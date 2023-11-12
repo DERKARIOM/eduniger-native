@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/block_info_note"
+    android:padding="20dp">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginBottom="20dp">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/baseline_info_24" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:text="INFORMATION"
+            android:textSize="20dp"
+            android:textColor="@color/black2"
+            android:fontFamily="sans-serif-smallcaps"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ENEIGNANT :"
+            android:textSize="18dp"
+            android:textColor="@color/black2"
+            android:background="@color/white"
+            />
+        <TextView
+            android:id="@+id/nomAg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="Bachir Moussa"
+            android:textSize="18dp"
+            android:textColor="@color/purple2_200"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="UE :"
+            android:textSize="18dp"
+            android:textColor="@color/black2"
+            android:background="@color/white"
+            />
+        <TextView
+            android:id="@+id/infoUE"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="Algorithme "
+            android:textSize="18dp"
+            android:textColor="@color/purple2_200"
+            />
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="CODE MATIERE :"
+            android:textSize="18dp"
+            android:textColor="@color/black2"
+            android:background="@color/white"
+            />
+        <TextView
+            android:id="@+id/infoCodeMat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="IF191010"
+            android:textSize="18dp"
+            android:textColor="@color/purple2_200"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="CREDIT :"
+            android:textSize="18dp"
+            android:textColor="@color/black2"
+            android:background="@color/white"
+            />
+        <TextView
+            android:id="@+id/infoCredit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:fontFamily="sans-serif-smallcaps"
+            android:text="4"
+            android:textSize="18dp"
+            android:textColor="@color/purple2_200"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SESSION :"
+            android:textSize="18dp"
+            android:textColor="@color/black2"
+            android:background="@color/white"
+            />
+        <TextView
+            android:id="@+id/idSession"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="1"
+            android:textSize="18dp"
+            android:textColor="@color/purple2_200"
+            />
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="NOTE /20 :"
+            android:textSize="18dp"
+            android:textColor="@color/black2"
+            android:background="@color/white"
+            />
+        <TextView
+            android:id="@+id/infoNote"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="19"
+            android:textSize="18dp"
+            android:textColor="@color/purple2_200"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="DATE D' ENVOIE :"
+            android:textSize="18dp"
+            android:textColor="@color/black2"
+            android:background="@color/white"
+            />
+        <TextView
+            android:id="@+id/infoDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="12/04/2023"
+            android:textSize="18dp"
+            android:textColor="@color/purple2_200"
+            />
+    </LinearLayout>
+
+</LinearLayout>

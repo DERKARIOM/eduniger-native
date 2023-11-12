@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Controleur.SuggestionActivity">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:layout_marginTop="10dp"
+                android:id="@+id/imgSuggestion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                >
+                <ImageView
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="200dp"
+                    android:src="@drawable/img_reclamation"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_below="@id/imgSuggestion"
+                android:id="@+id/BlockJuggestion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="40dp"
+                android:orientation="vertical">
+                <Spinner
+                    android:id="@+id/ObjetsJuggestion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:autofillHints="rasdkdkdkdkdkd"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="25dp"
+                    android:layout_marginEnd="20dp"
+                    android:fontFamily="sans-serif-smallcaps"
+                    android:gravity="center"
+                    android:backgroundTint="@color/purple_200"
+                    android:padding="10dp"/>
+                <ScrollView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/Suggestion"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="30dp"
+                        android:layout_marginTop="20dp"
+                        android:backgroundTint="@color/purple_200"
+                        android:layout_marginEnd="30dp"
+                        android:fontFamily="@font/apple1"
+                        android:gravity="top"
+                        android:hint="Distes-nous comment nous pouvons amélioré l'application fastpv"
+                        android:inputType="textMultiLine"
+                        android:minLines="4"
+                        android:padding="10dp"
+                        android:scrollbars="vertical" />
+                </ScrollView>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="25dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginStart="25dp"
+                    >
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/apple1"
+                        android:textColor="@color/black"
+                        android:text="Inclure les information de l' appariel ? (facultatif)"
+                        />
+                    <CheckBox
+                        android:id="@+id/infoPhone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"/>
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="20dp"
+                    android:fontFamily="@font/apple1"
+                    android:text="Les details techniques tels que le modele de votre appareil peuvent nous aide a repondre a votre question" />
+
+                <TextView
+                    android:id="@+id/TextErrSugg"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@id/ButtonConnect"
+                    android:layout_centerInParent="true"
+                    android:gravity="center"
+                    android:layout_marginBottom="10dp"
+                    android:text=""
+                    android:textColor="@color/rouge"
+                    android:textSize="12dp" />
+                <RelativeLayout
+                    android:id="@+id/BlockButtonConnect"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@+id/TextInscrire"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginEnd="30dp"
+                    >
+
+                    <ProgressBar
+                        android:id="@+id/progress_circularSuggestion"
+                        style="@android:style/Widget.Holo.ProgressBar.Small"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_centerInParent="true"
+                        android:layout_marginStart="40dp"
+                        android:layout_centerVertical="true"
+                        android:elevation="5dp"
+                        android:padding="20dp"
+                        android:visibility="invisible"
+                        android:progressDrawable="@drawable/circulaire_bar2" />
+                    <Button
+                        android:id="@+id/EnvoyerJuggestion"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:background="@drawable/bttarondie"
+                        android:textAllCaps="false"
+                        android:text="Envoyer" />
+                </RelativeLayout>
+            </LinearLayout>
+        </RelativeLayout>
+    </ScrollView>
+</RelativeLayout>

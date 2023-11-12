@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "634548293881",
+    "project_id": "fastpv-601d8",
+    "storage_bucket": "fastpv-601d8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:634548293881:android:6a124599450c44b6631228",
+        "android_client_info": {
+          "package_name": "com.example.fabi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "634548293881-podpe4tg93va9ppvn893h06o7u1rjs52.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBn8e47uWdhk9X5lteceUTrLN74FQpZ2Ec"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "634548293881-podpe4tg93va9ppvn893h06o7u1rjs52.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".Controleur.LoginActivity">
+
+    <RelativeLayout
+        android:id="@+id/block_login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/EditMatricule"
+        android:layout_alignParentTop="true"
+        android:background="@android:color/transparent"
+        android:elevation="10dp"
+        android:layout_marginBottom="60dp">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/login2"/>
+    </RelativeLayout>
+
+    <EditText
+        android:id="@+id/EditMatricule"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/EditPasse"
+        android:layout_marginStart="28dp"
+        android:layout_marginEnd="28dp"
+        android:layout_marginBottom="30dp"
+        android:background="@drawable/arondie"
+        android:elevation="10dp"
+        android:hint="  Votre matricule ?"
+        android:drawableStart="@drawable/identify"
+        android:inputType="number"
+        android:padding="10dp"
+        android:selectAllOnFocus="false" />
+
+    <EditText
+        android:id="@+id/EditPasse"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/TextErr"
+        android:layout_marginStart="28dp"
+        android:layout_marginEnd="28dp"
+        android:layout_marginBottom="30dp"
+        android:background="@drawable/arondie"
+        android:elevation="10dp"
+        android:hint="  Votre mot de passe ?"
+        android:drawableStart="@drawable/password"
+        android:inputType="textPassword"
+        android:padding="10dp" />
+
+    <TextView
+        android:id="@+id/TextErr"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/BlockButtonConnect"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="30dp"
+        android:text=""
+        android:textColor="@color/rouge"
+        android:textSize="12dp" />
+
+    <RelativeLayout
+        android:id="@+id/BlockButtonConnect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/TextInscrire"
+        android:layout_marginStart="28dp"
+        android:layout_marginEnd="28dp"
+        android:layout_marginBottom="40dp"
+        >
+
+        <ProgressBar
+            android:id="@+id/progress_circularLogin"
+            style="@android:style/Widget.Holo.ProgressBar.Small"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_alignStart="@id/ButtonConnect"
+            android:layout_marginStart="40dp"
+            android:layout_centerVertical="true"
+            android:elevation="5dp"
+            android:padding="20dp"
+            android:visibility="invisible"
+            android:progressDrawable="@drawable/circulaire_bar2" />
+        <Button
+            android:id="@+id/ButtonConnect"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:background="@drawable/bttarondie"
+            android:textAllCaps="false"
+            android:text="Connexion" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/TextInscrire"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/TextAide"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="60dp"
+        android:padding="10dp"
+        android:text="S'inscrire"
+        android:textSize="20dp" />
+
+    <TextView
+        android:id="@+id/TextAide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:text="Besoin d'aide"
+        android:textSize="20dp" />
+</RelativeLayout>

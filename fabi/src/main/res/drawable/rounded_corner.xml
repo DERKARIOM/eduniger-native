@@ -1,0 +1,4 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <corners android:radius="20dp"/> <!-- Vous pouvez ajuster le rayon selon votre préférence -->
+    <solid android:color="#FFFFFF"/> <!-- Couleur de fond de l'image -->
+</shape>

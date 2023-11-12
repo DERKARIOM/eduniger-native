@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/itemSon"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:layout_marginStart="10dp"
+             android:layout_marginEnd="10dp">
+
+    <TextView
+        android:id="@+id/numSon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:text="1"
+        android:textSize="16dp"/>
+    <TextView
+        android:id="@+id/titre_son"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/numSon"
+        android:layout_margin="10dp"
+        android:textSize="16dp"
+        android:layout_centerVertical="true"
+        android:text="Titre du morco"/>
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/download1"
+        android:layout_margin="10dp"
+        android:layout_alignParentEnd="true"/>
+</RelativeLayout>

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white"
+    tools:context=".Controleur.EmailChangeActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_above="@+id/EditMatricule4"
+        android:layout_marginBottom="50dp"
+        android:background="@drawable/bbock"
+        android:elevation="10dp"
+        android:layout_alignParentTop="true"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="3dp"
+            android:fontFamily="serif"
+            android:text="Changer votre adresse email"
+            android:textColor="@color/white"
+            android:textSize="23dp" />
+
+    </RelativeLayout>
+
+    <EditText
+        android:id="@+id/EditMatricule4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/EditPasse4"
+        android:layout_marginStart="28dp"
+        android:layout_marginEnd="28dp"
+        android:layout_marginBottom="30dp"
+        android:background="@drawable/arondie"
+        android:elevation="10dp"
+        android:hint="  Votre matricule ?"
+        android:drawableStart="@drawable/identify"
+        android:inputType="number"
+        android:padding="10dp" />
+
+    <EditText
+        android:id="@+id/EditPasse4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/EditMail3"
+        android:layout_marginStart="28dp"
+        android:layout_marginEnd="28dp"
+        android:layout_marginBottom="30dp"
+        android:background="@drawable/arondie"
+        android:elevation="10dp"
+        android:hint="  Votre mot de passe ?"
+        android:drawableStart="@drawable/password"
+        android:inputType="text"
+        android:padding="10dp" />
+
+    <EditText
+        android:id="@+id/EditMail3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/TextErr4"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="30dp"
+        android:background="@drawable/arondie"
+        android:elevation="10dp"
+        android:hint="  Nouveau adresse email"
+        android:drawableStart="@drawable/email"
+        android:inputType="textEmailAddress"
+        android:padding="10dp" />
+
+    <TextView
+        android:id="@+id/TextErr4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/ButtonConnect4"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="30dp"
+        android:text=""
+        android:textColor="@color/rouge"
+        android:textSize="12dp" />
+
+
+    <Button
+        android:id="@+id/ButtonConnect4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/changepasse"
+        android:layout_marginStart="28dp"
+        android:layout_marginEnd="28dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/bttarondie"
+        android:padding="10dp"
+        android:text="Connexion" />
+
+    <TextView
+        android:id="@+id/changepasse"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:padding="10dp"
+        android:text="Changer votre mot de passe"
+        android:textColor="@color/purple_200"
+        android:textSize="15dp" />
+</RelativeLayout>

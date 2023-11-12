@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/infoNotif"
+        android:title="Information"
+        />
+    <item
+        android:id="@+id/inportanteNotif"
+        android:title="Message importants" />
+    <item
+        android:id="@+id/ressayer"
+        android:title="Ressayer"
+        />
+    <item
+        android:id="@+id/suppNotif"
+        android:title="Supprimer" />
+    <item
+        android:id="@+id/commNotif"
+        android:title="Supprimer pour tout" />
+</menu>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/blockP"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="end">
+    <LinearLayout
+        android:id="@+id/notif_block"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+       android:background="@drawable/block_notif1"
+        android:elevation="2dp"
+        android:layout_margin="20dp"
+        android:padding="8dp"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/userNotif"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-smallcaps"
+            android:text="Vous"
+            android:textSize="10dp"
+            android:textColor="@color/white2"
+            />
+        <TextView
+            android:id="@+id/messageNotif"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="l' exament de syteme"
+            android:textColor="@color/white2"
+            android:textSize="17dp" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/dateNotif"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white2"
+                android:text="10:50"
+                android:textSize="8dp"
+                android:gravity="end"/>
+            <ImageView
+                android:id="@+id/vue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:src="@drawable/en_cour"/>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/idRecherhe"
+        android:title="Actualiser" />
+
+    <item
+        android:icon="@drawable/notifications"
+        android:title="notification"
+        app:showAsAction="always|never|collapseActionView|withText" />
+    <item
+        android:id="@+id/archiver"
+        android:title="Archives" />
+    <item
+        android:id="@+id/signaler"
+        android:title="Signaler" />
+    <item
+    android:id="@+id/offres"
+    android:title="Offres" />
+    <item android:title="Réservation" />
+    <item
+        android:id="@+id/parametre"
+        android:title="Paramètres" />
+
+    <item
+        android:id="@+id/deconnect"
+        android:title="Déconnecter" />
+</menu>

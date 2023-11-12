@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="15dp">
+    <TextView
+        android:id="@+id/label_mes_livres"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Livre telechargée"
+        android:textSize="18dp"/>
+    <TextView
+        android:id="@+id/nbr_livre"
+        android:layout_alignParentEnd="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="10"
+        android:textSize="18dp"/>
+</RelativeLayout>

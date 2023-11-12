@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Controleur.LicenceActivity">
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/linux2"
+            android:layout_margin="10dp"
+            android:textSize="20dp"
+            android:paddingBottom="20dp"
+            android:text="**Licence d'Utilisation Gratuite (Freeware) pour fastpv - Réservée aux Étudiants de la Faculté de Science et Technique (FAST) de l'Université Abdou Moumouni de Niamey (UAM)**\n\n
+
+\n**1. Acceptation des Termes**\n
+En installant, copiant ou utilisant fastpv, vous acceptez les termes de cette licence. Si vous n'êtes pas un étudiant inscrit à la FAST, veuillez ne pas installer ou utiliser l'application.
+
+\n\n**2. Utilisation Gratuite pour les Étudiants**\n
+L'application fastpv est gratuite à utiliser exclusivement pour les étudiants inscrits à la FAST. Cette utilisation est réservée aux fins éducatives et académiques.
+
+\n\n**3. Restrictions**\n
+   \na. Les étudiants de la faculté de science et technique sont autorisés à utiliser l'application uniquement dans le cadre de leurs études et projets académiques.\n
+
+   \nb. Vous n'êtes pas autorisé à redistribuer ou partager l'application en dehors de la faculté sans une autorisation écrite expresse de l'auteur.\n
+
+   \nc. Vous ne pouvez pas modifier, décompiler, désassembler ou tenter de récupérer le code source de l'application.\n
+
+\n\n**4. Avertissement sur la Garantie**\n
+L'application est fournie telle quelle sans garantie de quelque nature que ce soit. L'auteur ne peut être tenu responsable des dommages résultant de l'utilisation ou de l'incapacité d'utilisation de l'application.
+
+\n\n**5. Contact**\n
+Pour toute demande d'autorisation spéciale ou des questions liées à l'utilisation de l'application par les étudiants de la faculté de science et technique, veuillez contacter visionnairexcode@gmail.com .
+
+\n**6. Droits d'Auteur**\n
+L'application fastpv est protégée par le droit d'auteur © 2023-2024. Tous les droits sont réservés à l'auteur."/>
+    </ScrollView>
+</RelativeLayout>
