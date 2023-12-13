@@ -13,10 +13,8 @@
         <item name="android:statusBarColor">@color/transparente</item>
         <!-- Customize your theme here. -->
     </style>
-    <style name="Dialog.fastpv" parent="android:Theme.Dialog"
-
-        >
-
+    <style name="Dialog.fastpv" parent="android:Theme.Dialog" >
+        <item name="colorPrimary">@color/sombre</item>
     </style>
     <style name="DialogAnimation">
         <item name="android:windowEnterAnimation">@anim/agrandir_dilog</item>

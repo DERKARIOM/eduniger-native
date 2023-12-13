@@ -22,63 +22,63 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".Controleur.LivreActivity"
+            android:name="com.fabi.Controleur.LivreActivity"
             android:exported="false" />
         <activity
-            android:name=".Controleur.CategorieActivity"
+            android:name="com.fabi.Controleur.CategorieActivity"
             android:exported="false"
-            android:parentActivityName=".Controleur.MainActivity" />
+            android:parentActivityName="com.fabi.Controleur.MainActivity" />
         <activity
-            android:name=".Controleur.LicenceActivity"
+            android:name="com.fabi.Controleur.LicenceActivity"
             android:exported="false"
             android:label="Licence" />
         <activity
-            android:name=".Controleur.EmpreinteActivity"
+            android:name="com.fabi.Controleur.EmpreinteActivity"
             android:exported="false" />
         <activity
-            android:name=".Controleur.FingerPrintActivity"
+            android:name="com.fabi.Controleur.FingerPrintActivity"
             android:exported="false"
             android:label="Verrouillage par empreinte digitale"
-            android:parentActivityName=".Controleur.ParametreActivity" />
+            android:parentActivityName="com.fabi.Controleur.ParametreActivity" />
         <activity
-            android:name=".Controleur.EmailChangeActivity"
+            android:name="com.fabi.Controleur.EmailChangeActivity"
             android:exported="false" />
         <activity
-            android:name=".Controleur.InfosActivity"
+            android:name="com.fabi.Controleur.InfosActivity"
             android:exported="false" />
         <activity
-            android:name=".Controleur.ChangePasswordActivity"
+            android:name="com.fabi.Controleur.ChangePasswordActivity"
             android:exported="false" />
         <activity
-            android:name=".Controleur.ArchiverActivity"
+            android:name="com.fabi.Controleur.ArchiverActivity"
             android:exported="false"
             android:label="Archiver"
-            android:parentActivityName=".Controleur.MainActivity" />
+            android:parentActivityName="com.fabi.Controleur.MainActivity" />
         <activity
-            android:name=".Controleur.ParametreActivity"
+            android:name="com.fabi.Controleur.ParametreActivity"
             android:exported="false"
             android:label="Parametres"
-            android:parentActivityName=".Controleur.MainActivity" />
+            android:parentActivityName="com.fabi.Controleur.MainActivity" />
         <activity
-            android:name=".Controleur.MessageImportantsActivity"
+            android:name="com.fabi.Controleur.MessageImportantsActivity"
             android:exported="false"
             android:label="Message Importants"
-            android:parentActivityName=".Controleur.MainActivity" />
+            android:parentActivityName="com.fabi.Controleur.MainActivity" />
         <activity
-            android:name=".Controleur.SuggestionActivity"
+            android:name="com.fabi.Controleur.SuggestionActivity"
             android:exported="false"
             android:label="Suggestion"
-            android:parentActivityName=".Controleur.MainActivity" />
+            android:parentActivityName="com.fabi.Controleur.MainActivity" />
         <activity
-            android:name=".Controleur.LoginActivity"
+            android:name="com.fabi.Controleur.LoginActivity"
             android:exported="false"
             android:label="" />
         <activity
-            android:name=".Controleur.RegesterActivity"
+            android:name="com.fabi.Controleur.RegesterActivity"
             android:exported="false"
             android:label="Inscrivez-vous" />
         <activity
-            android:name=".Controleur.MainActivity"
+            android:name="com.fabi.Controleur.MainActivity"
             android:exported="true"
             android:icon="@drawable/item"
             android:label="fabi"
@@ -91,14 +91,14 @@
         </activity>
 
         <service
-            android:name=".Controleur.MyFirebaseMessagingService"
+            android:name="com.fabi.Controleur.MyFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
         <service
-            android:name=".Controleur.Service.NoteService"
+            android:name="com.fabi.Service.NoteService"
             android:exported="false" />
     </application>
 

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/white"
-    tools:context=".Controleur.LoginActivity">
+    tools:context="com.fabi.Controleur.LoginActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"

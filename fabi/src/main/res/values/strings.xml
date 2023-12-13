@@ -18,6 +18,21 @@
         <item>Ajout d\' une fonctionnalité</item>
         <item>Amélioration des performances</item>
     </string-array>
+
+    <string-array name="delait_reservation">
+        <item>Pour une journée</item>
+        <item>Pour deux jours</item>
+        <item>Pour trois jours</item>
+        <item>Pour quatre jours</item>
+        <item>Pour cinq jours</item>
+    </string-array>
+    <string-array name="delait_cosultation">
+        <item>Pour une heur</item>
+        <item>Pour deux heurs</item>
+        <item>Pour trois heurs</item>
+        <item>Pour quatre heurs</item>
+        <item>Pour cinq heurs</item>
+    </string-array>
     <string name="large_text">
         "Material is the metaphor.\n\n"
 

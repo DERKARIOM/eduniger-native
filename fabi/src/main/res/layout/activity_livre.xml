@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Controleur.LivreActivity">
+    tools:context="com.fabi.Controleur.LivreActivity">
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -143,6 +143,7 @@
                 </RelativeLayout>
                 <LinearLayout
                     android:id="@+id/bReservation"
+                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/bLivre"
@@ -183,6 +184,7 @@
                 </LinearLayout>
                 <LinearLayout
                     android:id="@+id/bAudio"
+                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/bReservation"
@@ -272,6 +274,7 @@
                 </LinearLayout>
                 <LinearLayout
                     android:id="@+id/bPDF"
+                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/bAudio"
