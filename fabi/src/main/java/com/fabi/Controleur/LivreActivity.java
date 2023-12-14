@@ -40,7 +40,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.fabi.Model.DialogReservationCusto;
 import com.fabi.Model.Disscution;
 import com.fabi.Model.DisscutionAdapter;
-import com.fabi.Model.ParametreCusto;
+import com.fabi.Model.ElectroniqueTable;
 import com.fabi.Model.Recenmment;
 import com.fabi.Model.RecenmmentAdapter;
 import com.fabi.Model.RoundedTransformation;
@@ -49,7 +49,6 @@ import com.fabi.Model.Son;
 import com.fabi.Model.SonAdapter;
 import com.example.fabi.R;
 import com.fabi.Model.SucceReservation;
-import com.fabi.Model.SucceSuggesion;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -97,7 +96,8 @@ public class LivreActivity extends AppCompatActivity {
         mDesc = findViewById(R.id.desc_livre);
         mBttReservation = findViewById(R.id.btt_reservation);
         mBttAudio = findViewById(R.id.btt_audio);
-        mBttPDF = findViewById(R.id.btt_pdf_ouvrir);
+        mBttOpenPDF = findViewById(R.id.btt_pdf_ouvrir);
+        mBttDowloadPDF = findViewById(R.id.btt_pdf);
         mMessage = findViewById(R.id.messageCommentaire);
         mAdd = findViewById(R.id.addCommentaire);
         mBlike = findViewById(R.id.like);
@@ -111,6 +111,7 @@ public class LivreActivity extends AppCompatActivity {
         mBAudio = findViewById(R.id.bAudio);
         mBPDF = findViewById(R.id.bPDF);
         mDialogReservationCusto = new DialogReservationCusto(this);
+        mElectroniqueTable = new ElectroniqueTable(this);
         tmp_position=0;
         mMediaPlayer = new MediaPlayer();
         isLike=false;
@@ -182,7 +183,7 @@ public class LivreActivity extends AppCompatActivity {
             }
         });
 
-        mBttPDF.setOnClickListener(new View.OnClickListener() {
+        mBttOpenPDF.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // Vérifier et demander la permission d'écriture externe si nécessaire
@@ -197,6 +198,14 @@ public class LivreActivity extends AppCompatActivity {
                     // Si la permission est déjà accordée, télécharger et ouvrir le PDF
                     downloadAndOpenPDF(mNomPdf);
                 }
+            }
+        });
+
+        mBttDowloadPDF.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(mElectroniqueTable.insert(mSession.getMatricule(),mIdLivre,mDesc.getText().toString(),mAuteur,"null",mNomPdf,mCategorie.getText().toString()))
+                    succeDowloadPDFDialog();
             }
         });
         mPlay.setOnClickListener(new View.OnClickListener() {
@@ -424,6 +433,7 @@ public class LivreActivity extends AppCompatActivity {
                     {
                         mBPDF.setVisibility(View.VISIBLE);
                         mNomPdf = jsonObject.getString("documentElec");
+                        mAuteur = jsonObject.getString("auteur");
                     }
                     mTitre.setText(jsonObject.getString("titreLivre"));
                     mCategorie.setText(jsonObject.getString("nomCat"));
@@ -766,7 +776,7 @@ public class LivreActivity extends AppCompatActivity {
                 if(jsonData.equals("true"))
                 {
                     mDialogReservationCusto.cancel();
-                    succeSuggestionDialog();
+                    succeReservationDialog();
                 }
 
                 //Toast.makeText(LivreActivity.this, jsonData, Toast.LENGTH_SHORT).show();
@@ -779,13 +789,30 @@ public class LivreActivity extends AppCompatActivity {
         }
     }
 
-    private void succeSuggestionDialog(){
+    private void succeReservationDialog(){
         SucceReservation succeReservation = new SucceReservation(this);
         succeReservation.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         succeReservation.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
         TextView message = succeReservation.findViewById(R.id.popo_message);
         TextView ok = succeReservation.findViewById(R.id.ok);
         message.setText("Merci d'avoir réservé \"" + mTitre.getText().toString() + "\" sur fabi; nous traitons votre demande et vous confirmerons la disponibilité bientôt.");
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                mSuggestion.setText("");
+                succeReservation.cancel();
+            }
+        });
+        succeReservation.build();
+    }
+
+    private void succeDowloadPDFDialog(){
+        SucceReservation succeReservation = new SucceReservation(this);
+        succeReservation.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        succeReservation.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        TextView message = succeReservation.findViewById(R.id.popo_message);
+        TextView ok = succeReservation.findViewById(R.id.ok);
+        message.setText("Le livre " +mTitre.getText().toString() + " format PDF a été téléchargé avec succès. N'hésitez pas à explorer son contenu dans l'application et contactez-nous en cas de besoin.");
         ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -816,7 +843,8 @@ public class LivreActivity extends AppCompatActivity {
     private TextView mDesc;
     private Button mBttReservation;
     private Button mBttAudio;
-    private  Button mBttPDF;
+    private  Button mBttOpenPDF;
+    private Button mBttDowloadPDF;
     private EditText mMessage;
     private ImageView mAdd;
     private LinearLayout mBlike;
@@ -837,5 +865,8 @@ public class LivreActivity extends AppCompatActivity {
     private int tmp_position;
     private DialogReservationCusto mDialogReservationCusto;
     private String mNomPdf;
+    private ElectroniqueTable mElectroniqueTable;
+    private String mAuteur;
+    private String mNomCouverture;
 
 }

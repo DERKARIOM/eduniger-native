@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 
+import com.fabi.Model.ElectroniqueTable;
 import com.fabi.Model.EmpreiteTable;
 import com.fabi.Model.Session;
 import com.fabi.Model.UtilisateurTable;
@@ -45,10 +46,12 @@ public class MainActivity extends AppCompatActivity {
         mAssistanceFragment = new AssistanceFragment();
         mBibliothequeFragment = new BibliothequeFragment();
         mSession = new Session(this);
+        mElectroniqueTable = new ElectroniqueTable(this);
         mEmpreiteTable = new EmpreiteTable(this);
         mUtilisateur = new UtilisateurTable(this);
         mToolbar = (Toolbar)findViewById(R.id.toolbar);
         mUtilisateur.onCreate(mDb);
+        mElectroniqueTable.onCreate(mDb);
 
         /* Detection de reseau */
         if(android.os.Build.VERSION.SDK_INT > 9)
@@ -226,6 +229,7 @@ public class MainActivity extends AppCompatActivity {
     private EmpreiteTable mEmpreiteTable;
     private UtilisateurTable mUtilisateur;
     private Toolbar mToolbar;
+    private ElectroniqueTable mElectroniqueTable;
     private Handler mHandler;
     private Runnable mRunnable;
 }
