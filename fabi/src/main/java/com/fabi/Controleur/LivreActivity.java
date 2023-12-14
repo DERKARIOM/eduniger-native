@@ -1,15 +1,20 @@
 package com.fabi.Controleur;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -23,8 +28,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -39,13 +48,20 @@ import com.fabi.Model.Session;
 import com.fabi.Model.Son;
 import com.fabi.Model.SonAdapter;
 import com.example.fabi.R;
+import com.fabi.Model.SucceReservation;
+import com.fabi.Model.SucceSuggesion;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -58,6 +74,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class LivreActivity extends AppCompatActivity {
+    private static final int STORAGE_PERMISSION_REQUEST_CODE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +97,7 @@ public class LivreActivity extends AppCompatActivity {
         mDesc = findViewById(R.id.desc_livre);
         mBttReservation = findViewById(R.id.btt_reservation);
         mBttAudio = findViewById(R.id.btt_audio);
-        mBttPDF = findViewById(R.id.btt_pdf);
+        mBttPDF = findViewById(R.id.btt_pdf_ouvrir);
         mMessage = findViewById(R.id.messageCommentaire);
         mAdd = findViewById(R.id.addCommentaire);
         mBlike = findViewById(R.id.like);
@@ -164,6 +181,24 @@ public class LivreActivity extends AppCompatActivity {
                 ReservationDialog();
             }
         });
+
+        mBttPDF.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Vérifier et demander la permission d'écriture externe si nécessaire
+                if (ContextCompat.checkSelfPermission(getApplicationContext(),
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED) {
+
+                    ActivityCompat.requestPermissions(LivreActivity.this,
+                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            STORAGE_PERMISSION_REQUEST_CODE);
+                } else {
+                    // Si la permission est déjà accordée, télécharger et ouvrir le PDF
+                    downloadAndOpenPDF(mNomPdf);
+                }
+            }
+        });
         mPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -241,7 +276,88 @@ public class LivreActivity extends AppCompatActivity {
             }
         });
     }
-    @Override
+
+    private void downloadAndOpenPDF(String nomPdf) {
+        new AsyncTask<Void, Void, File>() {
+            @Override
+            protected File doInBackground(Void... voids) {
+                try {
+                    // URL du PDF distant
+                    String pdfUrl = "http://192.168.43.1:2222/fabi/pdf/" + nomPdf;
+                    URL url = new URL(pdfUrl);
+
+                    // Ouvrir la connexion
+                    HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                    urlConnection.setRequestMethod("GET");
+
+                    // Télécharger le PDF dans le répertoire de téléchargement
+                    File pdfFile = new File(Environment.getExternalStoragePublicDirectory(
+                            Environment.DIRECTORY_DOWNLOADS), "PV.pdf");
+
+                    InputStream inputStream = urlConnection.getInputStream();
+                    FileOutputStream outputStream = new FileOutputStream(pdfFile);
+
+                    byte[] buffer = new byte[1024];
+                    int bytesRead;
+                    while ((bytesRead = inputStream.read(buffer)) != -1) {
+                        outputStream.write(buffer, 0, bytesRead);
+                    }
+
+                    outputStream.close();
+                    inputStream.close();
+
+                    return pdfFile;
+
+                } catch (IOException e) {
+                    Log.e("DownloadTask", "Error while downloading PDF", e);
+                    return null;
+                }
+            }
+
+            @Override
+            protected void onPostExecute(File pdfFile) {
+                super.onPostExecute(pdfFile);
+
+                if (pdfFile != null) {
+                    // Ouvrir le PDF avec Adobe PDF Reader
+                    openPDFWithAdobeReader(pdfFile);
+                } else {
+                    Log.e("DownloadTask", "PDF file is null");
+                }
+            }
+        }.execute();
+    }
+
+    private void openPDFWithAdobeReader(File pdfFile) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        Uri pdfUri = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".provider", pdfFile);
+        intent.setDataAndType(pdfUri, "application/pdf");
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+        try {
+            startActivity(intent);
+        } catch (Exception e) {
+            Toast.makeText(this, "OpenPDF : " + e, Toast.LENGTH_LONG).show();
+
+        }
+    }
+
+        @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == STORAGE_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission accordée, télécharger et ouvrir le PDF
+                downloadAndOpenPDF(mNomPdf);
+            } else {
+                // Permission refusée, gérer en conséquence
+                Log.e("Permission", "Storage permission denied");
+            }
+        }
+    }
+@Override
     public void onDestroy() {
         super.onDestroy();
         mTimer.cancel(); // Arrête le Timer lors de la destruction de l'activité
@@ -305,7 +421,10 @@ public class LivreActivity extends AppCompatActivity {
                     if(jsonObject.getString("estAudio").equals("1"))
                         mBAudio.setVisibility(View.VISIBLE);
                     if(!jsonObject.getString("documentElec").equals("null"))
+                    {
                         mBPDF.setVisibility(View.VISIBLE);
+                        mNomPdf = jsonObject.getString("documentElec");
+                    }
                     mTitre.setText(jsonObject.getString("titreLivre"));
                     mCategorie.setText(jsonObject.getString("nomCat"));
                     mDesc.setText(jsonObject.getString("descLivre"));
@@ -595,6 +714,11 @@ public class LivreActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if(reservPassword.getText().toString().equals(""))
                     reservErr.setText("svp votre mot de passe");
+                else
+                {
+                    Reservation reservation = new Reservation();
+                    reservation.execute("http://192.168.43.1:2222/fabi/android/reservation.php");
+                }
 
             }
         });
@@ -639,7 +763,13 @@ public class LivreActivity extends AppCompatActivity {
             //Toast.makeText(NoteService.this, response, Toast.LENGTH_SHORT).show();
             if(jsonData != null)
             {
+                if(jsonData.equals("true"))
+                {
+                    mDialogReservationCusto.cancel();
+                    succeSuggestionDialog();
+                }
 
+                //Toast.makeText(LivreActivity.this, jsonData, Toast.LENGTH_SHORT).show();
             }
             else
             {
@@ -647,6 +777,23 @@ public class LivreActivity extends AppCompatActivity {
             }
 
         }
+    }
+
+    private void succeSuggestionDialog(){
+        SucceReservation succeReservation = new SucceReservation(this);
+        succeReservation.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        succeReservation.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        TextView message = succeReservation.findViewById(R.id.popo_message);
+        TextView ok = succeReservation.findViewById(R.id.ok);
+        message.setText("Merci d'avoir réservé \"" + mTitre.getText().toString() + "\" sur fabi; nous traitons votre demande et vous confirmerons la disponibilité bientôt.");
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                mSuggestion.setText("");
+                succeReservation.cancel();
+            }
+        });
+        succeReservation.build();
     }
     private LinearLayout mBReservation;
     private LinearLayout mBAudio;
@@ -689,5 +836,6 @@ public class LivreActivity extends AppCompatActivity {
     private String mAudio;
     private int tmp_position;
     private DialogReservationCusto mDialogReservationCusto;
+    private String mNomPdf;
 
 }
