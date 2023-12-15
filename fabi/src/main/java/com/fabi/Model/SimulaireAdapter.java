@@ -8,15 +8,15 @@ import android.widget.ImageView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.fabi.R;
 import com.fabi.Controleur.LivreActivity;
+import com.example.fabi.R;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
-public class RecenmmentAdapter extends RecyclerView.Adapter<RecenmmentAdapter.MyViewHolder> {
+public class SimulaireAdapter extends RecyclerView.Adapter<SimulaireAdapter.MyViewHolder> {
     List<Recenmment> mListRecenmment;
 
     public int getPosition() {
@@ -28,11 +28,11 @@ public class RecenmmentAdapter extends RecyclerView.Adapter<RecenmmentAdapter.My
     }
 
     private int mPosition;
-    public RecenmmentAdapter(List<Recenmment> listRecenmment) {
+    public SimulaireAdapter(List<Recenmment> listRecenmment) {
         mListRecenmment = listRecenmment;
     }
     @Override
-    public RecenmmentAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public SimulaireAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         View view = layoutInflater.inflate(R.layout.recenmment_bloc,parent,false);
         return new MyViewHolder(view);
@@ -86,9 +86,9 @@ public class RecenmmentAdapter extends RecyclerView.Adapter<RecenmmentAdapter.My
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-//                    Intent intentLivre = new Intent(itemView.getContext(), LivreActivity.class);
-//                    intentLivre.putExtra("idLivre",recenmment.getIdLivre());
-//                    itemView.getContext().startActivity(intentLivre);
+                    Intent intentLivre = new Intent(itemView.getContext(), LivreActivity.class);
+                    intentLivre.putExtra("idLivre",recenmment.getIdLivre());
+                    itemView.getContext().startActivity(intentLivre);
                 }
             });
         }

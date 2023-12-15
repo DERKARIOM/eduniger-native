@@ -42,7 +42,7 @@ import com.fabi.Model.Disscution;
 import com.fabi.Model.DisscutionAdapter;
 import com.fabi.Model.ElectroniqueTable;
 import com.fabi.Model.Recenmment;
-import com.fabi.Model.RecenmmentAdapter;
+import com.fabi.Model.SimulaireAdapter;
 import com.fabi.Model.RoundedTransformation;
 import com.fabi.Model.Session;
 import com.fabi.Model.Son;
@@ -204,8 +204,7 @@ public class LivreActivity extends AppCompatActivity {
         mBttDowloadPDF.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(mElectroniqueTable.insert(mSession.getMatricule(),mIdLivre,mDesc.getText().toString(),mAuteur,"null",mNomPdf,mCategorie.getText().toString()))
-                    succeDowloadPDFDialog();
+                //downloadImg(mNomCouverture);
             }
         });
         mPlay.setOnClickListener(new View.OnClickListener() {
@@ -286,6 +285,57 @@ public class LivreActivity extends AppCompatActivity {
         });
     }
 
+    // Fonction pour enregistrer l'image localement
+    private void downloadImg(String nomImg) {
+        new AsyncTask<Void, Void, File>() {
+            @Override
+            protected File doInBackground(Void... voids) {
+                try {
+                    // URL du PDF distant
+                    String imgUrl = "http://192.168.43.1:2222/fabi/couverture/" + nomImg;
+                    URL url = new URL(imgUrl);
+
+                    // Ouvrir la connexion
+                    HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                    urlConnection.setRequestMethod("GET");
+
+                    // Télécharger le PDF dans le répertoire de téléchargement
+                    File pdfFile = new File(Environment.getExternalStoragePublicDirectory(
+                            Environment.DIRECTORY_DOWNLOADS), nomImg);
+
+                    InputStream inputStream = urlConnection.getInputStream();
+                    FileOutputStream outputStream = new FileOutputStream(pdfFile);
+
+                    byte[] buffer = new byte[1024];
+                    int bytesRead;
+                    while ((bytesRead = inputStream.read(buffer)) != -1) {
+                        outputStream.write(buffer, 0, bytesRead);
+                    }
+
+                    outputStream.close();
+                    inputStream.close();
+
+                    return pdfFile;
+
+                } catch (IOException e) {
+                    Log.e("DownloadTask", "Error while downloading PDF", e);
+                    return null;
+                }
+            }
+            @Override
+            protected void onPostExecute(File pdfFile) {
+                super.onPostExecute(pdfFile);
+
+                if (pdfFile != null) {
+                    // Ouvrir le PDF avec Adobe PDF Reader
+//                    openPDFWithAdobeReader(pdfFile);
+                } else {
+                    Log.e("DownloadTask", "PDF file is null");
+                }
+            }
+        }.execute();
+    }
+
     private void downloadAndOpenPDF(String nomPdf) {
         new AsyncTask<Void, Void, File>() {
             @Override
@@ -301,7 +351,7 @@ public class LivreActivity extends AppCompatActivity {
 
                     // Télécharger le PDF dans le répertoire de téléchargement
                     File pdfFile = new File(Environment.getExternalStoragePublicDirectory(
-                            Environment.DIRECTORY_DOWNLOADS), "PV.pdf");
+                            Environment.DIRECTORY_DOWNLOADS), nomPdf);
 
                     InputStream inputStream = urlConnection.getInputStream();
                     FileOutputStream outputStream = new FileOutputStream(pdfFile);
@@ -418,8 +468,9 @@ public class LivreActivity extends AppCompatActivity {
                     throw new RuntimeException(e);
                 }
                 try {
+                    mNomCouverture = jsonObject.getString("couverture");
                     Picasso.with(getApplicationContext())
-                            .load("http://192.168.43.1:2222/fabi/couverture/" + jsonObject.getString("couverture"))
+                            .load("http://192.168.43.1:2222/fabi/couverture/" + mNomCouverture)
                             .placeholder(R.drawable.item)
                             .error(R.drawable.item)
                             .transform(new RoundedTransformation(15,4))
@@ -612,7 +663,7 @@ public class LivreActivity extends AppCompatActivity {
                             throw new RuntimeException(e);
                         }
                     }
-                    mRecenmmentAdapter = new RecenmmentAdapter(mList2);
+                    mRecenmmentAdapter = new SimulaireAdapter(mList2);
                     mRecyclerView2.setLayoutManager(new LinearLayoutManager(getApplicationContext(),LinearLayoutManager.HORIZONTAL,false));
                     mRecyclerView2.setAdapter(mRecenmmentAdapter);
                 }
@@ -833,7 +884,7 @@ public class LivreActivity extends AppCompatActivity {
     private RecyclerView mRecyclerSon;
     private SonAdapter mSonAdapter;
     private List<Son> mListSon;
-    private RecenmmentAdapter mRecenmmentAdapter;
+    private SimulaireAdapter mRecenmmentAdapter;
     private List<Recenmment> mList2;
     private String mIdLivre;
     private Session mSession;

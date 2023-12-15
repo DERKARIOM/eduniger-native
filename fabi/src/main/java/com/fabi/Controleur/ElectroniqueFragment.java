@@ -1,9 +1,11 @@
 package com.fabi.Controleur;
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -14,6 +16,7 @@ import com.fabi.Model.ElectroniqueAdapter;
 import com.fabi.Model.ElectroniqueTable;
 import com.fabi.Model.Recenmment;
 import com.fabi.Model.RecenmmentAdapter;
+import com.fabi.Model.SimulaireAdapter;
 import com.example.fabi.R;
 import com.fabi.Model.Session;
 
@@ -38,15 +41,16 @@ public class ElectroniqueFragment extends Fragment {
         mList.add(new Electronique("playlists",0));
         mList.add(new Electronique("Categorie",mElectroniqueTable.getNbrCategorie(mSession.getMatricule())));
         mList.add(new Electronique("Auteurs",mElectroniqueTable.getNbrAuteur(mSession.getMatricule())));
-//        mList1.add(new Recenmment(R.drawable.l1));
-//        mList1.add(new Recenmment(R.drawable.l2));
-//        mList1.add(new Recenmment(R.drawable.l3));
-//        mList1.add(new Recenmment(R.drawable.l4));
-//        mList1.add(new Recenmment(R.drawable.l5));
+        Cursor cursor = mElectroniqueTable.getData(mSession.getMatricule());
+        cursor.moveToFirst();
+        do {
+            mList1.add(new Recenmment(cursor.getString(2),cursor.getString(5)));
+        }while(cursor.moveToNext());
+//
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext().getApplicationContext()));
-        //mRecyclerView1.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
+        mRecyclerView1.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
         mRecyclerView.setAdapter(mElectroniqueAdapter);
-        //mRecyclerView1.setAdapter(mRecenmmentAdapter);
+        mRecyclerView1.setAdapter(mRecenmmentAdapter);
         return view;
     }
     private RecyclerView mRecyclerView;
