@@ -1,9 +1,10 @@
 package com.fabi.Model;
 
 public class Recenmment {
-    public Recenmment(String idLivre, String couverteur) {
+    public Recenmment(String idLivre, String couverteur, String PDF) {
         mIdLivre = idLivre;
         mCouverteur = couverteur;
+        mPDF = PDF;
     }
 
     public String getIdLivre() {
@@ -22,6 +23,16 @@ public class Recenmment {
         mCouverteur = couverteur;
     }
 
+    public String getPDF() {
+        return mPDF;
+    }
+
+    public void setPDF(String PDF) {
+        mPDF = PDF;
+    }
+
     private String mIdLivre;
     private String mCouverteur;
+    private  String mPDF;
+
 }

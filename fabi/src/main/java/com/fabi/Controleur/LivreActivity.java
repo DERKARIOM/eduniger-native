@@ -204,7 +204,8 @@ public class LivreActivity extends AppCompatActivity {
         mBttDowloadPDF.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //downloadImg(mNomCouverture);
+                if(mElectroniqueTable.insert(mSession.getMatricule(),mIdLivre,mDesc.getText().toString(),mAuteur,mNomCouverture,mNomPdf,mCategorie.getText().toString(),mTitre.getText().toString()))
+                    succeDowloadPDFDialog();
             }
         });
         mPlay.setOnClickListener(new View.OnClickListener() {
@@ -658,7 +659,7 @@ public class LivreActivity extends AppCompatActivity {
                     }
                     for (int i=0;i<jsonArray.length();i++) {
                         try {
-                            mList2.add(new Recenmment(mIdLivre,jsonArray.getJSONObject(i).getString("couverture")));
+                            mList2.add(new Recenmment(mIdLivre,jsonArray.getJSONObject(i).getString("couverture"),null));
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }

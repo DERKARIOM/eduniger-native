@@ -1,13 +1,16 @@
 package com.fabi.Model;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fabi.R;
+import com.fabi.Controleur.LivreLocalActivity;
 
 import java.util.List;
 
@@ -69,6 +72,14 @@ public class ElectroniqueAdapter extends RecyclerView.Adapter<ElectroniqueAdapte
         void display(Electronique mesLivres2){
             mLabel.setText(mesLivres2.getLabel());
             mNbrLivre.setText("" + mesLivres2.getNbrLivre());
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent local = new Intent(itemView.getContext(), LivreLocalActivity.class);
+                    local.putExtra("id",mesLivres2.getId());
+                    itemView.getContext().startActivity(local);
+                }
+            });
         }
 
     }

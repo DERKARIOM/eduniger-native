@@ -1,6 +1,21 @@
 package com.fabi.Model;
 
 public class Electronique {
+
+    public Electronique(int id, String label, int nbrLivre) {
+        mId = id;
+        mLabel = label;
+        mNbrLivre = nbrLivre;
+    }
+
+    public int getId() {
+        return mId;
+    }
+
+    public void setId(int id) {
+        mId = id;
+    }
+
     public String getLabel() {
         return mLabel;
     }
@@ -17,10 +32,7 @@ public class Electronique {
         mNbrLivre = nbrLivre;
     }
 
-    public Electronique(String label, int nbrLivre) {
-        mLabel = label;
-        mNbrLivre = nbrLivre;
-    }
+    private int mId;
 
     private String mLabel;
     int mNbrLivre;

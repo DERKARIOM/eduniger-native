@@ -5,10 +5,12 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.core.content.FileProvider;
@@ -16,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fabi.R;
 import com.fabi.Controleur.LivreActivity;
+import com.fabi.Controleur.LivreLocalActivity;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -24,11 +27,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.List;
 
-public class RecenmmentAdapter extends RecyclerView.Adapter<RecenmmentAdapter.MyViewHolder> {
-    List<Recenmment> mListRecenmment;
+public class LivreLocalAdapter extends RecyclerView.Adapter<LivreLocalAdapter.MyViewHolder> {
+    List<LivreLocal> mListLivre;
 
     public int getPosition() {
         return mPosition;
@@ -39,65 +41,80 @@ public class RecenmmentAdapter extends RecyclerView.Adapter<RecenmmentAdapter.My
     }
 
     private int mPosition;
-    public RecenmmentAdapter(List<Recenmment> listRecenmment) {
-        mListRecenmment = listRecenmment;
+    public LivreLocalAdapter(List<LivreLocal> listLivre) {
+        mListLivre = listLivre;
     }
     @Override
-    public RecenmmentAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public LivreLocalAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View view = layoutInflater.inflate(R.layout.recenmment_bloc,parent,false);
+        View view = layoutInflater.inflate(R.layout.livre_bloc_local,parent,false);
         return new MyViewHolder(view);
     }
+
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        Recenmment item = mListRecenmment.get(position);
-        try {
-            holder.display(mListRecenmment.get(position));
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        LivreLocal item = mListLivre.get(position);
+        int i = position;
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                mPosition = holder.getAdapterPosition();
+                view.showContextMenu();
+                return true;
+            }
+        });
+        holder.display(mListLivre.get(position));
 
     }
     @Override
     public int getItemCount() {
-        return mListRecenmment.size();
+        return mListLivre.size();
     }
 
-//    public Notification getItem(int position) {
-//        return mListNotif.get(position);
-//    }
+    public LivreLocal getItem(int position) {
+        return mListLivre.get(position);
+    }
 
-//    public void Remove(int position){
-//        mListNotif.remove(position);
-//        notifyItemRemoved(position);
-//    }
+    public void Remove(int position){
+        mListLivre.remove(position);
+        notifyItemRemoved(position);
+    }
 
 
-    public class MyViewHolder extends RecyclerView.ViewHolder{
+    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener{
         private ImageView mCouverture;
+      private TextView mTitre;
+      private  TextView mCategorie;
+      private TextView mAuteur;
         MyViewHolder(View itemView){
             super(itemView);
-            mCouverture = (ImageView) itemView.findViewById(R.id.couverteur_recent);
+            mCouverture = itemView.findViewById(R.id.couverture_livre2);
+            mTitre = itemView.findViewById(R.id.title_livre2);
+            mCategorie = itemView.findViewById(R.id.categorie_livre2);
+            mAuteur = itemView.findViewById(R.id.auteur_livre);
+            itemView.setOnCreateContextMenuListener(this);
         }
-        //        @Override
-//        public void onCreateContextMenu(ContextMenu menu , View v , ContextMenu.ContextMenuInfo menuInfo){
-////            menu.add(Menu.NONE,R.id.infoNotif,Menu.NONE,"Information");
-////            menu.add(Menu.NONE,R.id.suppNotif,Menu.NONE,"Supprimer");
-////            menu.add(Menu.NONE,R.id.inportanteNotif,Menu.NONE,"Message importants");
-        void display(Recenmment recenmment) throws SQLException, IOException {
+        @Override
+        public void onCreateContextMenu(ContextMenu menu , View v , ContextMenu.ContextMenuInfo menuInfo){
+//            menu.add(Menu.NONE,R.id.infoNotif,Menu.NONE,"Information");
+//            menu.add(Menu.NONE,R.id.suppNotif,Menu.NONE,"Supprimer");
+//            menu.add(Menu.NONE,R.id.inportanteNotif,Menu.NONE,"Message importants");
+        }
+        void display(LivreLocal livre){
             Picasso.with(itemView.getContext())
-                    .load("http://192.168.43.1:2222/fabi/couverture/" + recenmment.getCouverteur())
+                    .load("http://192.168.43.1:2222/fabi/couverture/" + livre.getCouverture())
                     .placeholder(R.drawable.item)
                     .error(R.drawable.item)
                     .transform(new RoundedTransformation(15,4))
                     .resize(178,284)
                     .into(mCouverture);
+            mTitre.setText(livre.getTitre());
+            mCategorie.setText("Categorie : " + livre.getCategorie());
+            mAuteur.setText("Auteur : " + livre.getAuteur());
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    downloadAndOpenPDF(recenmment.getPDF());
+                    downloadAndOpenPDF(livre.getDocumentElec());
                 }
             });
         }
@@ -164,6 +181,5 @@ public class RecenmmentAdapter extends RecyclerView.Adapter<RecenmmentAdapter.My
                 Toast.makeText(itemView.getContext(), "OpenPDF : " + e, Toast.LENGTH_LONG).show();
             }
         }
-
     }
 }
