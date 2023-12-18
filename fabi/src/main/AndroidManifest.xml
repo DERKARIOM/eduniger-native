@@ -25,6 +25,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name="com.fabi.Controleur.ReservationActivity"
+            android:exported="false" />
+        <activity
             android:name="com.fabi.Controleur.LivreLocalActivity"
             android:exported="false" />
 
@@ -50,16 +53,13 @@
             android:exported="false"
             android:label="Licence" />
         <activity
-            android:name="com.fabi.Controleur.EmpreinteActivity"
+            android:name="com.fabi.Controleur.EmailChangeActivity"
             android:exported="false" />
         <activity
             android:name="com.fabi.Controleur.FingerPrintActivity"
             android:exported="false"
             android:label="Verrouillage par empreinte digitale"
             android:parentActivityName="com.fabi.Controleur.ParametreActivity" />
-        <activity
-            android:name="com.fabi.Controleur.EmailChangeActivity"
-            android:exported="false" />
         <activity
             android:name="com.fabi.Controleur.InfosActivity"
             android:exported="false" />

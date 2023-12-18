@@ -2,25 +2,32 @@ package com.fabi.Controleur;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.fabi.Model.ClassementAdapter;
 import com.fabi.Model.Livres;
+import com.fabi.Model.RoundedTransformation;
 import com.fabi.Model.Session;
 import com.example.fabi.R;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -35,9 +42,51 @@ public class RecomandeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_recomande, container, false);
         mSession = new Session(getContext());
         mRecyclerView = view.findViewById(R.id.recylerClassement);
+        mPub = view.findViewById(R.id.img_welcom);
         mList = new ArrayList<>();
+        mMonPub = new ArrayList<>();
+        mMonPub.add("pub1.jpg");
+        mMonPub.add("pub2.jpg");
+        Picasso.with(view.getContext())
+                .load("http://192.168.43.1:2222/fabi/pub/pub2.jpg")
+                .transform(new RoundedTransformation(200,10))
+                .resize(6200,3333)
+                .into(mPub);
+        Handler handler = new Handler();
+        int delayMillis = 10000; // 3 secondes
+        int currentIndex = 0;
+
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                // Utilisez YoYo pour animer le changement d'image
+
+
+                YoYo.with(Techniques.SlideInRight)
+                        .duration(1000)
+                        .onEnd(animator -> {
+                            // Changez la source de l'image après l'animation
+//                            Picasso.with(view.getContext())
+//                                    .load("http://192.168.43.1:2222/fabi/pub/pub2.jpg")
+//                                    .transform(new RoundedTransformation(200,10))
+//                                    .resize(6200,3333)
+//                                    .into(mPub);
+                            //currentIndex = (currentIndex + 1) % imagesList.size();
+                            // Répétez l'animation après un délai
+                            handler.postDelayed(this, delayMillis);
+                        })
+                        .playOn(mPub);
+            }
+        };
+        handler.postDelayed(runnable,delayMillis);
         Http http = new Http();
         http.execute("http://192.168.43.1:2222/fabi/android/recomande.php");
+        mPub.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                YoYo.with(Techniques.SlideOutLeft).duration(700).repeat(0).playOn(mPub);
+            }
+        });
         return view;
     }
     private class Http extends AsyncTask<String,Void,String> {
@@ -102,4 +151,6 @@ public class RecomandeFragment extends Fragment {
     private ClassementAdapter mClassementAdapter;
     private ArrayList<Livres> mList;
     private Session mSession;
+    private ImageView mPub;
+    private List<String> mMonPub;
 }

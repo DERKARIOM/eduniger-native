@@ -140,8 +140,8 @@ public class MainActivity extends AppCompatActivity {
         mToolbar.getMenu().getItem(6).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
-//                Restorer restorer = new Restorer();
-//                restorer.execute("http://192.168.43.1:2222/android/restorer.php");
+                Intent test = new Intent(MainActivity.this,ReservationActivity.class);
+                startActivity(test);
                 return false;
             }
         });
