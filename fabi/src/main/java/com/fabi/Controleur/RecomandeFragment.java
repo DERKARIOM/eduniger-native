@@ -52,11 +52,34 @@ public class RecomandeFragment extends Fragment {
                 .transform(new RoundedTransformation(200,10))
                 .resize(6200,3333)
                 .into(mPub);
-        Handler handler = new Handler();
-        int delayMillis = 10000; // 3 secondes
+        Handler handlerOut = new Handler();
+        Handler handlerIn = new Handler();
+        int delayMillis = 5000; // 3 secondes
         int currentIndex = 0;
 
-        Runnable runnable = new Runnable() {
+        Runnable runnableOut = new Runnable() {
+            @Override
+            public void run() {
+                // Utilisez YoYo pour animer le changement d'image
+
+
+                YoYo.with(Techniques.SlideOutLeft)
+                        .duration(1000)
+                        .onEnd(animator -> {
+                            // Changez la source de l'image après l'animation
+//                            Picasso.with(view.getContext())
+//                                    .load("http://192.168.43.1:2222/fabi/pub/pub2.jpg")
+//                                    .transform(new RoundedTransformation(200,10))
+//                                    .resize(6200,3333)
+//                                    .into(mPub);
+                            //currentIndex = (currentIndex + 1) % imagesList.size();
+                            // Répétez l'animation après un délai
+                            handlerOut.postDelayed(this, delayMillis);
+                        })
+                        .playOn(mPub);
+            }
+        };
+        Runnable runnableIn = new Runnable() {
             @Override
             public void run() {
                 // Utilisez YoYo pour animer le changement d'image
@@ -73,12 +96,13 @@ public class RecomandeFragment extends Fragment {
 //                                    .into(mPub);
                             //currentIndex = (currentIndex + 1) % imagesList.size();
                             // Répétez l'animation après un délai
-                            handler.postDelayed(this, delayMillis);
+                            handlerIn.postDelayed(this, delayMillis+1000);
                         })
                         .playOn(mPub);
             }
         };
-        handler.postDelayed(runnable,delayMillis);
+        handlerOut.postDelayed(runnableOut,delayMillis);
+        handlerIn.postDelayed(runnableIn,delayMillis+1000);
         Http http = new Http();
         http.execute("http://192.168.43.1:2222/fabi/android/recomande.php");
         mPub.setOnClickListener(new View.OnClickListener() {
