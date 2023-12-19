@@ -18,11 +18,39 @@
         android:layout_alignParentTop="true"
         app:titleTextAppearance="@style/CustoTollbar"
         />
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recylerLivreLocal"
+    <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/toolbar3"
-        />
+        tools:context="com.fabi.Controleur.RecomandeFragment">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <RelativeLayout
+                android:id="@+id/block_local"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:background="@android:color/transparent"
+                android:elevation="10dp"
+                android:layout_marginBottom="60dp">
+                <ImageView
+                    android:id="@+id/item_local"
+                    android:layout_width="wrap_content"
+                    android:layout_height="200dp"
+                    android:src="@drawable/telecharge_local"/>
+            </RelativeLayout>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recylerLivreLocal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/block_local"
+                />
+        </RelativeLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
 
 </RelativeLayout>

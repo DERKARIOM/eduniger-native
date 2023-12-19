@@ -204,7 +204,7 @@ public class LivreActivity extends AppCompatActivity {
         mBttDowloadPDF.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(mElectroniqueTable.insert(mSession.getMatricule(),mIdLivre,mDesc.getText().toString(),mAuteur,mNomCouverture,mNomPdf,mCategorie.getText().toString(),mTitre.getText().toString()))
+                if(mElectroniqueTable.insert(mSession.getMatricule(),mIdLivre,mDesc.getText().toString(),mAuteur,mNomCouverture,mNomPdf,mCategorie.getText().toString(),mTitre.getText().toString(),mNomCouvertureCat))
                     succeDowloadPDFDialog();
             }
         });
@@ -470,6 +470,7 @@ public class LivreActivity extends AppCompatActivity {
                 }
                 try {
                     mNomCouverture = jsonObject.getString("couverture");
+                    mNomCouvertureCat = jsonObject.getString("nomCouverture");
                     Picasso.with(getApplicationContext())
                             .load("http://192.168.43.1:2222/fabi/couverture/" + mNomCouverture)
                             .placeholder(R.drawable.item)
@@ -920,5 +921,6 @@ public class LivreActivity extends AppCompatActivity {
     private ElectroniqueTable mElectroniqueTable;
     private String mAuteur;
     private String mNomCouverture;
+    private String mNomCouvertureCat;
 
 }

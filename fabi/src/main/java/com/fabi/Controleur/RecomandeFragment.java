@@ -48,13 +48,13 @@ public class RecomandeFragment extends Fragment {
         mMonPub.add("pub1.jpg");
         mMonPub.add("pub2.jpg");
         Picasso.with(view.getContext())
-                .load("http://192.168.43.1:2222/fabi/pub/pub2.jpg")
+                .load("http://192.168.43.1:2222/fabi/pub/pub1.jpg")
                 .transform(new RoundedTransformation(200,10))
                 .resize(6200,3333)
                 .into(mPub);
         Handler handlerOut = new Handler();
         Handler handlerIn = new Handler();
-        int delayMillis = 5000; // 3 secondes
+        int delayMillis = 5000; // 5 secondes
         int currentIndex = 0;
 
         Runnable runnableOut = new Runnable() {
@@ -96,7 +96,7 @@ public class RecomandeFragment extends Fragment {
 //                                    .into(mPub);
                             //currentIndex = (currentIndex + 1) % imagesList.size();
                             // Répétez l'animation après un délai
-                            handlerIn.postDelayed(this, delayMillis+1000);
+                            handlerIn.postDelayed(this, delayMillis);
                         })
                         .playOn(mPub);
             }
