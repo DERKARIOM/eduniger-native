@@ -77,9 +77,9 @@
             android:label="Parametres"
             android:parentActivityName="com.fabi.Controleur.MainActivity" />
         <activity
-            android:name="com.fabi.Controleur.MessageImportantsActivity"
+            android:name="com.fabi.Controleur.NotificationActivity"
             android:exported="false"
-            android:label="Message Importants"
+            android:label="Notification"
             android:parentActivityName="com.fabi.Controleur.MainActivity" />
         <activity
             android:name="com.fabi.Controleur.SuggestionActivity"

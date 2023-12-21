@@ -4,32 +4,48 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 
+import com.fabi.Model.Notif;
 import com.fabi.Model.NotifCusto;
 import com.fabi.Model.Notification;
-import com.fabi.Model.StatusBarCusto;
 import com.example.fabi.R;
+import com.fabi.Model.NotificationAdapter;
+import com.fabi.Model.NotificationTable;
+import com.fabi.Model.Session;
 
 import java.util.ArrayList;
 
-public class MessageImportantsActivity extends AppCompatActivity {
+public class NotificationActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_message_importants);
-        StatusBarCusto statusBarCusto = new StatusBarCusto(this,getWindow());
+        setContentView(R.layout.activity_notification);
+        getSupportActionBar().hide();
         // Activer le bouton de retour de l'action barre
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mRecyclerView = (RecyclerView) findViewById(R.id.recyler2);
-        mList = new ArrayList<Notification>();
-        mList.add(new Notification("23","Test","62331","Information ! \nL' examen de base de de donnee est prevue pour ce mardi 25/04/2023 dans L' anphi DDK a partir de 10h00","10h23","12/5/2023","no"));
-        mNotifCusto = new NotifCusto(mList);
+        mSession = new Session(this);
+        mNotificationTable = new NotificationTable(this);
+        mList = new ArrayList<Notif>();
+        Cursor cursor = mNotificationTable.getData(mSession.getMatricule());
+        cursor.moveToFirst();
+        try {
+            do {
+                mList.add(new Notif(cursor.getString(2),cursor.getString(3),cursor.getString(4)));
+            }while(cursor.moveToNext());
+        }catch (Exception e)
+        {
+            Log.e("ErrGetDataNotification",e.getMessage());
+        }
+        mNotificationAdapter = new NotificationAdapter(mList);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getApplicationContext()));
-        mRecyclerView.setAdapter(mNotifCusto);
-        mRecyclerView.smoothScrollToPosition(mNotifCusto.getItemCount()-1);
+        mRecyclerView.setAdapter(mNotificationAdapter);
+        mRecyclerView.smoothScrollToPosition(mNotificationAdapter.getItemCount()-1);
 
     }
     @Override
@@ -51,6 +67,8 @@ public class MessageImportantsActivity extends AppCompatActivity {
         super.onBackPressed();
     }
     private RecyclerView mRecyclerView;
-    private NotifCusto mNotifCusto;
-    private ArrayList<Notification> mList;
+    private NotificationAdapter mNotificationAdapter;
+    private ArrayList<Notif> mList;
+    private NotificationTable mNotificationTable;
+    private Session mSession;
 }

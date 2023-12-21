@@ -204,7 +204,7 @@ public class LivreActivity extends AppCompatActivity {
         mBttDowloadPDF.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(mElectroniqueTable.insert(mSession.getMatricule(),mIdLivre,mDesc.getText().toString(),mAuteur,mNomCouverture,mNomPdf,mCategorie.getText().toString(),mTitre.getText().toString(),mNomCouvertureCat))
+                if(mElectroniqueTable.insert(mSession.getMatricule(),mIdLivre,mDesc.getText().toString(),mAuteur,mNomCouverture,mNomPdf,mCategorie.getText().toString(),mTitre.getText().toString(),mNomCouvertureCat,mProfilAuteur))
                     succeDowloadPDFDialog();
             }
         });
@@ -471,6 +471,7 @@ public class LivreActivity extends AppCompatActivity {
                 try {
                     mNomCouverture = jsonObject.getString("couverture");
                     mNomCouvertureCat = jsonObject.getString("nomCouverture");
+                    mProfilAuteur = jsonObject.getString("profilAuteur");
                     Picasso.with(getApplicationContext())
                             .load("http://192.168.43.1:2222/fabi/couverture/" + mNomCouverture)
                             .placeholder(R.drawable.item)
@@ -775,10 +776,18 @@ public class LivreActivity extends AppCompatActivity {
         bttEnvoi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+//                if(delaitReservation.isEnabled())
+//                    Toast.makeText(LivreActivity.this, "OK", Toast.LENGTH_SHORT).show();
+//                else
+//                    Toast.makeText(LivreActivity.this, "KO", Toast.LENGTH_SHORT).show();
                 if(reservPassword.getText().toString().equals(""))
                     reservErr.setText("svp votre mot de passe");
                 else
                 {
+                    if(delaitReservation.isEnabled())
+                        mNbrJour = String.valueOf(delaitReservation.getSelectedItemPosition() + 1);
+                    else
+                        mNbrJour = String.valueOf(-1);
                     Reservation reservation = new Reservation();
                     reservation.execute("http://192.168.43.1:2222/fabi/android/reservation.php");
                 }
@@ -801,7 +810,7 @@ public class LivreActivity extends AppCompatActivity {
                         .setType(MultipartBody.FORM)
                         .addFormDataPart("matricule",mSession.getMatricule())
                         .addFormDataPart("idLivre",mIdLivre)
-                        .addFormDataPart("duree","3")
+                        .addFormDataPart("nbrJour",mNbrJour)
                         .build();
                 Request request = new Request.Builder()
                         .url(params[0])
@@ -826,6 +835,7 @@ public class LivreActivity extends AppCompatActivity {
             //Toast.makeText(NoteService.this, response, Toast.LENGTH_SHORT).show();
             if(jsonData != null)
             {
+                Toast.makeText(LivreActivity.this, jsonData, Toast.LENGTH_SHORT).show();
                 if(jsonData.equals("true"))
                 {
                     mDialogReservationCusto.cancel();
@@ -922,5 +932,6 @@ public class LivreActivity extends AppCompatActivity {
     private String mAuteur;
     private String mNomCouverture;
     private String mNomCouvertureCat;
-
+    private String mProfilAuteur;
+    private String mNbrJour;
 }

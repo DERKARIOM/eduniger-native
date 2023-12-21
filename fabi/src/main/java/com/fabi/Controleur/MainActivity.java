@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -16,9 +17,13 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.fabi.Model.ElectroniqueTable;
 import com.fabi.Model.EmpreiteTable;
+import com.fabi.Model.NotificationTable;
 import com.fabi.Model.Session;
 import com.fabi.Model.UtilisateurTable;
 import com.example.fabi.R;
+import com.fabi.Service.NoteService;
+import com.google.android.material.badge.BadgeDrawable;
+import com.google.android.material.badge.BadgeUtils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
@@ -49,9 +54,17 @@ public class MainActivity extends AppCompatActivity {
         mElectroniqueTable = new ElectroniqueTable(this);
         mEmpreiteTable = new EmpreiteTable(this);
         mUtilisateur = new UtilisateurTable(this);
+        mNotificationTable = new NotificationTable(this);
         mToolbar = (Toolbar)findViewById(R.id.toolbar);
         mUtilisateur.onCreate(mDb);
         mElectroniqueTable.onCreate(mDb);
+        mNotificationTable.onCreate(mDb);
+        mMenuItem = mToolbar.getMenu().findItem(R.id.menuHomeNotification);
+        mReservationService = new Intent(this, NoteService.class);
+//        BadgeDrawable badgeDrawableNotif  = BadgeDrawable.create(this);
+//        badgeDrawableNotif.setNumber(5);
+//        BadgeUtils.attachBadgeDrawable(badgeDrawableNotif,mToolbar,2);
+       // BadgeDrawable badgeDrawableNotif = mBottomNavigationView.getOrCreateBadge(R.id.menuHomeNotification);
 
         /* Detection de reseau */
         if(android.os.Build.VERSION.SDK_INT > 9)
@@ -63,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         /* Ouverteur de la session si ca existe  si non lancement de la page login */
         try {
             Toast.makeText(this, mSession.getMatricule(), Toast.LENGTH_SHORT);
-//            startService(mNoteService);
+            startService(mReservationService);
         }
         catch (Exception e)
         {
@@ -100,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
         mToolbar.getMenu().getItem(1).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
-                Intent importants = new Intent(MainActivity.this,MessageImportantsActivity.class);
+                Intent importants = new Intent(MainActivity.this, NotificationActivity.class);
                 startActivity(importants);
                 return false;
             }
@@ -135,12 +148,10 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
-
-        /* En cliquant sur "Restaurer mes notes" */
         mToolbar.getMenu().getItem(6).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
-                Intent test = new Intent(MainActivity.this,ReservationActivity.class);
+                Intent test = new Intent(MainActivity.this,ParametreActivity.class);
                 startActivity(test);
                 return false;
             }
@@ -232,4 +243,7 @@ public class MainActivity extends AppCompatActivity {
     private ElectroniqueTable mElectroniqueTable;
     private Handler mHandler;
     private Runnable mRunnable;
+    private Intent mReservationService;
+    private NotificationTable mNotificationTable;
+    private MenuItem mMenuItem;
 }

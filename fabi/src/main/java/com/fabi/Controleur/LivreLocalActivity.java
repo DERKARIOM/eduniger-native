@@ -68,6 +68,15 @@ public class LivreLocalActivity extends AppCompatActivity {
                 break;
             case 5: // Auteurs
                 mItemLocal.setImageResource(R.drawable.auteur_local);
+                mList4 = new ArrayList<>();
+                Cursor cursor5 = mElectroniqueTable.getData(mSession.getMatricule());
+                cursor5.moveToFirst();
+                do {
+                    mList4.add(new Categorie(cursor5.getString(10),cursor5.getString(4)));
+                }while(cursor5.moveToNext());
+                mCategorieLocalAdapter = new CategorieLocalAdapter(mList4);
+                mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+                mRecyclerView.setAdapter(mCategorieLocalAdapter);
                 break;
         }
     }

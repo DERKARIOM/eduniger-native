@@ -7,6 +7,7 @@
         android:title="Actualiser" />
 
     <item
+        android:id="@+id/menuHomeNotification"
         android:icon="@drawable/notifications"
         android:title="notification"
         app:showAsAction="always|never|collapseActionView|withText" />

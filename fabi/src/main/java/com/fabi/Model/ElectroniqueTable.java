@@ -28,7 +28,7 @@ public class ElectroniqueTable extends SQLiteOpenHelper {
                 "    categorie VARCHAR(100),\n" +
                 "    titre VARCHAR(100),\n" +
                 "    couvertureCat VARCHAR(100),\n" +
-
+                "    profilAuteur VARCHAR(100),\n" +
                 "    UNIQUE(matriculeUt,idLivre)\n" +
                 ");");
     }
@@ -74,7 +74,7 @@ public class ElectroniqueTable extends SQLiteOpenHelper {
         res.moveToFirst();
         return res.getInt(0);
     }
-    public boolean insert (String matriculeUt , String idLivre , String descLivre , String auteur ,String couverture, String documentElec , String categorie , String titre , String couvertureCat)
+    public boolean insert (String matriculeUt , String idLivre , String descLivre , String auteur ,String couverture, String documentElec , String categorie , String titre , String couvertureCat,String profilAuteur)
     {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -88,6 +88,7 @@ public class ElectroniqueTable extends SQLiteOpenHelper {
             contentValues.put("categorie",categorie);
             contentValues.put("titre",titre);
             contentValues.put("couvertureCat",couvertureCat);
+            contentValues.put("profilAuteur",profilAuteur);
             db.insert("Electronique",null,contentValues);
             return  true;
         }
