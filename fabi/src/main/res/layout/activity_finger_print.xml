@@ -1,12 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="com.fabi.Controleur.FingerPrintActivity">
-
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbarEmprint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        app:logo="@drawable/back"
+        app:title="Verrouillage par empreinte digitale"
+        android:layout_centerVertical="true"
+        app:titleMarginStart="15dp"
+        android:paddingStart="20dp"
+        app:titleTextColor="@color/black3"
+        android:layout_alignParentTop="true"
+        app:titleTextAppearance="@style/CustoTollbar"
+        />
 
     <Switch
         android:id="@+id/switch1"
@@ -19,9 +32,11 @@
         android:layout_marginTop="15dp"
         android:text="Déverrouiller avec l'empreinte"
         android:layout_marginBottom="5dp"
+        android:layout_below="@+id/toolbarEmprint"
         android:textSize="20dp" />
 
     <TextView
+        android:id="@+id/textEmprinte"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Lorsque cette option sera activée, vous derez utiliser votre emprinte digitale pour ouvrir fastpv."
@@ -29,6 +44,7 @@
         android:fontFamily="@font/linux2"
         android:textSize="15dp"
         android:layout_marginEnd="10dp"
+        android:layout_below="@+id/switch1"
         />
 
     <RadioGroup
@@ -37,6 +53,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:visibility="invisible"
+        android:layout_below="@+id/textEmprinte"
         android:layout_marginStart="8dp">
 
         <TextView
@@ -74,4 +91,4 @@
             android:text="Au bout de 5 minutes" />
     </RadioGroup>
 
-</LinearLayout>
+</RelativeLayout>

@@ -5,10 +5,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.fabi.Controleur.ParametreActivity">
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbarParametre"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:logo="@drawable/back"
+        app:title="Parametre"
+        android:layout_centerVertical="true"
+        app:titleMarginStart="15dp"
+        android:layout_marginBottom="10dp"
+        android:paddingStart="20dp"
+        app:titleTextColor="@color/black3"
+        android:layout_alignParentTop="true"
+        app:titleTextAppearance="@style/CustoTollbar"
+        />
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recylerParametre"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@id/toolbarParametre"
         />
 
 </RelativeLayout>

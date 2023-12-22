@@ -19,7 +19,7 @@
             android:layout_height="150dp"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="20dp"
-            android:src="@drawable/pvinfos" />
+            android:src="@drawable/default_livre" />
         <ImageView
             android:layout_below="@id/ninotech"
             android:layout_width="200dp"
@@ -32,7 +32,7 @@
         android:id="@+id/annee"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="2023-2024 FAST-PV"
+        android:text="2023-2024 Fabi"
         android:layout_below="@id/iconifos"
         android:layout_centerHorizontal="true"
         />
@@ -72,7 +72,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/version"
         android:textSize="40dp"
-        android:text="FAST-PV"
+        android:text="Fabi"
         android:fontFamily="@font/apple1"
         android:layout_centerHorizontal="true"
         />

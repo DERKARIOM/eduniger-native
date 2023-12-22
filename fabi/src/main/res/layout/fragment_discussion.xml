@@ -27,7 +27,7 @@
         android:layout_marginBottom="20dp"
         >
         <Button
-            android:id="@+id/impotant"
+            android:id="@+id/bttMemorisation"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:background="@android:color/transparent"
@@ -39,7 +39,7 @@
             android:id="@+id/importerMedia"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_alignStart="@+id/impotant"
+            android:layout_alignStart="@+id/bttMemorisation"
             android:layout_alignBottom="@id/messageNotif"
             android:layout_marginStart="-33dp"
             android:background="@android:color/transparent"

@@ -12,7 +12,7 @@ import com.example.fabi.R;
 public class StatusBarCusto {
     public StatusBarCusto(Context context,Window window) {
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(ContextCompat.getColor(context, R.color.purple_200));
+        window.setStatusBarColor(ContextCompat.getColor(context, R.color.white));
         window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
     }
 }

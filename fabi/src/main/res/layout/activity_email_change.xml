@@ -12,21 +12,15 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_above="@+id/EditMatricule4"
-        android:layout_marginBottom="50dp"
-        android:background="@drawable/bbock"
+        android:layout_marginBottom="40dp"
+        android:background="@android:color/transparent"
         android:elevation="10dp"
-        android:layout_alignParentTop="true"
-        android:orientation="vertical">
+        android:layout_alignParentTop="true">
 
-        <TextView
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_marginTop="3dp"
-            android:fontFamily="serif"
-            android:text="Changer votre adresse email"
-            android:textColor="@color/white"
-            android:textSize="23dp" />
+            android:src="@drawable/regester"/>
 
     </RelativeLayout>
 

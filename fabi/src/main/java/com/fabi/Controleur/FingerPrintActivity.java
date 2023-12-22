@@ -45,7 +45,8 @@ public class FingerPrintActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_finger_print);
-        StatusBarCusto statusBarCusto = new StatusBarCusto(this,getWindow());
+        getSupportActionBar().hide();
+        //StatusBarCusto statusBarCusto = new StatusBarCusto(this,getWindow());
         mDb = openOrCreateDatabase("data.db",MODE_PRIVATE,null);
         mEmpreiteTable = new EmpreiteTable(this);
         mSwitch = findViewById(R.id.switch1);

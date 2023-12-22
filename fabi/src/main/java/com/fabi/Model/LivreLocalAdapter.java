@@ -103,8 +103,8 @@ public class LivreLocalAdapter extends RecyclerView.Adapter<LivreLocalAdapter.My
         void display(LivreLocal livre){
             Picasso.with(itemView.getContext())
                     .load("http://192.168.43.1:2222/fabi/couverture/" + livre.getCouverture())
-                    .placeholder(R.drawable.item)
-                    .error(R.drawable.item)
+                    .placeholder(R.drawable.default_livre)
+                    .error(R.drawable.default_livre)
                     .transform(new RoundedTransformation(15,4))
                     .resize(178,284)
                     .into(mCouverture);

@@ -474,8 +474,8 @@ public class LivreActivity extends AppCompatActivity {
                     mProfilAuteur = jsonObject.getString("profilAuteur");
                     Picasso.with(getApplicationContext())
                             .load("http://192.168.43.1:2222/fabi/couverture/" + mNomCouverture)
-                            .placeholder(R.drawable.item)
-                            .error(R.drawable.item)
+                            .placeholder(R.drawable.default_livre)
+                            .error(R.drawable.default_livre)
                             .transform(new RoundedTransformation(15,4))
                             .resize(200,334)
                             .into(mCouverture);

@@ -17,9 +17,9 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@drawable/item"
+        android:icon="@drawable/default_livre"
         android:label="fabi"
-        android:logo="@drawable/item"
+        android:logo="@drawable/default_livre"
         android:supportsRtl="true"
         android:theme="@style/Theme.Ras"
         android:usesCleartextTraffic="true"
@@ -97,9 +97,9 @@
         <activity
             android:name="com.fabi.Controleur.MainActivity"
             android:exported="true"
-            android:icon="@drawable/item"
+            android:icon="@drawable/default_livre"
             android:label="fabi"
-            android:logo="@drawable/item">
+            android:logo="@drawable/default_livre">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

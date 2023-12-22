@@ -39,7 +39,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_password);
-        StatusBarCusto statusBarCusto = new StatusBarCusto(this,getWindow());
+        //StatusBarCusto statusBarCusto = new StatusBarCusto(this,getWindow());
         getSupportActionBar().hide();
         mEditMatricule3 = findViewById(R.id.EditMatricule3);
         mEditMail2 = findViewById(R.id.EditMail2);

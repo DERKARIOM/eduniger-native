@@ -38,7 +38,7 @@ public class EmailChangeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_email_change);
-        StatusBarCusto statusBarCusto = new StatusBarCusto(this,getWindow());
+        //StatusBarCusto statusBarCusto = new StatusBarCusto(this,getWindow());
         getSupportActionBar().hide();
         mEditMatricule4 = findViewById(R.id.EditMatricule4);
         mEditPasse4 = findViewById(R.id.EditPasse4);

@@ -5,7 +5,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.fabi.Controleur.SuggestionActivity">
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbarSuggestion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:logo="@drawable/back"
+        app:title="Suggestion"
+        android:layout_centerVertical="true"
+        app:titleMarginStart="15dp"
+        android:paddingStart="20dp"
+        app:titleTextColor="@color/black3"
+        android:layout_alignParentTop="true"
+        app:titleTextAppearance="@style/CustoTollbar"
+        />
     <ScrollView
+        android:layout_below="@+id/toolbarSuggestion"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_centerInParent="true"

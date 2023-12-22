@@ -35,7 +35,8 @@ public class SuggestionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_suggestion);
-        StatusBarCusto statusBarCusto = new StatusBarCusto(this,getWindow());
+        getSupportActionBar().hide();
+        // StatusBarCusto statusBarCusto = new StatusBarCusto(this,getWindow());
         // Activer le bouton de retour de l'action barre
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mSession = new Session(this);
