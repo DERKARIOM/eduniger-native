@@ -23,9 +23,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-import com.fabi.Model.EmpreinteConfirmerCusto;
+import com.fabi.Model.EmpreinteConfirmerDialog;
 import com.fabi.Model.EmpreiteTable;
-import com.fabi.Model.StatusBarCusto;
 import com.fabi.Model.SucceSuggesion;
 import com.example.fabi.R;
 
@@ -144,7 +143,7 @@ public class FingerPrintActivity extends AppCompatActivity {
         }
     }
     public void EmpreinteConfirmer() {
-        EmpreinteConfirmerCusto empreinteCusto = new EmpreinteConfirmerCusto(this);
+        EmpreinteConfirmerDialog empreinteCusto = new EmpreinteConfirmerDialog(this);
         empreinteCusto.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         ImageView digitaleConfirmer = empreinteCusto.findViewById(R.id.EdigitaleConfirme);
         TextView messageConfirme = empreinteCusto.findViewById(R.id.messageDigitaleConfirmer);

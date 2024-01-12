@@ -37,7 +37,7 @@ import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.fabi.Model.DialogReservationCusto;
+import com.fabi.Model.ReservationDialog;
 import com.fabi.Model.Disscution;
 import com.fabi.Model.DisscutionAdapter;
 import com.fabi.Model.ElectroniqueTable;
@@ -110,7 +110,7 @@ public class LivreActivity extends AppCompatActivity {
         mBReservation = findViewById(R.id.bReservation);
         mBAudio = findViewById(R.id.bAudio);
         mBPDF = findViewById(R.id.bPDF);
-        mDialogReservationCusto = new DialogReservationCusto(this);
+        mReservationDialog = new ReservationDialog(this);
         mElectroniqueTable = new ElectroniqueTable(this);
         tmp_position=0;
         mMediaPlayer = new MediaPlayer();
@@ -752,11 +752,11 @@ public class LivreActivity extends AppCompatActivity {
         }
     }
     public void ReservationDialog() {
-        Spinner delaitReservation = mDialogReservationCusto.findViewById(R.id.DelaitReservation);
-        CheckBox checkBox = mDialogReservationCusto.findViewById(R.id.estConsulte);
-        Button bttEnvoi = mDialogReservationCusto.findViewById(R.id.reservation_envoi);
-        EditText reservPassword = mDialogReservationCusto.findViewById(R.id.reservation_password);
-        TextView reservErr = mDialogReservationCusto.findViewById(R.id.err_reservation);
+        Spinner delaitReservation = mReservationDialog.findViewById(R.id.DelaitReservation);
+        CheckBox checkBox = mReservationDialog.findViewById(R.id.estConsulte);
+        Button bttEnvoi = mReservationDialog.findViewById(R.id.reservation_envoi);
+        EditText reservPassword = mReservationDialog.findViewById(R.id.reservation_password);
+        TextView reservErr = mReservationDialog.findViewById(R.id.err_reservation);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.delait_reservation, android.R.layout.simple_spinner_item);
         ArrayAdapter<CharSequence> adapterConsult = ArrayAdapter.createFromResource(this, R.array.delait_cosultation, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -794,9 +794,9 @@ public class LivreActivity extends AppCompatActivity {
 
             }
         });
-        mDialogReservationCusto.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        mDialogReservationCusto.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
-        mDialogReservationCusto.build();
+        mReservationDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        mReservationDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        mReservationDialog.build();
     }
 
 
@@ -838,7 +838,7 @@ public class LivreActivity extends AppCompatActivity {
                 Toast.makeText(LivreActivity.this, jsonData, Toast.LENGTH_SHORT).show();
                 if(jsonData.equals("true"))
                 {
-                    mDialogReservationCusto.cancel();
+                    mReservationDialog.cancel();
                     succeReservationDialog();
                 }
 
@@ -926,7 +926,7 @@ public class LivreActivity extends AppCompatActivity {
     private String url;
     private String mAudio;
     private int tmp_position;
-    private DialogReservationCusto mDialogReservationCusto;
+    private ReservationDialog mReservationDialog;
     private String mNomPdf;
     private ElectroniqueTable mElectroniqueTable;
     private String mAuteur;

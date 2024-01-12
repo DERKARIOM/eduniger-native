@@ -65,9 +65,6 @@ public class RecenmmentAdapter extends RecyclerView.Adapter<RecenmmentAdapter.My
         return mListRecenmment.size();
     }
 
-//    public Notification getItem(int position) {
-//        return mListNotif.get(position);
-//    }
 
 //    public void Remove(int position){
 //        mListNotif.remove(position);

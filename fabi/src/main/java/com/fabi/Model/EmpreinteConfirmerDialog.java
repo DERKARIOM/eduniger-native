@@ -5,8 +5,8 @@ import android.app.Dialog;
 
 import com.example.fabi.R;
 
-public class EmpreinteConfirmerCusto extends Dialog {
-    public EmpreinteConfirmerCusto(Activity activity)
+public class EmpreinteConfirmerDialog extends Dialog {
+    public EmpreinteConfirmerDialog(Activity activity)
     {
         super(activity, androidx.appcompat.R.style.Theme_AppCompat_Dialog);
         setContentView(R.layout.confirmer_empreinte);

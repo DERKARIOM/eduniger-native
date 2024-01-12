@@ -9,8 +9,8 @@ import androidx.core.content.ContextCompat;
 
 import com.example.fabi.R;
 
-public class DialogReservationCusto extends Dialog {
-    public DialogReservationCusto(Activity activity)
+public class ReservationDialog extends Dialog {
+    public ReservationDialog(Activity activity)
     {
         super(activity, R.style.Dialog_fastpv);
         setContentView(R.layout.dialog_reservation);

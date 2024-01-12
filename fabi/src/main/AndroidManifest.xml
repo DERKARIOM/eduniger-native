@@ -67,11 +67,6 @@
             android:name="com.fabi.Controleur.ChangePasswordActivity"
             android:exported="false" />
         <activity
-            android:name="com.fabi.Controleur.ArchiverActivity"
-            android:exported="false"
-            android:label="Archiver"
-            android:parentActivityName="com.fabi.Controleur.MainActivity" />
-        <activity
             android:name="com.fabi.Controleur.ParametreActivity"
             android:exported="false"
             android:label="Parametres"

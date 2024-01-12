@@ -46,9 +46,6 @@ public class ElectroniqueAdapter extends RecyclerView.Adapter<ElectroniqueAdapte
         return mListElectronique.size();
     }
 
-//    public Notification getItem(int position) {
-//        return mListNotif.get(position);
-//    }
 
 //    public void Remove(int position){
 //        mListNotif.remove(position);

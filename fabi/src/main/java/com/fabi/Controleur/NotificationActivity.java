@@ -10,8 +10,6 @@ import android.util.Log;
 import android.view.MenuItem;
 
 import com.fabi.Model.Notif;
-import com.fabi.Model.NotifCusto;
-import com.fabi.Model.Notification;
 import com.example.fabi.R;
 import com.fabi.Model.NotificationAdapter;
 import com.fabi.Model.NotificationTable;

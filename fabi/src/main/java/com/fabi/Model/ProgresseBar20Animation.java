@@ -6,8 +6,8 @@ import android.widget.TextView;
 
 import java.text.DecimalFormat;
 
-public class AnimationProgresseBarDec {
-    public AnimationProgresseBarDec(ProgressBar progressBar, TextView textView, float valeur) {
+public class ProgresseBar20Animation {
+    public ProgresseBar20Animation(ProgressBar progressBar, TextView textView, float valeur) {
         mProgressBar = progressBar;
         mTextView = textView;
         this.valeur = valeur;
@@ -21,7 +21,7 @@ public class AnimationProgresseBarDec {
         thread.start();
     }
     private void startProgress() {
-        for(mI=(int)valeur;mI>0;mI--)
+        for(mI=0;mI<=valeur*5;mI++)
         {
             try {
                 Thread.sleep(20);
@@ -33,10 +33,10 @@ public class AnimationProgresseBarDec {
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    if(mI <= valeur && mI != 0)
-                        mTextView.setText(String.valueOf(mI) + "%");
+                    if(mI/5 +1  < valeur)
+                        mTextView.setText(String.valueOf(mI) + "/20");
                     else
-                        mTextView.setText("00%");
+                        mTextView.setText(String.valueOf(mDf.format(valeur)) + "/20");
                 }
             });
         }
@@ -49,7 +49,8 @@ public class AnimationProgresseBarDec {
     private float valeur;
     private Handler mHandler;
     private int mI;
-    private DecimalFormat mDf = new DecimalFormat("#.##");
+    private DecimalFormat mDf = new DecimalFormat("#.#");
+    private float mValeur;
 
 }
 

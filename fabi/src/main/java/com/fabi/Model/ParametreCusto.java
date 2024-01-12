@@ -94,7 +94,7 @@ public class ParametreCusto extends RecyclerView.Adapter<ParametreCusto.MyViewHo
         private Session mSession;
         private String mNote;
         private String mObservation;
-        EvaluezVousCusto mEvaluez = new EvaluezVousCusto((Activity) itemView.getContext());
+        EvaluezVousDialog mEvaluez = new EvaluezVousDialog((Activity) itemView.getContext());
         EditText notre_note = mEvaluez.findViewById(R.id.notre_note);
         EditText notre_observation = mEvaluez.findViewById(R.id.notre_observation);
         Button notre_envoi = mEvaluez.findViewById(R.id.notre_envoi);
