@@ -48,6 +48,6 @@
         <item name="android:logo">@drawable/fast</item>
     </style>
     <style name="Block_notif1">
-        <item name="android:background">@drawable/block_notif1</item>
+        <item name="android:background">@drawable/forme_purple2_200_radus_10dp</item>
     </style>
 </resources>

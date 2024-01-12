@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/block_info_note"
+    android:background="@drawable/forme_white_radus_10dp"
     >
     <Spinner
         android:id="@+id/DelaitReservation"
@@ -45,7 +45,7 @@
         android:layout_height="wrap_content"
        android:layout_margin="10dp"
         android:textColor="@color/black3"
-        android:background="@drawable/arondie_reserv"
+        android:background="@drawable/forme_white_radus_10dp"
         android:elevation="2dp"
         android:hint="  Votre mot de passe"
         android:drawableStart="@drawable/password"
@@ -86,7 +86,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:background="@drawable/bttarondie"
+            android:background="@drawable/forme_purple_200_radus_10dp"
             android:text="Envoyer"
             android:textAllCaps="false" />
     </RelativeLayout>

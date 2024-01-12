@@ -24,6 +24,6 @@
         <item name="android:background">@drawable/progretion_dark_mode</item>
     </style>
     <style name="Block_notif1">
-        <item name="android:background">@drawable/block_notif1_dark</item>
+        <item name="android:background">@drawable/forme_sombre_radus_10dp</item>
     </style>
 </resources>

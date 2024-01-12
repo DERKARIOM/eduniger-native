@@ -52,7 +52,7 @@ public class ParametreActivity extends AppCompatActivity {
         mList.add(new Parametre(R.drawable.evaluez_vous,"Evaluez-nous","Votre note , Observation (facultative)"));
         mList.add(new Parametre(R.drawable.phone,"Contactez-nous","Appelez +22794961793"));
         mList.add(new Parametre(R.drawable.video,"Comment ça marche","Tutoriel qui vous explique de A-Z..."));
-        mList.add(new Parametre(R.drawable.baseline_info_24,"Infos de l'application","Auteurs , Version et Licence"));
+        mList.add(new Parametre(R.drawable.vector_purple_200_information,"Infos de l'application","Auteurs , Version et Licence"));
         mParametreAdapter = new ParametreAdapter(mList);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getApplicationContext()));
         mRecyclerView.setAdapter(mParametreAdapter);

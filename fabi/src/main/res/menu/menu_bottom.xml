@@ -12,6 +12,6 @@
         android:title="Assistance" />
     <item
         android:id="@+id/bibliotheque"
-        android:icon="@drawable/bibliotheque"
+        android:icon="@drawable/vector_purple_200_bibliotheque"
         android:title="Bibliothèque" />
 </menu>

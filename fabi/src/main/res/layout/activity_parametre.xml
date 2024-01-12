@@ -9,7 +9,7 @@
         android:id="@+id/toolbarParametre"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:logo="@drawable/back"
+        app:logo="@drawable/vector_back"
         app:title="Parametre"
         android:layout_centerVertical="true"
         app:titleMarginStart="15dp"

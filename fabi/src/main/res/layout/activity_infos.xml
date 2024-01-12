@@ -56,7 +56,7 @@
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
         android:textAllCaps="false"
-        android:background="@drawable/bttarondie"
+        android:background="@drawable/forme_purple_200_radus_10dp"
         android:text="Licence" />
     <TextView
         android:id="@+id/version"

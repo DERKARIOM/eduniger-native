@@ -16,7 +16,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.fabi.Model.EtudiantTable;
 import com.fabi.Model.Session;
-import com.fabi.Model.StatusBarCusto;
 import com.example.fabi.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -85,9 +84,9 @@ public class ChangePasswordActivity extends AppCompatActivity {
                     {
                         mTextErr3.setText("Votre matricule svp");
                         mEditMatricule3.setBackground(getResources().getDrawable(R.drawable.input_err));
-                        mEditMail2.setBackground(getResources().getDrawable(R.drawable.arondie));
-                        mEditPasse3.setBackground(getResources().getDrawable(R.drawable.arondie));
-                        mEditConf2.setBackground(getResources().getDrawable(R.drawable.arondie));
+                        mEditMail2.setBackground(getResources().getDrawable(R.drawable.forme_white_radus_10dp));
+                        mEditPasse3.setBackground(getResources().getDrawable(R.drawable.forme_white_radus_10dp));
+                        mEditConf2.setBackground(getResources().getDrawable(R.drawable.forme_white_radus_10dp));
                     }
                     if(mEditPasse3.getText().toString().equals(mEditConf2.getText().toString()))
                     {
@@ -96,8 +95,8 @@ public class ChangePasswordActivity extends AppCompatActivity {
                     }else
                     {
                         mTextErr3.setText("Erreur de confirmation");
-                        mEditMatricule3.setBackground(getResources().getDrawable(R.drawable.arondie));
-                        mEditMail2.setBackground(getResources().getDrawable(R.drawable.arondie));
+                        mEditMatricule3.setBackground(getResources().getDrawable(R.drawable.forme_white_radus_10dp));
+                        mEditMail2.setBackground(getResources().getDrawable(R.drawable.forme_white_radus_10dp));
                         mEditPasse3.setBackground(getResources().getDrawable(R.drawable.input_err));
                         mEditConf2.setBackground(getResources().getDrawable(R.drawable.input_err));
                     }
@@ -158,8 +157,8 @@ public class ChangePasswordActivity extends AppCompatActivity {
                     mTextErr3.setText("Matricule ou Email incorrect");
                     mEditMatricule3.setBackground(getResources().getDrawable(R.drawable.input_err));
                     mEditMail2.setBackground(getResources().getDrawable(R.drawable.input_err));
-                    mEditPasse3.setBackground(getResources().getDrawable(R.drawable.arondie));
-                    mEditConf2.setBackground(getResources().getDrawable(R.drawable.arondie));
+                    mEditPasse3.setBackground(getResources().getDrawable(R.drawable.forme_white_radus_10dp));
+                    mEditConf2.setBackground(getResources().getDrawable(R.drawable.forme_white_radus_10dp));
                 }
                 else
                 {

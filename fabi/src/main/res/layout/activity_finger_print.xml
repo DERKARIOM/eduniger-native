@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
-        app:logo="@drawable/back"
+        app:logo="@drawable/vector_back"
         app:title="Verrouillage par empreinte digitale"
         android:layout_centerVertical="true"
         app:titleMarginStart="15dp"

@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             app:menu="@menu/menu_home"
             app:title="Literature"
-            app:logo="@drawable/back"
+            app:logo="@drawable/vector_back"
             android:layout_centerVertical="true"
             app:titleMarginStart="15dp"
             android:paddingStart="20dp"

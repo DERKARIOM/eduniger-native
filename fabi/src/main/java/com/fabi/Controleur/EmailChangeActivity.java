@@ -15,7 +15,6 @@ import android.widget.Toast;
 
 import com.fabi.Model.EtudiantTable;
 import com.fabi.Model.Session;
-import com.fabi.Model.StatusBarCusto;
 import com.example.fabi.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -82,8 +81,8 @@ public class EmailChangeActivity extends AppCompatActivity {
                     {
                         mTextErr4.setText("Votre matricule svp");
                         mEditMatricule4.setBackground(getResources().getDrawable(R.drawable.input_err));
-                        mEditMail3.setBackground(getResources().getDrawable(R.drawable.arondie));
-                        mEditPasse4.setBackground(getResources().getDrawable(R.drawable.arondie));
+                        mEditMail3.setBackground(getResources().getDrawable(R.drawable.forme_white_radus_10dp));
+                        mEditPasse4.setBackground(getResources().getDrawable(R.drawable.forme_white_radus_10dp));
                     }
                     try {
                         http();
@@ -125,7 +124,7 @@ public class EmailChangeActivity extends AppCompatActivity {
             {
                 mTextErr4.setText("Matricule ou mot de passe incorrect");
                 mEditMatricule4.setBackground(getResources().getDrawable(R.drawable.input_err));
-                mEditMail3.setBackground(getResources().getDrawable(R.drawable.arondie));
+                mEditMail3.setBackground(getResources().getDrawable(R.drawable.forme_white_radus_10dp));
                 mEditPasse4.setBackground(getResources().getDrawable(R.drawable.input_err));
             }
             else

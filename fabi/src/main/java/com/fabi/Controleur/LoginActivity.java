@@ -84,13 +84,13 @@ public class LoginActivity extends AppCompatActivity {
                 if(mEditMatricule.getText().toString().equals("") && !mEditPasse.getText().toString().equals("")){
                     mTextErr.setText("Votre matricule svp");
                     mEditMatricule.setBackground(getResources().getDrawable(R.drawable.input_err));
-                    mEditPasse.setBackground(getResources().getDrawable(R.drawable.arondie));
+                    mEditPasse.setBackground(getResources().getDrawable(R.drawable.forme_white_radus_10dp));
                 }
 
                 if(!mEditMatricule.getText().toString().equals("") && mEditPasse.getText().toString().equals(""))
                 {
                     mTextErr.setText("Votre mot de passe svp");
-                    mEditMatricule.setBackground(getResources().getDrawable(R.drawable.arondie));
+                    mEditMatricule.setBackground(getResources().getDrawable(R.drawable.forme_white_radus_10dp));
                     mEditPasse.setBackground(getResources().getDrawable(R.drawable.input_err));
                 }
                 if(!mEditMatricule.getText().toString().equals("") && !mEditPasse.getText().toString().equals(""))
@@ -179,7 +179,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 else {
                     if (jsonData.equals("true")) {
-                        mEditMatricule.setBackground(getResources().getDrawable(R.drawable.arondie));
+                        mEditMatricule.setBackground(getResources().getDrawable(R.drawable.forme_white_radus_10dp));
                         mTextErr.setText("Mot de passe incorrect");
                         mTextAide.setText("j'ai oublié mon mot de passe");
                         mTextAide.setTextColor(Color.parseColor("#E6FD1010"));

@@ -12,7 +12,7 @@
         android:layout_height="100dp"
         android:layout_above="@id/Edigitale"
         android:layout_alignParentTop="true"
-        android:background="@drawable/bbock"
+        android:background="@drawable/forme_purple_200_bottom_radus_25dp"
         android:elevation="10dp"
         android:layout_marginBottom="140dp">
 

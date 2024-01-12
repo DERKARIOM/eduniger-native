@@ -67,7 +67,7 @@ public class LivreLocalActivity extends AppCompatActivity {
                 mRecyclerView.setAdapter(mCategorieLocalAdapter);
                 break;
             case 5: // Auteurs
-                mItemLocal.setImageResource(R.drawable.auteur_local);
+                mItemLocal.setImageResource(R.drawable.img_auteur_local);
                 mList4 = new ArrayList<>();
                 Cursor cursor5 = mElectroniqueTable.getData(mSession.getMatricule());
                 cursor5.moveToFirst();

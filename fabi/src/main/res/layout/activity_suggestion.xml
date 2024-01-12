@@ -9,7 +9,7 @@
         android:id="@+id/toolbarSuggestion"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:logo="@drawable/back"
+        app:logo="@drawable/vector_back"
         app:title="Suggestion"
         android:layout_centerVertical="true"
         app:titleMarginStart="15dp"
@@ -151,7 +151,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
-                        android:background="@drawable/bttarondie"
+                        android:background="@drawable/forme_purple_200_radus_10dp"
                         android:textAllCaps="false"
                         android:text="Envoyer" />
                 </RelativeLayout>

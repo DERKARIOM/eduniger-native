@@ -91,9 +91,9 @@ public class RegesterActivity extends AppCompatActivity {
                    {
                        mTextErr2.setText("Votre matricule svp");
                        mEditMatricule2.setBackground(getResources().getDrawable(R.drawable.input_err));
-                       mEditMail.setBackground(getResources().getDrawable(R.drawable.arondie));
-                       mEditPasse2.setBackground(getResources().getDrawable(R.drawable.arondie));
-                       mEditConf.setBackground(getResources().getDrawable(R.drawable.arondie));
+                       mEditMail.setBackground(getResources().getDrawable(R.drawable.forme_white_radus_10dp));
+                       mEditPasse2.setBackground(getResources().getDrawable(R.drawable.forme_white_radus_10dp));
+                       mEditConf.setBackground(getResources().getDrawable(R.drawable.forme_white_radus_10dp));
                    }
                    if(mEditPasse2.getText().toString().equals(mEditConf.getText().toString()))
                    {
@@ -104,8 +104,8 @@ public class RegesterActivity extends AppCompatActivity {
                    }else
                    {
                        mTextErr2.setText("Erreur de confirmation");
-                       mEditMatricule2.setBackground(getResources().getDrawable(R.drawable.arondie));
-                       mEditMail.setBackground(getResources().getDrawable(R.drawable.arondie));
+                       mEditMatricule2.setBackground(getResources().getDrawable(R.drawable.forme_white_radus_10dp));
+                       mEditMail.setBackground(getResources().getDrawable(R.drawable.forme_white_radus_10dp));
                        mEditPasse2.setBackground(getResources().getDrawable(R.drawable.input_err));
                        mEditConf.setBackground(getResources().getDrawable(R.drawable.input_err));
                    }
@@ -163,9 +163,9 @@ public class RegesterActivity extends AppCompatActivity {
                 if(jsonData.equals("matriculeEx")) {
                     mTextErr2.setText("Ce compte existe");
                     mEditMatricule2.setBackground(getResources().getDrawable(R.drawable.input_err));
-                    mEditMail.setBackground(getResources().getDrawable(R.drawable.arondie));
-                    mEditPasse2.setBackground(getResources().getDrawable(R.drawable.arondie));
-                    mEditConf.setBackground(getResources().getDrawable(R.drawable.arondie));
+                    mEditMail.setBackground(getResources().getDrawable(R.drawable.forme_white_radus_10dp));
+                    mEditPasse2.setBackground(getResources().getDrawable(R.drawable.forme_white_radus_10dp));
+                    mEditConf.setBackground(getResources().getDrawable(R.drawable.forme_white_radus_10dp));
                     mCirculaire.setVisibility(View.INVISIBLE);
                     mButtonConnect2.setText("Connexion");
                 }
@@ -173,10 +173,10 @@ public class RegesterActivity extends AppCompatActivity {
                 {
                     if(jsonData.equals("emailEx")) {
                         mTextErr2.setText("L'adresse email existe déjà");
-                        mEditMatricule2.setBackground(getResources().getDrawable(R.drawable.arondie));
+                        mEditMatricule2.setBackground(getResources().getDrawable(R.drawable.forme_white_radus_10dp));
                         mEditMail.setBackground(getResources().getDrawable(R.drawable.input_err));
-                        mEditPasse2.setBackground(getResources().getDrawable(R.drawable.arondie));
-                        mEditConf.setBackground(getResources().getDrawable(R.drawable.arondie));
+                        mEditPasse2.setBackground(getResources().getDrawable(R.drawable.forme_white_radus_10dp));
+                        mEditConf.setBackground(getResources().getDrawable(R.drawable.forme_white_radus_10dp));
                         mCirculaire.setVisibility(View.INVISIBLE);
                         mButtonConnect2.setText("Connexion");
                     }
@@ -186,9 +186,9 @@ public class RegesterActivity extends AppCompatActivity {
                         {
                             mTextErr2.setText("Matricule introuvable");
                             mEditMatricule2.setBackground(getResources().getDrawable(R.drawable.input_err));
-                            mEditMail.setBackground(getResources().getDrawable(R.drawable.arondie));
-                            mEditPasse2.setBackground(getResources().getDrawable(R.drawable.arondie));
-                            mEditConf.setBackground(getResources().getDrawable(R.drawable.arondie));
+                            mEditMail.setBackground(getResources().getDrawable(R.drawable.forme_white_radus_10dp));
+                            mEditPasse2.setBackground(getResources().getDrawable(R.drawable.forme_white_radus_10dp));
+                            mEditConf.setBackground(getResources().getDrawable(R.drawable.forme_white_radus_10dp));
                             mCirculaire.setVisibility(View.INVISIBLE);
                             mButtonConnect2.setText("Connexion");
                         }

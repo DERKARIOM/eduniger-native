@@ -30,7 +30,7 @@
         android:layout_marginStart="28dp"
         android:layout_marginEnd="28dp"
         android:layout_marginBottom="30dp"
-        android:background="@drawable/arondie"
+        android:background="@drawable/forme_white_radus_10dp"
         android:elevation="10dp"
         android:hint="  Votre matricule ?"
         android:drawableStart="@drawable/identify"
@@ -46,7 +46,7 @@
         android:layout_marginStart="28dp"
         android:layout_marginEnd="28dp"
         android:layout_marginBottom="30dp"
-        android:background="@drawable/arondie"
+        android:background="@drawable/forme_white_radus_10dp"
         android:elevation="10dp"
         android:hint="  Votre mot de passe ?"
         android:drawableStart="@drawable/password"
@@ -91,7 +91,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:background="@drawable/bttarondie"
+            android:background="@drawable/forme_purple_200_radus_10dp"
             android:textAllCaps="false"
             android:text="Connexion" />
     </RelativeLayout>

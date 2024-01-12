@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:menu="@menu/menu_notification"
-        app:logo="@drawable/back"
+        app:logo="@drawable/vector_back"
         app:title="Notification"
         android:layout_centerVertical="true"
         app:titleMarginStart="15dp"

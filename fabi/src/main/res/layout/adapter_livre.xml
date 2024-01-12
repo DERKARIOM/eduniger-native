@@ -60,7 +60,7 @@
                 android:layout_width="10dp"
                 android:layout_height="10dp"
                 android:visibility="gone"
-                android:src="@drawable/audio"/>
+                android:src="@drawable/vector_audio"/>
             <LinearLayout
                 android:id="@+id/like"
                 android:layout_width="wrap_content"
