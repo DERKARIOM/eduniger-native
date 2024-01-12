@@ -48,7 +48,7 @@ import com.fabi.Model.Session;
 import com.fabi.Model.Son;
 import com.fabi.Model.SonAdapter;
 import com.example.fabi.R;
-import com.fabi.Model.SucceReservation;
+import com.fabi.Model.SucceReservationDialog;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -853,37 +853,37 @@ public class LivreActivity extends AppCompatActivity {
     }
 
     private void succeReservationDialog(){
-        SucceReservation succeReservation = new SucceReservation(this);
-        succeReservation.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        succeReservation.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
-        TextView message = succeReservation.findViewById(R.id.popo_message);
-        TextView ok = succeReservation.findViewById(R.id.ok);
+        SucceReservationDialog succeReservationDialog = new SucceReservationDialog(this);
+        succeReservationDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        succeReservationDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        TextView message = succeReservationDialog.findViewById(R.id.popo_message);
+        TextView ok = succeReservationDialog.findViewById(R.id.ok);
         message.setText("Merci d'avoir réservé \"" + mTitre.getText().toString() + "\" sur fabi; nous traitons votre demande et vous confirmerons la disponibilité bientôt.");
         ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 //                mSuggestion.setText("");
-                succeReservation.cancel();
+                succeReservationDialog.cancel();
             }
         });
-        succeReservation.build();
+        succeReservationDialog.build();
     }
 
     private void succeDowloadPDFDialog(){
-        SucceReservation succeReservation = new SucceReservation(this);
-        succeReservation.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        succeReservation.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
-        TextView message = succeReservation.findViewById(R.id.popo_message);
-        TextView ok = succeReservation.findViewById(R.id.ok);
+        SucceReservationDialog succeReservationDialog = new SucceReservationDialog(this);
+        succeReservationDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        succeReservationDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        TextView message = succeReservationDialog.findViewById(R.id.popo_message);
+        TextView ok = succeReservationDialog.findViewById(R.id.ok);
         message.setText("Le livre " +mTitre.getText().toString() + " format PDF a été téléchargé avec succès. N'hésitez pas à explorer son contenu dans l'application et contactez-nous en cas de besoin.");
         ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 //                mSuggestion.setText("");
-                succeReservation.cancel();
+                succeReservationDialog.cancel();
             }
         });
-        succeReservation.build();
+        succeReservationDialog.build();
     }
     private LinearLayout mBReservation;
     private LinearLayout mBAudio;

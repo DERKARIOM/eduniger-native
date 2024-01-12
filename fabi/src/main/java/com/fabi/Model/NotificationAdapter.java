@@ -1,12 +1,8 @@
 package com.fabi.Model;
-import android.graphics.Color;
 import android.view.ContextMenu;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,7 +12,7 @@ import com.example.fabi.R;
 import java.util.List;
 
 public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.MyViewHolder> {
-    List<Notif> mListNotif;
+    List<Notification> mListNotification;
 
     public int getPosition() {
         return mPosition;
@@ -27,8 +23,8 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     }
 
     private int mPosition;
-    public NotificationAdapter(List<Notif> listNotif) {
-        mListNotif = listNotif;
+    public NotificationAdapter(List<Notification> listNotification) {
+        mListNotification = listNotification;
     }
     @Override
     public NotificationAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -38,7 +34,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     }
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        Notif item = mListNotif.get(position);
+        Notification item = mListNotification.get(position);
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
@@ -47,20 +43,20 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                 return true;
             }
         });
-        holder.display(mListNotif.get(position));
+        holder.display(mListNotification.get(position));
 
     }
     @Override
     public int getItemCount() {
-        return mListNotif.size();
+        return mListNotification.size();
     }
 
-    public Notif getItem(int position) {
-        return mListNotif.get(position);
+    public Notification getItem(int position) {
+        return mListNotification.get(position);
     }
 
     public void Remove(int position){
-        mListNotif.remove(position);
+        mListNotification.remove(position);
         notifyItemRemoved(position);
     }
 
@@ -82,10 +78,10 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 //            menu.add(Menu.NONE,R.id.suppNotif,Menu.NONE,"Supprimer");
 //            menu.add(Menu.NONE,R.id.inportanteNotif,Menu.NONE,"Message importants");
         }
-        void display(Notif notif){
-            mTitre.setText(notif.getTitre());
-            mMessage.setText(notif.getMessage());
-            mDate.setText(notif.getDate());
+        void display(Notification notification){
+            mTitre.setText(notification.getTitre());
+            mMessage.setText(notification.getMessage());
+            mDate.setText(notification.getDate());
         }
 
     }

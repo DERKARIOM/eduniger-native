@@ -8,8 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fabi.Model.Parametre;
-import com.fabi.Model.ParametreCusto;
-import com.fabi.Model.StatusBarCusto;
+import com.fabi.Model.ParametreAdapter;
 import com.example.fabi.R;
 
 import java.util.ArrayList;
@@ -54,9 +53,9 @@ public class ParametreActivity extends AppCompatActivity {
         mList.add(new Parametre(R.drawable.phone,"Contactez-nous","Appelez +22794961793"));
         mList.add(new Parametre(R.drawable.video,"Comment ça marche","Tutoriel qui vous explique de A-Z..."));
         mList.add(new Parametre(R.drawable.baseline_info_24,"Infos de l'application","Auteurs , Version et Licence"));
-        mParametreCusto = new ParametreCusto(mList);
+        mParametreAdapter = new ParametreAdapter(mList);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getApplicationContext()));
-        mRecyclerView.setAdapter(mParametreCusto);
+        mRecyclerView.setAdapter(mParametreAdapter);
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -78,5 +77,5 @@ public class ParametreActivity extends AppCompatActivity {
     }
     private RecyclerView mRecyclerView;
     private ArrayList<Parametre> mList;
-    private ParametreCusto mParametreCusto;
+    private ParametreAdapter mParametreAdapter;
 }

@@ -18,7 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.fabi.Model.Session;
-import com.fabi.Model.UpdateCusto;
+import com.fabi.Model.UpdateDialog;
 import com.fabi.Model.UtilisateurTable;
 import com.example.fabi.R;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -240,10 +240,10 @@ public class RegesterActivity extends AppCompatActivity {
         }
     }
     private void Update(){
-        UpdateCusto updateCusto = new UpdateCusto(this);
-        updateCusto.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        updateCusto.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
-        updateCusto.build();
+        UpdateDialog updateDialog = new UpdateDialog(this);
+        updateDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        updateDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        updateDialog.build();
     }
     private EditText mEditMatricule2;
     private EditText mEditPasse2;

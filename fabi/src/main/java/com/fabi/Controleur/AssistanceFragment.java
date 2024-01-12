@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.fabi.Model.ViewPagerAdapter1;
+import com.fabi.Model.AssistanceViewPagerAdapter;
 import com.example.fabi.R;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
@@ -21,7 +21,7 @@ public class AssistanceFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_assistance, container, false);
         mTabLayout = view.findViewById(R.id.tablayout_assistance);
         mViewPager = view.findViewById(R.id.view_page_assist);
-        mViewPagerAdapter = new ViewPagerAdapter1(this);
+        mViewPagerAdapter = new AssistanceViewPagerAdapter(this);
         mViewPager.setAdapter(mViewPagerAdapter);
         new TabLayoutMediator(mTabLayout,mViewPager,(tab, position) -> {
             switch (position){
@@ -37,5 +37,5 @@ public class AssistanceFragment extends Fragment {
     }
     private TabLayout mTabLayout;
     private ViewPager2 mViewPager;
-    private ViewPagerAdapter1 mViewPagerAdapter;
+    private AssistanceViewPagerAdapter mViewPagerAdapter;
 }

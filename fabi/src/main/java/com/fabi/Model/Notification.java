@@ -1,7 +1,7 @@
 package com.fabi.Model;
 
-public class Notif {
-    public Notif(String titre, String message, String date) {
+public class Notification {
+    public Notification(String titre, String message, String date) {
         mTitre = titre;
         mMessage = message;
         mDate = date;

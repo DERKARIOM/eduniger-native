@@ -37,7 +37,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class ParametreCusto extends RecyclerView.Adapter<ParametreCusto.MyViewHolder> {
+public class ParametreAdapter extends RecyclerView.Adapter<ParametreAdapter.MyViewHolder> {
     List<Parametre> mListParametre;
 
     public int getPosition() {
@@ -49,11 +49,11 @@ public class ParametreCusto extends RecyclerView.Adapter<ParametreCusto.MyViewHo
     }
 
     private int mPosition;
-    public ParametreCusto(List<Parametre> listParametre) {
+    public ParametreAdapter(List<Parametre> listParametre) {
         mListParametre = listParametre;
     }
     @Override
-    public ParametreCusto.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ParametreAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         View view = layoutInflater.inflate(R.layout.block_parametre,parent,false);
         return new MyViewHolder(view);
@@ -241,23 +241,23 @@ public class ParametreCusto extends RecyclerView.Adapter<ParametreCusto.MyViewHo
             }
         }
         private void SucceSuggestionDialog(int id_ico , String titre , String messager){
-            SucceSuggesion succeSuggesion = new SucceSuggesion((Activity) itemView.getContext());
-            succeSuggesion.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            succeSuggesion.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
-            ImageView ico = succeSuggesion.findViewById(R.id.popo_ico);
-            TextView title = succeSuggesion.findViewById(R.id.popo_titre);
-            TextView message = succeSuggesion.findViewById(R.id.popo_message);
+            SucceSuggesionDialog succeSuggesionDialog = new SucceSuggesionDialog((Activity) itemView.getContext());
+            succeSuggesionDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            succeSuggesionDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+            ImageView ico = succeSuggesionDialog.findViewById(R.id.popo_ico);
+            TextView title = succeSuggesionDialog.findViewById(R.id.popo_titre);
+            TextView message = succeSuggesionDialog.findViewById(R.id.popo_message);
             ico.setImageResource(id_ico);
             title.setText(titre);
             message.setText(messager);
-            TextView ok = succeSuggesion.findViewById(R.id.ok);
+            TextView ok = succeSuggesionDialog.findViewById(R.id.ok);
             ok.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    succeSuggesion.cancel();
+                    succeSuggesionDialog.cancel();
                 }
             });
-            succeSuggesion.build();
+            succeSuggesionDialog.build();
         }
         private void makePhoneCall() {
             String phoneNumber = "+22794961793";

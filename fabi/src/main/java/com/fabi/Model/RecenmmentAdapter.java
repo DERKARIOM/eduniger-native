@@ -67,7 +67,7 @@ public class RecenmmentAdapter extends RecyclerView.Adapter<RecenmmentAdapter.My
 
 
 //    public void Remove(int position){
-//        mListNotif.remove(position);
+//        mListNotification.remove(position);
 //        notifyItemRemoved(position);
 //    }
 

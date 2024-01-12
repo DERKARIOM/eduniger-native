@@ -18,7 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.fabi.Model.Session;
-import com.fabi.Model.UpdateCusto;
+import com.fabi.Model.UpdateDialog;
 import com.fabi.Model.UtilisateurTable;
 import com.example.fabi.R;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -230,15 +230,15 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
     private void Update(){
-        UpdateCusto updateCusto = new UpdateCusto(this);
-        updateCusto.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        updateCusto.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
-        TextView annuler = updateCusto.findViewById(R.id.annuler);
-        TextView installer = updateCusto.findViewById(R.id.installer);
+        UpdateDialog updateDialog = new UpdateDialog(this);
+        updateDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        updateDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        TextView annuler = updateDialog.findViewById(R.id.annuler);
+        TextView installer = updateDialog.findViewById(R.id.installer);
         annuler.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                updateCusto.cancel();
+                updateDialog.cancel();
             }
         });
 
@@ -251,7 +251,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        updateCusto.build();
+        updateDialog.build();
     }
 
     /* Les attributs menbre */

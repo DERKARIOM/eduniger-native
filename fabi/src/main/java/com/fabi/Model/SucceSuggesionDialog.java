@@ -5,11 +5,11 @@ import android.app.Dialog;
 
 import com.example.fabi.R;
 
-public class SucceReservation extends Dialog {
-    public SucceReservation(Activity activity)
+public class SucceSuggesionDialog extends Dialog {
+    public SucceSuggesionDialog(Activity activity)
     {
         super(activity, R.style.Dialog_fastpv);
-        setContentView(R.layout.succes_reservation);
+        setContentView(R.layout.succes_suggestion);
     }
     public void build()
     {

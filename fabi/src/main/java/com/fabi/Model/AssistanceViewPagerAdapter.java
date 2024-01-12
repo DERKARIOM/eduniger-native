@@ -4,13 +4,12 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
-import com.fabi.Controleur.AudioFragment;
-import com.fabi.Controleur.ElectroniqueFragment;
-import com.fabi.Controleur.PhysiqueFragment;
+import com.fabi.Controleur.DiscussionFragment;
+import com.fabi.Controleur.HistoriqueFragment;
 
-public class ViewPagerAdapter2 extends FragmentStateAdapter {
+public class AssistanceViewPagerAdapter extends FragmentStateAdapter {
 
-    public ViewPagerAdapter2(Fragment fragment) {
+    public AssistanceViewPagerAdapter(Fragment fragment) {
         super(fragment);
     }
 
@@ -20,18 +19,16 @@ public class ViewPagerAdapter2 extends FragmentStateAdapter {
         // Retournez le fragment associé à chaque onglet
         switch (position) {
             case 0:
-                return new ElectroniqueFragment();
+                return new DiscussionFragment();
             case 1:
-                return new AudioFragment();
-            case 2:
-                return new PhysiqueFragment();
+                return new HistoriqueFragment();
         }
-        return new ElectroniqueFragment(); // Fragment par défaut
+        return new DiscussionFragment(); // Fragment par défaut
     }
 
     @Override
     public int getItemCount() {
         // Nombre total d'onglets
-        return 3;
+        return 2;
     }
 }

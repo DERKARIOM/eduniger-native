@@ -9,7 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 
-import com.fabi.Model.Notif;
+import com.fabi.Model.Notification;
 import com.example.fabi.R;
 import com.fabi.Model.NotificationAdapter;
 import com.fabi.Model.NotificationTable;
@@ -29,12 +29,12 @@ public class NotificationActivity extends AppCompatActivity {
         mRecyclerView = (RecyclerView) findViewById(R.id.recyler2);
         mSession = new Session(this);
         mNotificationTable = new NotificationTable(this);
-        mList = new ArrayList<Notif>();
+        mList = new ArrayList<Notification>();
         Cursor cursor = mNotificationTable.getData(mSession.getMatricule());
         cursor.moveToFirst();
         try {
             do {
-                mList.add(new Notif(cursor.getString(2),cursor.getString(3),cursor.getString(4)));
+                mList.add(new Notification(cursor.getString(2),cursor.getString(3),cursor.getString(4)));
             }while(cursor.moveToNext());
         }catch (Exception e)
         {
@@ -66,7 +66,7 @@ public class NotificationActivity extends AppCompatActivity {
     }
     private RecyclerView mRecyclerView;
     private NotificationAdapter mNotificationAdapter;
-    private ArrayList<Notif> mList;
+    private ArrayList<Notification> mList;
     private NotificationTable mNotificationTable;
     private Session mSession;
 }

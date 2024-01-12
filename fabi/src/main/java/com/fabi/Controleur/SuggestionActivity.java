@@ -18,8 +18,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.fabi.Model.Session;
-import com.fabi.Model.StatusBarCusto;
-import com.fabi.Model.SucceSuggesion;
+import com.fabi.Model.SucceSuggesionDialog;
 import com.example.fabi.R;
 
 import java.io.IOException;
@@ -139,18 +138,18 @@ public class SuggestionActivity extends AppCompatActivity {
         }
     }
     private void SucceSuggestionDialog(){
-        SucceSuggesion succeSuggesion = new SucceSuggesion(this);
-        succeSuggesion.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        succeSuggesion.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
-        TextView ok = succeSuggesion.findViewById(R.id.ok);
+        SucceSuggesionDialog succeSuggesionDialog = new SucceSuggesionDialog(this);
+        succeSuggesionDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        succeSuggesionDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        TextView ok = succeSuggesionDialog.findViewById(R.id.ok);
         ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mSuggestion.setText("");
-                succeSuggesion.cancel();
+                succeSuggesionDialog.cancel();
             }
         });
-        succeSuggesion.build();
+        succeSuggesionDialog.build();
     }
     private Button mEnvoyerSuggestion;
     private EditText mSuggestion;

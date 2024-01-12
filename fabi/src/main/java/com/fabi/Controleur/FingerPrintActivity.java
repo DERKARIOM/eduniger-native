@@ -25,7 +25,7 @@ import androidx.core.app.ActivityCompat;
 
 import com.fabi.Model.EmpreinteConfirmerDialog;
 import com.fabi.Model.EmpreiteTable;
-import com.fabi.Model.SucceSuggesion;
+import com.fabi.Model.SucceSuggesionDialog;
 import com.example.fabi.R;
 
 public class FingerPrintActivity extends AppCompatActivity {
@@ -202,13 +202,13 @@ public class FingerPrintActivity extends AppCompatActivity {
         empreinteCusto.build();
     }
     private void DesoleDialog(){
-        SucceSuggesion succeSuggesion = new SucceSuggesion(this);
-        succeSuggesion.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        succeSuggesion.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
-        ImageView ico = succeSuggesion.findViewById(R.id.popo_ico);
-        TextView title = succeSuggesion.findViewById(R.id.popo_titre);
-        TextView message = succeSuggesion.findViewById(R.id.popo_message);
-        TextView ok = succeSuggesion.findViewById(R.id.ok);
+        SucceSuggesionDialog succeSuggesionDialog = new SucceSuggesionDialog(this);
+        succeSuggesionDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        succeSuggesionDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        ImageView ico = succeSuggesionDialog.findViewById(R.id.popo_ico);
+        TextView title = succeSuggesionDialog.findViewById(R.id.popo_titre);
+        TextView message = succeSuggesionDialog.findViewById(R.id.popo_message);
+        TextView ok = succeSuggesionDialog.findViewById(R.id.ok);
         ico.setImageResource(R.drawable.desole);
         title.setText("Désolé");
         message.setText("Je n'ai pas trouvé de capteur d'empreinte digitale sur votre téléphone.");
@@ -216,9 +216,9 @@ public class FingerPrintActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 mSwitch.setChecked(false);
-                succeSuggesion.cancel();
+                succeSuggesionDialog.cancel();
             }
         });
-        succeSuggesion.build();
+        succeSuggesionDialog.build();
     }
 }

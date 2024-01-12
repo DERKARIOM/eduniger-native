@@ -8,9 +8,9 @@ import com.fabi.Controleur.CategorieFragment;
 import com.fabi.Controleur.ClassementFragment;
 import com.fabi.Controleur.RecomandeFragment;
 
-public class ViewPagerAdapter extends FragmentStateAdapter {
+public class AccueilViewPagerAdapter extends FragmentStateAdapter {
 
-    public ViewPagerAdapter(Fragment fragment) {
+    public AccueilViewPagerAdapter(Fragment fragment) {
         super(fragment);
     }
 
