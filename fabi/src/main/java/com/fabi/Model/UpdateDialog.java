@@ -9,7 +9,7 @@ public class UpdateDialog extends Dialog {
     public UpdateDialog(Activity activity)
     {
         super(activity,R.style.Dialog_fastpv);
-        setContentView(R.layout.update);
+        setContentView(R.layout.dialog_update);
     }
     public void build()
     {

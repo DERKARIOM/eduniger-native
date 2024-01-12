@@ -118,7 +118,7 @@ public class SuggestionActivity extends AppCompatActivity {
         }
         @Override
         protected void onPostExecute(String response){
-            //Toast.makeText(NoteService.this, response, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
             if(response != null)
             {
                 if(response.equals("true"))

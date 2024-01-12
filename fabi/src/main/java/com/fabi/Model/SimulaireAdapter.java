@@ -34,7 +34,7 @@ public class SimulaireAdapter extends RecyclerView.Adapter<SimulaireAdapter.MyVi
     @Override
     public SimulaireAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View view = layoutInflater.inflate(R.layout.recenmment_bloc,parent,false);
+        View view = layoutInflater.inflate(R.layout.adapter_similaire,parent,false);
         return new MyViewHolder(view);
     }
     @Override

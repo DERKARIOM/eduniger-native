@@ -16,7 +16,6 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import com.example.fabi.R;
-import com.fabi.Controleur.MainActivity;
 import com.fabi.Controleur.NotificationActivity;
 import com.fabi.Model.NotificationTable;
 import com.fabi.Model.Session;
@@ -32,7 +31,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class NoteService extends Service {
+public class NotificationService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return null;
@@ -98,7 +97,7 @@ public class NoteService extends Service {
 
             }catch (Exception e)
             {
-                Toast.makeText(NoteService.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(NotificationService.this, e.getMessage(), Toast.LENGTH_SHORT).show();
             }
             return null;
         }

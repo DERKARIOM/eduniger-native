@@ -34,7 +34,7 @@ public class ClassementAdapter extends RecyclerView.Adapter<ClassementAdapter.My
     @Override
     public ClassementAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View view = layoutInflater.inflate(R.layout.livre_bloc,parent,false);
+        View view = layoutInflater.inflate(R.layout.adapter_livre,parent,false);
         return new MyViewHolder(view);
     }
 

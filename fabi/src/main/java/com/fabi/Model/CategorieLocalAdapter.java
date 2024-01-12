@@ -1,6 +1,5 @@
 package com.fabi.Model;
 
-import android.content.Intent;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +11,6 @@ import android.widget.Toast;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fabi.R;
-import com.fabi.Controleur.CategorieActivity;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -36,7 +34,7 @@ public class CategorieLocalAdapter extends RecyclerView.Adapter<CategorieLocalAd
     @Override
     public CategorieLocalAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View view = layoutInflater.inflate(R.layout.categorie_bloc,parent,false);
+        View view = layoutInflater.inflate(R.layout.adapter_categorie,parent,false);
         return new MyViewHolder(view);
     }
 

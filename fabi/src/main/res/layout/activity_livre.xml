@@ -415,7 +415,7 @@
                             android:id="@+id/addCommentaire"
                             android:layout_width="30dp"
                             android:layout_height="30dp"
-                            android:src="@drawable/add"
+                            android:src="@drawable/vector_black3_add"
                             android:layout_centerVertical="true"
                             android:layout_alignParentEnd="true"/>
                     </RelativeLayout>

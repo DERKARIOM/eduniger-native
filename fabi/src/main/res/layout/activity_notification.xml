@@ -10,7 +10,7 @@
         android:id="@+id/toolbar4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:menu="@menu/notif_menu"
+        app:menu="@menu/menu_notification"
         app:logo="@drawable/back"
         app:title="Notification"
         android:layout_centerVertical="true"

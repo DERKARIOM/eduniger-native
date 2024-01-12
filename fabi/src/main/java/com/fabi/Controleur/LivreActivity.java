@@ -459,7 +459,7 @@ public class LivreActivity extends AppCompatActivity {
         }
         @Override
         protected void onPostExecute(String jsonData){
-            //Toast.makeText(NoteService.this, response, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
             if(jsonData != null)
             {
                 JSONObject jsonObject = null;
@@ -535,7 +535,7 @@ public class LivreActivity extends AppCompatActivity {
         }
         @Override
         protected void onPostExecute(String jsonData){
-            //Toast.makeText(NoteService.this, response, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
             if(jsonData != null)
             {
                 if(!jsonData.equals("RAS"))
@@ -598,7 +598,7 @@ public class LivreActivity extends AppCompatActivity {
         }
         @Override
         protected void onPostExecute(String jsonData){
-            //Toast.makeText(NoteService.this, response, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
             if(jsonData != null)
             {
                 if(jsonData.equals("true"))
@@ -648,7 +648,7 @@ public class LivreActivity extends AppCompatActivity {
         }
         @Override
         protected void onPostExecute(String jsonData){
-            //Toast.makeText(NoteService.this, response, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
             if(jsonData != null)
             {
                 if(!jsonData.equals("RAS"))
@@ -711,7 +711,7 @@ public class LivreActivity extends AppCompatActivity {
         }
         @Override
         protected void onPostExecute(String jsonData){
-            //Toast.makeText(NoteService.this, response, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
             if(jsonData != null)
             {
                 if(!jsonData.equals("RAS"))
@@ -832,7 +832,7 @@ public class LivreActivity extends AppCompatActivity {
         }
         @Override
         protected void onPostExecute(String jsonData){
-            //Toast.makeText(NoteService.this, response, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
             if(jsonData != null)
             {
                 Toast.makeText(LivreActivity.this, jsonData, Toast.LENGTH_SHORT).show();

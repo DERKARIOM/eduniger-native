@@ -150,7 +150,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
         }
         @Override
         protected void onPostExecute(String jsonData){
-            //Toast.makeText(NoteService.this, response, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
             if(jsonData != null)
             {
                 if(jsonData.equals("false"))

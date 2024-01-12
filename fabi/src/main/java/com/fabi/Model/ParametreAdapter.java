@@ -55,7 +55,7 @@ public class ParametreAdapter extends RecyclerView.Adapter<ParametreAdapter.MyVi
     @Override
     public ParametreAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View view = layoutInflater.inflate(R.layout.block_parametre,parent,false);
+        View view = layoutInflater.inflate(R.layout.adapter_parametre,parent,false);
         return new MyViewHolder(view);
     }
     @Override
@@ -209,7 +209,7 @@ public class ParametreAdapter extends RecyclerView.Adapter<ParametreAdapter.MyVi
             }
             @Override
             protected void onPostExecute(String response){
-                //Toast.makeText(NoteService.this, response, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
                 if(response != null)
                 {
                     if(response.equals("true"))

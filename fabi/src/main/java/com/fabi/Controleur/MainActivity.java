@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -21,9 +20,7 @@ import com.fabi.Model.NotificationTable;
 import com.fabi.Model.Session;
 import com.fabi.Model.UtilisateurTable;
 import com.example.fabi.R;
-import com.fabi.Service.NoteService;
-import com.google.android.material.badge.BadgeDrawable;
-import com.google.android.material.badge.BadgeUtils;
+import com.fabi.Service.NotificationService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
@@ -60,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         mElectroniqueTable.onCreate(mDb);
         mNotificationTable.onCreate(mDb);
         mMenuItem = mToolbar.getMenu().findItem(R.id.menuHomeNotification);
-        mReservationService = new Intent(this, NoteService.class);
+        mReservationService = new Intent(this, NotificationService.class);
 //        BadgeDrawable badgeDrawableNotif  = BadgeDrawable.create(this);
 //        badgeDrawableNotif.setNumber(5);
 //        BadgeUtils.attachBadgeDrawable(badgeDrawableNotif,mToolbar,2);

@@ -32,7 +32,7 @@ public class PysiqueAdapter extends RecyclerView.Adapter<PysiqueAdapter.MyViewHo
     @Override
     public PysiqueAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View view = layoutInflater.inflate(R.layout.pysique_bloc,parent,false);
+        View view = layoutInflater.inflate(R.layout.adapter_pysique,parent,false);
         return new MyViewHolder(view);
     }
 

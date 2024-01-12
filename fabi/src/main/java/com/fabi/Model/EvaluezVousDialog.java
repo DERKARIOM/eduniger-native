@@ -9,7 +9,7 @@ public class EvaluezVousDialog extends Dialog {
     public EvaluezVousDialog(Activity activity)
     {
         super(activity, R.style.Dialog_fastpv);
-        setContentView(R.layout.evaluez_nous);
+        setContentView(R.layout.dialog_evaluez_nous);
     }
     public void build()
     {

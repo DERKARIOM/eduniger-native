@@ -15,7 +15,6 @@ import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fabi.R;
-import com.fabi.Controleur.LivreActivity;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -45,7 +44,7 @@ public class RecenmmentAdapter extends RecyclerView.Adapter<RecenmmentAdapter.My
     @Override
     public RecenmmentAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View view = layoutInflater.inflate(R.layout.recenmment_bloc,parent,false);
+        View view = layoutInflater.inflate(R.layout.adapter_similaire,parent,false);
         return new MyViewHolder(view);
     }
     @Override

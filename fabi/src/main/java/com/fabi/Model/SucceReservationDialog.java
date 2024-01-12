@@ -9,7 +9,7 @@ public class SucceReservationDialog extends Dialog {
     public SucceReservationDialog(Activity activity)
     {
         super(activity, R.style.Dialog_fastpv);
-        setContentView(R.layout.succes_reservation);
+        setContentView(R.layout.dialog_succes_reservation);
     }
     public void build()
     {

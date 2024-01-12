@@ -110,7 +110,7 @@
             </intent-filter>
         </service>
         <service
-            android:name="com.fabi.Service.NoteService"
+            android:name="com.fabi.Service.NotificationService"
             android:exported="false" />
     </application>
 

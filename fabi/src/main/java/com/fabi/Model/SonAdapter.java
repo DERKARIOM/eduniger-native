@@ -42,7 +42,7 @@ public class SonAdapter extends RecyclerView.Adapter<SonAdapter.MyViewHolder> {
     @Override
     public SonAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View view = layoutInflater.inflate(R.layout.son_block,parent,false);
+        View view = layoutInflater.inflate(R.layout.adapter_son,parent,false);
         return new MyViewHolder(view);
     }
 

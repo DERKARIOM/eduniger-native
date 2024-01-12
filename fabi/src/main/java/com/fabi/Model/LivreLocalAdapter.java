@@ -17,8 +17,6 @@ import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fabi.R;
-import com.fabi.Controleur.LivreActivity;
-import com.fabi.Controleur.LivreLocalActivity;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -47,7 +45,7 @@ public class LivreLocalAdapter extends RecyclerView.Adapter<LivreLocalAdapter.My
     @Override
     public LivreLocalAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View view = layoutInflater.inflate(R.layout.livre_bloc_local,parent,false);
+        View view = layoutInflater.inflate(R.layout.adapter_livre_local,parent,false);
         return new MyViewHolder(view);
     }
 
