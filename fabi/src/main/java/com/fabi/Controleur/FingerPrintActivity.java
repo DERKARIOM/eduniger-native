@@ -153,7 +153,7 @@ public class FingerPrintActivity extends AppCompatActivity {
             @Override
             public void run() {
                 // Redemander à l'utilisateur de Toucher le capteur d'empreinte digitale
-                digitaleConfirmer.setImageResource(R.drawable.digitale);
+                digitaleConfirmer.setImageResource(R.drawable.vector_purple2_200_digitale);
                 messageConfirme.setText("Touchez le capteur d' empreinte");
             }
         };
@@ -180,7 +180,7 @@ public class FingerPrintActivity extends AppCompatActivity {
 
                 @Override
                 public void onAuthenticationSucceeded(FingerprintManager.AuthenticationResult result) {
-                    digitaleConfirmer.setImageResource(R.drawable.success_digitale);
+                    digitaleConfirmer.setImageResource(R.drawable.vector_vert_success);
                     mEmpreiteTable.onCreate(mDb);
                     mEmpreiteTable.insert("0");
                     handler.postDelayed(activer,1000);
@@ -188,7 +188,7 @@ public class FingerPrintActivity extends AppCompatActivity {
 
                 @Override
                 public void onAuthenticationFailed() {
-                    digitaleConfirmer.setImageResource(R.drawable.error_digitale);
+                    digitaleConfirmer.setImageResource(R.drawable.vector_rouge_error);
                     messageConfirme.setText("Empreinte non reconnue");
                     handler.postDelayed(runnable,1000);
                 }
@@ -209,7 +209,7 @@ public class FingerPrintActivity extends AppCompatActivity {
         TextView title = succeSuggesionDialog.findViewById(R.id.popo_titre);
         TextView message = succeSuggesionDialog.findViewById(R.id.popo_message);
         TextView ok = succeSuggesionDialog.findViewById(R.id.ok);
-        ico.setImageResource(R.drawable.desole);
+        ico.setImageResource(R.drawable.vector_purple_200_desole);
         title.setText("Désolé");
         message.setText("Je n'ai pas trouvé de capteur d'empreinte digitale sur votre téléphone.");
         ok.setOnClickListener(new View.OnClickListener() {

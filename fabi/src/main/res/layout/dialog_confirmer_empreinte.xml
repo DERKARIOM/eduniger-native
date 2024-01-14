@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/forme_white_radus_10dp"
+    android:background="@drawable/forme_white_radius_10dp"
     android:padding="20dp"
     android:orientation="vertical">
     <TextView
@@ -17,7 +17,7 @@
         android:id="@+id/EdigitaleConfirme"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:src="@drawable/digitale"
+        android:src="@drawable/vector_purple2_200_digitale"
         android:layout_marginTop="25dp"
         android:layout_marginBottom="25dp"
         />

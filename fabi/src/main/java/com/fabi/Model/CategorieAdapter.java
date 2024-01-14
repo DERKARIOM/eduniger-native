@@ -88,8 +88,8 @@ public class CategorieAdapter extends RecyclerView.Adapter<CategorieAdapter.MyVi
         void display(Categorie categorie){
             Picasso.with(itemView.getContext())
                     .load("http://192.168.43.1:2222/fabi/couverture/" + categorie.getIco())
-                    .placeholder(R.drawable.default_livre)
-                    .error(R.drawable.default_livre)
+                    .placeholder(R.drawable.img_default_livre)
+                    .error(R.drawable.img_default_livre)
                     .into(mIco);
             mTitre.setText(categorie.getTitre());
             itemView.setOnClickListener(new View.OnClickListener() {

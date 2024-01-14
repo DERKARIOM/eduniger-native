@@ -89,7 +89,7 @@ public class EmpreinteActivity extends AppCompatActivity {
 
                 @Override
                 public void onAuthenticationSucceeded(FingerprintManager.AuthenticationResult result) {
-                    mEdigitale.setImageResource(R.drawable.success_digitale);
+                    mEdigitale.setImageResource(R.drawable.vector_vert_success);
                     mMessageDigitale.setText("");
                     mEmpreiteTable.onUpdate("1");
                     handler.postDelayed(home, 1);
@@ -97,7 +97,7 @@ public class EmpreinteActivity extends AppCompatActivity {
 
                 @Override
                 public void onAuthenticationFailed() {
-                    mEdigitale.setImageResource(R.drawable.error_digitale);
+                    mEdigitale.setImageResource(R.drawable.vector_rouge_error);
                     mMessageDigitale.setText("Empreinte non reconnue");
                     handler.postDelayed(runnable, 1000);
                 }
@@ -118,7 +118,7 @@ public class EmpreinteActivity extends AppCompatActivity {
     }
     private void authenticate()
     {
-        mEdigitale.setImageResource(R.drawable.digitale);
+        mEdigitale.setImageResource(R.drawable.vector_purple2_200_digitale);
         mMessageDigitale.setText("Toucher le capteur d'empreinte");
     }
     private void Home()

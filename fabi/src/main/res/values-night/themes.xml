@@ -18,12 +18,12 @@
         <item name="android:textColor">@color/white2</item>
     </style>
     <style name="Progretion">
-        <item name="android:background">@drawable/progretion_dark_mode</item>
+        <item name="android:background">@drawable/forme_sombre_radius_25dp</item>
     </style>
     <style name="ProgretionNote">
-        <item name="android:background">@drawable/progretion_dark_mode</item>
+        <item name="android:background">@drawable/forme_sombre_radius_25dp</item>
     </style>
     <style name="Block_notif1">
-        <item name="android:background">@drawable/forme_sombre_radus_10dp</item>
+        <item name="android:background">@drawable/forme_sombre_radius_10dp</item>
     </style>
 </resources>

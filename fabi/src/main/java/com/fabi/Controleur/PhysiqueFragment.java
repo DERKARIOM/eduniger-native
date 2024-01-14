@@ -22,9 +22,9 @@ public class PhysiqueFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_physique, container, false);
         mRecyclerView = view.findViewById(R.id.recylerPysique);
         mList = new ArrayList<>();
-        mList.add(new Pysique(R.drawable.l1,"Femmes du silenc","17/010/2023","20/10/2023","20"));
-        mList.add(new Pysique(R.drawable.l2,"Dans mes reves","17/010/2023","20/10/2023","60"));
-        mList.add(new Pysique(R.drawable.l3,"Perdu dans les bois","17/010/2023","20/10/2023","30"));
+        mList.add(new Pysique(R.drawable.img_default_livre,"Femmes du silenc","17/010/2023","20/10/2023","20"));
+        mList.add(new Pysique(R.drawable.img_default_livre,"Dans mes reves","17/010/2023","20/10/2023","60"));
+        mList.add(new Pysique(R.drawable.img_default_livre,"Perdu dans les bois","17/010/2023","20/10/2023","30"));
         mPysiqueAdapter = new PysiqueAdapter(mList);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(mPysiqueAdapter);

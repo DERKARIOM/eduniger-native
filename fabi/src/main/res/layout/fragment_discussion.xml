@@ -33,7 +33,7 @@
             android:background="@android:color/transparent"
             android:layout_alignEnd="@id/messageNotif"
             android:layout_alignBottom="@id/messageNotif"
-            android:drawableEnd="@drawable/memorisation"/>
+            android:drawableEnd="@drawable/vector_black3_scanner"/>
 
         <Button
             android:id="@+id/importerMedia"
@@ -43,7 +43,7 @@
             android:layout_alignBottom="@id/messageNotif"
             android:layout_marginStart="-33dp"
             android:background="@android:color/transparent"
-            android:drawableEnd="@drawable/media" />
+            android:drawableEnd="@drawable/vector_black3_importe" />
 
         <Button
             android:id="@+id/emoji"
@@ -53,14 +53,14 @@
             android:layout_alignBottom="@id/messageNotif"
             android:background="@android:color/transparent"
             android:inputType=""
-            android:drawableEnd="@drawable/micro" />
+            android:drawableEnd="@drawable/vector_black3_micro" />
 
 
         <EditText
             android:id="@+id/messageNotif"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/message_chat"
+            android:background="@drawable/forme_white_sombre_radius_100dp"
             android:hint="Message"
             android:paddingStart="50dp"
             android:paddingEnd="65dp"
@@ -77,7 +77,7 @@
         android:layout_alignParentEnd="true"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
-        android:background="@drawable/cercle_boutton"
-        app:icon="@drawable/send" />
+        android:background="@drawable/forme_white_circulaire"
+        app:icon="@drawable/vector_white_send" />
 
 </RelativeLayout>

@@ -47,7 +47,7 @@
                         android:layout_marginEnd="10dp"
                         android:layout_marginBottom="10dp"
                         android:elevation="2dp"
-                        android:src="@drawable/l1" />
+                        android:src="@drawable/img_default_livre" />
                     <RelativeLayout
                         android:layout_width="wrap_content"
                         android:layout_marginStart="20dp"
@@ -92,7 +92,7 @@
                                     android:layout_width="22dp"
                                     android:layout_height="22dp"
                                     android:elevation="10dp"
-                                    android:src="@drawable/off_like"/>
+                                    android:src="@drawable/vector_black3_off_like"/>
                                 <TextView
                                     android:id="@+id/nbr_like"
                                     android:layout_width="wrap_content"
@@ -102,7 +102,7 @@
                                     android:gravity="center_vertical"
                                     android:textSize="10dp"
                                     android:layout_gravity="center_vertical"
-                                    android:src="@drawable/off_like"/>
+                                    android:src="@drawable/vector_black3_off_like"/>
                             </LinearLayout>
                             <LinearLayout
                                 android:id="@+id/nolike"
@@ -114,7 +114,7 @@
                                     android:layout_width="22dp"
                                     android:layout_height="22dp"
                                     android:elevation="10dp"
-                                    android:src="@drawable/off_nolike"/>
+                                    android:src="@drawable/vector_black3_off_nolike"/>
                                 <TextView
                                     android:id="@+id/nbr_nolike"
                                     android:layout_width="wrap_content"
@@ -136,7 +136,7 @@
                                     android:layout_width="22dp"
                                     android:layout_height="22dp"
                                     android:elevation="10dp"
-                                    android:src="@drawable/notifications"/>
+                                    android:src="@drawable/vector_black3_notifications"/>
                             </LinearLayout>
                         </LinearLayout>
                     </RelativeLayout>
@@ -178,7 +178,7 @@
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="5dp"
                         android:layout_marginBottom="5dp"
-                        app:icon="@drawable/pysique"
+                        app:icon="@drawable/vector_black3_pysique"
                         android:textSize="15dp"
                         android:backgroundTint="@color/sombre"/>
                 </LinearLayout>
@@ -221,7 +221,7 @@
                                 android:layout_margin="10dp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:src="@drawable/plause"
+                                android:src="@drawable/vector_black3_plause"
                                 />
                             <ImageView
                                 android:id="@+id/stop"
@@ -231,7 +231,7 @@
                                 android:layout_marginEnd="3dp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:src="@drawable/stop"
+                                android:src="@drawable/vector_black3_stop"
                                 />
                             <TextView
                                 android:id="@+id/heurInit"
@@ -268,7 +268,7 @@
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="5dp"
                         android:layout_marginBottom="5dp"
-                        app:icon="@drawable/download"
+                        app:icon="@drawable/vector_white_download"
                         android:textSize="15dp"
                         android:backgroundTint="@color/sombre"/>
                 </LinearLayout>
@@ -309,7 +309,7 @@
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="5dp"
                         android:layout_marginBottom="5dp"
-                        app:icon="@drawable/pdf"
+                        app:icon="@drawable/vector_black3_pdf"
                         android:textSize="15dp"
                         android:backgroundTint="@color/sombre"/>
                     <Button
@@ -321,7 +321,7 @@
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="5dp"
                         android:layout_marginBottom="5dp"
-                        app:icon="@drawable/download"
+                        app:icon="@drawable/vector_white_download"
                         android:textSize="15dp"
                         android:backgroundTint="@color/sombre"/>
                 </LinearLayout>
@@ -406,7 +406,7 @@
                             android:id="@+id/messageCommentaire"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/forme_white_radus_10dp"
+                            android:background="@drawable/forme_white_radius_10dp"
                             android:hint=" Ajouter votre Commentaire"
                             android:layout_centerVertical="true"
                             android:padding="5dp"

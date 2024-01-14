@@ -7,5 +7,5 @@
         android:id="@+id/couverteur_recent"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:src="@drawable/item"/>
+        android:src="@drawable/img_default_livre"/>
 </RelativeLayout>

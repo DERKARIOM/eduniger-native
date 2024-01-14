@@ -19,14 +19,14 @@
             android:layout_height="150dp"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="20dp"
-            android:src="@drawable/default_livre" />
+            android:src="@drawable/img_default_livre" />
         <ImageView
             android:layout_below="@id/ninotech"
             android:layout_width="200dp"
             android:layout_height="200dp"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="20dp"
-            android:src="@drawable/ninotech" />
+            android:src="@drawable/img_ninotech" />
     </RelativeLayout>
     <TextView
         android:id="@+id/annee"
@@ -56,7 +56,7 @@
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
         android:textAllCaps="false"
-        android:background="@drawable/forme_purple_200_radus_10dp"
+        android:background="@drawable/forme_purple_200_radius_10dp"
         android:text="Licence" />
     <TextView
         android:id="@+id/version"

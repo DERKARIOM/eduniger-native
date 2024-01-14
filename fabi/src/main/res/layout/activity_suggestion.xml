@@ -37,7 +37,7 @@
 
                     android:layout_width="wrap_content"
                     android:layout_height="200dp"
-                    android:src="@drawable/img_reclamation"/>
+                    android:src="@drawable/img_message_suggestion"/>
             </LinearLayout>
             <LinearLayout
                 android:layout_below="@id/imgSuggestion"
@@ -145,13 +145,13 @@
                         android:elevation="5dp"
                         android:padding="20dp"
                         android:visibility="invisible"
-                        android:progressDrawable="@drawable/circulaire_bar2" />
+                        android:progressDrawable="@drawable/forme_circulaire_bar_connexion" />
                     <Button
                         android:id="@+id/EnvoyerJuggestion"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
-                        android:background="@drawable/forme_purple_200_radus_10dp"
+                        android:background="@drawable/forme_purple_200_radius_10dp"
                         android:textAllCaps="false"
                         android:text="Envoyer" />
                 </RelativeLayout>

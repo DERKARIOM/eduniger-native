@@ -98,8 +98,8 @@ public class ClassementAdapter extends RecyclerView.Adapter<ClassementAdapter.My
         void display(Livres livre){
             Picasso.with(itemView.getContext())
                     .load("http://192.168.43.1:2222/fabi/couverture/" + livre.getCouverture())
-                    .placeholder(R.drawable.default_livre)
-                    .error(R.drawable.default_livre)
+                    .placeholder(R.drawable.img_default_livre)
+                    .error(R.drawable.img_default_livre)
                     .transform(new RoundedTransformation(15,4))
                     .resize(178,284)
                     .into(mCouverture);

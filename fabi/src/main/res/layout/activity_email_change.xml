@@ -20,7 +20,7 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/regester"/>
+            android:src="@drawable/img_regester"/>
 
     </RelativeLayout>
 
@@ -32,10 +32,10 @@
         android:layout_marginStart="28dp"
         android:layout_marginEnd="28dp"
         android:layout_marginBottom="30dp"
-        android:background="@drawable/forme_white_radus_10dp"
+        android:background="@drawable/forme_white_radius_10dp"
         android:elevation="10dp"
         android:hint="  Votre matricule ?"
-        android:drawableStart="@drawable/identify"
+        android:drawableStart="@drawable/vector_black3_identify"
         android:inputType="number"
         android:padding="10dp" />
 
@@ -47,10 +47,10 @@
         android:layout_marginStart="28dp"
         android:layout_marginEnd="28dp"
         android:layout_marginBottom="30dp"
-        android:background="@drawable/forme_white_radus_10dp"
+        android:background="@drawable/forme_white_radius_10dp"
         android:elevation="10dp"
         android:hint="  Votre mot de passe ?"
-        android:drawableStart="@drawable/password"
+        android:drawableStart="@drawable/vector_black3_password"
         android:inputType="text"
         android:padding="10dp" />
 
@@ -62,10 +62,10 @@
         android:layout_marginStart="30dp"
         android:layout_marginEnd="30dp"
         android:layout_marginBottom="30dp"
-        android:background="@drawable/forme_white_radus_10dp"
+        android:background="@drawable/forme_white_radius_10dp"
         android:elevation="10dp"
         android:hint="  Nouveau adresse email"
-        android:drawableStart="@drawable/email"
+        android:drawableStart="@drawable/vector_black3_email"
         android:inputType="textEmailAddress"
         android:padding="10dp" />
 
@@ -89,7 +89,7 @@
         android:layout_marginStart="28dp"
         android:layout_marginEnd="28dp"
         android:layout_marginBottom="20dp"
-        android:background="@drawable/forme_purple_200_radus_10dp"
+        android:background="@drawable/forme_purple_200_radius_10dp"
         android:padding="10dp"
         android:text="Connexion" />
 

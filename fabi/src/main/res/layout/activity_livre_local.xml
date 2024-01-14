@@ -40,7 +40,7 @@
                     android:id="@+id/item_local"
                     android:layout_width="wrap_content"
                     android:layout_height="200dp"
-                    android:src="@drawable/telecharge_local"/>
+                    android:src="@drawable/img_telecharge_local"/>
             </RelativeLayout>
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recylerLivreLocal"

@@ -86,8 +86,8 @@ public class DisscutionAdapter extends RecyclerView.Adapter<DisscutionAdapter.My
         void display(Disscution disscution){
             Picasso.with(itemView.getContext())
                     .load("http://192.168.43.1:2222/fabi/profil/" + disscution.getProfil())
-                    .placeholder(R.drawable.item)
-                    .error(R.drawable.item)
+                    .placeholder(R.drawable.img_default_livre)
+                    .error(R.drawable.img_default_livre)
                     .into(mPhoto);
             mUsername.setText(disscution.getUsername());
             mMessage.setText(disscution.getMessage());

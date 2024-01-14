@@ -17,16 +17,13 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@drawable/default_livre"
+        android:icon="@drawable/img_default_livre"
         android:label="fabi"
-        android:logo="@drawable/default_livre"
+        android:logo="@drawable/img_default_livre"
         android:supportsRtl="true"
         android:theme="@style/Theme.Ras"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
-        <activity
-            android:name="com.fabi.Controleur.ReservationActivity"
-            android:exported="false" />
         <activity
             android:name="com.fabi.Controleur.LivreLocalActivity"
             android:exported="false" />
@@ -86,15 +83,15 @@
             android:exported="false"
             android:label="" />
         <activity
-            android:name="com.fabi.Controleur.RegesterActivity"
+            android:name="com.fabi.Controleur.RegisterActivity"
             android:exported="false"
             android:label="Inscrivez-vous" />
         <activity
             android:name="com.fabi.Controleur.MainActivity"
             android:exported="true"
-            android:icon="@drawable/default_livre"
+            android:icon="@drawable/img_default_livre"
             android:label="fabi"
-            android:logo="@drawable/default_livre">
+            android:logo="@drawable/img_default_livre">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -19,7 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.fabi.Model.Session;
 import com.fabi.Model.UpdateDialog;
-import com.fabi.Model.UtilisateurTable;
+import com.fabi.Model.UserTable;
 import com.example.fabi.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -55,7 +55,7 @@ public class LoginActivity extends AppCompatActivity {
         mTextErr = findViewById(R.id.TextErr);
         mCirculaire = findViewById(R.id.progress_circularLogin);
         mSession = new Session(this);
-        mUtilisateur = new UtilisateurTable(this);
+        mUtilisateur = new UserTable(this);
         mJeton="null";
         /* Generation de jeton FireBase */
         FirebaseMessaging.getInstance().getToken()
@@ -78,20 +78,20 @@ public class LoginActivity extends AppCompatActivity {
                 if(mEditMatricule.getText().toString().equals("") && mEditPasse.getText().toString().equals(""))
                 {
                     mTextErr.setText("Votre matricule et mot de passe svp");
-                    mEditMatricule.setBackground(getResources().getDrawable(R.drawable.input_err));
-                    mEditPasse.setBackground(getResources().getDrawable(R.drawable.input_err));
+                    mEditMatricule.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
+                    mEditPasse.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
                 }
                 if(mEditMatricule.getText().toString().equals("") && !mEditPasse.getText().toString().equals("")){
                     mTextErr.setText("Votre matricule svp");
-                    mEditMatricule.setBackground(getResources().getDrawable(R.drawable.input_err));
-                    mEditPasse.setBackground(getResources().getDrawable(R.drawable.forme_white_radus_10dp));
+                    mEditMatricule.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
+                    mEditPasse.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
                 }
 
                 if(!mEditMatricule.getText().toString().equals("") && mEditPasse.getText().toString().equals(""))
                 {
                     mTextErr.setText("Votre mot de passe svp");
-                    mEditMatricule.setBackground(getResources().getDrawable(R.drawable.forme_white_radus_10dp));
-                    mEditPasse.setBackground(getResources().getDrawable(R.drawable.input_err));
+                    mEditMatricule.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
+                    mEditPasse.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
                 }
                 if(!mEditMatricule.getText().toString().equals("") && !mEditPasse.getText().toString().equals(""))
                 {
@@ -107,7 +107,7 @@ public class LoginActivity extends AppCompatActivity {
         mTextInscrire.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent inscription = new Intent(LoginActivity.this , RegesterActivity.class);
+                Intent inscription = new Intent(LoginActivity.this , RegisterActivity.class);
                 startActivity(inscription);
             }
         });
@@ -171,19 +171,19 @@ public class LoginActivity extends AppCompatActivity {
                 if(jsonData.equals("false"))
                 {
                     mTextErr.setText("Ce compte n' existe pas");
-                    mEditMatricule.setBackground(getResources().getDrawable(R.drawable.input_err));
-                    mEditPasse.setBackground(getResources().getDrawable(R.drawable.input_err));
+                    mEditMatricule.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
+                    mEditPasse.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
                     mCirculaire.setVisibility(View.INVISIBLE);
                     mButtonConnect.setText("Connexion");
 
                 }
                 else {
                     if (jsonData.equals("true")) {
-                        mEditMatricule.setBackground(getResources().getDrawable(R.drawable.forme_white_radus_10dp));
+                        mEditMatricule.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
                         mTextErr.setText("Mot de passe incorrect");
                         mTextAide.setText("j'ai oublié mon mot de passe");
                         mTextAide.setTextColor(Color.parseColor("#E6FD1010"));
-                        mEditPasse.setBackground(getResources().getDrawable(R.drawable.input_err));
+                        mEditPasse.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
                         mTextAide.setTextSize(15);
                         mCirculaire.setVisibility(View.INVISIBLE);
                         mButtonConnect.setText("Connexion");
@@ -262,7 +262,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextView mTextErr;
     private TextView mTextAide;
     private Session mSession;
-    private UtilisateurTable mUtilisateur;
+    private UserTable mUtilisateur;
     private String mJeton;
     private ProgressBar mCirculaire;
 }

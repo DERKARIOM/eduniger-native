@@ -8,7 +8,7 @@
 
     <item
         android:id="@+id/menuHomeNotification"
-        android:icon="@drawable/notifications"
+        android:icon="@drawable/vector_black3_notifications"
         android:title="notification"
         app:showAsAction="always|never|collapseActionView|withText" />
     <item

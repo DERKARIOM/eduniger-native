@@ -13,7 +13,7 @@
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
         android:elevation="2dp"
-        android:src="@drawable/item" />
+        android:src="@drawable/img_default_livre" />
     <RelativeLayout
         android:id="@+id/info_livre"
         android:layout_width="wrap_content"
@@ -46,14 +46,14 @@
                 android:layout_width="10dp"
                 android:layout_height="10dp"
                 android:visibility="gone"
-                android:src="@drawable/pysique"/>
+                android:src="@drawable/vector_black3_pysique"/>
             <ImageView
                 android:id="@+id/ico_pdf"
                 android:layout_margin="5dp"
                 android:layout_width="10dp"
                 android:layout_height="10dp"
                 android:visibility="gone"
-                android:src="@drawable/pdf"/>
+                android:src="@drawable/vector_black3_pdf"/>
             <ImageView
                 android:id="@+id/ico_audio"
                 android:layout_margin="5dp"
@@ -70,7 +70,7 @@
                     android:id="@+id/ico1"
                     android:layout_width="10dp"
                     android:layout_height="10dp"
-                    android:src="@drawable/off_like"/>
+                    android:src="@drawable/vector_black3_off_like"/>
                 <TextView
                     android:id="@+id/nbr_like"
                     android:layout_width="wrap_content"
@@ -79,7 +79,7 @@
                     android:text="20000k"
                     android:gravity="center_vertical"
                     android:textSize="8dp"
-                    android:src="@drawable/off_like"/>
+                    android:src="@drawable/vector_black3_off_like"/>
             </LinearLayout>
             <LinearLayout
                 android:id="@+id/vue"
@@ -90,7 +90,7 @@
                     android:id="@+id/ico2"
                     android:layout_width="10dp"
                     android:layout_height="10dp"
-                    android:src="@drawable/vue"/>
+                    android:src="@drawable/vector_black3_vue"/>
                 <TextView
                     android:id="@+id/nbr_vue"
                     android:layout_width="wrap_content"
@@ -99,7 +99,7 @@
                     android:text="20000k"
                     android:gravity="center_vertical"
                     android:textSize="8dp"
-                    android:src="@drawable/off_like"/>
+                    android:src="@drawable/vector_black3_off_like"/>
 
 
             </LinearLayout>

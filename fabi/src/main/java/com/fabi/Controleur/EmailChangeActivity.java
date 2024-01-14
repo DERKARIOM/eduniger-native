@@ -12,8 +12,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.fabi.Model.EtudiantTable;
 import com.fabi.Model.Session;
 import com.example.fabi.R;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -46,7 +44,6 @@ public class EmailChangeActivity extends AppCompatActivity {
         mChamgePasse = findViewById(R.id.changepasse);
         mTextErr4 = findViewById(R.id.TextErr4);
         mSession = new Session(this);
-        mEtudiant = new EtudiantTable(this);
 //        data = openOrCreateDatabase("data.db",MODE_PRIVATE,null);
         mJeton = "null";
 
@@ -71,18 +68,18 @@ public class EmailChangeActivity extends AppCompatActivity {
                 if(mEditMatricule4.getText().toString().equals("") && mEditMail3.getText().toString().equals("") && mEditPasse4.getText().toString().equals(""))
                 {
                     mTextErr4.setText("Veuillez remplir ces champs svp");
-                    mEditMatricule4.setBackground(getResources().getDrawable(R.drawable.input_err));
-                    mEditMail3.setBackground(getResources().getDrawable(R.drawable.input_err));
-                    mEditPasse4.setBackground(getResources().getDrawable(R.drawable.input_err));
+                    mEditMatricule4.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
+                    mEditMail3.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
+                    mEditPasse4.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
                 }
                 else
                 {
                     if(mEditMatricule4.getText().toString().equals(""))
                     {
                         mTextErr4.setText("Votre matricule svp");
-                        mEditMatricule4.setBackground(getResources().getDrawable(R.drawable.input_err));
-                        mEditMail3.setBackground(getResources().getDrawable(R.drawable.forme_white_radus_10dp));
-                        mEditPasse4.setBackground(getResources().getDrawable(R.drawable.forme_white_radus_10dp));
+                        mEditMatricule4.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
+                        mEditMail3.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
+                        mEditPasse4.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
                     }
                     try {
                         http();
@@ -123,22 +120,15 @@ public class EmailChangeActivity extends AppCompatActivity {
             if(jsonData.equals("false"))
             {
                 mTextErr4.setText("Matricule ou mot de passe incorrect");
-                mEditMatricule4.setBackground(getResources().getDrawable(R.drawable.input_err));
-                mEditMail3.setBackground(getResources().getDrawable(R.drawable.forme_white_radus_10dp));
-                mEditPasse4.setBackground(getResources().getDrawable(R.drawable.input_err));
+                mEditMatricule4.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
+                mEditMail3.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
+                mEditPasse4.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
             }
             else
             {
                 Toast.makeText(this,"Email change avec succès ", Toast.LENGTH_SHORT).show();
                 mSession.insert(mEditMatricule4.getText().toString());
                 JSONObject jsonObject = new JSONObject(jsonData);
-                mEtudiant.insert(jsonObject.getString("matricule"),
-                        jsonObject.getString("nomEt"),
-                        jsonObject.getString("prenomEt"),
-                        jsonObject.getString("sectionEt"),
-                        jsonObject.getString("nomSemestreI"),
-                        jsonObject.getString("nomSemestreP"),
-                        jsonObject.getString("delegue"));
                 Intent home = new Intent(EmailChangeActivity.this, MainActivity.class);
                 startActivity(home);
                 finish();
@@ -154,7 +144,6 @@ public class EmailChangeActivity extends AppCompatActivity {
     private TextView mTextErr4;
     private EditText mEditMail3;
     private SQLiteDatabase data;
-    private EtudiantTable mEtudiant;
     private Session mSession;
     private String mJeton;
 }

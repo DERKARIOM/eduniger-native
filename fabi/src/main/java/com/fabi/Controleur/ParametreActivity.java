@@ -46,12 +46,12 @@ public class ParametreActivity extends AppCompatActivity {
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recylerParametre);
         mList = new ArrayList<>();
-        mList.add(new Parametre(R.drawable.compte,"Compte","Changer votre mot de passe , email..."));
-        mList.add(new Parametre(R.drawable.empreinte,"Empreinte digitale","Sécurisé votre session"));
-        mList.add(new Parametre(R.drawable.suggestion,"Envoyer une suggestion","L'objet de votre suggestion"));
-        mList.add(new Parametre(R.drawable.evaluez_vous,"Evaluez-nous","Votre note , Observation (facultative)"));
-        mList.add(new Parametre(R.drawable.phone,"Contactez-nous","Appelez +22794961793"));
-        mList.add(new Parametre(R.drawable.video,"Comment ça marche","Tutoriel qui vous explique de A-Z..."));
+        mList.add(new Parametre(R.drawable.vector_purple_200_compte,"Compte","Changer votre mot de passe , email..."));
+        mList.add(new Parametre(R.drawable.vector_purple_200_digital,"Empreinte digitale","Sécurisé votre session"));
+        mList.add(new Parametre(R.drawable.vector_purple_200_messagerie,"Envoyer une suggestion","L'objet de votre suggestion"));
+        mList.add(new Parametre(R.drawable.vector_purple_200_start,"Evaluez-nous","Votre note , Observation (facultative)"));
+        mList.add(new Parametre(R.drawable.vector_purple_200_phone,"Contactez-nous","Appelez +22794961793"));
+        mList.add(new Parametre(R.drawable.vector_purple_200_video,"Comment ça marche","Tutoriel qui vous explique de A-Z..."));
         mList.add(new Parametre(R.drawable.vector_purple_200_information,"Infos de l'application","Auteurs , Version et Licence"));
         mParametreAdapter = new ParametreAdapter(mList);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getApplicationContext()));

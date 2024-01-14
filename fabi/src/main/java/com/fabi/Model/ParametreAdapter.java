@@ -158,7 +158,7 @@ public class ParametreAdapter extends RecyclerView.Adapter<ParametreAdapter.MyVi
                 public void onClick(View view) {
                     if(notre_note.getText().toString().equals(""))
                     {
-                        notre_note.setBackground(view.getResources().getDrawable(R.drawable.input_err));
+                        notre_note.setBackground(view.getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
                         err_evaluez.setText("Votre note svp");
                     }
                     else
@@ -219,7 +219,7 @@ public class ParametreAdapter extends RecyclerView.Adapter<ParametreAdapter.MyVi
                         notre_observation.setText("");
                         circulaire.setVisibility(View.INVISIBLE);
                         notre_envoi.setText("Envoyer");
-                        SucceSuggestionDialog(R.drawable.succes_suggestion,"Succès","Nous tenons à vous exprimer notre sincère gratitude pour avoir pris le temps de noter fastpv");
+                        SucceSuggestionDialog(R.drawable.vector_emoji_succes,"Succès","Nous tenons à vous exprimer notre sincère gratitude pour avoir pris le temps de noter fastpv");
                     }
                     else
                     {
@@ -228,7 +228,7 @@ public class ParametreAdapter extends RecyclerView.Adapter<ParametreAdapter.MyVi
                         notre_observation.setText("");
                         circulaire.setVisibility(View.INVISIBLE);
                         notre_envoi.setText("Envoyer");
-                        SucceSuggestionDialog(R.drawable.desole,"Désolé","Nous tenons à vous informer qu'il n'est possible de laisser qu'une seule évaluation par utilisateur. Cette limitation est en place pour garantir l'équité et la transparence dans les évaluations de l'application. ");
+                        SucceSuggestionDialog(R.drawable.vector_purple_200_desole,"Désolé","Nous tenons à vous informer qu'il n'est possible de laisser qu'une seule évaluation par utilisateur. Cette limitation est en place pour garantir l'équité et la transparence dans les évaluations de l'application. ");
                     }
 
                 }

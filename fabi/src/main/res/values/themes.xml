@@ -20,9 +20,6 @@
         <item name="android:windowEnterAnimation">@anim/agrandir_dilog</item>
         <item name="android:windowExitAnimation">@anim/agrandir_dilog_out</item>
     </style>
-    <style name="CircularBar" parent="@android:style/Widget.ProgressBar.Small">
-        <item name="android:indeterminateDrawable">@drawable/circulaire_bar</item>
-    </style>
     <style name="semeste">
         <item name="android:fontFamily">@font/apple2</item>
         <item name="android:textSize">20dp</item>
@@ -39,15 +36,14 @@
         <item name="android:fontFamily">@font/apple1</item>
     </style>
     <style name="Progretion">
-        <item name="android:background">@drawable/progretion</item>
+        <item name="android:background">@drawable/forme_purple_200_radius_25dp</item>
     </style>
     <style name="ProgretionNote">
-        <item name="android:background">@drawable/prgretion_notes</item>
+        <item name="android:background">@drawable/forme_white_radius_25dp</item>
     </style>
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="android:logo">@drawable/fast</item>
     </style>
     <style name="Block_notif1">
-        <item name="android:background">@drawable/forme_purple2_200_radus_10dp</item>
+        <item name="android:background">@drawable/forme_purple2_200_radius_10dp</item>
     </style>
 </resources>

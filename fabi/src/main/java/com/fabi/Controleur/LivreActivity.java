@@ -135,7 +135,7 @@ public class LivreActivity extends AppCompatActivity {
                         mSeekBar.setMax(mMediaPlayer.getDuration());
                         mMediaPlayer.start();
                         tmp_position = position;
-                        mPlay.setImageResource(R.drawable.play);
+                        mPlay.setImageResource(R.drawable.vector_black3_play);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -213,12 +213,12 @@ public class LivreActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if(mMediaPlayer.isPlaying())
                 {
-                    mPlay.setImageResource(R.drawable.plause);
+                    mPlay.setImageResource(R.drawable.vector_black3_plause);
                     mMediaPlayer.pause();
                 }
                 else
                 {
-                    mPlay.setImageResource(R.drawable.play);
+                    mPlay.setImageResource(R.drawable.vector_black3_play);
                     mMediaPlayer.start();
                 }
             }
@@ -228,7 +228,7 @@ public class LivreActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 mMediaPlayer.stop();
-                mPlay.setImageResource(R.drawable.plause);
+                mPlay.setImageResource(R.drawable.vector_black3_plause);
                 mTimer.cancel(); // Arrête le Timer lors de la destruction de l'activité
                mSeekBar.setProgress(0);
             }
@@ -239,12 +239,12 @@ public class LivreActivity extends AppCompatActivity {
                 if(!isLike)
                 {
                     isLike = true;
-                    mBttLike.setImageResource(R.drawable.on_like);
+                    mBttLike.setImageResource(R.drawable.vector_purple2_200_on_like);
                 }
                 else
                 {
                     isLike = false;
-                    mBttLike.setImageResource(R.drawable.off_like);
+                    mBttLike.setImageResource(R.drawable.vector_black3_off_like);
 
                 }
             }
@@ -256,12 +256,12 @@ public class LivreActivity extends AppCompatActivity {
                 if(!isNoLike)
                 {
                     isNoLike = true;
-                    mBttNoLike.setImageResource(R.drawable.on_nolike);
+                    mBttNoLike.setImageResource(R.drawable.vector_rouge_on_nolike);
                 }
                 else
                 {
                     isNoLike = false;
-                    mBttNoLike.setImageResource(R.drawable.off_nolike);
+                    mBttNoLike.setImageResource(R.drawable.vector_black3_off_nolike);
 
                 }
             }
@@ -474,8 +474,8 @@ public class LivreActivity extends AppCompatActivity {
                     mProfilAuteur = jsonObject.getString("profilAuteur");
                     Picasso.with(getApplicationContext())
                             .load("http://192.168.43.1:2222/fabi/couverture/" + mNomCouverture)
-                            .placeholder(R.drawable.default_livre)
-                            .error(R.drawable.default_livre)
+                            .placeholder(R.drawable.img_default_livre)
+                            .error(R.drawable.img_default_livre)
                             .transform(new RoundedTransformation(15,4))
                             .resize(200,334)
                             .into(mCouverture);

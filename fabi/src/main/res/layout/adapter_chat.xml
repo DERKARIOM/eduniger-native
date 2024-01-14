@@ -14,7 +14,7 @@
             android:layout_height="25dp"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
-            android:src="@drawable/profile" />
+            android:src="@drawable/vector_black3_profile" />
         <TextView
             android:id="@+id/chatNom"
             android:layout_width="wrap_content"

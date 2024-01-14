@@ -10,7 +10,7 @@
         android:id="@+id/bNotification"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-       android:background="@drawable/forme_white2_radus_10dp"
+       android:background="@drawable/forme_white2_radius_10dp"
         android:elevation="2dp"
         android:layout_margin="20dp"
         android:padding="8dp"

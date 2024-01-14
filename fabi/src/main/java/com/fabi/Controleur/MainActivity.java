@@ -18,7 +18,7 @@ import com.fabi.Model.ElectroniqueTable;
 import com.fabi.Model.EmpreiteTable;
 import com.fabi.Model.NotificationTable;
 import com.fabi.Model.Session;
-import com.fabi.Model.UtilisateurTable;
+import com.fabi.Model.UserTable;
 import com.example.fabi.R;
 import com.fabi.Service.NotificationService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
         mSession = new Session(this);
         mElectroniqueTable = new ElectroniqueTable(this);
         mEmpreiteTable = new EmpreiteTable(this);
-        mUtilisateur = new UtilisateurTable(this);
+        mUtilisateur = new UserTable(this);
         mNotificationTable = new NotificationTable(this);
         mToolbar = (Toolbar)findViewById(R.id.toolbar);
         mUtilisateur.onCreate(mDb);
@@ -235,7 +235,7 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences mSharedPreferences;
     private Session mSession;
     private EmpreiteTable mEmpreiteTable;
-    private UtilisateurTable mUtilisateur;
+    private UserTable mUtilisateur;
     private Toolbar mToolbar;
     private ElectroniqueTable mElectroniqueTable;
     private Handler mHandler;

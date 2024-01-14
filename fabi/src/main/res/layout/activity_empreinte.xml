@@ -12,7 +12,7 @@
         android:layout_height="100dp"
         android:layout_above="@id/Edigitale"
         android:layout_alignParentTop="true"
-        android:background="@drawable/forme_purple_200_bottom_radus_25dp"
+        android:background="@drawable/forme_purple_200_bottom_radius_25dp"
         android:elevation="10dp"
         android:layout_marginBottom="140dp">
 
@@ -27,7 +27,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginBottom="50dp"
-                android:src="@drawable/lock"/>
+                android:src="@drawable/vector_white_lock"/>
             <TextView
                 android:id="@+id/TextConnect"
                 android:layout_width="match_parent"
@@ -43,7 +43,7 @@
         android:id="@+id/Edigitale"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/digitale"
+        android:src="@drawable/vector_purple2_200_digitale"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="50dp"
         android:layout_above="@id/messageDigitale"

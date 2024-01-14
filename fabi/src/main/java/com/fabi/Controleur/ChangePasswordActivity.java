@@ -13,8 +13,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.fabi.Model.EtudiantTable;
 import com.fabi.Model.Session;
 import com.example.fabi.R;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -48,7 +46,6 @@ public class ChangePasswordActivity extends AppCompatActivity {
         mTextLogin2 = findViewById(R.id.TextAide2);
         mTextErr3 = findViewById(R.id.TextErr3);
         mSession = new Session(this);
-        mEtudiant = new EtudiantTable(this);
 //        data = openOrCreateDatabase("data.db",MODE_PRIVATE,null);
         mJeton = "null";
 
@@ -73,20 +70,20 @@ public class ChangePasswordActivity extends AppCompatActivity {
                 if(mEditMatricule3.getText().toString().equals("") && mEditMail2.getText().toString().equals("") && mEditPasse3.getText().toString().equals("") && mEditConf2.getText().toString().equals(""))
                 {
                     mTextErr3.setText("Veuillez remplir ces champs svp");
-                    mEditMatricule3.setBackground(getResources().getDrawable(R.drawable.input_err));
-                    mEditMail2.setBackground(getResources().getDrawable(R.drawable.input_err));
-                    mEditPasse3.setBackground(getResources().getDrawable(R.drawable.input_err));
-                    mEditConf2.setBackground(getResources().getDrawable(R.drawable.input_err));
+                    mEditMatricule3.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
+                    mEditMail2.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
+                    mEditPasse3.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
+                    mEditConf2.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
                 }
                 else
                 {
                     if(mEditMatricule3.getText().toString().equals(""))
                     {
                         mTextErr3.setText("Votre matricule svp");
-                        mEditMatricule3.setBackground(getResources().getDrawable(R.drawable.input_err));
-                        mEditMail2.setBackground(getResources().getDrawable(R.drawable.forme_white_radus_10dp));
-                        mEditPasse3.setBackground(getResources().getDrawable(R.drawable.forme_white_radus_10dp));
-                        mEditConf2.setBackground(getResources().getDrawable(R.drawable.forme_white_radus_10dp));
+                        mEditMatricule3.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
+                        mEditMail2.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
+                        mEditPasse3.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
+                        mEditConf2.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
                     }
                     if(mEditPasse3.getText().toString().equals(mEditConf2.getText().toString()))
                     {
@@ -95,10 +92,10 @@ public class ChangePasswordActivity extends AppCompatActivity {
                     }else
                     {
                         mTextErr3.setText("Erreur de confirmation");
-                        mEditMatricule3.setBackground(getResources().getDrawable(R.drawable.forme_white_radus_10dp));
-                        mEditMail2.setBackground(getResources().getDrawable(R.drawable.forme_white_radus_10dp));
-                        mEditPasse3.setBackground(getResources().getDrawable(R.drawable.input_err));
-                        mEditConf2.setBackground(getResources().getDrawable(R.drawable.input_err));
+                        mEditMatricule3.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
+                        mEditMail2.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
+                        mEditPasse3.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
+                        mEditConf2.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
                     }
                 }
             }
@@ -155,10 +152,10 @@ public class ChangePasswordActivity extends AppCompatActivity {
                 if(jsonData.equals("false"))
                 {
                     mTextErr3.setText("Matricule ou Email incorrect");
-                    mEditMatricule3.setBackground(getResources().getDrawable(R.drawable.input_err));
-                    mEditMail2.setBackground(getResources().getDrawable(R.drawable.input_err));
-                    mEditPasse3.setBackground(getResources().getDrawable(R.drawable.forme_white_radus_10dp));
-                    mEditConf2.setBackground(getResources().getDrawable(R.drawable.forme_white_radus_10dp));
+                    mEditMatricule3.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
+                    mEditMail2.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
+                    mEditPasse3.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
+                    mEditConf2.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
                 }
                 else
                 {
@@ -166,17 +163,6 @@ public class ChangePasswordActivity extends AppCompatActivity {
                     JSONObject jsonObject = null;
                     try {
                         jsonObject = new JSONObject(jsonData);
-                    } catch (JSONException e) {
-                        throw new RuntimeException(e);
-                    }
-                    try {
-                        mEtudiant.insert(jsonObject.getString("matricule"),
-                                jsonObject.getString("nomEt"),
-                                jsonObject.getString("prenomEt"),
-                                jsonObject.getString("sectionEt"),
-                                jsonObject.getString("nomSemestreI"),
-                                jsonObject.getString("nomSemestreP"),
-                                jsonObject.getString("delegue"));
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
@@ -202,7 +188,6 @@ public class ChangePasswordActivity extends AppCompatActivity {
     private TextView mTextErr3;
     private EditText mEditMail2;
     private SQLiteDatabase data;
-    private EtudiantTable mEtudiant;
     private Session mSession;
     private String mJeton;
 }

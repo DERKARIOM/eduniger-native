@@ -37,7 +37,7 @@ public class LivreLocalActivity extends AppCompatActivity {
         switch (id)
         {
             case 1: // Les Livre Telechages
-                mItemLocal.setImageResource(R.drawable.telecharge_local);
+                mItemLocal.setImageResource(R.drawable.img_telecharge_local);
                 mList1 = new ArrayList<>();
                 Cursor cursor1 = mElectroniqueTable.getData(mSession.getMatricule());
                 cursor1.moveToFirst();
@@ -49,13 +49,13 @@ public class LivreLocalActivity extends AppCompatActivity {
                 mRecyclerView.setAdapter(mLivreLocalAdapter);
                 break;
             case 2: // Coups de coeur
-                mItemLocal.setImageResource(R.drawable.love_local);
+                mItemLocal.setImageResource(R.drawable.img_love_livre);
                 break;
             case 3: // Playlists
-                mItemLocal.setImageResource(R.drawable.playliste_local);
+                mItemLocal.setImageResource(R.drawable.img_playliste_local);
                 break;
             case 4: // Categorie
-                mItemLocal.setImageResource(R.drawable.categorie_local);
+                mItemLocal.setImageResource(R.drawable.img_categorie);
                 mList4 = new ArrayList<>();
                 Cursor cursor4 = mElectroniqueTable.getData(mSession.getMatricule());
                 cursor4.moveToFirst();
