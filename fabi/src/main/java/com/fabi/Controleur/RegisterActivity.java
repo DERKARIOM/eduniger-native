@@ -78,42 +78,72 @@ public class RegisterActivity extends AppCompatActivity {
        mConnectionButton.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View view) {
-               mAccount = new Account(mIdNumberEditText.getText().toString(), mEmailEditText.getText().toString(), mPasswordEditText.getText().toString(),"ras");
-               switch (mAccount.register(mPasswordConfirmEditText.getText().toString()))
+               mAccount = new Account(
+                       mIdNumberEditText.getText().toString(),
+                       mEmailEditText.getText().toString(),
+                       mPasswordEditText.getText().toString(),
+                       "ras");
+               switch (mAccount.inputControlRegister(mPasswordConfirmEditText.getText().toString()))
                {
                    case "0000":
-                       mErrorTextView.setText("Veuillez remplir ces champs svp");
-                       mIdNumberEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
-                       mEmailEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
-                       mPasswordEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
-                       mPasswordConfirmEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
+                       inputControl(
+                               R.drawable.forme_white_radius_100dp_border_rouge,
+                               R.drawable.forme_white_radius_100dp_border_rouge,
+                               R.drawable.forme_white_radius_100dp_border_rouge,
+                               R.drawable.forme_white_radius_100dp_border_rouge,
+                               R.string.register_error_0000
+                       );
                        break;
                    case "0111":
-                       mErrorTextView.setText("Votre matricule svp");
-                       mIdNumberEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
-                       mEmailEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
-                       mPasswordEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
-                       mPasswordConfirmEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
+                       inputControl(
+                               R.drawable.forme_white_radius_100dp_border_rouge,
+                               R.drawable.forme_white_radius_10dp,
+                               R.drawable.forme_white_radius_10dp,
+                               R.drawable.forme_white_radius_10dp,
+                               R.string.register_error_0111
+                       );
                        break;
                    case "1011":
-                       mErrorTextView.setText("Votre email svp");
-                       mEmailEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
-                       mIdNumberEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
-                       mPasswordEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
-                       mPasswordConfirmEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
+                       inputControl(
+                               R.drawable.forme_white_radius_10dp,
+                               R.drawable.forme_white_radius_100dp_border_rouge,
+                               R.drawable.forme_white_radius_10dp,
+                               R.drawable.forme_white_radius_10dp,
+                               R.string.register_error_1011
+                       );
+                       break;
+                   case "1101":
+                       inputControl(
+                               R.drawable.forme_white_radius_10dp,
+                               R.drawable.forme_white_radius_10dp,
+                               R.drawable.forme_white_radius_100dp_border_rouge,
+                               R.drawable.forme_white_radius_10dp,
+                               R.string.register_error_1101
+                       );
+                       break;
+                   case "1110":
+                       inputControl(
+                               R.drawable.forme_white_radius_10dp,
+                               R.drawable.forme_white_radius_10dp,
+                               R.drawable.forme_white_radius_10dp,
+                               R.drawable.forme_white_radius_100dp_border_rouge,
+                               R.string.register_error_1110
+                       );
+                       break;
+                   case "1100":
+                       inputControl(
+                               R.drawable.forme_white_radius_10dp,
+                               R.drawable.forme_white_radius_10dp,
+                               R.drawable.forme_white_radius_100dp_border_rouge,
+                               R.drawable.forme_white_radius_100dp_border_rouge,
+                               R.string.register_error_1100
+                       );
                        break;
                    case "1111":
                        mConnectionProgressBar.setVisibility(View.VISIBLE);
-                       mConnectionButton.setText("Connexion...");
+                       mConnectionButton.setText(R.string.register_error_1111);
                        Http http = new Http();
                        http.execute("http://192.168.43.1:2222/fabi/android/register.php",mAccount.getIdNumber(),mAccount.getEmail(),mAccount.getPassword());
-                       break;
-                   case "1110":
-                       mErrorTextView.setText("Erreur de confirmation");
-                       mIdNumberEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
-                       mEmailEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
-                       mPasswordEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
-                       mPasswordConfirmEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
                        break;
                }
            }
@@ -127,6 +157,15 @@ public class RegisterActivity extends AppCompatActivity {
                startActivity(login);
            }
        });
+    }
+
+    public void inputControl(int idNumberIco , int emailIco , int passwordIco , int passwordConfirmIco , int message)
+    {
+        mIdNumberEditText.setBackground(getResources().getDrawable(idNumberIco));
+        mEmailEditText.setBackground(getResources().getDrawable(emailIco));
+        mPasswordEditText.setBackground(getResources().getDrawable(passwordIco));
+        mPasswordConfirmEditText.setBackground(getResources().getDrawable(passwordConfirmIco));
+        mErrorTextView.setText(message);
     }
 
     // Methode pour la requette okhttp enfin de creer un compte a un utilisateur

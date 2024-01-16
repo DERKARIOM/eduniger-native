@@ -6,6 +6,13 @@
     <string name="edit_text_hint_password_confirm">  Confirmer votre mot de passe</string>
     <string name="button_text_connection">Connexion</string>
     <string name="text_view_pass_register_login">Avez-Vous un compte ?</string>
+    <string name="register_error_0000">Veuillez remplir ces champs svp</string>
+    <string name="register_error_0111">Votre matricule svp</string>
+    <string name="register_error_1011">Votre email svp</string>
+    <string name="register_error_1101">Votre mot de passe svp</string>
+    <string name="register_error_1110">Confirmer votre mot de passe svp</string>
+    <string name="register_error_1100">Erreur de confirmation</string>
+    <string name="register_error_1111">Connexion...</string>
 
     <string-array name="journale">
         <item>"Motivation" </item>
