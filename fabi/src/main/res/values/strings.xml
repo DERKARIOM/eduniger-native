@@ -1,5 +1,12 @@
 <resources>
     <string name="app_name">FASTPV</string>
+    <string name="edit_text_hint_id_number">  Votre matricule ?</string>
+    <string name="edit_text_hint_email">  exemple@gmail.com</string>
+    <string name="edit_text_hint_password">  Votre mot de passe ?</string>
+    <string name="edit_text_hint_password_confirm">  Confirmer votre mot de passe</string>
+    <string name="button_text_connection">Connexion</string>
+    <string name="text_view_pass_register_login">Avez-Vous un compte ?</string>
+
     <string-array name="journale">
         <item>"Motivation" </item>
         <item>Introduction</item>

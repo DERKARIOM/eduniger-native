@@ -1,18 +1,73 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+
+    <!-- Le themes de base de l'application -->
     <style name="Theme.Ras" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
-        <!-- Primary brand color. -->
+        <!-- Couleur de la marque principale. -->
         <item name="colorPrimary">@color/purple_200</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
         <item name="colorOnPrimary">@color/white</item>
-        <!-- Secondary brand color. -->
+        <!-- Couleur de la marque secondaire. -->
         <item name="colorSecondary">@color/teal_200</item>
         <item name="colorSecondaryVariant">@color/teal_700</item>
         <item name="colorOnSecondary">@color/black</item>
-        <!-- Status bar color. -->
+        <!-- Couleur de la barre d'état. -->
         <item name="android:statusBarColor">@color/transparente</item>
-        <!-- Customize your theme here. -->
     </style>
+
+<!-- Le themes de formulaire(EditText) du type register et login -->
+    <style name="edit_text_register">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">28dp</item>
+        <item name="android:layout_marginEnd">28dp</item>
+        <item name="android:layout_marginBottom">30dp</item>
+        <item name="android:background">@drawable/forme_white_radius_10dp</item>
+        <item name="android:elevation">10dp</item>
+        <item name="android:padding">10dp</item>
+    </style>
+
+<!-- Le themes de message d' erreur du type register et login -->
+    <style name="text_view_error_register">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerInParent">true</item>
+        <item name="android:layout_marginBottom">30dp</item>
+        <item name="android:text"></item>
+        <item name="android:textColor">@color/rouge</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+<!--    Le themes de la bar de progression(ProgressBar) du type connexion -->
+    <style name="progress_bar_connection" parent="@android:style/Widget.Holo.ProgressBar.Small">
+        <item name="android:layout_width">60dp</item>
+        <item name="android:layout_height">60dp</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:elevation">5dp</item>
+        <item name="android:padding">20dp</item>
+        <item name="android:visibility">invisible</item>
+        <item name="android:progressDrawable">@drawable/forme_circulaire_bar_connexion</item>
+        <item name="android:layout_marginStart">40dp</item>
+    </style>
+
+<!--    Le themes du boutton(Button) de type connexion -->
+    <style name="button_connexion">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerInParent">true</item>
+        <item name="android:background">@drawable/forme_purple_200_radius_10dp</item>
+        <item name="android:text">@string/button_text_connection</item>
+    </style>
+
+<!--    Le themes de texte (TextView) de type login et register -->
+    <style name="text_view_pass_login_register">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:text">@string/text_view_pass_register_login</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
     <style name="Dialog.fastpv" parent="android:Theme.Dialog" >
         <item name="colorPrimary">@color/sombre</item>
     </style>

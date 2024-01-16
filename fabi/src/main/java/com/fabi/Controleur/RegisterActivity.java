@@ -46,15 +46,15 @@ public class RegisterActivity extends AppCompatActivity {
         getSupportActionBar().hide();
 
 
-        /* Initialisation des attributs menbre */
-       mEditTextIdNumber = findViewById(R.id.EditMatricule2);
-       mEditTextEmail = findViewById(R.id.EditMail);
-       mEditTextPassword = findViewById(R.id.EditPasse2);
-       mEditTextConfirmPassword = findViewById(R.id.EditConf);
-       mButtonConnection = findViewById(R.id.ButtonConnect2);
-       mTextViewLogin = findViewById(R.id.TextLogin);
-       mTextViewError = findViewById(R.id.TextErr2);
-       mProgressBarCirculaire = findViewById(R.id.progress_circularRegester);
+        /* Initialisation des attributs membre(propiete) */
+       mIdNumberEditText = findViewById(R.id.edit_textRegister_activity_id_number);
+       mEmailEditText = findViewById(R.id.edit_text_register_email);
+       mPasswordEditText = findViewById(R.id.edit_text_register_password);
+       mPasswordConfirmEditText = findViewById(R.id.edit_text_register_password_confirm);
+       mConnectionButton = findViewById(R.id.button_register_connection);
+       mLoginTextView = findViewById(R.id.text_view_register_login);
+       mErrorTextView = findViewById(R.id.text_view_register_error);
+       mConnectionProgressBar = findViewById(R.id.progress_bar_register_connection);
        mSession = new Session(this);
        mUserTable = new UserTable(this);
        mJeton = "null";
@@ -75,52 +75,52 @@ public class RegisterActivity extends AppCompatActivity {
                 });
 
         /* En cliquant sur le boutton de connection2 */
-       mButtonConnection.setOnClickListener(new View.OnClickListener() {
+       mConnectionButton.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View view) {
-               Account account = new Account(mEditTextIdNumber.getText().toString(), mEditTextEmail.getText().toString(), mEditTextPassword.getText().toString(),"ras");
-               switch (account.register(mEditTextConfirmPassword.getText().toString()))
+               mAccount = new Account(mIdNumberEditText.getText().toString(), mEmailEditText.getText().toString(), mPasswordEditText.getText().toString(),"ras");
+               switch (mAccount.register(mPasswordConfirmEditText.getText().toString()))
                {
                    case "0000":
-                       mTextViewError.setText("Veuillez remplir ces champs svp");
-                       mEditTextIdNumber.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
-                       mEditTextEmail.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
-                       mEditTextPassword.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
-                       mEditTextConfirmPassword.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
+                       mErrorTextView.setText("Veuillez remplir ces champs svp");
+                       mIdNumberEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
+                       mEmailEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
+                       mPasswordEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
+                       mPasswordConfirmEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
                        break;
                    case "0111":
-                       mTextViewError.setText("Votre matricule svp");
-                       mEditTextIdNumber.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
-                       mEditTextEmail.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
-                       mEditTextPassword.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
-                       mEditTextConfirmPassword.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
+                       mErrorTextView.setText("Votre matricule svp");
+                       mIdNumberEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
+                       mEmailEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
+                       mPasswordEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
+                       mPasswordConfirmEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
                        break;
                    case "1011":
-                       mTextViewError.setText("Votre email svp");
-                       mEditTextEmail.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
-                       mEditTextIdNumber.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
-                       mEditTextPassword.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
-                       mEditTextConfirmPassword.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
+                       mErrorTextView.setText("Votre email svp");
+                       mEmailEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
+                       mIdNumberEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
+                       mPasswordEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
+                       mPasswordConfirmEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
                        break;
                    case "1111":
-                       mProgressBarCirculaire.setVisibility(View.VISIBLE);
-                       mButtonConnection.setText("Connexion...");
+                       mConnectionProgressBar.setVisibility(View.VISIBLE);
+                       mConnectionButton.setText("Connexion...");
                        Http http = new Http();
-                       http.execute("http://192.168.43.1:2222/fabi/android/register.php",account.getIdNumber(),account.getEmail(),account.getPassword());
+                       http.execute("http://192.168.43.1:2222/fabi/android/register.php",mAccount.getIdNumber(),mAccount.getEmail(),mAccount.getPassword());
                        break;
                    case "1110":
-                       mTextViewError.setText("Erreur de confirmation");
-                       mEditTextIdNumber.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
-                       mEditTextEmail.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
-                       mEditTextPassword.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
-                       mEditTextConfirmPassword.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
+                       mErrorTextView.setText("Erreur de confirmation");
+                       mIdNumberEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
+                       mEmailEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
+                       mPasswordEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
+                       mPasswordConfirmEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
                        break;
                }
            }
        });
 
        /* En cliquant sur le TextView ce connecter */
-       mTextViewLogin.setOnClickListener(new View.OnClickListener() {
+       mLoginTextView.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View view) {
                Intent login = new Intent(RegisterActivity.this, LoginActivity.class);
@@ -129,6 +129,7 @@ public class RegisterActivity extends AppCompatActivity {
        });
     }
 
+    // Methode pour la requette okhttp enfin de creer un compte a un utilisateur
     private class Http extends AsyncTask<String,Void,String> {
         @Override
         protected String doInBackground(String... params) {
@@ -163,48 +164,47 @@ public class RegisterActivity extends AppCompatActivity {
         }
         @Override
         protected void onPostExecute(String jsonData){
-            //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
             if(jsonData != null)
             {
                 if(jsonData.equals("matriculeEx")) {
-                    mTextViewError.setText("Ce compte existe");
-                    mEditTextIdNumber.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
-                    mEditTextEmail.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
-                    mEditTextPassword.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
-                    mEditTextConfirmPassword.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
-                    mProgressBarCirculaire.setVisibility(View.INVISIBLE);
-                    mButtonConnection.setText("Connexion");
+                    mErrorTextView.setText("Ce compte existe");
+                    mIdNumberEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
+                    mEmailEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
+                    mPasswordEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
+                    mPasswordConfirmEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
+                    mConnectionProgressBar.setVisibility(View.INVISIBLE);
+                    mConnectionButton.setText("Connexion");
                 }
                 else
                 {
                     if(jsonData.equals("emailEx")) {
-                        mTextViewError.setText("L'adresse email existe déjà");
-                        mEditTextIdNumber.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
-                        mEditTextEmail.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
-                        mEditTextPassword.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
-                        mEditTextConfirmPassword.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
-                        mProgressBarCirculaire.setVisibility(View.INVISIBLE);
-                        mButtonConnection.setText("Connexion");
+                        mErrorTextView.setText("L'adresse email existe déjà");
+                        mIdNumberEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
+                        mEmailEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
+                        mPasswordEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
+                        mPasswordConfirmEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
+                        mConnectionProgressBar.setVisibility(View.INVISIBLE);
+                        mConnectionButton.setText("Connexion");
                     }
                     else
                     {
                         if(jsonData.equals("matriculeIn"))
                         {
-                            mTextViewError.setText("Matricule introuvable");
-                            mEditTextIdNumber.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
-                            mEditTextEmail.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
-                            mEditTextPassword.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
-                            mEditTextConfirmPassword.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
-                            mProgressBarCirculaire.setVisibility(View.INVISIBLE);
-                            mButtonConnection.setText("Connexion");
+                            mErrorTextView.setText("Matricule introuvable");
+                            mIdNumberEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
+                            mEmailEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
+                            mPasswordEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
+                            mPasswordConfirmEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
+                            mConnectionProgressBar.setVisibility(View.INVISIBLE);
+                            mConnectionButton.setText("Connexion");
                         }
                         else
                         {
                             if(jsonData.equals("update"))
                             {
                                 Update();
-                                mProgressBarCirculaire.setVisibility(View.INVISIBLE);
-                                mButtonConnection.setText("Connexion");
+                                mConnectionProgressBar.setVisibility(View.INVISIBLE);
+                                mConnectionButton.setText("Connexion");
                             }
                             else
                             {
@@ -238,9 +238,9 @@ public class RegisterActivity extends AppCompatActivity {
             }
             else
             {
-                mTextViewError.setText("Aucune conexion");
-                mProgressBarCirculaire.setVisibility(View.INVISIBLE);
-                mButtonConnection.setText("Connexion");
+                mErrorTextView.setText("Aucune conexion");
+                mConnectionProgressBar.setVisibility(View.INVISIBLE);
+                mConnectionButton.setText("Connexion");
             }
 
         }
@@ -251,16 +251,17 @@ public class RegisterActivity extends AppCompatActivity {
         updateDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
         updateDialog.build();
     }
-    private EditText mEditTextIdNumber;
-    private EditText mEditTextPassword;
-    private EditText mEditTextConfirmPassword;
-    private Button mButtonConnection;
-    private TextView mTextViewLogin;
-    private TextView mTextViewError;
-    private EditText mEditTextEmail;
+    private EditText mIdNumberEditText;
+    private EditText mPasswordEditText;
+    private EditText mPasswordConfirmEditText;
+    private Button mConnectionButton;
+    private TextView mLoginTextView;
+    private TextView mErrorTextView;
+    private EditText mEmailEditText;
     private SQLiteDatabase mDataBase;
     private UserTable mUserTable;
     private Session mSession;
     private String mJeton;
-    private ProgressBar mProgressBarCirculaire;
+    private ProgressBar mConnectionProgressBar;
+    private Account mAccount;
 }
