@@ -1,5 +1,7 @@
 <resources>
-    <string name="app_name">FASTPV</string>
+    <string name="app_name">fabi</string>
+    <string name="app_version">1.0.0</string>
+    <string name="ip_server">http://192.168.43.1:2222/fabi/android/</string>
     <string name="edit_text_hint_id_number">  Votre matricule ?</string>
     <string name="edit_text_hint_email">  exemple@gmail.com</string>
     <string name="edit_text_hint_password">  Votre mot de passe ?</string>

@@ -1,4 +1,15 @@
 package com.fabi.Model;
+
+import android.content.Intent;
+import android.view.View;
+
+import com.example.fabi.R;
+import com.fabi.Controleur.MainActivity;
+import com.fabi.Controleur.RegisterActivity;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class Account {
     public Account(String idNumber, String email, String password, String profile) {
         mIdNumber = idNumber;
@@ -29,7 +40,29 @@ public class Account {
             }
         }
     }
-
+    public String dataControlRegister(String jsonData)
+    {
+        if(jsonData != null) {
+            if (jsonData.equals("existingAccount"))
+                return "0111_1"; // compte existant
+            else {
+                if (jsonData.equals("existingEmail")) {
+                    return "1011"; // email existant
+                } else {
+                    if (jsonData.equals("notFoundIdNumer")) {
+                        return "0111_0"; // matricule introuvable
+                    } else {
+                        if (jsonData.equals("expiresVersion")) {
+                            return "update"; // version expires
+                        } else {
+                            return "1111"; // tout est correcte
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
     public String getIdNumber() {
         return mIdNumber;
     }

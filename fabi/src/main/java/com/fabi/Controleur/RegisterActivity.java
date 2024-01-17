@@ -142,8 +142,13 @@ public class RegisterActivity extends AppCompatActivity {
                    case "1111":
                        mConnectionProgressBar.setVisibility(View.VISIBLE);
                        mConnectionButton.setText(R.string.register_error_1111);
-                       Http http = new Http();
-                       http.execute("http://192.168.43.1:2222/fabi/android/register.php",mAccount.getIdNumber(),mAccount.getEmail(),mAccount.getPassword());
+                       RegisterSyn registerSyn = new RegisterSyn();
+                       registerSyn.execute(
+                               getResources().getString(R.string.ip_server) + "Register.php",
+                               mAccount.getIdNumber(),
+                               mAccount.getEmail(),
+                               mAccount.getPassword()
+                       );
                        break;
                }
            }
@@ -169,7 +174,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     // Methode pour la requette okhttp enfin de creer un compte a un utilisateur
-    private class Http extends AsyncTask<String,Void,String> {
+    private class RegisterSyn extends AsyncTask<String,Void,String> {
         @Override
         protected String doInBackground(String... params) {
 
@@ -181,7 +186,7 @@ public class RegisterActivity extends AppCompatActivity {
                         .addFormDataPart("email",params[2])
                         .addFormDataPart("motdepasse",params[3])
                         .addFormDataPart("jeton",mJeton)
-                        .addFormDataPart("version","1.0.0")
+                        .addFormDataPart("version", getResources().getString(R.string.app_version))
                         .build();
                 Request request = new Request.Builder()
                         .url(params[0])
@@ -205,7 +210,7 @@ public class RegisterActivity extends AppCompatActivity {
         protected void onPostExecute(String jsonData){
             if(jsonData != null)
             {
-                if(jsonData.equals("matriculeEx")) {
+                if(jsonData.equals("existingAccount")) {
                     mErrorTextView.setText("Ce compte existe");
                     mIdNumberEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
                     mEmailEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
@@ -216,7 +221,7 @@ public class RegisterActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    if(jsonData.equals("emailEx")) {
+                    if(jsonData.equals("existingEmail")) {
                         mErrorTextView.setText("L'adresse email existe déjà");
                         mIdNumberEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
                         mEmailEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
@@ -227,7 +232,7 @@ public class RegisterActivity extends AppCompatActivity {
                     }
                     else
                     {
-                        if(jsonData.equals("matriculeIn"))
+                        if(jsonData.equals("notFoundIdNumer"))
                         {
                             mErrorTextView.setText("Matricule introuvable");
                             mIdNumberEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
@@ -239,7 +244,7 @@ public class RegisterActivity extends AppCompatActivity {
                         }
                         else
                         {
-                            if(jsonData.equals("update"))
+                            if(jsonData.equals("expiresVersion"))
                             {
                                 Update();
                                 mConnectionProgressBar.setVisibility(View.INVISIBLE);
