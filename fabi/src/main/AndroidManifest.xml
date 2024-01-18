@@ -25,7 +25,7 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name="com.fabi.Controleur.LivreLocalActivity"
+            android:name="com.fabi.controleur.activity.LivreLocalActivity"
             android:screenOrientation="portrait"
             android:exported="false" />
 
@@ -40,67 +40,67 @@
         </provider>
 
         <activity
-            android:name="com.fabi.Controleur.LivreActivity"
+            android:name="com.fabi.controleur.activity.LivreActivity"
             android:screenOrientation="portrait"
             android:exported="false" />
         <activity
-            android:name="com.fabi.Controleur.CategorieActivity"
+            android:name="com.fabi.controleur.activity.CategorieActivity"
             android:exported="false"
             android:screenOrientation="portrait"
-            android:parentActivityName="com.fabi.Controleur.MainActivity" />
+            android:parentActivityName="com.fabi.controleur.activity.MainActivity" />
         <activity
-            android:name="com.fabi.Controleur.LicenceActivity"
+            android:name="com.fabi.controleur.activity.LicenceActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:label="Licence" />
         <activity
-            android:name="com.fabi.Controleur.EmailChangeActivity"
+            android:name="com.fabi.controleur.activity.EmailChangeActivity"
             android:screenOrientation="portrait"
             android:exported="false" />
         <activity
-            android:name="com.fabi.Controleur.FingerPrintActivity"
+            android:name="com.fabi.controleur.activity.FingerPrintActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:label="Verrouillage par empreinte digitale"
-            android:parentActivityName="com.fabi.Controleur.ParametreActivity" />
+            android:parentActivityName="com.fabi.controleur.activity.ParametreActivity" />
         <activity
-            android:name="com.fabi.Controleur.InfosActivity"
+            android:name="com.fabi.controleur.activity.InfosActivity"
             android:screenOrientation="portrait"
             android:exported="false" />
         <activity
-            android:name="com.fabi.Controleur.ChangePasswordActivity"
+            android:name="com.fabi.controleur.activity.ChangePasswordActivity"
             android:screenOrientation="portrait"
             android:exported="false" />
         <activity
-            android:name="com.fabi.Controleur.ParametreActivity"
+            android:name="com.fabi.controleur.activity.ParametreActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:label="Parametres"
-            android:parentActivityName="com.fabi.Controleur.MainActivity" />
+            android:parentActivityName="com.fabi.controleur.activity.MainActivity" />
         <activity
-            android:name="com.fabi.Controleur.NotificationActivity"
+            android:name="com.fabi.controleur.activity.NotificationActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:label="Notification"
-            android:parentActivityName="com.fabi.Controleur.MainActivity" />
+            android:parentActivityName="com.fabi.controleur.activity.MainActivity" />
         <activity
-            android:name="com.fabi.Controleur.SuggestionActivity"
+            android:name="com.fabi.controleur.activity.SuggestionActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:label="Suggestion"
-            android:parentActivityName="com.fabi.Controleur.MainActivity" />
+            android:parentActivityName="com.fabi.controleur.activity.MainActivity" />
         <activity
-            android:name="com.fabi.Controleur.LoginActivity"
+            android:name="com.fabi.controleur.activity.LoginActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:label="" />
         <activity
-            android:name="com.fabi.Controleur.RegisterActivity"
+            android:name="com.fabi.controleur.activity.RegisterActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:label="Inscrivez-vous" />
         <activity
-            android:name="com.fabi.Controleur.MainActivity"
+            android:name="com.fabi.controleur.activity.MainActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:icon="@drawable/img_default_livre"
@@ -114,14 +114,14 @@
         </activity>
 
         <service
-            android:name="com.fabi.Controleur.MyFirebaseMessagingService"
+            android:name="com.fabi.model.service.MyFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
         <service
-            android:name="com.fabi.Service.NotificationService"
+            android:name="com.fabi.model.service.NotificationService"
             android:exported="false" />
     </application>
 

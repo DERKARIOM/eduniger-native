@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.fabi.Controleur.SuggestionActivity">
+    tools:context="com.fabi.controleur.activity.SuggestionActivity">
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbarSuggestion"
         android:layout_width="match_parent"

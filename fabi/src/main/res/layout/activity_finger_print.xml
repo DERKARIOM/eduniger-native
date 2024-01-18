@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.fabi.Controleur.FingerPrintActivity">
+    tools:context="com.fabi.controleur.activity.FingerPrintActivity">
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbarEmprint"
         android:layout_width="match_parent"

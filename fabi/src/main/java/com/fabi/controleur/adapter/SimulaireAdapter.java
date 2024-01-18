@@ -1,0 +1,96 @@
+package com.fabi.controleur.adapter;
+
+import android.content.Intent;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.fabi.controleur.activity.LivreActivity;
+import com.example.fabi.R;
+import com.fabi.controleur.animation.RoundedTransformation;
+import com.fabi.model.data.Recenmment;
+import com.squareup.picasso.Picasso;
+
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.List;
+
+public class SimulaireAdapter extends RecyclerView.Adapter<SimulaireAdapter.MyViewHolder> {
+    List<Recenmment> mListRecenmment;
+
+    public int getPosition() {
+        return mPosition;
+    }
+
+    public void setPosition(int position) {
+        mPosition = position;
+    }
+
+    private int mPosition;
+    public SimulaireAdapter(List<Recenmment> listRecenmment) {
+        mListRecenmment = listRecenmment;
+    }
+    @Override
+    public SimulaireAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
+        View view = layoutInflater.inflate(R.layout.adapter_similaire,parent,false);
+        return new MyViewHolder(view);
+    }
+    @Override
+    public void onBindViewHolder(MyViewHolder holder, int position) {
+        Recenmment item = mListRecenmment.get(position);
+        try {
+            holder.display(mListRecenmment.get(position));
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+    @Override
+    public int getItemCount() {
+        return mListRecenmment.size();
+    }
+
+
+//    public void Remove(int position){
+//        mListNotification.remove(position);
+//        notifyItemRemoved(position);
+//    }
+
+
+    public class MyViewHolder extends RecyclerView.ViewHolder{
+        private ImageView mCouverture;
+        MyViewHolder(View itemView){
+            super(itemView);
+            mCouverture = (ImageView) itemView.findViewById(R.id.couverteur_recent);
+        }
+        //        @Override
+//        public void onCreateContextMenu(ContextMenu menu , View v , ContextMenu.ContextMenuInfo menuInfo){
+////            menu.add(Menu.NONE,R.id.infoNotif,Menu.NONE,"Information");
+////            menu.add(Menu.NONE,R.id.suppNotif,Menu.NONE,"Supprimer");
+////            menu.add(Menu.NONE,R.id.inportanteNotif,Menu.NONE,"Message importants");
+        void display(Recenmment recenmment) throws SQLException, IOException {
+            Picasso.with(itemView.getContext())
+                    .load("http://192.168.43.1:2222/fabi/couverture/" + recenmment.getCouverteur())
+                    .placeholder(R.drawable.img_default_livre)
+                    .error(R.drawable.img_default_livre)
+                    .transform(new RoundedTransformation(15,4))
+                    .resize(178,284)
+                    .into(mCouverture);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intentLivre = new Intent(itemView.getContext(), LivreActivity.class);
+                    intentLivre.putExtra("idLivre",recenmment.getIdLivre());
+                    itemView.getContext().startActivity(intentLivre);
+                }
+            });
+        }
+
+    }
+}

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.fabi.Controleur.LivreLocalActivity">
+    tools:context="com.fabi.controleur.activity.LivreLocalActivity">
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar3"
         android:layout_width="match_parent"
@@ -23,7 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/toolbar3"
-        tools:context="com.fabi.Controleur.RecomandeFragment">
+        tools:context="com.fabi.controleur.fragment.RecomandeFragment">
 
         <RelativeLayout
             android:layout_width="match_parent"

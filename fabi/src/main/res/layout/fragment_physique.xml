@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.fabi.Controleur.PhysiqueFragment">
+    tools:context="com.fabi.controleur.fragment.PhysiqueFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recylerPysique"
