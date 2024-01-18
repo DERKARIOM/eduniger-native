@@ -11,7 +11,7 @@
         android:id="@+id/block_login"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/EditMatricule"
+        android:layout_above="@+id/edit_text_login_id_number"
         android:layout_alignParentTop="true"
         android:background="@android:color/transparent"
         android:elevation="10dp"
@@ -23,103 +23,65 @@
     </RelativeLayout>
 
     <EditText
-        android:id="@+id/EditMatricule"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/EditPasse"
-        android:layout_marginStart="28dp"
-        android:layout_marginEnd="28dp"
-        android:layout_marginBottom="30dp"
-        android:background="@drawable/forme_white_radius_10dp"
-        android:elevation="10dp"
-        android:hint="  Votre matricule ?"
-        android:drawableStart="@drawable/vector_black3_identify"
+        android:id="@+id/edit_text_login_id_number"
+        android:layout_above="@+id/edit_text_login_password"
+        android:hint="@string/edit_text_hint_id_number"
         android:inputType="number"
-        android:padding="10dp"
-        android:selectAllOnFocus="false" />
+        android:selectAllOnFocus="false"
+        android:drawableStart="@drawable/vector_black3_identify"
+        style="@style/edit_text_register"
+
+         />
 
     <EditText
-        android:id="@+id/EditPasse"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/TextErr"
-        android:layout_marginStart="28dp"
-        android:layout_marginEnd="28dp"
-        android:layout_marginBottom="30dp"
-        android:background="@drawable/forme_white_radius_10dp"
-        android:elevation="10dp"
-        android:hint="  Votre mot de passe ?"
-        android:drawableStart="@drawable/vector_black3_password"
+        android:id="@+id/edit_text_login_password"
+        android:layout_above="@+id/text_view_login_error"
         android:inputType="textPassword"
-        android:padding="10dp" />
+        android:hint="@string/edit_text_hint_password"
+        android:drawableStart="@drawable/vector_black3_password"
+        style="@style/edit_text_register"/>
 
     <TextView
-        android:id="@+id/TextErr"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/text_view_login_error"
         android:layout_above="@id/BlockButtonConnect"
-        android:layout_centerInParent="true"
-        android:layout_marginBottom="30dp"
-        android:text=""
-        android:textColor="@color/rouge"
-        android:textSize="12dp" />
+        style="@style/text_view_error_register"/>
 
     <RelativeLayout
         android:id="@+id/BlockButtonConnect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/TextInscrire"
+        android:layout_above="@+id/text_view_login_pass_register"
         android:layout_marginStart="28dp"
         android:layout_marginEnd="28dp"
         android:layout_marginBottom="40dp"
         >
 
         <ProgressBar
-            android:id="@+id/progress_circularLogin"
-            style="@android:style/Widget.Holo.ProgressBar.Small"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_alignStart="@id/ButtonConnect"
-            android:layout_marginStart="40dp"
-            android:layout_centerVertical="true"
-            android:elevation="5dp"
-            android:padding="20dp"
-            android:visibility="invisible"
-            android:progressDrawable="@drawable/forme_circulaire_bar_connexion" />
+            android:id="@+id/progress_bar_login_connection"
+           style="@style/progress_bar_connection" />
         <Button
-            android:id="@+id/ButtonConnect"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:background="@drawable/forme_purple_200_radius_10dp"
-            android:textAllCaps="false"
-            android:text="Connexion" />
+            android:id="@+id/button_login_connection"
+            style="@style/button_connexion" />
     </RelativeLayout>
 
     <TextView
-        android:id="@+id/TextInscrire"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/TextAide"
-        android:layout_centerHorizontal="true"
-        android:layout_gravity="center_horizontal"
+        android:id="@+id/text_view_login_pass_register"
+        android:layout_above="@+id/text_view_login_helper"
+        android:text="@string/text_view_to_register"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="60dp"
-        android:padding="10dp"
-        android:text="S'inscrire"
-        android:textSize="20dp" />
+        style="@style/text_view_pass_login_register"/>
 
     <TextView
-        android:id="@+id/TextAide"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/text_view_login_helper"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center_horizontal"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
-        android:text="Besoin d'aide"
-        android:textSize="20dp" />
+        android:text="@string/text_help"
+        android:textSize="15sp"
+        style="@style/text_view_pass_login_register" />
 </RelativeLayout>

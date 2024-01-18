@@ -64,7 +64,7 @@
         android:id="@+id/BlockButtonConnect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/TextInscrire"
+        android:layout_above="@+id/text_view_login_pass_register"
         android:layout_margin="10dp"
         >
 

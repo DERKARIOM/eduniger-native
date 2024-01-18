@@ -56,7 +56,6 @@ public class RegisterActivity extends AppCompatActivity {
        mErrorTextView = findViewById(R.id.text_view_register_error);
        mConnectionProgressBar = findViewById(R.id.progress_bar_register_connection);
        mSession = new Session(this);
-       mUserTable = new UserTable(this);
        mJeton = "null";
        mDataBase = openOrCreateDatabase("data.db",MODE_PRIVATE,null);
 
@@ -296,7 +295,6 @@ public class RegisterActivity extends AppCompatActivity {
     private TextView mErrorTextView;
     private EditText mEmailEditText;
     private SQLiteDatabase mDataBase;
-    private UserTable mUserTable;
     private Session mSession;
     private String mJeton;
     private ProgressBar mConnectionProgressBar;
