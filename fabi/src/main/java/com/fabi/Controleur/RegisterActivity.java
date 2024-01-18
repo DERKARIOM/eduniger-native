@@ -172,6 +172,12 @@ public class RegisterActivity extends AppCompatActivity {
         mPasswordConfirmEditText.setBackground(getResources().getDrawable(passwordConfirmIco));
         mErrorTextView.setText(message);
     }
+    public void dataControl(int idNumberIco , int emailIco , int passwordIco , int passwordConfirmIco , int message)
+    {
+        inputControl(idNumberIco,emailIco,passwordIco,passwordConfirmIco,message);
+        mConnectionProgressBar.setVisibility(View.INVISIBLE);
+        mConnectionButton.setText(R.string.button_text_connection);
+    }
 
     // Methode pour la requette okhttp enfin de creer un compte a un utilisateur
     private class RegisterSyn extends AsyncTask<String,Void,String> {
@@ -208,85 +214,71 @@ public class RegisterActivity extends AppCompatActivity {
         }
         @Override
         protected void onPostExecute(String jsonData){
-            if(jsonData != null)
+            switch (mAccount.dataControlRegister(jsonData))
             {
-                if(jsonData.equals("existingAccount")) {
-                    mErrorTextView.setText("Ce compte existe");
-                    mIdNumberEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
-                    mEmailEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
-                    mPasswordEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
-                    mPasswordConfirmEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
+                case "0111_1":
+                        dataControl(
+                                R.drawable.forme_white_radius_100dp_border_rouge,
+                                R.drawable.forme_white_radius_10dp,
+                                R.drawable.forme_white_radius_10dp,
+                                R.drawable.forme_white_radius_10dp,
+                                R.string.register_error_0111_1_data
+                        );
+                    break;
+                case "1011":
+                    dataControl(
+                            R.drawable.forme_white_radius_10dp,
+                            R.drawable.forme_white_radius_100dp_border_rouge,
+                            R.drawable.forme_white_radius_10dp,
+                            R.drawable.forme_white_radius_10dp,
+                            R.string.register_error_1011_data
+                    );
+                    break;
+                case "0111_0":
+                    dataControl(
+                            R.drawable.forme_white_radius_100dp_border_rouge,
+                            R.drawable.forme_white_radius_10dp,
+                            R.drawable.forme_white_radius_10dp,
+                            R.drawable.forme_white_radius_10dp,
+                            R.string.register_error_0111_0_data
+                    );
+                    break;
+                case "update":
+                    Update();
                     mConnectionProgressBar.setVisibility(View.INVISIBLE);
-                    mConnectionButton.setText("Connexion");
-                }
-                else
-                {
-                    if(jsonData.equals("existingEmail")) {
-                        mErrorTextView.setText("L'adresse email existe déjà");
-                        mIdNumberEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
-                        mEmailEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
-                        mPasswordEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
-                        mPasswordConfirmEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
-                        mConnectionProgressBar.setVisibility(View.INVISIBLE);
-                        mConnectionButton.setText("Connexion");
+                    mConnectionButton.setText(R.string.button_text_connection);
+                    break;
+                case "1111":
+                    JSONObject jsonObject = null;
+                    try {
+                        jsonObject = new JSONObject(jsonData);
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
                     }
-                    else
-                    {
-                        if(jsonData.equals("notFoundIdNumer"))
-                        {
-                            mErrorTextView.setText("Matricule introuvable");
-                            mIdNumberEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
-                            mEmailEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
-                            mPasswordEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
-                            mPasswordConfirmEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
-                            mConnectionProgressBar.setVisibility(View.INVISIBLE);
-                            mConnectionButton.setText("Connexion");
-                        }
-                        else
-                        {
-                            if(jsonData.equals("expiresVersion"))
-                            {
-                                Update();
-                                mConnectionProgressBar.setVisibility(View.INVISIBLE);
-                                mConnectionButton.setText("Connexion");
-                            }
-                            else
-                            {
-                                JSONObject jsonObject = null;
-                                try {
-                                    jsonObject = new JSONObject(jsonData);
-                                } catch (JSONException e) {
-                                    throw new RuntimeException(e);
-                                }
-                                try {
-                                    mUserTable.insert(jsonObject.getString("matriculeUt"),
-                                            jsonObject.getString("nomUt"),
-                                            jsonObject.getString("prenomUt"),
-                                            jsonObject.getString("statusUt"));
-                                } catch (JSONException e) {
-                                    throw new RuntimeException(e);
-                                }
-                                mSession.onCreate(mDataBase);
-                                try {
-                                    mSession.insert(jsonObject.getString("matriculeUt"));
-                                } catch (JSONException e) {
-                                    throw new RuntimeException(e);
-                                }
-                                Intent  home= new Intent(RegisterActivity.this , MainActivity.class);
-                                startActivity(home);
-                                finish();
-                            }
-                        }
+                    try {
+                        mUserTable.insert(jsonObject.getString("matriculeUt"),
+                                jsonObject.getString("nomUt"),
+                                jsonObject.getString("prenomUt"),
+                                jsonObject.getString("statusUt"));
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
                     }
-                }
+                    mSession.onCreate(mDataBase);
+                    try {
+                        mSession.insert(jsonObject.getString("matriculeUt"));
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                    Intent  home= new Intent(RegisterActivity.this , MainActivity.class);
+                    startActivity(home);
+                    finish();
+                    break;
+                default:
+                    mErrorTextView.setText(R.string.no_connection);
+                    mConnectionProgressBar.setVisibility(View.INVISIBLE);
+                    mConnectionButton.setText(R.string.button_text_connection);
+                    break;
             }
-            else
-            {
-                mErrorTextView.setText("Aucune conexion");
-                mConnectionProgressBar.setVisibility(View.INVISIBLE);
-                mConnectionButton.setText("Connexion");
-            }
-
         }
     }
     private void Update(){

@@ -15,6 +15,10 @@
     <string name="register_error_1110">Confirmer votre mot de passe svp</string>
     <string name="register_error_1100">Erreur de confirmation</string>
     <string name="register_error_1111">Connexion...</string>
+    <string name="register_error_0111_1_data">Ce compte existe</string>
+    <string name="register_error_1011_data">L\'adresse email existe déjà</string>
+    <string name="register_error_0111_0_data">Matricule introuvable</string>
+    <string name="no_connection">Aucune conexion</string>
 
     <string-array name="journale">
         <item>"Motivation" </item>
