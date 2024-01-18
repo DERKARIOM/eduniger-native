@@ -57,6 +57,7 @@ public class LoginActivity extends AppCompatActivity {
         mSession = new Session(this);
         mUtilisateur = new UserTable(this);
         mJeton="null";
+
         /* Generation de jeton FireBase */
         FirebaseMessaging.getInstance().getToken()
                 .addOnCompleteListener(new OnCompleteListener<String>() {

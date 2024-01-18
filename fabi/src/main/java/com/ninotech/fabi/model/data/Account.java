@@ -1,7 +1,10 @@
 package com.ninotech.fabi.model.data;
 
 import android.content.Context;
+import android.view.View;
 
+import com.ninotech.fabi.R;
+import com.ninotech.fabi.controleur.activity.LoginActivity;
 import com.ninotech.fabi.model.table.UserTable;
 
 public class Account {
@@ -61,6 +64,23 @@ public class Account {
     {
         UserTable userTable = new UserTable(context);
         return (userTable.insert(mIdNumber,nom,prenom,status,email));
+    }
+    public String inputControlLogin(String idNumber , String password)
+    {
+        mIdNumber = idNumber;
+        mPassword = password;
+        if(mIdNumber.equals("") && mPassword.equals(""))
+            return "00"; // Votre matricule et mot de passe svp
+        if(!mPassword.equals("") && mPassword.equals("")){
+            return "01"; // Votre matricule svp
+        }
+        if(!mIdNumber.equals("") && mPassword.equals(""))
+        {
+           return "10"; // Votre mot de passe svp
+        }
+        if(!mIdNumber.equals("") && !mPassword.equals(""))
+            return "11"; // Connection
+        return null;
     }
     public String getIdNumber() {
         return mIdNumber;
