@@ -18,14 +18,14 @@
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@drawable/img_default_livre"
-        android:label="fabi"
+        android:label="Fabi"
         android:logo="@drawable/img_default_livre"
         android:supportsRtl="true"
         android:theme="@style/Theme.Ras"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name="com.fabi.controleur.activity.LivreLocalActivity"
+            android:name="com.ninotech.fabi.controleur.activity.LivreLocalActivity"
             android:screenOrientation="portrait"
             android:exported="false" />
 
@@ -40,71 +40,71 @@
         </provider>
 
         <activity
-            android:name="com.fabi.controleur.activity.LivreActivity"
+            android:name="com.ninotech.fabi.controleur.activity.LivreActivity"
             android:screenOrientation="portrait"
             android:exported="false" />
         <activity
-            android:name="com.fabi.controleur.activity.CategorieActivity"
+            android:name="com.ninotech.fabi.controleur.activity.CategorieActivity"
             android:exported="false"
             android:screenOrientation="portrait"
-            android:parentActivityName="com.fabi.controleur.activity.MainActivity" />
+            android:parentActivityName="com.ninotech.fabi.controleur.activity.MainActivity" />
         <activity
-            android:name="com.fabi.controleur.activity.LicenceActivity"
+            android:name="com.ninotech.fabi.controleur.activity.LicenceActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:label="Licence" />
         <activity
-            android:name="com.fabi.controleur.activity.EmailChangeActivity"
+            android:name="com.ninotech.fabi.controleur.activity.EmailChangeActivity"
             android:screenOrientation="portrait"
             android:exported="false" />
         <activity
-            android:name="com.fabi.controleur.activity.FingerPrintActivity"
+            android:name="com.ninotech.fabi.controleur.activity.FingerPrintActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:label="Verrouillage par empreinte digitale"
-            android:parentActivityName="com.fabi.controleur.activity.ParametreActivity" />
+            android:parentActivityName="com.ninotech.fabi.controleur.activity.ParametreActivity" />
         <activity
-            android:name="com.fabi.controleur.activity.InfosActivity"
+            android:name="com.ninotech.fabi.controleur.activity.InfosActivity"
             android:screenOrientation="portrait"
             android:exported="false" />
         <activity
-            android:name="com.fabi.controleur.activity.ChangePasswordActivity"
+            android:name="com.ninotech.fabi.controleur.activity.ChangePasswordActivity"
             android:screenOrientation="portrait"
             android:exported="false" />
         <activity
-            android:name="com.fabi.controleur.activity.ParametreActivity"
+            android:name="com.ninotech.fabi.controleur.activity.ParametreActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:label="Parametres"
-            android:parentActivityName="com.fabi.controleur.activity.MainActivity" />
+            android:parentActivityName="com.ninotech.fabi.controleur.activity.MainActivity" />
         <activity
-            android:name="com.fabi.controleur.activity.NotificationActivity"
+            android:name="com.ninotech.fabi.controleur.activity.NotificationActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:label="Notification"
-            android:parentActivityName="com.fabi.controleur.activity.MainActivity" />
+            android:parentActivityName="com.ninotech.fabi.controleur.activity.MainActivity" />
         <activity
-            android:name="com.fabi.controleur.activity.SuggestionActivity"
+            android:name="com.ninotech.fabi.controleur.activity.SuggestionActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:label="Suggestion"
-            android:parentActivityName="com.fabi.controleur.activity.MainActivity" />
+            android:parentActivityName="com.ninotech.fabi.controleur.activity.MainActivity" />
         <activity
-            android:name="com.fabi.controleur.activity.LoginActivity"
+            android:name="com.ninotech.fabi.controleur.activity.LoginActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:label="" />
         <activity
-            android:name="com.fabi.controleur.activity.RegisterActivity"
+            android:name="com.ninotech.fabi.controleur.activity.RegisterActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:label="Inscrivez-vous" />
         <activity
-            android:name="com.fabi.controleur.activity.MainActivity"
+            android:name="com.ninotech.fabi.controleur.activity.MainActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:icon="@drawable/img_default_livre"
-            android:label="fabi"
+            android:label="Fabi"
             android:logo="@drawable/img_default_livre">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -114,14 +114,14 @@
         </activity>
 
         <service
-            android:name="com.fabi.model.service.MyFirebaseMessagingService"
+            android:name="com.ninotech.fabi.model.service.MyFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
         <service
-            android:name="com.fabi.model.service.NotificationService"
+            android:name="com.ninotech.fabi.model.service.NotificationService"
             android:exported="false" />
     </application>
 

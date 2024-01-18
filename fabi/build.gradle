@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'com.example.fabi'
+    namespace 'com.ninotech.fabi'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.example.fabi"
+        applicationId "com.ninotech.fabi"
         minSdk 21
         targetSdk 33
         versionCode 1

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/white"
-    tools:context="com.fabi.controleur.activity.EmailChangeActivity">
+    tools:context="com.ninotech.fabi.controleur.activity.EmailChangeActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
