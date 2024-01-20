@@ -1,10 +1,7 @@
 package com.ninotech.fabi.model.data;
 
 import android.content.Context;
-import android.view.View;
 
-import com.ninotech.fabi.R;
-import com.ninotech.fabi.controleur.activity.LoginActivity;
 import com.ninotech.fabi.model.table.UserTable;
 
 public class Account {
@@ -19,7 +16,7 @@ public class Account {
         mIdNumber = idNumber;
         mPassword = password;
     }
-    public String inputControlRegister(String confirPassword)
+    public String inputControl(String confirPassword)
     {
         if(mIdNumber.equals("") && mEmail.equals("") && mPassword.equals("") && confirPassword.equals(""))
             return "0000"; // "Veuillez remplir ces champs svp"
@@ -42,35 +39,7 @@ public class Account {
             }
         }
     }
-    public String dataControlRegister(String jsonData)
-    {
-        if(jsonData != null) {
-            if (jsonData.equals("existingAccount"))
-                return "0111_1"; // compte existant
-            else {
-                if (jsonData.equals("existingEmail")) {
-                    return "1011"; // email existant
-                } else {
-                    if (jsonData.equals("notFoundIdNumer")) {
-                        return "0111_0"; // matricule introuvable
-                    } else {
-                        if (jsonData.equals("expiresVersion")) {
-                            return "update"; // version expires
-                        } else {
-                            return "1111"; // tout est correcte
-                        }
-                    }
-                }
-            }
-        }
-        return null;
-    }
-    public boolean register(Context context,String nom , String prenom , String status , String email)
-    {
-        UserTable userTable = new UserTable(context);
-        return (userTable.insert(mIdNumber,nom,prenom,status,email));
-    }
-    public String inputControlLogin()
+    public String inputControl()
     {
         if(mIdNumber.equals("") && mPassword.equals(""))
             return "00"; // Votre matricule et mot de passe svp
@@ -79,11 +48,41 @@ public class Account {
         }
         if(!mIdNumber.equals("") && mPassword.equals(""))
         {
-           return "10"; // Votre mot de passe svp
+            return "10"; // Votre mot de passe svp
         }
         if(!mIdNumber.equals("") && !mPassword.equals(""))
             return "11"; // Connection
         return null;
+    }
+    public String dataControl(String jsonData)
+    {
+        if(jsonData != null) {
+            switch (jsonData) {
+                case "existingAccount":
+                    return "0111_1"; // compte existant
+                case "accountNotExist":
+                    return "00"; // Le compte n'existe pas
+                case "incorrectPassword":
+                    return "10"; // mot de passe incorrect
+                case "existingEmail":
+                    return "1011"; // email existant
+                case "notFoundIdNumer":
+                    return "0111_0"; // matricule introuvable
+                case "expiresVersion":
+                    return "update"; // version expires
+                default:
+                    return "1111"; // ok
+            }
+        }
+        return "noConnection";
+    }
+    public boolean connection(Context context, String nom , String prenom , String status , String email)
+    {
+        UserTable userTable = new UserTable(context);
+            if(userTable.isUserExist(mIdNumber))
+                return true;
+            else
+                return (userTable.insert(mIdNumber,nom,prenom,status,email));
     }
     public String getIdNumber() {
         return mIdNumber;

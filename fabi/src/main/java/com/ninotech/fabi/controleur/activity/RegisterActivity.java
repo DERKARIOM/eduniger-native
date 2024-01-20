@@ -20,7 +20,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.ninotech.fabi.model.data.Account;
 import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.controleur.dialog.UpdateDialog;
-import com.ninotech.fabi.model.table.UserTable;
 import com.ninotech.fabi.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -82,7 +81,7 @@ public class RegisterActivity extends AppCompatActivity {
                        mEmailEditText.getText().toString(),
                        mPasswordEditText.getText().toString(),
                        "ras");
-               switch (mAccount.inputControlRegister(mPasswordConfirmEditText.getText().toString()))
+               switch (mAccount.inputControl(mPasswordConfirmEditText.getText().toString()))
                {
                    case "0000":
                        inputControl(
@@ -140,7 +139,7 @@ public class RegisterActivity extends AppCompatActivity {
                        break;
                    case "1111":
                        mConnectionProgressBar.setVisibility(View.VISIBLE);
-                       mConnectionButton.setText(R.string.register_error_1111);
+                       mConnectionButton.setText(R.string.register_succes_1111);
                        RegisterSyn registerSyn = new RegisterSyn();
                        registerSyn.execute(
                                getResources().getString(R.string.ip_server) + "Register.php",
@@ -163,12 +162,12 @@ public class RegisterActivity extends AppCompatActivity {
        });
     }
 
-    public void inputControl(int idNumberIco , int emailIco , int passwordIco , int passwordConfirmIco , int message)
+    public void inputControl(int idNumberForm , int emailForm , int passwordForm , int passwordConfirmForm , int message)
     {
-        mIdNumberEditText.setBackground(getResources().getDrawable(idNumberIco));
-        mEmailEditText.setBackground(getResources().getDrawable(emailIco));
-        mPasswordEditText.setBackground(getResources().getDrawable(passwordIco));
-        mPasswordConfirmEditText.setBackground(getResources().getDrawable(passwordConfirmIco));
+        mIdNumberEditText.setBackground(getResources().getDrawable(idNumberForm));
+        mEmailEditText.setBackground(getResources().getDrawable(emailForm));
+        mPasswordEditText.setBackground(getResources().getDrawable(passwordForm));
+        mPasswordConfirmEditText.setBackground(getResources().getDrawable(passwordConfirmForm));
         mErrorTextView.setText(message);
     }
     public void dataControl(int idNumberIco , int emailIco , int passwordIco , int passwordConfirmIco , int message)
@@ -213,7 +212,7 @@ public class RegisterActivity extends AppCompatActivity {
         }
         @Override
         protected void onPostExecute(String jsonData){
-            switch (mAccount.dataControlRegister(jsonData))
+            switch (mAccount.dataControl(jsonData))
             {
                 case "0111_1":
                         dataControl(
@@ -255,7 +254,7 @@ public class RegisterActivity extends AppCompatActivity {
                         throw new RuntimeException(e);
                     }
                     try {
-                        if(mAccount.register(getApplicationContext(), jsonObject.getString("nomUt"), jsonObject.getString("prenomUt"), jsonObject.getString("statusUt"),mAccount.getEmail()))
+                        if(mAccount.connection(getApplicationContext(), jsonObject.getString("nomUt"), jsonObject.getString("prenomUt"), jsonObject.getString("statusUt"),mAccount.getEmail()))
                         {
                             mSession.onCreate(mDataBase);
                             mSession.insert(mAccount.getIdNumber());

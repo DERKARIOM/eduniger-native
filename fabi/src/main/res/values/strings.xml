@@ -14,13 +14,17 @@
     <string name="register_error_1101">Votre mot de passe svp</string>
     <string name="register_error_1110">Confirmer votre mot de passe svp</string>
     <string name="register_error_1100">Erreur de confirmation</string>
-    <string name="register_error_1111">Connexion...</string>
+    <string name="register_succes_1111">Connexion...</string>
     <string name="register_error_0111_1_data">Ce compte existe</string>
     <string name="register_error_1011_data">L\'adresse email existe déjà</string>
     <string name="register_error_0111_0_data">Matricule introuvable</string>
     <string name="no_connection">Aucune conexion</string>
     <string name="text_view_to_register">S\'inscrire</string>
     <string name="text_help">Besoin d\'aide</string>
+    <string name="login_error_00">Votre matricule et mot de passe svp</string>
+    <string name="account_not_exist">Ce compte n\' existe pas</string>
+    <string name="incorrect_password">Mot de passe incorrect</string>
+    <string name="forgot_password">j\'ai oublié mon mot de passe</string>
 
     <string-array name="journale">
         <item>"Motivation" </item>

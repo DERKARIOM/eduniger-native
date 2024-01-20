@@ -36,6 +36,15 @@ public class UserTable extends SQLiteOpenHelper {
         Cursor res = db.rawQuery("SELECT * FROM Utilisateur;",null);
         return res;
     }
+    public boolean isUserExist(String idNumber)
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = db.rawQuery("SELECT * FROM Utilisateur WHERE matriculeUt=\"" + idNumber + "\";",null);
+        if(res.moveToFirst())
+            return true;
+        else
+            return false;
+    }
     public boolean insert (String matricule , String nom , String prenom , String status , String email)
     {
         try {

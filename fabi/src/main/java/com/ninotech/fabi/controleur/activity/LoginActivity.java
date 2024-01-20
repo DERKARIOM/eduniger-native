@@ -1,6 +1,7 @@
 package com.ninotech.fabi.controleur.activity;
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -48,10 +49,11 @@ public class LoginActivity extends AppCompatActivity {
         getSupportActionBar().hide();
 
         /* Initialisation des attributs menbre */
+        mDataBase = openOrCreateDatabase("data.db",MODE_PRIVATE,null);
         mIdNumberEditText = findViewById(R.id.edit_text_login_id_number);
         mPassewordEditText = findViewById(R.id.edit_text_login_password);
         mRegisterTextView = findViewById(R.id.text_view_login_pass_register);
-        mConnectionButtom = findViewById(R.id.button_login_connection);
+        mConnectionButton = findViewById(R.id.button_login_connection);
         mHelperTextView = findViewById(R.id.text_view_login_helper);
         mErrorTextView = findViewById(R.id.text_view_login_error);
         mConnectionProgressBar = findViewById(R.id.progress_bar_login_connection);
@@ -74,34 +76,39 @@ public class LoginActivity extends AppCompatActivity {
                 });
 
         /* En Cliquant sur le boutton de connexion */
-        mConnectionButtom.setOnClickListener(new View.OnClickListener() {
+        mConnectionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mAccount = new Account(mIdNumberEditText.getText().toString(),mPassewordEditText.getText().toString());
-                switch (mAccount.inputControlLogin())
+                switch (mAccount.inputControl())
                 {
                     case "00":
-                        mErrorTextView.setText("Votre matricule et mot de passe svp");
-                        mIdNumberEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
-                        mPassewordEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
+                        inputData(
+                                R.drawable.forme_white_radius_100dp_border_rouge,
+                                R.drawable.forme_white_radius_100dp_border_rouge,
+                                R.string.login_error_00
+                        );
                         break;
                     case "01":
-                        mErrorTextView.setText("Votre matricule svp");
-                        mIdNumberEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
-                        mPassewordEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
+                        inputData(
+                                R.drawable.forme_white_radius_100dp_border_rouge,
+                                R.drawable.forme_white_radius_10dp,
+                                R.string.register_error_0111
+                        );
                         break;
                     case "10":
-                        mErrorTextView.setText("Votre mot de passe svp");
-                        mIdNumberEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
-                        mPassewordEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
+                        inputData(
+                                R.drawable.forme_white_radius_10dp,
+                                R.drawable.forme_white_radius_100dp_border_rouge,
+                                R.string.register_error_1101
+                        );
                         break;
                     case "11":
                         mConnectionProgressBar.setVisibility(View.VISIBLE);
-                        mConnectionButtom.setText("Connexion...");
-                        Http http = new Http();
-                        http.execute(getResources().getString(R.string.ip_server) + "Login.php");
+                        mConnectionButton.setText(R.string.register_succes_1111);
+                        LoginSyn loginSyn = new LoginSyn();
+                        loginSyn.execute(getResources().getString(R.string.ip_server) + "Login.php",mAccount.getIdNumber(),mAccount.getPassword());
                         break;
-
                 }
             }
         });
@@ -120,7 +127,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 try {
-                    if(mHelperTextView.getText().equals("j'ai oublié mon mot de passe"))
+                    if(mHelperTextView.getText().equals(getResources().getString(R.string.forgot_password)))
                     {
                         Intent changePasseWord = new Intent(LoginActivity.this, ChangePasswordActivity.class);
                         startActivity(changePasseWord);
@@ -133,9 +140,20 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
-
+    public void inputData(int idNumberForm , int passwordForm , int message)
+    {
+        mIdNumberEditText.setBackground(getResources().getDrawable(idNumberForm));
+        mPassewordEditText.setBackground(getResources().getDrawable(passwordForm));
+        mErrorTextView.setText(message);
+    }
+    public void dataControl(int idNumberForm , int passwordForm , int message)
+    {
+        inputData(idNumberForm,passwordForm,message);
+        mConnectionProgressBar.setVisibility(View.INVISIBLE);
+        mConnectionButton.setText(R.string.button_text_connection);
+    }
     /* Les methode de la Classe LoginActivity */
-    private class Http extends AsyncTask<String,Void,String> {
+    private class LoginSyn extends AsyncTask<String,Void,String> {
         @Override
         protected String doInBackground(String... params) {
 
@@ -143,10 +161,10 @@ public class LoginActivity extends AppCompatActivity {
                 OkHttpClient client = new OkHttpClient();
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
-                        .addFormDataPart("matricule", mIdNumberEditText.getText().toString())
-                        .addFormDataPart("motdepasse", mPassewordEditText.getText().toString())
+                        .addFormDataPart("matricule", params[1])
+                        .addFormDataPart("motdepasse", params[2])
                         .addFormDataPart("jeton",mJeton)
-                        .addFormDataPart("version","1.0.0")
+                        .addFormDataPart("version",getResources().getString(R.string.app_version))
                         .build();
                 Request request = new Request.Builder()
                         .url(params[0])
@@ -168,68 +186,62 @@ public class LoginActivity extends AppCompatActivity {
         }
         @Override
         protected void onPostExecute(String jsonData){
-            //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
-            if(jsonData != null)
+            switch (mAccount.dataControl(jsonData))
             {
-                if(jsonData.equals("false"))
-                {
-                    mErrorTextView.setText("Ce compte n' existe pas");
-                    mIdNumberEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
-                    mPassewordEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
+                case "00":
+                    dataControl(
+                            R.drawable.forme_white_radius_100dp_border_rouge,
+                            R.drawable.forme_white_radius_100dp_border_rouge,
+                            R.string.account_not_exist
+                    );
+                    break;
+                case "10":
+                    dataControl(
+                            R.drawable.forme_white_radius_10dp,
+                            R.drawable.forme_white_radius_100dp_border_rouge,
+                            R.string.incorrect_password
+                    );
+                    mHelperTextView.setText("j'ai oublié mon mot de passe");
+                    mHelperTextView.setTextColor(Color.parseColor("#E6FD1010"));
                     mConnectionProgressBar.setVisibility(View.INVISIBLE);
-                    mConnectionButtom.setText("Connexion");
-
-                }
-                else {
-                    if (jsonData.equals("true")) {
-                        mIdNumberEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
-                        mErrorTextView.setText("Mot de passe incorrect");
-                        mHelperTextView.setText("j'ai oublié mon mot de passe");
-                        mHelperTextView.setTextColor(Color.parseColor("#E6FD1010"));
-                        mPassewordEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
-                        mHelperTextView.setTextSize(15);
-                        mConnectionProgressBar.setVisibility(View.INVISIBLE);
-                        mConnectionButtom.setText("Connexion");
-                    } else {
-                        if (jsonData.equals("update")) {
-                            Update();
-                            mConnectionProgressBar.setVisibility(View.INVISIBLE);
-                            mConnectionButtom.setText("Connexion");
-                        } else {
-//                            mSession.insert(mEditMatricule.getText().toString());
-                            JSONObject jsonObject = null;
-                            try {
-                                jsonObject = new JSONObject(jsonData);
-                            } catch (JSONException e) {
-                                throw new RuntimeException(e);
-                            }
-                            try {
-                                mUtilisateur.insert(jsonObject.getString("matriculeUt"),
-                                        jsonObject.getString("nomUt"),
-                                        jsonObject.getString("prenomUt"),
-                                        jsonObject.getString("statusUt"),jsonObject.getString("email"));
-                            } catch (JSONException e) {
-                                throw new RuntimeException(e);
-                            }
-                            try {
-                                mSession.insert(jsonObject.getString("matriculeUt"));
-                            } catch (JSONException e) {
-                                throw new RuntimeException(e);
-                            }
-                            Intent home = new Intent(LoginActivity.this, MainActivity.class);
+                    break;
+                case "update":
+                    Update();
+                    mConnectionProgressBar.setVisibility(View.INVISIBLE);
+                    mConnectionButton.setText(R.string.button_text_connection);
+                    break;
+                case "noConnection":
+                    mErrorTextView.setText(R.string.no_connection);
+                    mConnectionProgressBar.setVisibility(View.INVISIBLE);
+                    mConnectionButton.setText("Connexion");
+                    break;
+                default:
+                    JSONObject jsonObject = null;
+                    try {
+                        jsonObject = new JSONObject(jsonData);
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                    try {
+                        if(mAccount.connection(getApplicationContext(), jsonObject.getString("nomUt"), jsonObject.getString("prenomUt"), jsonObject.getString("statusUt"),jsonObject.getString("email")))
+                        {
+                            mSession.onCreate(mDataBase);
+                            mSession.insert(mAccount.getIdNumber());
+                            Intent  home= new Intent(LoginActivity.this , MainActivity.class);
                             startActivity(home);
                             finish();
                         }
+                        else
+                        {
+                            mErrorTextView.setText(R.string.no_connection);
+                            mConnectionProgressBar.setVisibility(View.INVISIBLE);
+                            mConnectionButton.setText(R.string.button_text_connection);
+                        }
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
                     }
-                }
+                    break;
             }
-            else
-            {
-                mErrorTextView.setText("Aucune conexion");
-                mConnectionProgressBar.setVisibility(View.INVISIBLE);
-                mConnectionButtom.setText("Connexion");
-            }
-
         }
     }
     private void Update(){
@@ -260,8 +272,9 @@ public class LoginActivity extends AppCompatActivity {
     /* Les attributs menbre */
     private EditText mIdNumberEditText;
     private EditText mPassewordEditText;
-    private Button mConnectionButtom;
+    private Button mConnectionButton;
     private TextView mRegisterTextView;
+    private SQLiteDatabase mDataBase;
     private TextView mErrorTextView;
     private TextView mHelperTextView;
     private Session mSession;
