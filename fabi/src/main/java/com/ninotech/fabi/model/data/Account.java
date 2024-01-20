@@ -14,6 +14,11 @@ public class Account {
         mPassword = password;
         mProfile = profile;
     }
+    public Account(String idNumber , String password)
+    {
+        mIdNumber = idNumber;
+        mPassword = password;
+    }
     public String inputControlRegister(String confirPassword)
     {
         if(mIdNumber.equals("") && mEmail.equals("") && mPassword.equals("") && confirPassword.equals(""))
@@ -65,13 +70,11 @@ public class Account {
         UserTable userTable = new UserTable(context);
         return (userTable.insert(mIdNumber,nom,prenom,status,email));
     }
-    public String inputControlLogin(String idNumber , String password)
+    public String inputControlLogin()
     {
-        mIdNumber = idNumber;
-        mPassword = password;
         if(mIdNumber.equals("") && mPassword.equals(""))
             return "00"; // Votre matricule et mot de passe svp
-        if(!mPassword.equals("") && mPassword.equals("")){
+        if(!mPassword.equals("") && mIdNumber.equals("")){
             return "01"; // Votre matricule svp
         }
         if(!mIdNumber.equals("") && mPassword.equals(""))

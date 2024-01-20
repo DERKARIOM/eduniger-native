@@ -17,6 +17,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.ninotech.fabi.model.data.Account;
 import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.controleur.dialog.UpdateDialog;
 import com.ninotech.fabi.model.table.UserTable;
@@ -76,30 +77,31 @@ public class LoginActivity extends AppCompatActivity {
         mConnectionButtom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(mIdNumberEditText.getText().toString().equals("") && mPassewordEditText.getText().toString().equals(""))
+                mAccount = new Account(mIdNumberEditText.getText().toString(),mPassewordEditText.getText().toString());
+                switch (mAccount.inputControlLogin())
                 {
-                    mErrorTextView.setText("Votre matricule et mot de passe svp");
-                    mIdNumberEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
-                    mPassewordEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
-                }
-                if(mIdNumberEditText.getText().toString().equals("") && !mPassewordEditText.getText().toString().equals("")){
-                    mErrorTextView.setText("Votre matricule svp");
-                    mIdNumberEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
-                    mPassewordEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
-                }
+                    case "00":
+                        mErrorTextView.setText("Votre matricule et mot de passe svp");
+                        mIdNumberEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
+                        mPassewordEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
+                        break;
+                    case "01":
+                        mErrorTextView.setText("Votre matricule svp");
+                        mIdNumberEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
+                        mPassewordEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
+                        break;
+                    case "10":
+                        mErrorTextView.setText("Votre mot de passe svp");
+                        mIdNumberEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
+                        mPassewordEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
+                        break;
+                    case "11":
+                        mConnectionProgressBar.setVisibility(View.VISIBLE);
+                        mConnectionButtom.setText("Connexion...");
+                        Http http = new Http();
+                        http.execute(getResources().getString(R.string.ip_server) + "Login.php");
+                        break;
 
-                if(!mIdNumberEditText.getText().toString().equals("") && mPassewordEditText.getText().toString().equals(""))
-                {
-                    mErrorTextView.setText("Votre mot de passe svp");
-                    mIdNumberEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
-                    mPassewordEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
-                }
-                if(!mIdNumberEditText.getText().toString().equals("") && !mPassewordEditText.getText().toString().equals(""))
-                {
-                    mConnectionProgressBar.setVisibility(View.VISIBLE);
-                    mConnectionButtom.setText("Connexion...");
-                    Http http = new Http();
-                    http.execute(getResources().getString(R.string.ip_server) + "Login.php");
                 }
             }
         });
@@ -266,4 +268,5 @@ public class LoginActivity extends AppCompatActivity {
     private UserTable mUtilisateur;
     private String mJeton;
     private ProgressBar mConnectionProgressBar;
+    private Account mAccount;
 }
