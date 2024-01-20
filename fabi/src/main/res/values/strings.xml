@@ -25,6 +25,7 @@
     <string name="account_not_exist">Ce compte n\' existe pas</string>
     <string name="incorrect_password">Mot de passe incorrect</string>
     <string name="forgot_password">j\'ai oublié mon mot de passe</string>
+    <string name="find_book">  Recherche des livre</string>
 
     <string-array name="journale">
         <item>"Motivation" </item>

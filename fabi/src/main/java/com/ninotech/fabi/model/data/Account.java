@@ -1,7 +1,9 @@
 package com.ninotech.fabi.model.data;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 
+import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.model.table.UserTable;
 
 public class Account {
@@ -10,6 +12,13 @@ public class Account {
         mEmail = email;
         mPassword = password;
         mProfile = profile;
+    }
+    public Account()
+    {
+        mIdNumber=null;
+        mPassword=null;
+        mEmail=null;
+        mProfile=null;
     }
     public Account(String idNumber , String password)
     {
@@ -83,6 +92,17 @@ public class Account {
                 return true;
             else
                 return (userTable.insert(mIdNumber,nom,prenom,status,email));
+    }
+    public boolean logout(Context context,SQLiteDatabase database)
+    {
+        Session session = new Session(context);
+        try {
+            session.onUpgrade(database,0,1);
+            return true;
+        }catch (Exception e)
+        {
+            return false;
+        }
     }
     public String getIdNumber() {
         return mIdNumber;

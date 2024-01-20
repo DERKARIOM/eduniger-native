@@ -1,5 +1,7 @@
 package com.ninotech.fabi.controleur.activity;
 
+import static java.lang.System.exit;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -17,6 +19,7 @@ import androidx.appcompat.widget.Toolbar;
 import com.ninotech.fabi.controleur.fragment.AccueilFragment;
 import com.ninotech.fabi.controleur.fragment.AssistanceFragment;
 import com.ninotech.fabi.controleur.fragment.BibliothequeFragment;
+import com.ninotech.fabi.model.data.Account;
 import com.ninotech.fabi.model.table.ElectroniqueTable;
 import com.ninotech.fabi.model.table.EmpreiteTable;
 import com.ninotech.fabi.model.table.NotificationTable;
@@ -43,29 +46,25 @@ public class MainActivity extends AppCompatActivity {
                 Lock();
             }
         };
-        mBottomNavigationView = findViewById(R.id.bottom_menu);
+        mBottomNavigationView = findViewById(R.id.bottom_navigation_main);
+        mToolbar = (Toolbar)findViewById(R.id.toolbar_main);
         mSharedPreferences = getSharedPreferences("MODE",Context.MODE_PRIVATE);
         mNightMODE = mSharedPreferences.getBoolean("night",false);
-        mDb = openOrCreateDatabase("data.db",MODE_PRIVATE,null);
+        mDatabase = openOrCreateDatabase("data.db",MODE_PRIVATE,null);
         mAccueilFragment = new AccueilFragment();
         mAssistanceFragment = new AssistanceFragment();
         mBibliothequeFragment = new BibliothequeFragment();
         mSession = new Session(this);
         mElectroniqueTable = new ElectroniqueTable(this);
         mEmpreiteTable = new EmpreiteTable(this);
-        mUtilisateur = new UserTable(this);
+        mUserTable = new UserTable(this);
         mNotificationTable = new NotificationTable(this);
-        mToolbar = (Toolbar)findViewById(R.id.toolbar);
-        mUtilisateur.onCreate(mDb);
-        mElectroniqueTable.onCreate(mDb);
-        mNotificationTable.onCreate(mDb);
+        mUserTable.onCreate(mDatabase);
+        mElectroniqueTable.onCreate(mDatabase);
+        mNotificationTable.onCreate(mDatabase);
         mMenuItem = mToolbar.getMenu().findItem(R.id.menuHomeNotification);
         mReservationService = new Intent(this, NotificationService.class);
-//        BadgeDrawable badgeDrawableNotif  = BadgeDrawable.create(this);
-//        badgeDrawableNotif.setNumber(5);
-//        BadgeUtils.attachBadgeDrawable(badgeDrawableNotif,mToolbar,2);
-       // BadgeDrawable badgeDrawableNotif = mBottomNavigationView.getOrCreateBadge(R.id.menuHomeNotification);
-
+        mAccount = new Account();
         /* Detection de reseau */
         if(android.os.Build.VERSION.SDK_INT > 9)
         {
@@ -161,7 +160,8 @@ public class MainActivity extends AppCompatActivity {
         mToolbar.getMenu().getItem(7).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
-                deconnecter();
+                if(mAccount.logout(getApplicationContext(),mDatabase))
+                    reboot();
                 return false;
             }
         });
@@ -210,26 +210,22 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void deconnecter() {
-//        stopService(mNoteService);
-        mSession.onUpgrade(mDb,0,1);
+    private void reboot() {
         Intent login = new Intent(MainActivity.this, MainActivity.class);
         startActivity(login);
         finish();
-//        exit(1);
+        exit(1);
     }
 
     private void Lock() {
         mEmpreiteTable.onUpdate("0");
     }
-
-    /* Les attributs de la Classe MainActivity */
-    private SQLiteDatabase mDb;
-
     public BottomNavigationView getBottomNavigationView() {
         return mBottomNavigationView;
     }
 
+    /* Les attributs de la Classe MainActivity */
+    private SQLiteDatabase mDatabase;
     private BottomNavigationView mBottomNavigationView;
     private AccueilFragment mAccueilFragment = new AccueilFragment();
     private AssistanceFragment mAssistanceFragment = new AssistanceFragment();
@@ -238,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences mSharedPreferences;
     private Session mSession;
     private EmpreiteTable mEmpreiteTable;
-    private UserTable mUtilisateur;
+    private UserTable mUserTable;
     private Toolbar mToolbar;
     private ElectroniqueTable mElectroniqueTable;
     private Handler mHandler;
@@ -246,4 +242,5 @@ public class MainActivity extends AppCompatActivity {
     private Intent mReservationService;
     private NotificationTable mNotificationTable;
     private MenuItem mMenuItem;
+    private Account mAccount;
 }

@@ -6,13 +6,13 @@
     android:layout_height="match_parent"
     tools:context="com.ninotech.fabi.controleur.activity.MainActivity">
    <RelativeLayout
+       android:id="@+id/Btoolbar"
        android:layout_width="wrap_content"
-       android:layout_height="wrap_content"
-       android:layout_marginStart="25dp"
-       android:layout_marginTop="20dp"
-       android:id="@+id/Btoolbar">
+           android:layout_height="wrap_content"
+           android:layout_marginStart="25dp"
+           android:layout_marginTop="20dp">
        <androidx.appcompat.widget.Toolbar
-           android:id="@+id/toolbar"
+           android:id="@+id/toolbar_main"
            android:layout_width="match_parent"
            android:layout_height="wrap_content"
            app:menu="@menu/menu_home"
@@ -31,7 +31,7 @@
            android:elevation="1dp"
            android:layout_alignParentEnd="true"
            android:layout_marginRight="100dp"
-           android:hint="  Recherche des livres"
+           android:hint="@string/find_book"
            android:drawableStart="?android:attr/actionModeWebSearchDrawable"
            android:drawableEnd="@drawable/vector_black3_micro"
            android:inputType="text"
@@ -40,16 +40,16 @@
            android:selectAllOnFocus="false" />
    </RelativeLayout>
     <FrameLayout
+        android:id="@+id/Top_comtainer"
         android:layout_below="@+id/Btoolbar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/Top_comtainer"
-        android:layout_above="@+id/bottom_menu"
+        android:layout_above="@+id/bottom_navigation_main"
         />
     <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation_main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/bottom_menu"
         android:layout_alignParentBottom="true"
         app:menu="@menu/menu_bottom"
         />

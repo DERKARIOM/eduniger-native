@@ -201,7 +201,7 @@ public class LoginActivity extends AppCompatActivity {
                             R.drawable.forme_white_radius_100dp_border_rouge,
                             R.string.incorrect_password
                     );
-                    mHelperTextView.setText("j'ai oublié mon mot de passe");
+                    mHelperTextView.setText(R.string.forgot_password);
                     mHelperTextView.setTextColor(Color.parseColor("#E6FD1010"));
                     mConnectionProgressBar.setVisibility(View.INVISIBLE);
                     break;
@@ -213,7 +213,7 @@ public class LoginActivity extends AppCompatActivity {
                 case "noConnection":
                     mErrorTextView.setText(R.string.no_connection);
                     mConnectionProgressBar.setVisibility(View.INVISIBLE);
-                    mConnectionButton.setText("Connexion");
+                    mConnectionButton.setText(R.string.button_text_connection);
                     break;
                 default:
                     JSONObject jsonObject = null;
