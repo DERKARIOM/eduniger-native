@@ -37,6 +37,7 @@
            android:inputType="text"
            android:layout_centerVertical="true"
            android:padding="5dp"
+           android:focusable="false"
            android:selectAllOnFocus="false" />
    </RelativeLayout>
     <FrameLayout

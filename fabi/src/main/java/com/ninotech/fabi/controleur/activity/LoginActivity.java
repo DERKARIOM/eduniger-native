@@ -49,7 +49,6 @@ public class LoginActivity extends AppCompatActivity {
         getSupportActionBar().hide();
 
         /* Initialisation des attributs menbre */
-        mDataBase = openOrCreateDatabase("data.db",MODE_PRIVATE,null);
         mIdNumberEditText = findViewById(R.id.edit_text_login_id_number);
         mPassewordEditText = findViewById(R.id.edit_text_login_password);
         mRegisterTextView = findViewById(R.id.text_view_login_pass_register);
@@ -57,8 +56,6 @@ public class LoginActivity extends AppCompatActivity {
         mHelperTextView = findViewById(R.id.text_view_login_helper);
         mErrorTextView = findViewById(R.id.text_view_login_error);
         mConnectionProgressBar = findViewById(R.id.progress_bar_login_connection);
-        mSession = new Session(this);
-        mUtilisateur = new UserTable(this);
         mJeton="null";
 
         /* Generation de jeton FireBase */
@@ -223,13 +220,14 @@ public class LoginActivity extends AppCompatActivity {
                         throw new RuntimeException(e);
                     }
                     try {
-                        if(mAccount.connection(getApplicationContext(), jsonObject.getString("nomUt"), jsonObject.getString("prenomUt"), jsonObject.getString("statusUt"),jsonObject.getString("email")))
+                        if(mAccount.register(getApplicationContext(), jsonObject.getString("nomUt"), jsonObject.getString("prenomUt"), jsonObject.getString("statusUt"),jsonObject.getString("email")))
                         {
-                            mSession.onCreate(mDataBase);
-                            mSession.insert(mAccount.getIdNumber());
-                            Intent  home= new Intent(LoginActivity.this , MainActivity.class);
-                            startActivity(home);
-                            finish();
+                            if(mAccount.login(getApplicationContext()))
+                            {
+                                Intent  home= new Intent(LoginActivity.this , MainActivity.class);
+                                startActivity(home);
+                                finish();
+                            }
                         }
                         else
                         {
@@ -274,11 +272,8 @@ public class LoginActivity extends AppCompatActivity {
     private EditText mPassewordEditText;
     private Button mConnectionButton;
     private TextView mRegisterTextView;
-    private SQLiteDatabase mDataBase;
     private TextView mErrorTextView;
     private TextView mHelperTextView;
-    private Session mSession;
-    private UserTable mUtilisateur;
     private String mJeton;
     private ProgressBar mConnectionProgressBar;
     private Account mAccount;

@@ -1,8 +1,11 @@
 package com.ninotech.fabi.model.data;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.ninotech.fabi.R;
 import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.model.table.UserTable;
 
@@ -24,6 +27,8 @@ public class Account {
     {
         mIdNumber = idNumber;
         mPassword = password;
+        mEmail = null;
+        mProfile = null;
     }
     public String inputControl(String confirPassword)
     {
@@ -40,28 +45,20 @@ public class Account {
             if(confirPassword.equals(""))
                 return "1110";
             if(mPassword.equals(confirPassword))
-            {
                 return "1111"; // Connexion...
-            }else
-            {
+            else
                 return "1100"; // Erreur de confirmation
-            }
         }
     }
     public String inputControl()
     {
         if(mIdNumber.equals("") && mPassword.equals(""))
             return "00"; // Votre matricule et mot de passe svp
-        if(!mPassword.equals("") && mIdNumber.equals("")){
+        if(mIdNumber.equals(""))
             return "01"; // Votre matricule svp
-        }
-        if(!mIdNumber.equals("") && mPassword.equals(""))
-        {
+        if(mPassword.equals(""))
             return "10"; // Votre mot de passe svp
-        }
-        if(!mIdNumber.equals("") && !mPassword.equals(""))
-            return "11"; // Connection
-        return null;
+        return "11"; // Connection
     }
     public String dataControl(String jsonData)
     {
@@ -85,13 +82,26 @@ public class Account {
         }
         return "noConnection";
     }
-    public boolean connection(Context context, String nom , String prenom , String status , String email)
+    public boolean register(Context context, String nom , String prenom , String status , String email)
     {
         UserTable userTable = new UserTable(context);
             if(userTable.isUserExist(mIdNumber))
                 return true;
             else
                 return (userTable.insert(mIdNumber,nom,prenom,status,email));
+    }
+    public boolean login(Context context)
+    {
+        SQLiteDatabase database = context.openOrCreateDatabase(context.getResources().getString(R.string.database_name),MODE_PRIVATE,null);
+        Session session = new Session(context);
+        try {
+            session.onCreate(database);
+            session.insert(mIdNumber);
+            return true;
+        }catch (Exception e)
+        {
+            return false;
+        }
     }
     public boolean logout(Context context,SQLiteDatabase database)
     {

@@ -54,9 +54,7 @@ public class RegisterActivity extends AppCompatActivity {
        mLoginTextView = findViewById(R.id.text_view_register_login);
        mErrorTextView = findViewById(R.id.text_view_register_error);
        mConnectionProgressBar = findViewById(R.id.progress_bar_register_connection);
-       mSession = new Session(this);
        mJeton = "null";
-       mDataBase = openOrCreateDatabase("data.db",MODE_PRIVATE,null);
 
         /* Generation de jeton FireBase */
         FirebaseMessaging.getInstance().getToken()
@@ -254,13 +252,14 @@ public class RegisterActivity extends AppCompatActivity {
                         throw new RuntimeException(e);
                     }
                     try {
-                        if(mAccount.connection(getApplicationContext(), jsonObject.getString("nomUt"), jsonObject.getString("prenomUt"), jsonObject.getString("statusUt"),mAccount.getEmail()))
+                        if(mAccount.register(getApplicationContext(), jsonObject.getString("nomUt"), jsonObject.getString("prenomUt"), jsonObject.getString("statusUt"),mAccount.getEmail()))
                         {
-                            mSession.onCreate(mDataBase);
-                            mSession.insert(mAccount.getIdNumber());
-                            Intent  home= new Intent(RegisterActivity.this , MainActivity.class);
-                            startActivity(home);
-                            finish();
+                            if(mAccount.login(getApplicationContext()))
+                            {
+                                Intent  home= new Intent(RegisterActivity.this , MainActivity.class);
+                                startActivity(home);
+                                finish();
+                            }
                         }
                         else
                         {
@@ -293,8 +292,6 @@ public class RegisterActivity extends AppCompatActivity {
     private TextView mLoginTextView;
     private TextView mErrorTextView;
     private EditText mEmailEditText;
-    private SQLiteDatabase mDataBase;
-    private Session mSession;
     private String mJeton;
     private ProgressBar mConnectionProgressBar;
     private Account mAccount;
