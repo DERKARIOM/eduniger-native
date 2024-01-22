@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="size_title">18sp</dimen> <!-- La taile des titre du projet -->
+    <dimen name="size_sub_title">12sp</dimen> <!-- La taile des sous titre d projet -->
+    <dimen name="size_text">15sp</dimen> <!-- La taile des texte du projet -->
+</resources>

@@ -34,7 +34,7 @@
         <item name="android:layout_marginBottom">30dp</item>
         <item name="android:text"></item>
         <item name="android:textColor">@color/rouge</item>
-        <item name="android:textSize">12sp</item>
+        <item name="android:textSize">@dimen/size_sub_title</item>
     </style>
 
 <!--    Le themes de la bar de progression(ProgressBar) du type connexion -->
@@ -65,7 +65,7 @@
         <item name="android:layout_centerHorizontal">true</item>
         <item name="android:padding">10dp</item>
         <item name="android:text">@string/text_view_pass_register_login</item>
-        <item name="android:textSize">18sp</item>
+        <item name="android:textSize">@dimen/size_title</item>
     </style>
 
     <style name="Dialog.fastpv" parent="android:Theme.Dialog" >
