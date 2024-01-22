@@ -65,7 +65,7 @@ public class DiscussionFragment extends Fragment {
             OkHttpClient client = new OkHttpClient();
             RequestBody requestBody = new MultipartBody.Builder()
                     .setType(MultipartBody.FORM)
-                    .addFormDataPart("matricule",mSession.getMatricule())
+                    .addFormDataPart("matricule",mSession.getIdNumber())
                     .addFormDataPart("message",mRequete)
                     .build();
             Request request = new Request.Builder()

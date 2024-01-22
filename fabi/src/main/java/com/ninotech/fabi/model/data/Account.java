@@ -3,13 +3,10 @@ package com.ninotech.fabi.model.data;
 import static android.content.Context.MODE_PRIVATE;
 
 import android.content.Context;
-import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.widget.Toast;
 
 import com.ninotech.fabi.R;
-import com.ninotech.fabi.controleur.activity.LoginActivity;
-import com.ninotech.fabi.controleur.activity.MainActivity;
 import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.model.table.UserTable;
 
@@ -124,7 +121,7 @@ public class Account {
     {
         Session session = new Session(context);
         try {
-            Toast.makeText(context, session.getMatricule(), Toast.LENGTH_SHORT);
+            Toast.makeText(context, session.getIdNumber(), Toast.LENGTH_SHORT);
             return true;
         }
         catch (Exception e)

@@ -6,45 +6,52 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.ninotech.fabi.R;
+
 public class Session extends SQLiteOpenHelper {
-    public static final String DATABASE_NAME = "data.db";
     public static final String NAME_TABLE = "Session";
     public Session(Context context) {
-        super(context, DATABASE_NAME, null, 1);
+        super(context, context.getString(R.string.database_name), null, 1);
     }
     @Override
-    public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE IF NOT EXISTS Session\n" +
+    public void onCreate(SQLiteDatabase database) {
+        database.execSQL("CREATE TABLE IF NOT EXISTS " + NAME_TABLE + "\n" +
                 "(\n" +
                 "    matricule VARCHAR(10) PRIMARY KEY\n" +
                 ");");
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase db, int i, int i1) {
-        db.execSQL("DROP TABLE IF EXISTS Session");
-        onCreate(db);
+    public void onUpgrade(SQLiteDatabase database, int i, int i1) {
+        database.execSQL("DROP TABLE IF EXISTS " + NAME_TABLE);
+        onCreate(database);
     }
     public Cursor getData()
     {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = null;
-        res = db.rawQuery("SELECT * FROM Session",null);
-        return res;
+        SQLiteDatabase database = this.getReadableDatabase();
+        Cursor cursor = null;
+        cursor = database.rawQuery("SELECT * FROM " + NAME_TABLE,null);
+        return cursor;
     }
-    public boolean insert (String matricule)
+    public String getIdNumber()
     {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put("matricule",matricule);
-        db.insert("Session",null,contentValues);
-        return  true;
+        SQLiteDatabase database = this.getReadableDatabase();
+        Cursor cursor = database.rawQuery("SELECT * FROM " + NAME_TABLE,null);
+        cursor.moveToFirst();
+        return cursor.getString(0);
     }
-    public String getMatricule()
+    public boolean insert (String idNumber)
     {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("SELECT * FROM Session",null);
-        res.moveToFirst();
-        return res.getString(0);
+        try {
+            SQLiteDatabase database = this.getWritableDatabase();
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("matricule",idNumber);
+            database.insert(NAME_TABLE,null,contentValues);
+            return  true;
+        }catch (Exception e)
+        {
+            return false;
+        }
+
     }
 }

@@ -92,7 +92,7 @@ public class SuggestionActivity extends AppCompatActivity {
                 OkHttpClient client = new OkHttpClient();
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
-                        .addFormDataPart("matricule",mSession.getMatricule())
+                        .addFormDataPart("matricule",mSession.getIdNumber())
                         .addFormDataPart("objet", mObjetJuggestion.getSelectedItem().toString())
                         .addFormDataPart("suggestion",mSuggestion.getText().toString())
                         .addFormDataPart("model",mModel)

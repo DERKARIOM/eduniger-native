@@ -43,7 +43,7 @@ public class NotificationService extends Service {
         mSession = new Session(this);
         mNotificationTable = new NotificationTable(this);
         try {
-            mMatricule = mSession.getMatricule();
+            mMatricule = mSession.getIdNumber();
         }catch (Exception e)
         {
             mMatricule = "0";

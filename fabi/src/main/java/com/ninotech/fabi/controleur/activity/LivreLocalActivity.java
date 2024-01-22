@@ -39,10 +39,10 @@ public class LivreLocalActivity extends AppCompatActivity {
             case 1: // Les Livre Telechages
                 mItemLocal.setImageResource(R.drawable.img_telecharge_local);
                 mList1 = new ArrayList<>();
-                Cursor cursor1 = mElectroniqueTable.getData(mSession.getMatricule());
+                Cursor cursor1 = mElectroniqueTable.getData(mSession.getIdNumber());
                 cursor1.moveToFirst();
                 do {
-                    mList1.add(new LivreLocal(mSession.getMatricule(),cursor1.getString(5),cursor1.getString(8),cursor1.getString(7),cursor1.getString(4),cursor1.getString(6)));
+                    mList1.add(new LivreLocal(mSession.getIdNumber(),cursor1.getString(5),cursor1.getString(8),cursor1.getString(7),cursor1.getString(4),cursor1.getString(6)));
                 }while(cursor1.moveToNext());
                 mLivreLocalAdapter = new LivreLocalAdapter(mList1);
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -57,7 +57,7 @@ public class LivreLocalActivity extends AppCompatActivity {
             case 4: // Categorie
                 mItemLocal.setImageResource(R.drawable.img_categorie);
                 mList4 = new ArrayList<>();
-                Cursor cursor4 = mElectroniqueTable.getData(mSession.getMatricule());
+                Cursor cursor4 = mElectroniqueTable.getData(mSession.getIdNumber());
                 cursor4.moveToFirst();
                 do {
                     mList4.add(new Categorie(cursor4.getString(9),cursor4.getString(7)));
@@ -69,7 +69,7 @@ public class LivreLocalActivity extends AppCompatActivity {
             case 5: // Auteurs
                 mItemLocal.setImageResource(R.drawable.img_auteur_local);
                 mList4 = new ArrayList<>();
-                Cursor cursor5 = mElectroniqueTable.getData(mSession.getMatricule());
+                Cursor cursor5 = mElectroniqueTable.getData(mSession.getIdNumber());
                 cursor5.moveToFirst();
                 do {
                     mList4.add(new Categorie(cursor5.getString(10),cursor5.getString(4)));

@@ -121,7 +121,7 @@ public class RecomandeFragment extends Fragment {
                 OkHttpClient client = new OkHttpClient();
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
-                        .addFormDataPart("matricule",mSession.getMatricule())
+                        .addFormDataPart("matricule",mSession.getIdNumber())
                         .build();
                 Request request = new Request.Builder()
                         .url(params[0])

@@ -30,7 +30,7 @@ public class NotificationActivity extends AppCompatActivity {
         mSession = new Session(this);
         mNotificationTable = new NotificationTable(this);
         mList = new ArrayList<Notification>();
-        Cursor cursor = mNotificationTable.getData(mSession.getMatricule());
+        Cursor cursor = mNotificationTable.getData(mSession.getIdNumber());
         cursor.moveToFirst();
         try {
             do {

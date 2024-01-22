@@ -204,7 +204,7 @@ public class LivreActivity extends AppCompatActivity {
         mBttDowloadPDF.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(mElectroniqueTable.insert(mSession.getMatricule(),mIdLivre,mDesc.getText().toString(),mAuteur,mNomCouverture,mNomPdf,mCategorie.getText().toString(),mTitre.getText().toString(),mNomCouvertureCat,mProfilAuteur))
+                if(mElectroniqueTable.insert(mSession.getIdNumber(),mIdLivre,mDesc.getText().toString(),mAuteur,mNomCouverture,mNomPdf,mCategorie.getText().toString(),mTitre.getText().toString(),mNomCouvertureCat,mProfilAuteur))
                     succeDowloadPDFDialog();
             }
         });
@@ -436,7 +436,7 @@ public class LivreActivity extends AppCompatActivity {
                 OkHttpClient client = new OkHttpClient();
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
-                        .addFormDataPart("matricule",mSession.getMatricule())
+                        .addFormDataPart("matricule",mSession.getIdNumber())
                         .addFormDataPart("idLivre",mIdLivre)
                         .build();
                 Request request = new Request.Builder()
@@ -512,7 +512,7 @@ public class LivreActivity extends AppCompatActivity {
                 OkHttpClient client = new OkHttpClient();
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
-                        .addFormDataPart("matricule",mSession.getMatricule())
+                        .addFormDataPart("matricule",mSession.getIdNumber())
                         .addFormDataPart("idLivre",mIdLivre)
                         .build();
                 Request request = new Request.Builder()
@@ -574,7 +574,7 @@ public class LivreActivity extends AppCompatActivity {
                 OkHttpClient client = new OkHttpClient();
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
-                        .addFormDataPart("matricule",mSession.getMatricule())
+                        .addFormDataPart("matricule",mSession.getIdNumber())
                         .addFormDataPart("idLivre",mIdLivre)
                         .addFormDataPart("message",mMessage.getText().toString())
                         .build();
@@ -624,7 +624,7 @@ public class LivreActivity extends AppCompatActivity {
                 OkHttpClient client = new OkHttpClient();
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
-                        .addFormDataPart("matricule",mSession.getMatricule())
+                        .addFormDataPart("matricule",mSession.getIdNumber())
                         .addFormDataPart("nomCategorie",mCategorie.getText().toString())
                         .addFormDataPart("idLivre",mIdLivre)
                         .build();
@@ -688,7 +688,7 @@ public class LivreActivity extends AppCompatActivity {
                 OkHttpClient client = new OkHttpClient();
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
-                        .addFormDataPart("matricule",mSession.getMatricule())
+                        .addFormDataPart("matricule",mSession.getIdNumber())
                         .addFormDataPart("idLivre",mIdLivre)
                         .build();
                 Request request = new Request.Builder()
@@ -808,7 +808,7 @@ public class LivreActivity extends AppCompatActivity {
                 OkHttpClient client = new OkHttpClient();
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
-                        .addFormDataPart("matricule",mSession.getMatricule())
+                        .addFormDataPart("matricule",mSession.getIdNumber())
                         .addFormDataPart("idLivre",mIdLivre)
                         .addFormDataPart("nbrJour",mNbrJour)
                         .build();
