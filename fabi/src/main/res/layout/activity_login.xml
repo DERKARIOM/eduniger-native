@@ -2,23 +2,20 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    style="@style/match_parent_all"
     android:background="@color/white"
     tools:context="com.ninotech.fabi.controleur.activity.LoginActivity">
 
     <RelativeLayout
         android:id="@+id/block_login"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        style="@style/match_wrap"
         android:layout_above="@+id/edit_text_login_id_number"
         android:layout_alignParentTop="true"
         android:background="@android:color/transparent"
         android:elevation="10dp"
         android:layout_marginBottom="60dp">
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/wrap_content_all"
             android:src="@drawable/img_login"/>
     </RelativeLayout>
 
@@ -48,8 +45,7 @@
 
     <RelativeLayout
         android:id="@+id/BlockButtonConnect"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/wrap_content_all"
         android:layout_above="@+id/text_view_login_pass_register"
         android:layout_marginStart="28dp"
         android:layout_marginEnd="28dp"
@@ -82,6 +78,6 @@
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
         android:text="@string/text_help"
-        android:textSize="15sp"
+        android:textSize="@dimen/size_sub_title"
         style="@style/text_view_pass_login_register" />
 </RelativeLayout>

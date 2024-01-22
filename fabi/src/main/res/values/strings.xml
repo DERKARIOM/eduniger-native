@@ -27,6 +27,9 @@
     <string name="incorrect_password">Mot de passe incorrect</string>
     <string name="forgot_password">j\'ai oublié mon mot de passe</string>
     <string name="find_book">  Recherche des livre</string>
+    <string name="recomended_title">Recommandé</string>
+    <string name="category_title">Catégorie</string>
+    <string name="ranking">Classement</string>
 
     <string-array name="journale">
         <item>"Motivation" </item>

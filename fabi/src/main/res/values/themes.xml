@@ -68,6 +68,30 @@
         <item name="android:textSize">@dimen/size_title</item>
     </style>
 
+<!--    Le themes wrap_content en larger et hauteur -->
+    <style name="wrap_content_all">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <!--    Le themes match_parent en larger et hauteur -->
+    <style name="match_parent_all">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <!--    Le themes pour avoir wrap_content en larger et match_parent en hauteur -->
+    <style name="wrap_match">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+    </style>
+
+    <!--    Le themes pour avoir match_parent en larger et wrap_content en hauteur -->
+    <style name="match_wrap">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
     <style name="Dialog.fastpv" parent="android:Theme.Dialog" >
         <item name="colorPrimary">@color/sombre</item>
     </style>

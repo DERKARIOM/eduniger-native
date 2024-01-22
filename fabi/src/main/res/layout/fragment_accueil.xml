@@ -1,32 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    style="@style/match_parent_all"
     tools:context="com.ninotech.fabi.controleur.fragment.AccueilFragment">
-
-    <!-- TODO: Update blank fragment layout -->
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tablayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        style="@style/match_wrap">
         <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Recommandé"/>
+            style="@style/wrap_content_all"
+            android:text="@string/recomended_title"/>
         <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Catégorie"/>
+            style="@style/wrap_content_all"
+            android:text="@string/category_title"/>
         <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Classement"/>
+            style="@style/wrap_content_all"
+            android:text="@string/ranking"/>
     </com.google.android.material.tabs.TabLayout>
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPage"
         android:layout_below="@id/tablayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
+        style="@style/match_parent_all"/>
 </RelativeLayout>
