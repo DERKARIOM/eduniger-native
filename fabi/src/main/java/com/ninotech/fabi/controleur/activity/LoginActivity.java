@@ -51,7 +51,7 @@ public class LoginActivity extends AppCompatActivity {
         /* Initialisation des attributs menbre */
         mIdNumberEditText = findViewById(R.id.edit_text_login_id_number);
         mPassewordEditText = findViewById(R.id.edit_text_login_password);
-        mRegisterTextView = findViewById(R.id.text_view_login_pass_register);
+        TextView registerTextView = findViewById(R.id.text_view_login_pass_register);
         mConnectionButton = findViewById(R.id.button_login_connection);
         mHelperTextView = findViewById(R.id.text_view_login_helper);
         mErrorTextView = findViewById(R.id.text_view_login_error);
@@ -104,14 +104,14 @@ public class LoginActivity extends AppCompatActivity {
                         mConnectionProgressBar.setVisibility(View.VISIBLE);
                         mConnectionButton.setText(R.string.register_succes_1111);
                         LoginSyn loginSyn = new LoginSyn();
-                        loginSyn.execute(getResources().getString(R.string.ip_server) + "Login.php",mAccount.getIdNumber(),mAccount.getPassword());
+                        loginSyn.execute(getString(R.string.ip_server) + "Login.php",mAccount.getIdNumber(),mAccount.getPassword());
                         break;
                 }
             }
         });
 
         /* En Cliquant sur le TextView d' inscription */
-        mRegisterTextView.setOnClickListener(new View.OnClickListener() {
+        registerTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent inscription = new Intent(LoginActivity.this , RegisterActivity.class);
@@ -124,7 +124,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 try {
-                    if(mHelperTextView.getText().equals(getResources().getString(R.string.forgot_password)))
+                    if(mHelperTextView.getText().equals(getString(R.string.forgot_password)))
                     {
                         Intent changePasseWord = new Intent(LoginActivity.this, ChangePasswordActivity.class);
                         startActivity(changePasseWord);
@@ -139,8 +139,8 @@ public class LoginActivity extends AppCompatActivity {
     }
     public void inputData(int idNumberForm , int passwordForm , int message)
     {
-        mIdNumberEditText.setBackground(getResources().getDrawable(idNumberForm));
-        mPassewordEditText.setBackground(getResources().getDrawable(passwordForm));
+        mIdNumberEditText.setBackground(getDrawable(idNumberForm));
+        mPassewordEditText.setBackground(getDrawable(passwordForm));
         mErrorTextView.setText(message);
     }
     public void dataControl(int idNumberForm , int passwordForm , int message)
@@ -271,7 +271,6 @@ public class LoginActivity extends AppCompatActivity {
     private EditText mIdNumberEditText;
     private EditText mPassewordEditText;
     private Button mConnectionButton;
-    private TextView mRegisterTextView;
     private TextView mErrorTextView;
     private TextView mHelperTextView;
     private String mJeton;

@@ -14,7 +14,7 @@
             android:layout_marginBottom="20dp"
             android:elevation="6dp"
             android:layout_width="match_parent"
-            android:layout_height="200dp" />
+            android:layout_height="200dp"/>
         <!-- TODO: Update blank fragment layout -->
         <androidx.recyclerview.widget.RecyclerView
             android:layout_below="@+id/img_welcom"

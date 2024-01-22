@@ -40,24 +40,24 @@ public class MainActivity extends AppCompatActivity {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
         /* Initialisation des attributs membre */
-        mHandler = new Handler();
-        mRunnable = new Runnable() {
+        Handler handler = new Handler();
+        Runnable runnable = new Runnable() {
             @Override
             public void run() {
                 Lock();
             }
         };
-        mInitialization = new Initialization(getApplicationContext());
-        mInitialization.onCreate(getApplicationContext());
+        Initialization initialization = new Initialization(getApplicationContext());
+        initialization.onCreate(getApplicationContext());
         mBottomNavigationView = findViewById(R.id.bottom_navigation_main);
-        mToolbar = findViewById(R.id.toolbar_main);
-        mSharedPreferences = getSharedPreferences("MODE",Context.MODE_PRIVATE);
-        mNightMODE = mSharedPreferences.getBoolean("night",false);
+        Toolbar toolbar = findViewById(R.id.toolbar_main);
+        SharedPreferences sharedPreferences = getSharedPreferences("MODE", Context.MODE_PRIVATE);
+        boolean nightMODE = sharedPreferences.getBoolean("night", false);
         mAccueilFragment = new AccueilFragment();
         mAssistanceFragment = new AssistanceFragment();
-        mBibliothequeFragment = new BibliothequeFragment();
-        mMenuItem = mToolbar.getMenu().findItem(R.id.menuHomeNotification);
-        mReservationService = new Intent(this, NotificationService.class);
+        BibliothequeFragment bibliothequeFragment = new BibliothequeFragment();
+        MenuItem menuItem = toolbar.getMenu().findItem(R.id.menuHomeNotification);
+        Intent reservationService = new Intent(this, NotificationService.class);
         mAccount = new Account();
         /* Detection de reseau */
         if(android.os.Build.VERSION.SDK_INT > 9)
@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
 
         /* Ouverteur de la session si ca existe  si non lancement de la page login */
         if(mAccount.isSession(getApplicationContext()))
-            startService(mReservationService);
+            startService(reservationService);
         else
         {
             Intent login = new Intent(MainActivity.this, LoginActivity.class);
@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
         /* ########## Gestion du menu principale ########## */
 
         /* En cliquant sur "Actualiser" */
-        mToolbar.getMenu().getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        toolbar.getMenu().getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
                 Intent accuiel = new Intent(MainActivity.this, MainActivity.class);
@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         /* En cliquant sur "Message importants" */
-        mToolbar.getMenu().getItem(1).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        toolbar.getMenu().getItem(1).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
                 Intent importants = new Intent(MainActivity.this, NotificationActivity.class);
@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         /* En cliquant sur "Archiver" */
-        mToolbar.getMenu().getItem(3).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        toolbar.getMenu().getItem(3).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
                 return false;
@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         /* En cliquant sur "Suggestion" */
-        mToolbar.getMenu().getItem(4).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        toolbar.getMenu().getItem(4).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
 //                Intent reclamation = new Intent(MainActivity.this, SuggestionActivity.class);
@@ -118,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         /* En cliquant sur "Paramètres" */
-        mToolbar.getMenu().getItem(5).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        toolbar.getMenu().getItem(5).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
 //                Intent parametre = new Intent(MainActivity.this,ParametreActivity.class);
@@ -126,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
-        mToolbar.getMenu().getItem(6).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        toolbar.getMenu().getItem(6).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
                 Intent test = new Intent(MainActivity.this, ParametreActivity.class);
@@ -136,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         /* En cliquant sur "Déconnecter" */
-        mToolbar.getMenu().getItem(7).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        toolbar.getMenu().getItem(7).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
                 if(mAccount.logout(getApplicationContext()))
@@ -147,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         /* Activation du mode nuit et changement de couleur a la bar de navigation si le mode jour n' est pas activer */
-        if(mNightMODE)
+        if(nightMODE)
         {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
             getWindow().setNavigationBarColor(getResources().getColor(R.color.black2));
@@ -208,14 +208,5 @@ public class MainActivity extends AppCompatActivity {
     private BottomNavigationView mBottomNavigationView;
     private AccueilFragment mAccueilFragment = new AccueilFragment();
     private AssistanceFragment mAssistanceFragment = new AssistanceFragment();
-    private BibliothequeFragment mBibliothequeFragment = new BibliothequeFragment();
-    private boolean mNightMODE;
-    private SharedPreferences mSharedPreferences;
-    private Toolbar mToolbar;
-    private Handler mHandler;
-    private Runnable mRunnable;
-    private Intent mReservationService;
-    private MenuItem mMenuItem;
     private Account mAccount;
-    private Initialization mInitialization;
 }

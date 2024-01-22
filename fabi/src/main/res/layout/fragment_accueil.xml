@@ -4,7 +4,7 @@
     style="@style/match_parent_all"
     tools:context="com.ninotech.fabi.controleur.fragment.AccueilFragment">
     <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tablayout"
+        android:id="@+id/tab_layout_accuiel"
         style="@style/match_wrap">
         <com.google.android.material.tabs.TabItem
             style="@style/wrap_content_all"
@@ -17,7 +17,7 @@
             android:text="@string/ranking"/>
     </com.google.android.material.tabs.TabLayout>
     <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/viewPage"
-        android:layout_below="@id/tablayout"
+        android:id="@+id/view_page_accuiel"
+        android:layout_below="@id/tab_layout_accuiel"
         style="@style/match_parent_all"/>
 </RelativeLayout>

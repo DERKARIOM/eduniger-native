@@ -17,28 +17,25 @@ public class AccueilFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_accueil, container, false);
-        mTabLayout = view.findViewById(R.id.tablayout);
-        mViewPager = view.findViewById(R.id.viewPage);
-        mAccueilViewPagerAdapter = new AccueilViewPagerAdapter(this);
-        mViewPager.setAdapter(mAccueilViewPagerAdapter);
-        new TabLayoutMediator(mTabLayout,mViewPager,(tab, position) -> {
+        TabLayout tabLayout = view.findViewById(R.id.tab_layout_accuiel);
+        ViewPager2 viewPager2 = view.findViewById(R.id.view_page_accuiel);
+        AccueilViewPagerAdapter accueilViewPagerAdapter = new AccueilViewPagerAdapter(this);
+        viewPager2.setAdapter(accueilViewPagerAdapter);
+        new TabLayoutMediator(tabLayout, viewPager2,(tab, position) -> {
             switch (position){
                 case 0:
-                    tab.setText("Recommandé");
+                    tab.setText(getString(R.string.recomended_title));
                     break;
                 case 1:
-                    tab.setText("Catégorie");
+                    tab.setText(getString(R.string.category_title));
                     break;
                 case 2:
-                    tab.setText("Classement");
+                    tab.setText(R.string.ranking);
                     break;
             }
         }).attach();
         return view;
     }
-    private TabLayout mTabLayout;
-    private ViewPager2 mViewPager;
-    private AccueilViewPagerAdapter mAccueilViewPagerAdapter;
+
 }
