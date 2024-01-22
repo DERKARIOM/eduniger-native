@@ -3,9 +3,13 @@ package com.ninotech.fabi.model.data;
 import static android.content.Context.MODE_PRIVATE;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.widget.Toast;
 
 import com.ninotech.fabi.R;
+import com.ninotech.fabi.controleur.activity.LoginActivity;
+import com.ninotech.fabi.controleur.activity.MainActivity;
 import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.model.table.UserTable;
 
@@ -103,13 +107,27 @@ public class Account {
             return false;
         }
     }
-    public boolean logout(Context context,SQLiteDatabase database)
+    public boolean logout(Context context)
     {
+        SQLiteDatabase database = context.openOrCreateDatabase(context.getResources().getString(R.string.database_name),MODE_PRIVATE,null);
         Session session = new Session(context);
         try {
             session.onUpgrade(database,0,1);
             return true;
         }catch (Exception e)
+        {
+            return false;
+        }
+    }
+
+    public boolean isSession(Context context)
+    {
+        Session session = new Session(context);
+        try {
+            Toast.makeText(context, session.getMatricule(), Toast.LENGTH_SHORT);
+            return true;
+        }
+        catch (Exception e)
         {
             return false;
         }

@@ -20,6 +20,7 @@ import com.ninotech.fabi.controleur.fragment.AccueilFragment;
 import com.ninotech.fabi.controleur.fragment.AssistanceFragment;
 import com.ninotech.fabi.controleur.fragment.BibliothequeFragment;
 import com.ninotech.fabi.model.data.Account;
+import com.ninotech.fabi.model.data.Initialization;
 import com.ninotech.fabi.model.table.ElectroniqueTable;
 import com.ninotech.fabi.model.table.EmpreiteTable;
 import com.ninotech.fabi.model.table.NotificationTable;
@@ -46,22 +47,15 @@ public class MainActivity extends AppCompatActivity {
                 Lock();
             }
         };
+        mInitialization = new Initialization(getApplicationContext());
+        mInitialization.onCreate(getApplicationContext());
         mBottomNavigationView = findViewById(R.id.bottom_navigation_main);
-        mToolbar = (Toolbar)findViewById(R.id.toolbar_main);
+        mToolbar = findViewById(R.id.toolbar_main);
         mSharedPreferences = getSharedPreferences("MODE",Context.MODE_PRIVATE);
         mNightMODE = mSharedPreferences.getBoolean("night",false);
-        mDatabase = openOrCreateDatabase("data.db",MODE_PRIVATE,null);
         mAccueilFragment = new AccueilFragment();
         mAssistanceFragment = new AssistanceFragment();
         mBibliothequeFragment = new BibliothequeFragment();
-        mSession = new Session(this);
-        mElectroniqueTable = new ElectroniqueTable(this);
-        mEmpreiteTable = new EmpreiteTable(this);
-        mUserTable = new UserTable(this);
-        mNotificationTable = new NotificationTable(this);
-        mUserTable.onCreate(mDatabase);
-        mElectroniqueTable.onCreate(mDatabase);
-        mNotificationTable.onCreate(mDatabase);
         mMenuItem = mToolbar.getMenu().findItem(R.id.menuHomeNotification);
         mReservationService = new Intent(this, NotificationService.class);
         mAccount = new Account();
@@ -73,27 +67,14 @@ public class MainActivity extends AppCompatActivity {
         }
 
         /* Ouverteur de la session si ca existe  si non lancement de la page login */
-        try {
-            Toast.makeText(this, mSession.getMatricule(), Toast.LENGTH_SHORT);
+        if(mAccount.isSession(getApplicationContext()))
             startService(mReservationService);
-        }
-        catch (Exception e)
+        else
         {
             Intent login = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(login);
             finish();
         }
-
-        try {
-            if(mEmpreiteTable.getPasse().equals("0"))
-            {
-                Intent emprient = new Intent(MainActivity.this, EmpreinteActivity.class);
-                startActivity(emprient);
-                finish();
-            }
-            else
-                mEmpreiteTable.onUpdate("0");
-        }catch (Exception e){};
 
         /* ########## Gestion du menu principale ########## */
 
@@ -122,8 +103,6 @@ public class MainActivity extends AppCompatActivity {
         mToolbar.getMenu().getItem(3).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
-//                Intent archive = new Intent(MainActivity.this,ArchiverActivity.class);
-//                startActivity(archive);
                 return false;
             }
         });
@@ -160,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
         mToolbar.getMenu().getItem(7).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
-                if(mAccount.logout(getApplicationContext(),mDatabase))
+                if(mAccount.logout(getApplicationContext()))
                     reboot();
                 return false;
             }
@@ -218,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void Lock() {
-        mEmpreiteTable.onUpdate("0");
+        //mEmpreiteTable.onUpdate("0");
     }
     public BottomNavigationView getBottomNavigationView() {
         return mBottomNavigationView;
@@ -232,15 +211,11 @@ public class MainActivity extends AppCompatActivity {
     private BibliothequeFragment mBibliothequeFragment = new BibliothequeFragment();
     private boolean mNightMODE;
     private SharedPreferences mSharedPreferences;
-    private Session mSession;
-    private EmpreiteTable mEmpreiteTable;
-    private UserTable mUserTable;
     private Toolbar mToolbar;
-    private ElectroniqueTable mElectroniqueTable;
     private Handler mHandler;
     private Runnable mRunnable;
     private Intent mReservationService;
-    private NotificationTable mNotificationTable;
     private MenuItem mMenuItem;
     private Account mAccount;
+    private Initialization mInitialization;
 }
