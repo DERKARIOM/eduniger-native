@@ -79,14 +79,14 @@ public class AudioAdapter extends RecyclerView.Adapter<AudioAdapter.MyViewHolder
         private  ImageView mIco2;
         MyViewHolder(View itemView){
             super(itemView);
-            mCouverture = itemView.findViewById(R.id.couverture_livre);
-            mTitre = itemView.findViewById(R.id.title_livre);
-            mCategorie = itemView.findViewById(R.id.categorie_livre);
-            mIcoPysique = itemView.findViewById(R.id.ico_pysique);
-            mIcoPdf = itemView.findViewById(R.id.ico_pdf);
-            mIcoAudio = itemView.findViewById(R.id.ico_audio);
-            mNbrLike = itemView.findViewById(R.id.nbr_like);
-            mNbrVue = itemView.findViewById(R.id.nbr_vue);
+            mCouverture = itemView.findViewById(R.id.image_view_adapter_book_blanket);
+            mTitre = itemView.findViewById(R.id.text_view_adapter_book_title);
+            mCategorie = itemView.findViewById(R.id.text_view_adapter_book_category);
+            mIcoPysique = itemView.findViewById(R.id.image_view_adapter_book_physical);
+            mIcoPdf = itemView.findViewById(R.id.image_view_adapter_book_electronic);
+            mIcoAudio = itemView.findViewById(R.id.image_view_adapter_book_audio);
+            mNbrLike = itemView.findViewById(R.id.text_view_adapter_book_number_like);
+            mNbrVue = itemView.findViewById(R.id.text_view_adapter_book_number_view);
             mIco1 = itemView.findViewById(R.id.ico1);
             mIco2 = itemView.findViewById(R.id.ico2);
             itemView.setOnCreateContextMenuListener(this);

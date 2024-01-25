@@ -1,7 +1,6 @@
 package com.ninotech.fabi.controleur.activity;
 
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -19,9 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.ninotech.fabi.model.data.Account;
-import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.controleur.dialog.UpdateDialog;
-import com.ninotech.fabi.model.table.UserTable;
 import com.ninotech.fabi.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -104,7 +101,7 @@ public class LoginActivity extends AppCompatActivity {
                         mConnectionProgressBar.setVisibility(View.VISIBLE);
                         mConnectionButton.setText(R.string.register_succes_1111);
                         LoginSyn loginSyn = new LoginSyn();
-                        loginSyn.execute(getString(R.string.ip_server) + "Login.php",mAccount.getIdNumber(),mAccount.getPassword());
+                        loginSyn.execute(getString(R.string.ip_server_android) + "Login.php",mAccount.getIdNumber(),mAccount.getPassword());
                         break;
                 }
             }

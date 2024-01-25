@@ -81,14 +81,14 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.MyViewHolder> 
         private final TextView mNumberViewTextView;
         MyViewHolder(View itemView){
             super(itemView);
-            mBlanketImageView = itemView.findViewById(R.id.couverture_livre);
-            mTitleTextView = itemView.findViewById(R.id.title_livre);
-            mCategoryTextView = itemView.findViewById(R.id.categorie_livre);
-            mPysicalImageView = itemView.findViewById(R.id.ico_pysique);
-            mElectronicImageView = itemView.findViewById(R.id.ico_pdf);
-            mAudioImageView = itemView.findViewById(R.id.ico_audio);
-            mNumberLikeTextView = itemView.findViewById(R.id.nbr_like);
-            mNumberViewTextView = itemView.findViewById(R.id.nbr_vue);
+            mBlanketImageView = itemView.findViewById(R.id.image_view_adapter_book_blanket);
+            mTitleTextView = itemView.findViewById(R.id.text_view_adapter_book_title);
+            mCategoryTextView = itemView.findViewById(R.id.text_view_adapter_book_category);
+            mPysicalImageView = itemView.findViewById(R.id.image_view_adapter_book_physical);
+            mElectronicImageView = itemView.findViewById(R.id.image_view_adapter_book_electronic);
+            mAudioImageView = itemView.findViewById(R.id.image_view_adapter_book_audio);
+            mNumberLikeTextView = itemView.findViewById(R.id.text_view_adapter_book_number_like);
+            mNumberViewTextView = itemView.findViewById(R.id.text_view_adapter_book_number_view);
             itemView.setOnCreateContextMenuListener(this);
         }
         @Override
@@ -96,7 +96,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.MyViewHolder> 
         }
         void display(Book book){
             Picasso.with(itemView.getContext())
-                    .load("http://192.168.43.1:2222/fabi/couverture/" + book.getBlanket())
+                    .load(itemView.getResources().getString(R.string.ip_server) + "couverture/" + book.getBlanket())
                     .placeholder(R.drawable.img_default_livre)
                     .error(R.drawable.img_default_livre)
                     .transform(new RoundedTransformation(15,4))

@@ -1,7 +1,6 @@
 package com.ninotech.fabi.controleur.activity;
 
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
@@ -18,7 +17,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.ninotech.fabi.model.data.Account;
-import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.controleur.dialog.UpdateDialog;
 import com.ninotech.fabi.R;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -140,7 +138,7 @@ public class RegisterActivity extends AppCompatActivity {
                        mConnectionButton.setText(R.string.register_succes_1111);
                        RegisterSyn registerSyn = new RegisterSyn();
                        registerSyn.execute(
-                               getResources().getString(R.string.ip_server) + "Register.php",
+                               getResources().getString(R.string.ip_server_android) + "Register.php",
                                mAccount.getIdNumber(),
                                mAccount.getEmail(),
                                mAccount.getPassword()

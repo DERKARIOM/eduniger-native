@@ -94,7 +94,7 @@
                                     android:elevation="10dp"
                                     android:src="@drawable/vector_black3_off_like"/>
                                 <TextView
-                                    android:id="@+id/nbr_like"
+                                    android:id="@+id/text_view_adapter_book_number_like"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginStart="3dp"
