@@ -4,24 +4,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.ninotech.fabi.controleur.fragment.RecomandeFragment">
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <ImageView
             android:id="@+id/img_welcom"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="20dp"
             android:elevation="6dp"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"/>
-        <!-- TODO: Update blank fragment layout -->
+            />
         <androidx.recyclerview.widget.RecyclerView
-            android:layout_below="@+id/img_welcom"
             android:id="@+id/recylerClassement"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_below="@+id/img_welcom"
+            style="@style/match_parent_all"
             />
     </RelativeLayout>
-
 </androidx.core.widget.NestedScrollView>

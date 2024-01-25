@@ -34,7 +34,7 @@ public class ElectroniqueFragment extends Fragment {
         mSession = new Session(getContext());
         mElectroniqueAdapter = new ElectroniqueAdapter(mList);
         mRecenmmentAdapter = new RecenmmentAdapter(mList1);
-        mList.add(new Electronique(1,"Les Livres télécharges",mElectroniqueTable.getNbrElectronique(mSession.getIdNumber())));
+        mList.add(new Electronique(1,"Les Book télécharges",mElectroniqueTable.getNbrElectronique(mSession.getIdNumber())));
         mList.add(new Electronique(2,"Coups de coeur",0));
         mList.add(new Electronique(3,"playlists",0));
         mList.add(new Electronique(4,"Categorie",mElectroniqueTable.getNbrCategorie(mSession.getIdNumber())));

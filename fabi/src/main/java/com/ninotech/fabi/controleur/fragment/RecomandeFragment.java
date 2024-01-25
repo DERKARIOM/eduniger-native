@@ -15,8 +15,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
-import com.ninotech.fabi.controleur.adapter.ClassementAdapter;
-import com.ninotech.fabi.model.data.Livres;
+import com.ninotech.fabi.controleur.adapter.BookAdapter;
+import com.ninotech.fabi.model.data.Book;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
 import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.R;
@@ -41,7 +41,7 @@ public class RecomandeFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_recomande, container, false);
         mSession = new Session(getContext());
-        mRecyclerView = view.findViewById(R.id.recylerClassement);
+        mRecyclerViewBookRecomended = view.findViewById(R.id.recylerClassement);
         mPub = view.findViewById(R.id.img_welcom);
         mList = new ArrayList<>();
         mMonPub = new ArrayList<>();
@@ -154,14 +154,16 @@ public class RecomandeFragment extends Fragment {
                 }
                 for (int i=0;i<jsonArray.length();i++) {
                     try {
-                        mList.add(new Livres(jsonArray.getJSONObject(i).getString("idLivre"),jsonArray.getJSONObject(i).getString("couverture"),jsonArray.getJSONObject(i).getString("titreLivre"),jsonArray.getJSONObject(i).getString("nomCat"),jsonArray.getJSONObject(i).getString("estPhysique"),jsonArray.getJSONObject(i).getString("documentElec"),jsonArray.getJSONObject(i).getString("estAudio"),jsonArray.getJSONObject(i).getString("nbrLikes"),"0"));
+                        ArrayList<String> category = new ArrayList<>();
+                        category.add(jsonArray.getJSONObject(i).getString("nomCat"));
+                        mList.add(new Book(jsonArray.getJSONObject(i).getString("idLivre"),jsonArray.getJSONObject(i).getString("couverture"),jsonArray.getJSONObject(i).getString("titreLivre"),category,jsonArray.getJSONObject(i).getString("estPhysique"),jsonArray.getJSONObject(i).getString("documentElec"),jsonArray.getJSONObject(i).getString("estAudio"),jsonArray.getJSONObject(i).getString("nbrLikes"),"0"));
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
                 }
-                mClassementAdapter = new ClassementAdapter(mList);
-                mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                mRecyclerView.setAdapter(mClassementAdapter);
+                mBookAdapter = new BookAdapter(mList);
+                mRecyclerViewBookRecomended.setLayoutManager(new LinearLayoutManager(getContext()));
+                mRecyclerViewBookRecomended.setAdapter(mBookAdapter);
                 //Toast.makeText(getContext(), jsonData, Toast.LENGTH_SHORT).show();
             }
             else
@@ -171,9 +173,9 @@ public class RecomandeFragment extends Fragment {
 
         }
     }
-    private RecyclerView mRecyclerView;
-    private ClassementAdapter mClassementAdapter;
-    private ArrayList<Livres> mList;
+    private RecyclerView mRecyclerViewBookRecomended;
+    private BookAdapter mBookAdapter;
+    private ArrayList<Book> mList;
     private Session mSession;
     private ImageView mPub;
     private List<String> mMonPub;
