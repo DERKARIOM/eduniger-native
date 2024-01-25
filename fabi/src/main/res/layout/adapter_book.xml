@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="10dp">
@@ -13,95 +14,80 @@
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
         android:elevation="2dp"
-        android:src="@drawable/img_default_livre" />
+        android:src="@drawable/img_default_livre"
+        android:contentDescription="@string/todo" />
     <RelativeLayout
         android:id="@+id/info_livre"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/couverture_livre"
+        style="@style/wrap_content_all"
+        android:layout_toEndOf="@+id/couverture_livre"
         android:layout_centerVertical="true">
+
         <TextView
             android:id="@+id/title_livre"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Titre du livre"
-            android:textColor="@color/black"
-            android:layout_margin="5dp"
-            android:textSize="15dp"/>
+            style="@style/wrap_content_all"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="5dp"
+            android:text="@string/title_livre"
+            android:textColor="@color/black2"
+            android:textSize="@dimen/size_title"
+            android:textStyle="bold" />
         <TextView
             android:id="@+id/categorie_livre"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/wrap_content_all"
             android:layout_margin="5dp"
             android:layout_below="@id/title_livre"
-            android:text="Categorie du livre"
-            android:textSize="12dp"/>
+            android:text="@string/book_category"
+            android:textSize="@dimen/size_sub_title"/>
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/wrap_content_all"
             android:layout_below="@id/categorie_livre">
             <ImageView
                 android:id="@+id/ico_pysique"
-                android:layout_margin="5dp"
-                android:layout_width="10dp"
-                android:layout_height="10dp"
-                android:visibility="gone"
-                android:src="@drawable/vector_black3_pysique"/>
+                android:src="@drawable/vector_black3_pysique"
+                style="@style/icon_format"
+                android:contentDescription="@string/todo" />
             <ImageView
                 android:id="@+id/ico_pdf"
-                android:layout_margin="5dp"
-                android:layout_width="10dp"
-                android:layout_height="10dp"
-                android:visibility="gone"
-                android:src="@drawable/vector_black3_pdf"/>
+                style="@style/icon_format"
+                android:src="@drawable/vector_black3_pdf"
+                android:contentDescription="@string/todo" />
             <ImageView
                 android:id="@+id/ico_audio"
-                android:layout_margin="5dp"
-                android:layout_width="10dp"
-                android:layout_height="10dp"
-                android:visibility="gone"
-                android:src="@drawable/vector_audio"/>
+                style="@style/icon_format"
+                android:src="@drawable/vector_audio"
+                android:contentDescription="@string/todo" />
             <LinearLayout
                 android:id="@+id/like"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp">
+                style="@style/wrap_content_all"
+                android:layout_margin="5dp"
+                android:orientation="horizontal"
+                tools:ignore="UseCompoundDrawables">
                 <ImageView
                     android:id="@+id/ico1"
-                    android:layout_width="10dp"
-                    android:layout_height="10dp"
-                    android:src="@drawable/vector_black3_off_like"/>
+                    style="@style/icon_subcribe"
+                    android:src="@drawable/vector_black3_off_like"
+                    android:contentDescription="@string/todo" />
                 <TextView
                     android:id="@+id/nbr_like"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="3dp"
-                    android:text="20000k"
-                    android:gravity="center_vertical"
-                    android:textSize="8dp"
+                    style="@style/icon_subcribe_text_view"
                     android:src="@drawable/vector_black3_off_like"/>
             </LinearLayout>
             <LinearLayout
                 android:id="@+id/vue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp">
+                style="@style/wrap_content_all"
+                android:layout_margin="5dp"
+                tools:ignore="UseCompoundDrawables">
                 <ImageView
                     android:id="@+id/ico2"
-                    android:layout_width="10dp"
-                    android:layout_height="10dp"
-                    android:src="@drawable/vector_black3_vue"/>
+                    style="@style/icon_subcribe"
+                    android:src="@drawable/vector_black3_vue"
+                    android:contentDescription="@string/todo" />
                 <TextView
                     android:id="@+id/nbr_vue"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="3dp"
-                    android:text="20000k"
-                    android:gravity="center_vertical"
-                    android:textSize="8dp"
+                    style="@style/icon_subcribe_text_view"
                     android:src="@drawable/vector_black3_off_like"/>
-
-
             </LinearLayout>
         </LinearLayout>
     </RelativeLayout>

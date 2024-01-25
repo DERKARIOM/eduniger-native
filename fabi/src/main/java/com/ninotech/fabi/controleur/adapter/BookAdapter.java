@@ -74,7 +74,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.MyViewHolder> 
         private final ImageView mBlanketImageView;
         private final TextView mTitleTextView;
         private final TextView mCategoryTextView;
-        private final ImageView mPycicalImageView;
+        private final ImageView mPysicalImageView;
         private final ImageView mElectronicImageView;
         private final ImageView mAudioImageView;
         private final TextView mNumberLikeTextView;
@@ -84,7 +84,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.MyViewHolder> 
             mBlanketImageView = itemView.findViewById(R.id.couverture_livre);
             mTitleTextView = itemView.findViewById(R.id.title_livre);
             mCategoryTextView = itemView.findViewById(R.id.categorie_livre);
-            mPycicalImageView = itemView.findViewById(R.id.ico_pysique);
+            mPysicalImageView = itemView.findViewById(R.id.ico_pysique);
             mElectronicImageView = itemView.findViewById(R.id.ico_pdf);
             mAudioImageView = itemView.findViewById(R.id.ico_audio);
             mNumberLikeTextView = itemView.findViewById(R.id.nbr_like);
@@ -109,8 +109,8 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.MyViewHolder> 
             mCategoryTextView.setText(category);
             mNumberLikeTextView.setText(book.getNumberLikes());
             mNumberViewTextView.setText(book.getNumberView());
-            if(book.getIsPysical().equals("1"))
-                mPycicalImageView.setVisibility(View.VISIBLE);
+            if(book.getIsPhysical().equals("1"))
+                mPysicalImageView.setVisibility(View.VISIBLE);
             if(!book.getElectronic().equals("null"))
                 mElectronicImageView.setVisibility(View.VISIBLE);
             if(book.getIsAudio().equals("1"))

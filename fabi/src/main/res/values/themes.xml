@@ -91,6 +91,27 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
+    
+    <!-- Le themes pour les icons de disponible des format -->
+    <style name="icon_format">
+        <item name="android:layout_width">10dp</item>
+        <item name="android:layout_height">10dp</item>
+        <item name="android:layout_margin">5dp</item>
+        <item name="android:visibility">gone</item>
+    </style>
+
+    <!-- Le themes pour les icons des abonement -->
+    <style name="icon_subcribe">
+        <item name="android:layout_width">10dp</item>
+        <item name="android:layout_height">10dp</item>
+    </style>
+
+    <!-- Le themes pour les nombres d' abonement -->
+    <style name="icon_subcribe_text_view" parent="wrap_content_all">
+        <item name="android:layout_marginStart">3dp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textSize">@dimen/size_number_subcribe</item>
+    </style>
 
     <style name="Dialog.fastpv" parent="android:Theme.Dialog" >
         <item name="colorPrimary">@color/sombre</item>

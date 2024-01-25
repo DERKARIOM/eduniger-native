@@ -1,7 +1,6 @@
 package com.ninotech.fabi.model.data;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class Book {
    public Book(String id, String title, String blanket, ArrayList<String> category, String author, String description, String electronic, String isAudio, String isAvailable, String isPysical, String numberLikes, String numberNoLikes , String numberView) {
@@ -14,18 +13,18 @@ public class Book {
       mElectronic = electronic;
       mIsAudio = isAudio;
       mIsAvailable = isAvailable;
-      mIsPysical = isPysical;
+      mIsPhysical = isPysical;
       mNumberLikes = numberLikes;
       mNumberNoLikes = numberNoLikes;
       mNumberView = numberView;
    }
-   public Book(String id , String blanket , String title , ArrayList<String> category , String isPysical , String electronic , String isAudio , String numberLikes , String numberView)
+   public Book(String id , String blanket , String title , ArrayList<String> category , String isPhysical, String electronic , String isAudio , String numberLikes , String numberView)
    {
       mId = id;
       mBlanket = blanket;
       mTitle = title;
       mCategory = category;
-      mIsPysical = isPysical;
+      mIsPhysical = isPhysical;
       mElectronic = electronic;
       mIsAudio = isAudio;
       mNumberLikes = numberLikes;
@@ -111,12 +110,12 @@ public class Book {
       mIsAvailable = isAvailable;
    }
 
-   public String getIsPysical() {
-      return mIsPysical;
+   public String getIsPhysical() {
+      return mIsPhysical;
    }
 
-   public void setIsPysical(String isPysical) {
-      mIsPysical = isPysical;
+   public void setIsPhysical(String isPhysical) {
+      mIsPhysical = isPhysical;
    }
 
    public String getNumberLikes() {
@@ -136,7 +135,7 @@ public class Book {
    private String mElectronic;
    private String mIsAudio;
    private  String mIsAvailable;
-   private String mIsPysical;
+   private String mIsPhysical;
    private String mNumberLikes;
    private String mNumberNoLikes;
 
