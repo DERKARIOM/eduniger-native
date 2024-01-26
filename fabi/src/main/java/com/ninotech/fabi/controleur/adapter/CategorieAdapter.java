@@ -36,7 +36,7 @@ public class CategorieAdapter extends RecyclerView.Adapter<CategorieAdapter.MyVi
     @Override
     public CategorieAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View view = layoutInflater.inflate(R.layout.adapter_categorie,parent,false);
+        View view = layoutInflater.inflate(R.layout.adapter_category,parent,false);
         return new MyViewHolder(view);
     }
 
@@ -70,35 +70,31 @@ public class CategorieAdapter extends RecyclerView.Adapter<CategorieAdapter.MyVi
     }
 
 
-    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener{
-        private ImageView mIco;
-        private TextView mTitre;
+    public static class MyViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener{
+        private final ImageView mBlanketImageView;
+        private final TextView mTitleTextView;
         MyViewHolder(View itemView){
             super(itemView);
-            mIco = itemView.findViewById(R.id.ico_cat);
-            mTitre = itemView.findViewById(R.id.titre_cat);
-            //mButton = (Button) itemView.findViewById(R.id.bttAnex);
+            mBlanketImageView = itemView.findViewById(R.id.image_view_adapter_category_blanket);
+            mTitleTextView = itemView.findViewById(R.id.text_view_adapter_category_title);
             itemView.setOnCreateContextMenuListener(this);
         }
         @Override
         public void onCreateContextMenu(ContextMenu menu , View v , ContextMenu.ContextMenuInfo menuInfo){
-//            menu.add(Menu.NONE,R.id.infoNotif,Menu.NONE,"Information");
-//            menu.add(Menu.NONE,R.id.suppNotif,Menu.NONE,"Supprimer");
-//            menu.add(Menu.NONE,R.id.inportanteNotif,Menu.NONE,"Message importants");
         }
         void display(Category category){
             Picasso.with(itemView.getContext())
-                    .load("http://192.168.43.1:2222/fabi/couverture/" + category.getBlanket())
+                    .load(itemView.getResources().getString(R.string.ip_server) + "couverture/" + category.getBlanket())
                     .placeholder(R.drawable.img_default_livre)
                     .error(R.drawable.img_default_livre)
-                    .into(mIco);
-            mTitre.setText(category.getTitle());
+                    .into(mBlanketImageView);
+            mTitleTextView.setText(category.getTitle());
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent categorie = new Intent(itemView.getContext(), CategorieActivity.class);
-                    categorie.putExtra("nomCat",mTitre.getText().toString());
-                    itemView.getContext().startActivity(categorie);
+                    Intent category = new Intent(itemView.getContext(), CategorieActivity.class);
+                    category.putExtra("intent_adapter_category_title", mTitleTextView.getText().toString());
+                    itemView.getContext().startActivity(category);
                 }
             });
         }

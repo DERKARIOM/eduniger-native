@@ -43,8 +43,8 @@ public class CategorieActivity extends AppCompatActivity {
         mList = new ArrayList<>();
         Intent intent = getIntent();
         mCategorie=null;
-        if (intent != null && intent.hasExtra("nomCat")) {
-            mCategorie = intent.getStringExtra("nomCat");
+        if (intent != null && intent.hasExtra("intent_adapter_category_title")) {
+            mCategorie = intent.getStringExtra("intent_adapter_category_title");
         }
         mToolbar.setTitle(mCategorie);
         Http http = new Http();

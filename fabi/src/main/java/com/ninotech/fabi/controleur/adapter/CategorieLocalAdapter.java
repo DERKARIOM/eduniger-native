@@ -35,7 +35,7 @@ public class CategorieLocalAdapter extends RecyclerView.Adapter<CategorieLocalAd
     @Override
     public CategorieLocalAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View view = layoutInflater.inflate(R.layout.adapter_categorie,parent,false);
+        View view = layoutInflater.inflate(R.layout.adapter_category,parent,false);
         return new MyViewHolder(view);
     }
 
@@ -74,8 +74,8 @@ public class CategorieLocalAdapter extends RecyclerView.Adapter<CategorieLocalAd
         private TextView mTitre;
         MyViewHolder(View itemView){
             super(itemView);
-            mIco = itemView.findViewById(R.id.ico_cat);
-            mTitre = itemView.findViewById(R.id.titre_cat);
+            mIco = itemView.findViewById(R.id.image_view_adapter_category_blanket);
+            mTitre = itemView.findViewById(R.id.text_view_adapter_category_title);
             //mButton = (Button) itemView.findViewById(R.id.bttAnex);
             itemView.setOnCreateContextMenuListener(this);
         }

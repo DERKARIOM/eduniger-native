@@ -157,5 +157,6 @@
     <string name="title_livre">Titre du livre</string>
     <string name="todo">TODO</string>
     <string name="book_category">Categorie du livre</string>
+    <string name="category">Categorie</string>
 
 </resources>
