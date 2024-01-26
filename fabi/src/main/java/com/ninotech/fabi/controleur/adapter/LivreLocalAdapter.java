@@ -109,7 +109,7 @@ public class LivreLocalAdapter extends RecyclerView.Adapter<LivreLocalAdapter.My
                     .resize(178,284)
                     .into(mCouverture);
             mTitre.setText(livre.getTitre());
-            mCategorie.setText("Categorie : " + livre.getCategorie());
+            mCategorie.setText("Category : " + livre.getCategorie());
             mAuteur.setText("Auteur : " + livre.getAuteur());
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

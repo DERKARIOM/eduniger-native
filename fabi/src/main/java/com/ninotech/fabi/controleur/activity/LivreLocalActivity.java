@@ -12,7 +12,7 @@ import android.widget.ImageView;
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.adapter.CategorieLocalAdapter;
 import com.ninotech.fabi.controleur.adapter.LivreLocalAdapter;
-import com.ninotech.fabi.model.data.Categorie;
+import com.ninotech.fabi.model.data.Category;
 import com.ninotech.fabi.model.table.ElectroniqueTable;
 import com.ninotech.fabi.model.data.LivreLocal;
 import com.ninotech.fabi.model.table.Session;
@@ -54,13 +54,13 @@ public class LivreLocalActivity extends AppCompatActivity {
             case 3: // Playlists
                 mItemLocal.setImageResource(R.drawable.img_playliste_local);
                 break;
-            case 4: // Categorie
+            case 4: // Category
                 mItemLocal.setImageResource(R.drawable.img_categorie);
                 mList4 = new ArrayList<>();
                 Cursor cursor4 = mElectroniqueTable.getData(mSession.getIdNumber());
                 cursor4.moveToFirst();
                 do {
-                    mList4.add(new Categorie(cursor4.getString(9),cursor4.getString(7)));
+                    mList4.add(new Category(cursor4.getString(9),cursor4.getString(7)));
                 }while(cursor4.moveToNext());
                 mCategorieLocalAdapter = new CategorieLocalAdapter(mList4);
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -72,7 +72,7 @@ public class LivreLocalActivity extends AppCompatActivity {
                 Cursor cursor5 = mElectroniqueTable.getData(mSession.getIdNumber());
                 cursor5.moveToFirst();
                 do {
-                    mList4.add(new Categorie(cursor5.getString(10),cursor5.getString(4)));
+                    mList4.add(new Category(cursor5.getString(10),cursor5.getString(4)));
                 }while(cursor5.moveToNext());
                 mCategorieLocalAdapter = new CategorieLocalAdapter(mList4);
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -83,7 +83,7 @@ public class LivreLocalActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private LivreLocalAdapter mLivreLocalAdapter;
     private List<LivreLocal> mList1;
-    private List<Categorie> mList4;
+    private List<Category> mList4;
     private ElectroniqueTable mElectroniqueTable;
     private Session mSession;
     private ImageView mItemLocal;

@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.controleur.adapter.CategorieAdapter;
-import com.ninotech.fabi.model.data.Categorie;
+import com.ninotech.fabi.model.data.Category;
 import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.R;
 
@@ -83,7 +83,7 @@ public class CategorieFragment extends Fragment {
                 }
                 for (int i=0;i<jsonArray.length();i++) {
                     try {
-                        mList.add(new Categorie(jsonArray.getJSONObject(i).getString("nomCouverture"),jsonArray.getJSONObject(i).getString("nomCat")));
+                        mList.add(new Category(jsonArray.getJSONObject(i).getString("nomCouverture"),jsonArray.getJSONObject(i).getString("nomCat")));
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
@@ -103,6 +103,6 @@ public class CategorieFragment extends Fragment {
     }
     private RecyclerView mRecyclerView;
     private CategorieAdapter mCategorieAdapter;
-    private ArrayList<Categorie> mList;
+    private ArrayList<Category> mList;
     private Session mSession;
 }

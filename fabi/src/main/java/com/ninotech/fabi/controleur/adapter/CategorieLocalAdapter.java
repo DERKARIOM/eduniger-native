@@ -11,14 +11,14 @@ import android.widget.Toast;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.R;
-import com.ninotech.fabi.model.data.Categorie;
+import com.ninotech.fabi.model.data.Category;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 
 public class CategorieLocalAdapter extends RecyclerView.Adapter<CategorieLocalAdapter.MyViewHolder> {
-    List<Categorie> mListCategorie;
+    List<Category> mListCategory;
 
     public int getPosition() {
         return mPosition;
@@ -29,8 +29,8 @@ public class CategorieLocalAdapter extends RecyclerView.Adapter<CategorieLocalAd
     }
 
     private int mPosition;
-    public CategorieLocalAdapter(List<Categorie> listCategorie) {
-        mListCategorie = listCategorie;
+    public CategorieLocalAdapter(List<Category> listCategory) {
+        mListCategory = listCategory;
     }
     @Override
     public CategorieLocalAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -41,7 +41,7 @@ public class CategorieLocalAdapter extends RecyclerView.Adapter<CategorieLocalAd
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        Categorie item = mListCategorie.get(position);
+        Category item = mListCategory.get(position);
         int i = position;
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -51,20 +51,20 @@ public class CategorieLocalAdapter extends RecyclerView.Adapter<CategorieLocalAd
                 return true;
             }
         });
-        holder.display(mListCategorie.get(position));
+        holder.display(mListCategory.get(position));
 
     }
     @Override
     public int getItemCount() {
-        return mListCategorie.size();
+        return mListCategory.size();
     }
 
-    public Categorie getItem(int position) {
-        return mListCategorie.get(position);
+    public Category getItem(int position) {
+        return mListCategory.get(position);
     }
 
     public void Remove(int position){
-        mListCategorie.remove(position);
+        mListCategory.remove(position);
         notifyItemRemoved(position);
     }
 
@@ -85,20 +85,20 @@ public class CategorieLocalAdapter extends RecyclerView.Adapter<CategorieLocalAd
 //            menu.add(Menu.NONE,R.id.suppNotif,Menu.NONE,"Supprimer");
 //            menu.add(Menu.NONE,R.id.inportanteNotif,Menu.NONE,"Message importants");
         }
-        void display(Categorie categorie){
+        void display(Category category){
             Picasso.with(itemView.getContext())
-                    .load("http://192.168.43.1:2222/fabi/couverture/" + categorie.getIco())
+                    .load("http://192.168.43.1:2222/fabi/couverture/" + category.getBlanket())
                     .placeholder(R.drawable.img_default_livre)
                     .error(R.drawable.img_default_livre)
                     .into(mIco);
-            mTitre.setText(categorie.getTitre());
+            mTitre.setText(category.getTitle());
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Toast.makeText(itemView.getContext(), "OK", Toast.LENGTH_SHORT).show();
-//                    Intent categorie = new Intent(itemView.getContext(), CategorieActivity.class);
-//                    categorie.putExtra("nomCat",mTitre.getText().toString());
-//                    itemView.getContext().startActivity(categorie);
+//                    Intent category = new Intent(itemView.getContext(), CategorieActivity.class);
+//                    category.putExtra("nomCat",mTitre.getText().toString());
+//                    itemView.getContext().startActivity(category);
                 }
             });
         }
