@@ -10,22 +10,16 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 
-import com.ninotech.fabi.controleur.fragment.AccueilFragment;
+import com.ninotech.fabi.controleur.fragment.HomeFragment;
 import com.ninotech.fabi.controleur.fragment.AssistanceFragment;
 import com.ninotech.fabi.controleur.fragment.BibliothequeFragment;
 import com.ninotech.fabi.model.data.Account;
 import com.ninotech.fabi.model.data.Initialization;
-import com.ninotech.fabi.model.table.ElectroniqueTable;
-import com.ninotech.fabi.model.table.EmpreiteTable;
-import com.ninotech.fabi.model.table.NotificationTable;
-import com.ninotech.fabi.model.table.Session;
-import com.ninotech.fabi.model.table.UserTable;
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.model.service.NotificationService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -53,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar_main);
         SharedPreferences sharedPreferences = getSharedPreferences("MODE", Context.MODE_PRIVATE);
         boolean nightMODE = sharedPreferences.getBoolean("night", false);
-        mAccueilFragment = new AccueilFragment();
+        mHomeFragment = new HomeFragment();
         mAssistanceFragment = new AssistanceFragment();
         BibliothequeFragment bibliothequeFragment = new BibliothequeFragment();
         MenuItem menuItem = toolbar.getMenu().findItem(R.id.menuHomeNotification);
@@ -154,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         /* La mise en place du Fragment par defeaut */
-       getSupportFragmentManager().beginTransaction().replace(R.id.Top_comtainer,mAccueilFragment).commit();
+       getSupportFragmentManager().beginTransaction().replace(R.id.Top_comtainer, mHomeFragment).commit();
 
         /* En Clikquant sur les boutton de la barre de navigation */
         mBottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
@@ -163,12 +157,12 @@ public class MainActivity extends AppCompatActivity {
                 switch (item.getItemId())
                 {
                     case R.id.accueil:
-                        if (mAccueilFragment.isAdded()) {
-                            getSupportFragmentManager().beginTransaction().replace(R.id.Top_comtainer,mAccueilFragment).commit();
+                        if (mHomeFragment.isAdded()) {
+                            getSupportFragmentManager().beginTransaction().replace(R.id.Top_comtainer, mHomeFragment).commit();
                         }
                         else
                         {
-                            getSupportFragmentManager().beginTransaction().replace(R.id.Top_comtainer,new AccueilFragment()).commit();
+                            getSupportFragmentManager().beginTransaction().replace(R.id.Top_comtainer,new HomeFragment()).commit();
                         }
                         return true;
                     case R.id.assistance:
@@ -206,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
     /* Les attributs de la Classe MainActivity */
     private SQLiteDatabase mDatabase;
     private BottomNavigationView mBottomNavigationView;
-    private AccueilFragment mAccueilFragment = new AccueilFragment();
+    private HomeFragment mHomeFragment = new HomeFragment();
     private AssistanceFragment mAssistanceFragment = new AssistanceFragment();
     private Account mAccount;
 }

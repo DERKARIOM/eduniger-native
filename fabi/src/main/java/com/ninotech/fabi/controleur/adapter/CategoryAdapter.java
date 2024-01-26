@@ -11,7 +11,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.R;
-import com.ninotech.fabi.controleur.activity.CategorieActivity;
+import com.ninotech.fabi.controleur.activity.CategoryActivity;
 import com.ninotech.fabi.model.data.Category;
 import com.squareup.picasso.Picasso;
 
@@ -92,7 +92,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyView
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent category = new Intent(itemView.getContext(), CategorieActivity.class);
+                    Intent category = new Intent(itemView.getContext(), CategoryActivity.class);
                     category.putExtra("intent_adapter_category_title", mTitleTextView.getText().toString());
                     itemView.getContext().startActivity(category);
                 }

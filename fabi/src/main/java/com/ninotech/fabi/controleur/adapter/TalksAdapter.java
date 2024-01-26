@@ -15,7 +15,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-public class DisscutionAdapter extends RecyclerView.Adapter<DisscutionAdapter.MyViewHolder> {
+public class TalksAdapter extends RecyclerView.Adapter<TalksAdapter.MyViewHolder> {
     List<Talks> mListTalks;
 
     public int getPosition() {
@@ -27,13 +27,13 @@ public class DisscutionAdapter extends RecyclerView.Adapter<DisscutionAdapter.My
     }
 
     private int mPosition;
-    public DisscutionAdapter(List<Talks> listTalks) {
+    public TalksAdapter(List<Talks> listTalks) {
         mListTalks = listTalks;
     }
     @Override
-    public DisscutionAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public TalksAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View view = layoutInflater.inflate(R.layout.adapter_disscusion,parent,false);
+        View view = layoutInflater.inflate(R.layout.adapter_talks,parent,false);
         return new MyViewHolder(view);
     }
 
@@ -67,31 +67,28 @@ public class DisscutionAdapter extends RecyclerView.Adapter<DisscutionAdapter.My
     }
 
 
-    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener{
-        private ImageView mPhoto;
-        private TextView mUsername;
-        private TextView mMessage;
+    public static class MyViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener{
+        private final ImageView mPhotoProfilImageView;
+        private final TextView mUsernameTextView;
+        private final TextView mMessageTextView;
         MyViewHolder(View itemView){
             super(itemView);
-            mPhoto = itemView.findViewById(R.id.profile_disscution);
-            mUsername = itemView.findViewById(R.id.username);
-            mMessage = itemView.findViewById(R.id.talks);
+            mPhotoProfilImageView = itemView.findViewById(R.id.image_view_adapter_talks_profile);
+            mUsernameTextView = itemView.findViewById(R.id.text_view_adapter_talks_user_name);
+            mMessageTextView = itemView.findViewById(R.id.text_view_adapter_talks_message);
             itemView.setOnCreateContextMenuListener(this);
         }
         @Override
         public void onCreateContextMenu(ContextMenu menu , View v , ContextMenu.ContextMenuInfo menuInfo){
-//            menu.add(Menu.NONE,R.id.infoNotif,Menu.NONE,"Information");
-//            menu.add(Menu.NONE,R.id.suppNotif,Menu.NONE,"Supprimer");
-//            menu.add(Menu.NONE,R.id.inportanteNotif,Menu.NONE,"Message importants");
         }
         void display(Talks talks){
             Picasso.with(itemView.getContext())
-                    .load("http://192.168.43.1:2222/fabi/profil/" + talks.getProfil())
+                    .load(itemView.getResources().getString(R.string.ip_server) + "profil/" + talks.getProfil())
                     .placeholder(R.drawable.img_default_livre)
                     .error(R.drawable.img_default_livre)
-                    .into(mPhoto);
-            mUsername.setText(talks.getUsername());
-            mMessage.setText(talks.getMessage());
+                    .into(mPhotoProfilImageView);
+            mUsernameTextView.setText(talks.getUsername());
+            mMessageTextView.setText(talks.getMessage());
         }
     }
 }

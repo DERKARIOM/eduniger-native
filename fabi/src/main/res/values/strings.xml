@@ -160,5 +160,7 @@
     <string name="category">Categorie</string>
     <string name="category_book">categorie du livre</string>
     <string name="title_tones">Titre du morco</string>
+    <string name="user_name">Nom de l\' utilisateur</string>
+    <string name="message_default">Salut que puis-je faire pour vous</string>
 
 </resources>

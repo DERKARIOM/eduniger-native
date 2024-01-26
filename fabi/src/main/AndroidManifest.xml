@@ -44,7 +44,7 @@
             android:screenOrientation="portrait"
             android:exported="false" />
         <activity
-            android:name="com.ninotech.fabi.controleur.activity.CategorieActivity"
+            android:name="com.ninotech.fabi.controleur.activity.CategoryActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:parentActivityName="com.ninotech.fabi.controleur.activity.MainActivity" />

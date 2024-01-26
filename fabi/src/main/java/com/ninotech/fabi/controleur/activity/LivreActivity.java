@@ -37,7 +37,7 @@ import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.ninotech.fabi.controleur.adapter.DisscutionAdapter;
+import com.ninotech.fabi.controleur.adapter.TalksAdapter;
 import com.ninotech.fabi.controleur.dialog.ReservationDialog;
 import com.ninotech.fabi.model.data.Talks;
 import com.ninotech.fabi.model.table.ElectroniqueTable;
@@ -553,9 +553,9 @@ public class LivreActivity extends AppCompatActivity {
                             throw new RuntimeException(e);
                         }
                     }
-                    DisscutionAdapter disscutionAdapter = new DisscutionAdapter(mTalksList);
+                    TalksAdapter talksAdapter = new TalksAdapter(mTalksList);
                     mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                    mRecyclerView.setAdapter(disscutionAdapter);
+                    mRecyclerView.setAdapter(talksAdapter);
                 }
             }
             else

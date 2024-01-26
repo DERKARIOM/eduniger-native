@@ -21,7 +21,6 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -29,12 +28,12 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class CategorieActivity extends AppCompatActivity {
+public class CategoryActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_categorie);
+        setContentView(R.layout.activity_category);
         getSupportActionBar().hide();
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         mToolbar = findViewById(R.id.toolbar2);
@@ -71,7 +70,7 @@ public class CategorieActivity extends AppCompatActivity {
                     return response.body().string();
                 }catch (IOException e)
                 {
-                    Toast.makeText(CategorieActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CategoryActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
 
             }catch (Exception e)
@@ -103,7 +102,7 @@ public class CategorieActivity extends AppCompatActivity {
                         }
                     }
                     mBookAdapter = new BookAdapter(mList);
-                    mRecyclerView.setLayoutManager(new LinearLayoutManager(CategorieActivity.this));
+                    mRecyclerView.setLayoutManager(new LinearLayoutManager(CategoryActivity.this));
                     mRecyclerView.setAdapter(mBookAdapter);
                 }
                 //Toast.makeText(getContext(), jsonData, Toast.LENGTH_SHORT).show();

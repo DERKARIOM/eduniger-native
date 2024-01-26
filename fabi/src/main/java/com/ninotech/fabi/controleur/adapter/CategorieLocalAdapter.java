@@ -96,7 +96,7 @@ public class CategorieLocalAdapter extends RecyclerView.Adapter<CategorieLocalAd
                 @Override
                 public void onClick(View view) {
                     Toast.makeText(itemView.getContext(), "OK", Toast.LENGTH_SHORT).show();
-//                    Intent category = new Intent(itemView.getContext(), CategorieActivity.class);
+//                    Intent category = new Intent(itemView.getContext(), CategoryActivity.class);
 //                    category.putExtra("nomCat",mTitre.getText().toString());
 //                    itemView.getContext().startActivity(category);
                 }

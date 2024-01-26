@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/match_parent_all"
-    tools:context="com.ninotech.fabi.controleur.fragment.AccueilFragment">
+    tools:context="com.ninotech.fabi.controleur.fragment.HomeFragment">
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab_layout_accuiel"
         style="@style/match_wrap">
