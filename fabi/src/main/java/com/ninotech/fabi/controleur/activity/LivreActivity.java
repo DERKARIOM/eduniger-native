@@ -39,14 +39,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.controleur.adapter.DisscutionAdapter;
 import com.ninotech.fabi.controleur.dialog.ReservationDialog;
-import com.ninotech.fabi.model.data.Disscution;
+import com.ninotech.fabi.model.data.Talks;
 import com.ninotech.fabi.model.table.ElectroniqueTable;
 import com.ninotech.fabi.model.data.Recenmment;
 import com.ninotech.fabi.controleur.adapter.SimulaireAdapter;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
 import com.ninotech.fabi.model.table.Session;
-import com.ninotech.fabi.model.data.Son;
-import com.ninotech.fabi.controleur.adapter.SonAdapter;
+import com.ninotech.fabi.model.data.Tones;
+import com.ninotech.fabi.controleur.adapter.TonesAdapter;
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.dialog.SucceReservationDialog;
 import com.squareup.picasso.Picasso;
@@ -84,12 +84,12 @@ public class LivreActivity extends AppCompatActivity {
         Intent intentLivre = getIntent();
         mSession = new Session(this);
         mIdLivre = intentLivre.getStringExtra("intent_adapter_book_id");
-        mList = new ArrayList<>();
+        mTalksList = new ArrayList<>();
         mList2 = new ArrayList<>();
-        mListSon = new ArrayList<>();
+        mListTones = new ArrayList<>();
         mRecyclerView = findViewById(R.id.recylerCommentaire);
         mRecyclerView2 = findViewById(R.id.recylerSimilaire);
-        mRecyclerSon = findViewById(R.id.recylerAudio2);
+        mTonesRecyclerView = findViewById(R.id.recylerAudio2);
         mCouverture = findViewById(R.id.couverture_livre2);
         mTitre = findViewById(R.id.title_livre2);
         mCategorie = findViewById(R.id.categorie_livre2);
@@ -107,9 +107,9 @@ public class LivreActivity extends AppCompatActivity {
         mPlay = findViewById(R.id.paly);
         mStop = findViewById(R.id.stop);
         mSeekBar = findViewById(R.id.seekbar);
-        mBReservation = findViewById(R.id.bReservation);
-        mBAudio = findViewById(R.id.bAudio);
-        mBPDF = findViewById(R.id.bPDF);
+        mReservationLinearLayout = findViewById(R.id.bReservation);
+        mAudioLinearLayout = findViewById(R.id.bAudio);
+        mElectronicLinearLayout = findViewById(R.id.bPDF);
         mReservationDialog = new ReservationDialog(this);
         mElectroniqueTable = new ElectroniqueTable(this);
         tmp_position=0;
@@ -122,13 +122,13 @@ public class LivreActivity extends AppCompatActivity {
             @Override
             public void onReceive(Context context, Intent intent) {
                 if ("ACTION_AUDIO".equals(intent.getAction())) {
-                    mAudio = intent.getStringExtra("nomAudio");
-                    int position = intent.getIntExtra("position",0);
+                    mAudio = intent.getStringExtra("intent_adapter_tones_title");
+                    int position = intent.getIntExtra("intent_adapter_tones_position",0);
                     url = "http://192.168.43.1:2222/fabi/audio/" + mAudio;
                     try {
                         if(tmp_position != position)
-                            mListSon.get(tmp_position).setPlaying(false);
-                        mRecyclerSon.setAdapter(mSonAdapter);
+                            mListTones.get(tmp_position).setPlaying(false);
+                        mTonesRecyclerView.setAdapter(mTonesAdapter);
                         mMediaPlayer.reset();
                         mMediaPlayer.setDataSource(url);
                         mMediaPlayer.prepare();
@@ -480,12 +480,12 @@ public class LivreActivity extends AppCompatActivity {
                             .resize(200,334)
                             .into(mCouverture);
                     if(jsonObject.getString("estPhysique").equals("1"))
-                        mBReservation.setVisibility(View.VISIBLE);
+                        mReservationLinearLayout.setVisibility(View.VISIBLE);
                     if(jsonObject.getString("estAudio").equals("1"))
-                        mBAudio.setVisibility(View.VISIBLE);
+                        mAudioLinearLayout.setVisibility(View.VISIBLE);
                     if(!jsonObject.getString("documentElec").equals("null"))
                     {
-                        mBPDF.setVisibility(View.VISIBLE);
+                        mElectronicLinearLayout.setVisibility(View.VISIBLE);
                         mNomPdf = jsonObject.getString("documentElec");
                         mAuteur = jsonObject.getString("auteur");
                     }
@@ -548,14 +548,14 @@ public class LivreActivity extends AppCompatActivity {
                     }
                     for (int i=0;i<jsonArray.length();i++) {
                         try {
-                            mList.add(new Disscution(jsonArray.getJSONObject(i).getString("profil"),jsonArray.getJSONObject(i).getString("nomUt"),jsonArray.getJSONObject(i).getString("message")));
+                            mTalksList.add(new Talks(jsonArray.getJSONObject(i).getString("profil"),jsonArray.getJSONObject(i).getString("nomUt"),jsonArray.getJSONObject(i).getString("message")));
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
                     }
-                    mDisscutionAdapter = new DisscutionAdapter(mList);
+                    DisscutionAdapter disscutionAdapter = new DisscutionAdapter(mTalksList);
                     mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                    mRecyclerView.setAdapter(mDisscutionAdapter);
+                    mRecyclerView.setAdapter(disscutionAdapter);
                 }
             }
             else
@@ -724,7 +724,7 @@ public class LivreActivity extends AppCompatActivity {
                     }
                     for (int i=0;i<jsonArray.length();i++) {
                         try {
-                            mListSon.add(new Son(i+1,jsonArray.getJSONObject(i).getString("audio"),jsonArray.getJSONObject(i).getString("titre"),0,false));
+                            mListTones.add(new Tones(i+1,jsonArray.getJSONObject(i).getString("audio"),jsonArray.getJSONObject(i).getString("titre"),0,false));
                             if(i==0)
                                 mAudio = jsonArray.getJSONObject(i).getString("audio");
                         } catch (JSONException e) {
@@ -739,9 +739,9 @@ public class LivreActivity extends AppCompatActivity {
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
-                    mSonAdapter = new SonAdapter(mListSon);
-                    mRecyclerSon.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                    mRecyclerSon.setAdapter(mSonAdapter);
+                    mTonesAdapter = new TonesAdapter(mListTones);
+                    mTonesRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                    mTonesRecyclerView.setAdapter(mTonesAdapter);
                 }
             }
             else
@@ -885,17 +885,16 @@ public class LivreActivity extends AppCompatActivity {
         });
         succeReservationDialog.build();
     }
-    private LinearLayout mBReservation;
-    private LinearLayout mBAudio;
-    private LinearLayout mBPDF;
+    private LinearLayout mReservationLinearLayout;
+    private LinearLayout mAudioLinearLayout;
+    private LinearLayout mElectronicLinearLayout;
     private RecyclerView mRecyclerView;
-    private DisscutionAdapter mDisscutionAdapter;
-    private ArrayList<Disscution> mList;
+    private ArrayList<Talks> mTalksList;
 
     private RecyclerView mRecyclerView2;
-    private RecyclerView mRecyclerSon;
-    private SonAdapter mSonAdapter;
-    private List<Son> mListSon;
+    private RecyclerView mTonesRecyclerView;
+    private TonesAdapter mTonesAdapter;
+    private List<Tones> mListTones;
     private SimulaireAdapter mRecenmmentAdapter;
     private List<Recenmment> mList2;
     private String mIdLivre;

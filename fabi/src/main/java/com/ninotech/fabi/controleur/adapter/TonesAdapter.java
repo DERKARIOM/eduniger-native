@@ -11,12 +11,12 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.R;
-import com.ninotech.fabi.model.data.Son;
+import com.ninotech.fabi.model.data.Tones;
 
 import java.util.List;
 
-public class SonAdapter extends RecyclerView.Adapter<SonAdapter.MyViewHolder> {
-    List<Son> mListSon;
+public class TonesAdapter extends RecyclerView.Adapter<TonesAdapter.MyViewHolder> {
+    List<Tones> mListTones;
 
     public String getAudio() {
         return mAudio;
@@ -37,19 +37,19 @@ public class SonAdapter extends RecyclerView.Adapter<SonAdapter.MyViewHolder> {
     }
 
     private int mPosition;
-    public SonAdapter(List<Son> listSon) {
-        mListSon = listSon;
+    public TonesAdapter(List<Tones> listTones) {
+        mListTones = listTones;
     }
     @Override
-    public SonAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public TonesAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View view = layoutInflater.inflate(R.layout.adapter_son,parent,false);
+        View view = layoutInflater.inflate(R.layout.adapter_tones,parent,false);
         return new MyViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        Son item = mListSon.get(position);
+        Tones item = mListTones.get(position);
         int i = position;
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -59,54 +59,50 @@ public class SonAdapter extends RecyclerView.Adapter<SonAdapter.MyViewHolder> {
                 return true;
             }
         });
-        holder.display(mListSon.get(position));
+        holder.display(mListTones.get(position));
 
     }
     @Override
     public int getItemCount() {
-        return mListSon.size();
+        return mListTones.size();
     }
 
-    public Son getItem(int position) {
-        return mListSon.get(position);
+    public Tones getItem(int position) {
+        return mListTones.get(position);
     }
 
     public void Remove(int position){
-        mListSon.remove(position);
+        mListTones.remove(position);
         notifyItemRemoved(position);
     }
 
 
-    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener{
-        private TextView mNum;
-        private TextView mTitre;
-        private int tmp=0;
+    public static class MyViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener{
+        private final TextView mNumberTextView;
+        private final TextView mTitleTextView;
         MyViewHolder(View itemView){
             super(itemView);
-            mNum = itemView.findViewById(R.id.numSon);
-            mTitre = itemView.findViewById(R.id.titre_son);
+            mNumberTextView = itemView.findViewById(R.id.text_view_adapter_tones_number);
+            mTitleTextView = itemView.findViewById(R.id.text_view_adapter_tones_title);
             itemView.setOnCreateContextMenuListener(this);
         }
         @Override
         public void onCreateContextMenu(ContextMenu menu , View v , ContextMenu.ContextMenuInfo menuInfo){
-//            menu.add(Menu.NONE,R.id.infoNotif,Menu.NONE,"Information");
-//            menu.add(Menu.NONE,R.id.suppNotif,Menu.NONE,"Supprimer");
-//            menu.add(Menu.NONE,R.id.inportanteNotif,Menu.NONE,"Message importants");
         }
-        void display(Son son){
-            mNum.setText(String.valueOf(son.getNum()));
-            mTitre.setText(son.getTitre());
-            if(son.isPlaying())
-                mTitre.setTextColor(Color.parseColor("#D8125CDC"));
+        void display(Tones tones){
+            mNumberTextView.setText(String.valueOf(tones.getNumber()));
+            mTitleTextView.setText(tones.getTitle());
+            if(tones.isPlaying())
+                mTitleTextView.setTextColor(itemView.getResources().getColor(R.color.purple2_200));
             else
-                mTitre.setTextColor(Color.parseColor("#DF444444"));
+                mTitleTextView.setTextColor(itemView.getResources().getColor(R.color.black3));
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    son.setPlaying(true);
+                    tones.setPlaying(true);
                     Intent intent3 = new Intent("ACTION_AUDIO");
-                    intent3.putExtra("nomAudio", son.getAudio());
-                    intent3.putExtra("position", getPosition());
+                    intent3.putExtra("intent_adapter_tones_title", tones.getAudio());
+                    intent3.putExtra("intent_adapter_tones_position", getPosition());
                     itemView.getContext().sendBroadcast(intent3);
                 }
             });

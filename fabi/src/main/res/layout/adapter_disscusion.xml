@@ -32,7 +32,7 @@
         android:layout_below="@+id/block_profile"
         >
         <TextView
-            android:id="@+id/disscution"
+            android:id="@+id/talks"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"

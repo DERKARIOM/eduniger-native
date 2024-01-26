@@ -39,8 +39,8 @@ public class DiscussionFragment extends Fragment {
         mSession = new Session(view.getContext());
         mList = new ArrayList<>();
         mList.add(new Chat("fabiola.png","abiola","Salut que puis-je faire pour vous ?",true));
-//        mList.add(new Disscution(R.drawable.moi,"Bachir Abdoul Kader","D'où vient tu ?"));
-//        mList.add(new Disscution(R.drawable.fastia,"FASTIA","Je suis une intelligence artificielle créée par NinoTech. Je n'ai pas de lieu physique d'où je viens, car je suis un programme informatique conçu pour vous aider et répondre à vos questions. Comment puis-je vous assister aujourd'hui ?"));
+//        mList.add(new Talks(R.drawable.moi,"Bachir Abdoul Kader","D'où vient tu ?"));
+//        mList.add(new Talks(R.drawable.fastia,"FASTIA","Je suis une intelligence artificielle créée par NinoTech. Je n'ai pas de lieu physique d'où je viens, car je suis un programme informatique conçu pour vous aider et répondre à vos questions. Comment puis-je vous assister aujourd'hui ?"));
         mChatAdapter = new ChatAdapter(mList);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(mChatAdapter);

@@ -2,19 +2,16 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    style="@style/match_parent_all"
     tools:context="com.ninotech.fabi.controleur.activity.LivreActivity">
     <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/wrap_content_all"
         android:layout_marginStart="5dp"
         android:layout_marginTop="20dp"
         android:id="@+id/BtoolbarCategorie">
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+           style="@style/match_wrap"
             app:menu="@menu/menu_home"
             app:logo="@drawable/vector_back"
             android:layout_centerVertical="true"
@@ -23,76 +20,72 @@
             app:titleTextColor="@color/black3"
             android:layout_alignParentTop="true"
             app:titleTextAppearance="@style/CustoTollbar"
-            />
+            tools:ignore="RtlSymmetry" />
         <androidx.core.widget.NestedScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+           style="@style/match_parent_all"
             android:layout_below="@id/toolbar2">
             <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                style="@style/wrap_content_all">
                 <RelativeLayout
                     android:id="@+id/bLivre"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    style="@style/wrap_content_all"
                     android:layout_marginBottom="20dp"
                     android:layout_marginTop="10dp"
                     >
                     <ImageView
                         android:id="@+id/couverture_livre2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        style="@style/wrap_content_all"
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="10dp"
                         android:layout_marginEnd="10dp"
                         android:layout_marginBottom="10dp"
                         android:elevation="2dp"
-                        android:src="@drawable/img_default_livre" />
+                        android:src="@drawable/img_default_livre"
+                        android:contentDescription="@string/todo" />
                     <RelativeLayout
                         android:layout_width="wrap_content"
                         android:layout_marginStart="20dp"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:layout_toRightOf="@id/couverture_livre2">
+                        android:layout_toEndOf="@id/couverture_livre2">
 
                         <TextView
                             android:id="@+id/title_livre2"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            style="@style/wrap_content_all"
                             android:layout_marginStart="5dp"
                             android:layout_marginTop="5dp"
                             android:layout_marginEnd="5dp"
                             android:layout_marginBottom="5dp"
-                            android:text="Femmes du silence"
-                            android:textColor="@color/black"
-                            android:textSize="20dp" />
+                            android:text="@string/title_livre"
+                            android:textStyle="bold"
+                            android:textColor="@color/black2"
+                            android:textSize="@dimen/size_title" />
 
                         <TextView
                             android:id="@+id/categorie_livre2"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                           style="@style/wrap_content_all"
                             android:layout_below="@id/title_livre2"
                             android:layout_marginStart="5dp"
                             android:layout_marginTop="5dp"
                             android:layout_marginEnd="5dp"
                             android:layout_marginBottom="5dp"
-                            android:text="Literature"
-                            android:textSize="15dp" />
+                            android:text="@string/category_book"
+                            android:textSize="@dimen/size_sub_title" />
                         <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                           style="@style/wrap_content_all"
                             android:layout_below="@id/categorie_livre2">
                             <LinearLayout
                                 android:id="@+id/like"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_margin="10dp">
+                                style="@style/wrap_content_all"
+                                android:layout_margin="10dp"
+                                tools:ignore="UseCompoundDrawables">
                                 <ImageView
                                     android:id="@+id/ico1"
                                     android:layout_width="22dp"
                                     android:layout_height="22dp"
                                     android:elevation="10dp"
-                                    android:src="@drawable/vector_black3_off_like"/>
+                                    android:src="@drawable/vector_black3_off_like"
+                                    android:contentDescription="@string/todo" />
                                 <TextView
                                     android:id="@+id/text_view_adapter_book_number_like"
                                     android:layout_width="wrap_content"
@@ -100,21 +93,22 @@
                                     android:layout_marginStart="3dp"
                                     android:text="0"
                                     android:gravity="center_vertical"
-                                    android:textSize="10dp"
+                                    android:textSize="@dimen/size_number_subcribe"
                                     android:layout_gravity="center_vertical"
                                     android:src="@drawable/vector_black3_off_like"/>
                             </LinearLayout>
                             <LinearLayout
                                 android:id="@+id/nolike"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_margin="10dp">
+                                style="@style/wrap_content_all"
+                                android:layout_margin="10dp"
+                                tools:ignore="UseCompoundDrawables">
                                 <ImageView
                                     android:id="@+id/ico2"
                                     android:layout_width="22dp"
                                     android:layout_height="22dp"
                                     android:elevation="10dp"
-                                    android:src="@drawable/vector_black3_off_nolike"/>
+                                    android:src="@drawable/vector_black3_off_nolike"
+                                    android:contentDescription="@string/todo" />
                                 <TextView
                                     android:id="@+id/nbr_nolike"
                                     android:layout_width="wrap_content"
@@ -449,9 +443,8 @@
                     </RelativeLayout>
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recylerSimilaire"
+                        style="@style/wrap_content_all"
                         android:layout_margin="5dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
                         />
                 </LinearLayout>
             </RelativeLayout>

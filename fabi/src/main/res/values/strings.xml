@@ -158,5 +158,7 @@
     <string name="todo">TODO</string>
     <string name="book_category">Categorie du livre</string>
     <string name="category">Categorie</string>
+    <string name="category_book">categorie du livre</string>
+    <string name="title_tones">Titre du morco</string>
 
 </resources>

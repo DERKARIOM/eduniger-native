@@ -1,7 +1,7 @@
 package com.ninotech.fabi.model.data;
 
-public class Disscution {
-    public Disscution(String profil, String username, String message) {
+public class Talks {
+    public Talks(String profil, String username, String message) {
         this.profil = profil;
         mUsername = username;
         mMessage = message;
