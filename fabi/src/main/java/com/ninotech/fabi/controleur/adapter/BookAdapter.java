@@ -121,7 +121,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.MyViewHolder> 
                 @Override
                 public void onClick(View view) {
                     Intent intentLivre = new Intent(itemView.getContext(), LivreActivity.class);
-                    intentLivre.putExtra("idLivre",book.getId());
+                    intentLivre.putExtra("intent_adapter_book_id",book.getId());
                     itemView.getContext().startActivity(intentLivre);
                 }
             });

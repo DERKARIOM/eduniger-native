@@ -23,7 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/toolbar3"
-        tools:context="com.ninotech.fabi.controleur.fragment.RecomandeFragment">
+        tools:context="com.ninotech.fabi.controleur.fragment.RecommendedFragment">
 
         <RelativeLayout
             android:layout_width="match_parent"

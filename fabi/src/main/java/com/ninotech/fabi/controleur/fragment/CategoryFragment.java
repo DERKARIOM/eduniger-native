@@ -28,7 +28,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class CategorieFragment extends Fragment {
+public class CategoryFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -38,7 +38,7 @@ public class CategorieFragment extends Fragment {
         mSession = new Session(getContext());
         mList = new ArrayList<>();
         Http http = new Http();
-        http.execute("http://192.168.43.1:2222/fabi/android/categorie.php");
+        http.execute("http://192.168.43.1:2222/fabi/android/Category.php");
         return view;
     }
 

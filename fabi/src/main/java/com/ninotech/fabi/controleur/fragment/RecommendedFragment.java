@@ -35,34 +35,30 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class RecomandeFragment extends Fragment {
+public class RecommendedFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_recomande, container, false);
-        mSession = new Session(getContext());
-        mRecyclerViewBookRecomended = view.findViewById(R.id.recylerClassement);
+        View view = inflater.inflate(R.layout.fragment_recommended, container, false);
+        Session session = new Session(getContext());
+        mBookRecommendedRecyclerView = view.findViewById(R.id.recylerClassement);
         mPub = view.findViewById(R.id.img_welcom);
-        mList = new ArrayList<>();
-        mMonPub = new ArrayList<>();
-        mMonPub.add("pub1.jpg");
-        mMonPub.add("pub2.jpg");
+        mBookList = new ArrayList<>();
+        ArrayList<String> monPubList = null;
+        monPubList = new ArrayList<>();
+        monPubList.add("pub1.jpg");
+        monPubList.add("pub2.jpg");
         Picasso.with(view.getContext())
-                .load("http://192.168.43.1:2222/fabi/pub/pub1.jpg")
+                .load(getString(R.string.ip_server) + "pub/pub1.jpg")
                 .transform(new RoundedTransformation(200,10))
                 .resize(6200,3333)
                 .into(mPub);
         Handler handlerOut = new Handler();
         Handler handlerIn = new Handler();
         int delayMillis = 5000; // 5 secondes
-        int currentIndex = 0;
-
         Runnable runnableOut = new Runnable() {
             @Override
             public void run() {
-                // Utilisez YoYo pour animer le changement d'image
-
-
                 YoYo.with(Techniques.SlideOutLeft)
                         .duration(1000)
                         .onEnd(animator -> {
@@ -83,8 +79,6 @@ public class RecomandeFragment extends Fragment {
             @Override
             public void run() {
                 // Utilisez YoYo pour animer le changement d'image
-
-
                 YoYo.with(Techniques.SlideInRight)
                         .duration(1000)
                         .onEnd(animator -> {
@@ -103,8 +97,8 @@ public class RecomandeFragment extends Fragment {
         };
         handlerOut.postDelayed(runnableOut,delayMillis);
         handlerIn.postDelayed(runnableIn,delayMillis+1000);
-        Http http = new Http();
-        http.execute("http://192.168.43.1:2222/fabi/android/recomande.php");
+        RecommendedSyn recommendedSyn = new RecommendedSyn();
+        recommendedSyn.execute(getString(R.string.ip_server_android) + "Recommended.php", session.getIdNumber());
         mPub.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -113,7 +107,7 @@ public class RecomandeFragment extends Fragment {
         });
         return view;
     }
-    private class Http extends AsyncTask<String,Void,String> {
+    private class RecommendedSyn extends AsyncTask<String,Void,String> {
         @Override
         protected String doInBackground(String... params) {
 
@@ -121,7 +115,7 @@ public class RecomandeFragment extends Fragment {
                 OkHttpClient client = new OkHttpClient();
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
-                        .addFormDataPart("matricule",mSession.getIdNumber())
+                        .addFormDataPart("matricule",params[1])
                         .build();
                 Request request = new Request.Builder()
                         .url(params[0])
@@ -129,6 +123,7 @@ public class RecomandeFragment extends Fragment {
                         .build();
                 try {
                     Response response = client.newCall(request).execute();
+                    assert response.body() != null;
                     return response.body().string();
                 }catch (IOException e)
                 {
@@ -143,7 +138,6 @@ public class RecomandeFragment extends Fragment {
         }
         @Override
         protected void onPostExecute(String jsonData){
-            //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
             if(jsonData != null)
             {
                 JSONArray jsonArray = null;
@@ -156,27 +150,18 @@ public class RecomandeFragment extends Fragment {
                     try {
                         ArrayList<String> category = new ArrayList<>();
                         category.add(jsonArray.getJSONObject(i).getString("nomCat"));
-                        mList.add(new Book(jsonArray.getJSONObject(i).getString("idLivre"),jsonArray.getJSONObject(i).getString("couverture"),jsonArray.getJSONObject(i).getString("titreLivre"),category,jsonArray.getJSONObject(i).getString("estPhysique"),jsonArray.getJSONObject(i).getString("documentElec"),jsonArray.getJSONObject(i).getString("estAudio"),jsonArray.getJSONObject(i).getString("nbrLikes"),"0"));
+                        mBookList.add(new Book(jsonArray.getJSONObject(i).getString("idLivre"),jsonArray.getJSONObject(i).getString("couverture"),jsonArray.getJSONObject(i).getString("titreLivre"),category,jsonArray.getJSONObject(i).getString("estPhysique"),jsonArray.getJSONObject(i).getString("documentElec"),jsonArray.getJSONObject(i).getString("estAudio"),jsonArray.getJSONObject(i).getString("nbrLikes"),"0"));
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
                 }
-                mBookAdapter = new BookAdapter(mList);
-                mRecyclerViewBookRecomended.setLayoutManager(new LinearLayoutManager(getContext()));
-                mRecyclerViewBookRecomended.setAdapter(mBookAdapter);
-                //Toast.makeText(getContext(), jsonData, Toast.LENGTH_SHORT).show();
+                BookAdapter bookAdapter = new BookAdapter(mBookList);
+                mBookRecommendedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                mBookRecommendedRecyclerView.setAdapter(bookAdapter);
             }
-            else
-            {
-
-            }
-
         }
     }
-    private RecyclerView mRecyclerViewBookRecomended;
-    private BookAdapter mBookAdapter;
-    private ArrayList<Book> mList;
-    private Session mSession;
+    private RecyclerView mBookRecommendedRecyclerView;
+    private ArrayList<Book> mBookList;
     private ImageView mPub;
-    private List<String> mMonPub;
 }

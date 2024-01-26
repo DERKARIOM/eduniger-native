@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.ninotech.fabi.controleur.fragment.RecomandeFragment">
+    style="@style/match_parent_all"
+    tools:context="com.ninotech.fabi.controleur.fragment.RecommendedFragment">
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        style="@style/match_parent_all">
         <ImageView
             android:id="@+id/img_welcom"
             android:layout_width="match_parent"
@@ -14,7 +12,7 @@
             android:layout_marginTop="20dp"
             android:layout_marginBottom="20dp"
             android:elevation="6dp"
-            />
+            android:contentDescription="@string/todo" />
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recylerClassement"
             android:layout_below="@+id/img_welcom"

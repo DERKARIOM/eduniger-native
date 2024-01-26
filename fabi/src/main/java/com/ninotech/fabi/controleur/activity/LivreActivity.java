@@ -83,7 +83,7 @@ public class LivreActivity extends AppCompatActivity {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         Intent intentLivre = getIntent();
         mSession = new Session(this);
-        mIdLivre = intentLivre.getStringExtra("idLivre");
+        mIdLivre = intentLivre.getStringExtra("intent_adapter_book_id");
         mList = new ArrayList<>();
         mList2 = new ArrayList<>();
         mListSon = new ArrayList<>();
