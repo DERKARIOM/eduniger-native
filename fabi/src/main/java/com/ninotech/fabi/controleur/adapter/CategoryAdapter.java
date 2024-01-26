@@ -18,7 +18,7 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 
-public class CategorieAdapter extends RecyclerView.Adapter<CategorieAdapter.MyViewHolder> {
+public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyViewHolder> {
     List<Category> mListCategory;
 
     public int getPosition() {
@@ -30,11 +30,11 @@ public class CategorieAdapter extends RecyclerView.Adapter<CategorieAdapter.MyVi
     }
 
     private int mPosition;
-    public CategorieAdapter(List<Category> listCategory) {
+    public CategoryAdapter(List<Category> listCategory) {
         mListCategory = listCategory;
     }
     @Override
-    public CategorieAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public CategoryAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         View view = layoutInflater.inflate(R.layout.adapter_category,parent,false);
         return new MyViewHolder(view);

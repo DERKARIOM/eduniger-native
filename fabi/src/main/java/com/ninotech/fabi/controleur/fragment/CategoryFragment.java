@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.ninotech.fabi.controleur.adapter.CategorieAdapter;
+import com.ninotech.fabi.controleur.adapter.CategoryAdapter;
 import com.ninotech.fabi.model.data.Category;
 import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.R;
@@ -32,17 +32,16 @@ public class CategoryFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_categorie, container, false);
-        mRecyclerView = view.findViewById(R.id.recylerCategorie);
-        mSession = new Session(getContext());
-        mList = new ArrayList<>();
-        Http http = new Http();
-        http.execute("http://192.168.43.1:2222/fabi/android/Category.php");
+        View view = inflater.inflate(R.layout.fragment_category, container, false);
+        mCategoryRecyclerView = view.findViewById(R.id.recylerCategorie);
+        Session session = new Session(getContext());
+        mCategoryList = new ArrayList<>();
+        CategorySyn categorySyn = new CategorySyn();
+        categorySyn.execute(getString(R.string.ip_server_android) + "Category.php", session.getIdNumber());
         return view;
     }
 
-    private class Http extends AsyncTask<String,Void,String> {
+    private class CategorySyn extends AsyncTask<String,Void,String> {
         @Override
         protected String doInBackground(String... params) {
 
@@ -50,7 +49,7 @@ public class CategoryFragment extends Fragment {
                 OkHttpClient client = new OkHttpClient();
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
-                        .addFormDataPart("matricule",mSession.getIdNumber())
+                        .addFormDataPart("matricule",params[1])
                         .build();
                 Request request = new Request.Builder()
                         .url(params[0])
@@ -58,6 +57,7 @@ public class CategoryFragment extends Fragment {
                         .build();
                 try {
                     Response response = client.newCall(request).execute();
+                    assert response.body() != null;
                     return response.body().string();
                 }catch (IOException e)
                 {
@@ -72,7 +72,6 @@ public class CategoryFragment extends Fragment {
         }
         @Override
         protected void onPostExecute(String jsonData){
-            //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
             if(jsonData != null)
             {
                 JSONArray jsonArray = null;
@@ -83,26 +82,17 @@ public class CategoryFragment extends Fragment {
                 }
                 for (int i=0;i<jsonArray.length();i++) {
                     try {
-                        mList.add(new Category(jsonArray.getJSONObject(i).getString("nomCouverture"),jsonArray.getJSONObject(i).getString("nomCat")));
+                        mCategoryList.add(new Category(jsonArray.getJSONObject(i).getString("nomCouverture"),jsonArray.getJSONObject(i).getString("nomCat")));
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
                 }
-                mCategorieAdapter = new CategorieAdapter(mList);
-                mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                mRecyclerView.setAdapter(mCategorieAdapter);
-
-                //Toast.makeText(getContext(), jsonData, Toast.LENGTH_SHORT).show();
+                CategoryAdapter categoryAdapter = new CategoryAdapter(mCategoryList);
+                mCategoryRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                mCategoryRecyclerView.setAdapter(categoryAdapter);
             }
-            else
-            {
-
-            }
-
         }
     }
-    private RecyclerView mRecyclerView;
-    private CategorieAdapter mCategorieAdapter;
-    private ArrayList<Category> mList;
-    private Session mSession;
+    private RecyclerView mCategoryRecyclerView;
+    private ArrayList<Category> mCategoryList;
 }
