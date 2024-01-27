@@ -88,9 +88,9 @@ public class LivreLocalAdapter extends RecyclerView.Adapter<LivreLocalAdapter.My
       private TextView mAuteur;
         MyViewHolder(View itemView){
             super(itemView);
-            mCouverture = itemView.findViewById(R.id.couverture_livre2);
-            mTitre = itemView.findViewById(R.id.title_livre2);
-            mCategorie = itemView.findViewById(R.id.categorie_livre2);
+            mCouverture = itemView.findViewById(R.id.image_view_activity_book_blanket);
+            mTitre = itemView.findViewById(R.id.text_view_activity_book_title);
+            mCategorie = itemView.findViewById(R.id.text_view_activity_book_category);
             mAuteur = itemView.findViewById(R.id.auteur_livre);
             itemView.setOnCreateContextMenuListener(this);
         }

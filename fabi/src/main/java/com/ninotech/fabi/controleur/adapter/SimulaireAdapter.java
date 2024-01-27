@@ -8,7 +8,7 @@ import android.widget.ImageView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.ninotech.fabi.controleur.activity.LivreActivity;
+import com.ninotech.fabi.controleur.activity.BookActivity;
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
 import com.ninotech.fabi.model.data.Recenmment;
@@ -85,7 +85,7 @@ public class SimulaireAdapter extends RecyclerView.Adapter<SimulaireAdapter.MyVi
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intentLivre = new Intent(itemView.getContext(), LivreActivity.class);
+                    Intent intentLivre = new Intent(itemView.getContext(), BookActivity.class);
                     intentLivre.putExtra("idLivre",recenmment.getIdLivre());
                     itemView.getContext().startActivity(intentLivre);
                 }

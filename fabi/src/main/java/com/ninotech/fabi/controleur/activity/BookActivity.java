@@ -63,6 +63,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -72,14 +73,14 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class LivreActivity extends AppCompatActivity {
+public class BookActivity extends AppCompatActivity {
     private static final int STORAGE_PERMISSION_REQUEST_CODE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_livre);
-        getSupportActionBar().hide();
+        setContentView(R.layout.activity_book);
+        Objects.requireNonNull(getSupportActionBar()).hide();
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         Intent intentLivre = getIntent();
         mSession = new Session(this);
@@ -87,35 +88,35 @@ public class LivreActivity extends AppCompatActivity {
         mTalksList = new ArrayList<>();
         mList2 = new ArrayList<>();
         mListTones = new ArrayList<>();
-        mRecyclerView = findViewById(R.id.recylerCommentaire);
-        mRecyclerView2 = findViewById(R.id.recylerSimilaire);
-        mTonesRecyclerView = findViewById(R.id.recylerAudio2);
-        mCouverture = findViewById(R.id.couverture_livre2);
-        mTitre = findViewById(R.id.title_livre2);
-        mCategorie = findViewById(R.id.categorie_livre2);
-        mDesc = findViewById(R.id.desc_livre);
-        mBttReservation = findViewById(R.id.btt_reservation);
-        mBttAudio = findViewById(R.id.btt_audio);
-        mBttOpenPDF = findViewById(R.id.btt_pdf_ouvrir);
-        mBttDowloadPDF = findViewById(R.id.btt_pdf);
-        mMessage = findViewById(R.id.messageCommentaire);
-        mAdd = findViewById(R.id.addCommentaire);
-        mBlike = findViewById(R.id.like);
-        mBNolike = findViewById(R.id.nolike);
-        mBttLike = findViewById(R.id.ico1);
-        mBttNoLike = findViewById(R.id.ico2);
-        mPlay = findViewById(R.id.paly);
-        mStop = findViewById(R.id.stop);
-        mSeekBar = findViewById(R.id.seekbar);
-        mReservationLinearLayout = findViewById(R.id.bReservation);
-        mAudioLinearLayout = findViewById(R.id.bAudio);
-        mElectronicLinearLayout = findViewById(R.id.bPDF);
+        mCommentaireRecyclerView = findViewById(R.id.recycler_view_activity_book_Comments);
+        mSimilarRecyclerView = findViewById(R.id.recycler_view_activity_book_similar);
+        mTonesRecyclerView = findViewById(R.id.recycler_view_activity_book_tones);
+        mBlanketImageView = findViewById(R.id.image_view_activity_book_blanket);
+        mTitleTextView = findViewById(R.id.text_view_activity_book_title);
+        mCategoryTextView = findViewById(R.id.text_view_activity_book_category);
+        mDescriptionTextView = findViewById(R.id.text_view_activity_book_description);
+        mReservationButton = findViewById(R.id.button_activity_book_reservation);
+        mAudioButton = findViewById(R.id.button_activity_book_audio);
+        mOpenPDFButton = findViewById(R.id.button_activity_book_open_pdf);
+        mDownloadPDFButton = findViewById(R.id.button_activity_book_download_pdf);
+        mMessageTextView = findViewById(R.id.text_view_activity_book_message);
+        mAddCommentsImageView = findViewById(R.id.image_view_activity_book_add_comments);
+        mLikeLinearLayout = findViewById(R.id.linear_layout_activiry_book_like);
+        mNoLikeLinearLayout = findViewById(R.id.linear_layout_activiry_book_nolike);
+        mLikeImageView = findViewById(R.id.image_view_activity_book_like);
+        mNoLikeImageView = findViewById(R.id.image_view_activity_book_nolike);
+        mPlayerImageView = findViewById(R.id.image_view_activity_book_player);
+        mStopImageView = findViewById(R.id.image_view_activity_book_stop);
+        mSeekBar = findViewById(R.id.seekbar_activity_book);
+        mReservationLinearLayout = findViewById(R.id.linear_layout_activity_book_reservation);
+        mAudioLinearLayout = findViewById(R.id.linear_layout_activity_book_audio);
+        mElectronicLinearLayout = findViewById(R.id.linear_layout_activity_book_electronic);
         mReservationDialog = new ReservationDialog(this);
         mElectroniqueTable = new ElectroniqueTable(this);
         tmp_position=0;
         mMediaPlayer = new MediaPlayer();
-        isLike=false;
-        isNoLike=false;
+        mIsLike =false;
+        mIsNoLike =false;
         handler = new Handler();
         mTimer = new Timer();
         BroadcastReceiver receiverNote = new BroadcastReceiver() {
@@ -135,7 +136,7 @@ public class LivreActivity extends AppCompatActivity {
                         mSeekBar.setMax(mMediaPlayer.getDuration());
                         mMediaPlayer.start();
                         tmp_position = position;
-                        mPlay.setImageResource(R.drawable.vector_black3_play);
+                        mPlayerImageView.setImageResource(R.drawable.vector_black3_play);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -176,14 +177,14 @@ public class LivreActivity extends AppCompatActivity {
 
             }
         });
-        mBttReservation.setOnClickListener(new View.OnClickListener() {
+        mReservationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 ReservationDialog();
             }
         });
 
-        mBttOpenPDF.setOnClickListener(new View.OnClickListener() {
+        mOpenPDFButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // Vérifier et demander la permission d'écriture externe si nécessaire
@@ -191,7 +192,7 @@ public class LivreActivity extends AppCompatActivity {
                         Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED) {
 
-                    ActivityCompat.requestPermissions(LivreActivity.this,
+                    ActivityCompat.requestPermissions(BookActivity.this,
                             new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                             STORAGE_PERMISSION_REQUEST_CODE);
                 } else {
@@ -201,67 +202,67 @@ public class LivreActivity extends AppCompatActivity {
             }
         });
 
-        mBttDowloadPDF.setOnClickListener(new View.OnClickListener() {
+        mDownloadPDFButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(mElectroniqueTable.insert(mSession.getIdNumber(),mIdLivre,mDesc.getText().toString(),mAuteur,mNomCouverture,mNomPdf,mCategorie.getText().toString(),mTitre.getText().toString(),mNomCouvertureCat,mProfilAuteur))
+                if(mElectroniqueTable.insert(mSession.getIdNumber(),mIdLivre, mDescriptionTextView.getText().toString(),mAuteur,mNomCouverture,mNomPdf, mCategoryTextView.getText().toString(), mTitleTextView.getText().toString(),mNomCouvertureCat,mProfilAuteur))
                     succeDowloadPDFDialog();
             }
         });
-        mPlay.setOnClickListener(new View.OnClickListener() {
+        mPlayerImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(mMediaPlayer.isPlaying())
                 {
-                    mPlay.setImageResource(R.drawable.vector_black3_plause);
+                    mPlayerImageView.setImageResource(R.drawable.vector_black3_plause);
                     mMediaPlayer.pause();
                 }
                 else
                 {
-                    mPlay.setImageResource(R.drawable.vector_black3_play);
+                    mPlayerImageView.setImageResource(R.drawable.vector_black3_play);
                     mMediaPlayer.start();
                 }
             }
         });
 
-        mStop.setOnClickListener(new View.OnClickListener() {
+        mStopImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mMediaPlayer.stop();
-                mPlay.setImageResource(R.drawable.vector_black3_plause);
+                mPlayerImageView.setImageResource(R.drawable.vector_black3_plause);
                 mTimer.cancel(); // Arrête le Timer lors de la destruction de l'activité
                mSeekBar.setProgress(0);
             }
         });
-        mBlike.setOnClickListener(new View.OnClickListener() {
+        mLikeLinearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!isLike)
+                if(!mIsLike)
                 {
-                    isLike = true;
-                    mBttLike.setImageResource(R.drawable.vector_purple2_200_on_like);
+                    mIsLike = true;
+                    mLikeImageView.setImageResource(R.drawable.vector_purple2_200_on_like);
                 }
                 else
                 {
-                    isLike = false;
-                    mBttLike.setImageResource(R.drawable.vector_black3_off_like);
+                    mIsLike = false;
+                    mLikeImageView.setImageResource(R.drawable.vector_black3_off_like);
 
                 }
             }
         });
 
-        mBNolike.setOnClickListener(new View.OnClickListener() {
+        mNoLikeLinearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!isNoLike)
+                if(!mIsNoLike)
                 {
-                    isNoLike = true;
-                    mBttNoLike.setImageResource(R.drawable.vector_rouge_on_nolike);
+                    mIsNoLike = true;
+                    mNoLikeImageView.setImageResource(R.drawable.vector_rouge_on_nolike);
                 }
                 else
                 {
-                    isNoLike = false;
-                    mBttNoLike.setImageResource(R.drawable.vector_black3_off_nolike);
+                    mIsNoLike = false;
+                    mNoLikeImageView.setImageResource(R.drawable.vector_black3_off_nolike);
 
                 }
             }
@@ -274,10 +275,10 @@ public class LivreActivity extends AppCompatActivity {
         pullCommentaire.execute("http://192.168.43.1:2222/fabi/android/pull_commentaire.php");
         similaires.execute("http://192.168.43.1:2222/fabi/android/similaires.php");
         pullSon.execute("http://192.168.43.1:2222/fabi/android/son.php");
-        mAdd.setOnClickListener(new View.OnClickListener() {
+        mAddCommentsImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!mMessage.getText().toString().equals("null"))
+                if(!mMessageTextView.getText().toString().equals("null"))
                 {
                     PushCommentaire pushCommentaire = new PushCommentaire();
                     pushCommentaire.execute("http://192.168.43.1:2222/fabi/android/push_commentaire.php");
@@ -448,7 +449,7 @@ public class LivreActivity extends AppCompatActivity {
                     return response.body().string();
                 }catch (IOException e)
                 {
-                    Toast.makeText(LivreActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(BookActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
 
             }catch (Exception e)
@@ -478,7 +479,7 @@ public class LivreActivity extends AppCompatActivity {
                             .error(R.drawable.img_default_livre)
                             .transform(new RoundedTransformation(15,4))
                             .resize(200,334)
-                            .into(mCouverture);
+                            .into(mBlanketImageView);
                     if(jsonObject.getString("estPhysique").equals("1"))
                         mReservationLinearLayout.setVisibility(View.VISIBLE);
                     if(jsonObject.getString("estAudio").equals("1"))
@@ -489,9 +490,9 @@ public class LivreActivity extends AppCompatActivity {
                         mNomPdf = jsonObject.getString("documentElec");
                         mAuteur = jsonObject.getString("auteur");
                     }
-                    mTitre.setText(jsonObject.getString("titreLivre"));
-                    mCategorie.setText(jsonObject.getString("nomCat"));
-                    mDesc.setText(jsonObject.getString("descLivre"));
+                    mTitleTextView.setText(jsonObject.getString("titreLivre"));
+                    mCategoryTextView.setText(jsonObject.getString("nomCat"));
+                    mDescriptionTextView.setText(jsonObject.getString("descLivre"));
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
@@ -524,7 +525,7 @@ public class LivreActivity extends AppCompatActivity {
                     return response.body().string();
                 }catch (IOException e)
                 {
-                    Toast.makeText(LivreActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(BookActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
 
             }catch (Exception e)
@@ -554,8 +555,8 @@ public class LivreActivity extends AppCompatActivity {
                         }
                     }
                     TalksAdapter talksAdapter = new TalksAdapter(mTalksList);
-                    mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                    mRecyclerView.setAdapter(talksAdapter);
+                    mCommentaireRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                    mCommentaireRecyclerView.setAdapter(talksAdapter);
                 }
             }
             else
@@ -576,7 +577,7 @@ public class LivreActivity extends AppCompatActivity {
                         .setType(MultipartBody.FORM)
                         .addFormDataPart("matricule",mSession.getIdNumber())
                         .addFormDataPart("idLivre",mIdLivre)
-                        .addFormDataPart("message",mMessage.getText().toString())
+                        .addFormDataPart("message", mMessageTextView.getText().toString())
                         .build();
                 Request request = new Request.Builder()
                         .url(params[0])
@@ -587,7 +588,7 @@ public class LivreActivity extends AppCompatActivity {
                     return response.body().string();
                 }catch (IOException e)
                 {
-                    Toast.makeText(LivreActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(BookActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
 
             }catch (Exception e)
@@ -603,9 +604,9 @@ public class LivreActivity extends AppCompatActivity {
             {
                 if(jsonData.equals("true"))
                 {
-                    mMessage.setText("");
+                    mMessageTextView.setText("");
                 }
-                Toast.makeText(LivreActivity.this, jsonData, Toast.LENGTH_SHORT).show();
+                Toast.makeText(BookActivity.this, jsonData, Toast.LENGTH_SHORT).show();
             }
             else
             {
@@ -625,7 +626,7 @@ public class LivreActivity extends AppCompatActivity {
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
                         .addFormDataPart("matricule",mSession.getIdNumber())
-                        .addFormDataPart("nomCategorie",mCategorie.getText().toString())
+                        .addFormDataPart("nomCategorie", mCategoryTextView.getText().toString())
                         .addFormDataPart("idLivre",mIdLivre)
                         .build();
                 Request request = new Request.Builder()
@@ -637,7 +638,7 @@ public class LivreActivity extends AppCompatActivity {
                     return response.body().string();
                 }catch (IOException e)
                 {
-                    Toast.makeText(LivreActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(BookActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
 
             }catch (Exception e)
@@ -667,8 +668,8 @@ public class LivreActivity extends AppCompatActivity {
                         }
                     }
                     mRecenmmentAdapter = new SimulaireAdapter(mList2);
-                    mRecyclerView2.setLayoutManager(new LinearLayoutManager(getApplicationContext(),LinearLayoutManager.HORIZONTAL,false));
-                    mRecyclerView2.setAdapter(mRecenmmentAdapter);
+                    mSimilarRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(),LinearLayoutManager.HORIZONTAL,false));
+                    mSimilarRecyclerView.setAdapter(mRecenmmentAdapter);
                 }
                 //Toast.makeText(getContext(), jsonData, Toast.LENGTH_SHORT).show();
             }
@@ -700,7 +701,7 @@ public class LivreActivity extends AppCompatActivity {
                     return response.body().string();
                 }catch (IOException e)
                 {
-                    Toast.makeText(LivreActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(BookActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
 
             }catch (Exception e)
@@ -777,9 +778,9 @@ public class LivreActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 //                if(delaitReservation.isEnabled())
-//                    Toast.makeText(LivreActivity.this, "OK", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(BookActivity.this, "OK", Toast.LENGTH_SHORT).show();
 //                else
-//                    Toast.makeText(LivreActivity.this, "KO", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(BookActivity.this, "KO", Toast.LENGTH_SHORT).show();
                 if(reservPassword.getText().toString().equals(""))
                     reservErr.setText("svp votre mot de passe");
                 else
@@ -821,7 +822,7 @@ public class LivreActivity extends AppCompatActivity {
                     return response.body().string();
                 }catch (IOException e)
                 {
-                    Toast.makeText(LivreActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(BookActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
 
             }catch (Exception e)
@@ -835,14 +836,14 @@ public class LivreActivity extends AppCompatActivity {
             //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
             if(jsonData != null)
             {
-                Toast.makeText(LivreActivity.this, jsonData, Toast.LENGTH_SHORT).show();
+                Toast.makeText(BookActivity.this, jsonData, Toast.LENGTH_SHORT).show();
                 if(jsonData.equals("true"))
                 {
                     mReservationDialog.cancel();
                     succeReservationDialog();
                 }
 
-                //Toast.makeText(LivreActivity.this, jsonData, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(BookActivity.this, jsonData, Toast.LENGTH_SHORT).show();
             }
             else
             {
@@ -858,7 +859,7 @@ public class LivreActivity extends AppCompatActivity {
         succeReservationDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
         TextView message = succeReservationDialog.findViewById(R.id.popo_message);
         TextView ok = succeReservationDialog.findViewById(R.id.ok);
-        message.setText("Merci d'avoir réservé \"" + mTitre.getText().toString() + "\" sur fabi; nous traitons votre demande et vous confirmerons la disponibilité bientôt.");
+        message.setText("Merci d'avoir réservé \"" + mTitleTextView.getText().toString() + "\" sur fabi; nous traitons votre demande et vous confirmerons la disponibilité bientôt.");
         ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -875,7 +876,7 @@ public class LivreActivity extends AppCompatActivity {
         succeReservationDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
         TextView message = succeReservationDialog.findViewById(R.id.popo_message);
         TextView ok = succeReservationDialog.findViewById(R.id.ok);
-        message.setText("Le livre " +mTitre.getText().toString() + " format PDF a été téléchargé avec succès. N'hésitez pas à explorer son contenu dans l'application et contactez-nous en cas de besoin.");
+        message.setText("Le livre " + mTitleTextView.getText().toString() + " format PDF a été téléchargé avec succès. N'hésitez pas à explorer son contenu dans l'application et contactez-nous en cas de besoin.");
         ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -888,10 +889,10 @@ public class LivreActivity extends AppCompatActivity {
     private LinearLayout mReservationLinearLayout;
     private LinearLayout mAudioLinearLayout;
     private LinearLayout mElectronicLinearLayout;
-    private RecyclerView mRecyclerView;
+    private RecyclerView mCommentaireRecyclerView;
     private ArrayList<Talks> mTalksList;
 
-    private RecyclerView mRecyclerView2;
+    private RecyclerView mSimilarRecyclerView;
     private RecyclerView mTonesRecyclerView;
     private TonesAdapter mTonesAdapter;
     private List<Tones> mListTones;
@@ -899,28 +900,28 @@ public class LivreActivity extends AppCompatActivity {
     private List<Recenmment> mList2;
     private String mIdLivre;
     private Session mSession;
-    private ImageView mCouverture;
-    private TextView mTitre;
-    private TextView mCategorie;
-    private TextView mDesc;
-    private Button mBttReservation;
-    private Button mBttAudio;
-    private  Button mBttOpenPDF;
-    private Button mBttDowloadPDF;
-    private EditText mMessage;
-    private ImageView mAdd;
-    private LinearLayout mBlike;
-    private LinearLayout mBNolike;
-    private ImageView mBttLike;
-    private ImageView mBttNoLike;
-    private boolean isLike;
-    private boolean isNoLike;
-    private ImageView mPlay;
+    private ImageView mBlanketImageView;
+    private TextView mTitleTextView;
+    private TextView mCategoryTextView;
+    private TextView mDescriptionTextView;
+    private Button mReservationButton;
+    private Button mAudioButton;
+    private  Button mOpenPDFButton;
+    private Button mDownloadPDFButton;
+    private EditText mMessageTextView;
+    private ImageView mAddCommentsImageView;
+    private LinearLayout mLikeLinearLayout;
+    private LinearLayout mNoLikeLinearLayout;
+    private ImageView mLikeImageView;
+    private ImageView mNoLikeImageView;
+    private boolean mIsLike;
+    private boolean mIsNoLike;
+    private ImageView mPlayerImageView;
     private MediaPlayer mMediaPlayer;
     private SeekBar mSeekBar;
     private Handler handler;
     private Timer mTimer;
-    private ImageView mStop;
+    private ImageView mStopImageView;
     private RelativeLayout mRelativeLayout;
     private String url;
     private String mAudio;

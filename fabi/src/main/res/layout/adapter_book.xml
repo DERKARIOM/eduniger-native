@@ -58,13 +58,13 @@
                 android:src="@drawable/vector_audio"
                 android:contentDescription="@string/todo" />
             <LinearLayout
-                android:id="@+id/like"
+                android:id="@+id/linear_layout_activiry_book_like"
                 style="@style/wrap_content_all"
                 android:layout_margin="5dp"
                 android:orientation="horizontal"
                 tools:ignore="UseCompoundDrawables">
                 <ImageView
-                    android:id="@+id/ico1"
+                    android:id="@+id/image_view_activity_book_like"
                     style="@style/icon_subcribe"
                     android:src="@drawable/vector_black3_off_like"
                     android:contentDescription="@string/todo" />
@@ -79,7 +79,7 @@
                 android:layout_margin="5dp"
                 tools:ignore="UseCompoundDrawables">
                 <ImageView
-                    android:id="@+id/ico2"
+                    android:id="@+id/image_view_activity_book_nolike"
                     style="@style/icon_subcribe"
                     android:src="@drawable/vector_black3_vue"
                     android:contentDescription="@string/todo" />

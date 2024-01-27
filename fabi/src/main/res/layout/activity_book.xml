@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/match_parent_all"
-    tools:context="com.ninotech.fabi.controleur.activity.LivreActivity">
+    tools:context="com.ninotech.fabi.controleur.activity.BookActivity">
     <RelativeLayout
         style="@style/wrap_content_all"
         android:layout_marginStart="5dp"
@@ -33,7 +33,7 @@
                     android:layout_marginTop="10dp"
                     >
                     <ImageView
-                        android:id="@+id/couverture_livre2"
+                        android:id="@+id/image_view_activity_book_blanket"
                         style="@style/wrap_content_all"
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="10dp"
@@ -47,10 +47,10 @@
                         android:layout_marginStart="20dp"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:layout_toEndOf="@id/couverture_livre2">
+                        android:layout_toEndOf="@id/image_view_activity_book_blanket">
 
                         <TextView
-                            android:id="@+id/title_livre2"
+                            android:id="@+id/text_view_activity_book_title"
                             style="@style/wrap_content_all"
                             android:layout_marginStart="5dp"
                             android:layout_marginTop="5dp"
@@ -62,9 +62,9 @@
                             android:textSize="@dimen/size_title" />
 
                         <TextView
-                            android:id="@+id/categorie_livre2"
+                            android:id="@+id/text_view_activity_book_category"
                            style="@style/wrap_content_all"
-                            android:layout_below="@id/title_livre2"
+                            android:layout_below="@id/text_view_activity_book_title"
                             android:layout_marginStart="5dp"
                             android:layout_marginTop="5dp"
                             android:layout_marginEnd="5dp"
@@ -73,14 +73,14 @@
                             android:textSize="@dimen/size_sub_title" />
                         <LinearLayout
                            style="@style/wrap_content_all"
-                            android:layout_below="@id/categorie_livre2">
+                            android:layout_below="@id/text_view_activity_book_category">
                             <LinearLayout
-                                android:id="@+id/like"
+                                android:id="@+id/linear_layout_activiry_book_like"
                                 style="@style/wrap_content_all"
                                 android:layout_margin="10dp"
                                 tools:ignore="UseCompoundDrawables">
                                 <ImageView
-                                    android:id="@+id/ico1"
+                                    android:id="@+id/image_view_activity_book_like"
                                     android:layout_width="22dp"
                                     android:layout_height="22dp"
                                     android:elevation="10dp"
@@ -98,12 +98,12 @@
                                     android:src="@drawable/vector_black3_off_like"/>
                             </LinearLayout>
                             <LinearLayout
-                                android:id="@+id/nolike"
+                                android:id="@+id/linear_layout_activiry_book_nolike"
                                 style="@style/wrap_content_all"
                                 android:layout_margin="10dp"
                                 tools:ignore="UseCompoundDrawables">
                                 <ImageView
-                                    android:id="@+id/ico2"
+                                    android:id="@+id/image_view_activity_book_nolike"
                                     android:layout_width="22dp"
                                     android:layout_height="22dp"
                                     android:elevation="10dp"
@@ -136,7 +136,7 @@
                     </RelativeLayout>
                 </RelativeLayout>
                 <LinearLayout
-                    android:id="@+id/bReservation"
+                    android:id="@+id/linear_layout_activity_book_reservation"
                     android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -164,7 +164,7 @@
                             />
                     </RelativeLayout>
                     <Button
-                        android:id="@+id/btt_reservation"
+                        android:id="@+id/button_activity_book_reservation"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Réservation  du livre "
@@ -177,11 +177,11 @@
                         android:backgroundTint="@color/sombre"/>
                 </LinearLayout>
                 <LinearLayout
-                    android:id="@+id/bAudio"
+                    android:id="@+id/linear_layout_activity_book_audio"
                     android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/bReservation"
+                    android:layout_below="@id/linear_layout_activity_book_reservation"
                     android:orientation="vertical">
                     <RelativeLayout
                         android:layout_width="match_parent"
@@ -211,14 +211,14 @@
                             android:layout_height="wrap_content"
                             android:orientation="horizontal">
                             <ImageView
-                                android:id="@+id/paly"
+                                android:id="@+id/image_view_activity_book_player"
                                 android:layout_margin="10dp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:src="@drawable/vector_black3_plause"
                                 />
                             <ImageView
-                                android:id="@+id/stop"
+                                android:id="@+id/image_view_activity_book_stop"
                                 android:layout_marginStart="3dp"
                                 android:layout_marginTop="10dp"
                                 android:layout_marginBottom="10dp"
@@ -238,7 +238,7 @@
                                 android:text="00:00"
                                 />
                             <SeekBar
-                                android:id="@+id/seekbar"
+                                android:id="@+id/seekbar_activity_book"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_vertical"
@@ -246,7 +246,7 @@
                                 android:progress="100"/>
                         </LinearLayout>
                         <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/recylerAudio2"
+                            android:id="@+id/recycler_view_activity_book_tones"
                             android:layout_marginTop="10dp"
                             android:layout_marginBottom="10dp"
                             android:layout_width="match_parent"
@@ -254,7 +254,7 @@
                             />
                     </LinearLayout>
                     <Button
-                        android:id="@+id/btt_audio"
+                        android:id="@+id/button_activity_book_audio"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Format audio"
@@ -267,11 +267,11 @@
                         android:backgroundTint="@color/sombre"/>
                 </LinearLayout>
                 <LinearLayout
-                    android:id="@+id/bPDF"
+                    android:id="@+id/linear_layout_activity_book_electronic"
                     android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/bAudio"
+                    android:layout_below="@id/linear_layout_activity_book_audio"
                     android:orientation="vertical">
                     <RelativeLayout
                         android:layout_width="match_parent"
@@ -295,7 +295,7 @@
                             />
                     </RelativeLayout>
                     <Button
-                        android:id="@+id/btt_pdf_ouvrir"
+                        android:id="@+id/button_activity_book_open_pdf"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Ouvrir"
@@ -307,7 +307,7 @@
                         android:textSize="15dp"
                         android:backgroundTint="@color/sombre"/>
                     <Button
-                        android:id="@+id/btt_pdf"
+                        android:id="@+id/button_activity_book_download_pdf"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Format PDF"
@@ -323,7 +323,7 @@
                     android:id="@+id/apropos"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/bPDF"
+                    android:layout_below="@id/linear_layout_activity_book_electronic"
                     android:layout_marginTop="20dp"
                     android:orientation="vertical">
                     <RelativeLayout
@@ -348,7 +348,7 @@
                             />
                     </RelativeLayout>
                     <TextView
-                        android:id="@+id/desc_livre"
+                        android:id="@+id/text_view_activity_book_description"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Ce Livre est un chef-d'œuvre captivant qui explore les profondeurs de l'âme féminine avec une grâce poignante. À travers des personnages complexes et des récits riches, l'auteur tisse une histoire émouvante de courage, de résilience et de découverte de soi. Chaque page résonne avec une puissante authenticité, nous plongeant dans un monde où les silences parlent plus fort que les mots. Une lecture inoubliable qui laisse une empreinte profonde dans le cœur et l'esprit, révélant la force incommensurable des femmes face à l'adversité."
@@ -387,7 +387,7 @@
                             />
                     </RelativeLayout>
                     <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recylerCommentaire"
+                        android:id="@+id/recycler_view_activity_book_Comments"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         />
@@ -397,7 +397,7 @@
                         android:layout_margin="10dp"
                         >
                         <EditText
-                            android:id="@+id/messageCommentaire"
+                            android:id="@+id/text_view_activity_book_message"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="@drawable/forme_white_radius_10dp"
@@ -406,7 +406,7 @@
                             android:padding="5dp"
                             android:layout_marginEnd="50dp"/>
                         <ImageView
-                            android:id="@+id/addCommentaire"
+                            android:id="@+id/image_view_activity_book_add_comments"
                             android:layout_width="30dp"
                             android:layout_height="30dp"
                             android:src="@drawable/vector_black3_add"
@@ -442,7 +442,7 @@
                             />
                     </RelativeLayout>
                     <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recylerSimilaire"
+                        android:id="@+id/recycler_view_activity_book_similar"
                         style="@style/wrap_content_all"
                         android:layout_margin="5dp"
                         />

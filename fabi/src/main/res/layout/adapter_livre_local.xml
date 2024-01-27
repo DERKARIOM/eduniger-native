@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:layout_margin="10dp">
     <ImageView
-        android:id="@+id/couverture_livre2"
+        android:id="@+id/image_view_activity_book_blanket"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_marginStart="10dp"
@@ -17,11 +17,11 @@
         android:id="@+id/info_livre2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/couverture_livre2"
+        android:layout_toRightOf="@+id/image_view_activity_book_blanket"
         android:layout_centerVertical="true">
 
         <TextView
-            android:id="@+id/title_livre2"
+            android:id="@+id/text_view_activity_book_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
@@ -33,10 +33,10 @@
             android:textSize="15dp" />
 
         <TextView
-            android:id="@+id/categorie_livre2"
+            android:id="@+id/text_view_activity_book_category"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/title_livre2"
+            android:layout_below="@id/text_view_activity_book_title"
             android:layout_marginStart="5dp"
             android:layout_marginTop="5dp"
             android:layout_marginEnd="5dp"
@@ -48,7 +48,7 @@
             android:id="@+id/auteur_livre"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/categorie_livre2"
+            android:layout_below="@id/text_view_activity_book_category"
             android:layout_marginStart="5dp"
             android:layout_marginTop="5dp"
             android:layout_marginEnd="5dp"

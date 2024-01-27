@@ -40,7 +40,7 @@
         </provider>
 
         <activity
-            android:name="com.ninotech.fabi.controleur.activity.LivreActivity"
+            android:name="com.ninotech.fabi.controleur.activity.BookActivity"
             android:screenOrientation="portrait"
             android:exported="false" />
         <activity

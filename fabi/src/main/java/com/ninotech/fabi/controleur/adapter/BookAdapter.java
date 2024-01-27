@@ -11,7 +11,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.R;
-import com.ninotech.fabi.controleur.activity.LivreActivity;
+import com.ninotech.fabi.controleur.activity.BookActivity;
 import com.ninotech.fabi.model.data.Book;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
 import com.squareup.picasso.Picasso;
@@ -120,7 +120,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.MyViewHolder> 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intentLivre = new Intent(itemView.getContext(), LivreActivity.class);
+                    Intent intentLivre = new Intent(itemView.getContext(), BookActivity.class);
                     intentLivre.putExtra("intent_adapter_book_id",book.getId());
                     itemView.getContext().startActivity(intentLivre);
                 }
