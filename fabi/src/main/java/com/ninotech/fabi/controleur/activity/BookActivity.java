@@ -125,7 +125,7 @@ public class BookActivity extends AppCompatActivity {
                 if ("ACTION_AUDIO".equals(intent.getAction())) {
                     mAudio = intent.getStringExtra("intent_adapter_tones_title");
                     int position = intent.getIntExtra("intent_adapter_tones_position",0);
-                    url = "http://192.168.43.1:2222/fabi/audio/" + mAudio;
+                    url = getString(R.string.ip_server) + "audio/" + mAudio;
                     try {
                         if(tmp_position != position)
                             mListTones.get(tmp_position).setPlaying(false);
@@ -271,17 +271,17 @@ public class BookActivity extends AppCompatActivity {
         PullCommentaire pullCommentaire = new PullCommentaire();
         Similaires similaires = new Similaires();
         PullSon pullSon = new PullSon();
-        http.execute("http://192.168.43.1:2222/fabi/android/livre.php");
-        pullCommentaire.execute("http://192.168.43.1:2222/fabi/android/pull_commentaire.php");
-        similaires.execute("http://192.168.43.1:2222/fabi/android/similaires.php");
-        pullSon.execute("http://192.168.43.1:2222/fabi/android/son.php");
+        http.execute(getString(R.string.ip_server_android) + "Book.php");
+        pullCommentaire.execute(getString(R.string.ip_server_android) + "ReceiveComments.php");
+        similaires.execute(getString(R.string.ip_server_android) + "SimilarBook.php");
+        pullSon.execute(getString(R.string.ip_server_android) + "Tones.php");
         mAddCommentsImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(!mMessageTextView.getText().toString().equals("null"))
                 {
                     PushCommentaire pushCommentaire = new PushCommentaire();
-                    pushCommentaire.execute("http://192.168.43.1:2222/fabi/android/push_commentaire.php");
+                    pushCommentaire.execute(getString(R.string.ip_server_android) + "SendComments.php");
                 }
             }
         });
