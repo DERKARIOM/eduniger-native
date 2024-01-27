@@ -28,19 +28,19 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class ClassementFragment extends Fragment {
+public class RankingFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
        View view = inflater.inflate(R.layout.fragment_classement, container, false);
-       mSession = new Session(getContext());
-       mRecyclerView = view.findViewById(R.id.recylerClassement);
-        mList = new ArrayList<>();
-        Http http = new Http();
-        http.execute("http://192.168.43.1:2222/fabi/android/classement.php");
+        Session session = new Session(getContext());
+       mBookRecyclerView = view.findViewById(R.id.recycler_view_ranking);
+        mBookList = new ArrayList<>();
+        RankingSyn rankingSyn = new RankingSyn();
+        rankingSyn.execute(getString(R.string.ip_server_android) + "classement.php", session.getIdNumber());
         return view;
     }
-    private class Http extends AsyncTask<String,Void,String> {
+    private class RankingSyn extends AsyncTask<String,Void,String> {
         @Override
         protected String doInBackground(String... params) {
 
@@ -48,7 +48,7 @@ public class ClassementFragment extends Fragment {
                 OkHttpClient client = new OkHttpClient();
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
-                        .addFormDataPart("matricule",mSession.getIdNumber())
+                        .addFormDataPart("matricule",params[1])
                         .build();
                 Request request = new Request.Builder()
                         .url(params[0])
@@ -56,6 +56,7 @@ public class ClassementFragment extends Fragment {
                         .build();
                 try {
                     Response response = client.newCall(request).execute();
+                    assert response.body() != null;
                     return response.body().string();
                 }catch (IOException e)
                 {
@@ -70,7 +71,6 @@ public class ClassementFragment extends Fragment {
         }
         @Override
         protected void onPostExecute(String jsonData){
-            //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
             if(jsonData != null)
             {
                 JSONArray jsonArray = null;
@@ -83,26 +83,17 @@ public class ClassementFragment extends Fragment {
                     try {
                         ArrayList<String> category = new ArrayList<>();
                         category.add(jsonArray.getJSONObject(i).getString("nomCat"));
-                        mList.add(new Book(jsonArray.getJSONObject(i).getString("idLivre"),jsonArray.getJSONObject(i).getString("couverture"),jsonArray.getJSONObject(i).getString("titreLivre"),category,jsonArray.getJSONObject(i).getString("estPhysique"),jsonArray.getJSONObject(i).getString("documentElec"),jsonArray.getJSONObject(i).getString("estAudio"),"0","0"));
+                        mBookList.add(new Book(jsonArray.getJSONObject(i).getString("idLivre"),jsonArray.getJSONObject(i).getString("couverture"),jsonArray.getJSONObject(i).getString("titreLivre"),category,jsonArray.getJSONObject(i).getString("estPhysique"),jsonArray.getJSONObject(i).getString("documentElec"),jsonArray.getJSONObject(i).getString("estAudio"),"0","0"));
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
                 }
-                mBookAdapter = new BookAdapter(mList);
-                mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                mRecyclerView.setAdapter(mBookAdapter);
-
-                //Toast.makeText(getContext(), jsonData, Toast.LENGTH_SHORT).show();
+                BookAdapter bookAdapter = new BookAdapter(mBookList);
+                mBookRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                mBookRecyclerView.setAdapter(bookAdapter);
             }
-            else
-            {
-
-            }
-
         }
     }
-    private RecyclerView mRecyclerView;
-    private BookAdapter mBookAdapter;
-    private ArrayList<Book> mList;
-    private Session mSession;
+    private RecyclerView mBookRecyclerView;
+    private ArrayList<Book> mBookList;
 }

@@ -3,11 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.ninotech.fabi.controleur.fragment.ClassementFragment">
+    tools:context="com.ninotech.fabi.controleur.fragment.RankingFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recylerClassement"
+        android:id="@+id/recycler_view_ranking"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         />

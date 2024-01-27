@@ -27,7 +27,6 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -41,7 +40,7 @@ public class RecommendedFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_recommended, container, false);
         Session session = new Session(getContext());
-        mBookRecommendedRecyclerView = view.findViewById(R.id.recylerClassement);
+        mBookRecommendedRecyclerView = view.findViewById(R.id.recycler_view_ranking);
         mPub = view.findViewById(R.id.img_welcom);
         mBookList = new ArrayList<>();
         ArrayList<String> monPubList = null;

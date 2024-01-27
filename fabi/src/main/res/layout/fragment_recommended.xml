@@ -14,7 +14,7 @@
             android:elevation="6dp"
             android:contentDescription="@string/todo" />
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recylerClassement"
+            android:id="@+id/recycler_view_ranking"
             android:layout_below="@+id/img_welcom"
             style="@style/match_parent_all"
             />
