@@ -30,6 +30,10 @@ public class Book {
       mNumberLikes = numberLikes;
       mNumberView = numberView;
    }
+   public Book(String id)
+   {
+      mId = id;
+   }
    public String getNumberView() {
       return mNumberView;
    }

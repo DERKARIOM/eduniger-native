@@ -39,6 +39,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.controleur.adapter.TalksAdapter;
 import com.ninotech.fabi.controleur.dialog.ReservationDialog;
+import com.ninotech.fabi.model.data.Book;
 import com.ninotech.fabi.model.data.Talks;
 import com.ninotech.fabi.model.table.ElectroniqueTable;
 import com.ninotech.fabi.model.data.Recenmment;
@@ -82,9 +83,9 @@ public class BookActivity extends AppCompatActivity {
         setContentView(R.layout.activity_book);
         Objects.requireNonNull(getSupportActionBar()).hide();
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-        Intent intentLivre = getIntent();
+        Intent intentBook = getIntent();
         mSession = new Session(this);
-        mIdLivre = intentLivre.getStringExtra("intent_adapter_book_id");
+        mBook = new Book(intentBook.getStringExtra("intent_adapter_book_id"));
         mTalksList = new ArrayList<>();
         mList2 = new ArrayList<>();
         mListTones = new ArrayList<>();
@@ -95,29 +96,29 @@ public class BookActivity extends AppCompatActivity {
         mTitleTextView = findViewById(R.id.text_view_activity_book_title);
         mCategoryTextView = findViewById(R.id.text_view_activity_book_category);
         mDescriptionTextView = findViewById(R.id.text_view_activity_book_description);
-        mReservationButton = findViewById(R.id.button_activity_book_reservation);
-        mAudioButton = findViewById(R.id.button_activity_book_audio);
-        mOpenPDFButton = findViewById(R.id.button_activity_book_open_pdf);
-        mDownloadPDFButton = findViewById(R.id.button_activity_book_download_pdf);
+        Button reservationButton = findViewById(R.id.button_activity_book_reservation);
+        Button audioButton = findViewById(R.id.button_activity_book_audio);
+        Button openPDFButton = findViewById(R.id.button_activity_book_open_pdf);
+        Button downloadPDFButton = findViewById(R.id.button_activity_book_download_pdf);
         mMessageTextView = findViewById(R.id.text_view_activity_book_message);
-        mAddCommentsImageView = findViewById(R.id.image_view_activity_book_add_comments);
-        mLikeLinearLayout = findViewById(R.id.linear_layout_activiry_book_like);
-        mNoLikeLinearLayout = findViewById(R.id.linear_layout_activiry_book_nolike);
+        ImageView addCommentsImageView = findViewById(R.id.image_view_activity_book_add_comments);
+        LinearLayout likeLinearLayout = findViewById(R.id.linear_layout_activiry_book_like);
+        LinearLayout noLikeLinearLayout = findViewById(R.id.linear_layout_activiry_book_nolike);
         mLikeImageView = findViewById(R.id.image_view_activity_book_like);
         mNoLikeImageView = findViewById(R.id.image_view_activity_book_nolike);
         mPlayerImageView = findViewById(R.id.image_view_activity_book_player);
-        mStopImageView = findViewById(R.id.image_view_activity_book_stop);
+        ImageView stopImageView = findViewById(R.id.image_view_activity_book_stop);
         mSeekBar = findViewById(R.id.seekbar_activity_book);
         mReservationLinearLayout = findViewById(R.id.linear_layout_activity_book_reservation);
         mAudioLinearLayout = findViewById(R.id.linear_layout_activity_book_audio);
         mElectronicLinearLayout = findViewById(R.id.linear_layout_activity_book_electronic);
         mReservationDialog = new ReservationDialog(this);
-        mElectroniqueTable = new ElectroniqueTable(this);
+        mElectronicTable = new ElectroniqueTable(this);
         tmp_position=0;
         mMediaPlayer = new MediaPlayer();
         mIsLike =false;
         mIsNoLike =false;
-        handler = new Handler();
+        Handler handler = new Handler();
         mTimer = new Timer();
         BroadcastReceiver receiverNote = new BroadcastReceiver() {
             @Override
@@ -177,14 +178,14 @@ public class BookActivity extends AppCompatActivity {
 
             }
         });
-        mReservationButton.setOnClickListener(new View.OnClickListener() {
+        reservationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 ReservationDialog();
             }
         });
 
-        mOpenPDFButton.setOnClickListener(new View.OnClickListener() {
+        openPDFButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // Vérifier et demander la permission d'écriture externe si nécessaire
@@ -202,10 +203,10 @@ public class BookActivity extends AppCompatActivity {
             }
         });
 
-        mDownloadPDFButton.setOnClickListener(new View.OnClickListener() {
+        downloadPDFButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(mElectroniqueTable.insert(mSession.getIdNumber(),mIdLivre, mDescriptionTextView.getText().toString(),mAuteur,mNomCouverture,mNomPdf, mCategoryTextView.getText().toString(), mTitleTextView.getText().toString(),mNomCouvertureCat,mProfilAuteur))
+                if(mElectronicTable.insert(mSession.getIdNumber(),mIdLivre, mDescriptionTextView.getText().toString(),mAuteur,mNomCouverture,mNomPdf, mCategoryTextView.getText().toString(), mTitleTextView.getText().toString(),mNomCouvertureCat,mProfilAuteur))
                     succeDowloadPDFDialog();
             }
         });
@@ -225,7 +226,7 @@ public class BookActivity extends AppCompatActivity {
             }
         });
 
-        mStopImageView.setOnClickListener(new View.OnClickListener() {
+        stopImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mMediaPlayer.stop();
@@ -234,7 +235,7 @@ public class BookActivity extends AppCompatActivity {
                mSeekBar.setProgress(0);
             }
         });
-        mLikeLinearLayout.setOnClickListener(new View.OnClickListener() {
+        likeLinearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(!mIsLike)
@@ -251,7 +252,7 @@ public class BookActivity extends AppCompatActivity {
             }
         });
 
-        mNoLikeLinearLayout.setOnClickListener(new View.OnClickListener() {
+        noLikeLinearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(!mIsNoLike)
@@ -267,15 +268,15 @@ public class BookActivity extends AppCompatActivity {
                 }
             }
         });
-        Http http = new Http();
+        RecoveryBook recoveryBook = new RecoveryBook();
         PullCommentaire pullCommentaire = new PullCommentaire();
         Similaires similaires = new Similaires();
         PullSon pullSon = new PullSon();
-        http.execute(getString(R.string.ip_server_android) + "Book.php");
+        recoveryBook.execute(getString(R.string.ip_server_android) + "Book.php",mSession.getIdNumber(),mBook.getId());
         pullCommentaire.execute(getString(R.string.ip_server_android) + "ReceiveComments.php");
         similaires.execute(getString(R.string.ip_server_android) + "SimilarBook.php");
         pullSon.execute(getString(R.string.ip_server_android) + "Tones.php");
-        mAddCommentsImageView.setOnClickListener(new View.OnClickListener() {
+        addCommentsImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(!mMessageTextView.getText().toString().equals("null"))
@@ -429,7 +430,7 @@ public class BookActivity extends AppCompatActivity {
         Toast.makeText(this, "ok", Toast.LENGTH_SHORT).show();
     }
 
-    private class Http extends AsyncTask<String,Void,String> {
+    private class RecoveryBook extends AsyncTask<String,Void,String> {
         @Override
         protected String doInBackground(String... params) {
 
@@ -437,8 +438,8 @@ public class BookActivity extends AppCompatActivity {
                 OkHttpClient client = new OkHttpClient();
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
-                        .addFormDataPart("matricule",mSession.getIdNumber())
-                        .addFormDataPart("idLivre",mIdLivre)
+                        .addFormDataPart("matricule",params[1])
+                        .addFormDataPart("idLivre",params[2])
                         .build();
                 Request request = new Request.Builder()
                         .url(params[0])
@@ -446,6 +447,7 @@ public class BookActivity extends AppCompatActivity {
                         .build();
                 try {
                     Response response = client.newCall(request).execute();
+                    assert response.body() != null;
                     return response.body().string();
                 }catch (IOException e)
                 {
@@ -460,7 +462,6 @@ public class BookActivity extends AppCompatActivity {
         }
         @Override
         protected void onPostExecute(String jsonData){
-            //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
             if(jsonData != null)
             {
                 JSONObject jsonObject = null;
@@ -470,11 +471,11 @@ public class BookActivity extends AppCompatActivity {
                     throw new RuntimeException(e);
                 }
                 try {
-                    mNomCouverture = jsonObject.getString("couverture");
+                    mBook.setBlanket(jsonObject.getString("couverture"));
                     mNomCouvertureCat = jsonObject.getString("nomCouverture");
                     mProfilAuteur = jsonObject.getString("profilAuteur");
                     Picasso.with(getApplicationContext())
-                            .load("http://192.168.43.1:2222/fabi/couverture/" + mNomCouverture)
+                            .load(getString(R.string.ip_server) + "couverture/" + mBook.getBlanket())
                             .placeholder(R.drawable.img_default_livre)
                             .error(R.drawable.img_default_livre)
                             .transform(new RoundedTransformation(15,4))
@@ -904,14 +905,7 @@ public class BookActivity extends AppCompatActivity {
     private TextView mTitleTextView;
     private TextView mCategoryTextView;
     private TextView mDescriptionTextView;
-    private Button mReservationButton;
-    private Button mAudioButton;
-    private  Button mOpenPDFButton;
-    private Button mDownloadPDFButton;
     private EditText mMessageTextView;
-    private ImageView mAddCommentsImageView;
-    private LinearLayout mLikeLinearLayout;
-    private LinearLayout mNoLikeLinearLayout;
     private ImageView mLikeImageView;
     private ImageView mNoLikeImageView;
     private boolean mIsLike;
@@ -919,19 +913,18 @@ public class BookActivity extends AppCompatActivity {
     private ImageView mPlayerImageView;
     private MediaPlayer mMediaPlayer;
     private SeekBar mSeekBar;
-    private Handler handler;
     private Timer mTimer;
-    private ImageView mStopImageView;
     private RelativeLayout mRelativeLayout;
     private String url;
     private String mAudio;
     private int tmp_position;
     private ReservationDialog mReservationDialog;
     private String mNomPdf;
-    private ElectroniqueTable mElectroniqueTable;
+    private ElectroniqueTable mElectronicTable;
     private String mAuteur;
     private String mNomCouverture;
     private String mNomCouvertureCat;
     private String mProfilAuteur;
     private String mNbrJour;
+    private Book mBook;
 }
