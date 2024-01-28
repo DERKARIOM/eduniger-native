@@ -472,6 +472,13 @@ public class BookActivity extends AppCompatActivity {
                 }
                 try {
                     mBook.setBlanket(jsonObject.getString("couverture"));
+                    mBook.setTitle(jsonObject.getString("titreLivre"));
+                    mBook.setIsPhysical(jsonObject.getString("estPhysique"));
+                    mBook.setIsAudio(jsonObject.getString("estAudio"));
+                    mBook.setElectronic(jsonObject.getString("documentElec"));
+                    mBook.setAuthor(jsonObject.getString("auteur"));
+                    mBook.setDescription(jsonObject.getString("descLivre"));
+                    mBook.getCategory().add(jsonObject.getString("nomCat"));
                     mNomCouvertureCat = jsonObject.getString("nomCouverture");
                     mProfilAuteur = jsonObject.getString("profilAuteur");
                     Picasso.with(getApplicationContext())
@@ -481,19 +488,18 @@ public class BookActivity extends AppCompatActivity {
                             .transform(new RoundedTransformation(15,4))
                             .resize(200,334)
                             .into(mBlanketImageView);
-                    if(jsonObject.getString("estPhysique").equals("1"))
+                    if(mBook.getIsPhysical().equals("1"))
                         mReservationLinearLayout.setVisibility(View.VISIBLE);
-                    if(jsonObject.getString("estAudio").equals("1"))
+                    if(mBook.getIsAudio().equals("1"))
                         mAudioLinearLayout.setVisibility(View.VISIBLE);
-                    if(!jsonObject.getString("documentElec").equals("null"))
-                    {
+                    if(!mBook.getElectronic().equals("null"))
                         mElectronicLinearLayout.setVisibility(View.VISIBLE);
-                        mNomPdf = jsonObject.getString("documentElec");
-                        mAuteur = jsonObject.getString("auteur");
-                    }
-                    mTitleTextView.setText(jsonObject.getString("titreLivre"));
-                    mCategoryTextView.setText(jsonObject.getString("nomCat"));
-                    mDescriptionTextView.setText(jsonObject.getString("descLivre"));
+                    mTitleTextView.setText(mBook.getTitle());
+                    StringBuilder category= new StringBuilder(".");
+                    for(int i=0;i<mBook.getCategory().size();i++)
+                        category.append(mBook.getCategory().get(i));
+                    mCategoryTextView.setText(category);
+                    mDescriptionTextView.setText(mBook.getDescription());
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }

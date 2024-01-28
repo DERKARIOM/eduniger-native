@@ -33,6 +33,7 @@ public class Book {
    public Book(String id)
    {
       mId = id;
+      mCategory = new ArrayList<>();
    }
    public String getNumberView() {
       return mNumberView;
