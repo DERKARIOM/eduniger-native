@@ -269,20 +269,20 @@ public class BookActivity extends AppCompatActivity {
             }
         });
         RecoveryBook recoveryBook = new RecoveryBook();
-        PullCommentaire pullCommentaire = new PullCommentaire();
-        Similaires similaires = new Similaires();
-        PullSon pullSon = new PullSon();
+        RecoveryCommentaire recoveryCommentaire = new RecoveryCommentaire();
+        Similar similar = new Similar();
+        RecoveryTones recoveryTones = new RecoveryTones();
         recoveryBook.execute(getString(R.string.ip_server_android) + "Book.php",mSession.getIdNumber(),mBook.getId());
-        pullCommentaire.execute(getString(R.string.ip_server_android) + "ReceiveComments.php");
-        similaires.execute(getString(R.string.ip_server_android) + "SimilarBook.php");
-        pullSon.execute(getString(R.string.ip_server_android) + "Tones.php");
+        recoveryCommentaire.execute(getString(R.string.ip_server_android) + "ReceiveComments.php",mSession.getIdNumber(),mBook.getId());
+        similar.execute(getString(R.string.ip_server_android) + "SimilarBook.php",mSession.getIdNumber(),mCategoryTextView.getText().toString(),mBook.getId());
+        recoveryTones.execute(getString(R.string.ip_server_android) + "Tones.php");
         addCommentsImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(!mMessageTextView.getText().toString().equals("null"))
                 {
-                    PushCommentaire pushCommentaire = new PushCommentaire();
-                    pushCommentaire.execute(getString(R.string.ip_server_android) + "SendComments.php");
+                    SendCommentaire sendCommentaire = new SendCommentaire();
+                    sendCommentaire.execute(getString(R.string.ip_server_android) + "SendComments.php",mSession.getIdNumber(),mBook.getId(),mMessageTextView.getText().toString());
                 }
             }
         });
@@ -345,7 +345,7 @@ public class BookActivity extends AppCompatActivity {
             protected File doInBackground(Void... voids) {
                 try {
                     // URL du PDF distant
-                    String pdfUrl = getString(R.string.ip_server) + "pdf/" + nomPdf;
+                    String pdfUrl = getString(R.string.ip_server) + "pdf/" + mBook.getElectronic();
                     URL url = new URL(pdfUrl);
 
                     // Ouvrir la connexion
@@ -354,7 +354,7 @@ public class BookActivity extends AppCompatActivity {
 
                     // Télécharger le PDF dans le répertoire de téléchargement
                     File pdfFile = new File(Environment.getExternalStoragePublicDirectory(
-                            Environment.DIRECTORY_DOWNLOADS), nomPdf);
+                            Environment.DIRECTORY_DOWNLOADS), mBook.getElectronic());
 
                     InputStream inputStream = urlConnection.getInputStream();
                     FileOutputStream outputStream = new FileOutputStream(pdfFile);
@@ -504,15 +504,10 @@ public class BookActivity extends AppCompatActivity {
                     throw new RuntimeException(e);
                 }
             }
-            else
-            {
-
-            }
-
         }
     }
 
-    private class PullCommentaire extends AsyncTask<String,Void,String> {
+    private class RecoveryCommentaire extends AsyncTask<String,Void,String> {
         @Override
         protected String doInBackground(String... params) {
 
@@ -520,8 +515,8 @@ public class BookActivity extends AppCompatActivity {
                 OkHttpClient client = new OkHttpClient();
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
-                        .addFormDataPart("matricule",mSession.getIdNumber())
-                        .addFormDataPart("idLivre",mIdLivre)
+                        .addFormDataPart("matricule",params[1])
+                        .addFormDataPart("idLivre",params[2])
                         .build();
                 Request request = new Request.Builder()
                         .url(params[0])
@@ -529,6 +524,7 @@ public class BookActivity extends AppCompatActivity {
                         .build();
                 try {
                     Response response = client.newCall(request).execute();
+                    assert response.body() != null;
                     return response.body().string();
                 }catch (IOException e)
                 {
@@ -566,15 +562,10 @@ public class BookActivity extends AppCompatActivity {
                     mCommentaireRecyclerView.setAdapter(talksAdapter);
                 }
             }
-            else
-            {
-
-            }
-
         }
     }
 
-    private class PushCommentaire extends AsyncTask<String,Void,String> {
+    private class SendCommentaire extends AsyncTask<String,Void,String> {
         @Override
         protected String doInBackground(String... params) {
 
@@ -582,9 +573,9 @@ public class BookActivity extends AppCompatActivity {
                 OkHttpClient client = new OkHttpClient();
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
-                        .addFormDataPart("matricule",mSession.getIdNumber())
-                        .addFormDataPart("idLivre",mIdLivre)
-                        .addFormDataPart("message", mMessageTextView.getText().toString())
+                        .addFormDataPart("matricule",params[1])
+                        .addFormDataPart("idLivre",params[2])
+                        .addFormDataPart("message",params[3])
                         .build();
                 Request request = new Request.Builder()
                         .url(params[0])
@@ -592,6 +583,7 @@ public class BookActivity extends AppCompatActivity {
                         .build();
                 try {
                     Response response = client.newCall(request).execute();
+                    assert response.body() != null;
                     return response.body().string();
                 }catch (IOException e)
                 {
@@ -615,16 +607,11 @@ public class BookActivity extends AppCompatActivity {
                 }
                 Toast.makeText(BookActivity.this, jsonData, Toast.LENGTH_SHORT).show();
             }
-            else
-            {
-
-            }
-
         }
     }
 
 
-    private class Similaires extends AsyncTask<String,Void,String> {
+    private class Similar extends AsyncTask<String,Void,String> {
         @Override
         protected String doInBackground(String... params) {
 
@@ -632,9 +619,9 @@ public class BookActivity extends AppCompatActivity {
                 OkHttpClient client = new OkHttpClient();
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
-                        .addFormDataPart("matricule",mSession.getIdNumber())
-                        .addFormDataPart("nomCategorie", mCategoryTextView.getText().toString())
-                        .addFormDataPart("idLivre",mIdLivre)
+                        .addFormDataPart("matricule",params[1])
+                        .addFormDataPart("nomCategorie",params[2])
+                        .addFormDataPart("idLivre",params[3])
                         .build();
                 Request request = new Request.Builder()
                         .url(params[0])
@@ -680,15 +667,11 @@ public class BookActivity extends AppCompatActivity {
                 }
                 //Toast.makeText(getContext(), jsonData, Toast.LENGTH_SHORT).show();
             }
-            else
-            {
-
-            }
 
         }
     }
 
-    private class PullSon extends AsyncTask<String,Void,String> {
+    private class RecoveryTones extends AsyncTask<String,Void,String> {
         @Override
         protected String doInBackground(String... params) {
 
@@ -752,11 +735,6 @@ public class BookActivity extends AppCompatActivity {
                     mTonesRecyclerView.setAdapter(mTonesAdapter);
                 }
             }
-            else
-            {
-
-            }
-
         }
     }
     public void ReservationDialog() {
@@ -773,21 +751,12 @@ public class BookActivity extends AppCompatActivity {
         checkBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(checkBox.isChecked())
-                {
-                    delaitReservation.setEnabled(false);
-                }
-                else
-                    delaitReservation.setEnabled(true);
+                delaitReservation.setEnabled(!checkBox.isChecked());
             }
         });
         bttEnvoi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                if(delaitReservation.isEnabled())
-//                    Toast.makeText(BookActivity.this, "OK", Toast.LENGTH_SHORT).show();
-//                else
-//                    Toast.makeText(BookActivity.this, "KO", Toast.LENGTH_SHORT).show();
                 if(reservPassword.getText().toString().equals(""))
                     reservErr.setText("svp votre mot de passe");
                 else
@@ -797,9 +766,8 @@ public class BookActivity extends AppCompatActivity {
                     else
                         mNbrJour = String.valueOf(-1);
                     Reservation reservation = new Reservation();
-                    reservation.execute("http://192.168.43.1:2222/fabi/android/reservation.php");
+                    reservation.execute(getString(R.string.ip_server_android) + "Reservation.php",mSession.getIdNumber(),mBook.getId(),mNbrJour);
                 }
-
             }
         });
         mReservationDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -816,9 +784,9 @@ public class BookActivity extends AppCompatActivity {
                 OkHttpClient client = new OkHttpClient();
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
-                        .addFormDataPart("matricule",mSession.getIdNumber())
-                        .addFormDataPart("idLivre",mIdLivre)
-                        .addFormDataPart("nbrJour",mNbrJour)
+                        .addFormDataPart("matricule",params[1])
+                        .addFormDataPart("idLivre",params[2])
+                        .addFormDataPart("nbrJour",params[3])
                         .build();
                 Request request = new Request.Builder()
                         .url(params[0])
@@ -826,6 +794,7 @@ public class BookActivity extends AppCompatActivity {
                         .build();
                 try {
                     Response response = client.newCall(request).execute();
+                    assert response.body() != null;
                     return response.body().string();
                 }catch (IOException e)
                 {
@@ -840,7 +809,6 @@ public class BookActivity extends AppCompatActivity {
         }
         @Override
         protected void onPostExecute(String jsonData){
-            //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
             if(jsonData != null)
             {
                 Toast.makeText(BookActivity.this, jsonData, Toast.LENGTH_SHORT).show();
@@ -849,12 +817,6 @@ public class BookActivity extends AppCompatActivity {
                     mReservationDialog.cancel();
                     succeReservationDialog();
                 }
-
-                //Toast.makeText(BookActivity.this, jsonData, Toast.LENGTH_SHORT).show();
-            }
-            else
-            {
-
             }
 
         }
