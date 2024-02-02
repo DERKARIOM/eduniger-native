@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -34,17 +35,22 @@ public class ElectroniqueFragment extends Fragment {
         mSession = new Session(getContext());
         mElectroniqueAdapter = new ElectroniqueAdapter(mList);
         mRecenmmentAdapter = new RecenmmentAdapter(mList1);
-        mList.add(new Electronique(1,"Les Book télécharges",mElectroniqueTable.getNbrElectronique(mSession.getIdNumber())));
+        mList.add(new Electronique(1,"Les Livres télécharges",mElectroniqueTable.getNbrElectronique(mSession.getIdNumber())));
         mList.add(new Electronique(2,"Coups de coeur",0));
         mList.add(new Electronique(3,"playlists",0));
         mList.add(new Electronique(4,"Category",mElectroniqueTable.getNbrCategorie(mSession.getIdNumber())));
         mList.add(new Electronique(5,"Auteurs",mElectroniqueTable.getNbrAuteur(mSession.getIdNumber())));
-        Cursor cursor = mElectroniqueTable.getData(mSession.getIdNumber());
-        cursor.moveToFirst();
-        do {
-            mList1.add(new Recenmment(cursor.getString(2),cursor.getString(5),cursor.getString(6)));
-        }while(cursor.moveToNext());
-//
+        try {
+            Cursor cursor = mElectroniqueTable.getData(mSession.getIdNumber());
+            cursor.moveToFirst();
+            do {
+                mList1.add(new Recenmment(cursor.getString(2),cursor.getString(5),cursor.getString(6)));
+            }while(cursor.moveToNext());
+        }catch (Exception e)
+        {
+            Toast.makeText(view.getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext().getApplicationContext()));
         mRecyclerView1.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
         mRecyclerView.setAdapter(mElectroniqueAdapter);

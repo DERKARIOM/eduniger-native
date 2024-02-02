@@ -1,19 +1,18 @@
 package com.ninotech.fabi.model.data;
 
 public class User {
-    public User(String idNumer, String name, String firstName, String status) {
-        mIdNumer = idNumer;
+    public User(String idNumber, String name, String firstName) {
+        mIdNumber = idNumber;
         mName = name;
         mFirstName = firstName;
-        mStatus = status;
     }
 
-    public String getIdNumer() {
-        return mIdNumer;
+    public String getIdNumber() {
+        return mIdNumber;
     }
 
-    public void setIdNumer(String idNumer) {
-        mIdNumer = idNumer;
+    public void setIdNumber(String idNumber) {
+        mIdNumber = idNumber;
     }
 
     public String getName() {
@@ -32,17 +31,9 @@ public class User {
         mFirstName = firstName;
     }
 
-    public String getStatus() {
-        return mStatus;
-    }
+    protected String mIdNumber;
+    protected String mName;
+    protected String mFirstName;
 
-    public void setStatus(String status) {
-        mStatus = status;
-    }
-
-    private String mIdNumer;
-    private  String mName;
-    private String mFirstName;
-    private String mStatus;
 
 }

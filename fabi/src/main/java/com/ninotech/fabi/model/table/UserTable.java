@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import com.ninotech.fabi.R;
 
 public class UserTable extends SQLiteOpenHelper {
-    public static final String NAME_TABLE = "Utilisateur";
+    public static final String NAME_TABLE = "Student";
     public UserTable(Context context) {
         super(context, context.getString(R.string.database_name), null, 1);
     }
@@ -18,11 +18,11 @@ public class UserTable extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase database) {
         database.execSQL("CREATE TABLE IF NOT EXISTS " + NAME_TABLE + "\n" +
                 "(\n" +
-                "    matriculeUt VARCHAR(10) PRIMARY KEY,\n" +
-                "    nomUt VARCHAR(20) NOT NULL,\n" +
-                "    prenomUt VARCHAR(20) NOT NULL,\n" +
-                "    statusUt VARCHAR(100) NOT NULL,\n" +
-                "    email VARCHAR(100) NOT NULL\n" +
+                "    idNumber VARCHAR(10) PRIMARY KEY,\n" +
+                "    name VARCHAR(20) NOT NULL,\n" +
+                "    firstName VARCHAR(20) NOT NULL,\n" +
+                "    department VARCHAR(100) NOT NULL,\n" +
+                "    section VARCHAR(100) NOT NULL\n" +
                 ");");
     }
 
@@ -39,19 +39,19 @@ public class UserTable extends SQLiteOpenHelper {
     public boolean isUserExist(String idNumber)
     {
         SQLiteDatabase database = this.getReadableDatabase();
-        Cursor cursor = database.rawQuery("SELECT * FROM " + NAME_TABLE + " WHERE matriculeUt=\"" + idNumber + "\";",null);
+        Cursor cursor = database.rawQuery("SELECT * FROM " + NAME_TABLE + " WHERE idNumber=\"" + idNumber + "\";",null);
         return cursor.moveToFirst();
     }
-    public boolean insert (String matricule , String nom , String prenom , String status , String email)
+    public boolean insert (String idNumber , String name , String firstName , String department , String section)
     {
         try {
             SQLiteDatabase db = this.getWritableDatabase();
             ContentValues contentValues = new ContentValues();
-            contentValues.put("matriculeUt",matricule);
-            contentValues.put("nomUt",nom);
-            contentValues.put("prenomUt",prenom);
-            contentValues.put("statusUt",status);
-            contentValues.put("email",email);
+            contentValues.put("idNumber",idNumber);
+            contentValues.put("name",name);
+            contentValues.put("firstName",firstName);
+            contentValues.put("department",department);
+            contentValues.put("section",section);
             db.insert(NAME_TABLE,null,contentValues);
             return  true;
         }catch (Exception e)

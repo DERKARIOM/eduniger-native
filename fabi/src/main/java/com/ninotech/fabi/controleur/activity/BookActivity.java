@@ -142,8 +142,6 @@ public class BookActivity extends AppCompatActivity {
                         throw new RuntimeException(e);
                     }
                    Toast.makeText(context,String.valueOf(position), Toast.LENGTH_SHORT).show();
-
-
                 }
             }
         };
@@ -198,7 +196,7 @@ public class BookActivity extends AppCompatActivity {
                             STORAGE_PERMISSION_REQUEST_CODE);
                 } else {
                     // Si la permission est déjà accordée, télécharger et ouvrir le PDF
-                    downloadAndOpenPDF(mNomPdf);
+                    downloadAndOpenPDF(mBook.getElectronic());
                 }
             }
         });
@@ -206,7 +204,7 @@ public class BookActivity extends AppCompatActivity {
         downloadPDFButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(mElectronicTable.insert(mSession.getIdNumber(),mIdLivre, mDescriptionTextView.getText().toString(),mAuteur,mNomCouverture,mNomPdf, mCategoryTextView.getText().toString(), mTitleTextView.getText().toString(),mNomCouvertureCat,mProfilAuteur))
+                if(mElectronicTable.insert(mSession.getIdNumber(),mBook.getId(), mDescriptionTextView.getText().toString(),"ras",mBook.getBlanket(),mBook.getElectronic(), mCategoryTextView.getText().toString(), mBook.getTitle(),"ras","ras"))
                     succeDowloadPDFDialog();
             }
         });
@@ -412,7 +410,7 @@ public class BookActivity extends AppCompatActivity {
         if (requestCode == STORAGE_PERMISSION_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permission accordée, télécharger et ouvrir le PDF
-                downloadAndOpenPDF(mNomPdf);
+                downloadAndOpenPDF(mBook.getElectronic());
             } else {
                 // Permission refusée, gérer en conséquence
                 Log.e("Permission", "Storage permission denied");
@@ -479,8 +477,6 @@ public class BookActivity extends AppCompatActivity {
                     mBook.setAuthor(jsonObject.getString("auteur"));
                     mBook.setDescription(jsonObject.getString("descLivre"));
                     mBook.getCategory().add(jsonObject.getString("nomCat"));
-                    mNomCouvertureCat = jsonObject.getString("nomCouverture");
-                    mProfilAuteur = jsonObject.getString("profilAuteur");
                     Picasso.with(getApplicationContext())
                             .load(getString(R.string.ip_server) + "couverture/" + mBook.getBlanket())
                             .placeholder(R.drawable.img_default_livre)
@@ -680,7 +676,7 @@ public class BookActivity extends AppCompatActivity {
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
                         .addFormDataPart("matricule",mSession.getIdNumber())
-                        .addFormDataPart("idLivre",mIdLivre)
+                        .addFormDataPart("idLivre",mBook.getId())
                         .build();
                 Request request = new Request.Builder()
                         .url(params[0])
@@ -887,12 +883,7 @@ public class BookActivity extends AppCompatActivity {
     private String mAudio;
     private int tmp_position;
     private ReservationDialog mReservationDialog;
-    private String mNomPdf;
     private ElectroniqueTable mElectronicTable;
-    private String mAuteur;
-    private String mNomCouverture;
-    private String mNomCouvertureCat;
-    private String mProfilAuteur;
     private String mNbrJour;
     private Book mBook;
 }

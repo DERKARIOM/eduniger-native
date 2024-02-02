@@ -17,7 +17,7 @@ public class Session extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase database) {
         database.execSQL("CREATE TABLE IF NOT EXISTS " + NAME_TABLE + "\n" +
                 "(\n" +
-                "    matricule VARCHAR(10) PRIMARY KEY\n" +
+                "    idNumber VARCHAR(10) PRIMARY KEY\n" +
                 ");");
     }
 
@@ -45,13 +45,12 @@ public class Session extends SQLiteOpenHelper {
         try {
             SQLiteDatabase database = this.getWritableDatabase();
             ContentValues contentValues = new ContentValues();
-            contentValues.put("matricule",idNumber);
+            contentValues.put("idNumber",idNumber);
             database.insert(NAME_TABLE,null,contentValues);
             return  true;
         }catch (Exception e)
         {
             return false;
         }
-
     }
 }

@@ -41,14 +41,12 @@ public class ElectroniqueTable extends SQLiteOpenHelper {
     public Cursor getData()
     {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("SELECT * FROM Electronique;",null);
-        return res;
+        return db.rawQuery("SELECT * FROM Electronique;",null);
     }
     public Cursor getData(String matricule)
     {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("SELECT * FROM Electronique WHERE matriculeUt='" + matricule + "';",null);
-        return res;
+        return db.rawQuery("SELECT * FROM Electronique WHERE matriculeUt='" + matricule + "';",null);
     }
 
     public int getNbrElectronique(String matricule)
