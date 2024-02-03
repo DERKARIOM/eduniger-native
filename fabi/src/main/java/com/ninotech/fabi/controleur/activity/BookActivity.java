@@ -718,7 +718,7 @@ public class BookActivity extends AppCompatActivity {
                             throw new RuntimeException(e);
                         }
                     }
-                    url = "http://192.168.43.1:2222/fabi/audio/" + mAudio;
+                    url = getString(R.string.ip_server) + "audio/" + mAudio;
                     try {
                         mMediaPlayer.setDataSource(url);
                         mMediaPlayer.prepare();
@@ -754,7 +754,7 @@ public class BookActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(reservPassword.getText().toString().equals(""))
-                    reservErr.setText("svp votre mot de passe");
+                    reservErr.setText(R.string.edit_text_hint_password);
                 else
                 {
                     if(delaitReservation.isEnabled())
@@ -780,9 +780,9 @@ public class BookActivity extends AppCompatActivity {
                 OkHttpClient client = new OkHttpClient();
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
-                        .addFormDataPart("matricule",params[1])
-                        .addFormDataPart("idLivre",params[2])
-                        .addFormDataPart("nbrJour",params[3])
+                        .addFormDataPart("idNumber",params[1])
+                        .addFormDataPart("idBook",params[2])
+                        .addFormDataPart("numberOfDay",params[3])
                         .build();
                 Request request = new Request.Builder()
                         .url(params[0])
