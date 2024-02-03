@@ -37,7 +37,7 @@ public class RankingFragment extends Fragment {
        mBookRecyclerView = view.findViewById(R.id.recycler_view_ranking);
         mBookList = new ArrayList<>();
         RankingSyn rankingSyn = new RankingSyn();
-        rankingSyn.execute(getString(R.string.ip_server_android) + "classement.php", session.getIdNumber());
+        rankingSyn.execute(getString(R.string.ip_server_android) + "Ranking.php", session.getIdNumber());
         return view;
     }
     private class RankingSyn extends AsyncTask<String,Void,String> {
@@ -48,7 +48,7 @@ public class RankingFragment extends Fragment {
                 OkHttpClient client = new OkHttpClient();
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
-                        .addFormDataPart("matricule",params[1])
+                        .addFormDataPart("idNumber",params[1])
                         .build();
                 Request request = new Request.Builder()
                         .url(params[0])
@@ -82,8 +82,8 @@ public class RankingFragment extends Fragment {
                 for (int i=0;i<jsonArray.length();i++) {
                     try {
                         ArrayList<String> category = new ArrayList<>();
-                        category.add(jsonArray.getJSONObject(i).getString("nomCat"));
-                        mBookList.add(new Book(jsonArray.getJSONObject(i).getString("idLivre"),jsonArray.getJSONObject(i).getString("couverture"),jsonArray.getJSONObject(i).getString("titreLivre"),category,jsonArray.getJSONObject(i).getString("estPhysique"),jsonArray.getJSONObject(i).getString("documentElec"),jsonArray.getJSONObject(i).getString("estAudio"),"0","0"));
+                        category.add(jsonArray.getJSONObject(i).getString("name"));
+                        mBookList.add(new Book(jsonArray.getJSONObject(i).getString("idBook"),jsonArray.getJSONObject(i).getString("blanket"),jsonArray.getJSONObject(i).getString("title"),category,jsonArray.getJSONObject(i).getString("isPhysic"),jsonArray.getJSONObject(i).getString("electronic"),jsonArray.getJSONObject(i).getString("isAudio"),"0","0"));
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }

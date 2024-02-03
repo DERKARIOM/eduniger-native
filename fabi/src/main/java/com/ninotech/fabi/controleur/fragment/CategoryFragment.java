@@ -49,7 +49,7 @@ public class CategoryFragment extends Fragment {
                 OkHttpClient client = new OkHttpClient();
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
-                        .addFormDataPart("matricule",params[1])
+                        .addFormDataPart("idNumber",params[1])
                         .build();
                 Request request = new Request.Builder()
                         .url(params[0])
@@ -82,7 +82,7 @@ public class CategoryFragment extends Fragment {
                 }
                 for (int i=0;i<jsonArray.length();i++) {
                     try {
-                        mCategoryList.add(new Category(jsonArray.getJSONObject(i).getString("nomCouverture"),jsonArray.getJSONObject(i).getString("nomCat")));
+                        mCategoryList.add(new Category(jsonArray.getJSONObject(i).getString("blanket"),jsonArray.getJSONObject(i).getString("name")));
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
