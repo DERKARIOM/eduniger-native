@@ -8,9 +8,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.ninotech.fabi.R;
 
-public class UserTable extends SQLiteOpenHelper {
+public class StudentTable extends SQLiteOpenHelper {
     public static final String NAME_TABLE = "Student";
-    public UserTable(Context context) {
+    public StudentTable(Context context) {
         super(context, context.getString(R.string.database_name), null, 1);
     }
 

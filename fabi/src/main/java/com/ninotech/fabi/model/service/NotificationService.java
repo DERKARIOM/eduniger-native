@@ -43,10 +43,10 @@ public class NotificationService extends Service {
         mSession = new Session(this);
         mNotificationTable = new NotificationTable(this);
         try {
-            mMatricule = mSession.getIdNumber();
+            mIdNumber = mSession.getIdNumber();
         }catch (Exception e)
         {
-            mMatricule = "0";
+            mIdNumber = "0";
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
         }
 
@@ -59,7 +59,7 @@ public class NotificationService extends Service {
         handler.postDelayed(new Runnable(){
             public void run(){
                 ReservationService reservationService = new ReservationService();
-                reservationService.execute("http://192.168.43.1:2222/fabi/android/reservationService.php");
+                reservationService.execute(getString(R.string.ip_server_android) + "ReservationService.php");
                 handler.postDelayed(this, delay);
             }
         }, delay);
@@ -81,7 +81,7 @@ public class NotificationService extends Service {
                 OkHttpClient client = new OkHttpClient();
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
-                        .addFormDataPart("matricule",mMatricule)
+                        .addFormDataPart("idNumber", mIdNumber)
                         .build();
                 Request request = new Request.Builder()
                         .url(params[0])
@@ -122,15 +122,15 @@ public class NotificationService extends Service {
                     }
                     String message;
                     try {
-                        if(jsonArray.getJSONObject(i).getString("etat").equals("1"))
-                            message = "Votre réservation du livre " + jsonArray.getJSONObject(i).getString("titreLivre") + " a été traitée avec succès. Vous pouvez maintenant passer le récupérer. Merci de choisir notre service!\"";
+                        if(jsonArray.getJSONObject(i).getString("state").equals("1"))
+                            message = "Votre réservation du livre " + jsonArray.getJSONObject(i).getString("title") + " a été traitée avec succès. Vous pouvez maintenant passer le récupérer. Merci de choisir notre service!\"";
                         else
-                            message = "Nous regrettons de vous informer que votre réservation pour " + jsonArray.getJSONObject(i).getString("titreLivre") + " a été rejetée. Si vous avez des questions ou besoin d'assistance, n'hésitez pas à nous contacter. Merci de votre compréhension.";
+                            message = "Nous regrettons de vous informer que votre réservation pour " + jsonArray.getJSONObject(i).getString("title") + " a été rejetée. Si vous avez des questions ou besoin d'assistance, n'hésitez pas à nous contacter. Merci de votre compréhension.";
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
                     try {
-                        mNotificationTable.insert(mMatricule,"Traitement de Réservation",message,"10:00");
+                        mNotificationTable.insert(mIdNumber,"Traitement de Réservation",message,"10:00");
                     }catch (Exception e)
                     {
                         Log.e("ErrInsertNotification",e.getMessage());
@@ -167,6 +167,6 @@ public class NotificationService extends Service {
         }
     }
     private Session mSession;
-    private String mMatricule;
+    private String mIdNumber;
     private NotificationTable mNotificationTable;
 }

@@ -8,7 +8,7 @@ import android.widget.Toast;
 
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.model.table.Session;
-import com.ninotech.fabi.model.table.UserTable;
+import com.ninotech.fabi.model.table.StudentTable;
 
 public class Account {
     public Account(String idNumber, String email, String password, String profile) {
@@ -85,11 +85,11 @@ public class Account {
     }
     public boolean register(Context context, String nom , String prenom , String status , String email)
     {
-        UserTable userTable = new UserTable(context);
-            if(userTable.isUserExist(mIdNumber))
+        StudentTable studentTable = new StudentTable(context);
+            if(studentTable.isUserExist(mIdNumber))
                 return true;
             else
-                return (userTable.insert(mIdNumber,nom,prenom,status,email));
+                return (studentTable.insert(mIdNumber,nom,prenom,status,email));
     }
     public boolean login(Context context)
     {

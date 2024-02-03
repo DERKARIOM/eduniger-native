@@ -7,14 +7,13 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.model.table.ElectroniqueTable;
-import com.ninotech.fabi.model.table.EmpreiteTable;
 import com.ninotech.fabi.model.table.NotificationTable;
-import com.ninotech.fabi.model.table.UserTable;
+import com.ninotech.fabi.model.table.StudentTable;
 
 public class Initialization {
     public Initialization(Context context)
     {
-        mUserTable = new UserTable(context);
+        mStudentTable = new StudentTable(context);
         mElectroniqueTable = new ElectroniqueTable(context);
         mNotificationTable = new NotificationTable(context);
     }
@@ -22,7 +21,7 @@ public class Initialization {
     {
         try {
             SQLiteDatabase database = context.openOrCreateDatabase(context.getResources().getString(R.string.database_name),MODE_PRIVATE,null);
-            mUserTable.onCreate(database);
+            mStudentTable.onCreate(database);
             mElectroniqueTable.onCreate(database);
             mNotificationTable.onCreate(database);
             return true;
@@ -31,7 +30,7 @@ public class Initialization {
             return false;
         }
     }
-    private UserTable mUserTable;
+    private StudentTable mStudentTable;
     private ElectroniqueTable mElectroniqueTable;
     private NotificationTable mNotificationTable;
 }
