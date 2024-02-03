@@ -83,13 +83,13 @@ public class Account {
         }
         return "noConnection";
     }
-    public boolean register(Context context, String nom , String prenom , String status , String email)
+    public boolean register(Context context, String name , String firstName , String department , String section , String email)
     {
         StudentTable studentTable = new StudentTable(context);
             if(studentTable.isUserExist(mIdNumber))
                 return true;
             else
-                return (studentTable.insert(mIdNumber,nom,prenom,status,email));
+                return (studentTable.insert(mIdNumber,name,firstName,department,section,email));
     }
     public boolean login(Context context)
     {

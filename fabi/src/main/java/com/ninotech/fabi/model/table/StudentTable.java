@@ -22,7 +22,8 @@ public class StudentTable extends SQLiteOpenHelper {
                 "    name VARCHAR(20) NOT NULL,\n" +
                 "    firstName VARCHAR(20) NOT NULL,\n" +
                 "    department VARCHAR(100) NOT NULL,\n" +
-                "    section VARCHAR(100) NOT NULL\n" +
+                "    section VARCHAR(100) NOT NULL,\n" +
+                "    email VARCHAR(100) NOT NULL\n" +
                 ");");
     }
 
@@ -42,7 +43,7 @@ public class StudentTable extends SQLiteOpenHelper {
         Cursor cursor = database.rawQuery("SELECT * FROM " + NAME_TABLE + " WHERE idNumber=\"" + idNumber + "\";",null);
         return cursor.moveToFirst();
     }
-    public boolean insert (String idNumber , String name , String firstName , String department , String section)
+    public boolean insert (String idNumber , String name , String firstName , String department , String section , String email)
     {
         try {
             SQLiteDatabase db = this.getWritableDatabase();
@@ -52,6 +53,7 @@ public class StudentTable extends SQLiteOpenHelper {
             contentValues.put("firstName",firstName);
             contentValues.put("department",department);
             contentValues.put("section",section);
+            contentValues.put("email",email);
             db.insert(NAME_TABLE,null,contentValues);
             return  true;
         }catch (Exception e)

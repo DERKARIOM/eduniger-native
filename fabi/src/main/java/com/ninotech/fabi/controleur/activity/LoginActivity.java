@@ -155,9 +155,9 @@ public class LoginActivity extends AppCompatActivity {
                 OkHttpClient client = new OkHttpClient();
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
-                        .addFormDataPart("matricule", params[1])
-                        .addFormDataPart("motdepasse", params[2])
-                        .addFormDataPart("jeton",mJeton)
+                        .addFormDataPart("idNumber", params[1])
+                        .addFormDataPart("password", params[2])
+                        .addFormDataPart("token",mJeton)
                         .addFormDataPart("version",getResources().getString(R.string.app_version))
                         .build();
                 Request request = new Request.Builder()
@@ -166,6 +166,7 @@ public class LoginActivity extends AppCompatActivity {
                         .build();
                 try {
                     Response response = client.newCall(request).execute();
+                    assert response.body() != null;
                     return response.body().string();
                 }catch (IOException e)
                 {
@@ -217,7 +218,7 @@ public class LoginActivity extends AppCompatActivity {
                         throw new RuntimeException(e);
                     }
                     try {
-                        if(mAccount.register(getApplicationContext(), jsonObject.getString("nomUt"), jsonObject.getString("prenomUt"), jsonObject.getString("statusUt"),jsonObject.getString("email")))
+                        if(mAccount.register(getApplicationContext(), jsonObject.getString("name"), jsonObject.getString("firstName"), jsonObject.getString("department"),jsonObject.getString("section"),jsonObject.getString("email")))
                         {
                             if(mAccount.login(getApplicationContext()))
                             {
