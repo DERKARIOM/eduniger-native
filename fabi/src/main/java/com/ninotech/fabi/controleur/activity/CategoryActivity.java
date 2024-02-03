@@ -21,6 +21,7 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -34,7 +35,7 @@ public class CategoryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category);
-        getSupportActionBar().hide();
+        Objects.requireNonNull(getSupportActionBar()).hide();
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         mToolbar = findViewById(R.id.toolbar2);
         mSession = new Session(this);
@@ -46,11 +47,11 @@ public class CategoryActivity extends AppCompatActivity {
             mCategorie = intent.getStringExtra("intent_adapter_category_title");
         }
         mToolbar.setTitle(mCategorie);
-        Http http = new Http();
-        http.execute("http://192.168.43.1:2222/fabi/android/categorie2.php");
+        CategoryInSyn categoryInSyn = new CategoryInSyn();
+        categoryInSyn.execute(getString(R.string.ip_server_android) + "CategoryIn.php",mSession.getIdNumber(),mCategorie);
     }
 
-    private class Http extends AsyncTask<String,Void,String> {
+    private class CategoryInSyn extends AsyncTask<String,Void,String> {
         @Override
         protected String doInBackground(String... params) {
 
@@ -58,8 +59,8 @@ public class CategoryActivity extends AppCompatActivity {
                 OkHttpClient client = new OkHttpClient();
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
-                        .addFormDataPart("matricule",mSession.getIdNumber())
-                        .addFormDataPart("nomCategorie",mCategorie)
+                        .addFormDataPart("idNumber",params[1])
+                        .addFormDataPart("categoryTitle",params[2])
                         .build();
                 Request request = new Request.Builder()
                         .url(params[0])
@@ -95,8 +96,8 @@ public class CategoryActivity extends AppCompatActivity {
                     for (int i=0;i<jsonArray.length();i++) {
                         try {
                             ArrayList<String> category = new ArrayList<>();
-                            category.add(jsonArray.getJSONObject(i).getString("nomCat"));
-                            mList.add(new Book(jsonArray.getJSONObject(i).getString("idLivre"),jsonArray.getJSONObject(i).getString("couverture"),jsonArray.getJSONObject(i).getString("titreLivre"),category,jsonArray.getJSONObject(i).getString("estPhysique"),jsonArray.getJSONObject(i).getString("documentElec"),jsonArray.getJSONObject(i).getString("estAudio"),"0","0"));
+                            category.add(jsonArray.getJSONObject(i).getString("categoryTitle"));
+                            mList.add(new Book(jsonArray.getJSONObject(i).getString("idBook"),jsonArray.getJSONObject(i).getString("blanket"),jsonArray.getJSONObject(i).getString("bookTitle"),category,jsonArray.getJSONObject(i).getString("isPhysic"),jsonArray.getJSONObject(i).getString("electronic"),jsonArray.getJSONObject(i).getString("isAudio"),"0","0"));
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
