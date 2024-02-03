@@ -267,11 +267,11 @@ public class BookActivity extends AppCompatActivity {
             }
         });
         RecoveryBook recoveryBook = new RecoveryBook();
-        RecoveryCommentaire recoveryCommentaire = new RecoveryCommentaire();
+        ReceiveComments receiveComments = new ReceiveComments();
         Similar similar = new Similar();
         RecoveryTones recoveryTones = new RecoveryTones();
         recoveryBook.execute(getString(R.string.ip_server_android) + "Book.php",mSession.getIdNumber(),mBook.getId());
-        recoveryCommentaire.execute(getString(R.string.ip_server_android) + "ReceiveComments.php",mSession.getIdNumber(),mBook.getId());
+        receiveComments.execute(getString(R.string.ip_server_android) + "ReceiveComments.php",mSession.getIdNumber(),mBook.getId());
         similar.execute(getString(R.string.ip_server_android) + "SimilarBook.php",mSession.getIdNumber(),mCategoryTextView.getText().toString(),mBook.getId());
         recoveryTones.execute(getString(R.string.ip_server_android) + "Tones.php");
         addCommentsImageView.setOnClickListener(new View.OnClickListener() {
@@ -470,13 +470,13 @@ public class BookActivity extends AppCompatActivity {
                 }
                 try {
                     mBook.setBlanket(jsonObject.getString("bookBlanket"));
-                    mBook.setTitle(jsonObject.getString("title"));
+                    mBook.setTitle(jsonObject.getString("bookTitle"));
                     mBook.setIsPhysical(jsonObject.getString("isPhysic"));
                     mBook.setIsAudio(jsonObject.getString("isAudio"));
                     mBook.setElectronic(jsonObject.getString("electronic"));
                     mBook.setAuthor(jsonObject.getString("authorName"));
                     mBook.setDescription(jsonObject.getString("description"));
-                    mBook.getCategory().add(jsonObject.getString("categoryName"));
+                    mBook.getCategory().add(jsonObject.getString("categoryTitle"));
                     Picasso.with(getApplicationContext())
                             .load(getString(R.string.ip_server) + "couverture/" + mBook.getBlanket())
                             .placeholder(R.drawable.img_default_livre)
@@ -503,7 +503,7 @@ public class BookActivity extends AppCompatActivity {
         }
     }
 
-    private class RecoveryCommentaire extends AsyncTask<String,Void,String> {
+    private class ReceiveComments extends AsyncTask<String,Void,String> {
         @Override
         protected String doInBackground(String... params) {
 
@@ -511,8 +511,8 @@ public class BookActivity extends AppCompatActivity {
                 OkHttpClient client = new OkHttpClient();
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
-                        .addFormDataPart("matricule",params[1])
-                        .addFormDataPart("idLivre",params[2])
+                        .addFormDataPart("idNumber",params[1])
+                        .addFormDataPart("idBook",params[2])
                         .build();
                 Request request = new Request.Builder()
                         .url(params[0])
@@ -548,7 +548,7 @@ public class BookActivity extends AppCompatActivity {
                     }
                     for (int i=0;i<jsonArray.length();i++) {
                         try {
-                            mTalksList.add(new Talks(jsonArray.getJSONObject(i).getString("profil"),jsonArray.getJSONObject(i).getString("nomUt"),jsonArray.getJSONObject(i).getString("message")));
+                            mTalksList.add(new Talks(jsonArray.getJSONObject(i).getString("profile"),jsonArray.getJSONObject(i).getString("name"),jsonArray.getJSONObject(i).getString("message")));
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
@@ -569,8 +569,8 @@ public class BookActivity extends AppCompatActivity {
                 OkHttpClient client = new OkHttpClient();
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
-                        .addFormDataPart("matricule",params[1])
-                        .addFormDataPart("idLivre",params[2])
+                        .addFormDataPart("idNumber",params[1])
+                        .addFormDataPart("idBook",params[2])
                         .addFormDataPart("message",params[3])
                         .build();
                 Request request = new Request.Builder()
@@ -615,9 +615,9 @@ public class BookActivity extends AppCompatActivity {
                 OkHttpClient client = new OkHttpClient();
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
-                        .addFormDataPart("matricule",params[1])
-                        .addFormDataPart("nomCategorie",params[2])
-                        .addFormDataPart("idLivre",params[3])
+                        .addFormDataPart("idNumber",params[1])
+                        .addFormDataPart("categoryTitle",params[2])
+                        .addFormDataPart("idBook",params[3])
                         .build();
                 Request request = new Request.Builder()
                         .url(params[0])
@@ -652,7 +652,7 @@ public class BookActivity extends AppCompatActivity {
                     }
                     for (int i=0;i<jsonArray.length();i++) {
                         try {
-                            mList2.add(new Recenmment(mIdLivre,jsonArray.getJSONObject(i).getString("couverture"),null));
+                            mList2.add(new Recenmment(mBook.getId(),jsonArray.getJSONObject(i).getString("blanket"),null));
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
@@ -675,8 +675,8 @@ public class BookActivity extends AppCompatActivity {
                 OkHttpClient client = new OkHttpClient();
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
-                        .addFormDataPart("matricule",mSession.getIdNumber())
-                        .addFormDataPart("idLivre",mBook.getId())
+                        .addFormDataPart("idNumber",mSession.getIdNumber())
+                        .addFormDataPart("idBook",mBook.getId())
                         .build();
                 Request request = new Request.Builder()
                         .url(params[0])
@@ -711,7 +711,7 @@ public class BookActivity extends AppCompatActivity {
                     }
                     for (int i=0;i<jsonArray.length();i++) {
                         try {
-                            mListTones.add(new Tones(i+1,jsonArray.getJSONObject(i).getString("audio"),jsonArray.getJSONObject(i).getString("titre"),0,false));
+                            mListTones.add(new Tones(i+1,jsonArray.getJSONObject(i).getString("audio"),jsonArray.getJSONObject(i).getString("title"),0,false));
                             if(i==0)
                                 mAudio = jsonArray.getJSONObject(i).getString("audio");
                         } catch (JSONException e) {
