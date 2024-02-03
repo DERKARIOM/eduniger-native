@@ -436,8 +436,8 @@ public class BookActivity extends AppCompatActivity {
                 OkHttpClient client = new OkHttpClient();
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
-                        .addFormDataPart("matricule",params[1])
-                        .addFormDataPart("idLivre",params[2])
+                        .addFormDataPart("idNumber",params[1])
+                        .addFormDataPart("idBook",params[2])
                         .build();
                 Request request = new Request.Builder()
                         .url(params[0])
@@ -469,14 +469,14 @@ public class BookActivity extends AppCompatActivity {
                     throw new RuntimeException(e);
                 }
                 try {
-                    mBook.setBlanket(jsonObject.getString("couverture"));
-                    mBook.setTitle(jsonObject.getString("titreLivre"));
-                    mBook.setIsPhysical(jsonObject.getString("estPhysique"));
-                    mBook.setIsAudio(jsonObject.getString("estAudio"));
-                    mBook.setElectronic(jsonObject.getString("documentElec"));
-                    mBook.setAuthor(jsonObject.getString("auteur"));
-                    mBook.setDescription(jsonObject.getString("descLivre"));
-                    mBook.getCategory().add(jsonObject.getString("nomCat"));
+                    mBook.setBlanket(jsonObject.getString("bookBlanket"));
+                    mBook.setTitle(jsonObject.getString("title"));
+                    mBook.setIsPhysical(jsonObject.getString("isPhysic"));
+                    mBook.setIsAudio(jsonObject.getString("isAudio"));
+                    mBook.setElectronic(jsonObject.getString("electronic"));
+                    mBook.setAuthor(jsonObject.getString("authorName"));
+                    mBook.setDescription(jsonObject.getString("description"));
+                    mBook.getCategory().add(jsonObject.getString("categoryName"));
                     Picasso.with(getApplicationContext())
                             .load(getString(R.string.ip_server) + "couverture/" + mBook.getBlanket())
                             .placeholder(R.drawable.img_default_livre)

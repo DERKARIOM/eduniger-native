@@ -82,8 +82,8 @@ public class RankingFragment extends Fragment {
                 for (int i=0;i<jsonArray.length();i++) {
                     try {
                         ArrayList<String> category = new ArrayList<>();
-                        category.add(jsonArray.getJSONObject(i).getString("name"));
-                        mBookList.add(new Book(jsonArray.getJSONObject(i).getString("idBook"),jsonArray.getJSONObject(i).getString("blanket"),jsonArray.getJSONObject(i).getString("title"),category,jsonArray.getJSONObject(i).getString("isPhysic"),jsonArray.getJSONObject(i).getString("electronic"),jsonArray.getJSONObject(i).getString("isAudio"),"0","0"));
+                        category.add(jsonArray.getJSONObject(i).getString("categoryTitle"));
+                        mBookList.add(new Book(jsonArray.getJSONObject(i).getString("idBook"),jsonArray.getJSONObject(i).getString("blanket"),jsonArray.getJSONObject(i).getString("bookTitle"),category,jsonArray.getJSONObject(i).getString("isPhysic"),jsonArray.getJSONObject(i).getString("electronic"),jsonArray.getJSONObject(i).getString("isAudio"),"0","0"));
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }

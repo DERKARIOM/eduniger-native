@@ -82,7 +82,7 @@ public class CategoryFragment extends Fragment {
                 }
                 for (int i=0;i<jsonArray.length();i++) {
                     try {
-                        mCategoryList.add(new Category(jsonArray.getJSONObject(i).getString("blanket"),jsonArray.getJSONObject(i).getString("name")));
+                        mCategoryList.add(new Category(jsonArray.getJSONObject(i).getString("blanket"),jsonArray.getJSONObject(i).getString("title")));
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
