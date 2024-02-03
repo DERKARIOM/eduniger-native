@@ -182,10 +182,10 @@ public class RegisterActivity extends AppCompatActivity {
                 OkHttpClient client = new OkHttpClient();
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
-                        .addFormDataPart("matricule",params[1])
+                        .addFormDataPart("idNumber",params[1])
                         .addFormDataPart("email",params[2])
-                        .addFormDataPart("motdepasse",params[3])
-                        .addFormDataPart("jeton",mJeton)
+                        .addFormDataPart("password",params[3])
+                        .addFormDataPart("token",mJeton)
                         .addFormDataPart("version", getResources().getString(R.string.app_version))
                         .build();
                 Request request = new Request.Builder()
@@ -250,7 +250,7 @@ public class RegisterActivity extends AppCompatActivity {
                         throw new RuntimeException(e);
                     }
                     try {
-                        if(mAccount.register(getApplicationContext(), jsonObject.getString("nomUt"), jsonObject.getString("prenomUt"), jsonObject.getString("statusUt"),mAccount.getEmail()))
+                        if(mAccount.register(getApplicationContext(), jsonObject.getString("name"), jsonObject.getString("firstName"), jsonObject.getString("section"),mAccount.getEmail()))
                         {
                             if(mAccount.login(getApplicationContext()))
                             {
