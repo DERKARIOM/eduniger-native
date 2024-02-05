@@ -1,12 +1,16 @@
 package com.ninotech.fabi.model.data;
 
+import android.content.Context;
+import android.database.Cursor;
+
+import com.ninotech.fabi.model.table.StudentTable;
+
 public class User {
     public User(String idNumber, String name, String firstName) {
         mIdNumber = idNumber;
         mName = name;
         mFirstName = firstName;
     }
-
     public String getIdNumber() {
         return mIdNumber;
     }
@@ -34,6 +38,4 @@ public class User {
     protected String mIdNumber;
     protected String mName;
     protected String mFirstName;
-
-
 }

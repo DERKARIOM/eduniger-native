@@ -1,5 +1,10 @@
 package com.ninotech.fabi.model.data;
 
+import android.content.Context;
+import android.database.Cursor;
+
+import com.ninotech.fabi.model.table.StudentTable;
+
 public class Student extends User{
     public String getDepartment() {
         return mDepartment;

@@ -250,7 +250,7 @@ public class RegisterActivity extends AppCompatActivity {
                         throw new RuntimeException(e);
                     }
                     try {
-                        if(mAccount.register(getApplicationContext(), jsonObject.getString("name"), jsonObject.getString("firstName") ,jsonObject.getString("department"), jsonObject.getString("section"),mAccount.getEmail()))
+                        if(mAccount.register(getApplicationContext(), jsonObject.getString("name"), jsonObject.getString("firstName") ,jsonObject.getString("department"), jsonObject.getString("section"),mAccount.getEmail(),jsonObject.getString("profile")))
                         {
                             if(mAccount.login(getApplicationContext()))
                             {

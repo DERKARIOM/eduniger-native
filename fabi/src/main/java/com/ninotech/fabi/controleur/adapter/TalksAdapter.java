@@ -83,7 +83,7 @@ public class TalksAdapter extends RecyclerView.Adapter<TalksAdapter.MyViewHolder
         }
         void display(Talks talks){
             Picasso.with(itemView.getContext())
-                    .load(itemView.getResources().getString(R.string.ip_server) + "profil/" + talks.getProfil())
+                    .load(itemView.getResources().getString(R.string.ip_server) + "profile/" + talks.getProfil())
                     .placeholder(R.drawable.img_default_livre)
                     .error(R.drawable.img_default_livre)
                     .into(mPhotoProfilImageView);

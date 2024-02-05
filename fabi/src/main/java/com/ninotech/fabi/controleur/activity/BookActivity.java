@@ -40,6 +40,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.ninotech.fabi.controleur.adapter.TalksAdapter;
 import com.ninotech.fabi.controleur.dialog.ReservationDialog;
 import com.ninotech.fabi.model.data.Book;
+import com.ninotech.fabi.model.data.Chat;
+import com.ninotech.fabi.model.data.Student;
 import com.ninotech.fabi.model.data.Talks;
 import com.ninotech.fabi.model.table.ElectroniqueTable;
 import com.ninotech.fabi.model.data.Recenmment;
@@ -279,6 +281,12 @@ public class BookActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if(!mMessageTextView.getText().toString().equals("null"))
                 {
+                    Chat chat = new Chat(mSession.getIdNumber(),getApplicationContext(),mMessageTextView.getText().toString());
+                    mTalksList.add(new Talks(chat.getProfile(),chat.getNom(),chat.getMessage()));
+                    TalksAdapter talksAdapter = new TalksAdapter(mTalksList);
+                    mCommentaireRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                    mCommentaireRecyclerView.setAdapter(talksAdapter);
+                    mCommentaireRecyclerView.smoothScrollToPosition(talksAdapter.getItemCount()-1);
                     SendCommentaire sendCommentaire = new SendCommentaire();
                     sendCommentaire.execute(getString(R.string.ip_server_android) + "SendComments.php",mSession.getIdNumber(),mBook.getId(),mMessageTextView.getText().toString());
                 }
@@ -601,7 +609,6 @@ public class BookActivity extends AppCompatActivity {
                 {
                     mMessageTextView.setText("");
                 }
-                Toast.makeText(BookActivity.this, jsonData, Toast.LENGTH_SHORT).show();
             }
         }
     }

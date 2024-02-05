@@ -23,7 +23,8 @@ public class StudentTable extends SQLiteOpenHelper {
                 "    firstName VARCHAR(20) NOT NULL,\n" +
                 "    department VARCHAR(100) NOT NULL,\n" +
                 "    section VARCHAR(100) NOT NULL,\n" +
-                "    email VARCHAR(100) NOT NULL\n" +
+                "    email VARCHAR(100) NOT NULL,\n" +
+                "    profile VARCHAR(100) NOT NULL\n" +
                 ");");
     }
 
@@ -37,13 +38,18 @@ public class StudentTable extends SQLiteOpenHelper {
         SQLiteDatabase database = this.getReadableDatabase();
         return database.rawQuery("SELECT * FROM " + NAME_TABLE + ";",null);
     }
+    public Cursor getData(String idNumber)
+    {
+        SQLiteDatabase database = this.getReadableDatabase();
+        return database.rawQuery("SELECT * FROM " + NAME_TABLE + " WHERE idNumber=\"" + idNumber + "\";",null);
+    }
     public boolean isUserExist(String idNumber)
     {
         SQLiteDatabase database = this.getReadableDatabase();
         Cursor cursor = database.rawQuery("SELECT * FROM " + NAME_TABLE + " WHERE idNumber=\"" + idNumber + "\";",null);
         return cursor.moveToFirst();
     }
-    public boolean insert (String idNumber , String name , String firstName , String department , String section , String email)
+    public boolean insert (String idNumber , String name , String firstName , String department , String section , String email , String profile)
     {
         try {
             SQLiteDatabase db = this.getWritableDatabase();
@@ -54,6 +60,7 @@ public class StudentTable extends SQLiteOpenHelper {
             contentValues.put("department",department);
             contentValues.put("section",section);
             contentValues.put("email",email);
+            contentValues.put("profile",profile);
             db.insert(NAME_TABLE,null,contentValues);
             return  true;
         }catch (Exception e)
