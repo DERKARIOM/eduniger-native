@@ -87,7 +87,7 @@
                                     android:src="@drawable/vector_black3_off_like"
                                     android:contentDescription="@string/todo" />
                                 <TextView
-                                    android:id="@+id/text_view_adapter_book_number_like"
+                                    android:id="@+id/text_view_activity_book_number_like"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginStart="3dp"

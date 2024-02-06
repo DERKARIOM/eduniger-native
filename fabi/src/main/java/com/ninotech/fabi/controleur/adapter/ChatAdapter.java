@@ -90,7 +90,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
                     .placeholder(R.drawable.img_default_livre)
                     .error(R.drawable.img_default_livre)
                     .into(mProfile);
-            mNom.setText(chat.getNom());
+            mNom.setText(chat.getUserName());
             mMessage.setText(chat.getMessage());
         }
     }

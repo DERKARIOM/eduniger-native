@@ -3,7 +3,7 @@ package com.ninotech.fabi.model.data;
 import java.util.ArrayList;
 
 public class Book {
-   public Book(String id, String title, String blanket, ArrayList<String> category, String author, String description, String electronic, String isAudio, String isAvailable, String isPysical, String numberLikes, String numberNoLikes , String numberView) {
+   public Book(String id, String title, String blanket, ArrayList<String> category, String author, String description, String electronic, String isAudio, String isAvailable, String isPhysic, int numberLikes, int numberNoLikes , int numberView) {
       mId = id;
       mTitle = title;
       mBlanket = blanket;
@@ -13,33 +13,41 @@ public class Book {
       mElectronic = electronic;
       mIsAudio = isAudio;
       mIsAvailable = isAvailable;
-      mIsPhysical = isPysical;
+      mIsPhysic = isPhysic;
       mNumberLikes = numberLikes;
       mNumberNoLikes = numberNoLikes;
       mNumberView = numberView;
    }
-   public Book(String id , String blanket , String title , ArrayList<String> category , String isPhysical, String electronic , String isAudio , String numberLikes , String numberView)
+   public Book(String id , String blanket , String title , ArrayList<String> category , String isPhysic, String electronic , String isAudio , int numberLikes , int numberView)
    {
       mId = id;
       mBlanket = blanket;
       mTitle = title;
       mCategory = category;
-      mIsPhysical = isPhysical;
+      mIsPhysic = isPhysic;
       mElectronic = electronic;
       mIsAudio = isAudio;
       mNumberLikes = numberLikes;
       mNumberView = numberView;
+   }
+   public void like()
+   {
+      mNumberLikes++;
+   }
+   public void disLike()
+   {
+      mNumberLikes--;
    }
    public Book(String id)
    {
       mId = id;
       mCategory = new ArrayList<>();
    }
-   public String getNumberView() {
+   public int getNumberView() {
       return mNumberView;
    }
 
-   public void setNumberView(String numberView) {
+   public void setNumberView(int numberView) {
       mNumberView = numberView;
    }
 
@@ -115,19 +123,19 @@ public class Book {
       mIsAvailable = isAvailable;
    }
 
-   public String getIsPhysical() {
-      return mIsPhysical;
+   public String getIsPhysic() {
+      return mIsPhysic;
    }
 
-   public void setIsPhysical(String isPhysical) {
-      mIsPhysical = isPhysical;
+   public void setIsPhysic(String isPhysic) {
+      mIsPhysic = isPhysic;
    }
 
-   public String getNumberLikes() {
+   public int getNumberLikes() {
       return mNumberLikes;
    }
 
-   public void setNumberLikes(String numberLikes) {
+   public void setNumberLikes(int numberLikes) {
       mNumberLikes = numberLikes;
    }
 
@@ -140,9 +148,9 @@ public class Book {
    private String mElectronic;
    private String mIsAudio;
    private  String mIsAvailable;
-   private String mIsPhysical;
-   private String mNumberLikes;
-   private String mNumberNoLikes;
+   private String mIsPhysic;
+   private int mNumberLikes;
+   private int mNumberNoLikes;
 
-   private String mNumberView;
+   private int mNumberView;
 }

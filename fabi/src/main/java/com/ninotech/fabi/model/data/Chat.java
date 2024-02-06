@@ -6,9 +6,9 @@ import android.database.Cursor;
 import com.ninotech.fabi.model.table.StudentTable;
 
 public class Chat {
-    public Chat(String profile, String nom, String message, boolean isChat) {
+    public Chat(String profile, String userName, String message, boolean isChat) {
         mProfile = profile;
-        mNom = nom;
+        mUserName = userName;
         mMessage = message;
         this.isChat = isChat;
     }
@@ -17,7 +17,7 @@ public class Chat {
         StudentTable studentTable = new StudentTable(context);
         Cursor cursor = studentTable.getData(idNumber);
         cursor.moveToFirst();
-        mNom = cursor.getString(1) + " " +cursor.getString(2);
+        mUserName = cursor.getString(1) + " " +cursor.getString(2);
         mProfile = cursor.getString(6);
         mMessage = message;
     }
@@ -29,12 +29,12 @@ public class Chat {
         mProfile = profile;
     }
 
-    public String getNom() {
-        return mNom;
+    public String getUserName() {
+        return mUserName;
     }
 
-    public void setNom(String nom) {
-        mNom = nom;
+    public void setUserName(String userName) {
+        mUserName = userName;
     }
 
     public String getMessage() {
@@ -54,7 +54,7 @@ public class Chat {
     }
 
     private String mProfile;
-    private String mNom;
+    private String mUserName;
     private String mMessage;
     private boolean isChat;
 }

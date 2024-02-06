@@ -41,7 +41,6 @@ import com.ninotech.fabi.controleur.adapter.TalksAdapter;
 import com.ninotech.fabi.controleur.dialog.ReservationDialog;
 import com.ninotech.fabi.model.data.Book;
 import com.ninotech.fabi.model.data.Chat;
-import com.ninotech.fabi.model.data.Student;
 import com.ninotech.fabi.model.data.Talks;
 import com.ninotech.fabi.model.table.ElectroniqueTable;
 import com.ninotech.fabi.model.data.Recenmment;
@@ -103,6 +102,7 @@ public class BookActivity extends AppCompatActivity {
         Button openPDFButton = findViewById(R.id.button_activity_book_open_pdf);
         Button downloadPDFButton = findViewById(R.id.button_activity_book_download_pdf);
         mMessageTextView = findViewById(R.id.text_view_activity_book_message);
+        mNumberLikeTextView = findViewById(R.id.text_view_activity_book_number_like);
         ImageView addCommentsImageView = findViewById(R.id.image_view_activity_book_add_comments);
         LinearLayout likeLinearLayout = findViewById(R.id.linear_layout_activiry_book_like);
         LinearLayout noLikeLinearLayout = findViewById(R.id.linear_layout_activiry_book_nolike);
@@ -238,40 +238,24 @@ public class BookActivity extends AppCompatActivity {
         likeLinearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!mIsLike)
-                {
-                    mIsLike = true;
-                    mLikeImageView.setImageResource(R.drawable.vector_purple2_200_on_like);
-                }
-                else
-                {
-                    mIsLike = false;
-                    mLikeImageView.setImageResource(R.drawable.vector_black3_off_like);
-
-                }
+                InsertLikeSyn insertLikeSyn = new InsertLikeSyn();
+                insertLikeSyn.execute(getString(R.string.ip_server_android) + "InsertLike.php",mSession.getIdNumber(),mBook.getId());
             }
         });
 
         noLikeLinearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!mIsNoLike)
-                {
-                    mIsNoLike = true;
-                    mNoLikeImageView.setImageResource(R.drawable.vector_rouge_on_nolike);
-                }
-                else
-                {
-                    mIsNoLike = false;
-                    mNoLikeImageView.setImageResource(R.drawable.vector_black3_off_nolike);
-
-                }
+                InsertLikeSyn insertLikeSyn = new InsertLikeSyn();
+                insertLikeSyn.execute(getString(R.string.ip_server_android) + "InsertLike.php",mSession.getIdNumber(),mBook.getId());
             }
         });
         RecoveryBook recoveryBook = new RecoveryBook();
         ReceiveComments receiveComments = new ReceiveComments();
         Similar similar = new Similar();
         RecoveryTones recoveryTones = new RecoveryTones();
+        IsLikeSyn isLikeSyn = new IsLikeSyn();
+        isLikeSyn.execute(getString(R.string.ip_server_android) + "IsLike.php",mSession.getIdNumber(),mBook.getId());
         recoveryBook.execute(getString(R.string.ip_server_android) + "Book.php",mSession.getIdNumber(),mBook.getId());
         receiveComments.execute(getString(R.string.ip_server_android) + "ReceiveComments.php",mSession.getIdNumber(),mBook.getId());
         similar.execute(getString(R.string.ip_server_android) + "SimilarBook.php",mSession.getIdNumber(),mCategoryTextView.getText().toString(),mBook.getId());
@@ -282,7 +266,7 @@ public class BookActivity extends AppCompatActivity {
                 if(!mMessageTextView.getText().toString().equals("null"))
                 {
                     Chat chat = new Chat(mSession.getIdNumber(),getApplicationContext(),mMessageTextView.getText().toString());
-                    mTalksList.add(new Talks(chat.getProfile(),chat.getNom(),chat.getMessage()));
+                    mTalksList.add(new Talks(chat.getProfile(),chat.getUserName(),chat.getMessage()));
                     TalksAdapter talksAdapter = new TalksAdapter(mTalksList);
                     mCommentaireRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                     mCommentaireRecyclerView.setAdapter(talksAdapter);
@@ -479,12 +463,13 @@ public class BookActivity extends AppCompatActivity {
                 try {
                     mBook.setBlanket(jsonObject.getString("bookBlanket"));
                     mBook.setTitle(jsonObject.getString("bookTitle"));
-                    mBook.setIsPhysical(jsonObject.getString("isPhysic"));
+                    mBook.setIsPhysic(jsonObject.getString("isPhysic"));
                     mBook.setIsAudio(jsonObject.getString("isAudio"));
                     mBook.setElectronic(jsonObject.getString("electronic"));
                     mBook.setAuthor(jsonObject.getString("authorName"));
                     mBook.setDescription(jsonObject.getString("description"));
                     mBook.getCategory().add(jsonObject.getString("categoryTitle"));
+                    mBook.setNumberLikes(Integer.parseInt(jsonObject.getString("numberLike")));
                     Picasso.with(getApplicationContext())
                             .load(getString(R.string.ip_server) + "couverture/" + mBook.getBlanket())
                             .placeholder(R.drawable.img_default_livre)
@@ -492,7 +477,8 @@ public class BookActivity extends AppCompatActivity {
                             .transform(new RoundedTransformation(15,4))
                             .resize(200,334)
                             .into(mBlanketImageView);
-                    if(mBook.getIsPhysical().equals("1"))
+                    mNumberLikeTextView.setText(String.valueOf(mBook.getNumberLikes()));
+                    if(mBook.getIsPhysic().equals("1"))
                         mReservationLinearLayout.setVisibility(View.VISIBLE);
                     if(mBook.getIsAudio().equals("1"))
                         mAudioLinearLayout.setVisibility(View.VISIBLE);
@@ -564,6 +550,105 @@ public class BookActivity extends AppCompatActivity {
                     TalksAdapter talksAdapter = new TalksAdapter(mTalksList);
                     mCommentaireRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                     mCommentaireRecyclerView.setAdapter(talksAdapter);
+                }
+            }
+        }
+    }
+
+    private class InsertLikeSyn extends AsyncTask<String,Void,String> {
+        @Override
+        protected String doInBackground(String... params) {
+
+            try {
+                OkHttpClient client = new OkHttpClient();
+                RequestBody requestBody = new MultipartBody.Builder()
+                        .setType(MultipartBody.FORM)
+                        .addFormDataPart("idNumber",params[1])
+                        .addFormDataPart("idBook",params[2])
+                        .build();
+                Request request = new Request.Builder()
+                        .url(params[0])
+                        .post(requestBody)
+                        .build();
+                try {
+                    Response response = client.newCall(request).execute();
+                    assert response.body() != null;
+                    return response.body().string();
+                }catch (IOException e)
+                {
+                    Toast.makeText(BookActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+
+            }catch (Exception e)
+            {
+                return null;
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(String jsonData){
+            //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
+            if(jsonData != null)
+            {
+                if(!jsonData.equals("RAS"))
+                {
+                    if(jsonData.equals("true"))
+                    {
+                        mBook.like();
+                        mLikeImageView.setImageResource(R.drawable.vector_purple2_200_on_like);
+                    }
+                    else
+                    {
+                        mBook.disLike();
+                        mLikeImageView.setImageResource(R.drawable.vector_black3_off_like);
+                    }
+                    mNumberLikeTextView.setText(String.valueOf(mBook.getNumberLikes()));
+                }
+            }
+        }
+    }
+
+    private class IsLikeSyn extends AsyncTask<String,Void,String> {
+        @Override
+        protected String doInBackground(String... params) {
+
+            try {
+                OkHttpClient client = new OkHttpClient();
+                RequestBody requestBody = new MultipartBody.Builder()
+                        .setType(MultipartBody.FORM)
+                        .addFormDataPart("idNumber",params[1])
+                        .addFormDataPart("idBook",params[2])
+                        .build();
+                Request request = new Request.Builder()
+                        .url(params[0])
+                        .post(requestBody)
+                        .build();
+                try {
+                    Response response = client.newCall(request).execute();
+                    assert response.body() != null;
+                    return response.body().string();
+                }catch (IOException e)
+                {
+                    Toast.makeText(BookActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+
+            }catch (Exception e)
+            {
+                return null;
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(String jsonData){
+            //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
+            if(jsonData != null)
+            {
+                if(!jsonData.equals("RAS"))
+                {
+                    if(jsonData.equals(mSession.getIdNumber()))
+                        mLikeImageView.setImageResource(R.drawable.vector_purple2_200_on_like);
+                    else
+                        mLikeImageView.setImageResource(R.drawable.vector_black3_off_like);
                 }
             }
         }
@@ -876,6 +961,7 @@ public class BookActivity extends AppCompatActivity {
     private TextView mTitleTextView;
     private TextView mCategoryTextView;
     private TextView mDescriptionTextView;
+    private TextView mNumberLikeTextView;
     private EditText mMessageTextView;
     private ImageView mLikeImageView;
     private ImageView mNoLikeImageView;

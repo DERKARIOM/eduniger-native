@@ -87,7 +87,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.MyViewHolder> 
             mPysicalImageView = itemView.findViewById(R.id.image_view_adapter_book_physical);
             mElectronicImageView = itemView.findViewById(R.id.image_view_adapter_book_electronic);
             mAudioImageView = itemView.findViewById(R.id.image_view_adapter_book_audio);
-            mNumberLikeTextView = itemView.findViewById(R.id.text_view_adapter_book_number_like);
+            mNumberLikeTextView = itemView.findViewById(R.id.text_view_activity_book_number_like);
             mNumberViewTextView = itemView.findViewById(R.id.text_view_adapter_book_number_view);
             itemView.setOnCreateContextMenuListener(this);
         }
@@ -107,16 +107,14 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.MyViewHolder> 
             for(int i=0;i<book.getCategory().size();i++)
                 category.append(book.getCategory().get(i));
             mCategoryTextView.setText(category);
-            mNumberLikeTextView.setText(book.getNumberLikes());
-            mNumberViewTextView.setText(book.getNumberView());
-            if(book.getIsPhysical().equals("1"))
+            mNumberLikeTextView.setText(String.valueOf(book.getNumberLikes()));
+            mNumberViewTextView.setText(String.valueOf(book.getNumberView()));
+            if(book.getIsPhysic().equals("1"))
                 mPysicalImageView.setVisibility(View.VISIBLE);
             if(!book.getElectronic().equals("null"))
                 mElectronicImageView.setVisibility(View.VISIBLE);
             if(book.getIsAudio().equals("1"))
                 mAudioImageView.setVisibility(View.VISIBLE);
-            mNumberLikeTextView.setText(book.getNumberLikes());
-            mNumberViewTextView.setText(book.getNumberView());
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

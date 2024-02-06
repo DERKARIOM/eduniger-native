@@ -69,7 +69,7 @@
                     android:src="@drawable/vector_black3_off_like"
                     android:contentDescription="@string/todo" />
                 <TextView
-                    android:id="@+id/text_view_adapter_book_number_like"
+                    android:id="@+id/text_view_activity_book_number_like"
                     style="@style/icon_subcribe_text_view"
                     android:src="@drawable/vector_black3_off_like"/>
             </LinearLayout>
