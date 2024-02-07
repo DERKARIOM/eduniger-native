@@ -6,7 +6,7 @@
     android:background="@drawable/forme_white_radius_10dp"
     >
     <Spinner
-        android:id="@+id/DelaitReservation"
+        android:id="@+id/spinner_dialog_reservation_time_limit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:autofillHints="rasdkdkdkdkdkd"
@@ -33,14 +33,14 @@
             android:text="Consultation sur place"
             />
         <CheckBox
-            android:id="@+id/estConsulte"
+            android:id="@+id/check_box_dialog_reservation_local_consultation"
             android:layout_width="wrap_content"
             android:theme="@style/Theme.Ras"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"/>
     </LinearLayout>
     <EditText
-        android:id="@+id/reservation_password"
+        android:id="@+id/edit_text_dialog_reservation_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
        android:layout_margin="10dp"
@@ -53,7 +53,7 @@
         android:padding="7dp"
         android:selectAllOnFocus="false" />
     <TextView
-        android:id="@+id/err_reservation"
+        android:id="@+id/text_view_dialog_reservation_error"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="10dp"
@@ -82,7 +82,7 @@
             android:progressDrawable="@drawable/forme_circulaire_bar_connexion" />
 
         <Button
-            android:id="@+id/reservation_envoi"
+            android:id="@+id/button_dialog_reservation_send"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"

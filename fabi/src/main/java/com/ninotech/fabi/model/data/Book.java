@@ -38,6 +38,14 @@ public class Book {
    {
       mNumberLikes--;
    }
+   public void noLike()
+   {
+      mNumberNoLikes++;
+   }
+   public void disNoLike()
+   {
+      mNumberNoLikes--;
+   }
    public Book(String id)
    {
       mId = id;
@@ -150,6 +158,33 @@ public class Book {
    private  String mIsAvailable;
    private String mIsPhysic;
    private int mNumberLikes;
+
+   public int getNumberSubscribe() {
+      return mNumberSubscribe;
+   }
+
+   public void setNumberSubscribe(int numberSubscribe) {
+      mNumberSubscribe = numberSubscribe;
+   }
+
+   private int mNumberSubscribe;
+   public void subscribe()
+   {
+      mNumberSubscribe++;
+   }
+   public void desSubscribe()
+   {
+      mNumberSubscribe--;
+   }
+
+   public int getNumberNoLikes() {
+      return mNumberNoLikes;
+   }
+
+   public void setNumberNoLikes(int numberNoLikes) {
+      mNumberNoLikes = numberNoLikes;
+   }
+
    private int mNumberNoLikes;
 
    private int mNumberView;

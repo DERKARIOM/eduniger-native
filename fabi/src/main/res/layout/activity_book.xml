@@ -110,7 +110,7 @@
                                     android:src="@drawable/vector_black3_off_nolike"
                                     android:contentDescription="@string/todo" />
                                 <TextView
-                                    android:id="@+id/nbr_nolike"
+                                    android:id="@+id/text_view_activity_book_number_no_like"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginStart="3dp"
@@ -120,17 +120,27 @@
                                     android:layout_gravity="center_vertical" />
                             </LinearLayout>
                             <LinearLayout
-                                android:id="@+id/notification"
+                                android:id="@+id/linear_layout_activity_book_subscribe"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_margin="5dp"
                                 android:layout_gravity="center">
                                 <ImageView
-                                    android:id="@+id/ico3"
+                                    android:id="@+id/image_view_activity_book_subscribe"
                                     android:layout_width="22dp"
                                     android:layout_height="22dp"
                                     android:elevation="10dp"
-                                    android:src="@drawable/vector_black3_notifications"/>
+                                    android:src="@drawable/vector_black3_off_subscribe"
+                                    android:contentDescription="@string/todo" />
+                                <TextView
+                                    android:id="@+id/text_view_activity_book_number_subscribe"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="3dp"
+                                    android:text="0"
+                                    android:gravity="center_vertical"
+                                    android:textSize="10dp"
+                                    android:layout_gravity="center_vertical" />
                             </LinearLayout>
                         </LinearLayout>
                     </RelativeLayout>

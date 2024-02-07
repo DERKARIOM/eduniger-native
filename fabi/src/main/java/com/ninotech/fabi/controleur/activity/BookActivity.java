@@ -103,12 +103,16 @@ public class BookActivity extends AppCompatActivity {
         Button downloadPDFButton = findViewById(R.id.button_activity_book_download_pdf);
         mMessageTextView = findViewById(R.id.text_view_activity_book_message);
         mNumberLikeTextView = findViewById(R.id.text_view_activity_book_number_like);
+        mNumberNoLikeTextView = findViewById(R.id.text_view_activity_book_number_no_like);
+        mNumberSubscribeTextView = findViewById(R.id.text_view_activity_book_number_subscribe);
         ImageView addCommentsImageView = findViewById(R.id.image_view_activity_book_add_comments);
         LinearLayout likeLinearLayout = findViewById(R.id.linear_layout_activiry_book_like);
         LinearLayout noLikeLinearLayout = findViewById(R.id.linear_layout_activiry_book_nolike);
+        LinearLayout subscribeLinearLayout = findViewById(R.id.linear_layout_activity_book_subscribe);
         mLikeImageView = findViewById(R.id.image_view_activity_book_like);
         mNoLikeImageView = findViewById(R.id.image_view_activity_book_nolike);
         mPlayerImageView = findViewById(R.id.image_view_activity_book_player);
+        mSubscribeImageView = findViewById(R.id.image_view_activity_book_subscribe);
         ImageView stopImageView = findViewById(R.id.image_view_activity_book_stop);
         mSeekBar = findViewById(R.id.seekbar_activity_book);
         mReservationLinearLayout = findViewById(R.id.linear_layout_activity_book_reservation);
@@ -246,8 +250,16 @@ public class BookActivity extends AppCompatActivity {
         noLikeLinearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                InsertLikeSyn insertLikeSyn = new InsertLikeSyn();
-                insertLikeSyn.execute(getString(R.string.ip_server_android) + "InsertLike.php",mSession.getIdNumber(),mBook.getId());
+                InsertNoLikeSyn insertNoLikeSyn = new InsertNoLikeSyn();
+                insertNoLikeSyn.execute(getString(R.string.ip_server_android) + "InsertNoLike.php",mSession.getIdNumber(),mBook.getId());
+            }
+        });
+
+        subscribeLinearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                InsertSubscribeBookSyn insertSubscribeBookSyn = new InsertSubscribeBookSyn();
+                insertSubscribeBookSyn.execute(getString(R.string.ip_server_android) + "InsertSubscribeBook.php",mSession.getIdNumber(),mBook.getId());
             }
         });
         RecoveryBook recoveryBook = new RecoveryBook();
@@ -255,7 +267,13 @@ public class BookActivity extends AppCompatActivity {
         Similar similar = new Similar();
         RecoveryTones recoveryTones = new RecoveryTones();
         IsLikeSyn isLikeSyn = new IsLikeSyn();
+        IsNoLikeSyn isNoLikeSyn = new IsNoLikeSyn();
+        IsSubscribeBookSyn isSubscribeBookSyn = new IsSubscribeBookSyn();
+        InsertViewSyn insertViewSyn = new InsertViewSyn();
+        insertViewSyn.execute(getString(R.string.ip_server_android) + "InsertView.php",mSession.getIdNumber(),mBook.getId());
+        isSubscribeBookSyn.execute(getString(R.string.ip_server_android) + "IsSubscribeBook.php",mSession.getIdNumber(),mBook.getId());
         isLikeSyn.execute(getString(R.string.ip_server_android) + "IsLike.php",mSession.getIdNumber(),mBook.getId());
+        isNoLikeSyn.execute(getString(R.string.ip_server_android) + "IsNoLike.php",mSession.getIdNumber(),mBook.getId());
         recoveryBook.execute(getString(R.string.ip_server_android) + "Book.php",mSession.getIdNumber(),mBook.getId());
         receiveComments.execute(getString(R.string.ip_server_android) + "ReceiveComments.php",mSession.getIdNumber(),mBook.getId());
         similar.execute(getString(R.string.ip_server_android) + "SimilarBook.php",mSession.getIdNumber(),mCategoryTextView.getText().toString(),mBook.getId());
@@ -266,13 +284,14 @@ public class BookActivity extends AppCompatActivity {
                 if(!mMessageTextView.getText().toString().equals("null"))
                 {
                     Chat chat = new Chat(mSession.getIdNumber(),getApplicationContext(),mMessageTextView.getText().toString());
+                    mMessageTextView.setText("");
                     mTalksList.add(new Talks(chat.getProfile(),chat.getUserName(),chat.getMessage()));
                     TalksAdapter talksAdapter = new TalksAdapter(mTalksList);
                     mCommentaireRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                     mCommentaireRecyclerView.setAdapter(talksAdapter);
                     mCommentaireRecyclerView.smoothScrollToPosition(talksAdapter.getItemCount()-1);
                     SendCommentaire sendCommentaire = new SendCommentaire();
-                    sendCommentaire.execute(getString(R.string.ip_server_android) + "SendComments.php",mSession.getIdNumber(),mBook.getId(),mMessageTextView.getText().toString());
+                    sendCommentaire.execute(getString(R.string.ip_server_android) + "SendComments.php",mSession.getIdNumber(),mBook.getId(),chat.getMessage());
                 }
             }
         });
@@ -470,6 +489,8 @@ public class BookActivity extends AppCompatActivity {
                     mBook.setDescription(jsonObject.getString("description"));
                     mBook.getCategory().add(jsonObject.getString("categoryTitle"));
                     mBook.setNumberLikes(Integer.parseInt(jsonObject.getString("numberLike")));
+                    mBook.setNumberNoLikes(Integer.parseInt(jsonObject.getString("numberNoLike")));
+                    mBook.setNumberSubscribe(Integer.parseInt(jsonObject.getString("numberSubscribe")));
                     Picasso.with(getApplicationContext())
                             .load(getString(R.string.ip_server) + "couverture/" + mBook.getBlanket())
                             .placeholder(R.drawable.img_default_livre)
@@ -478,6 +499,8 @@ public class BookActivity extends AppCompatActivity {
                             .resize(200,334)
                             .into(mBlanketImageView);
                     mNumberLikeTextView.setText(String.valueOf(mBook.getNumberLikes()));
+                    mNumberNoLikeTextView.setText(String.valueOf(mBook.getNumberNoLikes()));
+                    mNumberSubscribeTextView.setText(String.valueOf(mBook.getNumberSubscribe()));
                     if(mBook.getIsPhysic().equals("1"))
                         mReservationLinearLayout.setVisibility(View.VISIBLE);
                     if(mBook.getIsAudio().equals("1"))
@@ -596,6 +619,7 @@ public class BookActivity extends AppCompatActivity {
                     {
                         mBook.like();
                         mLikeImageView.setImageResource(R.drawable.vector_purple2_200_on_like);
+                        mNoLikeImageView.setImageResource(R.drawable.vector_black3_off_nolike);
                     }
                     else
                     {
@@ -603,6 +627,195 @@ public class BookActivity extends AppCompatActivity {
                         mLikeImageView.setImageResource(R.drawable.vector_black3_off_like);
                     }
                     mNumberLikeTextView.setText(String.valueOf(mBook.getNumberLikes()));
+                }
+            }
+        }
+    }
+
+    private class InsertNoLikeSyn extends AsyncTask<String,Void,String> {
+        @Override
+        protected String doInBackground(String... params) {
+
+            try {
+                OkHttpClient client = new OkHttpClient();
+                RequestBody requestBody = new MultipartBody.Builder()
+                        .setType(MultipartBody.FORM)
+                        .addFormDataPart("idNumber",params[1])
+                        .addFormDataPart("idBook",params[2])
+                        .build();
+                Request request = new Request.Builder()
+                        .url(params[0])
+                        .post(requestBody)
+                        .build();
+                try {
+                    Response response = client.newCall(request).execute();
+                    assert response.body() != null;
+                    return response.body().string();
+                }catch (IOException e)
+                {
+                    Toast.makeText(BookActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+
+            }catch (Exception e)
+            {
+                return null;
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(String jsonData){
+            //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
+            if(jsonData != null)
+            {
+                if(!jsonData.equals("RAS"))
+                {
+                    if(jsonData.equals("true"))
+                    {
+                        mBook.noLike();
+                        mNoLikeImageView.setImageResource(R.drawable.vector_rouge_on_nolike);
+                        mLikeImageView.setImageResource(R.drawable.vector_black3_off_like);
+                    }
+                    else
+                    {
+                        mBook.disNoLike();
+                        mNoLikeImageView.setImageResource(R.drawable.vector_black3_off_nolike);
+                    }
+                    mNumberNoLikeTextView.setText(String.valueOf(mBook.getNumberNoLikes()));
+                }
+            }
+        }
+    }
+
+    private class InsertSubscribeBookSyn extends AsyncTask<String,Void,String> {
+        @Override
+        protected String doInBackground(String... params) {
+
+            try {
+                OkHttpClient client = new OkHttpClient();
+                RequestBody requestBody = new MultipartBody.Builder()
+                        .setType(MultipartBody.FORM)
+                        .addFormDataPart("idNumber",params[1])
+                        .addFormDataPart("idBook",params[2])
+                        .build();
+                Request request = new Request.Builder()
+                        .url(params[0])
+                        .post(requestBody)
+                        .build();
+                try {
+                    Response response = client.newCall(request).execute();
+                    assert response.body() != null;
+                    return response.body().string();
+                }catch (IOException e)
+                {
+                    Toast.makeText(BookActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+
+            }catch (Exception e)
+            {
+                return null;
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(String jsonData){
+            //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
+            if(jsonData != null)
+            {
+                if(!jsonData.equals("RAS"))
+                {
+                    if(jsonData.equals("true"))
+                    {
+                        mBook.subscribe();
+                        mSubscribeImageView.setImageResource(R.drawable.vector_purple2_200_suscribe);
+                    }
+                    else
+                    {
+                        mBook.desSubscribe();
+                        mSubscribeImageView.setImageResource(R.drawable.vector_black3_off_subscribe);
+                    }
+                    mNumberSubscribeTextView.setText(String.valueOf(mBook.getNumberSubscribe()));
+                }
+            }
+        }
+    }
+
+    private class InsertViewSyn extends AsyncTask<String,Void,String> {
+        @Override
+        protected String doInBackground(String... params) {
+
+            try {
+                OkHttpClient client = new OkHttpClient();
+                RequestBody requestBody = new MultipartBody.Builder()
+                        .setType(MultipartBody.FORM)
+                        .addFormDataPart("idNumber",params[1])
+                        .addFormDataPart("idBook",params[2])
+                        .build();
+                Request request = new Request.Builder()
+                        .url(params[0])
+                        .post(requestBody)
+                        .build();
+                try {
+                    Response response = client.newCall(request).execute();
+                    assert response.body() != null;
+                    return response.body().string();
+                }catch (IOException e)
+                {
+                    Toast.makeText(BookActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+
+            }catch (Exception e)
+            {
+                return null;
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(String jsonData){
+
+        }
+    }
+
+    private class IsNoLikeSyn extends AsyncTask<String,Void,String> {
+        @Override
+        protected String doInBackground(String... params) {
+
+            try {
+                OkHttpClient client = new OkHttpClient();
+                RequestBody requestBody = new MultipartBody.Builder()
+                        .setType(MultipartBody.FORM)
+                        .addFormDataPart("idNumber",params[1])
+                        .addFormDataPart("idBook",params[2])
+                        .build();
+                Request request = new Request.Builder()
+                        .url(params[0])
+                        .post(requestBody)
+                        .build();
+                try {
+                    Response response = client.newCall(request).execute();
+                    assert response.body() != null;
+                    return response.body().string();
+                }catch (IOException e)
+                {
+                    Toast.makeText(BookActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+
+            }catch (Exception e)
+            {
+                return null;
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(String jsonData){
+            //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
+            if(jsonData != null)
+            {
+                if(!jsonData.equals("RAS"))
+                {
+                    if(jsonData.equals(mSession.getIdNumber()))
+                        mNoLikeImageView.setImageResource(R.drawable.vector_rouge_on_nolike);
+                    else
+                        mNoLikeImageView.setImageResource(R.drawable.vector_black3_off_nolike);
                 }
             }
         }
@@ -649,6 +862,52 @@ public class BookActivity extends AppCompatActivity {
                         mLikeImageView.setImageResource(R.drawable.vector_purple2_200_on_like);
                     else
                         mLikeImageView.setImageResource(R.drawable.vector_black3_off_like);
+                }
+            }
+        }
+    }
+
+    private class IsSubscribeBookSyn extends AsyncTask<String,Void,String> {
+        @Override
+        protected String doInBackground(String... params) {
+
+            try {
+                OkHttpClient client = new OkHttpClient();
+                RequestBody requestBody = new MultipartBody.Builder()
+                        .setType(MultipartBody.FORM)
+                        .addFormDataPart("idNumber",params[1])
+                        .addFormDataPart("idBook",params[2])
+                        .build();
+                Request request = new Request.Builder()
+                        .url(params[0])
+                        .post(requestBody)
+                        .build();
+                try {
+                    Response response = client.newCall(request).execute();
+                    assert response.body() != null;
+                    return response.body().string();
+                }catch (IOException e)
+                {
+                    Toast.makeText(BookActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+
+            }catch (Exception e)
+            {
+                return null;
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(String jsonData){
+            //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
+            if(jsonData != null)
+            {
+                if(!jsonData.equals("RAS"))
+                {
+                    if(jsonData.equals(mSession.getIdNumber()))
+                        mSubscribeImageView.setImageResource(R.drawable.vector_purple2_200_suscribe);
+                    else
+                        mSubscribeImageView.setImageResource(R.drawable.vector_black3_off_subscribe);
                 }
             }
         }
@@ -826,31 +1085,31 @@ public class BookActivity extends AppCompatActivity {
         }
     }
     public void ReservationDialog() {
-        Spinner delaitReservation = mReservationDialog.findViewById(R.id.DelaitReservation);
-        CheckBox checkBox = mReservationDialog.findViewById(R.id.estConsulte);
-        Button bttEnvoi = mReservationDialog.findViewById(R.id.reservation_envoi);
-        EditText reservPassword = mReservationDialog.findViewById(R.id.reservation_password);
-        TextView reservErr = mReservationDialog.findViewById(R.id.err_reservation);
+        Spinner timeLimitSpinner = mReservationDialog.findViewById(R.id.spinner_dialog_reservation_time_limit);
+        CheckBox LocalConsultationCheckBox = mReservationDialog.findViewById(R.id.check_box_dialog_reservation_local_consultation);
+        Button sendButton = mReservationDialog.findViewById(R.id.button_dialog_reservation_send);
+        EditText passwordEditText = mReservationDialog.findViewById(R.id.edit_text_dialog_reservation_password);
+        TextView errorTextView = mReservationDialog.findViewById(R.id.text_view_dialog_reservation_error);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.delait_reservation, android.R.layout.simple_spinner_item);
         ArrayAdapter<CharSequence> adapterConsult = ArrayAdapter.createFromResource(this, R.array.delait_cosultation, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         adapterConsult.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        delaitReservation.setAdapter(adapter);
-        checkBox.setOnClickListener(new View.OnClickListener() {
+        timeLimitSpinner.setAdapter(adapter);
+        LocalConsultationCheckBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                delaitReservation.setEnabled(!checkBox.isChecked());
+                timeLimitSpinner.setEnabled(!LocalConsultationCheckBox.isChecked());
             }
         });
-        bttEnvoi.setOnClickListener(new View.OnClickListener() {
+        sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(reservPassword.getText().toString().equals(""))
-                    reservErr.setText(R.string.edit_text_hint_password);
+                if(passwordEditText.getText().toString().equals(""))
+                    errorTextView.setText(R.string.edit_text_hint_password);
                 else
                 {
-                    if(delaitReservation.isEnabled())
-                        mNbrJour = String.valueOf(delaitReservation.getSelectedItemPosition() + 1);
+                    if(timeLimitSpinner.isEnabled())
+                        mNbrJour = String.valueOf(timeLimitSpinner.getSelectedItemPosition() + 1);
                     else
                         mNbrJour = String.valueOf(-1);
                     Reservation reservation = new Reservation();
@@ -962,9 +1221,12 @@ public class BookActivity extends AppCompatActivity {
     private TextView mCategoryTextView;
     private TextView mDescriptionTextView;
     private TextView mNumberLikeTextView;
+    private TextView mNumberNoLikeTextView;
+    private TextView mNumberSubscribeTextView;
     private EditText mMessageTextView;
     private ImageView mLikeImageView;
     private ImageView mNoLikeImageView;
+    private ImageView mSubscribeImageView;
     private boolean mIsLike;
     private boolean mIsNoLike;
     private ImageView mPlayerImageView;
