@@ -6,11 +6,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -97,7 +99,7 @@ public class BookActivity extends AppCompatActivity {
         mTitleTextView = findViewById(R.id.text_view_activity_book_title);
         mCategoryTextView = findViewById(R.id.text_view_activity_book_category);
         mDescriptionTextView = findViewById(R.id.text_view_activity_book_description);
-        Button reservationButton = findViewById(R.id.button_activity_book_reservation);
+        mReservationButton = findViewById(R.id.button_activity_book_reservation);
         Button audioButton = findViewById(R.id.button_activity_book_audio);
         Button openPDFButton = findViewById(R.id.button_activity_book_open_pdf);
         Button downloadPDFButton = findViewById(R.id.button_activity_book_download_pdf);
@@ -182,10 +184,17 @@ public class BookActivity extends AppCompatActivity {
 
             }
         });
-        reservationButton.setOnClickListener(new View.OnClickListener() {
+        mReservationButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                ReservationDialog();
+            public void onClick(View view)
+            {
+                if(mReservationButton.getText().toString().equals(getString(R.string.reservation_book)))
+                    ReservationDialog();
+                else
+                {
+                    CancelReservationSyn cancelReservationSyn = new CancelReservationSyn();
+                    cancelReservationSyn.execute(getString(R.string.ip_server_android) + "CancelReservation.php",mSession.getIdNumber(),mBook.getId());
+                }
             }
         });
 
@@ -270,6 +279,8 @@ public class BookActivity extends AppCompatActivity {
         IsNoLikeSyn isNoLikeSyn = new IsNoLikeSyn();
         IsSubscribeBookSyn isSubscribeBookSyn = new IsSubscribeBookSyn();
         InsertViewSyn insertViewSyn = new InsertViewSyn();
+        IsReservationSyn isReservationSyn = new IsReservationSyn();
+        isReservationSyn.execute(getString(R.string.ip_server_android) + "IsReservation.php",mSession.getIdNumber(),mBook.getId());
         insertViewSyn.execute(getString(R.string.ip_server_android) + "InsertView.php",mSession.getIdNumber(),mBook.getId());
         isSubscribeBookSyn.execute(getString(R.string.ip_server_android) + "IsSubscribeBook.php",mSession.getIdNumber(),mBook.getId());
         isLikeSyn.execute(getString(R.string.ip_server_android) + "IsLike.php",mSession.getIdNumber(),mBook.getId());
@@ -867,6 +878,57 @@ public class BookActivity extends AppCompatActivity {
         }
     }
 
+    private class IsReservationSyn extends AsyncTask<String,Void,String> {
+        @Override
+        protected String doInBackground(String... params) {
+
+            try {
+                OkHttpClient client = new OkHttpClient();
+                RequestBody requestBody = new MultipartBody.Builder()
+                        .setType(MultipartBody.FORM)
+                        .addFormDataPart("idNumber",params[1])
+                        .addFormDataPart("idBook",params[2])
+                        .build();
+                Request request = new Request.Builder()
+                        .url(params[0])
+                        .post(requestBody)
+                        .build();
+                try {
+                    Response response = client.newCall(request).execute();
+                    assert response.body() != null;
+                    return response.body().string();
+                }catch (IOException e)
+                {
+                    Toast.makeText(BookActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+
+            }catch (Exception e)
+            {
+                return null;
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(String jsonData){
+            //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
+            if(jsonData != null)
+            {
+                if(!jsonData.equals("RAS"))
+                {
+                    if(jsonData.equals(mSession.getIdNumber()))
+                    {
+                        mReservationButton.setText(R.string.cancel_reservation);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            mReservationButton.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.rouge)));
+                        }
+                    }
+                    else
+                        mReservationButton.setText(R.string.reservation_book);
+                }
+            }
+        }
+    }
+
     private class IsSubscribeBookSyn extends AsyncTask<String,Void,String> {
         @Override
         protected String doInBackground(String... params) {
@@ -957,6 +1019,54 @@ public class BookActivity extends AppCompatActivity {
         }
     }
 
+    private class CancelReservationSyn extends AsyncTask<String,Void,String> {
+        @Override
+        protected String doInBackground(String... params) {
+
+            try {
+                OkHttpClient client = new OkHttpClient();
+                RequestBody requestBody = new MultipartBody.Builder()
+                        .setType(MultipartBody.FORM)
+                        .addFormDataPart("idNumber",params[1])
+                        .addFormDataPart("idBook",params[2])
+                        .build();
+                Request request = new Request.Builder()
+                        .url(params[0])
+                        .post(requestBody)
+                        .build();
+                try {
+                    Response response = client.newCall(request).execute();
+                    assert response.body() != null;
+                    return response.body().string();
+                }catch (IOException e)
+                {
+                    Toast.makeText(BookActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+
+            }catch (Exception e)
+            {
+                return null;
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(String jsonData){
+            //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
+            if(jsonData != null)
+            {
+                if(!jsonData.equals("RAS"))
+                {
+                    if(jsonData.equals("true"))
+                    {
+                        mReservationButton.setText(R.string.reservation_book);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            mReservationButton.setBackgroundTintList(getColorStateList(R.color.black3));
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     private class Similar extends AsyncTask<String,Void,String> {
         @Override
@@ -1173,6 +1283,10 @@ public class BookActivity extends AppCompatActivity {
                 {
                     mReservationDialog.cancel();
                     succeReservationDialog();
+                    mReservationButton.setText(R.string.cancel_reservation);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        mReservationButton.setBackgroundTintList(getColorStateList(R.color.rouge));
+                    }
                 }
             }
 
@@ -1237,6 +1351,7 @@ public class BookActivity extends AppCompatActivity {
     private ImageView mLikeImageView;
     private ImageView mNoLikeImageView;
     private ImageView mSubscribeImageView;
+    private Button mReservationButton;
     private boolean mIsLike;
     private boolean mIsNoLike;
     private ImageView mPlayerImageView;

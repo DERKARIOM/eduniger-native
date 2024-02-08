@@ -177,7 +177,7 @@
                         android:id="@+id/button_activity_book_reservation"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Réservation  du livre "
+                        android:text="@string/reservation_book"
                         android:textAllCaps="false"
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="5dp"
