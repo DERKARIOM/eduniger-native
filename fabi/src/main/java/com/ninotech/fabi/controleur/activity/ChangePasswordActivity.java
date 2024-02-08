@@ -168,7 +168,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
                         throw new RuntimeException(e);
                     }
                     try {
-                        mSession.insert(jsonObject.getString("matricule"));
+                        mSession.insert(jsonObject.getString("matricule"),"ras");
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }

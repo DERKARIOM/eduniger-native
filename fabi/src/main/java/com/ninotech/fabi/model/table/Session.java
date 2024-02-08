@@ -17,7 +17,8 @@ public class Session extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase database) {
         database.execSQL("CREATE TABLE IF NOT EXISTS " + NAME_TABLE + "\n" +
                 "(\n" +
-                "    idNumber VARCHAR(10) PRIMARY KEY\n" +
+                "    idNumber VARCHAR(10) PRIMARY KEY,\n" +
+                "    password VARCHAR(100)\n" +
                 ");");
     }
 
@@ -36,16 +37,24 @@ public class Session extends SQLiteOpenHelper {
     public String getIdNumber()
     {
         SQLiteDatabase database = this.getReadableDatabase();
-        Cursor cursor = database.rawQuery("SELECT * FROM " + NAME_TABLE,null);
+        Cursor cursor = database.rawQuery("SELECT idNumber FROM " + NAME_TABLE,null);
         cursor.moveToFirst();
         return cursor.getString(0);
     }
-    public boolean insert (String idNumber)
+    public String getPassword()
+    {
+        SQLiteDatabase database = this.getReadableDatabase();
+        Cursor cursor = database.rawQuery("SELECT password FROM " + NAME_TABLE,null);
+        cursor.moveToFirst();
+        return cursor.getString(0);
+    }
+    public boolean insert (String idNumber,String password)
     {
         try {
             SQLiteDatabase database = this.getWritableDatabase();
             ContentValues contentValues = new ContentValues();
             contentValues.put("idNumber",idNumber);
+            contentValues.put("password",password);
             database.insert(NAME_TABLE,null,contentValues);
             return  true;
         }catch (Exception e)

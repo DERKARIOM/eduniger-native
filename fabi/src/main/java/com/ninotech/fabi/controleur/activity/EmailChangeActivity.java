@@ -128,7 +128,7 @@ public class EmailChangeActivity extends AppCompatActivity {
             else
             {
                 Toast.makeText(this,"Email change avec succès ", Toast.LENGTH_SHORT).show();
-                mSession.insert(mEditMatricule4.getText().toString());
+                mSession.insert(mEditMatricule4.getText().toString(),"ras");
                 JSONObject jsonObject = new JSONObject(jsonData);
                 Intent home = new Intent(EmailChangeActivity.this, MainActivity.class);
                 startActivity(home);

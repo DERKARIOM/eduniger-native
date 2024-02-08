@@ -1105,15 +1105,26 @@ public class BookActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(passwordEditText.getText().toString().equals(""))
+                {
                     errorTextView.setText(R.string.edit_text_hint_password);
+                    passwordEditText.setBackground(getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
+                }
                 else
                 {
-                    if(timeLimitSpinner.isEnabled())
-                        mNbrJour = String.valueOf(timeLimitSpinner.getSelectedItemPosition() + 1);
+                    if(!passwordEditText.getText().toString().equals(mSession.getPassword()))
+                    {
+                        errorTextView.setText(R.string.incorrect_password);
+                        passwordEditText.setBackground(getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
+                    }
                     else
-                        mNbrJour = String.valueOf(-1);
-                    Reservation reservation = new Reservation();
-                    reservation.execute(getString(R.string.ip_server_android) + "Reservation.php",mSession.getIdNumber(),mBook.getId(),mNbrJour);
+                    {
+                        if(timeLimitSpinner.isEnabled())
+                            mNbrJour = String.valueOf(timeLimitSpinner.getSelectedItemPosition() + 1);
+                        else
+                            mNbrJour = String.valueOf(-1);
+                        Reservation reservation = new Reservation();
+                        reservation.execute(getString(R.string.ip_server_android) + "Reservation.php",mSession.getIdNumber(),mBook.getId(),mNbrJour);
+                    }
                 }
             }
         });
@@ -1158,7 +1169,6 @@ public class BookActivity extends AppCompatActivity {
         protected void onPostExecute(String jsonData){
             if(jsonData != null)
             {
-                Toast.makeText(BookActivity.this, jsonData, Toast.LENGTH_SHORT).show();
                 if(jsonData.equals("true"))
                 {
                     mReservationDialog.cancel();

@@ -97,7 +97,7 @@ public class Account {
         Session session = new Session(context);
         try {
             session.onCreate(database);
-            session.insert(mIdNumber);
+            session.insert(mIdNumber,mPassword);
             return true;
         }catch (Exception e)
         {
