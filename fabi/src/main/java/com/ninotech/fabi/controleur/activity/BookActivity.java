@@ -92,7 +92,7 @@ public class BookActivity extends AppCompatActivity {
         mTalksList = new ArrayList<>();
         mList2 = new ArrayList<>();
         mListTones = new ArrayList<>();
-        mCommentaireRecyclerView = findViewById(R.id.recycler_view_activity_book_Comments);
+        mCommentsRecyclerView = findViewById(R.id.recycler_view_activity_book_Comments);
         mSimilarRecyclerView = findViewById(R.id.recycler_view_activity_book_similar);
         mTonesRecyclerView = findViewById(R.id.recycler_view_activity_book_tones);
         mBlanketImageView = findViewById(R.id.image_view_activity_book_blanket);
@@ -108,6 +108,7 @@ public class BookActivity extends AppCompatActivity {
         mNumberNoLikeTextView = findViewById(R.id.text_view_activity_book_number_no_like);
         mNumberSubscribeTextView = findViewById(R.id.text_view_activity_book_number_subscribe);
         ImageView addCommentsImageView = findViewById(R.id.image_view_activity_book_add_comments);
+        ImageView stopImageView = findViewById(R.id.image_view_activity_book_stop);
         LinearLayout likeLinearLayout = findViewById(R.id.linear_layout_activiry_book_like);
         LinearLayout noLikeLinearLayout = findViewById(R.id.linear_layout_activiry_book_nolike);
         LinearLayout subscribeLinearLayout = findViewById(R.id.linear_layout_activity_book_subscribe);
@@ -115,17 +116,14 @@ public class BookActivity extends AppCompatActivity {
         mNoLikeImageView = findViewById(R.id.image_view_activity_book_nolike);
         mPlayerImageView = findViewById(R.id.image_view_activity_book_player);
         mSubscribeImageView = findViewById(R.id.image_view_activity_book_subscribe);
-        ImageView stopImageView = findViewById(R.id.image_view_activity_book_stop);
         mSeekBar = findViewById(R.id.seekbar_activity_book);
         mReservationLinearLayout = findViewById(R.id.linear_layout_activity_book_reservation);
         mAudioLinearLayout = findViewById(R.id.linear_layout_activity_book_audio);
         mElectronicLinearLayout = findViewById(R.id.linear_layout_activity_book_electronic);
         mReservationDialog = new ReservationDialog(this);
         mElectronicTable = new ElectroniqueTable(this);
-        tmp_position=0;
+        positionTmp=0;
         mMediaPlayer = new MediaPlayer();
-        mIsLike =false;
-        mIsNoLike =false;
         Handler handler = new Handler();
         mTimer = new Timer();
         BroadcastReceiver receiverNote = new BroadcastReceiver() {
@@ -136,20 +134,20 @@ public class BookActivity extends AppCompatActivity {
                     int position = intent.getIntExtra("intent_adapter_tones_position",0);
                     url = getString(R.string.ip_server) + "audio/" + mAudio;
                     try {
-                        if(tmp_position != position)
-                            mListTones.get(tmp_position).setPlaying(false);
+                        if(positionTmp != position)
+                            mListTones.get(positionTmp).setPlaying(false);
                         mTonesRecyclerView.setAdapter(mTonesAdapter);
                         mMediaPlayer.reset();
                         mMediaPlayer.setDataSource(url);
                         mMediaPlayer.prepare();
                         mSeekBar.setMax(mMediaPlayer.getDuration());
                         mMediaPlayer.start();
-                        tmp_position = position;
+                        positionTmp = position;
                         mPlayerImageView.setImageResource(R.drawable.vector_black3_play);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
-                   Toast.makeText(context,String.valueOf(position), Toast.LENGTH_SHORT).show();
+                   //Toast.makeText(context,String.valueOf(position), Toast.LENGTH_SHORT).show();
                 }
             }
         };
@@ -298,9 +296,9 @@ public class BookActivity extends AppCompatActivity {
                     mMessageTextView.setText("");
                     mTalksList.add(new Talks(chat.getProfile(),chat.getUserName(),chat.getMessage()));
                     TalksAdapter talksAdapter = new TalksAdapter(mTalksList);
-                    mCommentaireRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                    mCommentaireRecyclerView.setAdapter(talksAdapter);
-                    mCommentaireRecyclerView.smoothScrollToPosition(talksAdapter.getItemCount()-1);
+                    mCommentsRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                    mCommentsRecyclerView.setAdapter(talksAdapter);
+                    mCommentsRecyclerView.smoothScrollToPosition(talksAdapter.getItemCount()-1);
                     SendCommentaire sendCommentaire = new SendCommentaire();
                     sendCommentaire.execute(getString(R.string.ip_server_android) + "SendComments.php",mSession.getIdNumber(),mBook.getId(),chat.getMessage());
                 }
@@ -445,11 +443,6 @@ public class BookActivity extends AppCompatActivity {
         mTimer.cancel(); // Arrête le Timer lors de la destruction de l'activité
         mMediaPlayer.release(); // Libère les ressources du MediaPlayer
     }
-
-    public void CallMedia(View view) {
-        Toast.makeText(this, "ok", Toast.LENGTH_SHORT).show();
-    }
-
     private class RecoveryBook extends AsyncTask<String,Void,String> {
         @Override
         protected String doInBackground(String... params) {
@@ -582,8 +575,8 @@ public class BookActivity extends AppCompatActivity {
                         }
                     }
                     TalksAdapter talksAdapter = new TalksAdapter(mTalksList);
-                    mCommentaireRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                    mCommentaireRecyclerView.setAdapter(talksAdapter);
+                    mCommentsRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                    mCommentsRecyclerView.setAdapter(talksAdapter);
                 }
             }
         }
@@ -1118,9 +1111,9 @@ public class BookActivity extends AppCompatActivity {
                             throw new RuntimeException(e);
                         }
                     }
-                    mRecenmmentAdapter = new SimulaireAdapter(mList2);
+                    SimulaireAdapter recenmmentAdapter = new SimulaireAdapter(mList2);
                     mSimilarRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(),LinearLayoutManager.HORIZONTAL,false));
-                    mSimilarRecyclerView.setAdapter(mRecenmmentAdapter);
+                    mSimilarRecyclerView.setAdapter(recenmmentAdapter);
                 }
                 //Toast.makeText(getContext(), jsonData, Toast.LENGTH_SHORT).show();
             }
@@ -1179,14 +1172,14 @@ public class BookActivity extends AppCompatActivity {
                             throw new RuntimeException(e);
                         }
                     }
-                    url = getString(R.string.ip_server) + "audio/" + mAudio;
-                    try {
-                        mMediaPlayer.setDataSource(url);
-                        mMediaPlayer.prepare();
-                        mSeekBar.setMax(mMediaPlayer.getDuration());
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
+//                    url = getString(R.string.ip_server) + "audio/" + mAudio;
+//                    try {
+//                        mMediaPlayer.setDataSource(url);
+//                        mMediaPlayer.prepare();
+//                        mSeekBar.setMax(mMediaPlayer.getDuration());
+//                    } catch (IOException e) {
+//                        throw new RuntimeException(e);
+//                    }
                     mTonesAdapter = new TonesAdapter(mListTones);
                     mTonesRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                     mTonesRecyclerView.setAdapter(mTonesAdapter);
@@ -1329,16 +1322,14 @@ public class BookActivity extends AppCompatActivity {
     private LinearLayout mReservationLinearLayout;
     private LinearLayout mAudioLinearLayout;
     private LinearLayout mElectronicLinearLayout;
-    private RecyclerView mCommentaireRecyclerView;
+    private RecyclerView mCommentsRecyclerView;
     private ArrayList<Talks> mTalksList;
 
     private RecyclerView mSimilarRecyclerView;
     private RecyclerView mTonesRecyclerView;
     private TonesAdapter mTonesAdapter;
     private List<Tones> mListTones;
-    private SimulaireAdapter mRecenmmentAdapter;
     private List<Recenmment> mList2;
-    private String mIdLivre;
     private Session mSession;
     private ImageView mBlanketImageView;
     private TextView mTitleTextView;
@@ -1352,8 +1343,6 @@ public class BookActivity extends AppCompatActivity {
     private ImageView mNoLikeImageView;
     private ImageView mSubscribeImageView;
     private Button mReservationButton;
-    private boolean mIsLike;
-    private boolean mIsNoLike;
     private ImageView mPlayerImageView;
     private MediaPlayer mMediaPlayer;
     private SeekBar mSeekBar;
@@ -1361,7 +1350,7 @@ public class BookActivity extends AppCompatActivity {
     private RelativeLayout mRelativeLayout;
     private String url;
     private String mAudio;
-    private int tmp_position;
+    private int positionTmp;
     private ReservationDialog mReservationDialog;
     private ElectroniqueTable mElectronicTable;
     private String mNbrJour;
