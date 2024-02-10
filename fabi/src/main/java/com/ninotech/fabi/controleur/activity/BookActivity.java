@@ -44,6 +44,7 @@ import com.ninotech.fabi.controleur.dialog.ReservationDialog;
 import com.ninotech.fabi.model.data.Book;
 import com.ninotech.fabi.model.data.Chat;
 import com.ninotech.fabi.model.data.Talks;
+import com.ninotech.fabi.model.syn.SendComments;
 import com.ninotech.fabi.model.table.ElectroniqueTable;
 import com.ninotech.fabi.model.data.Recenmment;
 import com.ninotech.fabi.controleur.adapter.SimulaireAdapter;
@@ -299,8 +300,8 @@ public class BookActivity extends AppCompatActivity {
                     mCommentsRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                     mCommentsRecyclerView.setAdapter(talksAdapter);
                     mCommentsRecyclerView.smoothScrollToPosition(talksAdapter.getItemCount()-1);
-                    SendCommentaire sendCommentaire = new SendCommentaire();
-                    sendCommentaire.execute(getString(R.string.ip_server_android) + "SendComments.php",mSession.getIdNumber(),mBook.getId(),chat.getMessage());
+                    SendComments sendComments = new SendComments();
+                    sendComments.execute(getString(R.string.ip_server_android) + "SendComments.php",mSession.getIdNumber(),mBook.getId(),chat.getMessage());
                 }
             }
         });
@@ -963,50 +964,6 @@ public class BookActivity extends AppCompatActivity {
                         mSubscribeImageView.setImageResource(R.drawable.vector_purple2_200_suscribe);
                     else
                         mSubscribeImageView.setImageResource(R.drawable.vector_black3_off_subscribe);
-                }
-            }
-        }
-    }
-
-    private class SendCommentaire extends AsyncTask<String,Void,String> {
-        @Override
-        protected String doInBackground(String... params) {
-
-            try {
-                OkHttpClient client = new OkHttpClient();
-                RequestBody requestBody = new MultipartBody.Builder()
-                        .setType(MultipartBody.FORM)
-                        .addFormDataPart("idNumber",params[1])
-                        .addFormDataPart("idBook",params[2])
-                        .addFormDataPart("message",params[3])
-                        .build();
-                Request request = new Request.Builder()
-                        .url(params[0])
-                        .post(requestBody)
-                        .build();
-                try {
-                    Response response = client.newCall(request).execute();
-                    assert response.body() != null;
-                    return response.body().string();
-                }catch (IOException e)
-                {
-                    Toast.makeText(BookActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-
-            }catch (Exception e)
-            {
-                return null;
-            }
-            return null;
-        }
-        @Override
-        protected void onPostExecute(String jsonData){
-            //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
-            if(jsonData != null)
-            {
-                if(jsonData.equals("true"))
-                {
-                    mMessageTextView.setText("");
                 }
             }
         }
