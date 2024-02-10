@@ -1,7 +1,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Le themes de base de l'application -->
-    <style name="Theme.Ras" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Couleur de la marque principale. -->
         <item name="colorPrimary">@color/purple_200</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
@@ -140,8 +140,6 @@
     </style>
     <style name="ProgretionNote">
         <item name="android:background">@drawable/forme_white_radius_25dp</item>
-    </style>
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
     </style>
     <style name="Block_notif1">
         <item name="android:background">@drawable/forme_purple2_200_radius_10dp</item>

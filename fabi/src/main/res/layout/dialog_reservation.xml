@@ -13,7 +13,7 @@
         android:layout_margin="10dp"
         android:fontFamily="sans-serif-smallcaps"
         android:gravity="center"
-        android:theme="@style/Theme.Ras"
+        android:theme="@style/AppTheme"
         android:backgroundTint="@color/purple_200"
         android:padding="10dp"/>
     <LinearLayout
@@ -35,7 +35,7 @@
         <CheckBox
             android:id="@+id/check_box_dialog_reservation_local_consultation"
             android:layout_width="wrap_content"
-            android:theme="@style/Theme.Ras"
+            android:theme="@style/AppTheme"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"/>
     </LinearLayout>
