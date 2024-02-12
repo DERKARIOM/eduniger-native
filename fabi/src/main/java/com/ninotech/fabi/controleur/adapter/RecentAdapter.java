@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
-import com.ninotech.fabi.model.data.Recenmment;
+import com.ninotech.fabi.model.data.RecentBook;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -28,8 +28,8 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.util.List;
 
-public class RecenmmentAdapter extends RecyclerView.Adapter<RecenmmentAdapter.MyViewHolder> {
-    List<Recenmment> mListRecenmment;
+public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.MyViewHolder> {
+    List<RecentBook> mListRecentBook;
 
     public int getPosition() {
         return mPosition;
@@ -40,20 +40,20 @@ public class RecenmmentAdapter extends RecyclerView.Adapter<RecenmmentAdapter.My
     }
 
     private int mPosition;
-    public RecenmmentAdapter(List<Recenmment> listRecenmment) {
-        mListRecenmment = listRecenmment;
+    public RecentAdapter(List<RecentBook> listRecentBook) {
+        mListRecentBook = listRecentBook;
     }
     @Override
-    public RecenmmentAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecentAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         View view = layoutInflater.inflate(R.layout.adapter_similaire,parent,false);
         return new MyViewHolder(view);
     }
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        Recenmment item = mListRecenmment.get(position);
+        RecentBook item = mListRecentBook.get(position);
         try {
-            holder.display(mListRecenmment.get(position));
+            holder.display(mListRecentBook.get(position));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
@@ -63,7 +63,7 @@ public class RecenmmentAdapter extends RecyclerView.Adapter<RecenmmentAdapter.My
     }
     @Override
     public int getItemCount() {
-        return mListRecenmment.size();
+        return mListRecentBook.size();
     }
 
 
@@ -84,9 +84,9 @@ public class RecenmmentAdapter extends RecyclerView.Adapter<RecenmmentAdapter.My
 ////            menu.add(Menu.NONE,R.id.infoNotif,Menu.NONE,"Information");
 ////            menu.add(Menu.NONE,R.id.suppNotif,Menu.NONE,"Supprimer");
 ////            menu.add(Menu.NONE,R.id.inportanteNotif,Menu.NONE,"Message importants");
-        void display(Recenmment recenmment) throws SQLException, IOException {
+        void display(RecentBook recentBook) throws SQLException, IOException {
             Picasso.with(itemView.getContext())
-                    .load("http://192.168.43.1:2222/fabi/couverture/" + recenmment.getCouverteur())
+                    .load("http://192.168.43.1:2222/fabi/couverture/" + recentBook.getCouverteur())
                     .placeholder(R.drawable.img_default_livre)
                     .error(R.drawable.img_default_livre)
                     .transform(new RoundedTransformation(15,4))
@@ -95,7 +95,7 @@ public class RecenmmentAdapter extends RecyclerView.Adapter<RecenmmentAdapter.My
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    downloadAndOpenPDF(recenmment.getPDF());
+                    downloadAndOpenPDF(recentBook.getPDF());
                 }
             });
         }

@@ -13,7 +13,7 @@ import com.ninotech.fabi.controleur.adapter.BibliothequeViewPagerAdapter;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
-public class BibliothequeFragment extends Fragment {
+public class LibraryFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

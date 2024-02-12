@@ -1,7 +1,7 @@
 package com.ninotech.fabi.model.data;
 
-public class Recenmment {
-    public Recenmment(String idLivre, String couverteur, String PDF) {
+public class RecentBook {
+    public RecentBook(String idLivre, String couverteur, String PDF) {
         mIdLivre = idLivre;
         mCouverteur = couverteur;
         mPDF = PDF;

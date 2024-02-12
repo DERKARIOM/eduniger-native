@@ -10,12 +10,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.activity.LivreLocalActivity;
-import com.ninotech.fabi.model.data.Electronique;
+import com.ninotech.fabi.model.data.Electronic;
 
 import java.util.List;
 
-public class ElectroniqueAdapter extends RecyclerView.Adapter<ElectroniqueAdapter.MyViewHolder> {
-    List<Electronique> mListElectronique;
+public class ElectronicAdapter extends RecyclerView.Adapter<ElectronicAdapter.MyViewHolder> {
+    List<Electronic> mListElectronic;
 
     public int getPosition() {
         return mPosition;
@@ -26,24 +26,24 @@ public class ElectroniqueAdapter extends RecyclerView.Adapter<ElectroniqueAdapte
     }
 
     private int mPosition;
-    public ElectroniqueAdapter(List<Electronique> listElectronique) {
-        mListElectronique = listElectronique;
+    public ElectronicAdapter(List<Electronic> listElectronic) {
+        mListElectronic = listElectronic;
     }
     @Override
-    public ElectroniqueAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ElectronicAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         View view = layoutInflater.inflate(R.layout.adapter_electronique,parent,false);
         return new MyViewHolder(view);
     }
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        Electronique item = mListElectronique.get(position);
-        holder.display(mListElectronique.get(position));
+        Electronic item = mListElectronic.get(position);
+        holder.display(mListElectronic.get(position));
 
     }
     @Override
     public int getItemCount() {
-        return mListElectronique.size();
+        return mListElectronic.size();
     }
 
 
@@ -66,7 +66,7 @@ public class ElectroniqueAdapter extends RecyclerView.Adapter<ElectroniqueAdapte
 ////            menu.add(Menu.NONE,R.id.infoNotif,Menu.NONE,"Information");
 ////            menu.add(Menu.NONE,R.id.suppNotif,Menu.NONE,"Supprimer");
 ////            menu.add(Menu.NONE,R.id.inportanteNotif,Menu.NONE,"Message importants");
-        void display(Electronique mesLivres2){
+        void display(Electronic mesLivres2){
             mLabel.setText(mesLivres2.getLabel());
             mNbrLivre.setText("" + mesLivres2.getNbrLivre());
             itemView.setOnClickListener(new View.OnClickListener() {

@@ -17,7 +17,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.ninotech.fabi.controleur.fragment.HomeFragment;
 import com.ninotech.fabi.controleur.fragment.AssistanceFragment;
-import com.ninotech.fabi.controleur.fragment.BibliothequeFragment;
+import com.ninotech.fabi.controleur.fragment.LibraryFragment;
 import com.ninotech.fabi.model.data.Account;
 import com.ninotech.fabi.model.data.Initialization;
 import com.ninotech.fabi.R;
@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         boolean nightMODE = sharedPreferences.getBoolean("night", false);
         mHomeFragment = new HomeFragment();
         mAssistanceFragment = new AssistanceFragment();
-        BibliothequeFragment bibliothequeFragment = new BibliothequeFragment();
+        LibraryFragment libraryFragment = new LibraryFragment();
         MenuItem menuItem = toolbar.getMenu().findItem(R.id.menuHomeNotification);
         Intent reservationService = new Intent(this, NotificationService.class);
         mAccount = new Account();
@@ -175,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                         return true;
                     case R.id.bibliotheque:
-                        getSupportFragmentManager().beginTransaction().replace(R.id.Top_comtainer,new BibliothequeFragment()).commit();
+                        getSupportFragmentManager().beginTransaction().replace(R.id.Top_comtainer,new LibraryFragment()).commit();
                         return true;
                 }
                 return false;

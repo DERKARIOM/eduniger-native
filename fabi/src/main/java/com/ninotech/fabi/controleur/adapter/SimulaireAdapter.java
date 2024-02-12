@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.ninotech.fabi.controleur.activity.BookActivity;
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
-import com.ninotech.fabi.model.data.Recenmment;
+import com.ninotech.fabi.model.data.RecentBook;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
@@ -19,7 +19,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class SimulaireAdapter extends RecyclerView.Adapter<SimulaireAdapter.MyViewHolder> {
-    List<Recenmment> mListRecenmment;
+    List<RecentBook> mListRecentBook;
 
     public int getPosition() {
         return mPosition;
@@ -30,8 +30,8 @@ public class SimulaireAdapter extends RecyclerView.Adapter<SimulaireAdapter.MyVi
     }
 
     private int mPosition;
-    public SimulaireAdapter(List<Recenmment> listRecenmment) {
-        mListRecenmment = listRecenmment;
+    public SimulaireAdapter(List<RecentBook> listRecentBook) {
+        mListRecentBook = listRecentBook;
     }
     @Override
     public SimulaireAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -41,9 +41,9 @@ public class SimulaireAdapter extends RecyclerView.Adapter<SimulaireAdapter.MyVi
     }
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        Recenmment item = mListRecenmment.get(position);
+        RecentBook item = mListRecentBook.get(position);
         try {
-            holder.display(mListRecenmment.get(position));
+            holder.display(mListRecentBook.get(position));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
@@ -53,7 +53,7 @@ public class SimulaireAdapter extends RecyclerView.Adapter<SimulaireAdapter.MyVi
     }
     @Override
     public int getItemCount() {
-        return mListRecenmment.size();
+        return mListRecentBook.size();
     }
 
 
@@ -74,9 +74,9 @@ public class SimulaireAdapter extends RecyclerView.Adapter<SimulaireAdapter.MyVi
 ////            menu.add(Menu.NONE,R.id.infoNotif,Menu.NONE,"Information");
 ////            menu.add(Menu.NONE,R.id.suppNotif,Menu.NONE,"Supprimer");
 ////            menu.add(Menu.NONE,R.id.inportanteNotif,Menu.NONE,"Message importants");
-        void display(Recenmment recenmment) throws SQLException, IOException {
+        void display(RecentBook recentBook) throws SQLException, IOException {
             Picasso.with(itemView.getContext())
-                    .load("http://192.168.43.1:2222/fabi/couverture/" + recenmment.getCouverteur())
+                    .load("http://192.168.43.1:2222/fabi/couverture/" + recentBook.getCouverteur())
                     .placeholder(R.drawable.img_default_livre)
                     .error(R.drawable.img_default_livre)
                     .transform(new RoundedTransformation(15,4))
@@ -86,7 +86,7 @@ public class SimulaireAdapter extends RecyclerView.Adapter<SimulaireAdapter.MyVi
                 @Override
                 public void onClick(View view) {
                     Intent intentLivre = new Intent(itemView.getContext(), BookActivity.class);
-                    intentLivre.putExtra("idLivre",recenmment.getIdLivre());
+                    intentLivre.putExtra("idLivre", recentBook.getIdLivre());
                     itemView.getContext().startActivity(intentLivre);
                 }
             });

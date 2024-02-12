@@ -1,8 +1,8 @@
 package com.ninotech.fabi.model.data;
 
-public class Electronique {
+public class Electronic {
 
-    public Electronique(int id, String label, int nbrLivre) {
+    public Electronic(int id, String label, int nbrLivre) {
         mId = id;
         mLabel = label;
         mNbrLivre = nbrLivre;

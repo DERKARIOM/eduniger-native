@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.ninotech.fabi.controleur.fragment.ElectroniqueFragment">
+    tools:context="com.ninotech.fabi.controleur.fragment.ElectronicFragment">
 
     <TextView
         android:id="@+id/recenment"
@@ -20,13 +20,13 @@
 
     <!-- TODO: Update blank fragment layout -->
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyler_recent"
+        android:id="@+id/recycler_view_electronic_fragment_recent"
         android:layout_below="@+id/recenment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyler_media"
-        android:layout_below="@+id/recyler_recent"
+        android:id="@+id/recycler_view_electronic_fragment_media"
+        android:layout_below="@+id/recycler_view_electronic_fragment_recent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"/>

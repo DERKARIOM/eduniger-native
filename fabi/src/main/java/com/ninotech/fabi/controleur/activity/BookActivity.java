@@ -45,8 +45,8 @@ import com.ninotech.fabi.model.data.Book;
 import com.ninotech.fabi.model.data.Chat;
 import com.ninotech.fabi.model.data.Talks;
 import com.ninotech.fabi.model.syn.SendComments;
-import com.ninotech.fabi.model.table.ElectroniqueTable;
-import com.ninotech.fabi.model.data.Recenmment;
+import com.ninotech.fabi.model.table.ElectronicTable;
+import com.ninotech.fabi.model.data.RecentBook;
 import com.ninotech.fabi.controleur.adapter.SimulaireAdapter;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
 import com.ninotech.fabi.model.table.Session;
@@ -122,7 +122,7 @@ public class BookActivity extends AppCompatActivity {
         mAudioLinearLayout = findViewById(R.id.linear_layout_activity_book_audio);
         mElectronicLinearLayout = findViewById(R.id.linear_layout_activity_book_electronic);
         mReservationDialog = new ReservationDialog(this);
-        mElectronicTable = new ElectroniqueTable(this);
+        mElectronicTable = new ElectronicTable(this);
         positionTmp=0;
         mMediaPlayer = new MediaPlayer();
         Handler handler = new Handler();
@@ -1063,7 +1063,7 @@ public class BookActivity extends AppCompatActivity {
                     }
                     for (int i=0;i<jsonArray.length();i++) {
                         try {
-                            mList2.add(new Recenmment(mBook.getId(),jsonArray.getJSONObject(i).getString("blanket"),null));
+                            mList2.add(new RecentBook(mBook.getId(),jsonArray.getJSONObject(i).getString("blanket"),null));
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
@@ -1286,7 +1286,7 @@ public class BookActivity extends AppCompatActivity {
     private RecyclerView mTonesRecyclerView;
     private TonesAdapter mTonesAdapter;
     private List<Tones> mListTones;
-    private List<Recenmment> mList2;
+    private List<RecentBook> mList2;
     private Session mSession;
     private ImageView mBlanketImageView;
     private TextView mTitleTextView;
@@ -1309,7 +1309,7 @@ public class BookActivity extends AppCompatActivity {
     private String mAudio;
     private int positionTmp;
     private ReservationDialog mReservationDialog;
-    private ElectroniqueTable mElectronicTable;
+    private ElectronicTable mElectronicTable;
     private String mNbrJour;
     private Book mBook;
 }

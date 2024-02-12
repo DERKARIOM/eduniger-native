@@ -13,7 +13,7 @@ import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.adapter.CategorieLocalAdapter;
 import com.ninotech.fabi.controleur.adapter.LivreLocalAdapter;
 import com.ninotech.fabi.model.data.Category;
-import com.ninotech.fabi.model.table.ElectroniqueTable;
+import com.ninotech.fabi.model.table.ElectronicTable;
 import com.ninotech.fabi.model.data.LivreLocal;
 import com.ninotech.fabi.model.table.Session;
 
@@ -29,7 +29,7 @@ public class LivreLocalActivity extends AppCompatActivity {
         getSupportActionBar().hide();
         mRecyclerView = findViewById(R.id.recylerLivreLocal);
         mSession = new Session(this);
-        mElectroniqueTable = new ElectroniqueTable(this);
+        mElectronicTable = new ElectronicTable(this);
         mItemLocal = findViewById(R.id.item_local);
         Intent livreLocal = getIntent();
         int id = livreLocal.getIntExtra("id",0);
@@ -39,7 +39,7 @@ public class LivreLocalActivity extends AppCompatActivity {
             case 1: // Les Livre Telechages
                 mItemLocal.setImageResource(R.drawable.img_telecharge_local);
                 mList1 = new ArrayList<>();
-                Cursor cursor1 = mElectroniqueTable.getData(mSession.getIdNumber());
+                Cursor cursor1 = mElectronicTable.getData(mSession.getIdNumber());
                 cursor1.moveToFirst();
                 do {
                     mList1.add(new LivreLocal(mSession.getIdNumber(),cursor1.getString(5),cursor1.getString(8),cursor1.getString(7),cursor1.getString(4),cursor1.getString(6)));
@@ -57,7 +57,7 @@ public class LivreLocalActivity extends AppCompatActivity {
             case 4: // Category
                 mItemLocal.setImageResource(R.drawable.img_categorie);
                 mList4 = new ArrayList<>();
-                Cursor cursor4 = mElectroniqueTable.getData(mSession.getIdNumber());
+                Cursor cursor4 = mElectronicTable.getData(mSession.getIdNumber());
                 cursor4.moveToFirst();
                 do {
                     mList4.add(new Category(cursor4.getString(9),cursor4.getString(7)));
@@ -69,7 +69,7 @@ public class LivreLocalActivity extends AppCompatActivity {
             case 5: // Auteurs
                 mItemLocal.setImageResource(R.drawable.img_auteur_local);
                 mList4 = new ArrayList<>();
-                Cursor cursor5 = mElectroniqueTable.getData(mSession.getIdNumber());
+                Cursor cursor5 = mElectronicTable.getData(mSession.getIdNumber());
                 cursor5.moveToFirst();
                 do {
                     mList4.add(new Category(cursor5.getString(10),cursor5.getString(4)));
@@ -84,7 +84,7 @@ public class LivreLocalActivity extends AppCompatActivity {
     private LivreLocalAdapter mLivreLocalAdapter;
     private List<LivreLocal> mList1;
     private List<Category> mList4;
-    private ElectroniqueTable mElectroniqueTable;
+    private ElectronicTable mElectronicTable;
     private Session mSession;
     private ImageView mItemLocal;
     private CategorieLocalAdapter mCategorieLocalAdapter;
