@@ -17,6 +17,7 @@ import androidx.core.app.NotificationManagerCompat;
 
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.activity.NotificationActivity;
+import com.ninotech.fabi.model.table.LoandTable;
 import com.ninotech.fabi.model.table.NotificationTable;
 import com.ninotech.fabi.model.table.Session;
 
@@ -42,6 +43,7 @@ public class NotificationService extends Service {
         super.onCreate();
         Session session = new Session(this);
         mNotificationTable = new NotificationTable(this);
+        mLoandTable = new LoandTable(this);
         try {
             mIdNumber = session.getIdNumber();
         }catch (Exception e)
@@ -60,8 +62,10 @@ public class NotificationService extends Service {
             public void run(){
                 ReservationService reservationService = new ReservationService();
                 NotifService notifService = new NotifService();
+                LoandService loandService = new LoandService();
                 notifService.execute(getString(R.string.ip_server_android) + "NotifService.php",mIdNumber);
                 reservationService.execute(getString(R.string.ip_server_android) + "ReservationService.php",mIdNumber);
+                loandService.execute(getString(R.string.ip_server_android) + "LoandSyn.php",mIdNumber);
                 handler.postDelayed(this, delay);
             }
         }, delay);
@@ -273,6 +277,94 @@ public class NotificationService extends Service {
         }
     }
 
+    private class LoandService extends AsyncTask<String,Void,String> {
+        @Override
+        protected String doInBackground(String... params) {
+
+            try {
+                OkHttpClient client = new OkHttpClient();
+                RequestBody requestBody = new MultipartBody.Builder()
+                        .setType(MultipartBody.FORM)
+                        .addFormDataPart("idNumber", params[1])
+                        .build();
+                Request request = new Request.Builder()
+                        .url(params[0])
+                        .post(requestBody)
+                        .build();
+                try {
+                    Response response = client.newCall(request).execute();
+                    assert response.body() != null;
+                    return response.body().string();
+                }catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+
+            }catch (Exception e)
+            {
+                Toast.makeText(NotificationService.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(String response){
+            if(response != null)
+            {
+                JSONArray jsonArray = null;
+                try {
+                    jsonArray = new JSONArray(response);
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+                int i2=0;
+                for(int i=0 ; i<jsonArray.length() ; i++)
+                {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        NotificationChannel channel = new NotificationChannel("channel_id", "Nom du canal", NotificationManager.IMPORTANCE_DEFAULT);
+                        NotificationManager notificationManager = getSystemService(NotificationManager.class);
+                        notificationManager.createNotificationChannel(channel);
+                    }
+                    String message=null;
+                    try {
+                        message = "Nous tenons à vous rappeler que le livre " + jsonArray.getJSONObject(i).getString("title" ) + " que vous avez emprunté doit être retourné dans le(s) " + jsonArray.getJSONObject(i).getString("deliveryDate") + " prochains jours, conformément à nos conditions de prêt";
+                        mNotificationTable.insert(mIdNumber,"Nouvelles version",message,"10:00");
+                        mLoandTable.insert(jsonArray.getJSONObject(i).getString("idLoand"),jsonArray.getJSONObject(i).getString("idNumber"),jsonArray.getJSONObject(i).getString("blanket"),jsonArray.getJSONObject(i).getString("title"),jsonArray.getJSONObject(i).getString("dateLoand"),jsonArray.getJSONObject(i).getString("realReturnDate"));
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                    try {
+                        Intent intent = new Intent(getApplicationContext(), NotificationActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, 0);
+                        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "channel_id")
+                                .setSmallIcon(R.drawable.img_default_livre)
+                                .setContentTitle("Rappeler d' Emprunter")
+                                .setContentText(message)
+                                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                                .setContentIntent(pendingIntent)
+                                .setAutoCancel(true);
+                        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
+                        notificationManager.notify(i, builder.build());
+                    }catch (Exception e){
+                        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "channel_id")
+                                .setSmallIcon(R.drawable.img_default_livre)
+                                .setContentTitle("Rappeler d' Emprunter")
+                                .setContentText(message)
+                                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
+                        notificationManager.notify(i2, builder.build());
+                    }
+                    Intent intent3 = new Intent("ACTION_UPDATE_BADGE");
+                    intent3.putExtra("notificationCount", i2+1); // Nombre de nouvelles notifications à afficher
+                    i2++;
+                    sendBroadcast(intent3);
+                }
+
+            }
+        }
+    }
+
     private String mIdNumber;
     private NotificationTable mNotificationTable;
+    private LoandTable mLoandTable;
 }

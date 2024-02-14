@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:layout_margin="8dp">
     <ImageView
-        android:id="@+id/couverture_livre_pysique"
+        android:id="@+id/image_view_adapter_physical_blanket"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_margin="10dp"
@@ -14,10 +14,10 @@
         android:id="@+id/info_livre_pysique"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/couverture_livre_pysique"
+        android:layout_toRightOf="@+id/image_view_adapter_physical_blanket"
         android:layout_centerVertical="true">
         <TextView
-            android:id="@+id/title_livre_pysique"
+            android:id="@+id/text_view_adapter_physical_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Titre du livre"
@@ -25,19 +25,19 @@
             android:layout_margin="5dp"
             android:textSize="13dp"/>
         <TextView
-            android:id="@+id/date_init"
+            android:id="@+id/text_view_adapter_physical_date_init"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:layout_below="@id/title_livre_pysique"
+            android:layout_below="@id/text_view_adapter_physical_title"
             android:text="11/01/2023:10h00"
             android:textSize="10dp"/>
         <TextView
-            android:id="@+id/date_retoure"
+            android:id="@+id/date_return"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:layout_below="@id/date_init"
+            android:layout_below="@id/text_view_adapter_physical_date_init"
             android:text="11/03/2023:12h30"
             android:textSize="10dp"/>
     </RelativeLayout>
@@ -45,10 +45,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/info_livre_pysique"
-        android:layout_toRightOf="@id/couverture_livre_pysique"
+        android:layout_toRightOf="@id/image_view_adapter_physical_blanket"
         android:layout_marginTop="20dp">
         <ProgressBar
-            android:id="@+id/progress"
+            android:id="@+id/progress_bar_adapter_physical"
             style="@android:style/Widget.ProgressBar.Horizontal"
             android:layout_width="match_parent"
             android:layout_marginEnd="40dp"
@@ -58,7 +58,7 @@
             android:progressBackgroundTint="@color/whiteSombre"
             android:progressTint="@color/vert" />
         <TextView
-            android:id="@+id/pourcentage"
+            android:id="@+id/text_view_adapter_physical_pourcentage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="50%"
