@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -29,41 +30,17 @@ public class PhysiqueFragment extends Fragment {
         mRecyclerView = view.findViewById(R.id.recylerPysique);
         mList = new ArrayList<>();
         mLoandTable = new LoandTable(getContext());
-        long currentTimeMillis = System.currentTimeMillis();
-        long currentTimeSeconds = currentTimeMillis / 1000;
-
-        // Affichez le temps actuel en secondes
-        Log.d("Current Time (Seconds)", String.valueOf(currentTimeSeconds));
-
+        //Toast.makeText(getContext(), String.valueOf(getNowDate()), Toast.LENGTH_SHORT).show();
 
         // Chaîne de caractères représentant la date
-        String dateString = "2024-02-13 12:30:00";
-
-        // Format de la date dans la chaîne de caractères
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-        try {
-            // Analyser la chaîne de caractères en objet Date
-            Date date = dateFormat.parse(dateString);
-
-            // Convertir la date en millisecondes
-            long dateInMillis = date.getTime();
-
-            // Convertir les millisecondes en secondes
-            long dateInSeconds = dateInMillis / 1000;
-
-            // Afficher la date en secondes
-            Log.d("Date in Seconds", String.valueOf(dateInSeconds));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
 
 
         Cursor cursor = mLoandTable.getData();
         cursor.moveToFirst();
         try {
             do {
-                mList.add(new Physical(cursor.getString(2),cursor.getString(3),cursor.getString(4),cursor.getString(5)));
+                Toast.makeText(getContext(),String.valueOf(percentage(converterDate(cursor.getString(4)),converterDate(cursor.getString(5)),getNowDate())), Toast.LENGTH_SHORT).show();
+                mList.add(new Physical(cursor.getString(2),cursor.getString(3),cursor.getString(4),cursor.getString(5),percentage(converterDate(cursor.getString(4)),converterDate(cursor.getString(5)),getNowDate())));
             }while (cursor.moveToNext());
         }catch (Exception e)
         {
@@ -74,6 +51,40 @@ public class PhysiqueFragment extends Fragment {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(mPhysicalAdapter);
         return view;
+    }
+    public long percentage(long startDate , long endDate , long nowDate)
+    {
+        return (long) (((float)(nowDate - startDate)/(float) (endDate - startDate))*100);
+    }
+    public long getNowDate()
+    {
+        long currentTimeMillis = System.currentTimeMillis();
+        long currentTimeSeconds = currentTimeMillis / 1000;
+
+        // Affichez le temps actuel en secondes
+        return currentTimeSeconds;
+    }
+    public long converterDate(String dateString)
+    {
+//        String dateString = "2024-02-13 12:30:00";
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        long dateInSeconds = 0;
+
+        try {
+            // Analyser la chaîne de caractères en objet Date
+            Date date = dateFormat.parse(dateString);
+
+            // Convertir la date en millisecondes
+            long dateInMillis = date.getTime();
+
+            // Convertir les millisecondes en secondes
+            dateInSeconds = dateInMillis / 1000;
+
+            // Afficher la date en secondes
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return dateInSeconds;
     }
     private RecyclerView mRecyclerView;
     private PhysicalAdapter mPhysicalAdapter;

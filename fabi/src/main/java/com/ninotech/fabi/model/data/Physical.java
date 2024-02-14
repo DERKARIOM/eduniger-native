@@ -8,12 +8,13 @@ public class Physical {
         mDateStart = dateStart;
         mDateEnd = dateEnd;
     }
-    public  Physical(String blanket , String title , String dateStart , String dateEnd)
+    public  Physical(String blanket , String title , String dateStart , String dateEnd , long percentage)
     {
         mBlanket = blanket;
         mTitle = title;
         mDateStart = dateStart;
         mDateEnd = dateEnd;
+        mPercentage = percentage;
     }
 
     public String getIdLoand() {
@@ -62,7 +63,7 @@ public class Physical {
     private String mDateStart;
     private String mDateEnd;
 
-    public int getPercentage() {
+    public long getPercentage() {
         return mPercentage;
     }
 
@@ -70,5 +71,5 @@ public class Physical {
         mPercentage = percentage;
     }
 
-    private int mPercentage;
+    private long mPercentage;
 }
