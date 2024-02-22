@@ -105,8 +105,24 @@ public class PhysicalAdapter extends RecyclerView.Adapter<PhysicalAdapter.MyView
             mTitleTextView.setText(physical.getTitle());
             mDateInitTextView.setText(physical.getDateStart());
             mDateFinaleTextView.setText(physical.getDateEnd());
-            mProgressBar.setProgress((int) physical.getPercentage());
-            mPercentageTextView.setText(String.valueOf(physical.getPercentage()) + "%");
+            if(physical.getPercentage() > 100)
+            {
+                mProgressBar.setProgress(100);
+                mPercentageTextView.setText("100%");
+            }
+            else
+            {
+                if(physical.getPercentage() < 0)
+                {
+                    mProgressBar.setProgress(0);
+                    mPercentageTextView.setText("0%");
+                }
+                else
+                {
+                    mProgressBar.setProgress((int) physical.getPercentage());
+                    mPercentageTextView.setText(String.valueOf(physical.getPercentage()) + "%");
+                }
+            }
         }
     }
 }

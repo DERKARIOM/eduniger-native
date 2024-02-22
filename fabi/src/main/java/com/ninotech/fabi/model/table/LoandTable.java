@@ -1,5 +1,6 @@
 package com.ninotech.fabi.model.table;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -37,6 +38,12 @@ public class LoandTable extends SQLiteOpenHelper {
         Cursor cursor = null;
         cursor = database.rawQuery("SELECT * FROM " + NAME_TABLE,null);
         return cursor;
+    }
+    public boolean remove(String idLoand)
+    {
+        SQLiteDatabase database = this.getReadableDatabase();
+        database.execSQL("DELETE FROM " + NAME_TABLE + " WHERE idLoand=\"" + idLoand + "\"");
+        return true;
     }
     public boolean insert (String idLoand,String idNumber , String blanket , String title , String dateLoand , String realReturnDate)
     {

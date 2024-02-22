@@ -22,7 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class PhysiqueFragment extends Fragment {
+public class PhysicalFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -30,16 +30,10 @@ public class PhysiqueFragment extends Fragment {
         mRecyclerView = view.findViewById(R.id.recylerPysique);
         mList = new ArrayList<>();
         mLoandTable = new LoandTable(getContext());
-        //Toast.makeText(getContext(), String.valueOf(getNowDate()), Toast.LENGTH_SHORT).show();
-
-        // Chaîne de caractères représentant la date
-
-
         Cursor cursor = mLoandTable.getData();
         cursor.moveToFirst();
         try {
             do {
-                Toast.makeText(getContext(),String.valueOf(percentage(converterDate(cursor.getString(4)),converterDate(cursor.getString(5)),getNowDate())), Toast.LENGTH_SHORT).show();
                 mList.add(new Physical(cursor.getString(2),cursor.getString(3),cursor.getString(4),cursor.getString(5),percentage(converterDate(cursor.getString(4)),converterDate(cursor.getString(5)),getNowDate())));
             }while (cursor.moveToNext());
         }catch (Exception e)

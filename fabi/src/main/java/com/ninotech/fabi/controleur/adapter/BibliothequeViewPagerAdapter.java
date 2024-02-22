@@ -5,7 +5,7 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.ninotech.fabi.controleur.fragment.ElectronicFragment;
-import com.ninotech.fabi.controleur.fragment.PhysiqueFragment;
+import com.ninotech.fabi.controleur.fragment.PhysicalFragment;
 import com.ninotech.fabi.controleur.fragment.AudioFragment;
 
 public class BibliothequeViewPagerAdapter extends FragmentStateAdapter {
@@ -24,7 +24,7 @@ public class BibliothequeViewPagerAdapter extends FragmentStateAdapter {
             case 1:
                 return new AudioFragment();
             case 2:
-                return new PhysiqueFragment();
+                return new PhysicalFragment();
         }
         return new ElectronicFragment(); // Fragment par défaut
     }
