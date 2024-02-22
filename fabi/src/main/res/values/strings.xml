@@ -169,5 +169,22 @@
     <string name="playlists">Playlists</string>
     <string name="cetegory">Categorie</string>
     <string name="author">Auteurs</string>
+    <string name="account">Compte</string>
+    <string name="change_password">Changer votre mot de passe , email...</string>
+    <string name="digital_print">Empreinte digitale</string>
+    <string name="secure_session">Sécurisé votre session</string>
+    <string name="send_suggestion">Envoyer une suggestion</string>
+    <string name="subject_suggestion">L\'objet de votre suggestion</string>
+    <string name="evaluate_us">Evaluez-nous</string>
+    <string name="opservation_you">Votre note , Observation (facultative)</string>
+    <string name="contact_us">Contactez-nous</string>
+    <string name="call_number">Appelez +22794961793</string>
+    <string name="how_it_works">Comment ça marche</string>
+    <string name="tutorial_that_explains_you_from_a_z">Tutoriel qui vous explique de A-Z...</string>
+    <string name="app_information">Infos de l\'application</string>
+    <string name="sub_app_information">Auteurs , Version et Licence</string>
+    <string name="setting">Parametre</string>
+    <string name="password_new">Nouveau mot de passe</string>
+    <string name="change_email">Changer votre adresse email</string>
 
 </resources>

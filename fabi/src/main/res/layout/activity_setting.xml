@@ -2,15 +2,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.ninotech.fabi.controleur.activity.ParametreActivity">
+    style="@style/match_parent_all"
+    tools:context="com.ninotech.fabi.controleur.activity.SettingActivity">
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbarParametre"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:id="@+id/toolbar_activity_setting"
+       style="@style/match_wrap"
         app:logo="@drawable/vector_back"
-        app:title="Parametre"
+        app:title="@string/setting"
         android:layout_centerVertical="true"
         app:titleMarginStart="15dp"
         android:layout_marginBottom="10dp"
@@ -18,12 +16,12 @@
         app:titleTextColor="@color/black3"
         android:layout_alignParentTop="true"
         app:titleTextAppearance="@style/CustoTollbar"
-        />
+        tools:ignore="RtlSymmetry" />
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recylerParametre"
+        android:id="@+id/recycler_view_activity_setting"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/toolbarParametre"
+        android:layout_below="@id/toolbar_activity_setting"
         />
 
 </RelativeLayout>

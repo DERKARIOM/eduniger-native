@@ -8,12 +8,14 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.ninotech.fabi.model.data.Account;
 import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.R;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -24,6 +26,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -37,17 +40,16 @@ public class ChangePasswordActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_password);
-        //StatusBarCusto statusBarCusto = new StatusBarCusto(this,getWindow());
-        getSupportActionBar().hide();
-        mEditMatricule3 = findViewById(R.id.EditMatricule3);
-        mEditMail2 = findViewById(R.id.EditMail2);
-        mEditPasse3 = findViewById(R.id.EditPasse3);
-        mEditConf2 = findViewById(R.id.EditConf2);
-        mButtonConnect3 = findViewById(R.id.ButtonConnect3);
-        mTextLogin2 = findViewById(R.id.TextAide2);
-        mTextErr3 = findViewById(R.id.TextErr3);
+        Objects.requireNonNull(getSupportActionBar()).hide();
+        mIdNumberEditText = findViewById(R.id.edit_text_activity_change_password_id_number);
+        mMailEditText = findViewById(R.id.edit_text_activity_change_password_mail);
+        mPasswordEditText = findViewById(R.id.edit_text_activity_change_password_password);
+        mConfirmPassword = findViewById(R.id.edit_text_activity_change_password_confirm_password);
+        mConnectionButton = findViewById(R.id.button_activity_change_password_connection);
+        mChangeMailTextView = findViewById(R.id.text_view_activity_change_password_change_mail);
+        mErrorTextView = findViewById(R.id.text_view_activity_change_password_error);
+        mConnectionProgressBar = findViewById(R.id.progress_bar_change_password_connection);
         mSession = new Session(this);
-//        data = openOrCreateDatabase("data.db",MODE_PRIVATE,null);
         mJeton = "null";
 
         /* Generation de jeton FireBase */
@@ -56,7 +58,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<String> task) {
                         if (!task.isSuccessful()) {
-                            Log.w("TAG", "Erreur de generation du jeton", task.getException());
+                            Log.e("ErrChangePasswordJeton", "Erreur de generation du jeton", task.getException());
                             return;
                         }
                         // Generation du nouveau jeton
@@ -64,46 +66,84 @@ public class ChangePasswordActivity extends AppCompatActivity {
                     }
                 });
 
-        /* En cliquant sur le boutton de connection3 */
-        mButtonConnect3.setOnClickListener(new View.OnClickListener() {
+        /* En cliquant sur le boutton de connection */
+        mConnectionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(mEditMatricule3.getText().toString().equals("") && mEditMail2.getText().toString().equals("") && mEditPasse3.getText().toString().equals("") && mEditConf2.getText().toString().equals(""))
+                mAccount = new Account(mIdNumberEditText.getText().toString(),mMailEditText.getText().toString(),mPasswordEditText.getText().toString(),null);
+                switch (mAccount.inputControl(mConfirmPassword.getText().toString()))
                 {
-                    mTextErr3.setText("Veuillez remplir ces champs svp");
-                    mEditMatricule3.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
-                    mEditMail2.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
-                    mEditPasse3.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
-                    mEditConf2.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
-                }
-                else
-                {
-                    if(mEditMatricule3.getText().toString().equals(""))
-                    {
-                        mTextErr3.setText("Votre matricule svp");
-                        mEditMatricule3.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
-                        mEditMail2.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
-                        mEditPasse3.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
-                        mEditConf2.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
-                    }
-                    if(mEditPasse3.getText().toString().equals(mEditConf2.getText().toString()))
-                    {
-                       Http http = new Http();
-                       http.execute("http://192.168.43.1:2222/android/changePassWord.php");
-                    }else
-                    {
-                        mTextErr3.setText("Erreur de confirmation");
-                        mEditMatricule3.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
-                        mEditMail2.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
-                        mEditPasse3.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
-                        mEditConf2.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
-                    }
+                    case "0000":
+                        inputControl(
+                                R.drawable.forme_white_radius_100dp_border_rouge,
+                                R.drawable.forme_white_radius_100dp_border_rouge,
+                                R.drawable.forme_white_radius_100dp_border_rouge,
+                                R.drawable.forme_white_radius_100dp_border_rouge,
+                                R.string.register_error_0000
+                        );
+                        break;
+                    case "0111":
+                        inputControl(
+                                R.drawable.forme_white_radius_100dp_border_rouge,
+                                R.drawable.forme_white_radius_10dp,
+                                R.drawable.forme_white_radius_10dp,
+                                R.drawable.forme_white_radius_10dp,
+                                R.string.register_error_0111
+                        );
+                        break;
+                    case "1011":
+                        inputControl(
+                                R.drawable.forme_white_radius_10dp,
+                                R.drawable.forme_white_radius_100dp_border_rouge,
+                                R.drawable.forme_white_radius_10dp,
+                                R.drawable.forme_white_radius_10dp,
+                                R.string.register_error_1011
+                        );
+                        break;
+                    case "1101":
+                        inputControl(
+                                R.drawable.forme_white_radius_10dp,
+                                R.drawable.forme_white_radius_10dp,
+                                R.drawable.forme_white_radius_100dp_border_rouge,
+                                R.drawable.forme_white_radius_10dp,
+                                R.string.register_error_1101
+                        );
+                        break;
+                    case "1110":
+                        inputControl(
+                                R.drawable.forme_white_radius_10dp,
+                                R.drawable.forme_white_radius_10dp,
+                                R.drawable.forme_white_radius_10dp,
+                                R.drawable.forme_white_radius_100dp_border_rouge,
+                                R.string.register_error_1110
+                        );
+                        break;
+                    case "1100":
+                        inputControl(
+                                R.drawable.forme_white_radius_10dp,
+                                R.drawable.forme_white_radius_10dp,
+                                R.drawable.forme_white_radius_100dp_border_rouge,
+                                R.drawable.forme_white_radius_100dp_border_rouge,
+                                R.string.register_error_1100
+                        );
+                        break;
+                    case "1111":
+                        Toast.makeText(ChangePasswordActivity.this, "OK", Toast.LENGTH_SHORT).show();
+                        mConnectionProgressBar.setVisibility(View.VISIBLE);
+                        mConnectionButton.setText(R.string.register_succes_1111);
+//                        RegisterActivity.RegisterSyn registerSyn = new RegisterActivity.RegisterSyn();
+//                        registerSyn.execute(
+//                                getResources().getString(R.string.ip_server_android) + "Register.php",
+//                                mAccount.getIdNumber(),
+//                                mAccount.getEmail(),
+//                                mAccount.getPassword()
+                        break;
                 }
             }
         });
 
         /* En cliquant sur le TextView ce connecter */
-        mTextLogin2.setOnClickListener(new View.OnClickListener() {
+        mChangeMailTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent email = new Intent(ChangePasswordActivity.this, EmailChangeActivity.class);
@@ -112,7 +152,14 @@ public class ChangePasswordActivity extends AppCompatActivity {
         });
     }
 
-
+    public void inputControl(int idNumberForm , int emailForm , int passwordForm , int passwordConfirmForm , int message)
+    {
+        mIdNumberEditText.setBackground(getResources().getDrawable(idNumberForm));
+        mMailEditText.setBackground(getResources().getDrawable(emailForm));
+        mPasswordEditText.setBackground(getResources().getDrawable(passwordForm));
+        mConfirmPassword.setBackground(getResources().getDrawable(passwordConfirmForm));
+        mErrorTextView.setText(message);
+    }
     private class Http extends AsyncTask<String,Void,String> {
         @Override
         protected String doInBackground(String... params) {
@@ -121,9 +168,9 @@ public class ChangePasswordActivity extends AppCompatActivity {
                 OkHttpClient client = new OkHttpClient();
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
-                        .addFormDataPart("matricule", mEditMatricule3.getText().toString())
-                        .addFormDataPart("email", mEditMail2.getText().toString())
-                        .addFormDataPart("motdepasse", mEditPasse3.getText().toString())
+                        .addFormDataPart("matricule", mIdNumberEditText.getText().toString())
+                        .addFormDataPart("email", mMailEditText.getText().toString())
+                        .addFormDataPart("motdepasse", mPasswordEditText.getText().toString())
                         .addFormDataPart("jeton",mJeton)
                         .build();
                 Request request = new Request.Builder()
@@ -152,11 +199,11 @@ public class ChangePasswordActivity extends AppCompatActivity {
             {
                 if(jsonData.equals("false"))
                 {
-                    mTextErr3.setText("Matricule ou Email incorrect");
-                    mEditMatricule3.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
-                    mEditMail2.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
-                    mEditPasse3.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
-                    mEditConf2.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
+                    mErrorTextView.setText("Matricule ou Email incorrect");
+                    mIdNumberEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
+                    mMailEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
+                    mPasswordEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
+                    mConfirmPassword.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
                 }
                 else
                 {
@@ -178,17 +225,19 @@ public class ChangePasswordActivity extends AppCompatActivity {
                 }
             }
             else
-                mTextErr3.setText("Aucune connexion");
+                mErrorTextView.setText("Aucune connexion");
         }
     }
-    private EditText mEditMatricule3;
-    private EditText mEditPasse3;
-    private EditText mEditConf2;
-    private Button mButtonConnect3;
-    private TextView mTextLogin2;
-    private TextView mTextErr3;
-    private EditText mEditMail2;
+    private EditText mIdNumberEditText;
+    private EditText mPasswordEditText;
+    private EditText mConfirmPassword;
+    private Button mConnectionButton;
+    private TextView mChangeMailTextView;
+    private TextView mErrorTextView;
+    private EditText mMailEditText;
     private SQLiteDatabase data;
     private Session mSession;
     private String mJeton;
+    private Account mAccount;
+    private ProgressBar mConnectionProgressBar;
 }

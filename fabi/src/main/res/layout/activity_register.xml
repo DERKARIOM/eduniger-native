@@ -19,7 +19,8 @@
 
         <ImageView
             style="@style/wrap_content_all"
-            android:src="@drawable/img_regester"/>
+            android:src="@drawable/img_regester"
+            android:contentDescription="@string/todo" />
     </RelativeLayout>
 
     <EditText
@@ -28,7 +29,8 @@
         android:layout_above="@id/edit_text_register_email"
         android:drawableStart="@drawable/vector_black3_identify"
         android:inputType="number"
-        style="@style/edit_text_register" />
+        style="@style/edit_text_register"
+        android:autofillHints="" />
 
     <EditText
         android:id="@+id/edit_text_register_email"
@@ -36,7 +38,8 @@
         android:layout_above="@id/edit_text_register_password"
         android:drawableStart="@drawable/vector_black3_email"
         android:inputType="textEmailAddress"
-        style="@style/edit_text_register" />
+        style="@style/edit_text_register"
+        android:autofillHints="" />
 
     <EditText
         android:id="@+id/edit_text_register_password"
@@ -44,7 +47,8 @@
         android:layout_above="@id/edit_text_register_password_confirm"
         android:drawableStart="@drawable/vector_black3_password"
         android:inputType="textPassword"
-        style="@style/edit_text_register" />
+        style="@style/edit_text_register"
+        android:autofillHints="" />
 
     <EditText
         android:id="@+id/edit_text_register_password_confirm"
@@ -52,15 +56,19 @@
         android:layout_above="@+id/text_view_register_error"
         android:drawableStart="@drawable/vector_black3_lock"
         android:inputType="textPassword"
-        style="@style/edit_text_register"/>
+        style="@style/edit_text_register"
+        android:autofillHints="" />
 
     <TextView
         android:id="@+id/text_view_register_error"
-        android:layout_above="@id/BlockButtonConnect2"
-        style="@style/text_view_error_register" />
+        style="@style/text_view_error_register"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/relative_layout_change_password_connection"
+        android:layout_marginBottom="31dp" />
 
     <RelativeLayout
-        android:id="@+id/BlockButtonConnect2"
+        android:id="@+id/relative_layout_change_password_connection"
         style="@style/wrap_content_all"
         android:layout_above="@+id/text_view_register_login"
         android:layout_marginStart="28dp"

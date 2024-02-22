@@ -62,7 +62,7 @@
             android:exported="false"
             android:screenOrientation="portrait"
             android:label="Verrouillage par empreinte digitale"
-            android:parentActivityName="com.ninotech.fabi.controleur.activity.ParametreActivity" />
+            android:parentActivityName="com.ninotech.fabi.controleur.activity.SettingActivity" />
         <activity
             android:name="com.ninotech.fabi.controleur.activity.InfosActivity"
             android:screenOrientation="portrait"
@@ -72,7 +72,7 @@
             android:screenOrientation="portrait"
             android:exported="false" />
         <activity
-            android:name="com.ninotech.fabi.controleur.activity.ParametreActivity"
+            android:name="com.ninotech.fabi.controleur.activity.SettingActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:label="Parametres"

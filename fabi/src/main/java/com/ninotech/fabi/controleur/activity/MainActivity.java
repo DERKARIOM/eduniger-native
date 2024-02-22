@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
         toolbar.getMenu().getItem(6).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
-                Intent test = new Intent(MainActivity.this, ParametreActivity.class);
+                Intent test = new Intent(MainActivity.this, SettingActivity.class);
                 startActivity(test);
                 return false;
             }
