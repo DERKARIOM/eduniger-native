@@ -77,6 +77,10 @@ public class Account {
                     return "0111_0"; // matricule introuvable
                 case "expiresVersion":
                     return "update"; // version expires
+                case "noFoundIdNumberOrEmail":
+                    return "0011"; // matricule ou email introuvable
+                case "false":
+                    return "noConnection"; // pas de connexion internet
                 default:
                     return "1111"; // ok
             }

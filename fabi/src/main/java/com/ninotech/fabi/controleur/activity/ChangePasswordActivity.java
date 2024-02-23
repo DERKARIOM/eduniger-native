@@ -131,12 +131,12 @@ public class ChangePasswordActivity extends AppCompatActivity {
                         Toast.makeText(ChangePasswordActivity.this, "OK", Toast.LENGTH_SHORT).show();
                         mConnectionProgressBar.setVisibility(View.VISIBLE);
                         mConnectionButton.setText(R.string.register_succes_1111);
-//                        RegisterActivity.RegisterSyn registerSyn = new RegisterActivity.RegisterSyn();
-//                        registerSyn.execute(
-//                                getResources().getString(R.string.ip_server_android) + "Register.php",
-//                                mAccount.getIdNumber(),
-//                                mAccount.getEmail(),
-//                                mAccount.getPassword()
+                        ChangePassword changePassword = new ChangePassword();
+                        changePassword.execute(getResources().getString(R.string.ip_server_android) + "ChangePassword.php",
+                                mAccount.getIdNumber(),
+                                mAccount.getEmail(),
+                                mAccount.getPassword()
+                        );
                         break;
                 }
             }
@@ -160,7 +160,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
         mConfirmPassword.setBackground(getResources().getDrawable(passwordConfirmForm));
         mErrorTextView.setText(message);
     }
-    private class Http extends AsyncTask<String,Void,String> {
+    private class ChangePassword extends AsyncTask<String,Void,String> {
         @Override
         protected String doInBackground(String... params) {
 
@@ -168,22 +168,21 @@ public class ChangePasswordActivity extends AppCompatActivity {
                 OkHttpClient client = new OkHttpClient();
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
-                        .addFormDataPart("matricule", mIdNumberEditText.getText().toString())
-                        .addFormDataPart("email", mMailEditText.getText().toString())
-                        .addFormDataPart("motdepasse", mPasswordEditText.getText().toString())
-                        .addFormDataPart("jeton",mJeton)
+                        .addFormDataPart("idNumber",params[1])
+                        .addFormDataPart("email",params[2])
+                        .addFormDataPart("passwordNew",params[3])
                         .build();
                 Request request = new Request.Builder()
                         .url(params[0])
                         .post(requestBody)
                         .build();
-
                 try {
                     Response response = client.newCall(request).execute();
+                    assert response.body() != null;
                     return response.body().string();
                 }catch (IOException e)
                 {
-                    Toast.makeText(ChangePasswordActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.e("errorChangePassword",e.getMessage());
                 }
 
             }catch (Exception e)
@@ -194,39 +193,33 @@ public class ChangePasswordActivity extends AppCompatActivity {
         }
         @Override
         protected void onPostExecute(String jsonData){
-            //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
-            if(jsonData != null)
+            switch (mAccount.dataControl(jsonData))
             {
-                if(jsonData.equals("false"))
-                {
-                    mErrorTextView.setText("Matricule ou Email incorrect");
-                    mIdNumberEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
-                    mMailEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
-                    mPasswordEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
-                    mConfirmPassword.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
-                }
-                else
-                {
-                    Toast.makeText(getApplicationContext(),"Heureux de vous revoir ", Toast.LENGTH_SHORT).show();
-                    JSONObject jsonObject = null;
-                    try {
-                        jsonObject = new JSONObject(jsonData);
-                    } catch (JSONException e) {
-                        throw new RuntimeException(e);
-                    }
-                    try {
-                        mSession.insert(jsonObject.getString("matricule"),"ras");
-                    } catch (JSONException e) {
-                        throw new RuntimeException(e);
-                    }
-                    Intent home = new Intent(ChangePasswordActivity.this, MainActivity.class);
-                    startActivity(home);
-                    finish();
-                }
+                case "0011":
+                    dataControl(
+                            R.drawable.forme_white_radius_100dp_border_rouge,
+                            R.drawable.forme_white_radius_100dp_border_rouge,
+                            R.drawable.forme_white_radius_10dp,
+                            R.drawable.forme_white_radius_10dp,
+                            R.string.no_found_id_number_or_email
+                    );
+                    break;
+                case "1111":
+                    Toast.makeText(ChangePasswordActivity.this, "OK", Toast.LENGTH_SHORT).show();
+                    break;
+                default:
+                    mErrorTextView.setText(R.string.no_connection);
+                    mConnectionProgressBar.setVisibility(View.INVISIBLE);
+                    mConnectionButton.setText(R.string.button_text_connection);
+                    break;
             }
-            else
-                mErrorTextView.setText("Aucune connexion");
         }
+    }
+    public void dataControl(int idNumberIco , int emailIco , int passwordIco , int passwordConfirmIco , int message)
+    {
+        inputControl(idNumberIco,emailIco,passwordIco,passwordConfirmIco,message);
+        mConnectionProgressBar.setVisibility(View.INVISIBLE);
+        mConnectionButton.setText(R.string.button_text_connection);
     }
     private EditText mIdNumberEditText;
     private EditText mPasswordEditText;
