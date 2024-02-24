@@ -53,7 +53,7 @@ import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.model.data.Tones;
 import com.ninotech.fabi.controleur.adapter.TonesAdapter;
 import com.ninotech.fabi.R;
-import com.ninotech.fabi.controleur.dialog.SucceReservationDialog;
+import com.ninotech.fabi.controleur.dialog.SimpleOkDialog;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -1232,7 +1232,7 @@ public class BookActivity extends AppCompatActivity {
                 if(jsonData.equals("true"))
                 {
                     mReservationDialog.cancel();
-                    succeReservationDialog();
+                    successReservationDialog();
                     mReservationButton.setText(R.string.cancel_reservation);
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         mReservationButton.setBackgroundTintList(getColorStateList(R.color.rouge));
@@ -1243,38 +1243,38 @@ public class BookActivity extends AppCompatActivity {
         }
     }
 
-    private void succeReservationDialog(){
-        SucceReservationDialog succeReservationDialog = new SucceReservationDialog(this);
-        succeReservationDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        succeReservationDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
-        TextView message = succeReservationDialog.findViewById(R.id.popo_message);
-        TextView ok = succeReservationDialog.findViewById(R.id.ok);
-        message.setText("Merci d'avoir réservé \"" + mTitleTextView.getText().toString() + "\" sur fabi; nous traitons votre demande et vous confirmerons la disponibilité bientôt.");
-        ok.setOnClickListener(new View.OnClickListener() {
+    private void successReservationDialog(){
+        SimpleOkDialog simpleOkDialog = new SimpleOkDialog(this);
+        simpleOkDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        simpleOkDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        TextView messageTextView = simpleOkDialog.findViewById(R.id.text_view_dialog_simple_ok_message);
+        TextView okTextView = simpleOkDialog.findViewById(R.id.text_view_dialog_simple_ok);
+        messageTextView.setText("Merci d'avoir réservé \"" + mTitleTextView.getText().toString() + "\" sur fabi; nous traitons votre demande et vous confirmerons la disponibilité bientôt.");
+        okTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 //                mSuggestion.setText("");
-                succeReservationDialog.cancel();
+                simpleOkDialog.cancel();
             }
         });
-        succeReservationDialog.build();
+        simpleOkDialog.build();
     }
 
     private void succeDowloadPDFDialog(){
-        SucceReservationDialog succeReservationDialog = new SucceReservationDialog(this);
-        succeReservationDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        succeReservationDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
-        TextView message = succeReservationDialog.findViewById(R.id.popo_message);
-        TextView ok = succeReservationDialog.findViewById(R.id.ok);
+        SimpleOkDialog simpleOkDialog = new SimpleOkDialog(this);
+        simpleOkDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        simpleOkDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        TextView message = simpleOkDialog.findViewById(R.id.text_view_dialog_simple_ok_message);
+        TextView ok = simpleOkDialog.findViewById(R.id.text_view_dialog_simple_ok);
         message.setText("Le livre " + mTitleTextView.getText().toString() + " format PDF a été téléchargé avec succès. N'hésitez pas à explorer son contenu dans l'application et contactez-nous en cas de besoin.");
         ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 //                mSuggestion.setText("");
-                succeReservationDialog.cancel();
+                simpleOkDialog.cancel();
             }
         });
-        succeReservationDialog.build();
+        simpleOkDialog.build();
     }
     private LinearLayout mReservationLinearLayout;
     private LinearLayout mAudioLinearLayout;

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -9,25 +10,27 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:layout_marginBottom="20dp">
+        android:layout_marginBottom="20dp"
+        tools:ignore="UseCompoundDrawables">
         <ImageView
-            android:id="@+id/popo_ico"
+            android:id="@+id/image_view_dialog_simple_ok_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/vector_emoji_succes" />
+            android:src="@drawable/vector_emoji_success"
+            android:contentDescription="@string/todo" />
         <TextView
-            android:id="@+id/popo_titre"
+            android:id="@+id/text_view_dialog_simple_ok_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
-            android:text="Succès"
-            android:textSize="25dp"
+            android:text="@string/success"
+            android:textSize="@dimen/size_title"
             android:textColor="@color/purple_200"
             android:fontFamily="@font/linux2"
             />
     </LinearLayout>
     <TextView
-        android:id="@+id/popo_message"
+        android:id="@+id/text_view_dialog_simple_ok_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Merci beaucoup pour votre suggestion ! Nous apprécions vraiment que vous preniez le temps de nous faire part de vos idées pour améliorer fastpv"
@@ -36,7 +39,7 @@
         android:layout_gravity="center"
         android:fontFamily="@font/linux2"
         android:textColor="@color/black2"
-        android:textSize="15dp"
+        android:textSize="@dimen/size_text"
         />
     <LinearLayout
         android:layout_width="wrap_content"
@@ -46,14 +49,14 @@
         android:layout_margin="10dp"
         >
         <TextView
-            android:id="@+id/ok"
+            android:id="@+id/text_view_dialog_simple_ok"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="OK"
+            android:text="@string/ok"
             android:layout_margin="10dp"
             android:textColor="@color/purple_200"
             android:fontFamily="@font/linux2"
-            android:textSize="20dp"
-            />
+            android:textSize="@dimen/size_button"
+            tools:ignore="SpUsage" />
     </LinearLayout>
 </LinearLayout>

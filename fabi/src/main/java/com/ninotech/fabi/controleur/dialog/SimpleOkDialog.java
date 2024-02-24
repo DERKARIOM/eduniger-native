@@ -5,11 +5,11 @@ import android.app.Dialog;
 
 import com.ninotech.fabi.R;
 
-public class SucceReservationDialog extends Dialog {
-    public SucceReservationDialog(Activity activity)
+public class SimpleOkDialog extends Dialog {
+    public SimpleOkDialog(Activity activity)
     {
         super(activity, R.style.Dialog_fastpv);
-        setContentView(R.layout.dialog_succes_reservation);
+        setContentView(R.layout.dialog_simple_ok);
     }
     public void build()
     {

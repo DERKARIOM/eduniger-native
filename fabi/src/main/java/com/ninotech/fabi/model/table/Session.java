@@ -48,6 +48,11 @@ public class Session extends SQLiteOpenHelper {
         cursor.moveToFirst();
         return cursor.getString(0);
     }
+    public void setPassword(String password)
+    {
+        SQLiteDatabase database = this.getReadableDatabase();
+        database.execSQL("UPDATE " + NAME_TABLE + " SET password=\"" + password + "\"");
+    }
     public boolean insert (String idNumber,String password)
     {
         try {

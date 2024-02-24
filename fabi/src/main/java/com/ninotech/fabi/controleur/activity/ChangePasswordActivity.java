@@ -2,6 +2,8 @@ package com.ninotech.fabi.controleur.activity;
 
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +17,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.ninotech.fabi.controleur.dialog.SimpleOkDialog;
 import com.ninotech.fabi.model.data.Account;
 import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.R;
@@ -128,7 +131,6 @@ public class ChangePasswordActivity extends AppCompatActivity {
                         );
                         break;
                     case "1111":
-                        Toast.makeText(ChangePasswordActivity.this, "OK", Toast.LENGTH_SHORT).show();
                         mConnectionProgressBar.setVisibility(View.VISIBLE);
                         mConnectionButton.setText(R.string.register_succes_1111);
                         ChangePassword changePassword = new ChangePassword();
@@ -159,6 +161,18 @@ public class ChangePasswordActivity extends AppCompatActivity {
         mPasswordEditText.setBackground(getResources().getDrawable(passwordForm));
         mConfirmPassword.setBackground(getResources().getDrawable(passwordConfirmForm));
         mErrorTextView.setText(message);
+    }
+    public void inputClean()
+    {
+        mIdNumberEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
+        mMailEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
+        mPasswordEditText.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
+        mConfirmPassword.setBackground(getResources().getDrawable(R.drawable.forme_white_radius_10dp));
+        mErrorTextView.setText("");
+        mIdNumberEditText.setText("");
+        mMailEditText.setText("");
+        mPasswordEditText.setText("");
+        mConfirmPassword.setText("");
     }
     private class ChangePassword extends AsyncTask<String,Void,String> {
         @Override
@@ -205,7 +219,9 @@ public class ChangePasswordActivity extends AppCompatActivity {
                     );
                     break;
                 case "1111":
-                    Toast.makeText(ChangePasswordActivity.this, "OK", Toast.LENGTH_SHORT).show();
+                    inputClean();
+                    mSession.setPassword(mAccount.getPassword());
+                    successChangePasswordDialog();
                     break;
                 default:
                     mErrorTextView.setText(R.string.no_connection);
@@ -220,6 +236,23 @@ public class ChangePasswordActivity extends AppCompatActivity {
         inputControl(idNumberIco,emailIco,passwordIco,passwordConfirmIco,message);
         mConnectionProgressBar.setVisibility(View.INVISIBLE);
         mConnectionButton.setText(R.string.button_text_connection);
+    }
+    private void successChangePasswordDialog(){
+        SimpleOkDialog simpleOkDialog = new SimpleOkDialog(this);
+        simpleOkDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        simpleOkDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        TextView messageTextView = simpleOkDialog.findViewById(R.id.text_view_dialog_simple_ok_message);
+        TextView okTextView = simpleOkDialog.findViewById(R.id.text_view_dialog_simple_ok);
+        messageTextView.setText(R.string.ms_change_password);
+        okTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mConnectionProgressBar.setVisibility(View.GONE);
+                mConnectionButton.setText(R.string.button_text_connection);
+                simpleOkDialog.cancel();
+            }
+        });
+        simpleOkDialog.build();
     }
     private EditText mIdNumberEditText;
     private EditText mPasswordEditText;

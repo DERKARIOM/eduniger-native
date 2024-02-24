@@ -141,7 +141,7 @@ public class SuggestionActivity extends AppCompatActivity {
         SucceSuggesionDialog succeSuggesionDialog = new SucceSuggesionDialog(this);
         succeSuggesionDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         succeSuggesionDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
-        TextView ok = succeSuggesionDialog.findViewById(R.id.ok);
+        TextView ok = succeSuggesionDialog.findViewById(R.id.text_view_dialog_simple_ok);
         ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

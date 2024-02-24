@@ -187,5 +187,8 @@
     <string name="password_new">Nouveau mot de passe</string>
     <string name="change_email">Changer votre adresse email</string>
     <string name="no_found_id_number_or_email">Matricule ou mot de passe introuvable</string>
+    <string name="success">Succès</string>
+    <string name="ok">OK</string>
+    <string name="ms_change_password">votre mot de passe a été changé avec succès</string>
 
 </resources>

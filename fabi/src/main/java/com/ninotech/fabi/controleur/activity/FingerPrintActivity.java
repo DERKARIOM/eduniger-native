@@ -205,10 +205,10 @@ public class FingerPrintActivity extends AppCompatActivity {
         SucceSuggesionDialog succeSuggesionDialog = new SucceSuggesionDialog(this);
         succeSuggesionDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         succeSuggesionDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
-        ImageView ico = succeSuggesionDialog.findViewById(R.id.popo_ico);
-        TextView title = succeSuggesionDialog.findViewById(R.id.popo_titre);
-        TextView message = succeSuggesionDialog.findViewById(R.id.popo_message);
-        TextView ok = succeSuggesionDialog.findViewById(R.id.ok);
+        ImageView ico = succeSuggesionDialog.findViewById(R.id.image_view_dialog_simple_ok_icon);
+        TextView title = succeSuggesionDialog.findViewById(R.id.text_view_dialog_simple_ok_title);
+        TextView message = succeSuggesionDialog.findViewById(R.id.text_view_dialog_simple_ok_message);
+        TextView ok = succeSuggesionDialog.findViewById(R.id.text_view_dialog_simple_ok);
         ico.setImageResource(R.drawable.vector_purple_200_desole);
         title.setText("Désolé");
         message.setText("Je n'ai pas trouvé de capteur d'empreinte digitale sur votre téléphone.");

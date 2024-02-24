@@ -223,7 +223,7 @@ public class ParametreAdapter extends RecyclerView.Adapter<ParametreAdapter.MyVi
                         notre_observation.setText("");
                         circulaire.setVisibility(View.INVISIBLE);
                         notre_envoi.setText("Envoyer");
-                        SucceSuggestionDialog(R.drawable.vector_emoji_succes,"Succès","Nous tenons à vous exprimer notre sincère gratitude pour avoir pris le temps de noter fastpv");
+                        SucceSuggestionDialog(R.drawable.vector_emoji_success,"Succès","Nous tenons à vous exprimer notre sincère gratitude pour avoir pris le temps de noter fastpv");
                     }
                     else
                     {
@@ -248,13 +248,13 @@ public class ParametreAdapter extends RecyclerView.Adapter<ParametreAdapter.MyVi
             SucceSuggesionDialog succeSuggesionDialog = new SucceSuggesionDialog((Activity) itemView.getContext());
             succeSuggesionDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             succeSuggesionDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
-            ImageView ico = succeSuggesionDialog.findViewById(R.id.popo_ico);
-            TextView title = succeSuggesionDialog.findViewById(R.id.popo_titre);
-            TextView message = succeSuggesionDialog.findViewById(R.id.popo_message);
+            ImageView ico = succeSuggesionDialog.findViewById(R.id.image_view_dialog_simple_ok_icon);
+            TextView title = succeSuggesionDialog.findViewById(R.id.text_view_dialog_simple_ok_title);
+            TextView message = succeSuggesionDialog.findViewById(R.id.text_view_dialog_simple_ok_message);
             ico.setImageResource(id_ico);
             title.setText(titre);
             message.setText(messager);
-            TextView ok = succeSuggesionDialog.findViewById(R.id.ok);
+            TextView ok = succeSuggesionDialog.findViewById(R.id.text_view_dialog_simple_ok);
             ok.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

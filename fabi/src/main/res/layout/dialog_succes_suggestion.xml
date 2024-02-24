@@ -11,12 +11,12 @@
         android:gravity="center"
         android:layout_marginBottom="20dp">
         <ImageView
-            android:id="@+id/popo_ico"
+            android:id="@+id/image_view_dialog_simple_ok_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/vector_emoji_succes" />
+            android:src="@drawable/vector_emoji_success" />
         <TextView
-            android:id="@+id/popo_titre"
+            android:id="@+id/text_view_dialog_simple_ok_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
@@ -27,7 +27,7 @@
             />
     </LinearLayout>
     <TextView
-        android:id="@+id/popo_message"
+        android:id="@+id/text_view_dialog_simple_ok_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Merci beaucoup pour votre suggestion ! Nous apprécions vraiment que vous preniez le temps de nous faire part de vos idées pour améliorer fastpv"
@@ -46,7 +46,7 @@
         android:layout_margin="10dp"
         >
         <TextView
-            android:id="@+id/ok"
+            android:id="@+id/text_view_dialog_simple_ok"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="OK"
