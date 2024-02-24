@@ -54,7 +54,7 @@
             android:screenOrientation="portrait"
             android:label="Licence" />
         <activity
-            android:name="com.ninotech.fabi.controleur.activity.EmailChangeActivity"
+            android:name="com.ninotech.fabi.controleur.activity.ChangeEmailActivity"
             android:screenOrientation="portrait"
             android:exported="false" />
         <activity

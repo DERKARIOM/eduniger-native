@@ -190,5 +190,9 @@
     <string name="success">Succès</string>
     <string name="ok">OK</string>
     <string name="ms_change_password">votre mot de passe a été changé avec succès</string>
+    <string name="ms_change_email">votre adresse email a été changé avec succès</string>
+    <string name="email_new">Nouveau email</string>
+    <string name="goto_change_password">Changer votre mot de passe</string>
+    <string name="grab_id_number_and_password">Veuillez saisir votre matricule et mot de passe</string>
 
 </resources>

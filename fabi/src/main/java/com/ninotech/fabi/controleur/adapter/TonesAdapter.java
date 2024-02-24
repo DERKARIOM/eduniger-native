@@ -2,6 +2,7 @@ package com.ninotech.fabi.controleur.adapter;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -99,11 +100,19 @@ public class TonesAdapter extends RecyclerView.Adapter<TonesAdapter.MyViewHolder
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    tones.setPlaying(true);
-                    Intent intent3 = new Intent("ACTION_AUDIO");
-                    intent3.putExtra("intent_adapter_tones_title", tones.getAudio());
-                    intent3.putExtra("intent_adapter_tones_position", getPosition());
-                    itemView.getContext().sendBroadcast(intent3);
+                    try {
+                        tones.setPlaying(true);
+                        Intent intent3 = new Intent("ACTION_AUDIO");
+                        intent3.putExtra("intent_adapter_tones_title", tones.getAudio());
+                        intent3.putExtra("intent_adapter_tones_position", getPosition());
+                        itemView.getContext().sendBroadcast(intent3);
+                    }catch (ExceptionInInitializerError e)
+                    {
+                        Log.e("errTonesAdapter",e.getMessage());
+                    }catch (Exception e)
+                    {
+                        Log.e("errorTonesAdapter",e.getMessage());
+                    }
                 }
             });
         }

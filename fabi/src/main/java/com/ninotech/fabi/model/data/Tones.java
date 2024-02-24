@@ -8,6 +8,11 @@ public class Tones {
         mIcoDownload = icoDownload;
         mIsPlaying = isPlaying;
     }
+    public Tones(int number , String audio)
+    {
+        mNumber = number;
+        mAudio = audio;
+    }
 
     public int getNumber() {
         return mNumber;

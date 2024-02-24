@@ -124,18 +124,19 @@ public class BookActivity extends AppCompatActivity {
         mReservationDialog = new ReservationDialog(this);
         mElectronicTable = new ElectronicTable(this);
         positionTmp=0;
-        mMediaPlayer = new MediaPlayer();
         Handler handler = new Handler();
+        mMediaPlayer = new MediaPlayer();
         mTimer = new Timer();
-        BroadcastReceiver receiverNote = new BroadcastReceiver() {
+        BroadcastReceiver receiverTones = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 if ("ACTION_AUDIO".equals(intent.getAction())) {
                     mAudio = intent.getStringExtra("intent_adapter_tones_title");
-                    int position = intent.getIntExtra("intent_adapter_tones_position",0);
-                    url = getString(R.string.ip_server) + "audio/" + mAudio;
+                    mTones.setNumber(intent.getIntExtra("intent_adapter_tones_position",0));
+                    mMediaPlayer = new MediaPlayer();
+                    url = getString(R.string.ip_server) + "audio/" + mTones.getAudio();
                     try {
-                        if(positionTmp != position)
+                        if(positionTmp != mTones.getNumber())
                             mListTones.get(positionTmp).setPlaying(false);
                         mTonesRecyclerView.setAdapter(mTonesAdapter);
                         mMediaPlayer.reset();
@@ -143,16 +144,18 @@ public class BookActivity extends AppCompatActivity {
                         mMediaPlayer.prepare();
                         mSeekBar.setMax(mMediaPlayer.getDuration());
                         mMediaPlayer.start();
-                        positionTmp = position;
+                        positionTmp = mTones.getNumber();
                         mPlayerImageView.setImageResource(R.drawable.vector_black3_play);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
+                    }catch (Exception e)
+                    {
+                        Log.e("errReceiverTones",e.getMessage());
                     }
-                   //Toast.makeText(context,String.valueOf(position), Toast.LENGTH_SHORT).show();
                 }
             }
         };
-        registerReceiver(receiverNote, new IntentFilter("ACTION_AUDIO")); /* Appel de la fonction cregisterReceviver */
+        registerReceiver(receiverTones, new IntentFilter("ACTION_AUDIO")); /* Appel de la fonction cregisterReceviver */
         mTimer.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -1124,19 +1127,21 @@ public class BookActivity extends AppCompatActivity {
                         try {
                             mListTones.add(new Tones(i+1,jsonArray.getJSONObject(i).getString("audio"),jsonArray.getJSONObject(i).getString("title"),0,false));
                             if(i==0)
-                                mAudio = jsonArray.getJSONObject(i).getString("audio");
+                            {
+                                mTones = new Tones(0,jsonArray.getJSONObject(i).getString("audio"));
+                            }
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
                     }
-//                    url = getString(R.string.ip_server) + "audio/" + mAudio;
-//                    try {
-//                        mMediaPlayer.setDataSource(url);
-//                        mMediaPlayer.prepare();
-//                        mSeekBar.setMax(mMediaPlayer.getDuration());
-//                    } catch (IOException e) {
-//                        throw new RuntimeException(e);
-//                    }
+                    url = getString(R.string.ip_server) + "audio/" + mTones.getAudio();
+                    try {
+                        mMediaPlayer.setDataSource(url);
+                        mMediaPlayer.prepare();
+                        mSeekBar.setMax(mMediaPlayer.getDuration());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                     mTonesAdapter = new TonesAdapter(mListTones);
                     mTonesRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                     mTonesRecyclerView.setAdapter(mTonesAdapter);
@@ -1286,6 +1291,7 @@ public class BookActivity extends AppCompatActivity {
     private RecyclerView mTonesRecyclerView;
     private TonesAdapter mTonesAdapter;
     private List<Tones> mListTones;
+    private Tones mTones;
     private List<RecentBook> mList2;
     private Session mSession;
     private ImageView mBlanketImageView;
