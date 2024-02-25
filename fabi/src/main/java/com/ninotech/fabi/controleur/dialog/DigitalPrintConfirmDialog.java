@@ -5,8 +5,8 @@ import android.app.Dialog;
 
 import com.ninotech.fabi.R;
 
-public class EmpreinteConfirmerDialog extends Dialog {
-    public EmpreinteConfirmerDialog(Activity activity)
+public class DigitalPrintConfirmDialog extends Dialog {
+    public DigitalPrintConfirmDialog(Activity activity)
     {
         super(activity, androidx.appcompat.R.style.Theme_AppCompat_Dialog);
         setContentView(R.layout.dialog_confirmer_empreinte);

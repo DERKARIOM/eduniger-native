@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.CancellationSignal;
 import android.os.Handler;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -23,10 +24,12 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-import com.ninotech.fabi.controleur.dialog.EmpreinteConfirmerDialog;
+import com.ninotech.fabi.controleur.dialog.DigitalPrintConfirmDialog;
 import com.ninotech.fabi.model.table.DigitalPrintTable;
 import com.ninotech.fabi.controleur.dialog.SucceSuggesionDialog;
 import com.ninotech.fabi.R;
+
+import java.util.Objects;
 
 public class FingerPrintActivity extends AppCompatActivity {
 
@@ -37,21 +40,21 @@ public class FingerPrintActivity extends AppCompatActivity {
     private SQLiteDatabase mDb;
     private Handler handler;
     private Runnable runnable;
-    private Runnable activer;
+    private Runnable mActif;
     private RadioGroup mRadioGroup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_finger_print);
-        getSupportActionBar().hide();
+        Objects.requireNonNull(getSupportActionBar()).hide();
         //StatusBarCusto statusBarCusto = new StatusBarCusto(this,getWindow());
         mDb = openOrCreateDatabase("data.db",MODE_PRIVATE,null);
         mDigitalPrintTable = new DigitalPrintTable(this);
         mSwitch = findViewById(R.id.switch1);
         mRadioGroup = findViewById(R.id.RadioGroup);
         try {
-            Toast.makeText(this, mDigitalPrintTable.getPass(), Toast.LENGTH_SHORT);
+            Log.e("msgFingerPrint",mDigitalPrintTable.getPass());
             mSwitch.setChecked(true);
             mRadioGroup.setVisibility(View.VISIBLE);
         }catch (Exception e){ mSwitch.setChecked(false);}
@@ -63,19 +66,18 @@ public class FingerPrintActivity extends AppCompatActivity {
                 {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         if (!fingerprintManager.isHardwareDetected()) {
-                            DesoleDialog();
+                            sorryDialog();
                         } else if (!fingerprintManager.hasEnrolledFingerprints()) {
                             Intent intent = new Intent(Settings.ACTION_SECURITY_SETTINGS);
                             startActivity(intent);
                         } else {
-                            EmpreinteConfirmer();
+                            DigitalPrintConfirm();
                         }
                     }
                 }
                 else
                 {
                     mDigitalPrintTable.onUpgrade(mDb,1,1);
-                    Toast.makeText(FingerPrintActivity.this, "Desactiver", Toast.LENGTH_SHORT).show();
                     mRadioGroup.setVisibility(View.INVISIBLE);
                 }
             }
@@ -88,19 +90,17 @@ public class FingerPrintActivity extends AppCompatActivity {
         }
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.USE_FINGERPRINT) != PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(this, "autorisation non accorde", Toast.LENGTH_SHORT).show();
+            Log.e("errorFingerPrint",getString(R.string.authorization_not_granted));
             return;
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (!fingerprintManager.isHardwareDetected()) {
-
-                Toast.makeText(this, "Pas d' empreintes numerique inscrites", Toast.LENGTH_SHORT);
+                Log.e("errorFingerPrint",getString(R.string.no_digital_fingerprints_listed));
             } else if (!fingerprintManager.hasEnrolledFingerprints()) {
-                Toast.makeText(this, "Pas d' empreintes digital inscrites", Toast.LENGTH_SHORT);
-            } else {
-//                startFingerprintAuth();
+                Log.e("errorFingerPrint",getString(R.string.no_registered_fingerprints));
             }
+
         }
     }
     private void startFingerprintAuth() {
@@ -142,26 +142,25 @@ public class FingerPrintActivity extends AppCompatActivity {
             cancellationSignal.cancel();
         }
     }
-    public void EmpreinteConfirmer() {
-        EmpreinteConfirmerDialog empreinteCusto = new EmpreinteConfirmerDialog(this);
-        empreinteCusto.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        ImageView digitaleConfirmer = empreinteCusto.findViewById(R.id.EdigitaleConfirme);
-        TextView messageConfirme = empreinteCusto.findViewById(R.id.messageDigitaleConfirmer);
+    public void DigitalPrintConfirm() {
+        DigitalPrintConfirmDialog digitalPrintDialog = new DigitalPrintConfirmDialog(this);
+        digitalPrintDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        ImageView digitalPrintImageView = digitalPrintDialog.findViewById(R.id.EdigitaleConfirme);
+        TextView messageTextView = digitalPrintDialog.findViewById(R.id.messageDigitaleConfirmer);
         cancellationSignal = new CancellationSignal();
         handler = new Handler();
         runnable = new Runnable() {
             @Override
             public void run() {
-                // Redemander à l'utilisateur de Toucher le capteur d'empreinte digitale
-                digitaleConfirmer.setImageResource(R.drawable.vector_purple2_200_digitale);
-                messageConfirme.setText("Touchez le capteur d' empreinte");
+                digitalPrintImageView.setImageResource(R.drawable.vector_purple2_200_digitale);
+                messageTextView.setText(R.string.touch_the_fingerprint_sensor);
             }
         };
-        activer = new Runnable() {
+        mActif = new Runnable() {
             @Override
             public void run() {
                 mDigitalPrintTable.insert("0");
-                empreinteCusto.cancel();
+                digitalPrintDialog.cancel();
                 mRadioGroup.setVisibility(View.VISIBLE);
             }
         };
@@ -170,26 +169,26 @@ public class FingerPrintActivity extends AppCompatActivity {
             authenticationCallback = new FingerprintManager.AuthenticationCallback() {
                 @Override
                 public void onAuthenticationError(int errorCode, CharSequence errString) {
-                    Toast.makeText(FingerPrintActivity.this, "Authentication error: " + errString, Toast.LENGTH_SHORT).show();
+                    Log.e("errorFingerPrint",(String) errString);
                 }
 
                 @Override
                 public void onAuthenticationHelp(int helpCode, CharSequence helpString) {
-                    Toast.makeText(FingerPrintActivity.this, "Authentication help: " + helpString, Toast.LENGTH_SHORT).show();
+                    Log.e("errorFingerPrint",(String) helpString);
                 }
 
                 @Override
                 public void onAuthenticationSucceeded(FingerprintManager.AuthenticationResult result) {
-                    digitaleConfirmer.setImageResource(R.drawable.vector_vert_success);
+                    digitalPrintImageView.setImageResource(R.drawable.vector_vert_success);
                     mDigitalPrintTable.onCreate(mDb);
                     mDigitalPrintTable.insert("0");
-                    handler.postDelayed(activer,1000);
+                    handler.postDelayed(mActif,1000);
                 }
 
                 @Override
                 public void onAuthenticationFailed() {
-                    digitaleConfirmer.setImageResource(R.drawable.vector_rouge_error);
-                    messageConfirme.setText("Empreinte non reconnue");
+                    digitalPrintImageView.setImageResource(R.drawable.vector_rouge_error);
+                    messageTextView.setText(R.string.unrecognized_fingerprint);
                     handler.postDelayed(runnable,1000);
                 }
             };
@@ -198,10 +197,10 @@ public class FingerPrintActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             fingerprintManager.authenticate(null, cancellationSignal, 0, authenticationCallback, null);
         }
-        empreinteCusto.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
-        empreinteCusto.build();
+        digitalPrintDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        digitalPrintDialog.build();
     }
-    private void DesoleDialog(){
+    private void sorryDialog(){
         SucceSuggesionDialog succeSuggesionDialog = new SucceSuggesionDialog(this);
         succeSuggesionDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         succeSuggesionDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
