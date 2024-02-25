@@ -7,7 +7,7 @@
     tools:context="com.ninotech.fabi.controleur.activity.LoginActivity">
 
     <RelativeLayout
-        android:id="@+id/block_login"
+        android:id="@+id/relative_layout_digital_print_form"
         style="@style/match_wrap"
         android:layout_above="@+id/edit_text_login_id_number"
         android:layout_alignParentTop="true"

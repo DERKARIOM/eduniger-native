@@ -11,29 +11,29 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.CancellationSignal;
 import android.os.Handler;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.ninotech.fabi.model.table.EmpreiteTable;
-import com.ninotech.fabi.controleur.custo.StatusBarCusto;
+import com.ninotech.fabi.model.table.DigitalPrintTable;
 import com.ninotech.fabi.R;
 
-public class EmpreinteActivity extends AppCompatActivity {
+import java.util.Objects;
+
+public class DigitalPrintActivity extends AppCompatActivity {
     private FingerprintManager fingerprintManager;
     private CancellationSignal cancellationSignal;
-    private ImageView mEdigitale;
-    private TextView mMessageDigitale;
+    private ImageView mDigitalPrintImageView;
+    private TextView mMessageTextView;
     private Handler handler;
     private Runnable runnable;
     private Runnable home;
-    private EmpreiteTable mEmpreiteTable;
+    private DigitalPrintTable mDigitalPrintTable;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_empreinte);
-        getSupportActionBar().hide();
-        StatusBarCusto statusBarCusto = new StatusBarCusto(this,getWindow());
+        setContentView(R.layout.activity_digital_print);
+        Objects.requireNonNull(getSupportActionBar()).hide();
         handler = new Handler();
         runnable = new Runnable() {
             @Override
@@ -49,23 +49,23 @@ public class EmpreinteActivity extends AppCompatActivity {
             }
         };
 
-        mEdigitale = findViewById(R.id.Edigitale);
-        mEmpreiteTable = new EmpreiteTable(this);
-        mMessageDigitale = findViewById(R.id.messageDigitale);
+        mDigitalPrintImageView = findViewById(R.id.image_view_activity_digital_print);
+        mDigitalPrintTable = new DigitalPrintTable(this);
+        mMessageTextView = findViewById(R.id.text_view_activity_digital_print_message);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             fingerprintManager = (FingerprintManager) getSystemService(FINGERPRINT_SERVICE);
         }
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.USE_FINGERPRINT) != PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(this, "autorisation non accorde", Toast.LENGTH_SHORT).show();
+            Log.e("ErrDigitalPrint",getString(R.string.authorization_not_granted));
             return;
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (!fingerprintManager.isHardwareDetected()) {
-                Toast.makeText(this, "Pas d' empreintes numerique inscrites", Toast.LENGTH_SHORT).show();
+                Log.e("ErrDigitalPrint",getString(R.string.no_digital_fingerprints_listed));
             } else if (!fingerprintManager.hasEnrolledFingerprints()) {
-                Toast.makeText(this, "Pas d' empreintes digital inscrites", Toast.LENGTH_SHORT).show();
+                Log.e("ErrDigitalPrint",getString(R.string.no_registered_fingerprints));
             } else {
                 startFingerprintAuth();
             }
@@ -79,26 +79,26 @@ public class EmpreinteActivity extends AppCompatActivity {
             authenticationCallback = new FingerprintManager.AuthenticationCallback() {
                 @Override
                 public void onAuthenticationError(int errorCode, CharSequence errString) {
-                    Toast.makeText(EmpreinteActivity.this, "Authentication error: " + errString, Toast.LENGTH_SHORT).show();
+                    Log.e("ErrDigitalPrint", (String) errString);
                 }
 
                 @Override
                 public void onAuthenticationHelp(int helpCode, CharSequence helpString) {
-                    Toast.makeText(EmpreinteActivity.this, "Authentication help: " + helpString, Toast.LENGTH_SHORT).show();
+                    Log.e("ErrDigitalPrint", (String) helpString);
                 }
 
                 @Override
                 public void onAuthenticationSucceeded(FingerprintManager.AuthenticationResult result) {
-                    mEdigitale.setImageResource(R.drawable.vector_vert_success);
-                    mMessageDigitale.setText("");
-                    mEmpreiteTable.onUpdate("1");
+                    mDigitalPrintImageView.setImageResource(R.drawable.vector_vert_success);
+                    mMessageTextView.setText("");
+                    mDigitalPrintTable.onUpdate("1");
                     handler.postDelayed(home, 1);
                 }
 
                 @Override
                 public void onAuthenticationFailed() {
-                    mEdigitale.setImageResource(R.drawable.vector_rouge_error);
-                    mMessageDigitale.setText("Empreinte non reconnue");
+                    mDigitalPrintImageView.setImageResource(R.drawable.vector_rouge_error);
+                    mMessageTextView.setText(R.string.unrecognized_fingerprint);
                     handler.postDelayed(runnable, 1000);
                 }
             };
@@ -118,12 +118,12 @@ public class EmpreinteActivity extends AppCompatActivity {
     }
     private void authenticate()
     {
-        mEdigitale.setImageResource(R.drawable.vector_purple2_200_digitale);
-        mMessageDigitale.setText("Toucher le capteur d'empreinte");
+        mDigitalPrintImageView.setImageResource(R.drawable.vector_purple2_200_digitale);
+        mMessageTextView.setText(R.string.touch_the_fingerprint_sensor);
     }
     private void Home()
     {
-        Intent mainA = new Intent(EmpreinteActivity.this, MainActivity.class);
+        Intent mainA = new Intent(DigitalPrintActivity.this, MainActivity.class);
         startActivity(mainA);
         finish();
     }

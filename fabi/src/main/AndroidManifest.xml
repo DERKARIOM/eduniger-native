@@ -44,6 +44,10 @@
             android:screenOrientation="portrait"
             android:exported="false" />
         <activity
+            android:name="com.ninotech.fabi.controleur.activity.DigitalPrintActivity"
+            android:screenOrientation="portrait"
+            android:exported="false" />
+        <activity
             android:name="com.ninotech.fabi.controleur.activity.CategoryActivity"
             android:exported="false"
             android:screenOrientation="portrait"

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/match_parent_all"
+    android:background="@color/white"
+    tools:context="com.ninotech.fabi.controleur.activity.DigitalPrintActivity">
+    <RelativeLayout
+        android:id="@+id/relative_layout_digital_print_form"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/image_view_activity_digital_print"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/img_digital_print"
+        android:layout_marginBottom="80dp">
+
+
+    </RelativeLayout>
+    <ImageView
+        android:id="@+id/image_view_activity_digital_print"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/vector_purple2_200_digitale"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="50dp"
+        android:layout_above="@id/text_view_activity_digital_print_message"
+        />
+    <TextView
+        android:id="@+id/text_view_activity_digital_print_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/TextAideDigitale"
+        android:layout_marginBottom="160dp"
+        android:layout_centerHorizontal="true"
+        android:text="Touchez le capteur d'empreinte"
+        />
+    <TextView
+        android:id="@+id/TextAideDigitale"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:text="Besoin d'aide"
+        android:textSize="15dp" />
+
+</RelativeLayout>

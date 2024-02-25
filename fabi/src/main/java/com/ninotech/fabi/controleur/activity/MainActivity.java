@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
+import android.util.Log;
 import android.view.MenuItem;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,13 +25,16 @@ import com.ninotech.fabi.R;
 import com.ninotech.fabi.model.service.NotificationService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+import com.ninotech.fabi.model.table.DigitalPrintTable;
+
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        getSupportActionBar().hide();
+        Objects.requireNonNull(getSupportActionBar()).hide();
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
         /* Initialisation des attributs membre */
@@ -51,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
         mAssistanceFragment = new AssistanceFragment();
         LibraryFragment libraryFragment = new LibraryFragment();
         MenuItem menuItem = toolbar.getMenu().findItem(R.id.menuHomeNotification);
+        mDigitalPrintTable = new DigitalPrintTable(this);
         Intent reservationService = new Intent(this, NotificationService.class);
         mAccount = new Account();
         /* Detection de reseau */
@@ -69,6 +74,18 @@ public class MainActivity extends AppCompatActivity {
             startActivity(login);
             finish();
         }
+        try {
+            if(mDigitalPrintTable.getPass().equals("0"))
+            {
+                Intent emprient = new Intent(MainActivity.this, DigitalPrintActivity.class);
+                startActivity(emprient);
+                finish();
+            }
+            else
+                mDigitalPrintTable.onUpdate("0");
+        }catch (Exception e){
+            Log.e("errorMainActivity",e.getMessage());
+        };
 
         /* ########## Gestion du menu principale ########## */
 
@@ -203,4 +220,5 @@ public class MainActivity extends AppCompatActivity {
     private HomeFragment mHomeFragment = new HomeFragment();
     private AssistanceFragment mAssistanceFragment = new AssistanceFragment();
     private Account mAccount;
+    private DigitalPrintTable mDigitalPrintTable;
 }

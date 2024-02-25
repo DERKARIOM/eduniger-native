@@ -24,7 +24,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.ninotech.fabi.controleur.dialog.EmpreinteConfirmerDialog;
-import com.ninotech.fabi.model.table.EmpreiteTable;
+import com.ninotech.fabi.model.table.DigitalPrintTable;
 import com.ninotech.fabi.controleur.dialog.SucceSuggesionDialog;
 import com.ninotech.fabi.R;
 
@@ -32,7 +32,7 @@ public class FingerPrintActivity extends AppCompatActivity {
 
     private FingerprintManager fingerprintManager;
     private CancellationSignal cancellationSignal;
-    private EmpreiteTable mEmpreiteTable;
+    private DigitalPrintTable mDigitalPrintTable;
     private Switch mSwitch;
     private SQLiteDatabase mDb;
     private Handler handler;
@@ -47,11 +47,11 @@ public class FingerPrintActivity extends AppCompatActivity {
         getSupportActionBar().hide();
         //StatusBarCusto statusBarCusto = new StatusBarCusto(this,getWindow());
         mDb = openOrCreateDatabase("data.db",MODE_PRIVATE,null);
-        mEmpreiteTable = new EmpreiteTable(this);
+        mDigitalPrintTable = new DigitalPrintTable(this);
         mSwitch = findViewById(R.id.switch1);
         mRadioGroup = findViewById(R.id.RadioGroup);
         try {
-            Toast.makeText(this,mEmpreiteTable.getPasse(), Toast.LENGTH_SHORT);
+            Toast.makeText(this, mDigitalPrintTable.getPass(), Toast.LENGTH_SHORT);
             mSwitch.setChecked(true);
             mRadioGroup.setVisibility(View.VISIBLE);
         }catch (Exception e){ mSwitch.setChecked(false);}
@@ -74,7 +74,7 @@ public class FingerPrintActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    mEmpreiteTable.onUpgrade(mDb,1,1);
+                    mDigitalPrintTable.onUpgrade(mDb,1,1);
                     Toast.makeText(FingerPrintActivity.this, "Desactiver", Toast.LENGTH_SHORT).show();
                     mRadioGroup.setVisibility(View.INVISIBLE);
                 }
@@ -160,7 +160,7 @@ public class FingerPrintActivity extends AppCompatActivity {
         activer = new Runnable() {
             @Override
             public void run() {
-                mEmpreiteTable.insert("0");
+                mDigitalPrintTable.insert("0");
                 empreinteCusto.cancel();
                 mRadioGroup.setVisibility(View.VISIBLE);
             }
@@ -181,8 +181,8 @@ public class FingerPrintActivity extends AppCompatActivity {
                 @Override
                 public void onAuthenticationSucceeded(FingerprintManager.AuthenticationResult result) {
                     digitaleConfirmer.setImageResource(R.drawable.vector_vert_success);
-                    mEmpreiteTable.onCreate(mDb);
-                    mEmpreiteTable.insert("0");
+                    mDigitalPrintTable.onCreate(mDb);
+                    mDigitalPrintTable.insert("0");
                     handler.postDelayed(activer,1000);
                 }
 
