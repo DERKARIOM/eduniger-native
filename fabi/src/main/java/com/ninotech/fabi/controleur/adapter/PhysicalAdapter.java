@@ -95,7 +95,7 @@ public class PhysicalAdapter extends RecyclerView.Adapter<PhysicalAdapter.MyView
         }
         void display(Physical physical){
             Picasso.with(itemView.getContext())
-                    .load(itemView.getResources().getString(R.string.ip_server) + "couverture/" + physical.getBlanket())
+                    .load(itemView.getResources().getString(R.string.ip_server) + "ressources/cover/" + physical.getBlanket())
                     .placeholder(R.drawable.img_default_livre)
                     .error(R.drawable.img_default_livre)
                     .transform(new RoundedTransformation(15,4))

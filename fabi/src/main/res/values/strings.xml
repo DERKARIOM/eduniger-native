@@ -199,5 +199,6 @@
     <string name="no_registered_fingerprints">Pas d\' empreintes digital inscrites</string>
     <string name="unrecognized_fingerprint">Empreinte non reconnue</string>
     <string name="touch_the_fingerprint_sensor">Toucher le capteur d\'empreinte</string>
+    <string name="no_book_loand">Aucun livre emprunté</string>
 
 </resources>

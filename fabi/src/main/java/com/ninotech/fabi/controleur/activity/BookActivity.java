@@ -134,7 +134,7 @@ public class BookActivity extends AppCompatActivity {
                     mAudio = intent.getStringExtra("intent_adapter_tones_title");
                     mTones.setNumber(intent.getIntExtra("intent_adapter_tones_position",0));
                     mMediaPlayer = new MediaPlayer();
-                    url = getString(R.string.ip_server) + "audio/" + mTones.getAudio();
+                    url = getString(R.string.ip_server) + "ressources/audio/" + mTones.getAudio();
                     try {
                         if(positionTmp != mTones.getNumber())
                             mListTones.get(positionTmp).setPlaying(false);
@@ -500,7 +500,7 @@ public class BookActivity extends AppCompatActivity {
                     mBook.setNumberNoLikes(Integer.parseInt(jsonObject.getString("numberNoLike")));
                     mBook.setNumberSubscribe(Integer.parseInt(jsonObject.getString("numberSubscribe")));
                     Picasso.with(getApplicationContext())
-                            .load(getString(R.string.ip_server) + "couverture/" + mBook.getBlanket())
+                            .load(getString(R.string.ip_server) + "ressources/cover/" + mBook.getBlanket())
                             .placeholder(R.drawable.img_default_livre)
                             .error(R.drawable.img_default_livre)
                             .transform(new RoundedTransformation(15,4))

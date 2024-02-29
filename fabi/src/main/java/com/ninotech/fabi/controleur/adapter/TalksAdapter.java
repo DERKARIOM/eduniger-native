@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.R;
+import com.ninotech.fabi.controleur.animation.RoundedTransformation;
 import com.ninotech.fabi.model.data.Talks;
 import com.squareup.picasso.Picasso;
 
@@ -83,9 +84,11 @@ public class TalksAdapter extends RecyclerView.Adapter<TalksAdapter.MyViewHolder
         }
         void display(Talks talks){
             Picasso.with(itemView.getContext())
-                    .load(itemView.getResources().getString(R.string.ip_server) + "profile/" + talks.getProfil())
+                    .load(itemView.getResources().getString(R.string.ip_server) + "ressources/profile/" + talks.getProfil())
                     .placeholder(R.drawable.img_default_livre)
                     .error(R.drawable.img_default_livre)
+                    .transform(new RoundedTransformation(10000,4))
+                    .resize(200,200)
                     .into(mPhotoProfilImageView);
             mUsernameTextView.setText(talks.getUsername());
             mMessageTextView.setText(talks.getMessage());

@@ -1,22 +1,18 @@
 package com.ninotech.fabi.controleur.adapter;
-
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.R;
-import com.ninotech.fabi.model.data.Chat;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> {
-    List<Chat> mListDisscution;
+public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder> {
+    List<String> mListNote;
 
     public int getPosition() {
         return mPosition;
@@ -27,19 +23,19 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
     }
 
     private int mPosition;
-    public ChatAdapter(List<Chat> listDisscution) {
-        mListDisscution = listDisscution;
+    public ImageAdapter(List<String> listNote) {
+        mListNote = listNote;
     }
     @Override
-    public ChatAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ImageAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View view = layoutInflater.inflate(R.layout.adapter_chat,parent,false);
+        View view = layoutInflater.inflate(R.layout.adapter_image,parent,false);
         return new MyViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        Chat item = mListDisscution.get(position);
+        String item = mListNote.get(position);
         int i = position;
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -49,33 +45,30 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
                 return true;
             }
         });
-        holder.display(mListDisscution.get(position));
+        holder.display(mListNote.get(position));
 
     }
     @Override
     public int getItemCount() {
-        return mListDisscution.size();
+        return mListNote.size();
     }
 
-    public Chat getItem(int position) {
-        return mListDisscution.get(position);
+    public String getItem(int position) {
+        return mListNote.get(position);
     }
 
     public void Remove(int position){
-        mListDisscution.remove(position);
+        mListNote.remove(position);
         notifyItemRemoved(position);
     }
 
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener{
-        private ImageView mProfile;
-        private TextView mNom;
-        private TextView mMessage;
+        private TextView mTextView;
         MyViewHolder(View itemView){
             super(itemView);
-            mProfile = itemView.findViewById(R.id.chatProfile);
-            mNom = itemView.findViewById(R.id.chatNom);
-            mMessage = itemView.findViewById(R.id.chatMessage);
+            mTextView = itemView.findViewById(R.id.textWellcom);
+            //mButton = (Button) itemView.findViewById(R.id.bttAnex);
             itemView.setOnCreateContextMenuListener(this);
         }
         @Override
@@ -84,14 +77,8 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
 //            menu.add(Menu.NONE,R.id.suppNotif,Menu.NONE,"Supprimer");
 //            menu.add(Menu.NONE,R.id.inportanteNotif,Menu.NONE,"Message importants");
         }
-        void display(Chat chat){
-            Picasso.with(itemView.getContext())
-                    .load(itemView.getContext().getString(R.string.ip_server) + "ressources/profile/" + chat.getProfile())
-                    .placeholder(R.drawable.img_default_livre)
-                    .error(R.drawable.img_default_livre)
-                    .into(mProfile);
-            mNom.setText(chat.getUserName());
-            mMessage.setText(chat.getMessage());
+        void display(String ue){
+            mTextView.setText(ue);
         }
     }
 }

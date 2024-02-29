@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.ninotech.fabi.controleur.adapter.ImageAdapter;
 import com.ninotech.fabi.model.data.Physical;
 import com.ninotech.fabi.controleur.adapter.PhysicalAdapter;
 import com.ninotech.fabi.R;
@@ -32,18 +33,24 @@ public class PhysicalFragment extends Fragment {
         mLoandTable = new LoandTable(getContext());
         Cursor cursor = mLoandTable.getData();
         cursor.moveToFirst();
+
         try {
             do {
                 mList.add(new Physical(cursor.getString(2),cursor.getString(3),cursor.getString(4),cursor.getString(5),percentage(converterDate(cursor.getString(4)),converterDate(cursor.getString(5)),getNowDate())));
             }while (cursor.moveToNext());
+            mPhysicalAdapter = new PhysicalAdapter(mList);
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+            mRecyclerView.setAdapter(mPhysicalAdapter);
         }catch (Exception e)
         {
+            mImageList = new ArrayList<>();
+            mImageList.add("Aucun livre emprunté");
+            mImageAdapter = new ImageAdapter(mImageList);
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+            mRecyclerView.setAdapter(mImageAdapter);
             Log.e("errPhysicLoand",e.getMessage());
         }
 
-        mPhysicalAdapter = new PhysicalAdapter(mList);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mRecyclerView.setAdapter(mPhysicalAdapter);
         return view;
     }
     public long percentage(long startDate , long endDate , long nowDate)
@@ -83,5 +90,8 @@ public class PhysicalFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private PhysicalAdapter mPhysicalAdapter;
     private ArrayList<Physical> mList;
+    private ArrayList<String> mImageList;
     private LoandTable mLoandTable;
+    private ImageAdapter mImageAdapter;
+
 }

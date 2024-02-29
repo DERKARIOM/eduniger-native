@@ -96,7 +96,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.MyViewHolder> 
         }
         void display(Book book){
             Picasso.with(itemView.getContext())
-                    .load(itemView.getResources().getString(R.string.ip_server) + "couverture/" + book.getBlanket())
+                    .load(itemView.getResources().getString(R.string.ip_server) + "ressources/cover/" + book.getBlanket())
                     .placeholder(R.drawable.img_default_livre)
                     .error(R.drawable.img_default_livre)
                     .transform(new RoundedTransformation(15,4))
