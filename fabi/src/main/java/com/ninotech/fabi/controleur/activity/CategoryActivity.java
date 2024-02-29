@@ -37,7 +37,7 @@ public class CategoryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_category);
         Objects.requireNonNull(getSupportActionBar()).hide();
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-        mToolbar = findViewById(R.id.toolbar2);
+        mToolbar = findViewById(R.id.relative_layout_toolbar);
         mSession = new Session(this);
         mRecyclerView = findViewById(R.id.recylerCategorie2);
         mList = new ArrayList<>();

@@ -5,31 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.ninotech.fabi.controleur.activity.CategoryActivity">
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="20dp"
-        android:id="@+id/BtoolbarCategorie">
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:menu="@menu/menu_home"
-            app:title="Literature"
-            app:logo="@drawable/vector_back"
-            android:layout_centerVertical="true"
-            app:titleMarginStart="15dp"
-            android:paddingStart="20dp"
-            app:titleTextColor="@color/black3"
-            android:layout_alignParentTop="true"
-            app:titleTextAppearance="@style/toolbar"
-            />
-    </RelativeLayout>
+    <include
+        layout="@layout/toolbar_simple"
+        />
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recylerCategorie2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/BtoolbarCategorie"
+        android:layout_below="@+id/relative_layout_toolbar"
         />
 </RelativeLayout>
