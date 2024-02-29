@@ -2,13 +2,11 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    style="@style/match_parent_all"
     tools:context="com.ninotech.fabi.controleur.activity.SuggestionActivity">
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbarSuggestion"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:id="@+id/toolbar_activity_suggestion"
+        style="@style/match_wrap"
         app:logo="@drawable/vector_back"
         app:title="Suggestion"
         android:layout_centerVertical="true"
@@ -16,31 +14,28 @@
         android:paddingStart="20dp"
         app:titleTextColor="@color/black3"
         android:layout_alignParentTop="true"
-        app:titleTextAppearance="@style/CustoTollbar"
-        />
+        app:titleTextAppearance="@style/toolbar"
+        tools:ignore="RtlSymmetry" />
     <ScrollView
-        android:layout_below="@+id/toolbarSuggestion"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar_activity_suggestion"
+        style="@style/match_parent_all"
         android:layout_centerInParent="true"
         >
         <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            style="@style/match_wrap">
             <LinearLayout
+                android:id="@+id/linear_layout_activity_suggestion_image"
+                style="@style/wrap_content_all"
                 android:layout_marginTop="10dp"
-                android:id="@+id/imgSuggestion"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 >
                 <ImageView
-
                     android:layout_width="wrap_content"
                     android:layout_height="200dp"
-                    android:src="@drawable/img_message_suggestion"/>
+                    android:src="@drawable/img_message_suggestion"
+                    android:contentDescription="@string/todo" />
             </LinearLayout>
             <LinearLayout
-                android:layout_below="@id/imgSuggestion"
+                android:layout_below="@id/linear_layout_activity_suggestion_image"
                 android:id="@+id/BlockJuggestion"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -49,7 +44,7 @@
                 android:layout_marginBottom="40dp"
                 android:orientation="vertical">
                 <Spinner
-                    android:id="@+id/ObjetsJuggestion"
+                    android:id="@+id/spinner_activity_suggestion_object"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
@@ -62,72 +57,65 @@
                     android:backgroundTint="@color/purple_200"
                     android:padding="10dp"/>
                 <ScrollView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    style="@style/wrap_content_all"
+                    tools:ignore="NestedScrolling">
 
                     <EditText
-                        android:id="@+id/Suggestion"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:id="@+id/edit_text_activity_suggestion_message"
+                        style="@style/match_wrap"
                         android:layout_marginStart="30dp"
                         android:layout_marginTop="20dp"
                         android:backgroundTint="@color/purple_200"
                         android:layout_marginEnd="30dp"
                         android:fontFamily="@font/apple1"
                         android:gravity="top"
-                        android:hint="Distes-nous comment nous pouvons amélioré l'application fastpv"
+                        android:hint="@string/suggestion_hint_message"
                         android:inputType="textMultiLine"
                         android:minLines="4"
                         android:padding="10dp"
-                        android:scrollbars="vertical" />
+                        android:scrollbars="vertical"
+                        android:autofillHints="" />
                 </ScrollView>
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    style="@style/match_wrap"
                     android:layout_marginTop="25dp"
                     android:layout_marginEnd="5dp"
                     android:layout_marginStart="25dp"
                     >
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        style="@style/wrap_content_all"
                         android:fontFamily="@font/apple1"
                         android:textColor="@color/black"
-                        android:text="Inclure les information de l' appariel ? (facultatif)"
+                        android:text="@string/information_phone"
                         />
                     <CheckBox
-                        android:id="@+id/infoPhone"
+                        android:id="@+id/check_box_activity_suggestion_information_phone"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"/>
                 </LinearLayout>
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    style="@style/wrap_content_all"
                     android:layout_marginStart="25dp"
                     android:layout_marginTop="5dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="20dp"
                     android:fontFamily="@font/apple1"
-                    android:text="Les details techniques tels que le modele de votre appareil peuvent nous aide a repondre a votre question" />
+                    android:text="@string/details_information_phone" />
 
                 <TextView
-                    android:id="@+id/TextErrSugg"
+                    android:id="@+id/text_view_activity_suggestion_error"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_above="@id/button_login_connection"
-                    android:layout_centerInParent="true"
                     android:gravity="center"
                     android:layout_marginBottom="10dp"
                     android:text=""
                     android:textColor="@color/rouge"
-                    android:textSize="12dp" />
+                    android:textSize="@dimen/size_sub_title" />
                 <RelativeLayout
                     android:id="@+id/BlockButtonConnect"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_above="@+id/text_view_login_pass_register"
+                    style="@style/wrap_content_all"
                     android:layout_marginStart="30dp"
                     android:layout_marginTop="20dp"
                     android:layout_marginBottom="10dp"
@@ -135,7 +123,7 @@
                     >
 
                     <ProgressBar
-                        android:id="@+id/progress_circularSuggestion"
+                        android:id="@+id/progress_bar_activity_suggestion_connection"
                         style="@android:style/Widget.Holo.ProgressBar.Small"
                         android:layout_width="60dp"
                         android:layout_height="60dp"
@@ -145,15 +133,14 @@
                         android:elevation="5dp"
                         android:padding="20dp"
                         android:visibility="invisible"
-                        android:progressDrawable="@drawable/forme_circulaire_bar_connexion" />
+                        android:progressDrawable="@drawable/form_circular_bar_connexion" />
                     <Button
-                        android:id="@+id/EnvoyerJuggestion"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:id="@+id/button_activity_suggestion_send"
+                        style="@style/match_wrap"
                         android:layout_centerInParent="true"
-                        android:background="@drawable/forme_purple_200_radius_10dp"
+                        android:background="@drawable/form_purple_200_radius_10dp"
                         android:textAllCaps="false"
-                        android:text="Envoyer" />
+                        android:text="@string/send" />
                 </RelativeLayout>
             </LinearLayout>
         </RelativeLayout>

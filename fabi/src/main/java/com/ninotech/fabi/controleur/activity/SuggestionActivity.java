@@ -5,6 +5,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -17,11 +18,15 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.ninotech.fabi.controleur.dialog.SimpleOkDialog;
+import com.ninotech.fabi.model.data.Phone;
+import com.ninotech.fabi.model.data.Suggestion;
 import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.controleur.dialog.SucceSuggesionDialog;
 import com.ninotech.fabi.R;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -34,33 +39,31 @@ public class SuggestionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_suggestion);
-        getSupportActionBar().hide();
-        // StatusBarCusto statusBarCusto = new StatusBarCusto(this,getWindow());
-        // Activer le bouton de retour de l'action barre
+        Objects.requireNonNull(getSupportActionBar()).hide();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mSession = new Session(this);
-        mEnvoyerSuggestion = findViewById(R.id.EnvoyerJuggestion);
-        mObjetJuggestion = findViewById(R.id.ObjetsJuggestion);
-        mSuggestion = findViewById(R.id.Suggestion);
-        mErr = findViewById(R.id.TextErrSugg);
-        mPhone = findViewById(R.id.infoPhone);
-        mCirculaire = findViewById(R.id.progress_circularSuggestion);
-        mModel = Build.MODEL;
-        mVersion = Build.VERSION.RELEASE;
+        mSuggestionSendButton = findViewById(R.id.button_activity_suggestion_send);
+        mObjetSpinner = findViewById(R.id.spinner_activity_suggestion_object);
+        mMessageEditText = findViewById(R.id.edit_text_activity_suggestion_message);
+        mErrorTextView = findViewById(R.id.text_view_activity_suggestion_error);
+        CheckBox phoneCheckBox = findViewById(R.id.check_box_activity_suggestion_information_phone);
+        mConnectionProgressBar = findViewById(R.id.progress_bar_activity_suggestion_connection);
+        mPhone = new Phone(Build.MODEL,Build.VERSION.RELEASE);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.options_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mObjetJuggestion.setAdapter(adapter);
-        mEnvoyerSuggestion.setOnClickListener(new View.OnClickListener()  {
+        mObjetSpinner.setAdapter(adapter);
+        mSuggestionSendButton.setOnClickListener(new View.OnClickListener()  {
             @Override
             public void onClick(View view) {
-                if(mSuggestion.getText().toString().equals(""))
-                    mErr.setText("Veuillez remplir ces champs svp");
+                mSuggestion = new Suggestion(mSession.getIdNumber(),mObjetSpinner.getSelectedItem().toString(),mMessageEditText.getText().toString());
+                if(mSuggestion.getMessage().equals(""))
+                    mErrorTextView.setText(R.string.register_error_0000);
                 else
                 {
-                    mCirculaire.setVisibility(View.VISIBLE);
-                    mEnvoyerSuggestion.setText("");
-                    Http http = new Http();
-                    http.execute("http://192.168.43.1:2222/android/suggestion.php");
+                    mConnectionProgressBar.setVisibility(View.VISIBLE);
+                    mSuggestionSendButton.setText("");
+                    SuggestionSyn suggestionSyn = new SuggestionSyn();
+                    suggestionSyn.execute(getString(R.string.ip_server_android ) + "Suggestion.php",mSuggestion.getIdNumber(),mSuggestion.getObjet(),mSuggestion.getMessage(),mPhone.getModel(),mPhone.getVersion());
                 }
             }
         });
@@ -85,18 +88,18 @@ public class SuggestionActivity extends AppCompatActivity {
         super.onBackPressed();
     }
 
-    private class Http extends AsyncTask<String,Void,String> {
+    private class SuggestionSyn extends AsyncTask<String,Void,String> {
         @Override
         protected String doInBackground(String... params) {
             try {
                 OkHttpClient client = new OkHttpClient();
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
-                        .addFormDataPart("matricule",mSession.getIdNumber())
-                        .addFormDataPart("objet", mObjetJuggestion.getSelectedItem().toString())
-                        .addFormDataPart("suggestion",mSuggestion.getText().toString())
-                        .addFormDataPart("model",mModel)
-                        .addFormDataPart("version",mVersion)
+                        .addFormDataPart("idNumber",params[1])
+                        .addFormDataPart("objet", params[2])
+                        .addFormDataPart("message", params[3])
+                        .addFormDataPart("model",params[4])
+                        .addFormDataPart("version",params[5])
                         .build();
                 Request request = new Request.Builder()
                         .url(params[0])
@@ -104,15 +107,16 @@ public class SuggestionActivity extends AppCompatActivity {
                         .build();
                 try {
                     Response response = client.newCall(request).execute();
+                    assert response.body() != null;
                     return response.body().string();
                 }catch (IOException e)
                 {
-                   // Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.e("errorSuggestionActivity",e.getMessage());
                 }
 
             }catch (Exception e)
             {
-                //Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.e("errorSuggestionActivity",e.getMessage());
             }
             return null;
         }
@@ -123,41 +127,42 @@ public class SuggestionActivity extends AppCompatActivity {
             {
                 if(response.equals("true"))
                 {
-                    SucceSuggestionDialog();
-                    mCirculaire.setVisibility(View.INVISIBLE);
-                    mEnvoyerSuggestion.setText("Envoyer");
+                    SuccessSuggestionDialog();
+                    mConnectionProgressBar.setVisibility(View.INVISIBLE);
+                    mSuggestionSendButton.setText(R.string.send);
                 }
             }
             else
             {
-                mErr.setText("Aucune conexion");
-                mCirculaire.setVisibility(View.INVISIBLE);
-                mEnvoyerSuggestion.setText("Envoyer");
+                mErrorTextView.setText(R.string.no_connection);
+                mConnectionProgressBar.setVisibility(View.INVISIBLE);
+                mSuggestionSendButton.setText(R.string.send);
             }
 
         }
     }
-    private void SucceSuggestionDialog(){
-        SucceSuggesionDialog succeSuggesionDialog = new SucceSuggesionDialog(this);
-        succeSuggesionDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        succeSuggesionDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
-        TextView ok = succeSuggesionDialog.findViewById(R.id.text_view_dialog_simple_ok);
-        ok.setOnClickListener(new View.OnClickListener() {
+    private void SuccessSuggestionDialog(){
+        SimpleOkDialog simpleOkDialog = new SimpleOkDialog(this);
+        simpleOkDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        simpleOkDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        TextView okTextView = simpleOkDialog.findViewById(R.id.text_view_dialog_simple_ok);
+        TextView messageTextView = simpleOkDialog.findViewById(R.id.text_view_dialog_simple_ok_message);
+        messageTextView.setText(R.string.suggestion_message_dialog);
+        okTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mSuggestion.setText("");
-                succeSuggesionDialog.cancel();
+                mMessageEditText.setText("");
+                simpleOkDialog.cancel();
             }
         });
-        succeSuggesionDialog.build();
+        simpleOkDialog.build();
     }
-    private Button mEnvoyerSuggestion;
-    private EditText mSuggestion;
+    private Button mSuggestionSendButton;
+    private EditText mMessageEditText;
+    private Suggestion mSuggestion;
     private Session mSession;
-    private Spinner mObjetJuggestion;
-    private TextView mErr;
-    private String mModel;
-    private String mVersion;
-    private CheckBox mPhone;
-    private ProgressBar mCirculaire;
+    private Spinner mObjetSpinner;
+    private TextView mErrorTextView;
+    private Phone mPhone;
+    private ProgressBar mConnectionProgressBar;
 }

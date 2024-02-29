@@ -45,7 +45,7 @@
         <item name="android:elevation">5dp</item>
         <item name="android:padding">20dp</item>
         <item name="android:visibility">invisible</item>
-        <item name="android:progressDrawable">@drawable/forme_circulaire_bar_connexion</item>
+        <item name="android:progressDrawable">@drawable/form_circular_bar_connexion</item>
         <item name="android:layout_marginStart">40dp</item>
     </style>
 
@@ -54,7 +54,7 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_centerInParent">true</item>
-        <item name="android:background">@drawable/forme_purple_200_radius_10dp</item>
+        <item name="android:background">@drawable/form_purple_200_radius_10dp</item>
         <item name="android:text">@string/button_text_connection</item>
     </style>
 
@@ -131,7 +131,7 @@
     <style name="ColorMatier">
         <item name="android:textColor">@color/black</item>
     </style>
-    <style name="CustoTollbar">
+    <style name="toolbar">
         <item name="android:textSize">25dp</item>
         <item name="android:fontFamily">@font/apple1</item>
     </style>

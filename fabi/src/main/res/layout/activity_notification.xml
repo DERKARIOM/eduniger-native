@@ -18,7 +18,7 @@
         android:paddingStart="20dp"
         app:titleTextColor="@color/black3"
         android:layout_alignParentTop="true"
-        app:titleTextAppearance="@style/CustoTollbar"
+        app:titleTextAppearance="@style/toolbar"
         />
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyler2"
