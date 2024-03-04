@@ -1134,7 +1134,7 @@ public class BookActivity extends AppCompatActivity {
                             throw new RuntimeException(e);
                         }
                     }
-                    url = getString(R.string.ip_server) + "audio/" + mTones.getAudio();
+                    url = getString(R.string.ip_server) + "ressources/audio/" + mTones.getAudio();
                     try {
                         mMediaPlayer.setDataSource(url);
                         mMediaPlayer.prepare();
