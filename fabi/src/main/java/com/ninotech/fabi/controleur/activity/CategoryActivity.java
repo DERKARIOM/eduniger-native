@@ -1,10 +1,15 @@
 package com.ninotech.fabi.controleur.activity;
 
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
@@ -12,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.controleur.adapter.BookAdapter;
+import com.ninotech.fabi.controleur.custo.StatusBarCusto;
 import com.ninotech.fabi.model.data.Book;
 import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.R;
@@ -35,18 +41,28 @@ public class CategoryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category);
-        Objects.requireNonNull(getSupportActionBar()).hide();
+       // Objects.requireNonNull(getSupportActionBar()).hide();
+
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-        mToolbar = findViewById(R.id.relative_layout_toolbar);
+//        mToolbar = findViewById(R.id.toolbar_simple);
         mSession = new Session(this);
         mRecyclerView = findViewById(R.id.recylerCategorie2);
         mList = new ArrayList<>();
         Intent intent = getIntent();
+        //setSupportActionBar(mToolbar);
+        ActionBar ab = getSupportActionBar();
+        assert ab != null;
+        ab.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.white)));
+        ab.setHomeAsUpIndicator(R.drawable.vector_back);
+        ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        ab.setCustomView(R.layout.custom_action_bar);
+        TextView actionBarTitle = ab.getCustomView().findViewById(R.id.action_bar_title);
+        ab.setDisplayHomeAsUpEnabled(true);
         mCategorie=null;
         if (intent != null && intent.hasExtra("intent_adapter_category_title")) {
             mCategorie = intent.getStringExtra("intent_adapter_category_title");
         }
-        mToolbar.setTitle(mCategorie);
+        actionBarTitle.setText(mCategorie);
         CategoryInSyn categoryInSyn = new CategoryInSyn();
         categoryInSyn.execute(getString(R.string.ip_server_android) + "CategoryIn.php",mSession.getIdNumber(),mCategorie);
     }
@@ -115,7 +131,20 @@ public class CategoryActivity extends AppCompatActivity {
 
         }
     }
-    private Toolbar mToolbar;
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_search, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            onBackPressed(); // Appel de la méthode onBackPressed() pour simuler le comportement du bouton retour
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
     private RecyclerView mRecyclerView;
     private BookAdapter mBookAdapter;
     private ArrayList<Book> mList;

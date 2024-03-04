@@ -5,13 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.ninotech.fabi.controleur.activity.CategoryActivity">
-    <include
-        layout="@layout/toolbar_simple"
-        />
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recylerCategorie2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/relative_layout_toolbar"
+        android:layout_marginTop="10dp"
         />
 </RelativeLayout>
