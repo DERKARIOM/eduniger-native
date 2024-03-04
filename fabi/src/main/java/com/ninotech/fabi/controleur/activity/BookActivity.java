@@ -174,13 +174,19 @@ public class BookActivity extends AppCompatActivity {
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            int currentTime = mMediaPlayer.getCurrentPosition();
-                            mSeekBar.setProgress(currentTime);
-                            String currentTimeString = String.format("%02d:%02d",
-                                    TimeUnit.MILLISECONDS.toMinutes(currentTime),
-                                    TimeUnit.MILLISECONDS.toSeconds(currentTime) -
-                                            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(currentTime)));
-                            mTimeNowTextView.setText(currentTimeString);
+                            try {
+                                int currentTime = mMediaPlayer.getCurrentPosition();
+                                mSeekBar.setProgress(currentTime);
+                                String currentTimeString = String.format("%02d:%02d",
+                                        TimeUnit.MILLISECONDS.toMinutes(currentTime),
+                                        TimeUnit.MILLISECONDS.toSeconds(currentTime) -
+                                                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(currentTime)));
+                                mTimeNowTextView.setText(currentTimeString);
+                            }catch (Exception e)
+                            {
+                                Log.e("errorBookActivity",e.getMessage());
+                            }
+
                         }
                     });
                 }
@@ -308,6 +314,13 @@ public class BookActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mMediaPlayer.release();
+        mTimer.cancel();
+        mMediaPlayer = null;
     }
 
     // Fonction pour enregistrer l'image localement
@@ -441,12 +454,12 @@ public class BookActivity extends AppCompatActivity {
             }
         }
     }
-@Override
-    public void onDestroy() {
-        super.onDestroy();
-        mTimer.cancel(); // Arrête le Timer lors de la destruction de l'activité
-        mMediaPlayer.release(); // Libère les ressources du MediaPlayer
-    }
+//@Override
+//    public void onDestroy() {
+//        super.onDestroy();
+//        mTimer.cancel(); // Arrête le Timer lors de la destruction de l'activité
+//        mMediaPlayer.release(); // Libère les ressources du MediaPlayer
+//    }
     private class RecoveryBook extends AsyncTask<String,Void,String> {
         @Override
         protected String doInBackground(String... params) {
