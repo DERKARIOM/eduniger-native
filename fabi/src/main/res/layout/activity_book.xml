@@ -238,14 +238,14 @@
                                 android:src="@drawable/vector_black3_stop"
                                 />
                             <TextView
-                                android:id="@+id/heurInit"
+                                android:id="@+id/text_view_activity_book_time_now"
                                 android:layout_marginStart="8dp"
                                 android:layout_marginTop="10dp"
                                 android:layout_marginBottom="10dp"
                                 android:layout_gravity="center_vertical"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="00:00"
+                                android:text="00:00/30:40"
                                 />
                             <SeekBar
                                 android:id="@+id/seekbar_activity_book"

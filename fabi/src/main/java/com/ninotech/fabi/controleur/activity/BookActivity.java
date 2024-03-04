@@ -66,11 +66,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -100,6 +104,7 @@ public class BookActivity extends AppCompatActivity {
         mTitleTextView = findViewById(R.id.text_view_activity_book_title);
         mCategoryTextView = findViewById(R.id.text_view_activity_book_category);
         mDescriptionTextView = findViewById(R.id.text_view_activity_book_description);
+        mTimeNowTextView = findViewById(R.id.text_view_activity_book_time_now);
         mReservationButton = findViewById(R.id.button_activity_book_reservation);
         Button audioButton = findViewById(R.id.button_activity_book_audio);
         Button openPDFButton = findViewById(R.id.button_activity_book_open_pdf);
@@ -127,35 +132,6 @@ public class BookActivity extends AppCompatActivity {
         Handler handler = new Handler();
         mMediaPlayer = new MediaPlayer();
         mTimer = new Timer();
-        BroadcastReceiver receiverTones = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if ("ACTION_AUDIO".equals(intent.getAction())) {
-                    mAudio = intent.getStringExtra("intent_adapter_tones_title");
-                    mTones.setNumber(intent.getIntExtra("intent_adapter_tones_position",0));
-                    mMediaPlayer = new MediaPlayer();
-                    url = getString(R.string.ip_server) + "ressources/audio/" + mTones.getAudio();
-                    try {
-                        if(positionTmp != mTones.getNumber())
-                            mListTones.get(positionTmp).setPlaying(false);
-                        mTonesRecyclerView.setAdapter(mTonesAdapter);
-                        mMediaPlayer.reset();
-                        mMediaPlayer.setDataSource(url);
-                        mMediaPlayer.prepare();
-                        mSeekBar.setMax(mMediaPlayer.getDuration());
-                        mMediaPlayer.start();
-                        positionTmp = mTones.getNumber();
-                        mPlayerImageView.setImageResource(R.drawable.vector_black3_play);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }catch (Exception e)
-                    {
-                        Log.e("errReceiverTones",e.getMessage());
-                    }
-                }
-            }
-        };
-        registerReceiver(receiverTones, new IntentFilter("ACTION_AUDIO")); /* Appel de la fonction cregisterReceviver */
         mTimer.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -186,6 +162,30 @@ public class BookActivity extends AppCompatActivity {
 
             }
         });
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (mMediaPlayer != null) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            int currentTime = mMediaPlayer.getCurrentPosition();
+                            mSeekBar.setProgress(currentTime);
+                            String currentTimeString = String.format("%02d:%02d",
+                                    TimeUnit.MILLISECONDS.toMinutes(currentTime),
+                                    TimeUnit.MILLISECONDS.toSeconds(currentTime) -
+                                            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(currentTime)));
+                            mTimeNowTextView.setText(currentTimeString);
+                        }
+                    });
+                }
+            }
+        }).start();
         mReservationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view)
@@ -1139,12 +1139,15 @@ public class BookActivity extends AppCompatActivity {
                         mMediaPlayer.setDataSource(url);
                         mMediaPlayer.prepare();
                         mSeekBar.setMax(mMediaPlayer.getDuration());
+//                        LocalDateTime temps=null;
+//                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+//                            temps = LocalDateTime.ofInstant(Instant.ofEpochMilli(mMediaPlayer.getDuration()), ZoneId.systemDefault());
+//                        }
+//                        assert temps != null;
+//                        mTimeNowTextView.setText(temps.toString());
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
-                    mTonesAdapter = new TonesAdapter(mListTones);
-                    mTonesRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                    mTonesRecyclerView.setAdapter(mTonesAdapter);
                 }
             }
         }
@@ -1301,6 +1304,7 @@ public class BookActivity extends AppCompatActivity {
     private TextView mNumberLikeTextView;
     private TextView mNumberNoLikeTextView;
     private TextView mNumberSubscribeTextView;
+    private TextView mTimeNowTextView;
     private EditText mMessageTextView;
     private ImageView mLikeImageView;
     private ImageView mNoLikeImageView;
