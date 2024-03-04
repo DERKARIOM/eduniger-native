@@ -129,20 +129,10 @@ public class BookActivity extends AppCompatActivity {
         mReservationDialog = new ReservationDialog(this);
         mElectronicTable = new ElectronicTable(this);
         positionTmp=0;
-        Handler handler = new Handler();
+        mHandler = new Handler();
         mMediaPlayer = new MediaPlayer();
         mTimer = new Timer();
-        mTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mSeekBar.setProgress(mMediaPlayer.getCurrentPosition());
-                    }
-                });
-            }
-        }, 0, 1000); // Met à jour la SeekBar chaque seconde (1000 millisecondes)
+
 
         mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -162,36 +152,7 @@ public class BookActivity extends AppCompatActivity {
 
             }
         });
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (mMediaPlayer != null) {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                int currentTime = mMediaPlayer.getCurrentPosition();
-                                mSeekBar.setProgress(currentTime);
-                                String currentTimeString = String.format("%02d:%02d",
-                                        TimeUnit.MILLISECONDS.toMinutes(currentTime),
-                                        TimeUnit.MILLISECONDS.toSeconds(currentTime) -
-                                                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(currentTime)));
-                                mTimeNowTextView.setText(currentTimeString);
-                            }catch (Exception e)
-                            {
-                                Log.e("errorBookActivity",e.getMessage());
-                            }
 
-                        }
-                    });
-                }
-            }
-        }).start();
         mReservationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view)
@@ -250,10 +211,14 @@ public class BookActivity extends AppCompatActivity {
         stopImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mMediaPlayer.stop();
-                mPlayerImageView.setImageResource(R.drawable.vector_black3_plause);
-                mTimer.cancel(); // Arrête le Timer lors de la destruction de l'activité
-               mSeekBar.setProgress(0);
+                if(mMediaPlayer != null)
+                {
+                    mPlayerImageView.setImageResource(R.drawable.vector_black3_plause);
+                    //mTimer.cancel(); // Arrête le Timer lors de la destruction de l'activité
+                    mSeekBar.setProgress(0);
+                    mMediaPlayer.pause();
+                    mTimeNowTextView.setText(R.string.default_time);
+                }
             }
         });
         likeLinearLayout.setOnClickListener(new View.OnClickListener() {
@@ -454,12 +419,7 @@ public class BookActivity extends AppCompatActivity {
             }
         }
     }
-//@Override
-//    public void onDestroy() {
-//        super.onDestroy();
-//        mTimer.cancel(); // Arrête le Timer lors de la destruction de l'activité
-//        mMediaPlayer.release(); // Libère les ressources du MediaPlayer
-//    }
+//
     private class RecoveryBook extends AsyncTask<String,Void,String> {
         @Override
         protected String doInBackground(String... params) {
@@ -1152,6 +1112,33 @@ public class BookActivity extends AppCompatActivity {
                         mMediaPlayer.setDataSource(url);
                         mMediaPlayer.prepare();
                         mSeekBar.setMax(mMediaPlayer.getDuration());
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                while (mMediaPlayer != null) {
+                                    try {
+                                        Thread.sleep(1000);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                    mHandler.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            if (mMediaPlayer != null && mMediaPlayer.isPlaying())
+                                            {
+                                                int currentTime = mMediaPlayer.getCurrentPosition();
+                                                mSeekBar.setProgress(currentTime);
+                                                String currentTimeString = String.format("%02d:%02d",
+                                                        TimeUnit.MILLISECONDS.toMinutes(currentTime),
+                                                        TimeUnit.MILLISECONDS.toSeconds(currentTime) -
+                                                                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(currentTime)));
+                                                mTimeNowTextView.setText(currentTimeString);
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        }).start();
 //                        LocalDateTime temps=null;
 //                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
 //                            temps = LocalDateTime.ofInstant(Instant.ofEpochMilli(mMediaPlayer.getDuration()), ZoneId.systemDefault());
@@ -1335,4 +1322,5 @@ public class BookActivity extends AppCompatActivity {
     private ElectronicTable mElectronicTable;
     private String mNbrJour;
     private Book mBook;
+    private Handler mHandler;
 }

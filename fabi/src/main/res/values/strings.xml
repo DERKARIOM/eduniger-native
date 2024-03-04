@@ -206,5 +206,6 @@
     <string name="information_phone">Inclure les information de l\' appariel ? (facultatif)</string>
     <string name="details_information_phone">Les details techniques tels que le modele de votre appareil peuvent nous aide a repondre a votre question</string>
     <string name="search">Recherche</string>
+    <string name="default_time">00:00</string>
 
 </resources>
