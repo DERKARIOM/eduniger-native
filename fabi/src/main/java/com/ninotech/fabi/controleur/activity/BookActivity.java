@@ -295,7 +295,7 @@ public class BookActivity extends AppCompatActivity {
             protected File doInBackground(Void... voids) {
                 try {
                     // URL du PDF distant
-                    String imgUrl = getString(R.string.ip_server) + "couverture/" + nomImg;
+                    String imgUrl = getString(R.string.ip_server) + "ressources/cover/" + nomImg;
                     URL url = new URL(imgUrl);
 
                     // Ouvrir la connexion
@@ -345,7 +345,7 @@ public class BookActivity extends AppCompatActivity {
             protected File doInBackground(Void... voids) {
                 try {
                     // URL du PDF distant
-                    String pdfUrl = getString(R.string.ip_server) + "pdf/" + mBook.getElectronic();
+                    String pdfUrl = getString(R.string.ip_server) + "ressources/pdf/" + mBook.getElectronic();
                     URL url = new URL(pdfUrl);
 
                     // Ouvrir la connexion
