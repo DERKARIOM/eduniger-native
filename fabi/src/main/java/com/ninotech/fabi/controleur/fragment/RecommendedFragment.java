@@ -52,50 +52,50 @@ public class RecommendedFragment extends Fragment {
                 .transform(new RoundedTransformation(200,10))
                 .resize(6200,3333)
                 .into(mPub);
-        Handler handlerOut = new Handler();
-        Handler handlerIn = new Handler();
-        int delayMillis = 5000; // 5 secondes
-        Runnable runnableOut = new Runnable() {
-            @Override
-            public void run() {
-                YoYo.with(Techniques.SlideOutLeft)
-                        .duration(1000)
-                        .onEnd(animator -> {
-                            // Changez la source de l'image après l'animation
-//                            Picasso.with(view.getContext())
-//                                    .load("http://192.168.43.1:2222/fabi/pub/pub2.jpg")
-//                                    .transform(new RoundedTransformation(200,10))
-//                                    .resize(6200,3333)
-//                                    .into(mPub);
-                            //currentIndex = (currentIndex + 1) % imagesList.size();
-                            // Répétez l'animation après un délai
-                            handlerOut.postDelayed(this, delayMillis);
-                        })
-                        .playOn(mPub);
-            }
-        };
-        Runnable runnableIn = new Runnable() {
-            @Override
-            public void run() {
-                // Utilisez YoYo pour animer le changement d'image
-                YoYo.with(Techniques.SlideInRight)
-                        .duration(1000)
-                        .onEnd(animator -> {
-                            // Changez la source de l'image après l'animation
-//                            Picasso.with(view.getContext())
-//                                    .load("http://192.168.43.1:2222/fabi/pub/pub2.jpg")
-//                                    .transform(new RoundedTransformation(200,10))
-//                                    .resize(6200,3333)
-//                                    .into(mPub);
-                            //currentIndex = (currentIndex + 1) % imagesList.size();
-                            // Répétez l'animation après un délai
-                            handlerIn.postDelayed(this, delayMillis);
-                        })
-                        .playOn(mPub);
-            }
-        };
-        handlerOut.postDelayed(runnableOut,delayMillis);
-        handlerIn.postDelayed(runnableIn,delayMillis+1000);
+//        Handler handlerOut = new Handler();
+//        Handler handlerIn = new Handler();
+//        int delayMillis = 5000; // 5 secondes
+//        Runnable runnableOut = new Runnable() {
+//            @Override
+//            public void run() {
+//                YoYo.with(Techniques.SlideOutLeft)
+//                        .duration(1000)
+//                        .onEnd(animator -> {
+//                            // Changez la source de l'image après l'animation
+////                            Picasso.with(view.getContext())
+////                                    .load("http://192.168.43.1:2222/fabi/pub/pub2.jpg")
+////                                    .transform(new RoundedTransformation(200,10))
+////                                    .resize(6200,3333)
+////                                    .into(mPub);
+//                            //currentIndex = (currentIndex + 1) % imagesList.size();
+//                            // Répétez l'animation après un délai
+//                            handlerOut.postDelayed(this, delayMillis);
+//                        })
+//                        .playOn(mPub);
+//            }
+//        };
+//        Runnable runnableIn = new Runnable() {
+//            @Override
+//            public void run() {
+//                // Utilisez YoYo pour animer le changement d'image
+//                YoYo.with(Techniques.SlideInRight)
+//                        .duration(1000)
+//                        .onEnd(animator -> {
+//                            // Changez la source de l'image après l'animation
+////                            Picasso.with(view.getContext())
+////                                    .load("http://192.168.43.1:2222/fabi/pub/pub2.jpg")
+////                                    .transform(new RoundedTransformation(200,10))
+////                                    .resize(6200,3333)
+////                                    .into(mPub);
+//                            //currentIndex = (currentIndex + 1) % imagesList.size();
+//                            // Répétez l'animation après un délai
+//                            handlerIn.postDelayed(this, delayMillis);
+//                        })
+//                        .playOn(mPub);
+//            }
+//        };
+//        handlerOut.postDelayed(runnableOut,delayMillis);
+//        handlerIn.postDelayed(runnableIn,delayMillis+1000);
         RecommendedSyn recommendedSyn = new RecommendedSyn();
         recommendedSyn.execute(getString(R.string.ip_server_android) + "Recommended.php", session.getIdNumber());
         mPub.setOnClickListener(new View.OnClickListener() {
