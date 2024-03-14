@@ -11,15 +11,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.ninotech.fabi.controleur.activity.BookActivity;
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
-import com.ninotech.fabi.model.data.RecentBook;
+import com.ninotech.fabi.model.data.SimilarBook;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
-public class SimulaireAdapter extends RecyclerView.Adapter<SimulaireAdapter.MyViewHolder> {
-    List<RecentBook> mListRecentBook;
+public class SimilarAdapter extends RecyclerView.Adapter<SimilarAdapter.MyViewHolder> {
+    List<SimilarBook> mListSimilarBook;
 
     public int getPosition() {
         return mPosition;
@@ -30,63 +30,50 @@ public class SimulaireAdapter extends RecyclerView.Adapter<SimulaireAdapter.MyVi
     }
 
     private int mPosition;
-    public SimulaireAdapter(List<RecentBook> listRecentBook) {
-        mListRecentBook = listRecentBook;
+    public SimilarAdapter(List<SimilarBook> listSimilarBook) {
+        mListSimilarBook = listSimilarBook;
     }
     @Override
-    public SimulaireAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public SimilarAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View view = layoutInflater.inflate(R.layout.adapter_similaire,parent,false);
+        View view = layoutInflater.inflate(R.layout.adapter_similar,parent,false);
         return new MyViewHolder(view);
     }
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        RecentBook item = mListRecentBook.get(position);
+        SimilarBook item = mListSimilarBook.get(position);
         try {
-            holder.display(mListRecentBook.get(position));
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
+            holder.display(mListSimilarBook.get(position));
+        } catch (SQLException | IOException e) {
             throw new RuntimeException(e);
         }
 
     }
     @Override
     public int getItemCount() {
-        return mListRecentBook.size();
+        return mListSimilarBook.size();
     }
 
-
-//    public void Remove(int position){
-//        mListNotification.remove(position);
-//        notifyItemRemoved(position);
-//    }
-
-
     public class MyViewHolder extends RecyclerView.ViewHolder{
-        private ImageView mCouverture;
+        private final ImageView mCoverImageView;
         MyViewHolder(View itemView){
             super(itemView);
-            mCouverture = (ImageView) itemView.findViewById(R.id.couverteur_recent);
+            mCoverImageView = (ImageView) itemView.findViewById(R.id.image_view_adapter_similar_cover);
         }
-        //        @Override
-//        public void onCreateContextMenu(ContextMenu menu , View v , ContextMenu.ContextMenuInfo menuInfo){
-////            menu.add(Menu.NONE,R.id.infoNotif,Menu.NONE,"Information");
-////            menu.add(Menu.NONE,R.id.suppNotif,Menu.NONE,"Supprimer");
-////            menu.add(Menu.NONE,R.id.inportanteNotif,Menu.NONE,"Message importants");
-        void display(RecentBook recentBook) throws SQLException, IOException {
+
+        void display(SimilarBook similarBook) throws SQLException, IOException {
             Picasso.with(itemView.getContext())
-                    .load("http://192.168.43.1:2222/fabi/couverture/" + recentBook.getCouverteur())
+                    .load(itemView.getContext().getString(R.string.ip_server) + "ressources/cover/"  + similarBook.getCover())
                     .placeholder(R.drawable.img_default_book)
                     .error(R.drawable.img_default_book)
                     .transform(new RoundedTransformation(15,4))
                     .resize(178,284)
-                    .into(mCouverture);
+                    .into(mCoverImageView);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent intentLivre = new Intent(itemView.getContext(), BookActivity.class);
-                    intentLivre.putExtra("idLivre", recentBook.getIdLivre());
+                    intentLivre.putExtra("idLivre", similarBook.getId());
                     itemView.getContext().startActivity(intentLivre);
                 }
             });

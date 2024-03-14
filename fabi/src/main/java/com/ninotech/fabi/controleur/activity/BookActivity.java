@@ -43,8 +43,8 @@ import com.ninotech.fabi.model.data.Chat;
 import com.ninotech.fabi.model.data.Talks;
 import com.ninotech.fabi.model.syn.SendComments;
 import com.ninotech.fabi.model.table.ElectronicTable;
-import com.ninotech.fabi.model.data.RecentBook;
-import com.ninotech.fabi.controleur.adapter.SimulaireAdapter;
+import com.ninotech.fabi.model.data.SimilarBook;
+import com.ninotech.fabi.controleur.adapter.SimilarAdapter;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
 import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.model.data.Tones;
@@ -88,7 +88,7 @@ public class BookActivity extends AppCompatActivity {
         mSession = new Session(this);
         mBook = new Book(intentBook.getStringExtra("intent_adapter_book_id"));
         mTalksList = new ArrayList<>();
-        mList2 = new ArrayList<>();
+        mListSimilar = new ArrayList<>();
         mListTones = new ArrayList<>();
         mCommentsRecyclerView = findViewById(R.id.recycler_view_activity_book_Comments);
         mSimilarRecyclerView = findViewById(R.id.recycler_view_activity_book_similar);
@@ -205,7 +205,6 @@ public class BookActivity extends AppCompatActivity {
                 if(mMediaPlayer != null)
                 {
                     mPlayerImageView.setImageResource(R.drawable.vector_black3_pause);
-                    //mTimer.cancel(); // Arrête le Timer lors de la destruction de l'activité
                     mSeekBar.setProgress(0);
                     mMediaPlayer.pause();
                     mTimeNowTextView.setText(R.string.default_time);
@@ -410,7 +409,7 @@ public class BookActivity extends AppCompatActivity {
             }
         }
     }
-//
+
     private class RecoveryBook extends AsyncTask<String,Void,String> {
         @Override
         protected String doInBackground(String... params) {
@@ -1003,12 +1002,12 @@ public class BookActivity extends AppCompatActivity {
                         .build();
                 try {
                     Response response = client.newCall(request).execute();
+                    assert response.body() != null;
                     return response.body().string();
                 }catch (IOException e)
                 {
-                    Toast.makeText(BookActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.e("errorBookActivity",e.getMessage());
                 }
-
             }catch (Exception e)
             {
                 return null;
@@ -1030,16 +1029,15 @@ public class BookActivity extends AppCompatActivity {
                     }
                     for (int i=0;i<jsonArray.length();i++) {
                         try {
-                            mList2.add(new RecentBook(mBook.getId(),jsonArray.getJSONObject(i).getString("blanket"),null));
+                            mListSimilar.add(new SimilarBook(mBook.getId(),jsonArray.getJSONObject(i).getString("blanket"),null));
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
                     }
-                    SimulaireAdapter recenmmentAdapter = new SimulaireAdapter(mList2);
+                    SimilarAdapter similarAdapter = new SimilarAdapter(mListSimilar);
                     mSimilarRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(),LinearLayoutManager.HORIZONTAL,false));
-                    mSimilarRecyclerView.setAdapter(recenmmentAdapter);
+                    mSimilarRecyclerView.setAdapter(similarAdapter);
                 }
-                //Toast.makeText(getContext(), jsonData, Toast.LENGTH_SHORT).show();
             }
 
         }
@@ -1062,6 +1060,7 @@ public class BookActivity extends AppCompatActivity {
                         .build();
                 try {
                     Response response = client.newCall(request).execute();
+                    assert response.body() != null;
                     return response.body().string();
                 }catch (IOException e)
                 {
@@ -1130,12 +1129,6 @@ public class BookActivity extends AppCompatActivity {
                                 }
                             }
                         }).start();
-//                        LocalDateTime temps=null;
-//                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-//                            temps = LocalDateTime.ofInstant(Instant.ofEpochMilli(mMediaPlayer.getDuration()), ZoneId.systemDefault());
-//                        }
-//                        assert temps != null;
-//                        mTimeNowTextView.setText(temps.toString());
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -1286,7 +1279,7 @@ public class BookActivity extends AppCompatActivity {
     private TonesAdapter mTonesAdapter;
     private List<Tones> mListTones;
     private Tones mTones;
-    private List<RecentBook> mList2;
+    private List<SimilarBook> mListSimilar;
     private Session mSession;
     private ImageView mBlanketImageView;
     private TextView mTitleTextView;
