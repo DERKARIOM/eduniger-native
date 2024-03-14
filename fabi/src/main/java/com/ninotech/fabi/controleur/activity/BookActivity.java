@@ -1,10 +1,7 @@
 package com.ninotech.fabi.controleur.activity;
 
 import android.Manifest;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -66,14 +63,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.MultipartBody;
@@ -99,7 +92,6 @@ public class BookActivity extends AppCompatActivity {
         mListTones = new ArrayList<>();
         mCommentsRecyclerView = findViewById(R.id.recycler_view_activity_book_Comments);
         mSimilarRecyclerView = findViewById(R.id.recycler_view_activity_book_similar);
-        mTonesRecyclerView = findViewById(R.id.recycler_view_activity_book_tones);
         mBlanketImageView = findViewById(R.id.image_view_activity_book_blanket);
         mTitleTextView = findViewById(R.id.text_view_activity_book_title);
         mCategoryTextView = findViewById(R.id.text_view_activity_book_category);
@@ -115,11 +107,11 @@ public class BookActivity extends AppCompatActivity {
         mNumberSubscribeTextView = findViewById(R.id.text_view_activity_book_number_subscribe);
         ImageView addCommentsImageView = findViewById(R.id.image_view_activity_book_add_comments);
         ImageView stopImageView = findViewById(R.id.image_view_activity_book_stop);
-        LinearLayout likeLinearLayout = findViewById(R.id.linear_layout_activiry_book_like);
+        LinearLayout likeLinearLayout = findViewById(R.id.linear_layout_activity_book_like);
         LinearLayout noLikeLinearLayout = findViewById(R.id.linear_layout_activiry_book_nolike);
         LinearLayout subscribeLinearLayout = findViewById(R.id.linear_layout_activity_book_subscribe);
         mLikeImageView = findViewById(R.id.image_view_activity_book_like);
-        mNoLikeImageView = findViewById(R.id.image_view_activity_book_nolike);
+        mNoLikeImageView = findViewById(R.id.image_view_activity_book_no_like);
         mPlayerImageView = findViewById(R.id.image_view_activity_book_player);
         mSubscribeImageView = findViewById(R.id.image_view_activity_book_subscribe);
         mSeekBar = findViewById(R.id.seekbar_activity_book);
@@ -128,7 +120,6 @@ public class BookActivity extends AppCompatActivity {
         mElectronicLinearLayout = findViewById(R.id.linear_layout_activity_book_electronic);
         mReservationDialog = new ReservationDialog(this);
         mElectronicTable = new ElectronicTable(this);
-        positionTmp=0;
         mHandler = new Handler();
         mMediaPlayer = new MediaPlayer();
         mTimer = new Timer();
@@ -197,7 +188,7 @@ public class BookActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if(mMediaPlayer.isPlaying())
                 {
-                    mPlayerImageView.setImageResource(R.drawable.vector_black3_plause);
+                    mPlayerImageView.setImageResource(R.drawable.vector_black3_pause);
                     mMediaPlayer.pause();
                 }
                 else
@@ -213,7 +204,7 @@ public class BookActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if(mMediaPlayer != null)
                 {
-                    mPlayerImageView.setImageResource(R.drawable.vector_black3_plause);
+                    mPlayerImageView.setImageResource(R.drawable.vector_black3_pause);
                     //mTimer.cancel(); // Arrête le Timer lors de la destruction de l'activité
                     mSeekBar.setProgress(0);
                     mMediaPlayer.pause();
@@ -474,8 +465,8 @@ public class BookActivity extends AppCompatActivity {
                     mBook.setNumberSubscribe(Integer.parseInt(jsonObject.getString("numberSubscribe")));
                     Picasso.with(getApplicationContext())
                             .load(getString(R.string.ip_server) + "ressources/cover/" + mBook.getBlanket())
-                            .placeholder(R.drawable.img_default_livre)
-                            .error(R.drawable.img_default_livre)
+                            .placeholder(R.drawable.img_default_book)
+                            .error(R.drawable.img_default_book)
                             .transform(new RoundedTransformation(15,4))
                             .resize(200,334)
                             .into(mBlanketImageView);
@@ -600,7 +591,7 @@ public class BookActivity extends AppCompatActivity {
                     {
                         mBook.like();
                         mLikeImageView.setImageResource(R.drawable.vector_purple2_200_on_like);
-                        mNoLikeImageView.setImageResource(R.drawable.vector_black3_off_nolike);
+                        mNoLikeImageView.setImageResource(R.drawable.vector_black3_off_no_like);
                     }
                     else
                     {
@@ -659,7 +650,7 @@ public class BookActivity extends AppCompatActivity {
                     else
                     {
                         mBook.disNoLike();
-                        mNoLikeImageView.setImageResource(R.drawable.vector_black3_off_nolike);
+                        mNoLikeImageView.setImageResource(R.drawable.vector_black3_off_no_like);
                     }
                     mNumberNoLikeTextView.setText(String.valueOf(mBook.getNumberNoLikes()));
                 }
@@ -796,7 +787,7 @@ public class BookActivity extends AppCompatActivity {
                     if(jsonData.equals(mSession.getIdNumber()))
                         mNoLikeImageView.setImageResource(R.drawable.vector_rouge_on_nolike);
                     else
-                        mNoLikeImageView.setImageResource(R.drawable.vector_black3_off_nolike);
+                        mNoLikeImageView.setImageResource(R.drawable.vector_black3_off_no_like);
                 }
             }
         }
@@ -1317,7 +1308,6 @@ public class BookActivity extends AppCompatActivity {
     private RelativeLayout mRelativeLayout;
     private String url;
     private String mAudio;
-    private int positionTmp;
     private ReservationDialog mReservationDialog;
     private ElectronicTable mElectronicTable;
     private String mNbrJour;

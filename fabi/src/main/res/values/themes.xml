@@ -115,7 +115,7 @@
     </style>
 
     <style name="Dialog.fastpv" parent="android:Theme.Dialog" >
-        <item name="colorPrimary">@color/sombre</item>
+        <item name="colorPrimary">@color/dark</item>
     </style>
     <style name="DialogAnimation">
         <item name="android:windowEnterAnimation">@anim/agrandir_dilog</item>

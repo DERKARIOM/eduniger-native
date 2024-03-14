@@ -65,7 +65,7 @@
             android:paddingStart="50dp"
             android:paddingEnd="65dp"
             android:padding="10dp"
-            android:textColorHint="@color/sombre" />
+            android:textColorHint="@color/dark" />
 
     </RelativeLayout>
 

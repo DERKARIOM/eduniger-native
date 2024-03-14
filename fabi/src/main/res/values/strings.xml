@@ -154,7 +154,7 @@
         "For example, position the FAB to one side of stream of a cards so the FAB won’t interfere "
         "when a user tries to pick up one of cards.\n\n"
     </string>
-    <string name="title_livre">Titre du livre</string>
+    <string name="book_title">Titre du livre</string>
     <string name="todo">TODO</string>
     <string name="book_category">Categorie du livre</string>
     <string name="category">Categorie</string>
@@ -207,5 +207,14 @@
     <string name="details_information_phone">Les details techniques tels que le modele de votre appareil peuvent nous aide a repondre a votre question</string>
     <string name="search">Recherche</string>
     <string name="default_time">00:00</string>
+    <string name="to_book_reservation">Reservation de ce livre</string>
+    <string name="audio_format">Format Audio</string>
+    <string name="electronic_format">Format Electronique</string>
+    <string name="open">Ouvrir</string>
+    <string name="pdf_format">Format PDF</string>
+    <string name="to_book_about">A propos du livre</string>
+    <string name="comments">Commentaires</string>
+    <string name="add_comments">Ajouter votre Commentaire</string>
+    <string name="similar_book">Les livres similaires</string>
 
 </resources>

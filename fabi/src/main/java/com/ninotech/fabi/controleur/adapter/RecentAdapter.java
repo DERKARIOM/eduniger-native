@@ -87,8 +87,8 @@ public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.MyViewHold
         void display(RecentBook recentBook) throws SQLException, IOException {
             Picasso.with(itemView.getContext())
                     .load("http://192.168.43.1:2222/fabi/couverture/" + recentBook.getCouverteur())
-                    .placeholder(R.drawable.img_default_livre)
-                    .error(R.drawable.img_default_livre)
+                    .placeholder(R.drawable.img_default_book)
+                    .error(R.drawable.img_default_book)
                     .transform(new RoundedTransformation(15,4))
                     .resize(178,284)
                     .into(mCouverture);

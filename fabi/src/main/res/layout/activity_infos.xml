@@ -19,7 +19,7 @@
             android:layout_height="150dp"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="20dp"
-            android:src="@drawable/img_default_livre" />
+            android:src="@drawable/img_default_book" />
         <ImageView
             android:layout_below="@id/ninotech"
             android:layout_width="200dp"

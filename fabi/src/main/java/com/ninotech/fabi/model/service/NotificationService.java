@@ -148,7 +148,7 @@ public class NotificationService extends Service {
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, 0);
                         NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "channel_id")
-                                .setSmallIcon(R.drawable.img_default_livre)
+                                .setSmallIcon(R.drawable.img_default_book)
                                 .setContentTitle("Traitement de Réservation")
                                 .setContentText(message)
                                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -158,7 +158,7 @@ public class NotificationService extends Service {
                         notificationManager.notify(i, builder.build());
                     }catch (Exception e){
                         NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "channel_id")
-                                .setSmallIcon(R.drawable.img_default_livre)
+                                .setSmallIcon(R.drawable.img_default_book)
                                 .setContentTitle("Traitement de Réservation")
                                 .setContentText(message)
                                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
@@ -252,7 +252,7 @@ public class NotificationService extends Service {
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, 0);
                         NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "channel_id")
-                                .setSmallIcon(R.drawable.img_default_livre)
+                                .setSmallIcon(R.drawable.img_default_book)
                                 .setContentTitle("Nouvelles version")
                                 .setContentText(message)
                                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -262,7 +262,7 @@ public class NotificationService extends Service {
                         notificationManager.notify(i, builder.build());
                     }catch (Exception e){
                         NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "channel_id")
-                                .setSmallIcon(R.drawable.img_default_livre)
+                                .setSmallIcon(R.drawable.img_default_book)
                                 .setContentTitle("Nouvelles version")
                                 .setContentText(message)
                                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
@@ -339,7 +339,7 @@ public class NotificationService extends Service {
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, 0);
                         NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "channel_id")
-                                .setSmallIcon(R.drawable.img_default_livre)
+                                .setSmallIcon(R.drawable.img_default_book)
                                 .setContentTitle("Rappeler d' Emprunter")
                                 .setContentText(message)
                                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -349,7 +349,7 @@ public class NotificationService extends Service {
                         notificationManager.notify(i, builder.build());
                     }catch (Exception e){
                         NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "channel_id")
-                                .setSmallIcon(R.drawable.img_default_livre)
+                                .setSmallIcon(R.drawable.img_default_book)
                                 .setContentTitle("Rappeler d' Emprunter")
                                 .setContentText(message)
                                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
@@ -426,7 +426,7 @@ public class NotificationService extends Service {
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, 0);
                         NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "channel_id")
-                                .setSmallIcon(R.drawable.img_default_livre)
+                                .setSmallIcon(R.drawable.img_default_book)
                                 .setContentTitle("Fermeture  de l' emprunt")
                                 .setContentText(message)
                                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -436,7 +436,7 @@ public class NotificationService extends Service {
                         notificationManager.notify(i, builder.build());
                     }catch (Exception e){
                         NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "channel_id")
-                                .setSmallIcon(R.drawable.img_default_livre)
+                                .setSmallIcon(R.drawable.img_default_book)
                                 .setContentTitle("Fermeture  de l' emprunt")
                                 .setContentText(message)
                                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);

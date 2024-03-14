@@ -87,8 +87,8 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
         void display(Chat chat){
             Picasso.with(itemView.getContext())
                     .load(itemView.getContext().getString(R.string.ip_server) + "ressources/profile/" + chat.getProfile())
-                    .placeholder(R.drawable.img_default_livre)
-                    .error(R.drawable.img_default_livre)
+                    .placeholder(R.drawable.img_default_book)
+                    .error(R.drawable.img_default_book)
                     .into(mProfile);
             mNom.setText(chat.getUserName());
             mMessage.setText(chat.getMessage());

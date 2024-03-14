@@ -17,9 +17,9 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@drawable/img_default_livre"
+        android:icon="@drawable/img_default_book"
         android:label="Fabi"
-        android:logo="@drawable/img_default_livre"
+        android:logo="@drawable/img_default_book"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
@@ -107,9 +107,9 @@
             android:name="com.ninotech.fabi.controleur.activity.MainActivity"
             android:exported="true"
             android:screenOrientation="portrait"
-            android:icon="@drawable/img_default_livre"
+            android:icon="@drawable/img_default_book"
             android:label="Fabi"
-            android:logo="@drawable/img_default_livre">
+            android:logo="@drawable/img_default_book">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

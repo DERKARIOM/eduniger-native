@@ -88,7 +88,7 @@ public class AudioAdapter extends RecyclerView.Adapter<AudioAdapter.MyViewHolder
             mNbrLike = itemView.findViewById(R.id.text_view_activity_book_number_like);
             mNbrVue = itemView.findViewById(R.id.text_view_adapter_book_number_view);
             mIco1 = itemView.findViewById(R.id.image_view_activity_book_like);
-            mIco2 = itemView.findViewById(R.id.image_view_activity_book_nolike);
+            mIco2 = itemView.findViewById(R.id.image_view_activity_book_no_like);
             itemView.setOnCreateContextMenuListener(this);
         }
         @Override
