@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.controleur.adapter.BookAdapter;
+import com.ninotech.fabi.controleur.adapter.NoConnectionAdapter;
 import com.ninotech.fabi.model.data.Book;
 import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.R;
@@ -91,6 +92,14 @@ public class RankingFragment extends Fragment {
                 BookAdapter bookAdapter = new BookAdapter(mBookList);
                 mBookRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                 mBookRecyclerView.setAdapter(bookAdapter);
+            }
+            else
+            {
+                ArrayList<String> list = new ArrayList<>();
+                list.add(getString(R.string.no_connection_available));
+                NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
+                mBookRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                mBookRecyclerView.setAdapter(noConnectionAdapter);
             }
         }
     }
