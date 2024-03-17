@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.controleur.adapter.BookAdapter;
+import com.ninotech.fabi.controleur.adapter.NoConnectionAdapter;
 import com.ninotech.fabi.controleur.custo.StatusBarCusto;
 import com.ninotech.fabi.model.data.Book;
 import com.ninotech.fabi.model.table.Session;
@@ -126,7 +127,11 @@ public class CategoryActivity extends AppCompatActivity {
             }
             else
             {
-
+                ArrayList<String> list = new ArrayList<>();
+                list.add(getString(R.string.no_connection_available));
+                NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
+                mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                mRecyclerView.setAdapter(noConnectionAdapter);
             }
 
         }
