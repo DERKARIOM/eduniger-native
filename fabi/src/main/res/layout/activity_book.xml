@@ -22,6 +22,8 @@
             app:titleTextAppearance="@style/toolbar"
             tools:ignore="RtlSymmetry" />
         <androidx.core.widget.NestedScrollView
+            android:id="@+id/nested_scroll_view_activity_book"
+            android:visibility="gone"
            style="@style/match_parent_all"
             android:layout_below="@id/relative_layout_toolbar">
             <RelativeLayout
@@ -425,5 +427,9 @@
                 </LinearLayout>
             </RelativeLayout>
         </androidx.core.widget.NestedScrollView>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view_activity_book_no_connection"
+            style="@style/match_parent_all"
+            />
     </RelativeLayout>
 </RelativeLayout>

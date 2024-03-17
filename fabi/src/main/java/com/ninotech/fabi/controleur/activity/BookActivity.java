@@ -33,9 +33,11 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.ninotech.fabi.controleur.adapter.NoConnectionAdapter;
 import com.ninotech.fabi.controleur.adapter.TalksAdapter;
 import com.ninotech.fabi.controleur.dialog.ReservationDialog;
 import com.ninotech.fabi.model.data.Book;
@@ -90,8 +92,10 @@ public class BookActivity extends AppCompatActivity {
         mTalksList = new ArrayList<>();
         mListSimilar = new ArrayList<>();
         mListTones = new ArrayList<>();
+        mNestedScrollView = findViewById(R.id.nested_scroll_view_activity_book);
         mCommentsRecyclerView = findViewById(R.id.recycler_view_activity_book_Comments);
         mSimilarRecyclerView = findViewById(R.id.recycler_view_activity_book_similar);
+        mNoConnectionRecyclerView = findViewById(R.id.recycler_view_activity_book_no_connection);
         mBlanketImageView = findViewById(R.id.image_view_activity_book_blanket);
         mTitleTextView = findViewById(R.id.text_view_activity_book_title);
         mCategoryTextView = findViewById(R.id.text_view_activity_book_category);
@@ -444,6 +448,7 @@ public class BookActivity extends AppCompatActivity {
         protected void onPostExecute(String jsonData){
             if(jsonData != null)
             {
+                mNestedScrollView.setVisibility(View.VISIBLE);
                 JSONObject jsonObject = null;
                 try {
                     jsonObject = new JSONObject(jsonData);
@@ -487,6 +492,16 @@ public class BookActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
+            }
+            else
+            {
+                mNestedScrollView.setVisibility(View.GONE);
+                mNoLikeImageView.setVisibility(View.VISIBLE);
+                ArrayList<String> list = new ArrayList<>();
+                list.add(getString(R.string.no_connection_available));
+                NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
+                mNoConnectionRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                mNoConnectionRecyclerView.setAdapter(noConnectionAdapter);
             }
         }
     }
@@ -1276,6 +1291,7 @@ public class BookActivity extends AppCompatActivity {
 
     private RecyclerView mSimilarRecyclerView;
     private RecyclerView mTonesRecyclerView;
+    private RecyclerView mNoConnectionRecyclerView;
     private TonesAdapter mTonesAdapter;
     private List<Tones> mListTones;
     private Tones mTones;
@@ -1306,4 +1322,5 @@ public class BookActivity extends AppCompatActivity {
     private String mNbrJour;
     private Book mBook;
     private Handler mHandler;
+    private NestedScrollView mNestedScrollView;
 }

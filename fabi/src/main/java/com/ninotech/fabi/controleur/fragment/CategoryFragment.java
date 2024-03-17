@@ -34,7 +34,7 @@ public class CategoryFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_category, container, false);
-        mCategoryRecyclerView = view.findViewById(R.id.recylerCategorie);
+        mCategoryRecyclerView = view.findViewById(R.id.recycler_view_fragment_category);
         Session session = new Session(getContext());
         mCategoryList = new ArrayList<>();
         CategorySyn categorySyn = new CategorySyn();
