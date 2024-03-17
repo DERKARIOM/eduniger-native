@@ -9,11 +9,12 @@
     <color name="black">#E9000000</color>
     <color name="white">#FFFFFF</color>
     <color name="white2">#EFEFEF</color>
+    <color name="white3">#EBEBEB</color>
     <color name="whiteSombre">#B4EFEFEF</color>
     <color name="dark">#2B3940</color>
     <color name="black2">#E6252525</color>
     <color name="black3">#DF444444</color>
     <color name="rouge">#E6FD1010</color>
     <color name="vert">#ED15C40E</color>
-    <color name="transparente">#00FFFFFF</color>
+    <color name="transparent">#00FFFFFF</color>
 </resources>

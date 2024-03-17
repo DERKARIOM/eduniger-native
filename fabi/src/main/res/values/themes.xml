@@ -12,7 +12,7 @@
         <item name="colorOnSecondary">@color/black</item>
         <item name="android:textColorPrimary">@color/black</item>
         <!-- Couleur de la barre d'état. -->
-        <item name="android:statusBarColor">@color/transparente</item>
+        <item name="android:statusBarColor">@color/transparent</item>
     </style>
 
 <!-- Le themes de formulaire(EditText) du type register et login -->
@@ -144,5 +144,12 @@
     </style>
     <style name="Block_notif1">
         <item name="android:background">@drawable/forme_purple2_200_radius_10dp</item>
+    </style>
+    <style name="button_verify_connexion" parent="AppTheme">
+        <item name="colorPrimary">@color/white3</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerInParent">true</item>
+        <item name="android:background">@color/white3</item>
     </style>
 </resources>

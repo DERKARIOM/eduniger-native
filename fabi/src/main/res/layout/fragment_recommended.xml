@@ -6,7 +6,8 @@
     <RelativeLayout
         style="@style/match_parent_all">
         <ImageView
-            android:id="@+id/img_welcom"
+            android:id="@+id/image_view_fragment_recommended_welcome"
+            android:visibility="invisible"
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:layout_marginTop="20dp"
@@ -17,7 +18,7 @@
             android:contentDescription="@string/todo" />
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view_ranking"
-            android:layout_below="@+id/img_welcom"
+            android:layout_below="@+id/image_view_fragment_recommended_welcome"
             style="@style/match_parent_all"
             />
     </RelativeLayout>

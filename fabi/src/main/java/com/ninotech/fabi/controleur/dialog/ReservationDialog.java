@@ -15,7 +15,7 @@ public class ReservationDialog extends Dialog {
         super(activity, R.style.Dialog_fastpv);
         setContentView(R.layout.dialog_reservation);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        getWindow().setStatusBarColor(ContextCompat.getColor(getContext(), R.color.transparente));
+        getWindow().setStatusBarColor(ContextCompat.getColor(getContext(), R.color.transparent));
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
     }
     public void build()

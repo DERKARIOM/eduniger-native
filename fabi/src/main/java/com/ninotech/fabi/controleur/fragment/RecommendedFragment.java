@@ -2,7 +2,6 @@ package com.ninotech.fabi.controleur.fragment;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.ninotech.fabi.controleur.adapter.BookAdapter;
+import com.ninotech.fabi.controleur.adapter.NoConnectionAdapter;
 import com.ninotech.fabi.model.data.Book;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
 import com.ninotech.fabi.model.table.Session;
@@ -41,7 +41,7 @@ public class RecommendedFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_recommended, container, false);
         Session session = new Session(getContext());
         mBookRecommendedRecyclerView = view.findViewById(R.id.recycler_view_ranking);
-        mPub = view.findViewById(R.id.img_welcom);
+        mPub = view.findViewById(R.id.image_view_fragment_recommended_welcome);
         mBookList = new ArrayList<>();
         ArrayList<String> monPubList = null;
         monPubList = new ArrayList<>();
@@ -52,50 +52,7 @@ public class RecommendedFragment extends Fragment {
                 .transform(new RoundedTransformation(200,10))
                 .resize(6200,3333)
                 .into(mPub);
-//        Handler handlerOut = new Handler();
-//        Handler handlerIn = new Handler();
-//        int delayMillis = 5000; // 5 secondes
-//        Runnable runnableOut = new Runnable() {
-//            @Override
-//            public void run() {
-//                YoYo.with(Techniques.SlideOutLeft)
-//                        .duration(1000)
-//                        .onEnd(animator -> {
-//                            // Changez la source de l'image après l'animation
-////                            Picasso.with(view.getContext())
-////                                    .load("http://192.168.43.1:2222/fabi/pub/pub2.jpg")
-////                                    .transform(new RoundedTransformation(200,10))
-////                                    .resize(6200,3333)
-////                                    .into(mPub);
-//                            //currentIndex = (currentIndex + 1) % imagesList.size();
-//                            // Répétez l'animation après un délai
-//                            handlerOut.postDelayed(this, delayMillis);
-//                        })
-//                        .playOn(mPub);
-//            }
-//        };
-//        Runnable runnableIn = new Runnable() {
-//            @Override
-//            public void run() {
-//                // Utilisez YoYo pour animer le changement d'image
-//                YoYo.with(Techniques.SlideInRight)
-//                        .duration(1000)
-//                        .onEnd(animator -> {
-//                            // Changez la source de l'image après l'animation
-////                            Picasso.with(view.getContext())
-////                                    .load("http://192.168.43.1:2222/fabi/pub/pub2.jpg")
-////                                    .transform(new RoundedTransformation(200,10))
-////                                    .resize(6200,3333)
-////                                    .into(mPub);
-//                            //currentIndex = (currentIndex + 1) % imagesList.size();
-//                            // Répétez l'animation après un délai
-//                            handlerIn.postDelayed(this, delayMillis);
-//                        })
-//                        .playOn(mPub);
-//            }
-//        };
-//        handlerOut.postDelayed(runnableOut,delayMillis);
-//        handlerIn.postDelayed(runnableIn,delayMillis+1000);
+
         RecommendedSyn recommendedSyn = new RecommendedSyn();
         recommendedSyn.execute(getString(R.string.ip_server_android) + "Recommended.php", session.getIdNumber());
         mPub.setOnClickListener(new View.OnClickListener() {
@@ -154,14 +111,24 @@ public class RecommendedFragment extends Fragment {
                         throw new RuntimeException(e);
                     }
                 }
+                mPub.setVisibility(View.VISIBLE);
                 BookAdapter bookAdapter = new BookAdapter(mBookList);
                 mBookRecommendedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                 mBookRecommendedRecyclerView.setAdapter(bookAdapter);
-
+            }
+            else
+            {
+                mPub.setVisibility(View.INVISIBLE);
+                ArrayList<String> list = new ArrayList<>();
+                list.add(getString(R.string.no_connection_available));
+                NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
+                mBookRecommendedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                mBookRecommendedRecyclerView.setAdapter(noConnectionAdapter);
             }
         }
     }
     private RecyclerView mBookRecommendedRecyclerView;
     private ArrayList<Book> mBookList;
     private ImageView mPub;
+
 }
