@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.controleur.adapter.CategoryAdapter;
+import com.ninotech.fabi.controleur.adapter.NoConnectionAdapter;
 import com.ninotech.fabi.model.data.Category;
 import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.R;
@@ -90,6 +91,13 @@ public class CategoryFragment extends Fragment {
                 CategoryAdapter categoryAdapter = new CategoryAdapter(mCategoryList);
                 mCategoryRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                 mCategoryRecyclerView.setAdapter(categoryAdapter);
+            }
+            else {
+                ArrayList<String> list = new ArrayList<>();
+                list.add(getString(R.string.no_connection_available));
+                NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
+                mCategoryRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                mCategoryRecyclerView.setAdapter(noConnectionAdapter);
             }
         }
     }
