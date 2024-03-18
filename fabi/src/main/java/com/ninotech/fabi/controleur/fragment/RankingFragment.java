@@ -1,7 +1,12 @@
 package com.ninotech.fabi.controleur.fragment;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +43,32 @@ public class RankingFragment extends Fragment {
         Session session = new Session(getContext());
        mBookRecyclerView = view.findViewById(R.id.recycler_view_ranking);
         mBookList = new ArrayList<>();
+        ArrayList<Connection> list = new ArrayList<>();
+        list.add(new Connection(getString(R.string.wait),null,true));
+        mNoConnectionAdapter = new NoConnectionAdapter(list);
+        mBookRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mBookRecyclerView.setAdapter(mNoConnectionAdapter);
+        BroadcastReceiver receiverNoConnectionAdapter = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if ("RANKING_FRAGMENT".equals(intent.getAction())) {
+                    try {
+                        ArrayList<Connection> list = new ArrayList<>();
+                        list.add(new Connection(getString(R.string.wait),"RANKING_FRAGMENT",true));
+                        NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
+                        mBookRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                        mBookRecyclerView.setAdapter(noConnectionAdapter);
+                        RankingSyn rankingSyn = new RankingSyn();
+                        rankingSyn.execute(getString(R.string.ip_server_android) + "Ranking.php", session.getIdNumber());
+                    }catch (Exception e)
+                    {
+                        Log.e("errRankingFragment",e.getMessage());
+                    }
+
+                }
+            }
+        };
+        getContext().registerReceiver(receiverNoConnectionAdapter, new IntentFilter("RANKING_FRAGMENT"));
         RankingSyn rankingSyn = new RankingSyn();
         rankingSyn.execute(getString(R.string.ip_server_android) + "Ranking.php", session.getIdNumber());
         return view;
@@ -97,7 +128,7 @@ public class RankingFragment extends Fragment {
             else
             {
                 ArrayList<Connection> list = new ArrayList<>();
-                list.add(new Connection(getString(R.string.no_connection_available),null,false));
+                list.add(new Connection(getString(R.string.no_connection_available),"RANKING_FRAGMENT",false));
                 NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
                 mBookRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                 mBookRecyclerView.setAdapter(noConnectionAdapter);
@@ -106,4 +137,5 @@ public class RankingFragment extends Fragment {
     }
     private RecyclerView mBookRecyclerView;
     private ArrayList<Book> mBookList;
+    private NoConnectionAdapter mNoConnectionAdapter;
 }

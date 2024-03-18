@@ -1,7 +1,12 @@
 package com.ninotech.fabi.controleur.fragment;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +43,32 @@ public class CategoryFragment extends Fragment {
         mCategoryRecyclerView = view.findViewById(R.id.recycler_view_fragment_category);
         Session session = new Session(getContext());
         mCategoryList = new ArrayList<>();
+        ArrayList<Connection> list = new ArrayList<>();
+        list.add(new Connection(getString(R.string.wait),null,true));
+        mNoConnectionAdapter = new NoConnectionAdapter(list);
+        mCategoryRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mCategoryRecyclerView.setAdapter(mNoConnectionAdapter);
+        BroadcastReceiver receiverNoConnectionAdapter = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if ("CATEGORY_FRAGMENT".equals(intent.getAction())) {
+                    try {
+                        ArrayList<Connection> list = new ArrayList<>();
+                        list.add(new Connection(getString(R.string.wait),"CATEGORY_FRAGMENT",true));
+                        NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
+                        mCategoryRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                        mCategoryRecyclerView.setAdapter(noConnectionAdapter);
+                        CategorySyn categorySyn = new CategorySyn();
+                        categorySyn.execute(getString(R.string.ip_server_android) + "Category.php", session.getIdNumber());
+                    }catch (Exception e)
+                    {
+                        Log.e("errCategoryFragment",e.getMessage());
+                    }
+
+                }
+            }
+        };
+        getContext().registerReceiver(receiverNoConnectionAdapter, new IntentFilter("CATEGORY_FRAGMENT"));
         CategorySyn categorySyn = new CategorySyn();
         categorySyn.execute(getString(R.string.ip_server_android) + "Category.php", session.getIdNumber());
         return view;
@@ -95,7 +126,7 @@ public class CategoryFragment extends Fragment {
             }
             else {
                 ArrayList<Connection> list = new ArrayList<>();
-                list.add(new Connection(getString(R.string.no_connection_available),null,false));
+                list.add(new Connection(getString(R.string.no_connection_available),"CATEGORY_FRAGMENT",false));
                 NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
                 mCategoryRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                 mCategoryRecyclerView.setAdapter(noConnectionAdapter);
@@ -104,4 +135,5 @@ public class CategoryFragment extends Fragment {
     }
     private RecyclerView mCategoryRecyclerView;
     private ArrayList<Category> mCategoryList;
+    private NoConnectionAdapter mNoConnectionAdapter;
 }
