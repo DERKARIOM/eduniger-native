@@ -3,6 +3,7 @@ import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -65,9 +66,11 @@ public class NoConnectionAdapter extends RecyclerView.Adapter<NoConnectionAdapte
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener{
        private final TextView mMessageTextView;
+       private final Button mTryButton;
         MyViewHolder(View itemView){
             super(itemView);
            mMessageTextView = itemView.findViewById(R.id.text_view_adapter_no_connection_message);
+           mTryButton = itemView.findViewById(R.id.button_adapter_no_connection_try);
             itemView.setOnCreateContextMenuListener(this);
         }
         @Override
@@ -75,6 +78,7 @@ public class NoConnectionAdapter extends RecyclerView.Adapter<NoConnectionAdapte
         }
         void display(String message){
            mMessageTextView.setText(message);
+
         }
     }
 }
