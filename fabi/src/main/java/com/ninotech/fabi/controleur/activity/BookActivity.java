@@ -1,7 +1,10 @@
 package com.ninotech.fabi.controleur.activity;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -128,12 +131,32 @@ public class BookActivity extends AppCompatActivity {
         mHandler = new Handler();
         mMediaPlayer = new MediaPlayer();
         mTimer = new Timer();
-
         ArrayList<Connection> list = new ArrayList<>();
         list.add(new Connection(getString(R.string.wait),null,true));
         mNoConnectionAdapter = new NoConnectionAdapter(list);
         mNoConnectionRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         mNoConnectionRecyclerView.setAdapter(mNoConnectionAdapter);
+        BroadcastReceiver receiverNoConnectionAdapter = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if ("BOOK_ACTIVITY".equals(intent.getAction())) {
+                    try {
+//                        ArrayList<Connection> list = new ArrayList<>();
+//                        list.add(new Connection(getString(R.string.wait),"CATEGORY_ACTIVITY",true));
+//                        NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
+//                        mNoConnectionRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+//                        mNoConnectionRecyclerView.setAdapter(noConnectionAdapter);
+                        finish();
+                        startActivity(getIntent());
+                    }catch (Exception e)
+                    {
+                        Log.e("errRankingFragment",e.getMessage());
+                    }
+
+                }
+            }
+        };
+        registerReceiver(receiverNoConnectionAdapter, new IntentFilter("BOOK_ACTIVITY"));
         mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
