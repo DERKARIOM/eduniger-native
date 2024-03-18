@@ -4,16 +4,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.R;
+import com.ninotech.fabi.model.data.Connection;
 
 import java.util.List;
 
 public class NoConnectionAdapter extends RecyclerView.Adapter<NoConnectionAdapter.MyViewHolder> {
-    List<String> mListMessage;
+    List<Connection> mListConnection;
 
     public int getPosition() {
         return mPosition;
@@ -24,8 +26,8 @@ public class NoConnectionAdapter extends RecyclerView.Adapter<NoConnectionAdapte
     }
 
     private int mPosition;
-    public NoConnectionAdapter(List<String> listMessage) {
-        mListMessage = listMessage;
+    public NoConnectionAdapter(List<Connection> listConnection) {
+        mListConnection = listConnection;
     }
     @Override
     public NoConnectionAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -36,7 +38,7 @@ public class NoConnectionAdapter extends RecyclerView.Adapter<NoConnectionAdapte
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        String item = mListMessage.get(position);
+        Connection item = mListConnection.get(position);
         int i = position;
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -46,20 +48,20 @@ public class NoConnectionAdapter extends RecyclerView.Adapter<NoConnectionAdapte
                 return true;
             }
         });
-        holder.display(mListMessage.get(position));
+        holder.display(mListConnection.get(position));
 
     }
     @Override
     public int getItemCount() {
-        return mListMessage.size();
+        return mListConnection.size();
     }
 
-    public String getItem(int position) {
-        return mListMessage.get(position);
+    public Connection getItem(int position) {
+        return mListConnection.get(position);
     }
 
     public void Remove(int position){
-        mListMessage.remove(position);
+        mListConnection.remove(position);
         notifyItemRemoved(position);
     }
 
@@ -67,18 +69,29 @@ public class NoConnectionAdapter extends RecyclerView.Adapter<NoConnectionAdapte
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener{
        private final TextView mMessageTextView;
        private final Button mTryButton;
+       private final ProgressBar mWaitProgressBar;
         MyViewHolder(View itemView){
             super(itemView);
            mMessageTextView = itemView.findViewById(R.id.text_view_adapter_no_connection_message);
            mTryButton = itemView.findViewById(R.id.button_adapter_no_connection_try);
+           mWaitProgressBar = itemView.findViewById(R.id.progress_bar_adapter_no_connection);
             itemView.setOnCreateContextMenuListener(this);
         }
         @Override
         public void onCreateContextMenu(ContextMenu menu , View v , ContextMenu.ContextMenuInfo menuInfo){
         }
-        void display(String message){
-           mMessageTextView.setText(message);
-
+        void display(Connection connection){
+            if(connection.isWait())
+            {
+                mWaitProgressBar.setVisibility(View.VISIBLE);
+                mTryButton.setVisibility(View.INVISIBLE);
+            }
+            else
+            {
+                mTryButton.setVisibility(View.VISIBLE);
+                mWaitProgressBar.setVisibility(View.INVISIBLE);
+            }
+           mMessageTextView.setText(connection.getMessage());
         }
     }
 }

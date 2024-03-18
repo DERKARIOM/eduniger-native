@@ -217,5 +217,6 @@
     <string name="add_comments">Ajouter votre Commentaire</string>
     <string name="similar_book">Les livres similaires</string>
     <string name="no_connection_available">Aucun reseau disponible</string>
+    <string name="wait">Veuillez patienter</string>
 
 </resources>

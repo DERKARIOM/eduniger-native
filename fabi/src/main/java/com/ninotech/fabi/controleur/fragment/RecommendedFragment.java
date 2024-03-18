@@ -18,6 +18,7 @@ import com.ninotech.fabi.controleur.adapter.BookAdapter;
 import com.ninotech.fabi.controleur.adapter.NoConnectionAdapter;
 import com.ninotech.fabi.model.data.Book;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
+import com.ninotech.fabi.model.data.Connection;
 import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.R;
 import com.squareup.picasso.Picasso;
@@ -52,6 +53,11 @@ public class RecommendedFragment extends Fragment {
                 .transform(new RoundedTransformation(200,10))
                 .resize(6200,3333)
                 .into(mPub);
+        ArrayList<Connection> list = new ArrayList<>();
+        list.add(new Connection(getString(R.string.wait),null,true));
+       mNoConnectionAdapter = new NoConnectionAdapter(list);
+        mBookRecommendedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mBookRecommendedRecyclerView.setAdapter(mNoConnectionAdapter);
 
         RecommendedSyn recommendedSyn = new RecommendedSyn();
         recommendedSyn.execute(getString(R.string.ip_server_android) + "Recommended.php", session.getIdNumber());
@@ -119,8 +125,8 @@ public class RecommendedFragment extends Fragment {
             else
             {
                 mPub.setVisibility(View.INVISIBLE);
-                ArrayList<String> list = new ArrayList<>();
-                list.add(getString(R.string.no_connection_available));
+                ArrayList<Connection> list = new ArrayList<>();
+                list.add(new Connection(getString(R.string.no_connection_available),null,false));
                 NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
                 mBookRecommendedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                 mBookRecommendedRecyclerView.setAdapter(noConnectionAdapter);
@@ -130,5 +136,6 @@ public class RecommendedFragment extends Fragment {
     private RecyclerView mBookRecommendedRecyclerView;
     private ArrayList<Book> mBookList;
     private ImageView mPub;
+    private NoConnectionAdapter mNoConnectionAdapter;
 
 }

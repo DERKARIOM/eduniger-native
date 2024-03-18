@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.ninotech.fabi.controleur.adapter.CategoryAdapter;
 import com.ninotech.fabi.controleur.adapter.NoConnectionAdapter;
 import com.ninotech.fabi.model.data.Category;
+import com.ninotech.fabi.model.data.Connection;
 import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.R;
 
@@ -93,8 +94,8 @@ public class CategoryFragment extends Fragment {
                 mCategoryRecyclerView.setAdapter(categoryAdapter);
             }
             else {
-                ArrayList<String> list = new ArrayList<>();
-                list.add(getString(R.string.no_connection_available));
+                ArrayList<Connection> list = new ArrayList<>();
+                list.add(new Connection(getString(R.string.no_connection_available),null,false));
                 NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
                 mCategoryRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                 mCategoryRecyclerView.setAdapter(noConnectionAdapter);

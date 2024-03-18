@@ -42,6 +42,7 @@ import com.ninotech.fabi.controleur.adapter.TalksAdapter;
 import com.ninotech.fabi.controleur.dialog.ReservationDialog;
 import com.ninotech.fabi.model.data.Book;
 import com.ninotech.fabi.model.data.Chat;
+import com.ninotech.fabi.model.data.Connection;
 import com.ninotech.fabi.model.data.Talks;
 import com.ninotech.fabi.model.syn.SendComments;
 import com.ninotech.fabi.model.table.ElectronicTable;
@@ -497,8 +498,8 @@ public class BookActivity extends AppCompatActivity {
             {
                 mNestedScrollView.setVisibility(View.GONE);
                 mNoLikeImageView.setVisibility(View.VISIBLE);
-                ArrayList<String> list = new ArrayList<>();
-                list.add(getString(R.string.no_connection_available));
+                ArrayList<Connection> list = new ArrayList<>();
+                list.add(new Connection(getString(R.string.no_connection_available),null,false));
                 NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
                 mNoConnectionRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                 mNoConnectionRecyclerView.setAdapter(noConnectionAdapter);
