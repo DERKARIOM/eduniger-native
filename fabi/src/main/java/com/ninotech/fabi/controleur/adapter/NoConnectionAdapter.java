@@ -1,4 +1,5 @@
 package com.ninotech.fabi.controleur.adapter;
+import android.content.Intent;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -91,6 +92,13 @@ public class NoConnectionAdapter extends RecyclerView.Adapter<NoConnectionAdapte
                 mTryButton.setVisibility(View.VISIBLE);
                 mWaitProgressBar.setVisibility(View.INVISIBLE);
             }
+            mTryButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(connection.getSource());
+                    itemView.getContext().sendBroadcast(intent);
+                }
+            });
            mMessageTextView.setText(connection.getMessage());
         }
     }

@@ -1,7 +1,12 @@
 package com.ninotech.fabi.controleur.fragment;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,6 +58,27 @@ public class RecommendedFragment extends Fragment {
                 .transform(new RoundedTransformation(200,10))
                 .resize(6200,3333)
                 .into(mPub);
+        BroadcastReceiver receiverNoConnectionAdapter = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if ("RECOMMENDED_FRAGMENT".equals(intent.getAction())) {
+                    try {
+                        ArrayList<Connection> list = new ArrayList<>();
+                        list.add(new Connection(getString(R.string.wait),"RECOMMENDED_FRAGMENT",true));
+                        NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
+                        mBookRecommendedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                        mBookRecommendedRecyclerView.setAdapter(noConnectionAdapter);
+                        RecommendedSyn recommendedSyn = new RecommendedSyn();
+                        recommendedSyn.execute(getString(R.string.ip_server_android) + "Recommended.php", session.getIdNumber());
+                    }catch (Exception e)
+                    {
+                        Log.e("errRecommendedFragment",e.getMessage());
+                    }
+
+                }
+            }
+        };
+        getContext().registerReceiver(receiverNoConnectionAdapter, new IntentFilter("RECOMMENDED_FRAGMENT")); /* Appel de la fonction cregisterReceviver */
         ArrayList<Connection> list = new ArrayList<>();
         list.add(new Connection(getString(R.string.wait),null,true));
        mNoConnectionAdapter = new NoConnectionAdapter(list);
@@ -126,7 +152,7 @@ public class RecommendedFragment extends Fragment {
             {
                 mPub.setVisibility(View.INVISIBLE);
                 ArrayList<Connection> list = new ArrayList<>();
-                list.add(new Connection(getString(R.string.no_connection_available),null,false));
+                list.add(new Connection(getString(R.string.no_connection_available),"RECOMMENDED_FRAGMENT",false));
                 NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
                 mBookRecommendedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                 mBookRecommendedRecyclerView.setAdapter(noConnectionAdapter);
