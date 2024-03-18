@@ -1,9 +1,13 @@
 package com.ninotech.fabi.controleur.activity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -19,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.ninotech.fabi.controleur.adapter.BookAdapter;
 import com.ninotech.fabi.controleur.adapter.NoConnectionAdapter;
 import com.ninotech.fabi.controleur.custo.StatusBarCusto;
+import com.ninotech.fabi.controleur.fragment.RankingFragment;
 import com.ninotech.fabi.model.data.Book;
 import com.ninotech.fabi.model.data.Connection;
 import com.ninotech.fabi.model.table.Session;
@@ -65,6 +70,32 @@ public class CategoryActivity extends AppCompatActivity {
             mCategorie = intent.getStringExtra("intent_adapter_category_title");
         }
         actionBarTitle.setText(mCategorie);
+        ArrayList<Connection> list = new ArrayList<>();
+        list.add(new Connection(getString(R.string.wait),null,true));
+        mNoConnectionAdapter = new NoConnectionAdapter(list);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        mRecyclerView.setAdapter(mNoConnectionAdapter);
+        BroadcastReceiver receiverNoConnectionAdapter = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if ("CATEGORY_ACTIVITY".equals(intent.getAction())) {
+                    try {
+                        ArrayList<Connection> list = new ArrayList<>();
+                        list.add(new Connection(getString(R.string.wait),"CATEGORY_ACTIVITY",true));
+                        NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
+                        mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                        mRecyclerView.setAdapter(noConnectionAdapter);
+                        CategoryInSyn categoryInSyn = new CategoryInSyn();
+                        categoryInSyn.execute(getString(R.string.ip_server_android) + "CategoryIn.php",mSession.getIdNumber(),mCategorie);
+                    }catch (Exception e)
+                    {
+                        Log.e("errRankingFragment",e.getMessage());
+                    }
+
+                }
+            }
+        };
+        registerReceiver(receiverNoConnectionAdapter, new IntentFilter("CATEGORY_ACTIVITY"));
         CategoryInSyn categoryInSyn = new CategoryInSyn();
         categoryInSyn.execute(getString(R.string.ip_server_android) + "CategoryIn.php",mSession.getIdNumber(),mCategorie);
     }
@@ -129,7 +160,7 @@ public class CategoryActivity extends AppCompatActivity {
             else
             {
                 ArrayList<Connection> list = new ArrayList<>();
-                list.add(new Connection(getString(R.string.no_connection_available),null,false));
+                list.add(new Connection(getString(R.string.no_connection_available),"CATEGORY_ACTIVITY",false));
                 NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                 mRecyclerView.setAdapter(noConnectionAdapter);
@@ -156,4 +187,5 @@ public class CategoryActivity extends AppCompatActivity {
     private ArrayList<Book> mList;
     private Session mSession;
     private String mCategorie;
+    private NoConnectionAdapter mNoConnectionAdapter;
 }

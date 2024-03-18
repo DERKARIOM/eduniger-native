@@ -129,7 +129,11 @@ public class BookActivity extends AppCompatActivity {
         mMediaPlayer = new MediaPlayer();
         mTimer = new Timer();
 
-
+        ArrayList<Connection> list = new ArrayList<>();
+        list.add(new Connection(getString(R.string.wait),null,true));
+        mNoConnectionAdapter = new NoConnectionAdapter(list);
+        mNoConnectionRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        mNoConnectionRecyclerView.setAdapter(mNoConnectionAdapter);
         mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
@@ -449,6 +453,7 @@ public class BookActivity extends AppCompatActivity {
         protected void onPostExecute(String jsonData){
             if(jsonData != null)
             {
+                mNoConnectionRecyclerView.setVisibility(View.GONE);
                 mNestedScrollView.setVisibility(View.VISIBLE);
                 JSONObject jsonObject = null;
                 try {
@@ -497,9 +502,9 @@ public class BookActivity extends AppCompatActivity {
             else
             {
                 mNestedScrollView.setVisibility(View.GONE);
-                mNoLikeImageView.setVisibility(View.VISIBLE);
+                mNoConnectionRecyclerView.setVisibility(View.VISIBLE);
                 ArrayList<Connection> list = new ArrayList<>();
-                list.add(new Connection(getString(R.string.no_connection_available),null,false));
+                list.add(new Connection(getString(R.string.no_connection_available),"BOOK_ACTIVITY",false));
                 NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
                 mNoConnectionRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                 mNoConnectionRecyclerView.setAdapter(noConnectionAdapter);
@@ -1324,4 +1329,5 @@ public class BookActivity extends AppCompatActivity {
     private Book mBook;
     private Handler mHandler;
     private NestedScrollView mNestedScrollView;
+    private NoConnectionAdapter mNoConnectionAdapter;
 }
