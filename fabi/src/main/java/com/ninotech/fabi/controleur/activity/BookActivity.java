@@ -46,6 +46,7 @@ import com.ninotech.fabi.controleur.dialog.ReservationDialog;
 import com.ninotech.fabi.model.data.Book;
 import com.ninotech.fabi.model.data.Chat;
 import com.ninotech.fabi.model.data.Connection;
+import com.ninotech.fabi.model.data.ImageDownloader;
 import com.ninotech.fabi.model.data.Talks;
 import com.ninotech.fabi.model.syn.SendComments;
 import com.ninotech.fabi.model.table.ElectronicTable;
@@ -211,7 +212,9 @@ public class BookActivity extends AppCompatActivity {
         downloadPDFButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(mElectronicTable.insert(mSession.getIdNumber(),mBook.getId(), mDescriptionTextView.getText().toString(),"ras",mBook.getBlanket(),mBook.getElectronic(), mCategoryTextView.getText().toString(), mBook.getTitle(),"ras","ras"))
+                ImageDownloader imageDownloader = new ImageDownloader(getApplicationContext(),mSession.getIdNumber(),mBook);
+                imageDownloader.execute(getString(R.string.ip_server) + "ressources/cover/" + mBook.getBlanket());
+               // if(mElectronicTable.insert(mSession.getIdNumber(),mBook.getId(), mDescriptionTextView.getText().toString(),"ras",imageDownloader.getBytes(),mBook.getElectronic(), mCategoryTextView.getText().toString(), mBook.getTitle(),"ras","ras"))
                     succeDowloadPDFDialog();
             }
         });
@@ -1071,13 +1074,13 @@ public class BookActivity extends AppCompatActivity {
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
-                    for (int i=0;i<jsonArray.length();i++) {
-                        try {
-                            mListSimilar.add(new SimilarBook(mBook.getId(),jsonArray.getJSONObject(i).getString("blanket"),null));
-                        } catch (JSONException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
+//                    for (int i=0;i<jsonArray.length();i++) {
+//                        try {
+//                            mListSimilar.add(new SimilarBook(mBook.getId(),jsonArray.getJSONObject(i).getString("blanket"),null));
+//                        } catch (JSONException e) {
+//                            throw new RuntimeException(e);
+//                        }
+//                    }
                     SimilarAdapter similarAdapter = new SimilarAdapter(mListSimilar);
                     mSimilarRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(),LinearLayoutManager.HORIZONTAL,false));
                     mSimilarRecyclerView.setAdapter(similarAdapter);

@@ -80,13 +80,7 @@ public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.MyViewHold
             mCoverImageView = (ImageView) itemView.findViewById(R.id.image_view_adapter_similar_cover);
         }
         void display(SimilarBook similarBook) throws SQLException, IOException {
-            Picasso.with(itemView.getContext())
-                    .load(itemView.getContext().getString(R.string.ip_server) + "ressources/cover/"  + similarBook.getCover())
-                    .placeholder(R.drawable.img_default_book)
-                    .error(R.drawable.img_default_book)
-                    .transform(new RoundedTransformation(15,4))
-                    .resize(178,284)
-                    .into(mCoverImageView);
+            mCoverImageView.setImageBitmap(similarBook.getCover());
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

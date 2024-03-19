@@ -1,10 +1,12 @@
 package com.ninotech.fabi.model.data;
 
+import android.graphics.Bitmap;
+
 public class SimilarBook {
-    public SimilarBook(String mId, String mCover, String mPDF) {
-        this.mId = mId;
-        this.mCover = mCover;
-        this.mPDF = mPDF;
+    public SimilarBook(String id, Bitmap cover, String PDF) {
+        mId = id;
+        mCover = cover;
+        mPDF = PDF;
     }
 
     public String getId() {
@@ -15,11 +17,11 @@ public class SimilarBook {
         mId = id;
     }
 
-    public String getCover() {
+    public Bitmap getCover() {
         return mCover;
     }
 
-    public void setCover(String cover) {
+    public void setCover(Bitmap cover) {
         mCover = cover;
     }
 
@@ -32,7 +34,7 @@ public class SimilarBook {
     }
 
     private String mId;
-    private String mCover;
+    private Bitmap mCover;
     private  String mPDF;
 
 }

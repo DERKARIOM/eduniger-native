@@ -1,6 +1,8 @@
 package com.ninotech.fabi.controleur.fragment;
 
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -44,7 +46,10 @@ public class ElectronicFragment extends Fragment {
             Cursor cursor = electronicTable.getData(session.getIdNumber());
             cursor.moveToFirst();
             do {
-                similarBookList.add(new SimilarBook(cursor.getString(2),cursor.getString(5),cursor.getString(6)));
+                byte[] imageBytes = cursor.getBlob(5);
+                // Convertir le tableau d'octets en Bitmap
+                Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+                similarBookList.add(new SimilarBook(cursor.getString(2),bitmap,cursor.getString(6)));
             }while(cursor.moveToNext());
         }catch (Exception e)
         {
