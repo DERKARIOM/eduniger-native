@@ -83,7 +83,7 @@ public class TalksAdapter extends RecyclerView.Adapter<TalksAdapter.MyViewHolder
         public void onCreateContextMenu(ContextMenu menu , View v , ContextMenu.ContextMenuInfo menuInfo){
         }
         void display(Talks talks){
-            Picasso.with(itemView.getContext())
+            Picasso.get()
                     .load(itemView.getResources().getString(R.string.ip_server) + "ressources/profile/" + talks.getProfil())
                     .placeholder(R.drawable.img_default_book)
                     .error(R.drawable.img_default_book)

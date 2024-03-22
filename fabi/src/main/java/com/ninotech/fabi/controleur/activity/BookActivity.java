@@ -499,7 +499,7 @@ public class BookActivity extends AppCompatActivity {
                     mBook.setNumberLikes(Integer.parseInt(jsonObject.getString("numberLike")));
                     mBook.setNumberNoLikes(Integer.parseInt(jsonObject.getString("numberNoLike")));
                     mBook.setNumberSubscribe(Integer.parseInt(jsonObject.getString("numberSubscribe")));
-                    Picasso.with(getApplicationContext())
+                    Picasso.get()
                             .load(getString(R.string.ip_server) + "ressources/cover/" + mBook.getBlanket())
                             .placeholder(R.drawable.img_default_book)
                             .error(R.drawable.img_default_book)

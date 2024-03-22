@@ -95,7 +95,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.MyViewHolder> 
         public void onCreateContextMenu(ContextMenu menu , View v , ContextMenu.ContextMenuInfo menuInfo){
         }
         void display(Book book){
-            Picasso.with(itemView.getContext())
+            Picasso.get()
                     .load(itemView.getResources().getString(R.string.ip_server) + "ressources/cover/" + book.getBlanket())
                     .placeholder(R.drawable.img_default_book)
                     .error(R.drawable.img_default_book)

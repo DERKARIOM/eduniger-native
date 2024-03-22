@@ -85,7 +85,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
 //            menu.add(Menu.NONE,R.id.inportanteNotif,Menu.NONE,"Message importants");
         }
         void display(Chat chat){
-            Picasso.with(itemView.getContext())
+            Picasso.get()
                     .load(itemView.getContext().getString(R.string.ip_server) + "ressources/profile/" + chat.getProfile())
                     .placeholder(R.drawable.img_default_book)
                     .error(R.drawable.img_default_book)

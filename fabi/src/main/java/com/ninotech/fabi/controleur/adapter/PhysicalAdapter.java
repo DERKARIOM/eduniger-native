@@ -94,7 +94,7 @@ public class PhysicalAdapter extends RecyclerView.Adapter<PhysicalAdapter.MyView
 //            menu.add(Menu.NONE,R.id.inportanteNotif,Menu.NONE,"Message importants");
         }
         void display(Physical physical){
-            Picasso.with(itemView.getContext())
+            Picasso.get()
                     .load(itemView.getResources().getString(R.string.ip_server) + "ressources/cover/" + physical.getBlanket())
                     .placeholder(R.drawable.img_default_book)
                     .error(R.drawable.img_default_book)

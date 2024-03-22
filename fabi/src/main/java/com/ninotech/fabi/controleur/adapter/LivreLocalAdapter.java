@@ -101,7 +101,7 @@ public class LivreLocalAdapter extends RecyclerView.Adapter<LivreLocalAdapter.My
 //            menu.add(Menu.NONE,R.id.inportanteNotif,Menu.NONE,"Message importants");
         }
         void display(LivreLocal livre){
-            Picasso.with(itemView.getContext())
+            Picasso.get()
                     .load("http://192.168.43.1:2222/fabi/couverture/" + livre.getCouverture())
                     .placeholder(R.drawable.img_default_book)
                     .error(R.drawable.img_default_book)

@@ -53,7 +53,7 @@ public class RecommendedFragment extends Fragment {
         monPubList = new ArrayList<>();
         monPubList.add("pub1.jpg");
         monPubList.add("pub2.jpg");
-        Picasso.with(view.getContext())
+        Picasso.get()
                 .load(getString(R.string.ip_server) + "ressources/pub/pub1.jpg")
                 .transform(new RoundedTransformation(200,10))
                 .resize(6200,3333)

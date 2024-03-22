@@ -86,7 +86,7 @@ public class CategorieLocalAdapter extends RecyclerView.Adapter<CategorieLocalAd
 //            menu.add(Menu.NONE,R.id.inportanteNotif,Menu.NONE,"Message importants");
         }
         void display(Category category){
-            Picasso.with(itemView.getContext())
+            Picasso.get()
                     .load("http://192.168.43.1:2222/fabi/couverture/" + category.getBlanket())
                     .placeholder(R.drawable.img_default_book)
                     .error(R.drawable.img_default_book)

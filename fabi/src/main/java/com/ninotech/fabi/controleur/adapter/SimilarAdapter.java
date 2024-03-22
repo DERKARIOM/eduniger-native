@@ -62,7 +62,7 @@ public class SimilarAdapter extends RecyclerView.Adapter<SimilarAdapter.MyViewHo
         }
 
         void display(SimilarBook similarBook) throws SQLException, IOException {
-            Picasso.with(itemView.getContext())
+            Picasso.get()
                     .load(itemView.getContext().getString(R.string.ip_server) + "ressources/cover/"  + similarBook.getCover())
                     .placeholder(R.drawable.img_default_book)
                     .error(R.drawable.img_default_book)
