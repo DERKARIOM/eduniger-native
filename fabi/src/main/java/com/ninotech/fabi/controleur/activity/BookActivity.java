@@ -44,6 +44,7 @@ import com.ninotech.fabi.controleur.adapter.NoConnectionAdapter;
 import com.ninotech.fabi.controleur.adapter.TalksAdapter;
 import com.ninotech.fabi.controleur.dialog.ReservationDialog;
 import com.ninotech.fabi.model.data.Book;
+import com.ninotech.fabi.model.data.Category;
 import com.ninotech.fabi.model.data.Chat;
 import com.ninotech.fabi.model.data.Connection;
 import com.ninotech.fabi.model.data.ImageDownloader;
@@ -213,7 +214,7 @@ public class BookActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 ImageDownloader imageDownloader = new ImageDownloader(getApplicationContext(),mSession.getIdNumber(),mBook);
-                imageDownloader.execute(mBook.getBlanket(),mBook.getElectronic());
+                imageDownloader.execute(mBook.getBlanket(),mBook.getElectronic(),mCategory.getBlanket());
                // if(mElectronicTable.insert(mSession.getIdNumber(),mBook.getId(), mDescriptionTextView.getText().toString(),"ras",imageDownloader.getBytes(),mBook.getElectronic(), mCategoryTextView.getText().toString(), mBook.getTitle(),"ras","ras"))
                     succeDowloadPDFDialog();
             }
@@ -499,6 +500,7 @@ public class BookActivity extends AppCompatActivity {
                     mBook.setNumberLikes(Integer.parseInt(jsonObject.getString("numberLike")));
                     mBook.setNumberNoLikes(Integer.parseInt(jsonObject.getString("numberNoLike")));
                     mBook.setNumberSubscribe(Integer.parseInt(jsonObject.getString("numberSubscribe")));
+                    mCategory = new Category(jsonObject.getString("categoryBlanket"),jsonObject.getString("categoryTitle"));
                     Picasso.get()
                             .load(getString(R.string.ip_server) + "ressources/cover/" + mBook.getBlanket())
                             .placeholder(R.drawable.img_default_book)
@@ -1353,6 +1355,7 @@ public class BookActivity extends AppCompatActivity {
     private ElectronicTable mElectronicTable;
     private String mNbrJour;
     private Book mBook;
+    private Category mCategory;
     private Handler mHandler;
     private NestedScrollView mNestedScrollView;
     private NoConnectionAdapter mNoConnectionAdapter;

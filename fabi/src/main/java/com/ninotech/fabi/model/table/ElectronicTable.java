@@ -27,8 +27,8 @@ public class ElectronicTable extends SQLiteOpenHelper {
                 "    electronic BLOB NOT NULL,\n" +
                 "    category VARCHAR(100),\n" +
                 "    title VARCHAR(100),\n" +
-                "    blanketCategory VARCHAR(100),\n" +
-                "    profileAuthor VARCHAR(100),\n" +
+                "    blanketCategory BLOB NOT NULL,\n" +
+                "    profileAuthor BLOB,\n" +
                 "    UNIQUE(idNumber,idBook)\n" +
                 ");");
     }
@@ -72,7 +72,7 @@ public class ElectronicTable extends SQLiteOpenHelper {
         res.moveToFirst();
         return res.getInt(0);
     }
-    public boolean insert (String idNumber , String idBook , String description , String author ,byte[] blanketBook, byte[] electronic , String category , String title , String blanketCategory,String profileAuthor)
+    public boolean insert (String idNumber , String idBook , String description , String author ,byte[] blanketBook, byte[] electronic , String category , String title ,byte[] blanketCategory,byte[] profileAuthor)
     {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();

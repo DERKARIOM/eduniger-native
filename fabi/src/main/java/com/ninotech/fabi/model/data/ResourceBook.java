@@ -3,27 +3,47 @@ package com.ninotech.fabi.model.data;
 import android.graphics.Bitmap;
 
 public class ResourceBook {
-    public Bitmap getBitmap() {
-        return mBitmap;
+    public Bitmap getCoverBookBitmap() {
+        return mCoverBookBitmap;
     }
 
-    public void setBitmap(Bitmap bitmap) {
-        mBitmap = bitmap;
+    public void setCoverBookBitmap(Bitmap coverBookBitmap) {
+        mCoverBookBitmap = coverBookBitmap;
     }
 
-    public byte[] getBytes() {
-        return mBytes;
+    public byte[] getPdfBytes() {
+        return mPdfBytes;
     }
 
-    public void setBytes(byte[] bytes) {
-        mBytes = bytes;
+    public void setPdfBytes(byte[] pdfBytes) {
+        mPdfBytes = pdfBytes;
     }
 
     public ResourceBook() {
-        mBitmap = null;
-        mBytes = null;
+        mCoverBookBitmap = null;
+        mCoverCategoryBitmap = null;
+        mProfileAuthorBitmap = null;
+        mPdfBytes = null;
     }
 
-    private Bitmap mBitmap;
-    private byte[] mBytes;
+    public Bitmap getCoverCategoryBitmap() {
+        return mCoverCategoryBitmap;
+    }
+
+    public void setCoverCategoryBitmap(Bitmap coverCategoryBitmap) {
+        mCoverCategoryBitmap = coverCategoryBitmap;
+    }
+
+    public Bitmap getProfileAuthorBitmap() {
+        return mProfileAuthorBitmap;
+    }
+
+    public void setProfileAuthorBitmap(Bitmap profileAuthorBitmap) {
+        mProfileAuthorBitmap = profileAuthorBitmap;
+    }
+
+    private Bitmap mCoverBookBitmap;
+    private Bitmap mCoverCategoryBitmap;
+    private Bitmap mProfileAuthorBitmap;
+    private byte[] mPdfBytes;
 }
