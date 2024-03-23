@@ -219,6 +219,6 @@
     <string name="no_connection_available">Aucun reseau disponible</string>
     <string name="wait">Veuillez patienter</string>
     <string name="download_book">Téléchargement récent</string>
-    <string name="recent_read">Lecture récentes</string>
+    <string name="recent_read">Lecture récentes des livre Électronique</string>
 
 </resources>

@@ -91,7 +91,7 @@ public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.MyViewHold
                     .placeholder(R.drawable.img_default_book)
                     .error(R.drawable.img_default_book)
                     .transform(new RoundedTransformation(15,4))
-                    .resize(178,284)
+                    .resize(198,304)
                     .into(mCoverImageView);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
