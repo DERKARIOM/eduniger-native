@@ -164,9 +164,9 @@
     <string name="message_default">Salut que puis-je faire pour vous</string>
     <string name="cancel_reservation">Annuler La reservation</string>
     <string name="reservation_book">Réservation du livre</string>
-    <string name="dawnloads_book">Les Livres télécharges</string>
-    <string name="favorites">Coups de coeur</string>
-    <string name="playlists">Playlists</string>
+    <string name="dawnloads_book">Vos Livres Électronique</string>
+    <string name="favorites">Vos Livres Audio</string>
+    <string name="playlists">Vos Livres Emprunter</string>
     <string name="cetegory">Categorie</string>
     <string name="author">Auteurs</string>
     <string name="account">Compte</string>
@@ -219,5 +219,6 @@
     <string name="no_connection_available">Aucun reseau disponible</string>
     <string name="wait">Veuillez patienter</string>
     <string name="download_book">Téléchargement récent</string>
+    <string name="recent_read">Lecture récentes</string>
 
 </resources>

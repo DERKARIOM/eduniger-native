@@ -13,7 +13,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
-        android:text="@string/download_book"
+        android:text="@string/recent_read"
         android:textStyle="bold"
         android:textSize="@dimen/size_title" />
 
