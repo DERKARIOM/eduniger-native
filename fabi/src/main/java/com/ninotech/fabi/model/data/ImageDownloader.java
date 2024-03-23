@@ -7,28 +7,26 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.ninotech.fabi.R;
 import com.ninotech.fabi.model.table.ElectronicTable;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 public class ImageDownloader extends AsyncTask<String, Void, ResourceBook> {
     @Override
-    protected ResourceBook doInBackground(String... urls) {
-        String imageURL = urls[0];
-        String pdfURL = urls[1];
+    protected ResourceBook doInBackground(String... name) {
+        String blanketBookURL = mContext.getString(R.string.ip_server) + "ressources/cover/" + name[0];
+        String pdfURL = mContext.getString(R.string.ip_server) + "ressources/pdf/" + name[1];
         ResourceBook resourceBook = new ResourceBook();
         try {
             // Download Blanket
-            URL urlImage = new URL(imageURL);
-            HttpURLConnection connectionImage = (HttpURLConnection) urlImage.openConnection();
-            connectionImage.setDoInput(true);
-            connectionImage.connect();
-            InputStream inputImage = connectionImage.getInputStream();
-            resourceBook.setBitmap(BitmapFactory.decodeStream(inputImage));
+            resourceBook.setBitmap(downloadIMG(blanketBookURL));
 
             // Download Book
             URL urlPdf = new URL(pdfURL);
@@ -74,6 +72,14 @@ public class ImageDownloader extends AsyncTask<String, Void, ResourceBook> {
         mContext = context;
         mIdNumber = idNumber;
         mBook = book;
+    }
+    public Bitmap downloadIMG(String url) throws IOException {
+        URL urlImage = new URL(url);
+        HttpURLConnection connectionImage = (HttpURLConnection) urlImage.openConnection();
+        connectionImage.setDoInput(true);
+        connectionImage.connect();
+        InputStream inputImage = connectionImage.getInputStream();
+        return BitmapFactory.decodeStream(inputImage);
     }
     private Context mContext;
     private String mIdNumber;
