@@ -84,7 +84,7 @@ public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.MyViewHold
         void display(SimilarBook similarBook) throws SQLException, IOException {
             //mCoverImageView.setImageBitmap(similarBook.getCover());
             // Convertir le Bitmap en un fichier
-            File file = bitmapToFile(itemView.getContext(), "image.png", similarBook.getCover());
+            File file = bitmapToFile(itemView.getContext(), "image" + String.valueOf(similarBook.getId()) + ".png", similarBook.getCover());
 
 // Charger le fichier avec Picasso
             Picasso.get().load(file)
