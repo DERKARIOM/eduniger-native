@@ -32,7 +32,7 @@ public class ElectronicAdapter extends RecyclerView.Adapter<ElectronicAdapter.My
     @Override
     public ElectronicAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View view = layoutInflater.inflate(R.layout.adapter_electronique,parent,false);
+        View view = layoutInflater.inflate(R.layout.adapter_electronic,parent,false);
         return new MyViewHolder(view);
     }
     @Override
@@ -58,8 +58,8 @@ public class ElectronicAdapter extends RecyclerView.Adapter<ElectronicAdapter.My
         private TextView mNbrLivre;
         MyViewHolder(View itemView){
             super(itemView);
-            mLabel = (TextView) itemView.findViewById(R.id.label_mes_livres);
-            mNbrLivre = (TextView) itemView.findViewById(R.id.nbr_livre);
+            mLabel = (TextView) itemView.findViewById(R.id.text_view_adapter_electronic);
+            mNbrLivre = (TextView) itemView.findViewById(R.id.text_view_adapter_electronic_number);
         }
         //        @Override
 //        public void onCreateContextMenu(ContextMenu menu , View v , ContextMenu.ContextMenuInfo menuInfo){

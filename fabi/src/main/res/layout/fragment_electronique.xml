@@ -6,22 +6,21 @@
     tools:context="com.ninotech.fabi.controleur.fragment.ElectronicFragment">
 
     <TextView
-        android:id="@+id/recenment"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/text_view_fragment_electronique_recent_book"
+        style="@style/wrap_content_all"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="10dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
-        android:text="Téléchargement récent"
-        android:textColor="@color/black"
-        android:textSize="18dp" />
+        android:text="@string/download_book"
+        android:textStyle="bold"
+        android:textSize="@dimen/size_title" />
 
     <!-- TODO: Update blank fragment layout -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_electronic_fragment_recent"
-        android:layout_below="@+id/recenment"
+        android:layout_below="@+id/text_view_fragment_electronique_recent_book"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
     <androidx.recyclerview.widget.RecyclerView

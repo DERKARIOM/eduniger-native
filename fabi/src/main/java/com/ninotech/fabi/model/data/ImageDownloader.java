@@ -9,39 +9,61 @@ import android.util.Log;
 
 import com.ninotech.fabi.model.table.ElectronicTable;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class ImageDownloader extends AsyncTask<String, Void, Bitmap> {
+public class ImageDownloader extends AsyncTask<String, Void, ResourceBook> {
     @Override
-    protected Bitmap doInBackground(String... urls) {
+    protected ResourceBook doInBackground(String... urls) {
         String imageURL = urls[0];
-        Bitmap bitmap = null;
+        String pdfURL = urls[1];
+        ResourceBook resourceBook = new ResourceBook();
         try {
-            URL url = new URL(imageURL);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setDoInput(true);
-            connection.connect();
-            InputStream input = connection.getInputStream();
-            bitmap = BitmapFactory.decodeStream(input);
+            // Download Blanket
+            URL urlImage = new URL(imageURL);
+            HttpURLConnection connectionImage = (HttpURLConnection) urlImage.openConnection();
+            connectionImage.setDoInput(true);
+            connectionImage.connect();
+            InputStream inputImage = connectionImage.getInputStream();
+            resourceBook.setBitmap(BitmapFactory.decodeStream(inputImage));
+
+            // Download Book
+            URL urlPdf = new URL(pdfURL);
+            HttpURLConnection connectionPDF = (HttpURLConnection) urlPdf.openConnection();
+            connectionPDF.connect();
+            if (connectionPDF.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                InputStream inputStream = new BufferedInputStream(connectionPDF.getInputStream());
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                byte[] buffer = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, bytesRead);
+                }
+                resourceBook.setBytes(outputStream.toByteArray());
+                inputStream.close();
+                outputStream.close();
+                connectionPDF.disconnect();
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return bitmap;
+        return resourceBook;
     }
 
     @SuppressLint("WrongThread")
     @Override
-    protected void onPostExecute(Bitmap result) {
+    protected void onPostExecute(ResourceBook result) {
         if (result != null) {
             // Convertir l'image Bitmap en un tableau d'octets
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            result.compress(Bitmap.CompressFormat.PNG, 100, stream);
+            result.getBitmap().compress(Bitmap.CompressFormat.PNG, 100, stream);
             byte[] bytes = stream.toByteArray();
             ElectronicTable electronicTable = new ElectronicTable(mContext);
-            electronicTable.insert(mIdNumber,mBook.getId(),mBook.getDescription(),mBook.getAuthor(),bytes,mBook.getElectronic(),mBook.getCategory().get(0),mBook.getTitle(),"ras","ras");
+            electronicTable.insert(mIdNumber,mBook.getId(),mBook.getDescription(),mBook.getAuthor(),bytes,result.getBytes(),mBook.getCategory().get(0),mBook.getTitle(),"ras","ras");
             //Log.e("CAARAMOO",mBytes.toString());
         }
         // Sauvegarder l'image dans la base de données SQLite

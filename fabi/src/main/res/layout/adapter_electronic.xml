@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="15dp">
+    <TextView
+        android:id="@+id/text_view_adapter_electronic"
+        style="@style/wrap_content_all"
+        android:textStyle="bold"
+        android:textSize="@dimen/size_title"
+        tools:ignore="RelativeOverlap" />
+    <TextView
+        android:id="@+id/text_view_adapter_electronic_number"
+        android:layout_alignParentEnd="true"
+        style="@style/wrap_content_all"
+        android:textSize="@dimen/size_title"/>
+</RelativeLayout>

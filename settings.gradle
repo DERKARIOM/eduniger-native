@@ -10,6 +10,9 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven {
+            url "https://my.pspdfkit.com/maven/"
+        }
     }
 }
 rootProject.name = "ras"

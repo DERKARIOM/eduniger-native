@@ -30,7 +30,7 @@ public class ElectronicFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_electronique, container, false);
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view_electronic_fragment_media);
-        RecyclerView recyclerView1 = view.findViewById(R.id.recycler_view_electronic_fragment_recent);
+        RecyclerView recentRecyclerView = view.findViewById(R.id.recycler_view_electronic_fragment_recent);
         List<Electronic> ElectronicList = new ArrayList<>();
         List<SimilarBook> similarBookList = new ArrayList<>();
         ElectronicTable electronicTable = new ElectronicTable(getContext());
@@ -49,7 +49,7 @@ public class ElectronicFragment extends Fragment {
                 byte[] imageBytes = cursor.getBlob(5);
                 // Convertir le tableau d'octets en Bitmap
                 Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-                similarBookList.add(new SimilarBook(cursor.getString(2),bitmap,cursor.getString(6)));
+                similarBookList.add(new SimilarBook(cursor.getString(2),bitmap,null));
             }while(cursor.moveToNext());
         }catch (Exception e)
         {
@@ -57,10 +57,9 @@ public class ElectronicFragment extends Fragment {
         }
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext().getApplicationContext()));
-        recyclerView1.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
+        recentRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
         recyclerView.setAdapter(electronicAdapter);
-        recyclerView1.setAdapter(recentAdapter);
+        recentRecyclerView.setAdapter(recentAdapter);
         return view;
     }
-
 }

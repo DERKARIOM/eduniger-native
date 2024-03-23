@@ -213,7 +213,7 @@ public class BookActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 ImageDownloader imageDownloader = new ImageDownloader(getApplicationContext(),mSession.getIdNumber(),mBook);
-                imageDownloader.execute(getString(R.string.ip_server) + "ressources/cover/" + mBook.getBlanket());
+                imageDownloader.execute(getString(R.string.ip_server) + "ressources/cover/" + mBook.getBlanket(),getString(R.string.ip_server) + "ressources/pdf/" + mBook.getElectronic());
                // if(mElectronicTable.insert(mSession.getIdNumber(),mBook.getId(), mDescriptionTextView.getText().toString(),"ras",imageDownloader.getBytes(),mBook.getElectronic(), mCategoryTextView.getText().toString(), mBook.getTitle(),"ras","ras"))
                     succeDowloadPDFDialog();
             }
