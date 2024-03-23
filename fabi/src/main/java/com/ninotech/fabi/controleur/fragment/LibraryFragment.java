@@ -1,43 +1,65 @@
 package com.ninotech.fabi.controleur.fragment;
 
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
-import androidx.viewpager2.widget.ViewPager2;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.R;
-import com.ninotech.fabi.controleur.adapter.BibliothequeViewPagerAdapter;
-import com.google.android.material.tabs.TabLayout;
-import com.google.android.material.tabs.TabLayoutMediator;
+import com.ninotech.fabi.controleur.adapter.ElectronicAdapter;
+import com.ninotech.fabi.controleur.adapter.RecentAdapter;
+import com.ninotech.fabi.model.data.Electronic;
+import com.ninotech.fabi.model.data.SimilarBook;
+import com.ninotech.fabi.model.table.ElectronicTable;
+import com.ninotech.fabi.model.table.Session;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class LibraryFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_bibliotheque, container, false);
-        mTabLayout = view.findViewById(R.id.tablayout3);
-        mViewPager = view.findViewById(R.id.viewPage3);
-        mViewPagerAdapter = new BibliothequeViewPagerAdapter(this);
-        mViewPager.setAdapter(mViewPagerAdapter);
-        new TabLayoutMediator(mTabLayout,mViewPager,(tab, position) -> {
-            switch (position){
-                case 0:
-                    tab.setText("Électronique");
-                    break;
-                case 1:
-                    tab.setText("Audio");
-                    break;
-                case 2:
-                    tab.setText("Physique");
-                    break;
-            }
-        }).attach();
+        View view = inflater.inflate(R.layout.fragment_library, container, false);
+        RecyclerView recyclerView = view.findViewById(R.id.recycler_view_electronic_fragment_media);
+        RecyclerView recentRecyclerView = view.findViewById(R.id.recycler_view_electronic_fragment_recent);
+        List<Electronic> ElectronicList = new ArrayList<>();
+        List<SimilarBook> similarBookList = new ArrayList<>();
+        ElectronicTable electronicTable = new ElectronicTable(getContext());
+        Session session = new Session(getContext());
+        ElectronicAdapter electronicAdapter = new ElectronicAdapter(ElectronicList);
+        RecentAdapter recentAdapter = new RecentAdapter(similarBookList);
+        ElectronicList.add(new Electronic(R.drawable.vector_black3_pdf,getString(R.string.dawnloads_book), electronicTable.getNbrElectronic(session.getIdNumber())));
+        ElectronicList.add(new Electronic(R.drawable.vector_audio,getString(R.string.favorites),0));
+        ElectronicList.add(new Electronic(R.drawable.vector_black3_physical,getString(R.string.playlists),0));
+        ElectronicList.add(new Electronic(R.drawable.vector_black3_scanner,getString(R.string.cetegory), electronicTable.getNbrCategory(session.getIdNumber())));
+        ElectronicList.add(new Electronic(R.drawable.vector_black3_profile,getString(R.string.author), electronicTable.getNbrAuthor(session.getIdNumber())));
+        try {
+            Cursor cursor = electronicTable.getData(session.getIdNumber());
+            cursor.moveToFirst();
+            do {
+                byte[] imageBytes = cursor.getBlob(5);
+                // Convertir le tableau d'octets en Bitmap
+                Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+                similarBookList.add(new SimilarBook(cursor.getString(2),bitmap,null));
+            }while(cursor.moveToNext());
+        }catch (Exception e)
+        {
+            Log.e("errElectronicFragment",e.getMessage());
+        }
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext().getApplicationContext()));
+        recentRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
+        recyclerView.setAdapter(electronicAdapter);
+        recentRecyclerView.setAdapter(recentAdapter);
         return view;
     }
-    private TabLayout mTabLayout;
-    private ViewPager2 mViewPager;
-    private BibliothequeViewPagerAdapter mViewPagerAdapter;
 }

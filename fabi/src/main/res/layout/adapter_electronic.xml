@@ -4,9 +4,18 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_margin="15dp">
+    <ImageView
+        android:id="@+id/image_view_adapter_electronic"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_centerVertical="true"
+        android:src="@drawable/vector_audio"
+        />
     <TextView
+        android:layout_toRightOf="@id/image_view_adapter_electronic"
         android:id="@+id/text_view_adapter_electronic"
         style="@style/wrap_content_all"
+        android:layout_marginStart="15dp"
         android:textStyle="bold"
         android:textSize="@dimen/size_title"
         tools:ignore="RelativeOverlap" />

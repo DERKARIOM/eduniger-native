@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -54,10 +55,12 @@ public class ElectronicAdapter extends RecyclerView.Adapter<ElectronicAdapter.My
 
 
     public class MyViewHolder extends RecyclerView.ViewHolder{
-        private TextView mLabel;
-        private TextView mNbrLivre;
+        private ImageView mIcoImageView;
+        private final TextView mLabel;
+        private final TextView mNbrLivre;
         MyViewHolder(View itemView){
             super(itemView);
+            mIcoImageView = itemView.findViewById(R.id.image_view_adapter_electronic);
             mLabel = (TextView) itemView.findViewById(R.id.text_view_adapter_electronic);
             mNbrLivre = (TextView) itemView.findViewById(R.id.text_view_adapter_electronic_number);
         }
@@ -67,6 +70,7 @@ public class ElectronicAdapter extends RecyclerView.Adapter<ElectronicAdapter.My
 ////            menu.add(Menu.NONE,R.id.suppNotif,Menu.NONE,"Supprimer");
 ////            menu.add(Menu.NONE,R.id.inportanteNotif,Menu.NONE,"Message importants");
         void display(Electronic mesLivres2){
+            mIcoImageView.setImageResource(mesLivres2.getId());
             mLabel.setText(mesLivres2.getLabel());
             mNbrLivre.setText("" + mesLivres2.getNbrLivre());
             itemView.setOnClickListener(new View.OnClickListener() {
