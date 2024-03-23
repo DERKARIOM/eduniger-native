@@ -25,27 +25,8 @@ public class ImageDownloader extends AsyncTask<String, Void, ResourceBook> {
         String pdfURL = mContext.getString(R.string.ip_server) + "ressources/pdf/" + name[1];
         ResourceBook resourceBook = new ResourceBook();
         try {
-            // Download Blanket
             resourceBook.setBitmap(downloadIMG(blanketBookURL));
-
-            // Download Book
-            URL urlPdf = new URL(pdfURL);
-            HttpURLConnection connectionPDF = (HttpURLConnection) urlPdf.openConnection();
-            connectionPDF.connect();
-            if (connectionPDF.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                InputStream inputStream = new BufferedInputStream(connectionPDF.getInputStream());
-                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                byte[] buffer = new byte[1024];
-                int bytesRead;
-                while ((bytesRead = inputStream.read(buffer)) != -1) {
-                    outputStream.write(buffer, 0, bytesRead);
-                }
-                resourceBook.setBytes(outputStream.toByteArray());
-                inputStream.close();
-                outputStream.close();
-                connectionPDF.disconnect();
-            }
-
+            resourceBook.setBytes(downloadPDF(pdfURL));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -80,6 +61,27 @@ public class ImageDownloader extends AsyncTask<String, Void, ResourceBook> {
         connectionImage.connect();
         InputStream inputImage = connectionImage.getInputStream();
         return BitmapFactory.decodeStream(inputImage);
+    }
+
+    public byte[] downloadPDF(String url) throws IOException {
+        URL urlPdf = new URL(url);
+        byte[] bytes=null;
+        HttpURLConnection connectionPDF = (HttpURLConnection) urlPdf.openConnection();
+        connectionPDF.connect();
+        if (connectionPDF.getResponseCode() == HttpURLConnection.HTTP_OK) {
+            InputStream inputStream = new BufferedInputStream(connectionPDF.getInputStream());
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+            bytes = outputStream.toByteArray();
+            inputStream.close();
+            outputStream.close();
+            connectionPDF.disconnect();
+        }
+        return bytes;
     }
     private Context mContext;
     private String mIdNumber;
