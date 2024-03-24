@@ -25,7 +25,7 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name="com.ninotech.fabi.controleur.activity.LivreLocalActivity"
+            android:name="com.ninotech.fabi.controleur.activity.ContainerActivity"
             android:screenOrientation="portrait"
             android:exported="false" />
 

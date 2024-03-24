@@ -102,9 +102,9 @@ public class BookActivity extends AppCompatActivity {
         mCommentsRecyclerView = findViewById(R.id.recycler_view_activity_book_Comments);
         mSimilarRecyclerView = findViewById(R.id.recycler_view_activity_book_similar);
         mNoConnectionRecyclerView = findViewById(R.id.recycler_view_activity_book_no_connection);
-        mBlanketImageView = findViewById(R.id.image_view_activity_book_blanket);
-        mTitleTextView = findViewById(R.id.text_view_activity_book_title);
-        mCategoryTextView = findViewById(R.id.text_view_activity_book_category);
+        mBlanketImageView = findViewById(R.id.image_view_adapter_book_simple_cover);
+        mTitleTextView = findViewById(R.id.text_view_adapter_book_simple_title);
+        mCategoryTextView = findViewById(R.id.text_view_adapter_book_simple_category);
         mDescriptionTextView = findViewById(R.id.text_view_activity_book_description);
         mTimeNowTextView = findViewById(R.id.text_view_activity_book_time_now);
         mReservationButton = findViewById(R.id.button_activity_book_reservation);

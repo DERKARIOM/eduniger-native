@@ -35,7 +35,7 @@
                     android:layout_marginTop="10dp"
                     >
                     <ImageView
-                        android:id="@+id/image_view_activity_book_blanket"
+                        android:id="@+id/image_view_adapter_book_simple_cover"
                         android:layout_height="100dp"
                         android:layout_width="100dp"
                         android:layout_marginStart="10dp"
@@ -50,10 +50,10 @@
                         android:layout_marginStart="20dp"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:layout_toEndOf="@id/image_view_activity_book_blanket">
+                        android:layout_toEndOf="@id/image_view_adapter_book_simple_cover">
 
                         <TextView
-                            android:id="@+id/text_view_activity_book_title"
+                            android:id="@+id/text_view_adapter_book_simple_title"
                             style="@style/wrap_content_all"
                             android:layout_marginStart="5dp"
                             android:layout_marginTop="5dp"
@@ -65,9 +65,9 @@
                             android:textSize="@dimen/size_title" />
 
                         <TextView
-                            android:id="@+id/text_view_activity_book_category"
+                            android:id="@+id/text_view_adapter_book_simple_category"
                            style="@style/wrap_content_all"
-                            android:layout_below="@id/text_view_activity_book_title"
+                            android:layout_below="@id/text_view_adapter_book_simple_title"
                             android:layout_marginStart="5dp"
                             android:layout_marginTop="5dp"
                             android:layout_marginEnd="5dp"
@@ -76,7 +76,7 @@
                             android:textSize="@dimen/size_sub_title" />
                         <LinearLayout
                            style="@style/wrap_content_all"
-                            android:layout_below="@id/text_view_activity_book_category">
+                            android:layout_below="@id/text_view_adapter_book_simple_category">
                             <LinearLayout
                                 android:id="@+id/linear_layout_activity_book_like"
                                 style="@style/wrap_content_all"

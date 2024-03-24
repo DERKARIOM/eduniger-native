@@ -10,13 +10,13 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.R;
-import com.ninotech.fabi.controleur.activity.LivreLocalActivity;
-import com.ninotech.fabi.model.data.Electronic;
+import com.ninotech.fabi.controleur.activity.ContainerActivity;
+import com.ninotech.fabi.model.data.Library;
 
 import java.util.List;
 
 public class ElectronicAdapter extends RecyclerView.Adapter<ElectronicAdapter.MyViewHolder> {
-    List<Electronic> mListElectronic;
+    List<Library> mListLibrary;
 
     public int getPosition() {
         return mPosition;
@@ -27,8 +27,8 @@ public class ElectronicAdapter extends RecyclerView.Adapter<ElectronicAdapter.My
     }
 
     private int mPosition;
-    public ElectronicAdapter(List<Electronic> listElectronic) {
-        mListElectronic = listElectronic;
+    public ElectronicAdapter(List<Library> listLibrary) {
+        mListLibrary = listLibrary;
     }
     @Override
     public ElectronicAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -38,13 +38,13 @@ public class ElectronicAdapter extends RecyclerView.Adapter<ElectronicAdapter.My
     }
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        Electronic item = mListElectronic.get(position);
-        holder.display(mListElectronic.get(position));
+        Library item = mListLibrary.get(position);
+        holder.display(mListLibrary.get(position));
 
     }
     @Override
     public int getItemCount() {
-        return mListElectronic.size();
+        return mListLibrary.size();
     }
 
 
@@ -69,15 +69,15 @@ public class ElectronicAdapter extends RecyclerView.Adapter<ElectronicAdapter.My
 ////            menu.add(Menu.NONE,R.id.infoNotif,Menu.NONE,"Information");
 ////            menu.add(Menu.NONE,R.id.suppNotif,Menu.NONE,"Supprimer");
 ////            menu.add(Menu.NONE,R.id.inportanteNotif,Menu.NONE,"Message importants");
-        void display(Electronic mesLivres2){
-            mIcoImageView.setImageResource(mesLivres2.getId());
-            mLabel.setText(mesLivres2.getLabel());
-            mNbrLivre.setText("" + mesLivres2.getNbrLivre());
+        void display(Library library){
+            mIcoImageView.setImageResource(library.getIcon());
+            mLabel.setText(library.getLabel());
+            mNbrLivre.setText(String.valueOf(library.getNumber()));
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent local = new Intent(itemView.getContext(), LivreLocalActivity.class);
-                    local.putExtra("id",mesLivres2.getId());
+                    Intent local = new Intent(itemView.getContext(), ContainerActivity.class);
+                    local.putExtra("id",library.getId());
                     itemView.getContext().startActivity(local);
                 }
             });

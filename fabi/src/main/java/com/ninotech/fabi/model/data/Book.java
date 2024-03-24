@@ -188,4 +188,5 @@ public class Book {
    private int mNumberNoLikes;
 
    private int mNumberView;
+
 }

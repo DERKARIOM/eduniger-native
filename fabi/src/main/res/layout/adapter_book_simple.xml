@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:layout_margin="10dp">
     <ImageView
-        android:id="@+id/image_view_activity_book_blanket"
+        android:id="@+id/image_view_adapter_book_simple_cover"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_marginStart="10dp"
@@ -12,49 +12,47 @@
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
         android:elevation="2dp"
-        android:src="@drawable/img_default_book" />
+        android:src="@drawable/img_default_book"
+        android:contentDescription="@string/todo" />
     <RelativeLayout
         android:id="@+id/info_livre2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/image_view_activity_book_blanket"
+        android:layout_toRightOf="@+id/image_view_adapter_book_simple_cover"
         android:layout_centerVertical="true">
 
         <TextView
-            android:id="@+id/text_view_activity_book_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/text_view_adapter_book_simple_title"
+            style="@style/wrap_content_all"
             android:layout_marginStart="5dp"
             android:layout_marginTop="5dp"
             android:layout_marginEnd="5dp"
             android:layout_marginBottom="5dp"
-            android:text="Titre du livre"
-            android:textColor="@color/black"
-            android:textSize="15dp" />
+            android:text="@string/book_title"
+            android:textStyle="bold"
+            android:textSize="@dimen/size_title" />
 
         <TextView
-            android:id="@+id/text_view_activity_book_category"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/text_view_activity_book_title"
+            android:id="@+id/text_view_adapter_book_simple_category"
+            style="@style/wrap_content_all"
+            android:layout_below="@id/text_view_adapter_book_simple_title"
             android:layout_marginStart="5dp"
             android:layout_marginTop="5dp"
             android:layout_marginEnd="5dp"
             android:layout_marginBottom="5dp"
-            android:text="Categorie du livre"
-            android:textSize="12dp" />
+            android:text="@string/category_title"
+            android:textSize="@dimen/size_sub_title" />
 
         <TextView
-            android:id="@+id/auteur_livre"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/text_view_activity_book_category"
+            android:id="@+id/text_view_adapter_book_simple_author"
+            style="@style/wrap_content_all"
+            android:layout_below="@id/text_view_adapter_book_simple_category"
             android:layout_marginStart="5dp"
             android:layout_marginTop="5dp"
             android:layout_marginEnd="5dp"
             android:layout_marginBottom="5dp"
-            android:text="Auteur du livre"
-            android:textSize="12dp" />
+            android:text="@string/author"
+            android:textSize="@dimen/size_sub_title" />
     </RelativeLayout>
 
 </RelativeLayout>

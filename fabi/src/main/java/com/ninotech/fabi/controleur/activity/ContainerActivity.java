@@ -6,56 +6,56 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.widget.ImageView;
 
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.adapter.CategorieLocalAdapter;
-import com.ninotech.fabi.controleur.adapter.LivreLocalAdapter;
+import com.ninotech.fabi.controleur.adapter.ElectronicBookAdapter;
+import com.ninotech.fabi.model.data.Book;
 import com.ninotech.fabi.model.data.Category;
+import com.ninotech.fabi.model.data.ElectronicBook;
 import com.ninotech.fabi.model.table.ElectronicTable;
-import com.ninotech.fabi.model.data.LivreLocal;
 import com.ninotech.fabi.model.table.Session;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class LivreLocalActivity extends AppCompatActivity {
+public class ContainerActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_livre_local);
+        setContentView(R.layout.activity_container);
         getSupportActionBar().hide();
-        mRecyclerView = findViewById(R.id.recylerLivreLocal);
+        mRecyclerView = findViewById(R.id.recycler_view_activity_container);
         mSession = new Session(this);
         mElectronicTable = new ElectronicTable(this);
-        mItemLocal = findViewById(R.id.item_local);
-        Intent livreLocal = getIntent();
-        int id = livreLocal.getIntExtra("id",0);
+        Intent libraryIntent = getIntent();
+        int id = libraryIntent.getIntExtra("id",0);
 
         switch (id)
         {
-            case 1: // Les Livre Telechages
-                mItemLocal.setImageResource(R.drawable.img_telecharge_local);
-                mList1 = new ArrayList<>();
-                Cursor cursor1 = mElectronicTable.getData(mSession.getIdNumber());
-                cursor1.moveToFirst();
+            case 1: // Electronic Book
+                mElectronicBookList = new ArrayList<>();
+                Cursor electronicCursor = mElectronicTable.getData(mSession.getIdNumber());
+                electronicCursor.moveToFirst();
                 do {
-                    mList1.add(new LivreLocal(mSession.getIdNumber(),cursor1.getString(5),cursor1.getString(8),cursor1.getString(7),cursor1.getString(4),cursor1.getString(6)));
-                }while(cursor1.moveToNext());
-                mLivreLocalAdapter = new LivreLocalAdapter(mList1);
+                    byte[] imageBytes = electronicCursor.getBlob(5);
+                    // Convertir le tableau d'octets en Bitmap
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+                    mElectronicBookList.add(new ElectronicBook(electronicCursor.getString(2),bitmap,electronicCursor.getString(8),electronicCursor.getString(7),electronicCursor.getString(4),null));
+                }while(electronicCursor.moveToNext());
+                mElectronicBookAdapter = new ElectronicBookAdapter(mElectronicBookList);
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-                mRecyclerView.setAdapter(mLivreLocalAdapter);
+                mRecyclerView.setAdapter(mElectronicBookAdapter);
                 break;
             case 2: // Coups de coeur
-                mItemLocal.setImageResource(R.drawable.img_love_livre);
                 break;
             case 3: // Playlists
-                mItemLocal.setImageResource(R.drawable.img_playliste_local);
                 break;
             case 4: // Category
-                mItemLocal.setImageResource(R.drawable.img_categorie);
                 mList4 = new ArrayList<>();
                 Cursor cursor4 = mElectronicTable.getData(mSession.getIdNumber());
                 cursor4.moveToFirst();
@@ -67,7 +67,6 @@ public class LivreLocalActivity extends AppCompatActivity {
                 mRecyclerView.setAdapter(mCategorieLocalAdapter);
                 break;
             case 5: // Auteurs
-                mItemLocal.setImageResource(R.drawable.img_auteur_local);
                 mList4 = new ArrayList<>();
                 Cursor cursor5 = mElectronicTable.getData(mSession.getIdNumber());
                 cursor5.moveToFirst();
@@ -81,11 +80,10 @@ public class LivreLocalActivity extends AppCompatActivity {
         }
     }
     private RecyclerView mRecyclerView;
-    private LivreLocalAdapter mLivreLocalAdapter;
-    private List<LivreLocal> mList1;
+    private ElectronicBookAdapter mElectronicBookAdapter;
+    private List<ElectronicBook> mElectronicBookList;
     private List<Category> mList4;
     private ElectronicTable mElectronicTable;
     private Session mSession;
-    private ImageView mItemLocal;
     private CategorieLocalAdapter mCategorieLocalAdapter;
 }
