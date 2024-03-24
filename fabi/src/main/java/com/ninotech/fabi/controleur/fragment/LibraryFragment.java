@@ -19,6 +19,7 @@ import com.ninotech.fabi.controleur.adapter.RecentAdapter;
 import com.ninotech.fabi.model.data.Library;
 import com.ninotech.fabi.model.data.SimilarBook;
 import com.ninotech.fabi.model.table.ElectronicTable;
+import com.ninotech.fabi.model.table.LoandTable;
 import com.ninotech.fabi.model.table.Session;
 
 import java.util.ArrayList;
@@ -34,14 +35,15 @@ public class LibraryFragment extends Fragment {
         List<Library> libraryList = new ArrayList<>();
         List<SimilarBook> similarBookList = new ArrayList<>();
         ElectronicTable electronicTable = new ElectronicTable(getContext());
+        LoandTable loandTable = new LoandTable(getContext());
         Session session = new Session(getContext());
         ElectronicAdapter electronicAdapter = new ElectronicAdapter(libraryList);
         RecentAdapter recentAdapter = new RecentAdapter(similarBookList);
-        libraryList.add(new Library(1,R.drawable.vector_black3_pdf,getString(R.string.dawnloads_book), electronicTable.getNbrElectronic(session.getIdNumber())));
-        libraryList.add(new Library(2,R.drawable.vector_audio,getString(R.string.favorites),0));
-        libraryList.add(new Library(3,R.drawable.vector_black3_physical,getString(R.string.playlists),0));
-        libraryList.add(new Library(4,R.drawable.vector_black3_scanner,getString(R.string.cetegory), electronicTable.getNbrCategory(session.getIdNumber())));
-        libraryList.add(new Library(5,R.drawable.vector_black3_profile,getString(R.string.author), electronicTable.getNbrAuthor(session.getIdNumber())));
+        libraryList.add(new Library(1,R.drawable.img_electronic_book,getString(R.string.dawnloads_book), electronicTable.getNbrElectronic(session.getIdNumber())));
+        libraryList.add(new Library(2,R.drawable.img_audio_book,getString(R.string.favorites),0));
+        libraryList.add(new Library(3,R.drawable.img_loand_book,getString(R.string.playlists),loandTable.getNbrLoand(session.getIdNumber())));
+        libraryList.add(new Library(4,R.drawable.img_category,getString(R.string.cetegory), electronicTable.getNbrCategory(session.getIdNumber())));
+        libraryList.add(new Library(5,R.drawable.img_author,getString(R.string.author), electronicTable.getNbrAuthor(session.getIdNumber())));
         try {
             Cursor cursor = electronicTable.getData(session.getIdNumber());
             cursor.moveToFirst();

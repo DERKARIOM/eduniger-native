@@ -32,6 +32,13 @@ public class LoandTable extends SQLiteOpenHelper {
         database.execSQL("DROP TABLE IF EXISTS " + NAME_TABLE);
         onCreate(database);
     }
+    public int getNbrLoand(String idNumber)
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = db.rawQuery("SELECT COUNT(*) FROM " + NAME_TABLE + " WHERE idNumberLoand='"+idNumber+"';",null);
+        res.moveToFirst();
+        return res.getInt(0);
+    }
     public Cursor getData()
     {
         SQLiteDatabase database = this.getReadableDatabase();

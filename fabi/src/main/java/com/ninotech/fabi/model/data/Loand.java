@@ -1,14 +1,14 @@
 package com.ninotech.fabi.model.data;
 
-public class Physical {
-    public Physical(String idLoand, String blanket, String title, String dateStart, String dateEnd) {
+public class Loand {
+    public Loand(String idLoand, String blanket, String title, String dateStart, String dateEnd) {
         mIdLoand = idLoand;
         mBlanket = blanket;
         mTitle = title;
         mDateStart = dateStart;
         mDateEnd = dateEnd;
     }
-    public  Physical(String blanket , String title , String dateStart , String dateEnd , long percentage)
+    public Loand(String blanket , String title , String dateStart , String dateEnd , long percentage)
     {
         mBlanket = blanket;
         mTitle = title;

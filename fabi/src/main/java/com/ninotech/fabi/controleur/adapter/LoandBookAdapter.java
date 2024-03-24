@@ -12,13 +12,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
-import com.ninotech.fabi.model.data.Physical;
+import com.ninotech.fabi.model.data.Loand;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-public class PhysicalAdapter extends RecyclerView.Adapter<PhysicalAdapter.MyViewHolder> {
-    List<Physical> mListPhysical;
+public class LoandBookAdapter extends RecyclerView.Adapter<LoandBookAdapter.MyViewHolder> {
+    List<Loand> mListLoand;
 
     public int getPosition() {
         return mPosition;
@@ -29,11 +29,11 @@ public class PhysicalAdapter extends RecyclerView.Adapter<PhysicalAdapter.MyView
     }
 
     private int mPosition;
-    public PhysicalAdapter(List<Physical> listPhysical) {
-        mListPhysical = listPhysical;
+    public LoandBookAdapter(List<Loand> listLoand) {
+        mListLoand = listLoand;
     }
     @Override
-    public PhysicalAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public LoandBookAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         View view = layoutInflater.inflate(R.layout.adapter_physical,parent,false);
         return new MyViewHolder(view);
@@ -41,7 +41,7 @@ public class PhysicalAdapter extends RecyclerView.Adapter<PhysicalAdapter.MyView
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        Physical item = mListPhysical.get(position);
+        Loand item = mListLoand.get(position);
         int i = position;
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -51,20 +51,20 @@ public class PhysicalAdapter extends RecyclerView.Adapter<PhysicalAdapter.MyView
                 return true;
             }
         });
-        holder.display(mListPhysical.get(position));
+        holder.display(mListLoand.get(position));
 
     }
     @Override
     public int getItemCount() {
-        return mListPhysical.size();
+        return mListLoand.size();
     }
 
-    public Physical getItem(int position) {
-        return mListPhysical.get(position);
+    public Loand getItem(int position) {
+        return mListLoand.get(position);
     }
 
     public void Remove(int position){
-        mListPhysical.remove(position);
+        mListLoand.remove(position);
         notifyItemRemoved(position);
     }
 
@@ -93,34 +93,34 @@ public class PhysicalAdapter extends RecyclerView.Adapter<PhysicalAdapter.MyView
 //            menu.add(Menu.NONE,R.id.suppNotif,Menu.NONE,"Supprimer");
 //            menu.add(Menu.NONE,R.id.inportanteNotif,Menu.NONE,"Message importants");
         }
-        void display(Physical physical){
+        void display(Loand loand){
             Picasso.get()
-                    .load(itemView.getResources().getString(R.string.ip_server) + "ressources/cover/" + physical.getBlanket())
+                    .load(itemView.getResources().getString(R.string.ip_server) + "ressources/cover/" + loand.getBlanket())
                     .placeholder(R.drawable.img_default_book)
                     .error(R.drawable.img_default_book)
                     .transform(new RoundedTransformation(15,4))
                     .resize(178,284)
                     .into(mBlanketImageView);
-            mTitleTextView.setText(physical.getTitle());
-            mTitleTextView.setText(physical.getTitle());
-            mDateInitTextView.setText(physical.getDateStart());
-            mDateFinaleTextView.setText(physical.getDateEnd());
-            if(physical.getPercentage() > 100)
+            mTitleTextView.setText(loand.getTitle());
+            mTitleTextView.setText(loand.getTitle());
+            mDateInitTextView.setText(loand.getDateStart());
+            mDateFinaleTextView.setText(loand.getDateEnd());
+            if(loand.getPercentage() > 100)
             {
                 mProgressBar.setProgress(100);
                 mPercentageTextView.setText("100%");
             }
             else
             {
-                if(physical.getPercentage() < 0)
+                if(loand.getPercentage() < 0)
                 {
                     mProgressBar.setProgress(0);
                     mPercentageTextView.setText("0%");
                 }
                 else
                 {
-                    mProgressBar.setProgress((int) physical.getPercentage());
-                    mPercentageTextView.setText(String.valueOf(physical.getPercentage()) + "%");
+                    mProgressBar.setProgress((int) loand.getPercentage());
+                    mPercentageTextView.setText(String.valueOf(loand.getPercentage()) + "%");
                 }
             }
         }
