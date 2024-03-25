@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace 'com.ninotech.fabi'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.ninotech.fabi"
         minSdk 21
-        targetSdk 33
+        targetSdk 34
         versionCode 1
         versionName "1.0"
 
@@ -24,8 +24,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 }
 
@@ -43,5 +43,5 @@ dependencies {
     implementation 'com.daimajia.easing:library:2.0@aar'
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'com.daimajia.androidanimations:library:2.4@aar'
-   // implementation "com.pspdfkit:pspdfkit:2024.1.2"
+    //implementation "com.pspdfkit:pspdfkit:2024.1.2"
 }
