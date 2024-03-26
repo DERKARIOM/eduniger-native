@@ -53,6 +53,11 @@ public class ElectronicTable extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         return db.rawQuery("SELECT DISTINCT blanketCategory,category  FROM " + NAME_TABLE + " WHERE idNumber='" + idNumber + "';",null);
     }
+    public Cursor getAuthorData(String idNumber)
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.rawQuery("SELECT DISTINCT profileAuthor,author  FROM " + NAME_TABLE + " WHERE idNumber='" + idNumber + "';",null);
+    }
 
     public int getNbrElectronic(String idNumber)
     {

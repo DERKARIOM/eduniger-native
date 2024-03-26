@@ -29,7 +29,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder
     @Override
     public ImageAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View view = layoutInflater.inflate(R.layout.adapter_image,parent,false);
+        View view = layoutInflater.inflate(R.layout.adapter_void_container,parent,false);
         return new MyViewHolder(view);
     }
 
@@ -67,7 +67,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder
         private TextView mTextView;
         MyViewHolder(View itemView){
             super(itemView);
-            mTextView = itemView.findViewById(R.id.textWellcom);
+            mTextView = itemView.findViewById(R.id.text_view_adapter_container_message);
             //mButton = (Button) itemView.findViewById(R.id.bttAnex);
             itemView.setOnCreateContextMenuListener(this);
         }

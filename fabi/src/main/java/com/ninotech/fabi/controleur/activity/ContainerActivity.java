@@ -12,11 +12,13 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.ninotech.fabi.R;
+import com.ninotech.fabi.controleur.adapter.AuthorLocalAdapter;
 import com.ninotech.fabi.controleur.adapter.CategorieLocalAdapter;
 import com.ninotech.fabi.controleur.adapter.CategoryLocalAdapter;
 import com.ninotech.fabi.controleur.adapter.ElectronicBookAdapter;
 import com.ninotech.fabi.controleur.adapter.ImageAdapter;
 import com.ninotech.fabi.controleur.adapter.LoandBookAdapter;
+import com.ninotech.fabi.model.data.AuthorLocal;
 import com.ninotech.fabi.model.data.Category;
 import com.ninotech.fabi.model.data.CategoryLocal;
 import com.ninotech.fabi.model.data.ElectronicBook;
@@ -99,15 +101,18 @@ public class ContainerActivity extends AppCompatActivity {
                 mRecyclerView.setAdapter(categoryLoacalAdapter);
                 break;
             case 5: // Auteurs
-                mList4 = new ArrayList<>();
-                Cursor cursor5 = mElectronicTable.getData(mSession.getIdNumber());
-                cursor5.moveToFirst();
+                ArrayList<AuthorLocal> authorLocals = new ArrayList<>();
+                Cursor authorCursor = mElectronicTable.getAuthorData(mSession.getIdNumber());
+                authorCursor.moveToFirst();
                 do {
-                    mList4.add(new Category(cursor5.getString(10),cursor5.getString(4)));
-                }while(cursor5.moveToNext());
-                mCategorieLocalAdapter = new CategorieLocalAdapter(mList4);
+                    byte[] imageBytes = authorCursor.getBlob(0);
+                    // Convertir le tableau d'octets en Bitmap
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+                    authorLocals.add(new AuthorLocal(bitmap,authorCursor.getString(1)));
+                }while (authorCursor.moveToNext());
+                AuthorLocalAdapter authorLocalAdapter = new AuthorLocalAdapter(authorLocals);
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-                mRecyclerView.setAdapter(mCategorieLocalAdapter);
+                mRecyclerView.setAdapter(authorLocalAdapter);
                 break;
         }
     }

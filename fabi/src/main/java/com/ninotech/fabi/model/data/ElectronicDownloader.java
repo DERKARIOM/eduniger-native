@@ -16,7 +16,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class ImageDownloader extends AsyncTask<String, Void, ResourceBook> {
+public class ElectronicDownloader extends AsyncTask<String, Void, ResourceBook> {
     @Override
     protected ResourceBook doInBackground(String... name) {
         ResourceBook resourceBook = new ResourceBook();
@@ -24,6 +24,7 @@ public class ImageDownloader extends AsyncTask<String, Void, ResourceBook> {
             resourceBook.setCoverBookBitmap(downloadIMG(mContext.getString(R.string.ip_server) + "ressources/cover/" + name[0]));
             resourceBook.setPdfBytes(downloadPDF(mContext.getString(R.string.ip_server) + "ressources/pdf/" + name[1]));
             resourceBook.setCoverCategoryBitmap(downloadIMG(mContext.getString(R.string.ip_server) + "ressources/cover/" + name[2]));
+            resourceBook.setProfileAuthorBitmap(downloadIMG(mContext.getString(R.string.ip_server) + "ressources/profile/" + name[3]));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -37,17 +38,20 @@ public class ImageDownloader extends AsyncTask<String, Void, ResourceBook> {
             // Convertir l'image Bitmap en un tableau d'octets
             ByteArrayOutputStream coverBookStream = new ByteArrayOutputStream();
             ByteArrayOutputStream coverCategoryStream = new ByteArrayOutputStream();
+            ByteArrayOutputStream profileAuthorStream = new ByteArrayOutputStream();
             result.getCoverBookBitmap().compress(Bitmap.CompressFormat.PNG, 100, coverBookStream);
             result.getCoverCategoryBitmap().compress(Bitmap.CompressFormat.PNG, 100, coverCategoryStream);
+            result.getProfileAuthorBitmap().compress(Bitmap.CompressFormat.PNG, 100, profileAuthorStream);
             byte[] coverBookBytes = coverBookStream.toByteArray();
             byte[] coverCategoryBytes = coverCategoryStream.toByteArray();
+            byte[] profileAuthorBytes = profileAuthorStream.toByteArray();
             ElectronicTable electronicTable = new ElectronicTable(mContext);
-            electronicTable.insert(mIdNumber,mBook.getId(),mBook.getDescription(),mBook.getAuthor(),coverBookBytes,result.getPdfBytes(),mBook.getCategory().get(0),mBook.getTitle(),coverCategoryBytes,null);
+            electronicTable.insert(mIdNumber,mBook.getId(),mBook.getDescription(),mBook.getAuthor(),coverBookBytes,result.getPdfBytes(),mBook.getCategory().get(0),mBook.getTitle(),coverCategoryBytes,profileAuthorBytes);
         }
         // Sauvegarder l'image dans la base de données SQLite
         // Utilisez votre DatabaseHelper pour insérer l'image dans la base de données
     }
-    public ImageDownloader(Context context , String idNumber , Book book)
+    public ElectronicDownloader(Context context , String idNumber , Book book)
     {
         mContext = context;
         mIdNumber = idNumber;
@@ -85,4 +89,5 @@ public class ImageDownloader extends AsyncTask<String, Void, ResourceBook> {
     private Context mContext;
     private String mIdNumber;
     private Book mBook;
+    //private Author mAuthor;
 }
