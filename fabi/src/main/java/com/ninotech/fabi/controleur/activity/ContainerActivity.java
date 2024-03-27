@@ -16,13 +16,14 @@ import com.ninotech.fabi.controleur.adapter.AuthorLocalAdapter;
 import com.ninotech.fabi.controleur.adapter.CategorieLocalAdapter;
 import com.ninotech.fabi.controleur.adapter.CategoryLocalAdapter;
 import com.ninotech.fabi.controleur.adapter.ElectronicBookAdapter;
-import com.ninotech.fabi.controleur.adapter.ImageAdapter;
+import com.ninotech.fabi.controleur.adapter.VoidContainerAdapter;
 import com.ninotech.fabi.controleur.adapter.LoandBookAdapter;
 import com.ninotech.fabi.model.data.AuthorLocal;
 import com.ninotech.fabi.model.data.Category;
 import com.ninotech.fabi.model.data.CategoryLocal;
 import com.ninotech.fabi.model.data.ElectronicBook;
 import com.ninotech.fabi.model.data.Loand;
+import com.ninotech.fabi.model.data.VoidContainer;
 import com.ninotech.fabi.model.table.ElectronicTable;
 import com.ninotech.fabi.model.table.LoandTable;
 import com.ninotech.fabi.model.table.Session;
@@ -49,20 +50,26 @@ public class ContainerActivity extends AppCompatActivity {
         switch (id)
         {
             case 1: // Electronic Book
-                mElectronicBookList = new ArrayList<>();
-                Cursor electronicCursor = mElectronicTable.getData(mSession.getIdNumber());
-                electronicCursor.moveToFirst();
-                do {
-                    byte[] imageBytes = electronicCursor.getBlob(5);
-                    // Convertir le tableau d'octets en Bitmap
-                    Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-                    mElectronicBookList.add(new ElectronicBook(electronicCursor.getString(2),bitmap,electronicCursor.getString(8),electronicCursor.getString(7),electronicCursor.getString(4),null));
-                }while(electronicCursor.moveToNext());
-                ElectronicBookAdapter electronicBookAdapter = new ElectronicBookAdapter(mElectronicBookList);
-                mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-                mRecyclerView.setAdapter(electronicBookAdapter);
+               try {
+                   mElectronicBookList = new ArrayList<>();
+                   Cursor electronicCursor = mElectronicTable.getData(mSession.getIdNumber());
+                   electronicCursor.moveToFirst();
+                   do {
+                       byte[] imageBytes = electronicCursor.getBlob(5);
+                       // Convertir le tableau d'octets en Bitmap
+                       Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+                       mElectronicBookList.add(new ElectronicBook(electronicCursor.getString(2),bitmap,electronicCursor.getString(8),electronicCursor.getString(7),electronicCursor.getString(4),null));
+                   }while(electronicCursor.moveToNext());
+                   ElectronicBookAdapter electronicBookAdapter = new ElectronicBookAdapter(mElectronicBookList);
+                   mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+                   mRecyclerView.setAdapter(electronicBookAdapter);
+               }catch (Exception e)
+               {
+                   voidContainer(R.drawable.img_telecharge_local,getString(R.string.no_electronic_book));
+               }
                 break;
             case 2: // Audio Book
+                voidContainer(R.drawable.img_playliste_local,getString(R.string.no_audio_book));
                 break;
             case 3: // Loand Book
                 LoandTable loandTable = new LoandTable(this);
@@ -78,41 +85,48 @@ public class ContainerActivity extends AppCompatActivity {
                     mRecyclerView.setAdapter(loandBookAdapter);
                 }catch (Exception e)
                 {
-                    ArrayList<String> imageList = new ArrayList<>();
-                    imageList.add("Aucun livre emprunté");
-                    ImageAdapter imageAdapter = new ImageAdapter(imageList);
-                    mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-                    mRecyclerView.setAdapter(imageAdapter);
-                    Log.e("errPhysicLoand",e.getMessage());
+                    voidContainer(R.drawable.img_physical,getString(R.string.no_loand_book));
                 }
                 break;
             case 4: // Category
-                ArrayList<CategoryLocal> categoryLocals = new ArrayList<>();
-                Cursor categoryCursor = mElectronicTable.getCategoryData(mSession.getIdNumber());
-                categoryCursor.moveToFirst();
-                do {
-                    byte[] imageBytes = categoryCursor.getBlob(0);
-                    // Convertir le tableau d'octets en Bitmap
-                    Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-                    categoryLocals.add(new CategoryLocal(bitmap,categoryCursor.getString(1)));
-                }while (categoryCursor.moveToNext());
-                CategoryLocalAdapter categoryLoacalAdapter = new CategoryLocalAdapter(categoryLocals);
-                mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-                mRecyclerView.setAdapter(categoryLoacalAdapter);
+                try {
+                    ArrayList<CategoryLocal> categoryLocals = new ArrayList<>();
+                    Cursor categoryCursor = mElectronicTable.getCategoryData(mSession.getIdNumber());
+                    categoryCursor.moveToFirst();
+                    do {
+                        byte[] imageBytes = categoryCursor.getBlob(0);
+                        // Convertir le tableau d'octets en Bitmap
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+                        categoryLocals.add(new CategoryLocal(bitmap,categoryCursor.getString(1)));
+                    }while (categoryCursor.moveToNext());
+                    CategoryLocalAdapter categoryLoacalAdapter = new CategoryLocalAdapter(categoryLocals);
+                    mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+                    mRecyclerView.setAdapter(categoryLoacalAdapter);
+                }
+                catch (Exception e)
+                {
+                    voidContainer(R.drawable.img_categorie,getString(R.string.no_category));
+                }
                 break;
             case 5: // Auteurs
-                ArrayList<AuthorLocal> authorLocals = new ArrayList<>();
-                Cursor authorCursor = mElectronicTable.getAuthorData(mSession.getIdNumber());
-                authorCursor.moveToFirst();
-                do {
-                    byte[] imageBytes = authorCursor.getBlob(0);
-                    // Convertir le tableau d'octets en Bitmap
-                    Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-                    authorLocals.add(new AuthorLocal(bitmap,authorCursor.getString(1)));
-                }while (authorCursor.moveToNext());
-                AuthorLocalAdapter authorLocalAdapter = new AuthorLocalAdapter(authorLocals);
-                mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-                mRecyclerView.setAdapter(authorLocalAdapter);
+                try {
+                    ArrayList<AuthorLocal> authorLocals = new ArrayList<>();
+                    Cursor authorCursor = mElectronicTable.getAuthorData(mSession.getIdNumber());
+                    authorCursor.moveToFirst();
+                    do {
+                        byte[] imageBytes = authorCursor.getBlob(0);
+                        // Convertir le tableau d'octets en Bitmap
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+                        authorLocals.add(new AuthorLocal(bitmap,authorCursor.getString(1)));
+                    }while (authorCursor.moveToNext());
+                    AuthorLocalAdapter authorLocalAdapter = new AuthorLocalAdapter(authorLocals);
+                    mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+                    mRecyclerView.setAdapter(authorLocalAdapter);
+                }catch (Exception e)
+                {
+                    voidContainer(R.drawable.img_auteur_local,getString(R.string.no_author));
+                }
+
                 break;
         }
     }
@@ -149,6 +163,14 @@ public class ContainerActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         return dateInSeconds;
+    }
+    public void voidContainer(int image , String message)
+    {
+        ArrayList<VoidContainer> voidContainers = new ArrayList<>();
+        voidContainers.add(new VoidContainer(image,message));
+        VoidContainerAdapter voidContainerAdapter = new VoidContainerAdapter(voidContainers);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.setAdapter(voidContainerAdapter);
     }
     private RecyclerView mRecyclerView;
     private List<ElectronicBook> mElectronicBookList;

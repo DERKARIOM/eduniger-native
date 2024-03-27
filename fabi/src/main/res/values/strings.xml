@@ -220,5 +220,10 @@
     <string name="wait">Veuillez patienter</string>
     <string name="download_book">Téléchargement récent</string>
     <string name="recent_read">Lecture récentes des livre Électronique</string>
+    <string name="no_loand_book">Aucun livre Emprunté</string>
+    <string name="no_audio_book">Aucun livre audio</string>
+    <string name="no_electronic_book">Aucun livre électronique</string>
+    <string name="no_author">Accun auteur</string>
+    <string name="no_category">"Aucune catégorie "</string>
 
 </resources>

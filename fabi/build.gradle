@@ -43,5 +43,8 @@ dependencies {
     implementation 'com.daimajia.easing:library:2.0@aar'
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'com.daimajia.androidanimations:library:2.4@aar'
-    implementation 'com.pspdfkit:pspdfkit:8.3.0'
+    implementation 'com.pspdfkit:pspdfkit:8.9.0'
+    implementation 'com.pspdfkit:pspdfkit-ocr:8.9.0'
+    implementation 'com.pspdfkit:pspdfkit-ocr-english:8.9.0'
+    //implementation 'com.artifex.mupdf:mupdf-android-sdk:1.16.0'
 }

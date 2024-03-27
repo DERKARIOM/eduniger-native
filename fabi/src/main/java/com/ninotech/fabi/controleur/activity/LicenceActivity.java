@@ -1,11 +1,16 @@
 package com.ninotech.fabi.controleur.activity;
 
+import android.graphics.pdf.PdfDocument;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.ninotech.fabi.controleur.custo.StatusBarCusto;
 import com.ninotech.fabi.R;
+import com.pspdfkit.PSPDFKit;
+import com.pspdfkit.ui.PdfActivity;
+
 
 public class LicenceActivity extends AppCompatActivity {
 
@@ -13,7 +18,6 @@ public class LicenceActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_licence);
-        StatusBarCusto statusBarCusto = new StatusBarCusto(this,getWindow());
 
     }
 }

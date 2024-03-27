@@ -128,5 +128,4 @@
             android:name="com.ninotech.fabi.model.service.NotificationService"
             android:exported="false" />
     </application>
-
 </manifest>
