@@ -225,5 +225,6 @@
     <string name="no_electronic_book">Aucun livre électronique</string>
     <string name="no_author">Accun auteur</string>
     <string name="no_category">"Aucune catégorie "</string>
+    <string name="year">2023-2024</string>
 
 </resources>

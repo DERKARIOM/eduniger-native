@@ -49,10 +49,7 @@ public class RecommendedFragment extends Fragment {
         mBookRecommendedRecyclerView = view.findViewById(R.id.recycler_view_ranking);
         mPub = view.findViewById(R.id.image_view_fragment_recommended_welcome);
         mBookList = new ArrayList<>();
-        ArrayList<String> monPubList = null;
-        monPubList = new ArrayList<>();
-        monPubList.add("pub1.jpg");
-        monPubList.add("pub2.jpg");
+
         Picasso.get()
                 .load(getString(R.string.ip_server) + "ressources/pub/pub1.jpg")
                 .transform(new RoundedTransformation(200,10))
@@ -84,15 +81,8 @@ public class RecommendedFragment extends Fragment {
        mNoConnectionAdapter = new NoConnectionAdapter(list);
         mBookRecommendedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mBookRecommendedRecyclerView.setAdapter(mNoConnectionAdapter);
-
         RecommendedSyn recommendedSyn = new RecommendedSyn();
         recommendedSyn.execute(getString(R.string.ip_server_android) + "Recommended.php", session.getIdNumber());
-        mPub.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                YoYo.with(Techniques.SlideOutLeft).duration(700).repeat(0).playOn(mPub);
-            }
-        });
         return view;
     }
     private class RecommendedSyn extends AsyncTask<String,Void,String> {

@@ -22,6 +22,7 @@ import com.ninotech.fabi.model.data.SimilarBook;
 import com.ninotech.fabi.model.table.ElectronicTable;
 import com.ninotech.fabi.model.table.LoandTable;
 import com.ninotech.fabi.model.table.Session;
+import com.ninotech.fabi.model.table.StudentTable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,11 +34,18 @@ public class LibraryFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_library, container, false);
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view_electronic_fragment_media);
         RecyclerView recentRecyclerView = view.findViewById(R.id.recycler_view_electronic_fragment_recent);
+        TextView usernameTextView = view.findViewById(R.id.text_view_fragment_library_username);
+        TextView emailTextView = view.findViewById(R.id.text_view_fragment_library_email);
         List<Library> libraryList = new ArrayList<>();
         List<SimilarBook> similarBookList = new ArrayList<>();
         ElectronicTable electronicTable = new ElectronicTable(getContext());
         LoandTable loandTable = new LoandTable(getContext());
         Session session = new Session(getContext());
+        StudentTable studentTable = new StudentTable(getContext());
+        Cursor studentCursor = studentTable.getData(session.getIdNumber());
+        studentCursor.moveToFirst();
+        usernameTextView.setText(studentCursor.getString(1) + "" + studentCursor.getString(2));
+        emailTextView.setText(studentCursor.getString(5));
         ElectronicAdapter electronicAdapter = new ElectronicAdapter(libraryList);
         RecentAdapter recentAdapter = new RecentAdapter(similarBookList);
         libraryList.add(new Library(1,R.drawable.img_electronic_book,getString(R.string.dawnloads_book), electronicTable.getNbrElectronic(session.getIdNumber())));
