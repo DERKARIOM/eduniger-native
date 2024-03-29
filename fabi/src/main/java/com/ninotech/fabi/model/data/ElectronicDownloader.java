@@ -39,9 +39,9 @@ public class ElectronicDownloader extends AsyncTask<String, Void, ResourceBook> 
             ByteArrayOutputStream coverBookStream = new ByteArrayOutputStream();
             ByteArrayOutputStream coverCategoryStream = new ByteArrayOutputStream();
             ByteArrayOutputStream profileAuthorStream = new ByteArrayOutputStream();
-            result.getCoverBookBitmap().compress(Bitmap.CompressFormat.PNG, 100, coverBookStream);
-            result.getCoverCategoryBitmap().compress(Bitmap.CompressFormat.PNG, 100, coverCategoryStream);
-            result.getProfileAuthorBitmap().compress(Bitmap.CompressFormat.PNG, 100, profileAuthorStream);
+            result.getCoverBookBitmap().compress(Bitmap.CompressFormat.JPEG ,50, coverBookStream);
+            result.getCoverCategoryBitmap().compress(Bitmap.CompressFormat.PNG, 50, coverCategoryStream);
+            result.getProfileAuthorBitmap().compress(Bitmap.CompressFormat.JPEG, 50, profileAuthorStream);
             byte[] coverBookBytes = coverBookStream.toByteArray();
             byte[] coverCategoryBytes = coverCategoryStream.toByteArray();
             byte[] profileAuthorBytes = profileAuthorStream.toByteArray();
@@ -85,6 +85,12 @@ public class ElectronicDownloader extends AsyncTask<String, Void, ResourceBook> 
             connectionPDF.disconnect();
         }
         return bytes;
+    }
+    private byte[] compressImage(Bitmap imageBitmap) {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        // Compression de l'image avec une qualité de 50 (modifiable)
+        imageBitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
+        return byteArrayOutputStream.toByteArray();
     }
     private Context mContext;
     private String mIdNumber;

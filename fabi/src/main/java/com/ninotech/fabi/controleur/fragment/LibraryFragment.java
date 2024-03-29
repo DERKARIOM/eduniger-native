@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -55,6 +56,9 @@ public class LibraryFragment extends Fragment {
             }while(cursor.moveToNext());
         }catch (Exception e)
         {
+            TextView recentReadBookTextView;
+            recentReadBookTextView = view.findViewById(R.id.text_view_fragment_library_recent_read_book);
+            recentReadBookTextView.setVisibility(View.GONE);
             Log.e("errElectronicFragment",e.getMessage());
         }
 

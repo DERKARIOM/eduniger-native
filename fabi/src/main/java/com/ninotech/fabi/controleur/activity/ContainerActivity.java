@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.adapter.AuthorLocalAdapter;
@@ -66,6 +67,8 @@ public class ContainerActivity extends AppCompatActivity {
                }catch (Exception e)
                {
                    voidContainer(R.drawable.img_telecharge_local,getString(R.string.no_electronic_book));
+                   Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                   Log.e("Alazi",e.getMessage());
                }
                 break;
             case 2: // Audio Book
@@ -125,6 +128,7 @@ public class ContainerActivity extends AppCompatActivity {
                 }catch (Exception e)
                 {
                     voidContainer(R.drawable.img_auteur_local,getString(R.string.no_author));
+                    Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
 
                 break;
