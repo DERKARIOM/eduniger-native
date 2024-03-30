@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         >
         <ImageView
-            android:id="@+id/image_view_adapter_my_profile_photo"
+            android:id="@+id/image_view_fragment_library_photo"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_centerVertical="true"
@@ -22,7 +22,7 @@
             android:layout_margin="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/image_view_adapter_my_profile_photo"
+            android:layout_toRightOf="@id/image_view_fragment_library_photo"
             android:layout_centerVertical="true"
             android:orientation="vertical"
             >

@@ -1,19 +1,26 @@
 package com.ninotech.fabi.controleur.fragment;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.adapter.ElectronicAdapter;
 import com.ninotech.fabi.controleur.adapter.RecentAdapter;
@@ -24,6 +31,7 @@ import com.ninotech.fabi.model.table.LoandTable;
 import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.model.table.StudentTable;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +44,7 @@ public class LibraryFragment extends Fragment {
         RecyclerView recentRecyclerView = view.findViewById(R.id.recycler_view_electronic_fragment_recent);
         TextView usernameTextView = view.findViewById(R.id.text_view_fragment_library_username);
         TextView emailTextView = view.findViewById(R.id.text_view_fragment_library_email);
+        mPhotoImageView = view.findViewById(R.id.image_view_fragment_library_photo);
         List<Library> libraryList = new ArrayList<>();
         List<SimilarBook> similarBookList = new ArrayList<>();
         ElectronicTable electronicTable = new ElectronicTable(getContext());
@@ -46,6 +55,16 @@ public class LibraryFragment extends Fragment {
         studentCursor.moveToFirst();
         usernameTextView.setText(studentCursor.getString(1) + "" + studentCursor.getString(2));
         emailTextView.setText(studentCursor.getString(5));
+        mPhotoImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(), "OK", Toast.LENGTH_SHORT).show();
+                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                }
+            }
+        });
         ElectronicAdapter electronicAdapter = new ElectronicAdapter(libraryList);
         RecentAdapter recentAdapter = new RecentAdapter(similarBookList);
         libraryList.add(new Library(1,R.drawable.img_electronic_book,getString(R.string.dawnloads_book), electronicTable.getNbrElectronic(session.getIdNumber())));
@@ -76,4 +95,30 @@ public class LibraryFragment extends Fragment {
         recentRecyclerView.setAdapter(recentAdapter);
         return view;
     }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == getActivity().RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+
+            // Compression de l'image
+            byte[] compressedImageBytes = compressImage(imageBitmap);
+
+            // Affichage de l'image compressée
+            Glide.with(this)
+                    .load(compressedImageBytes)
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(mPhotoImageView);
+        }
+    }
+
+    private byte[] compressImage(Bitmap imageBitmap) {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        // Compression de l'image avec une qualité de 50 (modifiable)
+        imageBitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
+        return byteArrayOutputStream.toByteArray();
+    }
+    private ImageView mPhotoImageView;
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
 }
