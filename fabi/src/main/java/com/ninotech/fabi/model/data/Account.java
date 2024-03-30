@@ -11,7 +11,7 @@ import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.model.table.StudentTable;
 
 public class Account {
-    public Account(String idNumber, String email, String password, String profile) {
+    public Account(String idNumber, String email, String password, byte[] profile) {
         mIdNumber = idNumber;
         mEmail = email;
         mPassword = password;
@@ -87,7 +87,7 @@ public class Account {
         }
         return "noConnection";
     }
-    public boolean register(Context context, String name , String firstName , String department , String section , String email , String profile)
+    public boolean register(Context context, String name , String firstName , String department , String section , String email , byte[] profile)
     {
         StudentTable studentTable = new StudentTable(context);
             if(studentTable.isUserExist(mIdNumber))
@@ -157,16 +157,16 @@ public class Account {
         mPassword = password;
     }
 
-    public String getProfile() {
+    public byte[] getProfile() {
         return mProfile;
     }
 
-    public void setProfile(String profile) {
+    public void setProfile(byte[] profile) {
         mProfile = profile;
     }
 
     private String mIdNumber;
     private String mEmail;
     private String mPassword;
-    private String mProfile;
+    private byte[] mProfile;
 }

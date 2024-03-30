@@ -76,8 +76,7 @@ public class RegisterActivity extends AppCompatActivity {
                mAccount = new Account(
                        mIdNumberEditText.getText().toString(),
                        mEmailEditText.getText().toString(),
-                       mPasswordEditText.getText().toString(),
-                       "ras");
+                       mPasswordEditText.getText().toString(), null);
                switch (mAccount.inputControl(mPasswordConfirmEditText.getText().toString()))
                {
                    case "0000":
@@ -251,7 +250,7 @@ public class RegisterActivity extends AppCompatActivity {
                         throw new RuntimeException(e);
                     }
                     try {
-                        if(mAccount.register(getApplicationContext(), jsonObject.getString("name"), jsonObject.getString("firstName") ,jsonObject.getString("department"), jsonObject.getString("section"),mAccount.getEmail(),jsonObject.getString("profile")))
+                        if(mAccount.register(getApplicationContext(), jsonObject.getString("name"), jsonObject.getString("firstName") ,jsonObject.getString("department"), jsonObject.getString("section"),mAccount.getEmail(),null))
                         {
                             if(mAccount.login(getApplicationContext()))
                             {

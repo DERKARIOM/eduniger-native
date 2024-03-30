@@ -218,7 +218,7 @@ public class LoginActivity extends AppCompatActivity {
                         throw new RuntimeException(e);
                     }
                     try {
-                        if(mAccount.register(getApplicationContext(), jsonObject.getString("name"), jsonObject.getString("firstName"), jsonObject.getString("department"),jsonObject.getString("section"),jsonObject.getString("email"),jsonObject.getString("profile")))
+                        if(mAccount.register(getApplicationContext(), jsonObject.getString("name"), jsonObject.getString("firstName"), jsonObject.getString("department"),jsonObject.getString("section"),jsonObject.getString("email"),null))
                         {
                             if(mAccount.login(getApplicationContext()))
                             {
