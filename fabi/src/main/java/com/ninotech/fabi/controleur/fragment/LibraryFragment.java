@@ -44,17 +44,34 @@ public class LibraryFragment extends Fragment {
         RecyclerView recentRecyclerView = view.findViewById(R.id.recycler_view_electronic_fragment_recent);
         TextView usernameTextView = view.findViewById(R.id.text_view_fragment_library_username);
         TextView emailTextView = view.findViewById(R.id.text_view_fragment_library_email);
-        mPhotoImageView = view.findViewById(R.id.image_view_fragment_library_photo);
         List<Library> libraryList = new ArrayList<>();
         List<SimilarBook> similarBookList = new ArrayList<>();
         ElectronicTable electronicTable = new ElectronicTable(getContext());
         LoandTable loandTable = new LoandTable(getContext());
         Session session = new Session(getContext());
-        StudentTable studentTable = new StudentTable(getContext());
-        Cursor studentCursor = studentTable.getData(session.getIdNumber());
+        mStudentTable = new StudentTable(getContext());
+        Cursor studentCursor = mStudentTable.getData(session.getIdNumber());
         studentCursor.moveToFirst();
+        mPhotoImageView = view.findViewById(R.id.image_view_fragment_library_photo);
         usernameTextView.setText(studentCursor.getString(1) + "" + studentCursor.getString(2));
         emailTextView.setText(studentCursor.getString(5));
+        try {
+            byte[] photoByte = studentCursor.getBlob(6);
+            if(photoByte != null)
+            {
+                Glide.with(this)
+                        .load(photoByte)
+                        .apply(RequestOptions.circleCropTransform())
+                        .into(mPhotoImageView);
+            }else
+            {
+                mPhotoImageView = view.findViewById(R.id.image_view_fragment_library_photo);
+            }
+
+        }catch (Exception e)
+        {
+            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
         mPhotoImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -107,10 +124,10 @@ public class LibraryFragment extends Fragment {
                         .load(compressedImageBytes)
                         .apply(RequestOptions.circleCropTransform())
                         .into(mPhotoImageView);
-
+                mStudentTable.setPhoto(compressedImageBytes);
             } catch (Exception e) {
                 e.printStackTrace();
-                Toast.makeText(getContext(), "Erreur lors du chargement de l'image.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Erreur lors du chargement de l'image." + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         } else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == getActivity().RESULT_OK) {
             Bundle extras = data.getExtras();
@@ -144,6 +161,7 @@ public class LibraryFragment extends Fragment {
         startActivityForResult(galleryIntent, REQUEST_IMAGE_GALLERY);
     }
     private ImageView mPhotoImageView;
+    private StudentTable mStudentTable;
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_IMAGE_GALLERY = 2;
 }

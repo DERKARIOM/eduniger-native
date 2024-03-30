@@ -24,7 +24,7 @@ public class StudentTable extends SQLiteOpenHelper {
                 "    department VARCHAR(100) NOT NULL,\n" +
                 "    section VARCHAR(100) NOT NULL,\n" +
                 "    email VARCHAR(100) NOT NULL,\n" +
-                "    profile BLOB NOT NULL\n" +
+                "    profile BLOB\n" +
                 ");");
     }
 
@@ -48,6 +48,13 @@ public class StudentTable extends SQLiteOpenHelper {
         SQLiteDatabase database = this.getReadableDatabase();
         Cursor cursor = database.rawQuery("SELECT * FROM " + NAME_TABLE + " WHERE idNumber=\"" + idNumber + "\";",null);
         return cursor.moveToFirst();
+    }
+    public void setPhoto(byte[] photo)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("profile",photo);
+        db.update(NAME_TABLE,contentValues,null,null);
     }
     public boolean insert (String idNumber , String name , String firstName , String department , String section , String email , byte[] profile)
     {
