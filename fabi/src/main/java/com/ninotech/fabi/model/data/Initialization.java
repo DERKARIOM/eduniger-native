@@ -6,6 +6,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.ninotech.fabi.R;
+import com.ninotech.fabi.model.table.AudioTable;
 import com.ninotech.fabi.model.table.ElectronicTable;
 import com.ninotech.fabi.model.table.LoandTable;
 import com.ninotech.fabi.model.table.NotificationTable;
@@ -18,6 +19,7 @@ public class Initialization {
         mElectronicTable = new ElectronicTable(context);
         mNotificationTable = new NotificationTable(context);
         mLoandTable = new LoandTable(context);
+        mAudioTable = new AudioTable(context);
     }
     public boolean onCreate(Context context)
     {
@@ -27,6 +29,7 @@ public class Initialization {
             mElectronicTable.onCreate(database);
             mNotificationTable.onCreate(database);
             mLoandTable.onCreate(database);
+            mAudioTable.onCreate(database);
             return true;
         }catch (Exception e)
         {
@@ -37,5 +40,6 @@ public class Initialization {
     private final ElectronicTable mElectronicTable;
     private final NotificationTable mNotificationTable;
     private final LoandTable mLoandTable;
+    private final AudioTable mAudioTable;
 }
 

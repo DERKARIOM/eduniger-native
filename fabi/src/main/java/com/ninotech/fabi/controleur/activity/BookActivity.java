@@ -43,6 +43,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.ninotech.fabi.controleur.adapter.NoConnectionAdapter;
 import com.ninotech.fabi.controleur.adapter.TalksAdapter;
 import com.ninotech.fabi.controleur.dialog.ReservationDialog;
+import com.ninotech.fabi.model.data.AudioDownloader;
 import com.ninotech.fabi.model.data.Author;
 import com.ninotech.fabi.model.data.Book;
 import com.ninotech.fabi.model.data.Category;
@@ -51,6 +52,7 @@ import com.ninotech.fabi.model.data.Connection;
 import com.ninotech.fabi.model.data.ElectronicDownloader;
 import com.ninotech.fabi.model.data.Talks;
 import com.ninotech.fabi.model.syn.SendComments;
+import com.ninotech.fabi.model.table.AudioTable;
 import com.ninotech.fabi.model.table.ElectronicTable;
 import com.ninotech.fabi.model.data.SimilarBook;
 import com.ninotech.fabi.controleur.adapter.SimilarAdapter;
@@ -218,6 +220,14 @@ public class BookActivity extends AppCompatActivity {
                 electronicDownloader.execute(mBook.getBlanket(),mBook.getElectronic(),mCategory.getBlanket(),mAuthor.getProfile());
                // if(mElectronicTable.insert(mSession.getIdNumber(),mBook.getId(), mDescriptionTextView.getText().toString(),"ras",imageDownloader.getBytes(),mBook.getElectronic(), mCategoryTextView.getText().toString(), mBook.getTitle(),"ras","ras"))
                     succeDowloadPDFDialog();
+            }
+        });
+        audioButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(BookActivity.this, "ok", Toast.LENGTH_SHORT).show();
+                AudioDownloader audioDownloader = new AudioDownloader(getApplicationContext(),mSession.getIdNumber(),mBook);
+                audioDownloader.execute(mBook.getBlanket(),mBook.getElectronic(),mCategory.getBlanket(),mAuthor.getProfile());
             }
         });
         mPlayerImageView.setOnClickListener(new View.OnClickListener() {
