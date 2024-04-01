@@ -46,4 +46,14 @@ public class ResourceBook {
     private Bitmap mCoverCategoryBitmap;
     private Bitmap mProfileAuthorBitmap;
     private byte[] mPdfBytes;
+
+    public String getAudio() {
+        return mAudio;
+    }
+
+    public void setAudio(String audio) {
+        mAudio = audio;
+    }
+
+    private String mAudio;
 }

@@ -12,6 +12,8 @@ import com.ninotech.fabi.model.table.ElectronicTable;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -28,6 +30,32 @@ public class AudioDownloader extends AsyncTask<String, Void, ResourceBook> {
             resourceBook.setProfileAuthorBitmap(downloadIMG(mContext.getString(R.string.ip_server) + "ressources/profile/" + name[3]));
         } catch (Exception e) {
             e.printStackTrace();
+        }
+        try {
+            URL url = new URL(mContext.getString(R.string.ip_server) + "ressources/audio/" + name[4]);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.connect();
+            InputStream input = connection.getInputStream();
+
+            // Obtenez le répertoire de stockage interne de l'application
+            File internalStorageDir = mContext.getFilesDir();
+
+            // Créez un fichier dans le répertoire de stockage interne pour enregistrer le fichier audio
+            File audioFile = new File(internalStorageDir, name[4]);
+            FileOutputStream output = new FileOutputStream(audioFile);
+
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = input.read(buffer)) != -1) {
+                output.write(buffer, 0, bytesRead);
+            }
+
+            output.close();
+            input.close();
+            resourceBook.setAudio(audioFile.getAbsolutePath()); // Retourne le chemin d'accès au fichier audio
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
         return resourceBook;
     }
@@ -47,7 +75,7 @@ public class AudioDownloader extends AsyncTask<String, Void, ResourceBook> {
             byte[] coverCategoryBytes = coverCategoryStream.toByteArray();
             byte[] profileAuthorBytes = profileAuthorStream.toByteArray();
             AudioTable audioTable = new AudioTable(mContext);
-            audioTable.insert(mIdNumber,mBook.getId(),mBook.getDescription(),mBook.getAuthor(),coverBookBytes,null,mBook.getCategory().get(0),mBook.getTitle(),coverCategoryBytes,profileAuthorBytes);
+            audioTable.insert(mIdNumber,mBook.getId(),mBook.getDescription(),mBook.getAuthor(),coverBookBytes,result.getAudio(),mBook.getCategory().get(0),mBook.getTitle(),coverCategoryBytes,profileAuthorBytes);
         }
         // Sauvegarder l'image dans la base de données SQLite
         // Utilisez votre DatabaseHelper pour insérer l'image dans la base de données

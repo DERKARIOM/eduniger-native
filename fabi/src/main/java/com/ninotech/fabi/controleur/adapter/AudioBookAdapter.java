@@ -2,12 +2,14 @@ package com.ninotech.fabi.controleur.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.media.MediaPlayer;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -20,6 +22,7 @@ import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 public class AudioBookAdapter extends RecyclerView.Adapter<AudioBookAdapter.MyViewHolder> {
@@ -100,6 +103,22 @@ public class AudioBookAdapter extends RecyclerView.Adapter<AudioBookAdapter.MyVi
                     .into(mCoverImageView);
             mTitleTextView.setText(audioBook.getTitle());
             mAuthorTextView.setText(audioBook.getAuthor());
+            mCoverImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(itemView.getContext(), audioBook.getAudio(), Toast.LENGTH_SHORT).show();
+                    MediaPlayer
+                            mediaPlayer = new MediaPlayer();
+                    try {
+                        // Spécifie le chemin d'accès au fichier audio dans le stockage interne
+                        mediaPlayer.setDataSource(audioBook.getAudio());
+                        mediaPlayer.prepare();
+                        mediaPlayer.start();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
         }
         public File bitmapToFile(Context context, String filename, Bitmap bitmap) {
             // Créer un fichier dans le répertoire de cache de l'application

@@ -227,7 +227,7 @@ public class BookActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Toast.makeText(BookActivity.this, "ok", Toast.LENGTH_SHORT).show();
                 AudioDownloader audioDownloader = new AudioDownloader(getApplicationContext(),mSession.getIdNumber(),mBook);
-                audioDownloader.execute(mBook.getBlanket(),mBook.getElectronic(),mCategory.getBlanket(),mAuthor.getProfile());
+                audioDownloader.execute(mBook.getBlanket(),mBook.getElectronic(),mCategory.getBlanket(),mAuthor.getProfile(),mTones.getAudio());
             }
         });
         mPlayerImageView.setOnClickListener(new View.OnClickListener() {

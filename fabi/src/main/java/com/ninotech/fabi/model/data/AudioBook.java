@@ -3,12 +3,13 @@ package com.ninotech.fabi.model.data;
 import android.graphics.Bitmap;
 
 public class AudioBook {
-    public AudioBook(String id , Bitmap cover, String title, String author, String time) {
+    public AudioBook(String id , Bitmap cover, String title, String author, String time , String audio) {
         mId = id;
         mCover = cover;
         mTitle = title;
         mAuthor = author;
         mTime = time;
+        mAudio = audio;
     }
 
     public Bitmap getCover() {
@@ -56,4 +57,14 @@ public class AudioBook {
     private String mTitle;
     private String mAuthor;
     private String mTime;
+
+    public String getAudio() {
+        return mAudio;
+    }
+
+    public void setAudio(String audio) {
+        mAudio = audio;
+    }
+
+    private String mAudio;
 }
