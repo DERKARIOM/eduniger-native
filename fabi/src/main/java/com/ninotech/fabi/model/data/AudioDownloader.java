@@ -8,7 +8,6 @@ import android.os.AsyncTask;
 
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.model.table.AudioTable;
-import com.ninotech.fabi.model.table.ElectronicTable;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -75,16 +74,17 @@ public class AudioDownloader extends AsyncTask<String, Void, ResourceBook> {
             byte[] coverCategoryBytes = coverCategoryStream.toByteArray();
             byte[] profileAuthorBytes = profileAuthorStream.toByteArray();
             AudioTable audioTable = new AudioTable(mContext);
-            audioTable.insert(mIdNumber,mBook.getId(),mBook.getDescription(),mBook.getAuthor(),coverBookBytes,result.getAudio(),mBook.getCategory().get(0),mBook.getTitle(),coverCategoryBytes,profileAuthorBytes);
+            audioTable.insert(mIdNumber,mBook.getId(),mBook.getDescription(),mBook.getAuthor(),coverBookBytes,result.getAudio(),mBook.getCategory().get(0),mBook.getTitle(),coverCategoryBytes,profileAuthorBytes,mTones.getDuration());
         }
         // Sauvegarder l'image dans la base de données SQLite
         // Utilisez votre DatabaseHelper pour insérer l'image dans la base de données
     }
-    public AudioDownloader(Context context , String idNumber , Book book)
+    public AudioDownloader(Context context , String idNumber , Book book , Tones tones)
     {
         mContext = context;
         mIdNumber = idNumber;
         mBook = book;
+        mTones = tones;
     }
     public Bitmap downloadIMG(String url) throws IOException {
         URL urlImage = new URL(url);
@@ -121,8 +121,8 @@ public class AudioDownloader extends AsyncTask<String, Void, ResourceBook> {
         imageBitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
         return byteArrayOutputStream.toByteArray();
     }
-    private Context mContext;
-    private String mIdNumber;
-    private Book mBook;
-    //private Author mAuthor;
+    private final Context mContext;
+    private final String mIdNumber;
+    private final Book mBook;
+    private Tones mTones;
 }

@@ -83,7 +83,7 @@ public class ContainerActivity extends AppCompatActivity {
                         byte[] imageBytes = audioCursor.getBlob(5);
                         // Convertir le tableau d'octets en Bitmap
                         Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-                        audioBooks.add(new AudioBook(audioCursor.getString(0),bitmap,audioCursor.getString(8),audioCursor.getString(4),null,audioCursor.getString(6)));
+                        audioBooks.add(new AudioBook(audioCursor.getString(0),bitmap,audioCursor.getString(8),audioCursor.getString(4),audioCursor.getString(11),audioCursor.getString(6)));
                     }while (audioCursor.moveToNext());
                     AudioBookAdapter audioBookAdapter = new AudioBookAdapter(audioBooks);
                     mRecyclerView.setLayoutManager(new LinearLayoutManager(this));

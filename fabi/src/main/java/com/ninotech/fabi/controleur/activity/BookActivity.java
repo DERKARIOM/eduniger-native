@@ -52,7 +52,6 @@ import com.ninotech.fabi.model.data.Connection;
 import com.ninotech.fabi.model.data.ElectronicDownloader;
 import com.ninotech.fabi.model.data.Talks;
 import com.ninotech.fabi.model.syn.SendComments;
-import com.ninotech.fabi.model.table.AudioTable;
 import com.ninotech.fabi.model.table.ElectronicTable;
 import com.ninotech.fabi.model.data.SimilarBook;
 import com.ninotech.fabi.controleur.adapter.SimilarAdapter;
@@ -226,7 +225,7 @@ public class BookActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Toast.makeText(BookActivity.this, "ok", Toast.LENGTH_SHORT).show();
-                AudioDownloader audioDownloader = new AudioDownloader(getApplicationContext(),mSession.getIdNumber(),mBook);
+                AudioDownloader audioDownloader = new AudioDownloader(getApplicationContext(),mSession.getIdNumber(),mBook,mTones);
                 audioDownloader.execute(mBook.getBlanket(),mBook.getElectronic(),mCategory.getBlanket(),mAuthor.getProfile(),mTones.getAudio());
             }
         });
@@ -1163,6 +1162,7 @@ public class BookActivity extends AppCompatActivity {
                         mMediaPlayer.setDataSource(url);
                         mMediaPlayer.prepare();
                         mSeekBar.setMax(mMediaPlayer.getDuration());
+                        mTones.setDuration(convertedDurationToString(mMediaPlayer.getDuration()));
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
@@ -1179,11 +1179,7 @@ public class BookActivity extends AppCompatActivity {
                                             {
                                                 int currentTime = mMediaPlayer.getCurrentPosition();
                                                 mSeekBar.setProgress(currentTime);
-                                                String currentTimeString = String.format("%02d:%02d",
-                                                        TimeUnit.MILLISECONDS.toMinutes(currentTime),
-                                                        TimeUnit.MILLISECONDS.toSeconds(currentTime) -
-                                                                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(currentTime)));
-                                                mTimeNowTextView.setText(currentTimeString);
+                                                mTimeNowTextView.setText(convertedDurationToString(currentTime));
                                             }
                                         }
                                     });
@@ -1197,6 +1193,7 @@ public class BookActivity extends AppCompatActivity {
             }
         }
     }
+
     public void ReservationDialog() {
         Spinner timeLimitSpinner = mReservationDialog.findViewById(R.id.spinner_dialog_reservation_time_limit);
         CheckBox LocalConsultationCheckBox = mReservationDialog.findViewById(R.id.check_box_dialog_reservation_local_consultation);
@@ -1328,6 +1325,13 @@ public class BookActivity extends AppCompatActivity {
             }
         });
         simpleOkDialog.build();
+    }
+    public String convertedDurationToString(int duration)
+    {
+        return String.format("%02d:%02d",
+                TimeUnit.MILLISECONDS.toMinutes(duration),
+                TimeUnit.MILLISECONDS.toSeconds(duration) -
+                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(duration)));
     }
     private LinearLayout mReservationLinearLayout;
     private LinearLayout mAudioLinearLayout;

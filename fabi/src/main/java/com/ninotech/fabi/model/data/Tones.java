@@ -58,4 +58,14 @@ public class Tones {
     private String mTitle;
     private int mIcoDownload;
     private boolean mIsPlaying;
+
+    public String getDuration() {
+        return mDuration;
+    }
+
+    public void setDuration(String duration) {
+        mDuration = duration;
+    }
+
+    private String mDuration;
 }

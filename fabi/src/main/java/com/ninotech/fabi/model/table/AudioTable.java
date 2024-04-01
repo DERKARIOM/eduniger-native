@@ -29,6 +29,7 @@ public class AudioTable extends SQLiteOpenHelper {
                 "    titleAudio VARCHAR(100),\n" +
                 "    blanketCategoryAudio BLOB NOT NULL,\n" +
                 "    profileAuthorAudio BLOB,\n" +
+                "    durationAudio VARCHAR(100) NOT NULL,\n" +
                 "    UNIQUE(idNumberAudio,idBookAudio)\n" +
                 ");");
     }
@@ -82,7 +83,7 @@ public class AudioTable extends SQLiteOpenHelper {
         res.moveToFirst();
         return res.getInt(0);
     }
-    public boolean insert (String idNumber , String idBook , String description , String author ,byte[] blanketBook, String audio , String category , String title ,byte[] blanketCategory,byte[] profileAuthor)
+    public boolean insert (String idNumber , String idBook , String description , String author ,byte[] blanketBook, String audio , String category , String title ,byte[] blanketCategory,byte[] profileAuthor , String duration)
     {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -97,6 +98,7 @@ public class AudioTable extends SQLiteOpenHelper {
             contentValues.put("titleAudio",title);
             contentValues.put("blanketCategoryAudio",blanketCategory);
             contentValues.put("profileAuthorAudio",profileAuthor);
+            contentValues.put("durationAudio",duration);
             db.insert(NAME_TABLE,null,contentValues);
             return  true;
         }

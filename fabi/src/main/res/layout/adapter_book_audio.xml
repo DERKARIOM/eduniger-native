@@ -48,7 +48,7 @@
                 android:layout_centerVertical="true"
                 android:src="@drawable/vector_black3_time"/>
             <TextView
-                android:id="@+id/text_view_adapter_book_audio_time"
+                android:id="@+id/text_view_adapter_book_audio_duration"
                 android:layout_margin="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

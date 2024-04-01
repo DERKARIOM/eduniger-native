@@ -13,8 +13,6 @@ import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
 import com.ninotech.fabi.model.data.AudioBook;
@@ -81,13 +79,13 @@ public class AudioBookAdapter extends RecyclerView.Adapter<AudioBookAdapter.MyVi
         private final ImageView mCoverImageView;
         private final TextView mTitleTextView;
         private final TextView mAuthorTextView;
-        private TextView mTimeTextView;
+        private TextView mDurationTextView;
         MyViewHolder(View itemView){
             super(itemView);
            mCoverImageView = itemView.findViewById(R.id.image_view_adapter_book_audio_blanket);
            mTitleTextView = itemView.findViewById(R.id.text_view_adapter_book_audio_title);
            mAuthorTextView = itemView.findViewById(R.id.text_view_adapter_book_audio_author);
-           mTimeTextView = itemView.findViewById(R.id.text_view_adapter_book_audio_time);
+           mDurationTextView = itemView.findViewById(R.id.text_view_adapter_book_audio_duration);
             itemView.setOnCreateContextMenuListener(this);
         }
         @Override
@@ -103,6 +101,7 @@ public class AudioBookAdapter extends RecyclerView.Adapter<AudioBookAdapter.MyVi
                     .into(mCoverImageView);
             mTitleTextView.setText(audioBook.getTitle());
             mAuthorTextView.setText(audioBook.getAuthor());
+            mDurationTextView.setText(audioBook.getDuration());
             mCoverImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
