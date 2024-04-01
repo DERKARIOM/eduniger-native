@@ -25,9 +25,13 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name="com.ninotech.fabi.controleur.activity.ContainerActivity"
-            android:screenOrientation="portrait"
-            android:exported="false" />
+            android:name=".controleur.activity.AudioPlayerActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".controleur.activity.ContainerActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -40,76 +44,76 @@
         </provider>
 
         <activity
-            android:name="com.ninotech.fabi.controleur.activity.BookActivity"
-            android:screenOrientation="portrait"
-            android:exported="false" />
-        <activity
-            android:name="com.ninotech.fabi.controleur.activity.DigitalPrintActivity"
-            android:screenOrientation="portrait"
-            android:exported="false" />
-        <activity
-            android:name="com.ninotech.fabi.controleur.activity.CategoryActivity"
+            android:name=".controleur.activity.BookActivity"
             android:exported="false"
-            android:screenOrientation="portrait"
-            android:parentActivityName="com.ninotech.fabi.controleur.activity.MainActivity" />
+            android:screenOrientation="portrait" />
         <activity
-            android:name="com.ninotech.fabi.controleur.activity.LicenceActivity"
+            android:name=".controleur.activity.DigitalPrintActivity"
             android:exported="false"
-            android:screenOrientation="portrait"
-            android:label="Licence" />
+            android:screenOrientation="portrait" />
         <activity
-            android:name="com.ninotech.fabi.controleur.activity.ChangeEmailActivity"
-            android:screenOrientation="portrait"
-            android:exported="false" />
-        <activity
-            android:name="com.ninotech.fabi.controleur.activity.FingerPrintActivity"
+            android:name=".controleur.activity.CategoryActivity"
             android:exported="false"
-            android:screenOrientation="portrait"
+            android:parentActivityName=".controleur.activity.MainActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".controleur.activity.LicenceActivity"
+            android:exported="false"
+            android:label="Licence"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".controleur.activity.ChangeEmailActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".controleur.activity.FingerPrintActivity"
+            android:exported="false"
             android:label="Verrouillage par empreinte digitale"
-            android:parentActivityName="com.ninotech.fabi.controleur.activity.SettingActivity" />
+            android:parentActivityName=".controleur.activity.SettingActivity"
+            android:screenOrientation="portrait" />
         <activity
-            android:name="com.ninotech.fabi.controleur.activity.InfosActivity"
-            android:screenOrientation="portrait"
-            android:exported="false" />
-        <activity
-            android:name="com.ninotech.fabi.controleur.activity.ChangePasswordActivity"
-            android:screenOrientation="portrait"
-            android:exported="false" />
-        <activity
-            android:name="com.ninotech.fabi.controleur.activity.SettingActivity"
+            android:name=".controleur.activity.InfosActivity"
             android:exported="false"
-            android:screenOrientation="portrait"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".controleur.activity.ChangePasswordActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".controleur.activity.SettingActivity"
+            android:exported="false"
             android:label="Parametres"
-            android:parentActivityName="com.ninotech.fabi.controleur.activity.MainActivity" />
+            android:parentActivityName=".controleur.activity.MainActivity"
+            android:screenOrientation="portrait" />
         <activity
-            android:name="com.ninotech.fabi.controleur.activity.NotificationActivity"
+            android:name=".controleur.activity.NotificationActivity"
             android:exported="false"
-            android:screenOrientation="portrait"
             android:label="Notification"
-            android:parentActivityName="com.ninotech.fabi.controleur.activity.MainActivity" />
+            android:parentActivityName=".controleur.activity.MainActivity"
+            android:screenOrientation="portrait" />
         <activity
-            android:name="com.ninotech.fabi.controleur.activity.SuggestionActivity"
+            android:name=".controleur.activity.SuggestionActivity"
             android:exported="false"
-            android:screenOrientation="portrait"
             android:label="Suggestion"
-            android:parentActivityName="com.ninotech.fabi.controleur.activity.MainActivity" />
+            android:parentActivityName=".controleur.activity.MainActivity"
+            android:screenOrientation="portrait" />
         <activity
-            android:name="com.ninotech.fabi.controleur.activity.LoginActivity"
+            android:name=".controleur.activity.LoginActivity"
             android:exported="false"
-            android:screenOrientation="portrait"
-            android:label="" />
+            android:label=""
+            android:screenOrientation="portrait" />
         <activity
-            android:name="com.ninotech.fabi.controleur.activity.RegisterActivity"
+            android:name=".controleur.activity.RegisterActivity"
             android:exported="false"
-            android:screenOrientation="portrait"
-            android:label="Inscrivez-vous" />
+            android:label="Inscrivez-vous"
+            android:screenOrientation="portrait" />
         <activity
-            android:name="com.ninotech.fabi.controleur.activity.MainActivity"
+            android:name=".controleur.activity.MainActivity"
             android:exported="true"
-            android:screenOrientation="portrait"
             android:icon="@drawable/img_default_book"
             android:label="Fabi"
-            android:logo="@drawable/img_default_book">
+            android:logo="@drawable/img_default_book"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -118,14 +122,15 @@
         </activity>
 
         <service
-            android:name="com.ninotech.fabi.model.service.MyFirebaseMessagingService"
+            android:name=".model.service.MyFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
         <service
-            android:name="com.ninotech.fabi.model.service.NotificationService"
+            android:name=".model.service.NotificationService"
             android:exported="false" />
     </application>
+
 </manifest>

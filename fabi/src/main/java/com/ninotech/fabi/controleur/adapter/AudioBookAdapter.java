@@ -1,6 +1,7 @@
 package com.ninotech.fabi.controleur.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.MediaPlayer;
 import android.view.ContextMenu;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.R;
+import com.ninotech.fabi.controleur.activity.AudioPlayerActivity;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
 import com.ninotech.fabi.model.data.AudioBook;
 import com.squareup.picasso.Picasso;
@@ -105,17 +107,19 @@ public class AudioBookAdapter extends RecyclerView.Adapter<AudioBookAdapter.MyVi
             mCoverImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(itemView.getContext(), audioBook.getAudio(), Toast.LENGTH_SHORT).show();
-                    MediaPlayer
-                            mediaPlayer = new MediaPlayer();
-                    try {
-                        // Spécifie le chemin d'accès au fichier audio dans le stockage interne
-                        mediaPlayer.setDataSource(audioBook.getAudio());
-                        mediaPlayer.prepare();
-                        mediaPlayer.start();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    Intent audioPayerIntent = new Intent(itemView.getContext(), AudioPlayerActivity.class);
+                    itemView.getContext().startActivity(audioPayerIntent);
+//                    Toast.makeText(itemView.getContext(), audioBook.getAudio(), Toast.LENGTH_SHORT).show();
+//                    MediaPlayer
+//                            mediaPlayer = new MediaPlayer();
+//                    try {
+//                        // Spécifie le chemin d'accès au fichier audio dans le stockage interne
+//                        mediaPlayer.setDataSource(audioBook.getAudio());
+//                        mediaPlayer.prepare();
+//                        mediaPlayer.start();
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
                 }
             });
         }

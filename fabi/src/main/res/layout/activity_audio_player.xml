@@ -3,11 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
+    android:layout_height="match_parent"
+    android:background="@color/white3"
+    tools:context=".controleur.activity.AudioPlayerActivity">
     <RelativeLayout
         android:layout_width="match_parent"
-        android:background="@drawable/background_play"
         android:layout_height="match_parent" tools:context=".PlayActivity">
         <androidx.appcompat.widget.Toolbar
             android:layout_width="match_parent"
@@ -181,5 +181,4 @@
                 android:background="@drawable/baseline_shuffle_24" />
         </RelativeLayout>
     </RelativeLayout>
-
 </RelativeLayout>

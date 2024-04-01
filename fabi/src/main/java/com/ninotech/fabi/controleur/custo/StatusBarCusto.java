@@ -12,7 +12,7 @@ import com.ninotech.fabi.R;
 public class StatusBarCusto {
     public StatusBarCusto(Context context,Window window) {
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(ContextCompat.getColor(context, R.color.white));
+        window.setStatusBarColor(ContextCompat.getColor(context, R.color.white3));
         window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
     }
 }
