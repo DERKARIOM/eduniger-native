@@ -8,113 +8,141 @@
     tools:context=".controleur.activity.AudioPlayerActivity">
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" tools:context=".PlayActivity">
+        android:layout_height="match_parent">
         <androidx.appcompat.widget.Toolbar
             android:layout_width="match_parent"
             android:elevation="10dp"
-            android:id="@+id/entete_play"
+            android:id="@+id/toolbar_activity_audio_player"
             android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
             android:layout_alignParentStart="true"
             android:layout_marginTop="5dp"
-            app:menu="@menu/toulbart_play"
+            app:menu="@menu/tool_bar_audio_player"
             android:layout_height="wrap_content">
-            <ImageView android:layout_width="50dp"
-                android:id="@+id/list_music"
-                android:background="@drawable/baseline_expand_more_24"
-                android:layout_height="50dp"/>
-            <LinearLayout android:layout_width="match_parent"
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:id="@+id/image_view_activity_audio_player_back"
+                android:background="@drawable/vector_black2_back_player"
+                android:contentDescription="@string/todo" />
+            <LinearLayout
+                android:id="@+id/linear_layout_activity_audio_player_tool_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="end"
-                android:id="@+id/bloc"
-                android:layout_height="wrap_content">
-                <ImageView android:layout_width="45dp"
-                    android:id="@+id/plaly"
-                    android:background="@drawable/baseline_replay_circle_filled_24"
-                    android:layout_height="45dp"/>
-                <ImageView android:layout_width="45dp"
-                    android:id="@+id/hout"
-                    android:background="@drawable/baseline_volume_up_24"
-                    android:layout_height="45dp"/>
-                <ImageView android:layout_width="45dp"
-                    android:id="@+id/anim"
-                    android:background="@drawable/baseline_insert_chart_24"
-                    android:layout_height="45dp"/>
+                >
+                <ImageView
+                    android:id="@+id/image_view_activity_audio_player_replay"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_margin="10dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/vector_black2_replay"
+                    />
+                <ImageView
+                    android:id="@+id/image_view_activity_audio_player_volume"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/vector_black2_volume"
+                    android:contentDescription="@string/todo" />
+                <ImageView
+                    android:id="@+id/image_view_activity_audio_player_tones"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_margin="10dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/vector_black2_equalizer"
+                    android:contentDescription="@string/todo" />
             </LinearLayout>
         </androidx.appcompat.widget.Toolbar>
-        <RelativeLayout android:layout_width="match_parent"
+        <RelativeLayout
+            android:id="@+id/relative_layout_activity_audio_player_book"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/entete_play"
-            android:id="@+id/miature">
-            <ImageView android:id="@+id/logo"
+            android:layout_below="@id/toolbar_activity_audio_player"
+            >
+            <ImageView
+                android:id="@+id/image_view_activity_audio_player_cover"
                 android:layout_width="230dp"
                 android:layout_height="221dp"
-                android:src="@drawable/baseline_music_note_24"
+                android:src="@drawable/vector_white_music"
                 android:layout_centerInParent="true"
-                android:background="@drawable/background_play_music"/>
-            <TextView android:id="@+id/titre_music"
-                android:layout_below="@id/logo"
+                android:background="@drawable/background_play_music"
+                android:contentDescription="@string/todo" />
+            <TextView
+                android:id="@+id/text_view_activity_audio_player_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/image_view_activity_audio_player_cover"
                 android:layout_marginTop="100dp"
-                android:textSize="20dp"
-                android:textAlignment="center"
+                android:textSize="@dimen/size_title"
+                android:layout_centerHorizontal="true"
                 android:padding="5dp"
                 android:textColor="@color/black"
                 android:text="5 Astuces pour gagner sa vie"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-            <TextView android:id="@+id/nom_play_list"
-                android:layout_below="@id/titre_music"
+                />
+            <TextView
+                android:id="@+id/text_view_activity_audio_player"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/text_view_activity_audio_player_title"
                 android:layout_marginTop="3dp"
-                android:textSize="20dp"
-                android:textAlignment="center"
+                android:textSize="@dimen/size_sub_title"
+                android:layout_centerHorizontal="true"
                 android:padding="5dp"
                 android:textColor="@color/black"
                 android:text="inconnu"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                />
         </RelativeLayout>
         <RelativeLayout
+            android:id="@+id/relative_layout_activity_audio_player_list_love_add"
             android:layout_width="match_parent"
-            android:id="@+id/bloc1"
-            android:layout_marginTop="50dp"
-            android:layout_below="@id/miature"
-            android:layout_height="wrap_content">
-            <ImageView android:layout_width="45dp"
-                android:id="@+id/bloc1_center"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="100dp"
+            android:layout_marginEnd="40dp"
+            android:layout_marginStart="40dp"
+            android:layout_below="@id/relative_layout_activity_audio_player_book">
+            <ImageView
+                android:id="@+id/image_view_activity_audio_player_love"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
                 android:layout_centerInParent="true"
                 android:background="@drawable/baseline_favorite_border_24"
-                android:layout_height="45dp"/>
-            <ImageView android:layout_width="45dp"
-                android:id="@+id/bloc1_end"
+                android:contentDescription="@string/todo" />
+            <ImageView
+                android:id="@+id/image_view_activity_audio_player_add"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
                 android:layout_centerInParent="true"
                 android:layout_alignParentEnd="true"
-                android:layout_marginEnd="20dp"
                 android:background="@drawable/baseline_add_24"
-                android:layout_height="45dp"/>
+                android:contentDescription="@string/todo" />
 
             <ImageView
-                android:id="@+id/bloc1_left"
-                android:layout_width="45dp"
-                android:layout_height="45dp"
+                android:id="@+id/image_view_activity_audio_player_list"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
                 android:layout_alignParentStart="true"
                 android:layout_centerInParent="true"
-                android:layout_marginStart="20dp"
-                android:background="@drawable/baseline_bar_chart_24" />
+                android:background="@drawable/baseline_bar_chart_24"
+                android:contentDescription="@string/todo" />
         </RelativeLayout>
         <RelativeLayout
             android:layout_width="match_parent"
             android:id="@+id/bloc2"
-            android:layout_below="@id/bloc1"
+            android:layout_below="@id/relative_layout_activity_audio_player_list_love_add"
             android:layout_height="50dp">
-            <com.google.android.material.progressindicator.LinearProgressIndicator
+            <SeekBar
+                android:id="@+id/seek_bar_activity_audio_player"
                 android:layout_width="match_parent"
-                android:theme="@style/Progretion"
+                android:layout_height="wrap_content"
                 android:layout_marginEnd="40dp"
                 android:layout_marginStart="40dp"
                 android:layout_marginTop="20dp"
-                android:id="@+id/play_progress"
-                android:visibility="visible"
-                android:layout_height="wrap_content"/>
+                />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -122,8 +150,8 @@
                 android:layout_marginStart="40dp"
                 android:layout_marginTop="5dp"
                 android:textColor="@color/white"
-                android:textSize="15sp"
-                android:layout_below="@id/play_progress"
+                android:textSize="@dimen/size_title"
+                android:layout_below="@id/seek_bar_activity_audio_player"
                 android:id="@+id/plqy_debut"/>
             <TextView
                 android:layout_width="wrap_content"
@@ -133,49 +161,52 @@
                 android:layout_marginEnd="40dp"
                 android:layout_marginTop="5dp"
                 android:textColor="@color/white"
-                android:textSize="15sp"
-                android:layout_below="@id/play_progress"
+                android:textSize="@dimen/size_title"
+                android:layout_below="@id/seek_bar_activity_audio_player"
                 android:id="@+id/plqy_fin"/>
         </RelativeLayout>
         <RelativeLayout
             android:layout_width="match_parent"
             android:id="@+id/bloc3"
-            android:layout_marginTop="40dp"
+            android:layout_margin="40dp"
             android:layout_below="@id/bloc2"
             android:layout_height="wrap_content">
-            <ImageView android:layout_width="45dp"
-                android:id="@+id/bloc3_center"
+            <ImageView
+                android:id="@+id/image_view_activity_audio_player_play"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
                 android:layout_centerInParent="true"
                 android:background="@drawable/baseline_play_arrow_24"
-                android:layout_height="45dp"/>
-            <ImageView android:layout_width="45dp"
+                android:contentDescription="@string/todo" />
+            <ImageView
+                android:layout_width="25dp"
                 android:id="@+id/bloc3_list_all"
                 android:layout_centerInParent="true"
                 android:layout_alignParentEnd="true"
                 android:layout_marginEnd="10dp"
                 android:background="@drawable/baseline_text_rotation_none_24"
-                android:layout_height="45dp"/>
+                android:layout_height="25dp"/>
 
             <ImageView
                 android:id="@+id/bloc3_plus"
-                android:layout_width="45dp"
-                android:layout_height="45dp"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
                 android:layout_centerInParent="true"
                 android:layout_marginEnd="40dp"
                 android:layout_toLeftOf="@id/bloc3_list_all"
                 android:background="@drawable/baseline_fast_forward_24" />
-            <ImageView android:layout_width="45dp"
+            <ImageView android:layout_width="25dp"
                 android:id="@+id/bloc3_moin"
                 android:layout_centerInParent="true"
                 android:layout_toEndOf="@id/bloc3_order"
                 android:layout_marginStart="40dp"
                 android:background="@drawable/baseline_fast_rewind_24"
-                android:layout_height="45dp"/>
+                android:layout_height="25dp"/>
 
             <ImageView
                 android:id="@+id/bloc3_order"
-                android:layout_width="45dp"
-                android:layout_height="45dp"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
                 android:layout_alignParentStart="true"
                 android:layout_centerInParent="true"
                 android:background="@drawable/baseline_shuffle_24" />
