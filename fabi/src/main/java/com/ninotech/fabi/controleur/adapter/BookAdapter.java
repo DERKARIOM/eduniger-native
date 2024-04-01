@@ -81,7 +81,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.MyViewHolder> 
         private final TextView mNumberViewTextView;
         MyViewHolder(View itemView){
             super(itemView);
-            mBlanketImageView = itemView.findViewById(R.id.image_view_adapter_book_blanket);
+            mBlanketImageView = itemView.findViewById(R.id.image_view_adapter_book_audio_blanket);
             mTitleTextView = itemView.findViewById(R.id.text_view_adapter_book_title);
             mCategoryTextView = itemView.findViewById(R.id.text_view_adapter_book_category);
             mPysicalImageView = itemView.findViewById(R.id.image_view_adapter_book_physical);

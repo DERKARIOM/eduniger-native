@@ -79,7 +79,7 @@ public class AudioAdapter extends RecyclerView.Adapter<AudioAdapter.MyViewHolder
         private  ImageView mIco2;
         MyViewHolder(View itemView){
             super(itemView);
-            mCouverture = itemView.findViewById(R.id.image_view_adapter_book_blanket);
+            mCouverture = itemView.findViewById(R.id.image_view_adapter_book_audio_blanket);
             mTitre = itemView.findViewById(R.id.text_view_adapter_book_title);
             mCategorie = itemView.findViewById(R.id.text_view_adapter_book_category);
             mIcoPysique = itemView.findViewById(R.id.image_view_adapter_book_physical);

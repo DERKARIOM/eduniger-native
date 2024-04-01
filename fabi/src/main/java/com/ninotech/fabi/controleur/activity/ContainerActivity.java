@@ -14,17 +14,20 @@ import android.widget.Toast;
 
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.adapter.AuthorLocalAdapter;
+import com.ninotech.fabi.controleur.adapter.AudioBookAdapter;
 import com.ninotech.fabi.controleur.adapter.CategorieLocalAdapter;
 import com.ninotech.fabi.controleur.adapter.CategoryLocalAdapter;
 import com.ninotech.fabi.controleur.adapter.ElectronicBookAdapter;
 import com.ninotech.fabi.controleur.adapter.VoidContainerAdapter;
 import com.ninotech.fabi.controleur.adapter.LoandBookAdapter;
 import com.ninotech.fabi.model.data.AuthorLocal;
+import com.ninotech.fabi.model.data.AudioBook;
 import com.ninotech.fabi.model.data.Category;
 import com.ninotech.fabi.model.data.CategoryLocal;
 import com.ninotech.fabi.model.data.ElectronicBook;
 import com.ninotech.fabi.model.data.Loand;
 import com.ninotech.fabi.model.data.VoidContainer;
+import com.ninotech.fabi.model.table.AudioTable;
 import com.ninotech.fabi.model.table.ElectronicTable;
 import com.ninotech.fabi.model.table.LoandTable;
 import com.ninotech.fabi.model.table.Session;
@@ -67,12 +70,29 @@ public class ContainerActivity extends AppCompatActivity {
                }catch (Exception e)
                {
                    voidContainer(R.drawable.img_telecharge_local,getString(R.string.no_electronic_book));
-                   Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                   Log.e("Alazi",e.getMessage());
+                   Log.e("ErrorElectronic",e.getMessage());
                }
                 break;
             case 2: // Audio Book
-                voidContainer(R.drawable.img_playliste_local,getString(R.string.no_audio_book));
+                try {
+                    ArrayList<AudioBook> audioBooks = new ArrayList<>();
+                    AudioTable audioTable = new AudioTable(this);
+                    Cursor audioCursor = audioTable.getData(mSession.getIdNumber());
+                    audioCursor.moveToFirst();
+                    do {
+                        byte[] imageBytes = audioCursor.getBlob(5);
+                        // Convertir le tableau d'octets en Bitmap
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+                        audioBooks.add(new AudioBook(audioCursor.getString(0),bitmap,audioCursor.getString(8),audioCursor.getString(4),null));
+                    }while (audioCursor.moveToNext());
+                    AudioBookAdapter audioBookAdapter = new AudioBookAdapter(audioBooks);
+                    mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+                    mRecyclerView.setAdapter(audioBookAdapter);
+                }catch (Exception e)
+                {
+                    voidContainer(R.drawable.img_playliste_local,getString(R.string.no_audio_book));
+                    Log.e("ErrorAudio",e.getMessage());
+                }
                 break;
             case 3: // Loand Book
                 LoandTable loandTable = new LoandTable(this);
