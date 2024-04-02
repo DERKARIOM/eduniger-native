@@ -111,8 +111,7 @@ public class AudioBookAdapter extends RecyclerView.Adapter<AudioBookAdapter.MyVi
                     audioPayerIntent.putExtra("key_adapter_audio_book_id",audioBook.getId());
                     itemView.getContext().startActivity(audioPayerIntent);
 //                    Toast.makeText(itemView.getContext(), audioBook.getAudio(), Toast.LENGTH_SHORT).show();
-//                    MediaPlayer
-//                            mediaPlayer = new MediaPlayer();
+//                    MediaPlayer mediaPlayer = new MediaPlayer();
 //                    try {
 //                        // Spécifie le chemin d'accès au fichier audio dans le stockage interne
 //                        mediaPlayer.setDataSource(audioBook.getAudio());
