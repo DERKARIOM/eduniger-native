@@ -108,6 +108,7 @@ public class AudioBookAdapter extends RecyclerView.Adapter<AudioBookAdapter.MyVi
                 @Override
                 public void onClick(View v) {
                     Intent audioPayerIntent = new Intent(itemView.getContext(), AudioPlayerActivity.class);
+                    audioPayerIntent.putExtra("key_adapter_audio_book_id",audioBook.getId());
                     itemView.getContext().startActivity(audioPayerIntent);
 //                    Toast.makeText(itemView.getContext(), audioBook.getAudio(), Toast.LENGTH_SHORT).show();
 //                    MediaPlayer

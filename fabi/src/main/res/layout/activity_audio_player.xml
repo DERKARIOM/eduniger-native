@@ -85,7 +85,7 @@
                 android:text="5 Astuces pour gagner sa vie"
                 />
             <TextView
-                android:id="@+id/text_view_activity_audio_player"
+                android:id="@+id/text_view_activity_audio_player_author"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/text_view_activity_audio_player_title"
@@ -103,6 +103,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="100dp"
             android:layout_marginEnd="40dp"
+            android:layout_marginBottom="10dp"
             android:layout_marginStart="40dp"
             android:layout_below="@id/relative_layout_activity_audio_player_book">
             <ImageView
@@ -110,7 +111,7 @@
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:layout_centerInParent="true"
-                android:background="@drawable/baseline_favorite_border_24"
+                android:background="@drawable/vector_black2_favorite"
                 android:contentDescription="@string/todo" />
             <ImageView
                 android:id="@+id/image_view_activity_audio_player_add"
@@ -118,7 +119,7 @@
                 android:layout_height="25dp"
                 android:layout_centerInParent="true"
                 android:layout_alignParentEnd="true"
-                android:background="@drawable/baseline_add_24"
+                android:background="@drawable/vector_black2_add_24"
                 android:contentDescription="@string/todo" />
 
             <ImageView
@@ -127,7 +128,7 @@
                 android:layout_height="25dp"
                 android:layout_alignParentStart="true"
                 android:layout_centerInParent="true"
-                android:background="@drawable/baseline_bar_chart_24"
+                android:background="@drawable/vector_black2_queue_music_24"
                 android:contentDescription="@string/todo" />
         </RelativeLayout>
         <RelativeLayout
@@ -139,9 +140,9 @@
                 android:id="@+id/seek_bar_activity_audio_player"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="40dp"
-                android:layout_marginStart="40dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginEnd="30dp"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="5dp"
                 />
             <TextView
                 android:layout_width="wrap_content"
@@ -149,8 +150,8 @@
                 android:text="0:23"
                 android:layout_marginStart="40dp"
                 android:layout_marginTop="5dp"
-                android:textColor="@color/white"
-                android:textSize="@dimen/size_title"
+                android:textColor="@color/black2"
+                android:textSize="@dimen/size_sub_title"
                 android:layout_below="@id/seek_bar_activity_audio_player"
                 android:id="@+id/plqy_debut"/>
             <TextView
@@ -160,8 +161,8 @@
                 android:layout_alignParentEnd="true"
                 android:layout_marginEnd="40dp"
                 android:layout_marginTop="5dp"
-                android:textColor="@color/white"
-                android:textSize="@dimen/size_title"
+                android:textColor="@color/black2"
+                android:textSize="@dimen/size_sub_title"
                 android:layout_below="@id/seek_bar_activity_audio_player"
                 android:id="@+id/plqy_fin"/>
         </RelativeLayout>
@@ -176,7 +177,7 @@
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:layout_centerInParent="true"
-                android:background="@drawable/baseline_play_arrow_24"
+                android:background="@drawable/vector_black2_play"
                 android:contentDescription="@string/todo" />
             <ImageView
                 android:layout_width="25dp"
@@ -184,7 +185,7 @@
                 android:layout_centerInParent="true"
                 android:layout_alignParentEnd="true"
                 android:layout_marginEnd="10dp"
-                android:background="@drawable/baseline_text_rotation_none_24"
+                android:background="@drawable/vector_black2_rotation_none"
                 android:layout_height="25dp"/>
 
             <ImageView
@@ -194,13 +195,13 @@
                 android:layout_centerInParent="true"
                 android:layout_marginEnd="40dp"
                 android:layout_toLeftOf="@id/bloc3_list_all"
-                android:background="@drawable/baseline_fast_forward_24" />
+                android:background="@drawable/vector_black2_audio_player_next" />
             <ImageView android:layout_width="25dp"
                 android:id="@+id/bloc3_moin"
                 android:layout_centerInParent="true"
                 android:layout_toEndOf="@id/bloc3_order"
                 android:layout_marginStart="40dp"
-                android:background="@drawable/baseline_fast_rewind_24"
+                android:background="@drawable/vector_black2_audio_player_back"
                 android:layout_height="25dp"/>
 
             <ImageView
@@ -209,7 +210,7 @@
                 android:layout_height="25dp"
                 android:layout_alignParentStart="true"
                 android:layout_centerInParent="true"
-                android:background="@drawable/baseline_shuffle_24" />
+                android:background="@drawable/vector_black2_shuffle_24" />
         </RelativeLayout>
     </RelativeLayout>
 </RelativeLayout>
