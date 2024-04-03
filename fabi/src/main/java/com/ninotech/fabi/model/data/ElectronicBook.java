@@ -3,13 +3,13 @@ package com.ninotech.fabi.model.data;
 import android.graphics.Bitmap;
 
 public class ElectronicBook {
-    public ElectronicBook(String id, Bitmap cover, String tile, String category, String author, byte[] electronic) {
+    public ElectronicBook(String id, Bitmap cover, String tile, String category, String author, String pdf) {
         mId = id;
         mCover = cover;
         mTile = tile;
         mCategory = category;
         mAuthor = author;
-        mElectronic = electronic;
+        mPdf = pdf;
     }
 
     public String getId() {
@@ -52,19 +52,19 @@ public class ElectronicBook {
         mAuthor = author;
     }
 
-    public byte[] getElectronic() {
-        return mElectronic;
+    public String getPdf() {
+        return mPdf;
     }
 
-    public void setElectronic(byte[] electronic) {
-        mElectronic = electronic;
+    public void setPdf(String pdf) {
+        mPdf = pdf;
     }
-
     private String mId;
     private Bitmap mCover;
     private String mTile;
     private String mCategory;
     private String mAuthor;
-    private byte[] mElectronic;
+
+    private String mPdf;
 
 }

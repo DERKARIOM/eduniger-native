@@ -1,14 +1,18 @@
 package com.ninotech.fabi.controleur.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.R;
@@ -99,6 +103,26 @@ public class ElectronicBookAdapter extends RecyclerView.Adapter<ElectronicBookAd
             mTitleTextView.setText(electronicBook.getTile());
             mCategoryTextView.setText(electronicBook.getCategory());
             mAuthorTextView.setText(electronicBook.getAuthor());
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    openPDFWithAdobeReader(new File(electronicBook.getPdf()));
+                }
+            });
+        }
+        private void openPDFWithAdobeReader(File pdfFile) {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            Uri pdfUri = FileProvider.getUriForFile(itemView.getContext(), itemView.getContext().getApplicationContext().getPackageName() + ".provider", pdfFile);
+            intent.setDataAndType(pdfUri, "application/pdf");
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+            try {
+                itemView.getContext().startActivity(intent);
+            } catch (Exception e) {
+                Toast.makeText(itemView.getContext(), "OpenPDF : " + e, Toast.LENGTH_LONG).show();
+
+            }
         }
         public File bitmapToFile(Context context, String filename, Bitmap bitmap) {
             // Créer un fichier dans le répertoire de cache de l'application

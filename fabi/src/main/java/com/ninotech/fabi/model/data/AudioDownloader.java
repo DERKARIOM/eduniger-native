@@ -16,6 +16,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 public class AudioDownloader extends AsyncTask<String, Void, ResourceBook> {
@@ -27,34 +28,9 @@ public class AudioDownloader extends AsyncTask<String, Void, ResourceBook> {
             //resourceBook.setPdfBytes(downloadPDF(mContext.getString(R.string.ip_server) + "ressources/pdf/" + name[1]));
             resourceBook.setCoverCategoryBitmap(downloadIMG(mContext.getString(R.string.ip_server) + "ressources/cover/" + name[2]));
             resourceBook.setProfileAuthorBitmap(downloadIMG(mContext.getString(R.string.ip_server) + "ressources/profile/" + name[3]));
+            resourceBook.setAudio(downloadAudio(mContext.getString(R.string.ip_server) + "ressources/audio/" + name[4],name[4]));
         } catch (Exception e) {
             e.printStackTrace();
-        }
-        try {
-            URL url = new URL(mContext.getString(R.string.ip_server) + "ressources/audio/" + name[4]);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.connect();
-            InputStream input = connection.getInputStream();
-
-            // Obtenez le répertoire de stockage interne de l'application
-            File internalStorageDir = mContext.getFilesDir();
-
-            // Créez un fichier dans le répertoire de stockage interne pour enregistrer le fichier audio
-            File audioFile = new File(internalStorageDir, name[4]);
-            FileOutputStream output = new FileOutputStream(audioFile);
-
-            byte[] buffer = new byte[1024];
-            int bytesRead;
-            while ((bytesRead = input.read(buffer)) != -1) {
-                output.write(buffer, 0, bytesRead);
-            }
-
-            output.close();
-            input.close();
-            resourceBook.setAudio(audioFile.getAbsolutePath()); // Retourne le chemin d'accès au fichier audio
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
         }
         return resourceBook;
     }
@@ -114,6 +90,29 @@ public class AudioDownloader extends AsyncTask<String, Void, ResourceBook> {
             connectionPDF.disconnect();
         }
         return bytes;
+    }
+    public String downloadAudio(String url , String name) throws IOException {
+        URL audioUrl = new URL(url);
+        HttpURLConnection connection = (HttpURLConnection) audioUrl.openConnection();
+        connection.connect();
+        InputStream input = connection.getInputStream();
+
+        // Obtenez le répertoire de stockage interne de l'application
+        File internalStorageDir = mContext.getFilesDir();
+
+        // Créez un fichier dans le répertoire de stockage interne pour enregistrer le fichier audio
+        File audioFile = new File(internalStorageDir, name);
+        FileOutputStream output = new FileOutputStream(audioFile);
+
+        byte[] buffer = new byte[1024];
+        int bytesRead;
+        while ((bytesRead = input.read(buffer)) != -1) {
+            output.write(buffer, 0, bytesRead);
+        }
+
+        output.close();
+        input.close();
+        return audioFile.getAbsolutePath();
     }
     private byte[] compressImage(Bitmap imageBitmap) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();

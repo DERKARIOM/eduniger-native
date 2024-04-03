@@ -104,7 +104,7 @@ public class AudioBookAdapter extends RecyclerView.Adapter<AudioBookAdapter.MyVi
             mTitleTextView.setText(audioBook.getTitle());
             mAuthorTextView.setText(audioBook.getAuthor());
             mDurationTextView.setText(audioBook.getDuration());
-            mCoverImageView.setOnClickListener(new View.OnClickListener() {
+            itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent audioPayerIntent = new Intent(itemView.getContext(), AudioPlayerActivity.class);

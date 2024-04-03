@@ -11,6 +11,8 @@ import com.ninotech.fabi.model.table.ElectronicTable;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -22,7 +24,7 @@ public class ElectronicDownloader extends AsyncTask<String, Void, ResourceBook> 
         ResourceBook resourceBook = new ResourceBook();
         try {
             resourceBook.setCoverBookBitmap(downloadIMG(mContext.getString(R.string.ip_server) + "ressources/cover/" + name[0]));
-            resourceBook.setPdfBytes(downloadPDF(mContext.getString(R.string.ip_server) + "ressources/pdf/" + name[1]));
+            resourceBook.setPDF(downloadPDF(mContext.getString(R.string.ip_server) + "ressources/pdf/" + name[1],name[1]));
             resourceBook.setCoverCategoryBitmap(downloadIMG(mContext.getString(R.string.ip_server) + "ressources/cover/" + name[2]));
             resourceBook.setProfileAuthorBitmap(downloadIMG(mContext.getString(R.string.ip_server) + "ressources/profile/" + name[3]));
         } catch (Exception e) {
@@ -46,7 +48,7 @@ public class ElectronicDownloader extends AsyncTask<String, Void, ResourceBook> 
             byte[] coverCategoryBytes = coverCategoryStream.toByteArray();
             byte[] profileAuthorBytes = profileAuthorStream.toByteArray();
             ElectronicTable electronicTable = new ElectronicTable(mContext);
-            electronicTable.insert(mIdNumber,mBook.getId(),mBook.getDescription(),mBook.getAuthor(),coverBookBytes,result.getPdfBytes(),mBook.getCategory().get(0),mBook.getTitle(),coverCategoryBytes,profileAuthorBytes);
+            electronicTable.insert(mIdNumber,mBook.getId(),mBook.getDescription(),mBook.getAuthor(),coverBookBytes,result.getPDF(),mBook.getCategory().get(0),mBook.getTitle(),coverCategoryBytes,profileAuthorBytes);
         }
         // Sauvegarder l'image dans la base de données SQLite
         // Utilisez votre DatabaseHelper pour insérer l'image dans la base de données
@@ -65,32 +67,34 @@ public class ElectronicDownloader extends AsyncTask<String, Void, ResourceBook> 
         InputStream inputImage = connectionImage.getInputStream();
         return BitmapFactory.decodeStream(inputImage);
     }
-
-    public byte[] downloadPDF(String url) throws IOException {
-        URL urlPdf = new URL(url);
-        byte[] bytes=null;
-        HttpURLConnection connectionPDF = (HttpURLConnection) urlPdf.openConnection();
-        connectionPDF.connect();
-        if (connectionPDF.getResponseCode() == HttpURLConnection.HTTP_OK) {
-            InputStream inputStream = new BufferedInputStream(connectionPDF.getInputStream());
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            byte[] buffer = new byte[1024];
-            int bytesRead;
-            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, bytesRead);
-            }
-            bytes = outputStream.toByteArray();
-            inputStream.close();
-            outputStream.close();
-            connectionPDF.disconnect();
-        }
-        return bytes;
-    }
     private byte[] compressImage(Bitmap imageBitmap) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         // Compression de l'image avec une qualité de 50 (modifiable)
         imageBitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
         return byteArrayOutputStream.toByteArray();
+    }
+    public String downloadPDF(String url , String name) throws IOException {
+        URL audioUrl = new URL(url);
+        HttpURLConnection connection = (HttpURLConnection) audioUrl.openConnection();
+        connection.connect();
+        InputStream input = connection.getInputStream();
+
+        // Obtenez le répertoire de stockage interne de l'application
+        File internalStorageDir = mContext.getFilesDir();
+
+        // Créez un fichier dans le répertoire de stockage interne pour enregistrer le fichier audio
+        File audioFile = new File(internalStorageDir, name);
+        FileOutputStream output = new FileOutputStream(audioFile);
+
+        byte[] buffer = new byte[1024];
+        int bytesRead;
+        while ((bytesRead = input.read(buffer)) != -1) {
+            output.write(buffer, 0, bytesRead);
+        }
+
+        output.close();
+        input.close();
+        return audioFile.getAbsolutePath();
     }
     private Context mContext;
     private String mIdNumber;

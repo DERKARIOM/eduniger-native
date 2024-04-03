@@ -62,7 +62,7 @@ public class ContainerActivity extends AppCompatActivity {
                        byte[] imageBytes = electronicCursor.getBlob(5);
                        // Convertir le tableau d'octets en Bitmap
                        Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-                       mElectronicBookList.add(new ElectronicBook(electronicCursor.getString(2),bitmap,electronicCursor.getString(8),electronicCursor.getString(7),electronicCursor.getString(4),null));
+                       mElectronicBookList.add(new ElectronicBook(electronicCursor.getString(2),bitmap,electronicCursor.getString(8),electronicCursor.getString(7),electronicCursor.getString(4),electronicCursor.getString(6)));
                    }while(electronicCursor.moveToNext());
                    ElectronicBookAdapter electronicBookAdapter = new ElectronicBookAdapter(mElectronicBookList);
                    mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
