@@ -7,9 +7,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +29,7 @@ import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 public class AudioPlayerActivity extends AppCompatActivity {
 
@@ -45,8 +48,28 @@ public class AudioPlayerActivity extends AppCompatActivity {
         mDurationCurrentTextView = findViewById(R.id.text_view_activity_audio_player_duration_current);
         mCoverImageView = findViewById(R.id.image_view_activity_audio_player_cover);
         mPlayImageView = findViewById(R.id.image_view_activity_audio_player_play);
-        String idBook = audioBookIntent.getStringExtra("key_adagitpter_audio_book_id");
+        mSeekBar = findViewById(R.id.seek_bar_activity_audio_player);
+        mHandler = new Handler();
+        String idBook = audioBookIntent.getStringExtra("key_adapter_audio_book_id");
         AudioTable audioTable = new AudioTable(this);
+        mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                if (b) {
+                    mMediaPlayer.seekTo(i);
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
         try {
             Cursor audioCursor = audioTable.getData(mSession.getIdNumber(),idBook);
             audioCursor.moveToFirst();
@@ -64,10 +87,33 @@ public class AudioPlayerActivity extends AppCompatActivity {
                     .resize(280,330)
                     .into(mCoverImageView);
             mMediaPlayer = new MediaPlayer();
-            // Spécifie le chemin d'accès au fichier audio dans le stockage interne
-                mMediaPlayer.setDataSource(audioCursor.getString(6));
-                mMediaPlayer.prepare();
-                mMediaPlayer.start();
+            mMediaPlayer.setDataSource(audioCursor.getString(6));
+            mMediaPlayer.prepare();
+            mSeekBar.setMax(mMediaPlayer.getDuration());
+            mMediaPlayer.start();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (mMediaPlayer != null) {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        mHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (mMediaPlayer != null && mMediaPlayer.isPlaying())
+                                {
+                                    int currentTime = mMediaPlayer.getCurrentPosition();
+                                    mSeekBar.setProgress(currentTime);
+                                    mDurationCurrentTextView.setText(convertedDurationToString(currentTime));
+                                }
+                            }
+                        });
+                    }
+                }
+            }).start();
         }catch (Exception e)
         {
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -90,6 +136,12 @@ public class AudioPlayerActivity extends AppCompatActivity {
         });
 
     }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mMediaPlayer.release();
+        mMediaPlayer = null;
+    }
     public File bitmapToFile(Context context, String filename, Bitmap bitmap) {
         // Créer un fichier dans le répertoire de cache de l'application
         File file = new File(context.getCacheDir(), filename);
@@ -104,6 +156,13 @@ public class AudioPlayerActivity extends AppCompatActivity {
         }
         return file;
     }
+    public String convertedDurationToString(int duration)
+    {
+        return String.format("%02d:%02d",
+                TimeUnit.MILLISECONDS.toMinutes(duration),
+                TimeUnit.MILLISECONDS.toSeconds(duration) -
+                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(duration)));
+    }
     private Session mSession;
     private TextView mTitleTextView;
     private TextView mAuthorTextView;
@@ -112,4 +171,6 @@ public class AudioPlayerActivity extends AppCompatActivity {
     private TextView mDurationCurrentTextView;
     private MediaPlayer mMediaPlayer;
     private ImageView mPlayImageView;
+    private SeekBar mSeekBar;
+    private Handler mHandler;
 }
