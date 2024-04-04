@@ -112,7 +112,7 @@ public class ElectronicBookAdapter extends RecyclerView.Adapter<ElectronicBookAd
         }
         private void openPDFWithAdobeReader(File pdfFile) {
             Intent intent = new Intent(Intent.ACTION_VIEW);
-            Uri pdfUri = FileProvider.getUriForFile(itemView.getContext(), itemView.getContext().getApplicationContext().getPackageName() + ".provider", pdfFile);
+            Uri pdfUri = Uri.fromFile(pdfFile);
             intent.setDataAndType(pdfUri, "application/pdf");
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
