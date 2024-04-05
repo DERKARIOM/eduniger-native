@@ -2,11 +2,10 @@ package com.ninotech.fabi.model.data;
 
 import java.util.ArrayList;
 
-public class Book {
-   public Book(String id, String title, String blanket, ArrayList<String> category, String author, String description, String electronic, String isAudio, String isAvailable, String isPhysic, int numberLikes, int numberNoLikes , int numberView) {
-      mId = id;
-      mTitle = title;
-      mBlanket = blanket;
+public class Book extends Document{
+   public Book(String id, String title, String cover, String category, String author, String description, String electronic, String isAudio, String isAvailable, String isPhysic, int numberLikes, int numberNoLikes , int numberView) {
+      super(id,title);
+      mCover = cover;
       mCategory = category;
       mAuthor = author;
       mDescription = description;
@@ -18,11 +17,10 @@ public class Book {
       mNumberNoLikes = numberNoLikes;
       mNumberView = numberView;
    }
-   public Book(String id , String blanket , String title , ArrayList<String> category , String isPhysic, String electronic , String isAudio , int numberLikes , int numberView)
+   public Book(String id , String cover, String title , String category , String isPhysic, String electronic , String isAudio , int numberLikes , int numberView)
    {
-      mId = id;
-      mBlanket = blanket;
-      mTitle = title;
+      super(id,title);
+      mCover = cover;
       mCategory = category;
       mIsPhysic = isPhysic;
       mElectronic = electronic;
@@ -48,8 +46,7 @@ public class Book {
    }
    public Book(String id)
    {
-      mId = id;
-      mCategory = new ArrayList<>();
+      super(id);
    }
    public int getNumberView() {
       return mNumberView;
@@ -75,19 +72,19 @@ public class Book {
       mTitle = title;
    }
 
-   public String getBlanket() {
-      return mBlanket;
+   public String getCover() {
+      return mCover;
    }
 
-   public void setBlanket(String blanket) {
-      mBlanket = blanket;
+   public void setCover(String cover) {
+      mCover = cover;
    }
 
-   public ArrayList<String> getCategory() {
+   public String getCategory() {
       return mCategory;
    }
 
-   public void setCategory(ArrayList<String> category) {
+   public void setCategory(String category) {
       mCategory = category;
    }
 
@@ -146,28 +143,6 @@ public class Book {
    public void setNumberLikes(int numberLikes) {
       mNumberLikes = numberLikes;
    }
-
-   private String mId;
-   private String mTitle;
-   private String mBlanket;
-   private ArrayList<String> mCategory;
-   private String mAuthor;
-   private String mDescription;
-   private String mElectronic;
-   private String mIsAudio;
-   private  String mIsAvailable;
-   private String mIsPhysic;
-   private int mNumberLikes;
-
-   public int getNumberSubscribe() {
-      return mNumberSubscribe;
-   }
-
-   public void setNumberSubscribe(int numberSubscribe) {
-      mNumberSubscribe = numberSubscribe;
-   }
-
-   private int mNumberSubscribe;
    public void subscribe()
    {
       mNumberSubscribe++;
@@ -184,6 +159,24 @@ public class Book {
    public void setNumberNoLikes(int numberNoLikes) {
       mNumberNoLikes = numberNoLikes;
    }
+   public int getNumberSubscribe() {
+      return mNumberSubscribe;
+   }
+
+   public void setNumberSubscribe(int numberSubscribe) {
+      mNumberSubscribe = numberSubscribe;
+   }
+
+   private String mCover;
+   private String mCategory;
+   private String mAuthor;
+   private String mDescription;
+   private String mElectronic;
+   private String mIsAudio;
+   private  String mIsAvailable;
+   private String mIsPhysic;
+   private int mNumberLikes;
+   private int mNumberSubscribe;
 
    private int mNumberNoLikes;
 

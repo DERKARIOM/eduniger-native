@@ -50,7 +50,7 @@ public class AudioDownloader extends AsyncTask<String, Void, ResourceBook> {
             byte[] coverCategoryBytes = coverCategoryStream.toByteArray();
             byte[] profileAuthorBytes = profileAuthorStream.toByteArray();
             AudioTable audioTable = new AudioTable(mContext);
-            audioTable.insert(mIdNumber,mBook.getId(),mBook.getDescription(),mBook.getAuthor(),coverBookBytes,result.getAudio(),mBook.getCategory().get(0),mBook.getTitle(),coverCategoryBytes,profileAuthorBytes,mTones.getDuration());
+            audioTable.insert(mIdNumber,mBook.getId(),mBook.getDescription(),mBook.getAuthor(),coverBookBytes,result.getAudio(),mBook.getCategory(),mBook.getTitle(),coverCategoryBytes,profileAuthorBytes,mTones.getDuration());
         }
         // Sauvegarder l'image dans la base de données SQLite
         // Utilisez votre DatabaseHelper pour insérer l'image dans la base de données

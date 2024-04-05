@@ -96,17 +96,14 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.MyViewHolder> 
         }
         void display(Book book){
             Picasso.get()
-                    .load(itemView.getResources().getString(R.string.ip_server) + "ressources/cover/" + book.getBlanket())
+                    .load(itemView.getResources().getString(R.string.ip_server) + "ressources/cover/" + book.getCover())
                     .placeholder(R.drawable.img_default_book)
                     .error(R.drawable.img_default_book)
                     .transform(new RoundedTransformation(15,4))
                     .resize(178,284)
                     .into(mBlanketImageView);
             mTitleTextView.setText(book.getTitle());
-            StringBuilder category = new StringBuilder(".");
-            for(int i=0;i<book.getCategory().size();i++)
-                category.append(book.getCategory().get(i));
-            mCategoryTextView.setText(category);
+            mCategoryTextView.setText(book.getCategory());
             mNumberLikeTextView.setText(String.valueOf(book.getNumberLikes()));
             mNumberViewTextView.setText(String.valueOf(book.getNumberView()));
             if(book.getIsPhysic().equals("1"))

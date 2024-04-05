@@ -216,7 +216,7 @@ public class BookActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 ElectronicDownloader electronicDownloader = new ElectronicDownloader(getApplicationContext(),mSession.getIdNumber(),mBook);
-                electronicDownloader.execute(mBook.getBlanket(),mBook.getElectronic(),mCategory.getBlanket(),mAuthor.getProfile());
+                electronicDownloader.execute(mBook.getCover(),mBook.getElectronic(),mCategory.getBlanket(),mAuthor.getProfile());
                // if(mElectronicTable.insert(mSession.getIdNumber(),mBook.getId(), mDescriptionTextView.getText().toString(),"ras",imageDownloader.getBytes(),mBook.getElectronic(), mCategoryTextView.getText().toString(), mBook.getTitle(),"ras","ras"))
                     succeDowloadPDFDialog();
             }
@@ -226,7 +226,7 @@ public class BookActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Toast.makeText(BookActivity.this, "ok", Toast.LENGTH_SHORT).show();
                 AudioDownloader audioDownloader = new AudioDownloader(getApplicationContext(),mSession.getIdNumber(),mBook,mTones);
-                audioDownloader.execute(mBook.getBlanket(),mBook.getElectronic(),mCategory.getBlanket(),mAuthor.getProfile(),mTones.getAudio());
+                audioDownloader.execute(mBook.getCover(),mBook.getElectronic(),mCategory.getBlanket(),mAuthor.getProfile(),mTones.getAudio());
             }
         });
         mPlayerImageView.setOnClickListener(new View.OnClickListener() {
@@ -499,21 +499,21 @@ public class BookActivity extends AppCompatActivity {
                     throw new RuntimeException(e);
                 }
                 try {
-                    mBook.setBlanket(jsonObject.getString("bookBlanket"));
+                    mBook.setCover(jsonObject.getString("bookBlanket"));
                     mBook.setTitle(jsonObject.getString("bookTitle"));
                     mBook.setIsPhysic(jsonObject.getString("isPhysic"));
                     mBook.setIsAudio(jsonObject.getString("isAudio"));
                     mBook.setElectronic(jsonObject.getString("electronic"));
                     mBook.setAuthor(jsonObject.getString("authorName"));
                     mBook.setDescription(jsonObject.getString("description"));
-                    mBook.getCategory().add(jsonObject.getString("categoryTitle"));
+                    mBook.setCategory(jsonObject.getString("categoryTitle"));
                     mBook.setNumberLikes(Integer.parseInt(jsonObject.getString("numberLike")));
                     mBook.setNumberNoLikes(Integer.parseInt(jsonObject.getString("numberNoLike")));
                     mBook.setNumberSubscribe(Integer.parseInt(jsonObject.getString("numberSubscribe")));
                     mCategory = new Category(jsonObject.getString("categoryBlanket"),jsonObject.getString("categoryTitle"));
                     mAuthor = new Author(jsonObject.getString("idAuthor"),jsonObject.getString("name"),jsonObject.getString("firstName"),jsonObject.getString("profile"));
                     Picasso.get()
-                            .load(getString(R.string.ip_server) + "ressources/cover/" + mBook.getBlanket())
+                            .load(getString(R.string.ip_server) + "ressources/cover/" + mBook.getCover())
                             .placeholder(R.drawable.img_default_book)
                             .error(R.drawable.img_default_book)
                             .transform(new RoundedTransformation(15,4))
@@ -529,10 +529,7 @@ public class BookActivity extends AppCompatActivity {
                     if(!mBook.getElectronic().equals("null"))
                         mElectronicLinearLayout.setVisibility(View.VISIBLE);
                     mTitleTextView.setText(mBook.getTitle());
-                    StringBuilder category= new StringBuilder(".");
-                    for(int i=0;i<mBook.getCategory().size();i++)
-                        category.append(mBook.getCategory().get(i));
-                    mCategoryTextView.setText(category);
+                    mCategoryTextView.setText(mBook.getCategory());
                     mDescriptionTextView.setText(mBook.getDescription());
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
