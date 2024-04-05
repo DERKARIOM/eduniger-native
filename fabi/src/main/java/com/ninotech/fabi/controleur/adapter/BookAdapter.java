@@ -12,14 +12,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.activity.BookActivity;
-import com.ninotech.fabi.model.data.Book;
+import com.ninotech.fabi.model.data.OnlineBook;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 public class BookAdapter extends RecyclerView.Adapter<BookAdapter.MyViewHolder> {
-    List<Book> mListBook;
+    List<OnlineBook> mListOnlineBook;
 
     public int getPosition() {
         return mPosition;
@@ -30,8 +30,8 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.MyViewHolder> 
     }
 
     private int mPosition;
-    public BookAdapter(List<Book> listBook) {
-        mListBook = listBook;
+    public BookAdapter(List<OnlineBook> listOnlineBook) {
+        mListOnlineBook = listOnlineBook;
     }
     @Override
     public BookAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -42,7 +42,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.MyViewHolder> 
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        Book item = mListBook.get(position);
+        OnlineBook item = mListOnlineBook.get(position);
         int i = position;
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -52,20 +52,20 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.MyViewHolder> 
                 return true;
             }
         });
-        holder.display(mListBook.get(position));
+        holder.display(mListOnlineBook.get(position));
 
     }
     @Override
     public int getItemCount() {
-        return mListBook.size();
+        return mListOnlineBook.size();
     }
 
-    public Book getItem(int position) {
-        return mListBook.get(position);
+    public OnlineBook getItem(int position) {
+        return mListOnlineBook.get(position);
     }
 
     public void Remove(int position){
-        mListBook.remove(position);
+        mListOnlineBook.remove(position);
         notifyItemRemoved(position);
     }
 
@@ -94,29 +94,29 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.MyViewHolder> 
         @Override
         public void onCreateContextMenu(ContextMenu menu , View v , ContextMenu.ContextMenuInfo menuInfo){
         }
-        void display(Book book){
+        void display(OnlineBook onlineBook){
             Picasso.get()
-                    .load(itemView.getResources().getString(R.string.ip_server) + "ressources/cover/" + book.getCover())
+                    .load(itemView.getResources().getString(R.string.ip_server) + "ressources/cover/" + onlineBook.getCover())
                     .placeholder(R.drawable.img_default_book)
                     .error(R.drawable.img_default_book)
                     .transform(new RoundedTransformation(15,4))
                     .resize(178,284)
                     .into(mBlanketImageView);
-            mTitleTextView.setText(book.getTitle());
-            mCategoryTextView.setText(book.getCategory());
-            mNumberLikeTextView.setText(String.valueOf(book.getNumberLikes()));
-            mNumberViewTextView.setText(String.valueOf(book.getNumberView()));
-            if(book.getIsPhysic().equals("1"))
+            mTitleTextView.setText(onlineBook.getTitle());
+            mCategoryTextView.setText(onlineBook.getCategory());
+            mNumberLikeTextView.setText(String.valueOf(onlineBook.getNumberLikes()));
+            mNumberViewTextView.setText(String.valueOf(onlineBook.getNumberView()));
+            if(onlineBook.getIsPhysic().equals("1"))
                 mPysicalImageView.setVisibility(View.VISIBLE);
-            if(!book.getElectronic().equals("null"))
+            if(!onlineBook.getElectronic().equals("null"))
                 mElectronicImageView.setVisibility(View.VISIBLE);
-            if(book.getIsAudio().equals("1"))
+            if(onlineBook.getIsAudio().equals("1"))
                 mAudioImageView.setVisibility(View.VISIBLE);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent intentLivre = new Intent(itemView.getContext(), BookActivity.class);
-                    intentLivre.putExtra("intent_adapter_book_id",book.getId());
+                    intentLivre.putExtra("intent_adapter_book_id", onlineBook.getId());
                     itemView.getContext().startActivity(intentLivre);
                 }
             });

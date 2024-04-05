@@ -45,7 +45,7 @@ import com.ninotech.fabi.controleur.adapter.TalksAdapter;
 import com.ninotech.fabi.controleur.dialog.ReservationDialog;
 import com.ninotech.fabi.model.data.AudioDownloader;
 import com.ninotech.fabi.model.data.Author;
-import com.ninotech.fabi.model.data.Book;
+import com.ninotech.fabi.model.data.OnlineBook;
 import com.ninotech.fabi.model.data.Category;
 import com.ninotech.fabi.model.data.Chat;
 import com.ninotech.fabi.model.data.Connection;
@@ -96,7 +96,7 @@ public class BookActivity extends AppCompatActivity {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         Intent intentBook = getIntent();
         mSession = new Session(this);
-        mBook = new Book(intentBook.getStringExtra("intent_adapter_book_id"));
+        mOnlineBook = new OnlineBook(intentBook.getStringExtra("intent_adapter_book_id"));
         mTalksList = new ArrayList<>();
         mListSimilar = new ArrayList<>();
         mListTones = new ArrayList<>();
@@ -189,7 +189,7 @@ public class BookActivity extends AppCompatActivity {
                 else
                 {
                     CancelReservationSyn cancelReservationSyn = new CancelReservationSyn();
-                    cancelReservationSyn.execute(getString(R.string.ip_server_android) + "CancelReservation.php",mSession.getIdNumber(),mBook.getId());
+                    cancelReservationSyn.execute(getString(R.string.ip_server_android) + "CancelReservation.php",mSession.getIdNumber(), mOnlineBook.getId());
                 }
             }
         });
@@ -207,7 +207,7 @@ public class BookActivity extends AppCompatActivity {
                             STORAGE_PERMISSION_REQUEST_CODE);
                 } else {
                     // Si la permission est déjà accordée, télécharger et ouvrir le PDF
-                    downloadAndOpenPDF(mBook.getElectronic());
+                    downloadAndOpenPDF(mOnlineBook.getElectronic());
                 }
             }
         });
@@ -215,8 +215,8 @@ public class BookActivity extends AppCompatActivity {
         downloadPDFButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ElectronicDownloader electronicDownloader = new ElectronicDownloader(getApplicationContext(),mSession.getIdNumber(),mBook);
-                electronicDownloader.execute(mBook.getCover(),mBook.getElectronic(),mCategory.getBlanket(),mAuthor.getProfile());
+                ElectronicDownloader electronicDownloader = new ElectronicDownloader(getApplicationContext(),mSession.getIdNumber(), mOnlineBook);
+                electronicDownloader.execute(mOnlineBook.getCover(), mOnlineBook.getElectronic(),mCategory.getCover(),mAuthor.getProfile());
                // if(mElectronicTable.insert(mSession.getIdNumber(),mBook.getId(), mDescriptionTextView.getText().toString(),"ras",imageDownloader.getBytes(),mBook.getElectronic(), mCategoryTextView.getText().toString(), mBook.getTitle(),"ras","ras"))
                     succeDowloadPDFDialog();
             }
@@ -225,8 +225,8 @@ public class BookActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Toast.makeText(BookActivity.this, "ok", Toast.LENGTH_SHORT).show();
-                AudioDownloader audioDownloader = new AudioDownloader(getApplicationContext(),mSession.getIdNumber(),mBook,mTones);
-                audioDownloader.execute(mBook.getCover(),mBook.getElectronic(),mCategory.getBlanket(),mAuthor.getProfile(),mTones.getAudio());
+                AudioDownloader audioDownloader = new AudioDownloader(getApplicationContext(),mSession.getIdNumber(), mOnlineBook,mTones);
+                audioDownloader.execute(mOnlineBook.getCover(), mOnlineBook.getElectronic(),mCategory.getCover(),mAuthor.getProfile(),mTones.getAudio());
             }
         });
         mPlayerImageView.setOnClickListener(new View.OnClickListener() {
@@ -261,7 +261,7 @@ public class BookActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 InsertLikeSyn insertLikeSyn = new InsertLikeSyn();
-                insertLikeSyn.execute(getString(R.string.ip_server_android) + "InsertLike.php",mSession.getIdNumber(),mBook.getId());
+                insertLikeSyn.execute(getString(R.string.ip_server_android) + "InsertLike.php",mSession.getIdNumber(), mOnlineBook.getId());
             }
         });
 
@@ -269,7 +269,7 @@ public class BookActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 InsertNoLikeSyn insertNoLikeSyn = new InsertNoLikeSyn();
-                insertNoLikeSyn.execute(getString(R.string.ip_server_android) + "InsertNoLike.php",mSession.getIdNumber(),mBook.getId());
+                insertNoLikeSyn.execute(getString(R.string.ip_server_android) + "InsertNoLike.php",mSession.getIdNumber(), mOnlineBook.getId());
             }
         });
 
@@ -277,7 +277,7 @@ public class BookActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 InsertSubscribeBookSyn insertSubscribeBookSyn = new InsertSubscribeBookSyn();
-                insertSubscribeBookSyn.execute(getString(R.string.ip_server_android) + "InsertSubscribeBook.php",mSession.getIdNumber(),mBook.getId());
+                insertSubscribeBookSyn.execute(getString(R.string.ip_server_android) + "InsertSubscribeBook.php",mSession.getIdNumber(), mOnlineBook.getId());
             }
         });
         RecoveryBook recoveryBook = new RecoveryBook();
@@ -289,14 +289,14 @@ public class BookActivity extends AppCompatActivity {
         IsSubscribeBookSyn isSubscribeBookSyn = new IsSubscribeBookSyn();
         InsertViewSyn insertViewSyn = new InsertViewSyn();
         IsReservationSyn isReservationSyn = new IsReservationSyn();
-        isReservationSyn.execute(getString(R.string.ip_server_android) + "IsReservation.php",mSession.getIdNumber(),mBook.getId());
-        insertViewSyn.execute(getString(R.string.ip_server_android) + "InsertView.php",mSession.getIdNumber(),mBook.getId());
-        isSubscribeBookSyn.execute(getString(R.string.ip_server_android) + "IsSubscribeBook.php",mSession.getIdNumber(),mBook.getId());
-        isLikeSyn.execute(getString(R.string.ip_server_android) + "IsLike.php",mSession.getIdNumber(),mBook.getId());
-        isNoLikeSyn.execute(getString(R.string.ip_server_android) + "IsNoLike.php",mSession.getIdNumber(),mBook.getId());
-        recoveryBook.execute(getString(R.string.ip_server_android) + "Book.php",mSession.getIdNumber(),mBook.getId());
-        receiveComments.execute(getString(R.string.ip_server_android) + "ReceiveComments.php",mSession.getIdNumber(),mBook.getId());
-        similar.execute(getString(R.string.ip_server_android) + "SimilarBook.php",mSession.getIdNumber(),mCategoryTextView.getText().toString(),mBook.getId());
+        isReservationSyn.execute(getString(R.string.ip_server_android) + "IsReservation.php",mSession.getIdNumber(), mOnlineBook.getId());
+        insertViewSyn.execute(getString(R.string.ip_server_android) + "InsertView.php",mSession.getIdNumber(), mOnlineBook.getId());
+        isSubscribeBookSyn.execute(getString(R.string.ip_server_android) + "IsSubscribeBook.php",mSession.getIdNumber(), mOnlineBook.getId());
+        isLikeSyn.execute(getString(R.string.ip_server_android) + "IsLike.php",mSession.getIdNumber(), mOnlineBook.getId());
+        isNoLikeSyn.execute(getString(R.string.ip_server_android) + "IsNoLike.php",mSession.getIdNumber(), mOnlineBook.getId());
+        recoveryBook.execute(getString(R.string.ip_server_android) + "Book.php",mSession.getIdNumber(), mOnlineBook.getId());
+        receiveComments.execute(getString(R.string.ip_server_android) + "ReceiveComments.php",mSession.getIdNumber(), mOnlineBook.getId());
+        similar.execute(getString(R.string.ip_server_android) + "SimilarBook.php",mSession.getIdNumber(),mCategoryTextView.getText().toString(), mOnlineBook.getId());
         recoveryTones.execute(getString(R.string.ip_server_android) + "Tones.php");
         addCommentsImageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -311,7 +311,7 @@ public class BookActivity extends AppCompatActivity {
                     mCommentsRecyclerView.setAdapter(talksAdapter);
                     mCommentsRecyclerView.smoothScrollToPosition(talksAdapter.getItemCount()-1);
                     SendComments sendComments = new SendComments();
-                    sendComments.execute(getString(R.string.ip_server_android) + "SendComments.php",mSession.getIdNumber(),mBook.getId(),chat.getMessage());
+                    sendComments.execute(getString(R.string.ip_server_android) + "SendComments.php",mSession.getIdNumber(), mOnlineBook.getId(),chat.getMessage());
                 }
             }
         });
@@ -381,7 +381,7 @@ public class BookActivity extends AppCompatActivity {
             protected File doInBackground(Void... voids) {
                 try {
                     // URL du PDF distant
-                    String pdfUrl = getString(R.string.ip_server) + "ressources/pdf/" + mBook.getElectronic();
+                    String pdfUrl = getString(R.string.ip_server) + "ressources/pdf/" + mOnlineBook.getElectronic();
                     URL url = new URL(pdfUrl);
 
                     // Ouvrir la connexion
@@ -390,7 +390,7 @@ public class BookActivity extends AppCompatActivity {
 
                     // Télécharger le PDF dans le répertoire de téléchargement
                     File pdfFile = new File(Environment.getExternalStoragePublicDirectory(
-                            Environment.DIRECTORY_DOWNLOADS), mBook.getElectronic());
+                            Environment.DIRECTORY_DOWNLOADS), mOnlineBook.getElectronic());
 
                     InputStream inputStream = urlConnection.getInputStream();
                     FileOutputStream outputStream = new FileOutputStream(pdfFile);
@@ -448,7 +448,7 @@ public class BookActivity extends AppCompatActivity {
         if (requestCode == STORAGE_PERMISSION_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permission accordée, télécharger et ouvrir le PDF
-                downloadAndOpenPDF(mBook.getElectronic());
+                downloadAndOpenPDF(mOnlineBook.getElectronic());
             } else {
                 // Permission refusée, gérer en conséquence
                 Log.e("Permission", "Storage permission denied");
@@ -499,38 +499,38 @@ public class BookActivity extends AppCompatActivity {
                     throw new RuntimeException(e);
                 }
                 try {
-                    mBook.setCover(jsonObject.getString("bookBlanket"));
-                    mBook.setTitle(jsonObject.getString("bookTitle"));
-                    mBook.setIsPhysic(jsonObject.getString("isPhysic"));
-                    mBook.setIsAudio(jsonObject.getString("isAudio"));
-                    mBook.setElectronic(jsonObject.getString("electronic"));
-                    mBook.setAuthor(jsonObject.getString("authorName"));
-                    mBook.setDescription(jsonObject.getString("description"));
-                    mBook.setCategory(jsonObject.getString("categoryTitle"));
-                    mBook.setNumberLikes(Integer.parseInt(jsonObject.getString("numberLike")));
-                    mBook.setNumberNoLikes(Integer.parseInt(jsonObject.getString("numberNoLike")));
-                    mBook.setNumberSubscribe(Integer.parseInt(jsonObject.getString("numberSubscribe")));
+                    mOnlineBook.setCover(jsonObject.getString("bookBlanket"));
+                    mOnlineBook.setTitle(jsonObject.getString("bookTitle"));
+                    mOnlineBook.setIsPhysic(jsonObject.getString("isPhysic"));
+                    mOnlineBook.setIsAudio(jsonObject.getString("isAudio"));
+                    mOnlineBook.setElectronic(jsonObject.getString("electronic"));
+                    mOnlineBook.setAuthor(jsonObject.getString("authorName"));
+                    mOnlineBook.setDescription(jsonObject.getString("description"));
+                    mOnlineBook.setCategory(jsonObject.getString("categoryTitle"));
+                    mOnlineBook.setNumberLikes(Integer.parseInt(jsonObject.getString("numberLike")));
+                    mOnlineBook.setNumberNoLikes(Integer.parseInt(jsonObject.getString("numberNoLike")));
+                    mOnlineBook.setNumberSubscribe(Integer.parseInt(jsonObject.getString("numberSubscribe")));
                     mCategory = new Category(jsonObject.getString("categoryBlanket"),jsonObject.getString("categoryTitle"));
                     mAuthor = new Author(jsonObject.getString("idAuthor"),jsonObject.getString("name"),jsonObject.getString("firstName"),jsonObject.getString("profile"));
                     Picasso.get()
-                            .load(getString(R.string.ip_server) + "ressources/cover/" + mBook.getCover())
+                            .load(getString(R.string.ip_server) + "ressources/cover/" + mOnlineBook.getCover())
                             .placeholder(R.drawable.img_default_book)
                             .error(R.drawable.img_default_book)
                             .transform(new RoundedTransformation(15,4))
                             .resize(200,334)
                             .into(mBlanketImageView);
-                    mNumberLikeTextView.setText(String.valueOf(mBook.getNumberLikes()));
-                    mNumberNoLikeTextView.setText(String.valueOf(mBook.getNumberNoLikes()));
-                    mNumberSubscribeTextView.setText(String.valueOf(mBook.getNumberSubscribe()));
-                    if(mBook.getIsPhysic().equals("1"))
+                    mNumberLikeTextView.setText(String.valueOf(mOnlineBook.getNumberLikes()));
+                    mNumberNoLikeTextView.setText(String.valueOf(mOnlineBook.getNumberNoLikes()));
+                    mNumberSubscribeTextView.setText(String.valueOf(mOnlineBook.getNumberSubscribe()));
+                    if(mOnlineBook.getIsPhysic().equals("1"))
                         mReservationLinearLayout.setVisibility(View.VISIBLE);
-                    if(mBook.getIsAudio().equals("1"))
+                    if(mOnlineBook.getIsAudio().equals("1"))
                         mAudioLinearLayout.setVisibility(View.VISIBLE);
-                    if(!mBook.getElectronic().equals("null"))
+                    if(!mOnlineBook.getElectronic().equals("null"))
                         mElectronicLinearLayout.setVisibility(View.VISIBLE);
-                    mTitleTextView.setText(mBook.getTitle());
-                    mCategoryTextView.setText(mBook.getCategory());
-                    mDescriptionTextView.setText(mBook.getDescription());
+                    mTitleTextView.setText(mOnlineBook.getTitle());
+                    mCategoryTextView.setText(mOnlineBook.getCategory());
+                    mDescriptionTextView.setText(mOnlineBook.getDescription());
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
@@ -645,16 +645,16 @@ public class BookActivity extends AppCompatActivity {
                 {
                     if(jsonData.equals("true"))
                     {
-                        mBook.like();
+                        mOnlineBook.like();
                         mLikeImageView.setImageResource(R.drawable.vector_purple2_200_on_like);
                         mNoLikeImageView.setImageResource(R.drawable.vector_black3_off_no_like);
                     }
                     else
                     {
-                        mBook.disLike();
+                        mOnlineBook.disLike();
                         mLikeImageView.setImageResource(R.drawable.vector_black3_off_like);
                     }
-                    mNumberLikeTextView.setText(String.valueOf(mBook.getNumberLikes()));
+                    mNumberLikeTextView.setText(String.valueOf(mOnlineBook.getNumberLikes()));
                 }
             }
         }
@@ -699,16 +699,16 @@ public class BookActivity extends AppCompatActivity {
                 {
                     if(jsonData.equals("true"))
                     {
-                        mBook.noLike();
+                        mOnlineBook.noLike();
                         mNoLikeImageView.setImageResource(R.drawable.vector_rouge_on_nolike);
                         mLikeImageView.setImageResource(R.drawable.vector_black3_off_like);
                     }
                     else
                     {
-                        mBook.disNoLike();
+                        mOnlineBook.disNoLike();
                         mNoLikeImageView.setImageResource(R.drawable.vector_black3_off_no_like);
                     }
-                    mNumberNoLikeTextView.setText(String.valueOf(mBook.getNumberNoLikes()));
+                    mNumberNoLikeTextView.setText(String.valueOf(mOnlineBook.getNumberNoLikes()));
                 }
             }
         }
@@ -753,15 +753,15 @@ public class BookActivity extends AppCompatActivity {
                 {
                     if(jsonData.equals("true"))
                     {
-                        mBook.subscribe();
+                        mOnlineBook.subscribe();
                         mSubscribeImageView.setImageResource(R.drawable.vector_purple2_200_suscribe);
                     }
                     else
                     {
-                        mBook.desSubscribe();
+                        mOnlineBook.desSubscribe();
                         mSubscribeImageView.setImageResource(R.drawable.vector_black3_off_subscribe);
                     }
-                    mNumberSubscribeTextView.setText(String.valueOf(mBook.getNumberSubscribe()));
+                    mNumberSubscribeTextView.setText(String.valueOf(mOnlineBook.getNumberSubscribe()));
                 }
             }
         }
@@ -1109,7 +1109,7 @@ public class BookActivity extends AppCompatActivity {
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
                         .addFormDataPart("idNumber",mSession.getIdNumber())
-                        .addFormDataPart("idBook",mBook.getId())
+                        .addFormDataPart("idBook", mOnlineBook.getId())
                         .build();
                 Request request = new Request.Builder()
                         .url(params[0])
@@ -1230,7 +1230,7 @@ public class BookActivity extends AppCompatActivity {
                         else
                             mNbrJour = String.valueOf(-1);
                         Reservation reservation = new Reservation();
-                        reservation.execute(getString(R.string.ip_server_android) + "Reservation.php",mSession.getIdNumber(),mBook.getId(),mNbrJour);
+                        reservation.execute(getString(R.string.ip_server_android) + "Reservation.php",mSession.getIdNumber(), mOnlineBook.getId(),mNbrJour);
                     }
                 }
             }
@@ -1367,7 +1367,7 @@ public class BookActivity extends AppCompatActivity {
     private ReservationDialog mReservationDialog;
     private ElectronicTable mElectronicTable;
     private String mNbrJour;
-    private Book mBook;
+    private OnlineBook mOnlineBook;
     private Category mCategory;
     private Handler mHandler;
     private NestedScrollView mNestedScrollView;

@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.controleur.adapter.BookAdapter;
 import com.ninotech.fabi.controleur.adapter.NoConnectionAdapter;
-import com.ninotech.fabi.model.data.Book;
+import com.ninotech.fabi.model.data.OnlineBook;
 import com.ninotech.fabi.model.data.Connection;
 import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.R;
@@ -42,7 +42,7 @@ public class RankingFragment extends Fragment {
        View view = inflater.inflate(R.layout.fragment_classement, container, false);
         Session session = new Session(getContext());
        mBookRecyclerView = view.findViewById(R.id.recycler_view_ranking);
-        mBookList = new ArrayList<>();
+        mOnlineBookList = new ArrayList<>();
         ArrayList<Connection> list = new ArrayList<>();
         list.add(new Connection(getString(R.string.wait),null,true));
         mNoConnectionAdapter = new NoConnectionAdapter(list);
@@ -114,12 +114,12 @@ public class RankingFragment extends Fragment {
                 }
                 for (int i=0;i<jsonArray.length();i++) {
                     try {
-                        mBookList.add(new Book(jsonArray.getJSONObject(i).getString("idBook"),jsonArray.getJSONObject(i).getString("blanket"),jsonArray.getJSONObject(i).getString("bookTitle"),jsonArray.getJSONObject(i).getString("categoryTitle"),jsonArray.getJSONObject(i).getString("isPhysic"),jsonArray.getJSONObject(i).getString("electronic"),jsonArray.getJSONObject(i).getString("isAudio"),Integer.parseInt(jsonArray.getJSONObject(i).getString("numberLike")),Integer.parseInt(jsonArray.getJSONObject(i).getString("numberLike"))));
+                        mOnlineBookList.add(new OnlineBook(jsonArray.getJSONObject(i).getString("idBook"),jsonArray.getJSONObject(i).getString("blanket"),jsonArray.getJSONObject(i).getString("bookTitle"),jsonArray.getJSONObject(i).getString("categoryTitle"),jsonArray.getJSONObject(i).getString("isPhysic"),jsonArray.getJSONObject(i).getString("electronic"),jsonArray.getJSONObject(i).getString("isAudio"),Integer.parseInt(jsonArray.getJSONObject(i).getString("numberLike")),Integer.parseInt(jsonArray.getJSONObject(i).getString("numberLike"))));
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
                 }
-                BookAdapter bookAdapter = new BookAdapter(mBookList);
+                BookAdapter bookAdapter = new BookAdapter(mOnlineBookList);
                 mBookRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                 mBookRecyclerView.setAdapter(bookAdapter);
             }
@@ -134,6 +134,6 @@ public class RankingFragment extends Fragment {
         }
     }
     private RecyclerView mBookRecyclerView;
-    private ArrayList<Book> mBookList;
+    private ArrayList<OnlineBook> mOnlineBookList;
     private NoConnectionAdapter mNoConnectionAdapter;
 }

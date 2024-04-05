@@ -17,11 +17,9 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.daimajia.androidanimations.library.Techniques;
-import com.daimajia.androidanimations.library.YoYo;
 import com.ninotech.fabi.controleur.adapter.BookAdapter;
 import com.ninotech.fabi.controleur.adapter.NoConnectionAdapter;
-import com.ninotech.fabi.model.data.Book;
+import com.ninotech.fabi.model.data.OnlineBook;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
 import com.ninotech.fabi.model.data.Connection;
 import com.ninotech.fabi.model.table.Session;
@@ -48,7 +46,7 @@ public class RecommendedFragment extends Fragment {
         Session session = new Session(getContext());
         mBookRecommendedRecyclerView = view.findViewById(R.id.recycler_view_ranking);
         mPub = view.findViewById(R.id.image_view_fragment_recommended_welcome);
-        mBookList = new ArrayList<>();
+        mOnlineBookList = new ArrayList<>();
 
         Picasso.get()
                 .load(getString(R.string.ip_server) + "ressources/pub/pub1.jpg")
@@ -126,13 +124,13 @@ public class RecommendedFragment extends Fragment {
                 }
                 for (int i=0;i<jsonArray.length();i++) {
                     try {
-                        mBookList.add(new Book(jsonArray.getJSONObject(i).getString("idBook"),jsonArray.getJSONObject(i).getString("blanket"),jsonArray.getJSONObject(i).getString("bookTitle"),jsonArray.getJSONObject(i).getString("categoryTitle"),jsonArray.getJSONObject(i).getString("isPhysic"),jsonArray.getJSONObject(i).getString("electronic"),jsonArray.getJSONObject(i).getString("isAudio"),Integer.parseInt(jsonArray.getJSONObject(i).getString("numberLike")),Integer.parseInt(jsonArray.getJSONObject(i).getString("numberLike"))));
+                        mOnlineBookList.add(new OnlineBook(jsonArray.getJSONObject(i).getString("idBook"),jsonArray.getJSONObject(i).getString("blanket"),jsonArray.getJSONObject(i).getString("bookTitle"),jsonArray.getJSONObject(i).getString("categoryTitle"),jsonArray.getJSONObject(i).getString("isPhysic"),jsonArray.getJSONObject(i).getString("electronic"),jsonArray.getJSONObject(i).getString("isAudio"),Integer.parseInt(jsonArray.getJSONObject(i).getString("numberLike")),Integer.parseInt(jsonArray.getJSONObject(i).getString("numberLike"))));
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
                 }
                 mPub.setVisibility(View.VISIBLE);
-                BookAdapter bookAdapter = new BookAdapter(mBookList);
+                BookAdapter bookAdapter = new BookAdapter(mOnlineBookList);
                 mBookRecommendedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                 mBookRecommendedRecyclerView.setAdapter(bookAdapter);
             }
@@ -148,7 +146,7 @@ public class RecommendedFragment extends Fragment {
         }
     }
     private RecyclerView mBookRecommendedRecyclerView;
-    private ArrayList<Book> mBookList;
+    private ArrayList<OnlineBook> mOnlineBookList;
     private ImageView mPub;
     private NoConnectionAdapter mNoConnectionAdapter;
 

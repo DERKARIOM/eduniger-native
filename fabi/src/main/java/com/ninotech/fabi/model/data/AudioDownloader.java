@@ -16,7 +16,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 public class AudioDownloader extends AsyncTask<String, Void, ResourceBook> {
@@ -50,16 +49,16 @@ public class AudioDownloader extends AsyncTask<String, Void, ResourceBook> {
             byte[] coverCategoryBytes = coverCategoryStream.toByteArray();
             byte[] profileAuthorBytes = profileAuthorStream.toByteArray();
             AudioTable audioTable = new AudioTable(mContext);
-            audioTable.insert(mIdNumber,mBook.getId(),mBook.getDescription(),mBook.getAuthor(),coverBookBytes,result.getAudio(),mBook.getCategory(),mBook.getTitle(),coverCategoryBytes,profileAuthorBytes,mTones.getDuration());
+            audioTable.insert(mIdNumber, mOnlineBook.getId(), mOnlineBook.getDescription(), mOnlineBook.getAuthor(),coverBookBytes,result.getAudio(), mOnlineBook.getCategory(), mOnlineBook.getTitle(),coverCategoryBytes,profileAuthorBytes,mTones.getDuration());
         }
         // Sauvegarder l'image dans la base de données SQLite
         // Utilisez votre DatabaseHelper pour insérer l'image dans la base de données
     }
-    public AudioDownloader(Context context , String idNumber , Book book , Tones tones)
+    public AudioDownloader(Context context , String idNumber , OnlineBook onlineBook, Tones tones)
     {
         mContext = context;
         mIdNumber = idNumber;
-        mBook = book;
+        mOnlineBook = onlineBook;
         mTones = tones;
     }
     public Bitmap downloadIMG(String url) throws IOException {
@@ -122,6 +121,6 @@ public class AudioDownloader extends AsyncTask<String, Void, ResourceBook> {
     }
     private final Context mContext;
     private final String mIdNumber;
-    private final Book mBook;
+    private final OnlineBook mOnlineBook;
     private Tones mTones;
 }

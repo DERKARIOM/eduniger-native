@@ -2,11 +2,10 @@ package com.ninotech.fabi.model.data;
 
 import android.graphics.Bitmap;
 
-public class AudioBook extends Document {
+public class AudioBook extends Book {
     public AudioBook(String id , Bitmap cover, String title, String author, String duration, String audio) {
-       super(id,title);
+       super(id,title,null,author,null);
         mCover = cover;
-        mAuthor = author;
         mDuration = duration;
         mAudio = audio;
     }

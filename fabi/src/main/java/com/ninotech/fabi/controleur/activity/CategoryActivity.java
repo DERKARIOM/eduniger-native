@@ -16,15 +16,12 @@ import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
-import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.controleur.adapter.BookAdapter;
 import com.ninotech.fabi.controleur.adapter.NoConnectionAdapter;
-import com.ninotech.fabi.controleur.custo.StatusBarCusto;
-import com.ninotech.fabi.controleur.fragment.RankingFragment;
-import com.ninotech.fabi.model.data.Book;
+import com.ninotech.fabi.model.data.OnlineBook;
 import com.ninotech.fabi.model.data.Connection;
 import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.R;
@@ -34,7 +31,6 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Objects;
 
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -144,7 +140,7 @@ public class CategoryActivity extends AppCompatActivity {
                     }
                     for (int i=0;i<jsonArray.length();i++) {
                         try {
-                            mList.add(new Book(jsonArray.getJSONObject(i).getString("idBook"),jsonArray.getJSONObject(i).getString("blanket"),jsonArray.getJSONObject(i).getString("bookTitle"),jsonArray.getJSONObject(i).getString("categoryTitle"),jsonArray.getJSONObject(i).getString("isPhysic"),jsonArray.getJSONObject(i).getString("electronic"),jsonArray.getJSONObject(i).getString("isAudio"),0,0));
+                            mList.add(new OnlineBook(jsonArray.getJSONObject(i).getString("idBook"),jsonArray.getJSONObject(i).getString("blanket"),jsonArray.getJSONObject(i).getString("bookTitle"),jsonArray.getJSONObject(i).getString("categoryTitle"),jsonArray.getJSONObject(i).getString("isPhysic"),jsonArray.getJSONObject(i).getString("electronic"),jsonArray.getJSONObject(i).getString("isAudio"),0,0));
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
@@ -182,7 +178,7 @@ public class CategoryActivity extends AppCompatActivity {
     }
     private RecyclerView mRecyclerView;
     private BookAdapter mBookAdapter;
-    private ArrayList<Book> mList;
+    private ArrayList<OnlineBook> mList;
     private Session mSession;
     private String mCategorie;
     private NoConnectionAdapter mNoConnectionAdapter;

@@ -84,7 +84,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyView
         }
         void display(Category category){
             Picasso.get()
-                    .load(itemView.getResources().getString(R.string.ip_server) + "ressources/cover/" + category.getBlanket())
+                    .load(itemView.getResources().getString(R.string.ip_server) + "ressources/cover/" + category.getCover())
                     .placeholder(R.drawable.img_default_book)
                     .error(R.drawable.img_default_book)
                     .into(mBlanketImageView);

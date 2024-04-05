@@ -87,7 +87,7 @@ public class CategorieLocalAdapter extends RecyclerView.Adapter<CategorieLocalAd
         }
         void display(Category category){
             Picasso.get()
-                    .load("http://192.168.43.1:2222/fabi/couverture/" + category.getBlanket())
+                    .load("http://192.168.43.1:2222/fabi/couverture/" + category.getCover())
                     .placeholder(R.drawable.img_default_book)
                     .error(R.drawable.img_default_book)
                     .into(mIco);

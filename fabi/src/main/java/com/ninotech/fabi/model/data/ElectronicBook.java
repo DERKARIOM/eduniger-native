@@ -2,13 +2,10 @@ package com.ninotech.fabi.model.data;
 
 import android.graphics.Bitmap;
 
-public class ElectronicBook {
+public class ElectronicBook extends Book {
     public ElectronicBook(String id, Bitmap cover, String tile, String category, String author, String pdf) {
-        mId = id;
+        super(id,tile,category,author,null);
         mCover = cover;
-        mTile = tile;
-        mCategory = category;
-        mAuthor = author;
         mPdf = pdf;
     }
 
@@ -28,30 +25,6 @@ public class ElectronicBook {
         mCover = cover;
     }
 
-    public String getTile() {
-        return mTile;
-    }
-
-    public void setTile(String tile) {
-        mTile = tile;
-    }
-
-    public String getCategory() {
-        return mCategory;
-    }
-
-    public void setCategory(String category) {
-        mCategory = category;
-    }
-
-    public String getAuthor() {
-        return mAuthor;
-    }
-
-    public void setAuthor(String author) {
-        mAuthor = author;
-    }
-
     public String getPdf() {
         return mPdf;
     }
@@ -59,11 +32,7 @@ public class ElectronicBook {
     public void setPdf(String pdf) {
         mPdf = pdf;
     }
-    private String mId;
     private Bitmap mCover;
-    private String mTile;
-    private String mCategory;
-    private String mAuthor;
 
     private String mPdf;
 

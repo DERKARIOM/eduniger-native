@@ -1,14 +1,14 @@
 package com.ninotech.fabi.model.data;
 
 public class Category {
-    public Category(String id, String title, String blanket) {
+    public Category(String id, String title, String cover) {
         mId = id;
         mTitle = title;
-        mBlanket = blanket;
+        mCover = cover;
     }
-    public Category(String blanket , String title)
+    public Category(String cover, String title)
     {
-        mBlanket = blanket;
+        mCover = cover;
         mTitle = title;
     }
     public String getId() {
@@ -27,15 +27,15 @@ public class Category {
         mTitle = title;
     }
 
-    public String getBlanket() {
-        return mBlanket;
+    public String getCover() {
+        return mCover;
     }
 
-    public void setBlanket(String blanket) {
-        mBlanket = blanket;
+    public void setCover(String cover) {
+        mCover = cover;
     }
 
     private String mId;
     private String mTitle;
-    private String mBlanket;
+    private String mCover;
 }

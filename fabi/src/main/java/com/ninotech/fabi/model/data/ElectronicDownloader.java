@@ -9,7 +9,6 @@ import android.os.AsyncTask;
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.model.table.ElectronicTable;
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -48,16 +47,16 @@ public class ElectronicDownloader extends AsyncTask<String, Void, ResourceBook> 
             byte[] coverCategoryBytes = coverCategoryStream.toByteArray();
             byte[] profileAuthorBytes = profileAuthorStream.toByteArray();
             ElectronicTable electronicTable = new ElectronicTable(mContext);
-            electronicTable.insert(mIdNumber,mBook.getId(),mBook.getDescription(),mBook.getAuthor(),coverBookBytes,result.getPDF(),mBook.getCategory(),mBook.getTitle(),coverCategoryBytes,profileAuthorBytes);
+            electronicTable.insert(mIdNumber, mOnlineBook.getId(), mOnlineBook.getDescription(), mOnlineBook.getAuthor(),coverBookBytes,result.getPDF(), mOnlineBook.getCategory(), mOnlineBook.getTitle(),coverCategoryBytes,profileAuthorBytes);
         }
         // Sauvegarder l'image dans la base de données SQLite
         // Utilisez votre DatabaseHelper pour insérer l'image dans la base de données
     }
-    public ElectronicDownloader(Context context , String idNumber , Book book)
+    public ElectronicDownloader(Context context , String idNumber , OnlineBook onlineBook)
     {
         mContext = context;
         mIdNumber = idNumber;
-        mBook = book;
+        mOnlineBook = onlineBook;
     }
     public Bitmap downloadIMG(String url) throws IOException {
         URL urlImage = new URL(url);
@@ -98,6 +97,6 @@ public class ElectronicDownloader extends AsyncTask<String, Void, ResourceBook> 
     }
     private Context mContext;
     private String mIdNumber;
-    private Book mBook;
+    private OnlineBook mOnlineBook;
     //private Author mAuthor;
 }

@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.controleur.adapter.AudioAdapter;
-import com.ninotech.fabi.model.data.Book;
+import com.ninotech.fabi.model.data.OnlineBook;
 import com.ninotech.fabi.R;
 
 import java.util.ArrayList;
@@ -34,5 +34,5 @@ public class AudioFragment extends Fragment {
     }
     private RecyclerView mRecyclerView;
     private AudioAdapter mAudioAdapter;
-    private ArrayList<Book> mList;
+    private ArrayList<OnlineBook> mList;
 }

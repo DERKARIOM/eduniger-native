@@ -10,12 +10,12 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.R;
-import com.ninotech.fabi.model.data.Book;
+import com.ninotech.fabi.model.data.OnlineBook;
 
 import java.util.List;
 
 public class AudioAdapter extends RecyclerView.Adapter<AudioAdapter.MyViewHolder> {
-    List<Book> mListLivre;
+    List<OnlineBook> mListLivre;
 
     public int getPosition() {
         return mPosition;
@@ -26,7 +26,7 @@ public class AudioAdapter extends RecyclerView.Adapter<AudioAdapter.MyViewHolder
     }
 
     private int mPosition;
-    public AudioAdapter(List<Book> listLivre) {
+    public AudioAdapter(List<OnlineBook> listLivre) {
         mListLivre = listLivre;
     }
     @Override
@@ -38,7 +38,7 @@ public class AudioAdapter extends RecyclerView.Adapter<AudioAdapter.MyViewHolder
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        Book item = mListLivre.get(position);
+        OnlineBook item = mListLivre.get(position);
         int i = position;
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -56,7 +56,7 @@ public class AudioAdapter extends RecyclerView.Adapter<AudioAdapter.MyViewHolder
         return mListLivre.size();
     }
 
-    public Book getItem(int position) {
+    public OnlineBook getItem(int position) {
         return mListLivre.get(position);
     }
 
@@ -97,7 +97,7 @@ public class AudioAdapter extends RecyclerView.Adapter<AudioAdapter.MyViewHolder
 //            menu.add(Menu.NONE,R.id.suppNotif,Menu.NONE,"Supprimer");
 //            menu.add(Menu.NONE,R.id.inportanteNotif,Menu.NONE,"Message importants");
         }
-        void display(Book livre){
+        void display(OnlineBook livre){
 //            mCouverture.setImageResource(livre.getCouverture());
 //            mTitre.setText(livre.getTitre());
 //            mCategorie.setText(livre.getCategorie());
