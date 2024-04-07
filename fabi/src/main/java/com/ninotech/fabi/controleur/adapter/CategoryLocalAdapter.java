@@ -1,6 +1,5 @@
 package com.ninotech.fabi.controleur.adapter;
 
-import android.content.Intent;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,16 +10,15 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.R;
-import com.ninotech.fabi.controleur.activity.CategoryActivity;
 import com.ninotech.fabi.model.data.Category;
-import com.ninotech.fabi.model.data.CategoryLocal;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.List;
 
 
 public class CategoryLocalAdapter extends RecyclerView.Adapter<CategoryLocalAdapter.MyViewHolder> {
-    List<CategoryLocal> mCategoryLocalList;
+    List<Category> mCategories;
 
     public int getPosition() {
         return mPosition;
@@ -31,8 +29,8 @@ public class CategoryLocalAdapter extends RecyclerView.Adapter<CategoryLocalAdap
     }
 
     private int mPosition;
-    public CategoryLocalAdapter(List<CategoryLocal> categoryLocalList) {
-        mCategoryLocalList = categoryLocalList;
+    public CategoryLocalAdapter(List<Category> categories) {
+        mCategories = categories;
     }
     @Override
     public CategoryLocalAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -43,7 +41,7 @@ public class CategoryLocalAdapter extends RecyclerView.Adapter<CategoryLocalAdap
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        CategoryLocal item = mCategoryLocalList.get(position);
+        Category item = mCategories.get(position);
         int i = position;
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -53,39 +51,44 @@ public class CategoryLocalAdapter extends RecyclerView.Adapter<CategoryLocalAdap
                 return true;
             }
         });
-        holder.display(mCategoryLocalList.get(position));
+        holder.display(mCategories.get(position));
 
     }
     @Override
     public int getItemCount() {
-        return mCategoryLocalList.size();
+        return mCategories.size();
     }
 
-    public CategoryLocal getItem(int position) {
-        return mCategoryLocalList.get(position);
+    public Category getItem(int position) {
+        return mCategories.get(position);
     }
 
     public void Remove(int position){
-        mCategoryLocalList.remove(position);
+        mCategories.remove(position);
         notifyItemRemoved(position);
     }
 
 
     public static class MyViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener{
-        private final ImageView mBlanketImageView;
+        private final ImageView mCoverImageView;
         private final TextView mTitleTextView;
         MyViewHolder(View itemView){
             super(itemView);
-            mBlanketImageView = itemView.findViewById(R.id.image_view_adapter_category_blanket);
+            mCoverImageView = itemView.findViewById(R.id.image_view_adapter_category_blanket);
             mTitleTextView = itemView.findViewById(R.id.text_view_adapter_category_title);
             itemView.setOnCreateContextMenuListener(this);
         }
         @Override
         public void onCreateContextMenu(ContextMenu menu , View v , ContextMenu.ContextMenuInfo menuInfo){
         }
-        void display(CategoryLocal categoryLocal){
-            mBlanketImageView.setImageBitmap(categoryLocal.getCover());
-            mTitleTextView.setText(categoryLocal.getTitle());
+        void display(Category category){
+            File file = new File(category.getCover());
+            Picasso.get()
+                    .load(file)
+                    .placeholder(R.drawable.img_default_book)
+                    .error(R.drawable.img_default_book)
+                    .into(mCoverImageView);
+            mTitleTextView.setText(category.getTitle());
         }
     }
 }

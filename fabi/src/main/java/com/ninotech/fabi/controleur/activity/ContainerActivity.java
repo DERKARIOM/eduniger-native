@@ -15,7 +15,6 @@ import android.widget.Toast;
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.adapter.AuthorLocalAdapter;
 import com.ninotech.fabi.controleur.adapter.AudioBookAdapter;
-import com.ninotech.fabi.controleur.adapter.CategorieLocalAdapter;
 import com.ninotech.fabi.controleur.adapter.CategoryLocalAdapter;
 import com.ninotech.fabi.controleur.adapter.ElectronicBookAdapter;
 import com.ninotech.fabi.controleur.adapter.VoidContainerAdapter;
@@ -23,7 +22,6 @@ import com.ninotech.fabi.controleur.adapter.LoandBookAdapter;
 import com.ninotech.fabi.model.data.AuthorLocal;
 import com.ninotech.fabi.model.data.AudioBook;
 import com.ninotech.fabi.model.data.Category;
-import com.ninotech.fabi.model.data.CategoryLocal;
 import com.ninotech.fabi.model.data.ElectronicBook;
 import com.ninotech.fabi.model.data.Loand;
 import com.ninotech.fabi.model.data.VoidContainer;
@@ -107,16 +105,13 @@ public class ContainerActivity extends AppCompatActivity {
                 break;
             case 4: // Category
                 try {
-                    ArrayList<CategoryLocal> categoryLocals = new ArrayList<>();
+                    ArrayList<Category> categories = new ArrayList<>();
                     Cursor categoryCursor = mElectronicTable.getCategoryData(mSession.getIdNumber());
                     categoryCursor.moveToFirst();
                     do {
-                        byte[] imageBytes = categoryCursor.getBlob(0);
-                        // Convertir le tableau d'octets en Bitmap
-                        Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-                        categoryLocals.add(new CategoryLocal(bitmap,categoryCursor.getString(1)));
+                        categories.add(new Category(categoryCursor.getString(0),categoryCursor.getString(1)));
                     }while (categoryCursor.moveToNext());
-                    CategoryLocalAdapter categoryLoacalAdapter = new CategoryLocalAdapter(categoryLocals);
+                    CategoryLocalAdapter categoryLoacalAdapter = new CategoryLocalAdapter(categories);
                     mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
                     mRecyclerView.setAdapter(categoryLoacalAdapter);
                 }
@@ -195,5 +190,4 @@ public class ContainerActivity extends AppCompatActivity {
     private List<Category> mList4;
     private ElectronicTable mElectronicTable;
     private Session mSession;
-    private CategorieLocalAdapter mCategorieLocalAdapter;
 }
