@@ -94,7 +94,7 @@ public class AudioBookAdapter extends RecyclerView.Adapter<AudioBookAdapter.MyVi
         public void onCreateContextMenu(ContextMenu menu , View v , ContextMenu.ContextMenuInfo menuInfo){
         }
         void display(AudioBook audioBook){
-            File file = bitmapToFile(itemView.getContext(), "image" + String.valueOf(audioBook.getId()) + ".png", audioBook.getCover());
+            File file = new File(audioBook.getCover());
             Picasso.get().load(file)
                     .placeholder(R.drawable.img_default_book)
                     .error(R.drawable.img_default_book)

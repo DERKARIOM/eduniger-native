@@ -23,12 +23,12 @@ public class AudioTable extends SQLiteOpenHelper {
                 "    idBookAudio VARCHAR(100) NOT NULL,\n" +
                 "    descriptionAudio VARCHAR(100) NOT NULL,\n" +
                 "    authorAudio VARCHAR(100) NOT NULL,\n" +
-                "    blanketBookAudio BLOB NOT NULL,\n" +
+                "    coverAudio VARCHAR(100) NOT NULL,\n" +
                 "    audio VARCHAR(100),\n" +
                 "    categoryAudio VARCHAR(100),\n" +
                 "    titleAudio VARCHAR(100),\n" +
-                "    blanketCategoryAudio BLOB NOT NULL,\n" +
-                "    profileAuthorAudio BLOB,\n" +
+                "    coverCategoryAudio VARCHAR(100) NOT NULL,\n" +
+                "    profileAuthorAudio VARCHAR(100),\n" +
                 "    durationAudio VARCHAR(100) NOT NULL,\n" +
                 "    UNIQUE(idNumberAudio,idBookAudio)\n" +
                 ");");
@@ -88,7 +88,7 @@ public class AudioTable extends SQLiteOpenHelper {
         res.moveToFirst();
         return res.getInt(0);
     }
-    public boolean insert (String idNumber , String idBook , String description , String author ,byte[] blanketBook, String audio , String category , String title ,byte[] blanketCategory,byte[] profileAuthor , String duration)
+    public boolean insert (String idNumber , String idBook , String description , String author ,String cover, String audio , String category , String title ,String coverCategory,String profileAuthor , String duration)
     {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -97,11 +97,11 @@ public class AudioTable extends SQLiteOpenHelper {
             contentValues.put("idBookAudio",idBook);
             contentValues.put("descriptionAudio",description);
             contentValues.put("authorAudio",author);
-            contentValues.put("blanketBookAudio",blanketBook);
+            contentValues.put("coverAudio",cover);
             contentValues.put("audio",audio);
             contentValues.put("categoryAudio",category);
             contentValues.put("titleAudio",title);
-            contentValues.put("blanketCategoryAudio",blanketCategory);
+            contentValues.put("coverCategoryAudio",coverCategory);
             contentValues.put("profileAuthorAudio",profileAuthor);
             contentValues.put("durationAudio",duration);
             db.insert(NAME_TABLE,null,contentValues);

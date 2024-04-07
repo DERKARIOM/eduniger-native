@@ -76,10 +76,7 @@ public class AudioPlayerActivity extends AppCompatActivity {
             mTitleTextView.setText(audioCursor.getString(8));
             mAuthorTextView.setText(audioCursor.getString(4));
             mDurationTotalTextView.setText(audioCursor.getString(11));
-            byte[] imageBytes = audioCursor.getBlob(5);
-            // Convertir le tableau d'octets en Bitmap
-            Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-            File file = bitmapToFile(this, "image.png", bitmap);
+            File file = new File(audioCursor.getString(5));
             Picasso.get().load(file)
                     .placeholder(R.drawable.img_default_book)
                     .error(R.drawable.img_default_book)

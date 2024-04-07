@@ -1,20 +1,22 @@
 package com.ninotech.fabi.model.data;
 
-import android.graphics.Bitmap;
-
 public class AudioBook extends Book {
-    public AudioBook(String id , Bitmap cover, String title, String author, String duration, String audio) {
+    public AudioBook(String id , String cover, String title, String author, String duration, String audio) {
        super(id,title,null,author,null);
         mCover = cover;
         mDuration = duration;
         mAudio = audio;
     }
+    public AudioBook()
+    {
+        super(null,null);
+    }
 
-    public Bitmap getCover() {
+    public String getCover() {
         return mCover;
     }
 
-    public void setCover(Bitmap cover) {
+    public void setCover(String cover) {
         mCover = cover;
     }
 
@@ -49,10 +51,6 @@ public class AudioBook extends Book {
     public void setId(String id) {
         mId = id;
     }
-    private Bitmap mCover;
-    private String mAuthor;
-    private String mDuration;
-
     public String getAudio() {
         return mAudio;
     }
@@ -60,6 +58,25 @@ public class AudioBook extends Book {
     public void setAudio(String audio) {
         mAudio = audio;
     }
+    public String getCoverCategory() {
+        return mCoverCategory;
+    }
 
+    public void setCoverCategory(String coverCategory) {
+        mCoverCategory = coverCategory;
+    }
+
+    public String getProfileAuthor() {
+        return mProfileAuthor;
+    }
+
+    public void setProfileAuthor(String profileAuthor) {
+        mProfileAuthor = profileAuthor;
+    }
+    private String mCover;
+    private String mAuthor;
+    private String mDuration;
     private String mAudio;
+    private String mCoverCategory;
+    private String mProfileAuthor;
 }
