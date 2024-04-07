@@ -20,7 +20,7 @@ public class LoandTable extends SQLiteOpenHelper {
                 "(\n" +
                 "    idLoand VARCHAR(10) PRIMARY KEY,\n" +
                 "    idNumberLoand VARCHAR(10),\n" +
-                "    blanketLoand VARCHAR(100),\n" +
+                "    coverLoand VARCHAR(100),\n" +
                 "    titleLoand VARCHAR(100),\n" +
                 "    dateLoand VARCHAR(100),\n" +
                 "    realReturnDate VARCHAR(100)\n" +
@@ -52,14 +52,14 @@ public class LoandTable extends SQLiteOpenHelper {
         database.execSQL("DELETE FROM " + NAME_TABLE + " WHERE idLoand=\"" + idLoand + "\"");
         return true;
     }
-    public boolean insert (String idLoand,String idNumber , String blanket , String title , String dateLoand , String realReturnDate)
+    public boolean insert (String idLoand,String idNumber , String cover , String title , String dateLoand , String realReturnDate)
     {
         try {
             SQLiteDatabase database = this.getWritableDatabase();
             ContentValues contentValues = new ContentValues();
             contentValues.put("idLoand",idLoand);
             contentValues.put("idNumberLoand",idNumber);
-            contentValues.put("blanketLoand",blanket);
+            contentValues.put("coverLoand",cover);
             contentValues.put("titleLoand",title);
             contentValues.put("dateLoand",dateLoand);
             contentValues.put("realReturnDate",realReturnDate);

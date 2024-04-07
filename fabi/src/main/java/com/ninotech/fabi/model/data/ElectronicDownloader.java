@@ -21,11 +21,12 @@ public class ElectronicDownloader extends AsyncTask<String, Void, ElectronicBook
     @Override
     protected ElectronicBook doInBackground(String... name) {
         ElectronicBook electronicBook = new ElectronicBook();
+        DownloadFile downloadFile = new DownloadFile(mContext);
         try {
-            electronicBook.setCover(downloadPDF(mContext.getString(R.string.ip_server) + "ressources/cover/" + name[0],name[0]));
-            electronicBook.setPdf(downloadPDF(mContext.getString(R.string.ip_server) + "ressources/pdf/" + name[1],name[1]));
-            electronicBook.setCoverCategory(downloadPDF(mContext.getString(R.string.ip_server) + "ressources/cover/" + name[2],name[2]));
-            electronicBook.setProfileAuthor(downloadPDF(mContext.getString(R.string.ip_server) + "ressources/profile/" + name[3],name[3]));
+            electronicBook.setCover(downloadFile.start(mContext.getString(R.string.ip_server) + "ressources/cover/" + name[0],name[0]));
+            electronicBook.setPdf(downloadFile.start(mContext.getString(R.string.ip_server) + "ressources/pdf/" + name[1],name[1]));
+            electronicBook.setCoverCategory(downloadFile.start(mContext.getString(R.string.ip_server) + "ressources/cover/" + name[2],name[2]));
+            electronicBook.setProfileAuthor(downloadFile.start(mContext.getString(R.string.ip_server) + "ressources/profile/" + name[3],name[3]));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -48,45 +49,7 @@ public class ElectronicDownloader extends AsyncTask<String, Void, ElectronicBook
         mIdNumber = idNumber;
         mOnlineBook = onlineBook;
     }
-    public Bitmap downloadIMG(String url) throws IOException {
-        URL urlImage = new URL(url);
-        HttpURLConnection connectionImage = (HttpURLConnection) urlImage.openConnection();
-        connectionImage.setDoInput(true);
-        connectionImage.connect();
-        InputStream inputImage = connectionImage.getInputStream();
-        return BitmapFactory.decodeStream(inputImage);
-    }
-    private byte[] compressImage(Bitmap imageBitmap) {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        // Compression de l'image avec une qualité de 50 (modifiable)
-        imageBitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
-        return byteArrayOutputStream.toByteArray();
-    }
-    public String downloadPDF(String url , String name) throws IOException {
-        URL audioUrl = new URL(url);
-        HttpURLConnection connection = (HttpURLConnection) audioUrl.openConnection();
-        connection.connect();
-        InputStream input = connection.getInputStream();
-
-        // Obtenez le répertoire de stockage interne de l'application
-        File internalStorageDir = mContext.getFilesDir();
-
-        // Créez un fichier dans le répertoire de stockage interne pour enregistrer le fichier audio
-        File audioFile = new File(internalStorageDir, name);
-        FileOutputStream output = new FileOutputStream(audioFile);
-
-        byte[] buffer = new byte[1024];
-        int bytesRead;
-        while ((bytesRead = input.read(buffer)) != -1) {
-            output.write(buffer, 0, bytesRead);
-        }
-
-        output.close();
-        input.close();
-        return audioFile.getAbsolutePath();
-    }
     private Context mContext;
     private String mIdNumber;
     private OnlineBook mOnlineBook;
-    //private Author mAuthor;
 }

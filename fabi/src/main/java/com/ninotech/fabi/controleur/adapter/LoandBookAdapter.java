@@ -15,6 +15,7 @@ import com.ninotech.fabi.controleur.animation.RoundedTransformation;
 import com.ninotech.fabi.model.data.Loand;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.List;
 
 public class LoandBookAdapter extends RecyclerView.Adapter<LoandBookAdapter.MyViewHolder> {
@@ -94,8 +95,9 @@ public class LoandBookAdapter extends RecyclerView.Adapter<LoandBookAdapter.MyVi
 //            menu.add(Menu.NONE,R.id.inportanteNotif,Menu.NONE,"Message importants");
         }
         void display(Loand loand){
+            File file = new File(loand.getCover());
             Picasso.get()
-                    .load(itemView.getResources().getString(R.string.ip_server) + "ressources/cover/" + loand.getBlanket())
+                    .load(file)
                     .placeholder(R.drawable.img_default_book)
                     .error(R.drawable.img_default_book)
                     .transform(new RoundedTransformation(15,4))

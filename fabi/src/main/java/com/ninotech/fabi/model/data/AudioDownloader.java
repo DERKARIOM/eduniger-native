@@ -22,11 +22,12 @@ public class AudioDownloader extends AsyncTask<String, Void, AudioBook> {
     @Override
     protected AudioBook doInBackground(String... name) {
         AudioBook audioBook = new AudioBook();
+        DownloadFile downloadFile = new DownloadFile(mContext);
         try {
-            audioBook.setCover(downloadFile(mContext.getString(R.string.ip_server) + "ressources/cover/" + name[0],name[0]));
-            audioBook.setCoverCategory(downloadFile(mContext.getString(R.string.ip_server) + "ressources/cover/" + name[2],name[2]));
-            audioBook.setProfileAuthor(downloadFile(mContext.getString(R.string.ip_server) + "ressources/profile/" + name[3],name[3]));
-            audioBook.setAudio(downloadFile(mContext.getString(R.string.ip_server) + "ressources/audio/" + name[4],name[4]));
+            audioBook.setCover(downloadFile.start(mContext.getString(R.string.ip_server) + "ressources/cover/" + name[0],name[0]));
+            audioBook.setCoverCategory(downloadFile.start(mContext.getString(R.string.ip_server) + "ressources/cover/" + name[2],name[2]));
+            audioBook.setProfileAuthor(downloadFile.start(mContext.getString(R.string.ip_server) + "ressources/profile/" + name[3],name[3]));
+            audioBook.setAudio(downloadFile.start(mContext.getString(R.string.ip_server) + "ressources/audio/" + name[4],name[4]));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -50,64 +51,6 @@ public class AudioDownloader extends AsyncTask<String, Void, AudioBook> {
         mIdNumber = idNumber;
         mOnlineBook = onlineBook;
         mTones = tones;
-    }
-    public Bitmap downloadIMG(String url) throws IOException {
-        URL urlImage = new URL(url);
-        HttpURLConnection connectionImage = (HttpURLConnection) urlImage.openConnection();
-        connectionImage.setDoInput(true);
-        connectionImage.connect();
-        InputStream inputImage = connectionImage.getInputStream();
-        return BitmapFactory.decodeStream(inputImage);
-    }
-
-    public byte[] downloadPDF(String url) throws IOException {
-        URL urlPdf = new URL(url);
-        byte[] bytes=null;
-        HttpURLConnection connectionPDF = (HttpURLConnection) urlPdf.openConnection();
-        connectionPDF.connect();
-        if (connectionPDF.getResponseCode() == HttpURLConnection.HTTP_OK) {
-            InputStream inputStream = new BufferedInputStream(connectionPDF.getInputStream());
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            byte[] buffer = new byte[1024];
-            int bytesRead;
-            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, bytesRead);
-            }
-            bytes = outputStream.toByteArray();
-            inputStream.close();
-            outputStream.close();
-            connectionPDF.disconnect();
-        }
-        return bytes;
-    }
-    public String downloadFile(String url , String name) throws IOException {
-        URL audioUrl = new URL(url);
-        HttpURLConnection connection = (HttpURLConnection) audioUrl.openConnection();
-        connection.connect();
-        InputStream input = connection.getInputStream();
-
-        // Obtenez le répertoire de stockage interne de l'application
-        File internalStorageDir = mContext.getFilesDir();
-
-        // Créez un fichier dans le répertoire de stockage interne pour enregistrer le fichier audio
-        File audioFile = new File(internalStorageDir, name);
-        FileOutputStream output = new FileOutputStream(audioFile);
-
-        byte[] buffer = new byte[1024];
-        int bytesRead;
-        while ((bytesRead = input.read(buffer)) != -1) {
-            output.write(buffer, 0, bytesRead);
-        }
-
-        output.close();
-        input.close();
-        return audioFile.getAbsolutePath();
-    }
-    private byte[] compressImage(Bitmap imageBitmap) {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        // Compression de l'image avec une qualité de 50 (modifiable)
-        imageBitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
-        return byteArrayOutputStream.toByteArray();
     }
     private final Context mContext;
     private final String mIdNumber;

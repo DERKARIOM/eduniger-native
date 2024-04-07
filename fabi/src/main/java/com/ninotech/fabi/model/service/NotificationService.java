@@ -17,6 +17,8 @@ import androidx.core.app.NotificationManagerCompat;
 
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.activity.NotificationActivity;
+import com.ninotech.fabi.model.data.AudioDownloader;
+import com.ninotech.fabi.model.data.DownloadFile;
 import com.ninotech.fabi.model.table.LoandTable;
 import com.ninotech.fabi.model.table.NotificationTable;
 import com.ninotech.fabi.model.table.Session;
@@ -330,8 +332,12 @@ public class NotificationService extends Service {
                     try {
                         message = "Nous tenons à vous rappeler que le livre " + jsonArray.getJSONObject(i).getString("title" ) + " que vous avez emprunté doit être retourné dans le(s) " + jsonArray.getJSONObject(i).getString("deliveryDate") + " prochains jours, conformément à nos conditions de prêt";
                         mNotificationTable.insert(mIdNumber,"Nouvelles version",message,"10:00");
-                        mLoandTable.insert(jsonArray.getJSONObject(i).getString("idLoand"),jsonArray.getJSONObject(i).getString("idNumber"),jsonArray.getJSONObject(i).getString("blanket"),jsonArray.getJSONObject(i).getString("title"),jsonArray.getJSONObject(i).getString("dateLoand"),jsonArray.getJSONObject(i).getString("realReturnDate"));
+                        DownloadFile downloadFile = new DownloadFile(getApplicationContext());
+                        String coverPath = downloadFile.start(getString(R.string.ip_server) + "ressources/cover/" + jsonArray.getJSONObject(i).getString("blanket"),jsonArray.getJSONObject(i).getString("blanket"));
+                        mLoandTable.insert(jsonArray.getJSONObject(i).getString("idLoand"),jsonArray.getJSONObject(i).getString("idNumber"),coverPath,jsonArray.getJSONObject(i).getString("title"),jsonArray.getJSONObject(i).getString("dateLoand"),jsonArray.getJSONObject(i).getString("realReturnDate"));
                     } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
                     try {
