@@ -14,6 +14,7 @@ import com.ninotech.fabi.model.data.Category;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -67,7 +68,10 @@ public class CategoryLocalAdapter extends RecyclerView.Adapter<CategoryLocalAdap
         mCategories.remove(position);
         notifyItemRemoved(position);
     }
-
+    public void filterList(ArrayList<Category> filteredList) {
+        mCategories = filteredList;
+        notifyDataSetChanged();
+    }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener{
         private final ImageView mCoverImageView;

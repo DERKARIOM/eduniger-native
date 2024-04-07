@@ -9,7 +9,10 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.ninotech.fabi.R;
@@ -37,18 +40,37 @@ import java.util.Date;
 import java.util.List;
 
 public class ContainerActivity extends AppCompatActivity {
-
+    private ArrayList<Category> categories;
+    private ArrayList<Category> filteredList;
+    private CategoryLocalAdapter categoryLoacalAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_container);
         getSupportActionBar().hide();
         mRecyclerView = findViewById(R.id.recycler_view_activity_container);
+        mEditText = findViewById(R.id.edit_text_activity_container);
         mSession = new Session(this);
         mElectronicTable = new ElectronicTable(this);
         Intent libraryIntent = getIntent();
         int id = libraryIntent.getIntExtra("id",0);
+        filteredList = new ArrayList<>();
+        mEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                filter(s.toString());
+            }
+        });
         switch (id)
         {
             case 1: // Electronic Book
@@ -105,13 +127,13 @@ public class ContainerActivity extends AppCompatActivity {
                 break;
             case 4: // Category
                 try {
-                    ArrayList<Category> categories = new ArrayList<>();
+                    categories = new ArrayList<>();
                     Cursor categoryCursor = mElectronicTable.getCategoryData(mSession.getIdNumber());
                     categoryCursor.moveToFirst();
                     do {
                         categories.add(new Category(categoryCursor.getString(0),categoryCursor.getString(1)));
                     }while (categoryCursor.moveToNext());
-                    CategoryLocalAdapter categoryLoacalAdapter = new CategoryLocalAdapter(categories);
+                    categoryLoacalAdapter = new CategoryLocalAdapter(categories);
                     mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
                     mRecyclerView.setAdapter(categoryLoacalAdapter);
                 }
@@ -185,9 +207,19 @@ public class ContainerActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setAdapter(voidContainerAdapter);
     }
+    private void filter(String text) {
+        filteredList.clear();
+        for (Category item : categories) {
+            if (item.getTitle().toLowerCase().contains(text.toLowerCase())) {
+                filteredList.add(item);
+            }
+        }
+        categoryLoacalAdapter.filterList(filteredList);
+    }
     private RecyclerView mRecyclerView;
     private List<ElectronicBook> mElectronicBookList;
     private List<Category> mList4;
     private ElectronicTable mElectronicTable;
     private Session mSession;
+    private EditText mEditText;
 }
