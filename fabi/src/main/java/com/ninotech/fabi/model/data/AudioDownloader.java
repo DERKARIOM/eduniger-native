@@ -23,10 +23,10 @@ public class AudioDownloader extends AsyncTask<String, Void, AudioBook> {
     protected AudioBook doInBackground(String... name) {
         AudioBook audioBook = new AudioBook();
         try {
-            audioBook.setCover(downloadAudio(mContext.getString(R.string.ip_server) + "ressources/cover/" + name[0],name[0]));
-            audioBook.setCoverCategory(downloadAudio(mContext.getString(R.string.ip_server) + "ressources/cover/" + name[2],name[2]));
-            audioBook.setProfileAuthor(downloadAudio(mContext.getString(R.string.ip_server) + "ressources/profile/" + name[3],name[3]));
-            audioBook.setAudio(downloadAudio(mContext.getString(R.string.ip_server) + "ressources/audio/" + name[4],name[4]));
+            audioBook.setCover(downloadFile(mContext.getString(R.string.ip_server) + "ressources/cover/" + name[0],name[0]));
+            audioBook.setCoverCategory(downloadFile(mContext.getString(R.string.ip_server) + "ressources/cover/" + name[2],name[2]));
+            audioBook.setProfileAuthor(downloadFile(mContext.getString(R.string.ip_server) + "ressources/profile/" + name[3],name[3]));
+            audioBook.setAudio(downloadFile(mContext.getString(R.string.ip_server) + "ressources/audio/" + name[4],name[4]));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -80,7 +80,7 @@ public class AudioDownloader extends AsyncTask<String, Void, AudioBook> {
         }
         return bytes;
     }
-    public String downloadAudio(String url , String name) throws IOException {
+    public String downloadFile(String url , String name) throws IOException {
         URL audioUrl = new URL(url);
         HttpURLConnection connection = (HttpURLConnection) audioUrl.openConnection();
         connection.connect();

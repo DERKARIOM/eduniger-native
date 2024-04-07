@@ -17,37 +17,27 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class ElectronicDownloader extends AsyncTask<String, Void, ResourceBook> {
+public class ElectronicDownloader extends AsyncTask<String, Void, ElectronicBook> {
     @Override
-    protected ResourceBook doInBackground(String... name) {
-        ResourceBook resourceBook = new ResourceBook();
+    protected ElectronicBook doInBackground(String... name) {
+        ElectronicBook electronicBook = new ElectronicBook();
         try {
-            resourceBook.setCoverBookBitmap(downloadIMG(mContext.getString(R.string.ip_server) + "ressources/cover/" + name[0]));
-            resourceBook.setPDF(downloadPDF(mContext.getString(R.string.ip_server) + "ressources/pdf/" + name[1],name[1]));
-            resourceBook.setCoverCategoryBitmap(downloadIMG(mContext.getString(R.string.ip_server) + "ressources/cover/" + name[2]));
-            resourceBook.setProfileAuthorBitmap(downloadIMG(mContext.getString(R.string.ip_server) + "ressources/profile/" + name[3]));
+            electronicBook.setCover(downloadPDF(mContext.getString(R.string.ip_server) + "ressources/cover/" + name[0],name[0]));
+            electronicBook.setPdf(downloadPDF(mContext.getString(R.string.ip_server) + "ressources/pdf/" + name[1],name[1]));
+            electronicBook.setCoverCategory(downloadPDF(mContext.getString(R.string.ip_server) + "ressources/cover/" + name[2],name[2]));
+            electronicBook.setProfileAuthor(downloadPDF(mContext.getString(R.string.ip_server) + "ressources/profile/" + name[3],name[3]));
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return resourceBook;
+        return electronicBook;
     }
 
     @SuppressLint("WrongThread")
     @Override
-    protected void onPostExecute(ResourceBook result) {
+    protected void onPostExecute(ElectronicBook result) {
         if (result != null) {
-            // Convertir l'image Bitmap en un tableau d'octets
-            ByteArrayOutputStream coverBookStream = new ByteArrayOutputStream();
-            ByteArrayOutputStream coverCategoryStream = new ByteArrayOutputStream();
-            ByteArrayOutputStream profileAuthorStream = new ByteArrayOutputStream();
-            result.getCoverBookBitmap().compress(Bitmap.CompressFormat.JPEG ,50, coverBookStream);
-            result.getCoverCategoryBitmap().compress(Bitmap.CompressFormat.PNG, 50, coverCategoryStream);
-            result.getProfileAuthorBitmap().compress(Bitmap.CompressFormat.JPEG, 50, profileAuthorStream);
-            byte[] coverBookBytes = coverBookStream.toByteArray();
-            byte[] coverCategoryBytes = coverCategoryStream.toByteArray();
-            byte[] profileAuthorBytes = profileAuthorStream.toByteArray();
             ElectronicTable electronicTable = new ElectronicTable(mContext);
-            electronicTable.insert(mIdNumber, mOnlineBook.getId(), mOnlineBook.getDescription(), mOnlineBook.getAuthor(),coverBookBytes,result.getPDF(), mOnlineBook.getCategory(), mOnlineBook.getTitle(),coverCategoryBytes,profileAuthorBytes);
+            electronicTable.insert(mIdNumber, mOnlineBook.getId(), mOnlineBook.getDescription(), mOnlineBook.getAuthor(),result.getCover(),result.getPdf(), mOnlineBook.getCategory(), mOnlineBook.getTitle(),result.getCoverCategory(),result.getProfileAuthor());
         }
         // Sauvegarder l'image dans la base de données SQLite
         // Utilisez votre DatabaseHelper pour insérer l'image dans la base de données

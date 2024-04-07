@@ -57,10 +57,36 @@ public class Book {
     public void setDescription(String description) {
         mDescription = description;
     }
+    public String getCover() {
+        return mCover;
+    }
+
+    public void setCover(String cover) {
+        mCover = cover;
+    }
+
+    public String getCoverCategory() {
+        return mCoverCategory;
+    }
+
+    public void setCoverCategory(String coverCategory) {
+        mCoverCategory = coverCategory;
+    }
+
+    public String getProfileAuthor() {
+        return mProfileAuthor;
+    }
+
+    public void setProfileAuthor(String profileAuthor) {
+        mProfileAuthor = profileAuthor;
+    }
+
     protected String mId;
     protected String mTitle;
-    private String mCategory;
-    private String mAuthor;
-
-    private String mDescription;
+    protected String mCover;
+    protected String mCategory;
+    protected String mAuthor;
+    protected String mDescription;
+    protected String mCoverCategory;
+    protected String mProfileAuthor;
 }

@@ -18,18 +18,18 @@ public class ElectronicTable extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE IF NOT EXISTS " + NAME_TABLE + "\n" +
                 "(\n" +
-                "    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,\n" +
-                "    idNumber VARCHAR(100) NOT NULL,\n" +
-                "    idBook VARCHAR(100) NOT NULL,\n" +
-                "    description VARCHAR(100) NOT NULL,\n" +
-                "    author VARCHAR(100) NOT NULL,\n" +
-                "    blanketBook BLOB NOT NULL,\n" +
+                "    idElectronic INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,\n" +
+                "    idNumberElectronic VARCHAR(100) NOT NULL,\n" +
+                "    idBookElectronic VARCHAR(100) NOT NULL,\n" +
+                "    descriptionElectronic VARCHAR(100) NOT NULL,\n" +
+                "    authorElectronic VARCHAR(100) NOT NULL,\n" +
+                "    coverElectronic VARCHAR(100) NOT NULL,\n" +
                 "    electronic VARCHAR(100) NOT NULL,\n" +
-                "    category VARCHAR(100),\n" +
-                "    title VARCHAR(100),\n" +
-                "    blanketCategory BLOB NOT NULL,\n" +
-                "    profileAuthor BLOB,\n" +
-                "    UNIQUE(idNumber,idBook)\n" +
+                "    categoryElectronic VARCHAR(100),\n" +
+                "    titleElectronic VARCHAR(100),\n" +
+                "    coverCategoryElectronic VARCHAR(100) NOT NULL,\n" +
+                "    profileAuthorElectronic VARCHAR(100),\n" +
+                "    UNIQUE(idNumberElectronic,idBookElectronic)\n" +
                 ");");
     }
 
@@ -46,23 +46,23 @@ public class ElectronicTable extends SQLiteOpenHelper {
     public Cursor getData(String idNumber)
     {
         SQLiteDatabase db = this.getReadableDatabase();
-        return db.rawQuery("SELECT * FROM " + NAME_TABLE + " WHERE idNumber='" + idNumber + "';",null);
+        return db.rawQuery("SELECT * FROM " + NAME_TABLE + " WHERE idNumberElectronic='" + idNumber + "';",null);
     }
     public Cursor getCategoryData(String idNumber)
     {
         SQLiteDatabase db = this.getReadableDatabase();
-        return db.rawQuery("SELECT DISTINCT blanketCategory,category  FROM " + NAME_TABLE + " WHERE idNumber='" + idNumber + "';",null);
+        return db.rawQuery("SELECT DISTINCT coverCategoryElectronic,categoryElectronic  FROM " + NAME_TABLE + " WHERE idNumberElectronic='" + idNumber + "';",null);
     }
     public Cursor getAuthorData(String idNumber)
     {
         SQLiteDatabase db = this.getReadableDatabase();
-        return db.rawQuery("SELECT DISTINCT profileAuthor,author  FROM " + NAME_TABLE + " WHERE idNumber='" + idNumber + "';",null);
+        return db.rawQuery("SELECT DISTINCT profileAuthorElectronic,authorElectronic  FROM " + NAME_TABLE + " WHERE idNumberElectronic='" + idNumber + "';",null);
     }
 
     public int getNbrElectronic(String idNumber)
     {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("SELECT COUNT(*) FROM " + NAME_TABLE + " WHERE idNumber='"+idNumber+"';",null);
+        Cursor res = db.rawQuery("SELECT COUNT(*) FROM " + NAME_TABLE + " WHERE idNumberElectronic='"+idNumber+"';",null);
         res.moveToFirst();
         return res.getInt(0);
     }
@@ -70,7 +70,7 @@ public class ElectronicTable extends SQLiteOpenHelper {
     public int getNbrAuthor(String idNumber)
     {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("SELECT COUNT(DISTINCT author) FROM " + NAME_TABLE + " WHERE idNumber='"+idNumber+"';",null);
+        Cursor res = db.rawQuery("SELECT COUNT(DISTINCT authorElectronic) FROM " + NAME_TABLE + " WHERE idNumberElectronic='"+idNumber+"';",null);
         res.moveToFirst();
         return res.getInt(0);
     }
@@ -78,25 +78,25 @@ public class ElectronicTable extends SQLiteOpenHelper {
     public int getNbrCategory(String idNumber)
     {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("SELECT COUNT(DISTINCT category) FROM " + NAME_TABLE + " WHERE idNumber='"+idNumber+"';",null);
+        Cursor res = db.rawQuery("SELECT COUNT(DISTINCT categoryElectronic) FROM " + NAME_TABLE + " WHERE idNumberElectronic='"+idNumber+"';",null);
         res.moveToFirst();
         return res.getInt(0);
     }
-    public boolean insert (String idNumber , String idBook , String description , String author ,byte[] blanketBook, String electronic , String category , String title ,byte[] blanketCategory,byte[] profileAuthor)
+    public boolean insert (String idNumber , String idBook , String description , String author ,String cover, String electronic , String category , String title ,String coverCategory,String profileAuthor)
     {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         try {
-            contentValues.put("idNumber",idNumber);
-            contentValues.put("idBook",idBook);
-            contentValues.put("description",description);
-            contentValues.put("author",author);
-            contentValues.put("blanketBook",blanketBook);
+            contentValues.put("idNumberElectronic",idNumber);
+            contentValues.put("idBookElectronic",idBook);
+            contentValues.put("descriptionElectronic",description);
+            contentValues.put("authorElectronic",author);
+            contentValues.put("coverElectronic",cover);
             contentValues.put("electronic",electronic);
-            contentValues.put("category",category);
-            contentValues.put("title",title);
-            contentValues.put("blanketCategory",blanketCategory);
-            contentValues.put("profileAuthor",profileAuthor);
+            contentValues.put("categoryElectronic",category);
+            contentValues.put("titleElectronic",title);
+            contentValues.put("coverCategoryElectronic",coverCategory);
+            contentValues.put("profileAuthorElectronic",profileAuthor);
             db.insert(NAME_TABLE,null,contentValues);
             return  true;
         }

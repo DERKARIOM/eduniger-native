@@ -84,7 +84,7 @@ public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.MyViewHold
         void display(SimilarBook similarBook) throws SQLException, IOException {
             //mCoverImageView.setImageBitmap(similarBook.getCover());
             // Convertir le Bitmap en un fichier
-            File file = bitmapToFile(itemView.getContext(), "image" + String.valueOf(similarBook.getId()) + ".png", similarBook.getCover());
+            File file = new File(similarBook.getCover());
 
 // Charger le fichier avec Picasso
             Picasso.get().load(file)
@@ -99,20 +99,6 @@ public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.MyViewHold
                     downloadAndOpenPDF(similarBook.getPDF());
                 }
             });
-        }
-        public File bitmapToFile(Context context, String filename, Bitmap bitmap) {
-            // Créer un fichier dans le répertoire de cache de l'application
-            File file = new File(context.getCacheDir(), filename);
-            try {
-                // Convertir le Bitmap en un fichier de sortie
-                file.createNewFile();
-                FileOutputStream ostream = new FileOutputStream(file);
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, ostream);
-                ostream.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return file;
         }
         private void downloadAndOpenPDF(String nomPdf) {
             new AsyncTask<Void, Void, File>() {

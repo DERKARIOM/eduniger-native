@@ -92,10 +92,7 @@ public class LibraryFragment extends Fragment {
             Cursor cursor = electronicTable.getData(session.getIdNumber());
             cursor.moveToFirst();
             do {
-                byte[] imageBytes = cursor.getBlob(5);
-                // Convertir le tableau d'octets en Bitmap
-                Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-                similarBookList.add(new SimilarBook(cursor.getString(2),bitmap,null));
+                similarBookList.add(new SimilarBook(cursor.getString(2),cursor.getString(5),null));
             }while(cursor.moveToNext());
         }catch (Exception e)
         {

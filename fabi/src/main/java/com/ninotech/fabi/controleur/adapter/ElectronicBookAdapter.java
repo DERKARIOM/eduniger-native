@@ -93,7 +93,7 @@ public class ElectronicBookAdapter extends RecyclerView.Adapter<ElectronicBookAd
         public void onCreateContextMenu(ContextMenu menu , View v , ContextMenu.ContextMenuInfo menuInfo){
         }
         void display(ElectronicBook electronicBook){
-            File file = bitmapToFile(itemView.getContext(), "image" + String.valueOf(electronicBook.getId()) + ".png", electronicBook.getCover());
+            File file = new File(electronicBook.getCover());
             Picasso.get().load(file)
                     .placeholder(R.drawable.img_default_book)
                     .error(R.drawable.img_default_book)
@@ -123,20 +123,6 @@ public class ElectronicBookAdapter extends RecyclerView.Adapter<ElectronicBookAd
                 Toast.makeText(itemView.getContext(), "OpenPDF : " + e, Toast.LENGTH_LONG).show();
 
             }
-        }
-        public File bitmapToFile(Context context, String filename, Bitmap bitmap) {
-            // Créer un fichier dans le répertoire de cache de l'application
-            File file = new File(context.getCacheDir(), filename);
-            try {
-                // Convertir le Bitmap en un fichier de sortie
-                file.createNewFile();
-                FileOutputStream ostream = new FileOutputStream(file);
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, ostream);
-                ostream.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return file;
         }
     }
 }
