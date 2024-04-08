@@ -51,8 +51,8 @@ public class MainActivity extends AppCompatActivity {
         Initialization initialization = new Initialization(getApplicationContext());
         initialization.onCreate(getApplicationContext());
         mBottomNavigationView = findViewById(R.id.bottom_navigation_main);
-        Toolbar toolbar = findViewById(R.id.toolbar_main);
-        mEditText = findViewById(R.id.EditRecherche);
+        Toolbar toolbar = findViewById(R.id.toolbar_search);
+        mEditText = findViewById(R.id.edit_text_toolbar_search);
         SharedPreferences sharedPreferences = getSharedPreferences("MODE", Context.MODE_PRIVATE);
         boolean nightMODE = sharedPreferences.getBoolean("night", false);
         mHomeFragment = new HomeFragment();
@@ -66,6 +66,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Toast.makeText(MainActivity.this, "OK", Toast.LENGTH_SHORT).show();
+                Intent searchIntent = new Intent(MainActivity.this,SearchActivity.class);
+                startActivity(searchIntent);
             }
         });
         /* Detection de reseau */
