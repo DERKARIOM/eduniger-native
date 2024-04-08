@@ -9,9 +9,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 
+import com.ninotech.fabi.controleur.adapter.VoidContainerAdapter;
 import com.ninotech.fabi.model.data.Notification;
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.adapter.NotificationAdapter;
+import com.ninotech.fabi.model.data.VoidContainer;
 import com.ninotech.fabi.model.table.NotificationTable;
 import com.ninotech.fabi.model.table.Session;
 
@@ -36,15 +38,19 @@ public class NotificationActivity extends AppCompatActivity {
             do {
                 mList.add(new Notification(cursor.getString(2),cursor.getString(3),cursor.getString(4)));
             }while(cursor.moveToNext());
+            mNotificationAdapter = new NotificationAdapter(mList);
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getApplicationContext()));
+            mRecyclerView.setAdapter(mNotificationAdapter);
+            mRecyclerView.smoothScrollToPosition(mNotificationAdapter.getItemCount()-1);
         }catch (Exception e)
         {
             Log.e("ErrGetDataNotification",e.getMessage());
+            ArrayList<VoidContainer> voidContainers = new ArrayList<>();
+            voidContainers.add(new VoidContainer(R.drawable.img_message_suggestion,"Auccune Notification"));
+            VoidContainerAdapter voidContainerAdapter = new VoidContainerAdapter(voidContainers);
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+            mRecyclerView.setAdapter(voidContainerAdapter);
         }
-        mNotificationAdapter = new NotificationAdapter(mList);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getApplicationContext()));
-        mRecyclerView.setAdapter(mNotificationAdapter);
-        mRecyclerView.smoothScrollToPosition(mNotificationAdapter.getItemCount()-1);
-
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
