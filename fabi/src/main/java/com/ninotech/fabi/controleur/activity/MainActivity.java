@@ -65,7 +65,6 @@ public class MainActivity extends AppCompatActivity {
         mEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(MainActivity.this, "OK", Toast.LENGTH_SHORT).show();
                 Intent searchIntent = new Intent(MainActivity.this,SearchActivity.class);
                 startActivity(searchIntent);
             }
