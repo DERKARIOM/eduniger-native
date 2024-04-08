@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.ninotech.fabi.controleur.activity.MainActivity;
 import com.ninotech.fabi.controleur.adapter.BookAdapter;
 import com.ninotech.fabi.controleur.adapter.NoConnectionAdapter;
 import com.ninotech.fabi.model.data.OnlineBook;
@@ -47,7 +48,6 @@ public class RecommendedFragment extends Fragment {
         mBookRecommendedRecyclerView = view.findViewById(R.id.recycler_view_ranking);
         mPub = view.findViewById(R.id.image_view_fragment_recommended_welcome);
         mOnlineBookList = new ArrayList<>();
-
         Picasso.get()
                 .load(getString(R.string.ip_server) + "ressources/pub/pub1.jpg")
                 .transform(new RoundedTransformation(200,10))

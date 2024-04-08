@@ -11,6 +11,9 @@ import android.os.Handler;
 import android.os.StrictMode;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -49,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
         initialization.onCreate(getApplicationContext());
         mBottomNavigationView = findViewById(R.id.bottom_navigation_main);
         Toolbar toolbar = findViewById(R.id.toolbar_main);
+        mEditText = findViewById(R.id.EditRecherche);
         SharedPreferences sharedPreferences = getSharedPreferences("MODE", Context.MODE_PRIVATE);
         boolean nightMODE = sharedPreferences.getBoolean("night", false);
         mHomeFragment = new HomeFragment();
@@ -58,6 +62,12 @@ public class MainActivity extends AppCompatActivity {
         mDigitalPrintTable = new DigitalPrintTable(this);
         Intent reservationService = new Intent(this, NotificationService.class);
         mAccount = new Account();
+        mEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(MainActivity.this, "OK", Toast.LENGTH_SHORT).show();
+            }
+        });
         /* Detection de reseau */
         if(android.os.Build.VERSION.SDK_INT > 9)
         {
@@ -221,4 +231,14 @@ public class MainActivity extends AppCompatActivity {
     private AssistanceFragment mAssistanceFragment = new AssistanceFragment();
     private Account mAccount;
     private DigitalPrintTable mDigitalPrintTable;
+
+    public EditText getEditText() {
+        return mEditText;
+    }
+
+    public void setEditText(EditText editText) {
+        mEditText = editText;
+    }
+
+    private EditText mEditText;
 }
