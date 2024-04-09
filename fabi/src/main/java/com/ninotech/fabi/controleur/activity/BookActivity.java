@@ -224,9 +224,9 @@ public class BookActivity extends AppCompatActivity {
         audioButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(BookActivity.this, "ok", Toast.LENGTH_SHORT).show();
                 AudioDownloader audioDownloader = new AudioDownloader(getApplicationContext(),mSession.getIdNumber(), mOnlineBook,mTones);
                 audioDownloader.execute(mOnlineBook.getCover(), mOnlineBook.getElectronic(),mCategory.getCover(),mAuthor.getProfile(),mTones.getAudio());
+                succeDowloadPDFDialog();
             }
         });
         mPlayerImageView.setOnClickListener(new View.OnClickListener() {
