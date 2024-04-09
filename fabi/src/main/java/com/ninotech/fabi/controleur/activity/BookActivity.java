@@ -218,7 +218,7 @@ public class BookActivity extends AppCompatActivity {
                 ElectronicDownloader electronicDownloader = new ElectronicDownloader(getApplicationContext(),mSession.getIdNumber(), mOnlineBook);
                 electronicDownloader.execute(mOnlineBook.getCover(), mOnlineBook.getElectronic(),mCategory.getCover(),mAuthor.getProfile());
                // if(mElectronicTable.insert(mSession.getIdNumber(),mBook.getId(), mDescriptionTextView.getText().toString(),"ras",imageDownloader.getBytes(),mBook.getElectronic(), mCategoryTextView.getText().toString(), mBook.getTitle(),"ras","ras"))
-                    succeDowloadPDFDialog();
+                    succeDowloadPDFDialog("Le livre " + mTitleTextView.getText().toString() + " format PDF a été téléchargé avec succès. N'hésitez pas à explorer son contenu dans l'application et contactez-nous en cas de besoin.");
             }
         });
         audioButton.setOnClickListener(new View.OnClickListener() {
@@ -226,7 +226,7 @@ public class BookActivity extends AppCompatActivity {
             public void onClick(View v) {
                 AudioDownloader audioDownloader = new AudioDownloader(getApplicationContext(),mSession.getIdNumber(), mOnlineBook,mTones);
                 audioDownloader.execute(mOnlineBook.getCover(), mOnlineBook.getElectronic(),mCategory.getCover(),mAuthor.getProfile(),mTones.getAudio());
-                succeDowloadPDFDialog();
+                succeDowloadPDFDialog("Le livre " + mTitleTextView.getText().toString() + " format audio a été téléchargé avec succès. N'hésitez pas à explorer son contenu dans l'application et contactez-nous en cas de besoin.");
             }
         });
         mPlayerImageView.setOnClickListener(new View.OnClickListener() {
@@ -1307,13 +1307,13 @@ public class BookActivity extends AppCompatActivity {
         simpleOkDialog.build();
     }
 
-    private void succeDowloadPDFDialog(){
+    private void succeDowloadPDFDialog(String message){
         SimpleOkDialog simpleOkDialog = new SimpleOkDialog(this);
         simpleOkDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         simpleOkDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
-        TextView message = simpleOkDialog.findViewById(R.id.text_view_dialog_simple_ok_message);
+        TextView messageTextView = simpleOkDialog.findViewById(R.id.text_view_dialog_simple_ok_message);
         TextView ok = simpleOkDialog.findViewById(R.id.text_view_dialog_simple_ok);
-        message.setText("Le livre " + mTitleTextView.getText().toString() + " format PDF a été téléchargé avec succès. N'hésitez pas à explorer son contenu dans l'application et contactez-nous en cas de besoin.");
+        messageTextView.setText(message);
         ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

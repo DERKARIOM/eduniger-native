@@ -164,9 +164,9 @@
     <string name="message_default">Salut que puis-je faire pour vous</string>
     <string name="cancel_reservation">Annuler La reservation</string>
     <string name="reservation_book">Réservation du livre</string>
-    <string name="dawnloads_book">Vos Livres Électronique</string>
-    <string name="favorites">Vos Livres Audio</string>
-    <string name="playlists">Vos Livres Emprunter</string>
+    <string name="your_electronic_books">Vos Livres Électronique</string>
+    <string name="your_audio_books">Vos Livres Audio</string>
+    <string name="your_loand_books">Vos Livres Emprunter</string>
     <string name="cetegory">Categorie</string>
     <string name="author">Auteurs</string>
     <string name="account">Compte</string>

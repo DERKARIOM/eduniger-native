@@ -10,7 +10,7 @@
         android:layout_marginTop="20dp"
         android:id="@+id/BtoolbarCategorie">
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/relative_layout_toolbar"
+            android:id="@+id/relative_layout_toolbar_simple"
            style="@style/match_wrap"
             app:menu="@menu/menu_home"
             app:logo="@drawable/vector_back"
@@ -25,7 +25,7 @@
             android:id="@+id/nested_scroll_view_activity_book"
             android:visibility="gone"
            style="@style/match_parent_all"
-            android:layout_below="@id/relative_layout_toolbar">
+            android:layout_below="@id/relative_layout_toolbar_simple">
             <RelativeLayout
                 style="@style/wrap_content_all">
                 <RelativeLayout

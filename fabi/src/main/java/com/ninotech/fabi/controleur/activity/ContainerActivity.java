@@ -1,6 +1,7 @@
 package com.ninotech.fabi.controleur.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -40,39 +41,21 @@ import java.util.Date;
 import java.util.List;
 
 public class ContainerActivity extends AppCompatActivity {
-    private ArrayList<Category> categories;
-    private ArrayList<Category> filteredList;
-    private CategoryLocalAdapter categoryLoacalAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_container);
         getSupportActionBar().hide();
         mRecyclerView = findViewById(R.id.recycler_view_activity_container);
-        mEditText = findViewById(R.id.edit_text_activity_container);
+        mToolbar = findViewById(R.id.toolbar_simple);
         mSession = new Session(this);
         mElectronicTable = new ElectronicTable(this);
         Intent libraryIntent = getIntent();
         int id = libraryIntent.getIntExtra("id",0);
-        filteredList = new ArrayList<>();
-        mEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                filter(s.toString());
-            }
-        });
         switch (id)
         {
             case 1: // Electronic Book
+                mToolbar.setTitle(R.string.your_electronic_books);
                try {
                    mElectronicBookList = new ArrayList<>();
                    Cursor electronicCursor = mElectronicTable.getData(mSession.getIdNumber());
@@ -91,6 +74,7 @@ public class ContainerActivity extends AppCompatActivity {
                 break;
             case 2: // Audio Book
                 try {
+                    mToolbar.setTitle(R.string.your_audio_books);
                     ArrayList<AudioBook> audioBooks = new ArrayList<>();
                     AudioTable audioTable = new AudioTable(this);
                     Cursor audioCursor = audioTable.getData(mSession.getIdNumber());
@@ -108,6 +92,7 @@ public class ContainerActivity extends AppCompatActivity {
                 }
                 break;
             case 3: // Loand Book
+                mToolbar.setTitle(R.string.your_loand_books);
                 LoandTable loandTable = new LoandTable(this);
                 ArrayList<Loand> loandList = new ArrayList<>();
                 Cursor LoandCursor = loandTable.getData();
@@ -126,13 +111,14 @@ public class ContainerActivity extends AppCompatActivity {
                 break;
             case 4: // Category
                 try {
-                    categories = new ArrayList<>();
+                    mToolbar.setTitle(R.string.category);
+                    ArrayList<Category> categories = new ArrayList<>();
                     Cursor categoryCursor = mElectronicTable.getCategoryData(mSession.getIdNumber());
                     categoryCursor.moveToFirst();
                     do {
                         categories.add(new Category(categoryCursor.getString(0),categoryCursor.getString(1)));
                     }while (categoryCursor.moveToNext());
-                    categoryLoacalAdapter = new CategoryLocalAdapter(categories);
+                    CategoryLocalAdapter categoryLoacalAdapter = new CategoryLocalAdapter(categories);
                     mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
                     mRecyclerView.setAdapter(categoryLoacalAdapter);
                 }
@@ -142,6 +128,7 @@ public class ContainerActivity extends AppCompatActivity {
                 }
                 break;
             case 5: // Auteurs
+                mToolbar.setTitle(R.string.author);
                 try {
                     ArrayList<AuthorLocal> authorLocals = new ArrayList<>();
                     Cursor authorCursor = mElectronicTable.getAuthorData(mSession.getIdNumber());
@@ -206,19 +193,10 @@ public class ContainerActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setAdapter(voidContainerAdapter);
     }
-    private void filter(String text) {
-        filteredList.clear();
-        for (Category item : categories) {
-            if (item.getTitle().toLowerCase().contains(text.toLowerCase())) {
-                filteredList.add(item);
-            }
-        }
-        categoryLoacalAdapter.filterList(filteredList);
-    }
     private RecyclerView mRecyclerView;
     private List<ElectronicBook> mElectronicBookList;
     private List<Category> mList4;
     private ElectronicTable mElectronicTable;
     private Session mSession;
-    private EditText mEditText;
+    private Toolbar mToolbar;
 }

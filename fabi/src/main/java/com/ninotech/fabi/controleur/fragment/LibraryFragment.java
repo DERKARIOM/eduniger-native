@@ -3,7 +3,6 @@ package com.ninotech.fabi.controleur.fragment;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
@@ -83,9 +82,9 @@ public class LibraryFragment extends Fragment {
         });
         ElectronicAdapter electronicAdapter = new ElectronicAdapter(libraryList);
         RecentAdapter recentAdapter = new RecentAdapter(similarBookList);
-        libraryList.add(new Library(1,R.drawable.img_electronic_book,getString(R.string.dawnloads_book), electronicTable.getNbrElectronic(session.getIdNumber())));
-        libraryList.add(new Library(2,R.drawable.img_audio_book,getString(R.string.favorites),audioTable.getNbrAudio(session.getIdNumber())));
-        libraryList.add(new Library(3,R.drawable.img_loand_book,getString(R.string.playlists),loandTable.getNbrLoand(session.getIdNumber())));
+        libraryList.add(new Library(1,R.drawable.img_electronic_book,getString(R.string.your_electronic_books), electronicTable.getNbrElectronic(session.getIdNumber())));
+        libraryList.add(new Library(2,R.drawable.img_audio_book,getString(R.string.your_audio_books),audioTable.getNbrAudio(session.getIdNumber())));
+        libraryList.add(new Library(3,R.drawable.img_loand_book,getString(R.string.your_loand_books),loandTable.getNbrLoand(session.getIdNumber())));
         libraryList.add(new Library(4,R.drawable.img_category,getString(R.string.cetegory), electronicTable.getNbrCategory(session.getIdNumber())));
         libraryList.add(new Library(5,R.drawable.img_author,getString(R.string.author), electronicTable.getNbrAuthor(session.getIdNumber())));
         try {
