@@ -21,8 +21,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.controleur.adapter.BookAdapter;
 import com.ninotech.fabi.controleur.adapter.NoConnectionAdapter;
+import com.ninotech.fabi.controleur.adapter.VoidContainerAdapter;
 import com.ninotech.fabi.model.data.OnlineBook;
 import com.ninotech.fabi.model.data.Connection;
+import com.ninotech.fabi.model.data.VoidContainer;
 import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.R;
 
@@ -52,7 +54,6 @@ public class CategoryActivity extends AppCompatActivity {
         mRecyclerView = findViewById(R.id.recylerCategorie2);
         mList = new ArrayList<>();
         Intent intent = getIntent();
-        //setSupportActionBar(mToolbar);
         ActionBar ab = getSupportActionBar();
         assert ab != null;
         ab.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.white)));
@@ -149,6 +150,11 @@ public class CategoryActivity extends AppCompatActivity {
                     mRecyclerView.setLayoutManager(new LinearLayoutManager(CategoryActivity.this));
                     mRecyclerView.setAdapter(mBookAdapter);
                 }
+                else
+                {
+                    voidContainer(R.drawable.img_telecharge_local,"Aucun livre de categorie " + mCategorie);
+                    Toast.makeText(CategoryActivity.this, "OK", Toast.LENGTH_SHORT).show();
+                }
                 //Toast.makeText(getContext(), jsonData, Toast.LENGTH_SHORT).show();
             }
             else
@@ -175,6 +181,14 @@ public class CategoryActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+    public void voidContainer(int image , String message)
+    {
+        ArrayList<VoidContainer> voidContainers = new ArrayList<>();
+        voidContainers.add(new VoidContainer(image,message));
+        VoidContainerAdapter voidContainerAdapter = new VoidContainerAdapter(voidContainers);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.setAdapter(voidContainerAdapter);
     }
     private RecyclerView mRecyclerView;
     private BookAdapter mBookAdapter;
