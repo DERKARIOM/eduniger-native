@@ -17,7 +17,6 @@
         app:titleMarginStart="15dp"
         android:paddingStart="20dp"
         app:titleTextColor="@color/black3"
-        app:titleTextSize="10sp"
         android:layout_alignParentTop="true"
         app:titleTextAppearance="@style/toolbar"
         tools:ignore="RtlSymmetry" />

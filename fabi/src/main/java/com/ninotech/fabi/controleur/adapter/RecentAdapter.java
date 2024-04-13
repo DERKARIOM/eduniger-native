@@ -96,7 +96,7 @@ public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.MyViewHold
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    downloadAndOpenPDF(similarBook.getPDF());
+//                    downloadAndOpenPDF(similarBook.getPDF());
                 }
             });
         }
