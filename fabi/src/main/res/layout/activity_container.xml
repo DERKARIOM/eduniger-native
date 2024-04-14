@@ -4,12 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/match_parent_all"
     tools:context="com.ninotech.fabi.controleur.activity.ContainerActivity">
-    <include layout="@layout/toolbar_simple"/>
     <androidx.recyclerview.widget.RecyclerView
         android:layout_margin="5dp"
         android:id="@+id/recycler_view_activity_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/relative_layout_toolbar_simple"
         />
 </RelativeLayout>

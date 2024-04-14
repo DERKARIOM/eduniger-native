@@ -1,5 +1,6 @@
 package com.ninotech.fabi.controleur.activity;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -9,11 +10,15 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ninotech.fabi.R;
@@ -45,9 +50,15 @@ public class ContainerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_container);
-        getSupportActionBar().hide();
+        ActionBar ab = getSupportActionBar();
+        assert ab != null;
+        ab.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.white)));
+        ab.setHomeAsUpIndicator(R.drawable.vector_back);
+        ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        ab.setCustomView(R.layout.custom_action_bar);
+        ab.setDisplayHomeAsUpEnabled(true);
+        TextView actionBarTitle = ab.getCustomView().findViewById(R.id.action_bar_title);
         mRecyclerView = findViewById(R.id.recycler_view_activity_container);
-        mToolbar = findViewById(R.id.toolbar_simple);
         mSession = new Session(this);
         mElectronicTable = new ElectronicTable(this);
         Intent libraryIntent = getIntent();
@@ -55,7 +66,7 @@ public class ContainerActivity extends AppCompatActivity {
         switch (id)
         {
             case 1: // Electronic Book
-                mToolbar.setTitle(R.string.your_electronic_books);
+                actionBarTitle.setText(R.string.your_electronic_books);
                try {
                    mElectronicBookList = new ArrayList<>();
                    Cursor electronicCursor = mElectronicTable.getData(mSession.getIdNumber());
@@ -74,7 +85,7 @@ public class ContainerActivity extends AppCompatActivity {
                 break;
             case 2: // Audio Book
                 try {
-                    mToolbar.setTitle(R.string.your_audio_books);
+                    actionBarTitle.setText(R.string.your_audio_books);
                     ArrayList<AudioBook> audioBooks = new ArrayList<>();
                     AudioTable audioTable = new AudioTable(this);
                     Cursor audioCursor = audioTable.getData(mSession.getIdNumber());
@@ -92,7 +103,7 @@ public class ContainerActivity extends AppCompatActivity {
                 }
                 break;
             case 3: // Loand Book
-                mToolbar.setTitle(R.string.your_loand_books);
+                actionBarTitle.setText(R.string.your_loand_books);
                 LoandTable loandTable = new LoandTable(this);
                 ArrayList<Loand> loandList = new ArrayList<>();
                 Cursor LoandCursor = loandTable.getData();
@@ -111,7 +122,7 @@ public class ContainerActivity extends AppCompatActivity {
                 break;
             case 4: // Category
                 try {
-                    mToolbar.setTitle(R.string.category);
+                    actionBarTitle.setText(R.string.category);
                     ArrayList<Category> categories = new ArrayList<>();
                     Cursor categoryCursor = mElectronicTable.getCategoryData(mSession.getIdNumber());
                     categoryCursor.moveToFirst();
@@ -128,7 +139,7 @@ public class ContainerActivity extends AppCompatActivity {
                 }
                 break;
             case 5: // Auteurs
-                mToolbar.setTitle(R.string.author);
+                actionBarTitle.setText(R.string.author);
                 try {
                     ArrayList<AuthorLocal> authorLocals = new ArrayList<>();
                     Cursor authorCursor = mElectronicTable.getAuthorData(mSession.getIdNumber());
@@ -185,6 +196,26 @@ public class ContainerActivity extends AppCompatActivity {
         }
         return dateInSeconds;
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_search, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id)
+        {
+            case android.R.id.home:
+                onBackPressed(); // Appel de la méthode onBackPressed() pour simuler le comportement du bouton retour
+                return true;
+            case R.id.item_menu_search:
+                Toast.makeText(this, "ok", Toast.LENGTH_SHORT).show();
+                return true;
+        }
+        Log.e("idRecherche",String.valueOf(id));
+        return super.onOptionsItemSelected(item);
+    }
     public void voidContainer(int image , String message)
     {
         ArrayList<VoidContainer> voidContainers = new ArrayList<>();
@@ -198,5 +229,4 @@ public class ContainerActivity extends AppCompatActivity {
     private List<Category> mList4;
     private ElectronicTable mElectronicTable;
     private Session mSession;
-    private Toolbar mToolbar;
 }

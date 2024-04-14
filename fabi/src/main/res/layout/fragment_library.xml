@@ -40,11 +40,18 @@
 
         </LinearLayout>
     </RelativeLayout>
-
+    <View
+        android:id="@+id/view_fragment_library_1"
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/separator"
+        android:layout_below="@+id/relative_layout_fragment_library_profile"
+        />
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/relative_layout_fragment_library_profile"
+        android:layout_below="@+id/view_fragment_library_1"
         >
         <TextView
             android:id="@+id/text_view_fragment_library_recent_read_book"
@@ -64,9 +71,17 @@
             android:layout_below="@+id/text_view_fragment_library_recent_read_book"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
+        <View
+            android:id="@+id/view_fragment_library_2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="20dp"
+            android:background="@color/separator"
+            android:layout_below="@+id/recycler_view_electronic_fragment_recent"
+            />
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view_electronic_fragment_media"
-            android:layout_below="@+id/recycler_view_electronic_fragment_recent"
+            android:layout_below="@+id/view_fragment_library_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"/>

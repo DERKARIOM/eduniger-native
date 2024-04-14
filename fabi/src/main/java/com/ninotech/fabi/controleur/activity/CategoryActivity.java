@@ -177,7 +177,7 @@ public class CategoryActivity extends AppCompatActivity {
             case android.R.id.home:
                 onBackPressed(); // Appel de la méthode onBackPressed() pour simuler le comportement du bouton retour
                 return true;
-            case 2131361871:
+            case R.id.item_menu_search:
                 Intent searchIntent = new Intent(CategoryActivity.this,SearchActivity.class);
                 searchIntent.putExtra("search_key","ONLINE_BOOK");
                 searchIntent.putExtra("online_book_key","CATEGORY_ACTIVITY");
@@ -185,7 +185,6 @@ public class CategoryActivity extends AppCompatActivity {
                 startActivity(searchIntent);
                 return true;
         }
-        Log.e("idRecherche",String.valueOf(id));
         return super.onOptionsItemSelected(item);
     }
     public void voidContainer(int image , String message)

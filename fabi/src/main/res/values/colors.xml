@@ -16,5 +16,6 @@
     <color name="black3">#DF444444</color>
     <color name="rouge">#E6FD1010</color>
     <color name="vert">#ED15C40E</color>
+    <color name="separator">#6DAAAAAA</color>
     <color name="transparent">#00FFFFFF</color>
 </resources>
