@@ -22,22 +22,28 @@ import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.adapter.AudioBookAdapter;
 import com.ninotech.fabi.controleur.adapter.BookAdapter;
 import com.ninotech.fabi.controleur.adapter.ElectronicBookAdapter;
+import com.ninotech.fabi.controleur.adapter.LoandBookAdapter;
 import com.ninotech.fabi.controleur.adapter.NoConnectionAdapter;
 import com.ninotech.fabi.controleur.adapter.VoidContainerAdapter;
 import com.ninotech.fabi.model.data.AudioBook;
 import com.ninotech.fabi.model.data.Connection;
 import com.ninotech.fabi.model.data.ElectronicBook;
+import com.ninotech.fabi.model.data.LoandBook;
 import com.ninotech.fabi.model.data.OnlineBook;
 import com.ninotech.fabi.model.data.VoidContainer;
 import com.ninotech.fabi.model.table.AudioTable;
 import com.ninotech.fabi.model.table.ElectronicTable;
+import com.ninotech.fabi.model.table.LoandTable;
 import com.ninotech.fabi.model.table.Session;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Objects;
 
 import okhttp3.MultipartBody;
@@ -86,6 +92,10 @@ public class SearchActivity extends AppCompatActivity {
                         if(!mAudioBooks.isEmpty())
                             filterAudioBook(s.toString());
                         break;
+                    case "LOAND_BOOK":
+                        if(!mLoandBooks.isEmpty())
+                            filterLoandBook(s.toString());
+                        break;
                 }
             }
         });
@@ -112,6 +122,9 @@ public class SearchActivity extends AppCompatActivity {
                 searchAudioBook();
                 break;
             case "LOAND_BOOK":
+                searchLoandBook();
+                break;
+            case "CATEGORY":
                 break;
         }
     }
@@ -347,6 +360,15 @@ public class SearchActivity extends AppCompatActivity {
         }
         mAudioBookAdapter.filterList(mFilteredAudioBook);
     }
+    private void filterLoandBook(String text) {
+        mFilteredLoandBooks.clear();
+        for (LoandBook item : mLoandBooks) {
+            if (item.getTitle().toLowerCase().contains(text.toLowerCase())) {
+                mFilteredLoandBooks.add(item);
+            }
+        }
+        mLoandBookAdapter.filterList(mFilteredLoandBooks);
+    }
     public void searchAudioBook()
     {
         try {
@@ -367,6 +389,25 @@ public class SearchActivity extends AppCompatActivity {
             Log.e("ErrorAudio",e.getMessage());
         }
     }
+    public void searchLoandBook()
+    {
+        mLoandBooks = new ArrayList<>();
+        mFilteredAudioBook = new ArrayList<>();
+        LoandTable loandTable = new LoandTable(this);
+        Cursor LoandCursor = loandTable.getData();
+        LoandCursor.moveToFirst();
+        try {
+            do {
+                mLoandBooks.add(new LoandBook(LoandCursor.getString(2),LoandCursor.getString(3),LoandCursor.getString(4),LoandCursor.getString(5),percentage(converterDate(LoandCursor.getString(4)),converterDate(LoandCursor.getString(5)),getNowDate())));
+            }while (LoandCursor.moveToNext());
+            mLoandBookAdapter = new LoandBookAdapter(mLoandBooks);
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+            mRecyclerView.setAdapter(mLoandBookAdapter);
+        }catch (Exception e)
+        {
+            voidContainer(R.drawable.img_physical,getString(R.string.no_loand_book));
+        }
+    }
     public void voidContainer(int image , String message)
     {
         ArrayList<VoidContainer> voidContainers = new ArrayList<>();
@@ -374,6 +415,40 @@ public class SearchActivity extends AppCompatActivity {
         VoidContainerAdapter voidContainerAdapter = new VoidContainerAdapter(voidContainers);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setAdapter(voidContainerAdapter);
+    }
+    public long percentage(long startDate , long endDate , long nowDate)
+    {
+        return (long) (((float)(nowDate - startDate)/(float) (endDate - startDate))*100);
+    }
+    public long getNowDate()
+    {
+        long currentTimeMillis = System.currentTimeMillis();
+        long currentTimeSeconds = currentTimeMillis / 1000;
+
+        // Affichez le temps actuel en secondes
+        return currentTimeSeconds;
+    }
+    public long converterDate(String dateString)
+    {
+//        String dateString = "2024-02-13 12:30:00";
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        long dateInSeconds = 0;
+
+        try {
+            // Analyser la chaîne de caractères en objet Date
+            Date date = dateFormat.parse(dateString);
+
+            // Convertir la date en millisecondes
+            long dateInMillis = date.getTime();
+
+            // Convertir les millisecondes en secondes
+            dateInSeconds = dateInMillis / 1000;
+
+            // Afficher la date en secondes
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return dateInSeconds;
     }
     private RecyclerView mRecyclerView;
     private ArrayList<OnlineBook> mOnlineBooks;
@@ -388,4 +463,7 @@ public class SearchActivity extends AppCompatActivity {
     private ArrayList<AudioBook> mAudioBooks;
     private ArrayList<AudioBook> mFilteredAudioBook;
     private AudioBookAdapter mAudioBookAdapter;
+    private ArrayList<LoandBook> mLoandBooks;
+    private ArrayList<LoandBook> mFilteredLoandBooks;
+    private LoandBookAdapter mLoandBookAdapter;
 }

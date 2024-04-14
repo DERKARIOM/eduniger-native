@@ -12,14 +12,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
-import com.ninotech.fabi.model.data.Loand;
+import com.ninotech.fabi.model.data.LoandBook;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 public class LoandBookAdapter extends RecyclerView.Adapter<LoandBookAdapter.MyViewHolder> {
-    List<Loand> mListLoand;
+    List<LoandBook> mLoandBooks;
 
     public int getPosition() {
         return mPosition;
@@ -30,8 +31,8 @@ public class LoandBookAdapter extends RecyclerView.Adapter<LoandBookAdapter.MyVi
     }
 
     private int mPosition;
-    public LoandBookAdapter(List<Loand> listLoand) {
-        mListLoand = listLoand;
+    public LoandBookAdapter(List<LoandBook> loandBooks) {
+        mLoandBooks = loandBooks;
     }
     @Override
     public LoandBookAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -42,7 +43,7 @@ public class LoandBookAdapter extends RecyclerView.Adapter<LoandBookAdapter.MyVi
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        Loand item = mListLoand.get(position);
+        LoandBook item = mLoandBooks.get(position);
         int i = position;
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -52,23 +53,26 @@ public class LoandBookAdapter extends RecyclerView.Adapter<LoandBookAdapter.MyVi
                 return true;
             }
         });
-        holder.display(mListLoand.get(position));
+        holder.display(mLoandBooks.get(position));
 
     }
     @Override
     public int getItemCount() {
-        return mListLoand.size();
+        return mLoandBooks.size();
     }
 
-    public Loand getItem(int position) {
-        return mListLoand.get(position);
+    public LoandBook getItem(int position) {
+        return mLoandBooks.get(position);
     }
 
     public void Remove(int position){
-        mListLoand.remove(position);
+        mLoandBooks.remove(position);
         notifyItemRemoved(position);
     }
-
+    public void filterList(ArrayList<LoandBook> filteredList) {
+        mLoandBooks = filteredList;
+        notifyDataSetChanged();
+    }
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener{
         private final ImageView mBlanketImageView;
@@ -94,8 +98,8 @@ public class LoandBookAdapter extends RecyclerView.Adapter<LoandBookAdapter.MyVi
 //            menu.add(Menu.NONE,R.id.suppNotif,Menu.NONE,"Supprimer");
 //            menu.add(Menu.NONE,R.id.inportanteNotif,Menu.NONE,"Message importants");
         }
-        void display(Loand loand){
-            File file = new File(loand.getCover());
+        void display(LoandBook loandBook){
+            File file = new File(loandBook.getCover());
             Picasso.get()
                     .load(file)
                     .placeholder(R.drawable.img_default_book)
@@ -103,26 +107,26 @@ public class LoandBookAdapter extends RecyclerView.Adapter<LoandBookAdapter.MyVi
                     .transform(new RoundedTransformation(15,4))
                     .resize(178,284)
                     .into(mBlanketImageView);
-            mTitleTextView.setText(loand.getTitle());
-            mTitleTextView.setText(loand.getTitle());
-            mDateInitTextView.setText(loand.getDateStart());
-            mDateFinaleTextView.setText(loand.getDateEnd());
-            if(loand.getPercentage() > 100)
+            mTitleTextView.setText(loandBook.getTitle());
+            mTitleTextView.setText(loandBook.getTitle());
+            mDateInitTextView.setText(loandBook.getDateStart());
+            mDateFinaleTextView.setText(loandBook.getDateEnd());
+            if(loandBook.getPercentage() > 100)
             {
                 mProgressBar.setProgress(100);
                 mPercentageTextView.setText("100%");
             }
             else
             {
-                if(loand.getPercentage() < 0)
+                if(loandBook.getPercentage() < 0)
                 {
                     mProgressBar.setProgress(0);
                     mPercentageTextView.setText("0%");
                 }
                 else
                 {
-                    mProgressBar.setProgress((int) loand.getPercentage());
-                    mPercentageTextView.setText(String.valueOf(loand.getPercentage()) + "%");
+                    mProgressBar.setProgress((int) loandBook.getPercentage());
+                    mPercentageTextView.setText(String.valueOf(loandBook.getPercentage()) + "%");
                 }
             }
         }

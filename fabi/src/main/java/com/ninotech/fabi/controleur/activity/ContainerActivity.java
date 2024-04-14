@@ -2,7 +2,6 @@ package com.ninotech.fabi.controleur.activity;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -12,12 +11,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,7 +28,7 @@ import com.ninotech.fabi.model.data.AuthorLocal;
 import com.ninotech.fabi.model.data.AudioBook;
 import com.ninotech.fabi.model.data.Category;
 import com.ninotech.fabi.model.data.ElectronicBook;
-import com.ninotech.fabi.model.data.Loand;
+import com.ninotech.fabi.model.data.LoandBook;
 import com.ninotech.fabi.model.data.VoidContainer;
 import com.ninotech.fabi.model.table.AudioTable;
 import com.ninotech.fabi.model.table.ElectronicTable;
@@ -105,14 +101,14 @@ public class ContainerActivity extends AppCompatActivity {
             case 3: // Loand Book
                 actionBarTitle.setText(R.string.your_loand_books);
                 LoandTable loandTable = new LoandTable(this);
-                ArrayList<Loand> loandList = new ArrayList<>();
+                ArrayList<LoandBook> loandBookList = new ArrayList<>();
                 Cursor LoandCursor = loandTable.getData();
                 LoandCursor.moveToFirst();
                 try {
                     do {
-                        loandList.add(new Loand(LoandCursor.getString(2),LoandCursor.getString(3),LoandCursor.getString(4),LoandCursor.getString(5),percentage(converterDate(LoandCursor.getString(4)),converterDate(LoandCursor.getString(5)),getNowDate())));
+                        loandBookList.add(new LoandBook(LoandCursor.getString(2),LoandCursor.getString(3),LoandCursor.getString(4),LoandCursor.getString(5),percentage(converterDate(LoandCursor.getString(4)),converterDate(LoandCursor.getString(5)),getNowDate())));
                     }while (LoandCursor.moveToNext());
-                    LoandBookAdapter loandBookAdapter = new LoandBookAdapter(loandList);
+                    LoandBookAdapter loandBookAdapter = new LoandBookAdapter(loandBookList);
                     mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
                     mRecyclerView.setAdapter(loandBookAdapter);
                 }catch (Exception e)

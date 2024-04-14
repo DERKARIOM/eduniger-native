@@ -1,14 +1,14 @@
 package com.ninotech.fabi.model.data;
 
-public class Loand extends Book {
-    public Loand(String idLoand, String cover, String title, String dateStart, String dateEnd) {
+public class LoandBook extends Book {
+    public LoandBook(String idLoand, String cover, String title, String dateStart, String dateEnd) {
         super(null,title,null);
         mIdLoand = idLoand;
         mCover = cover;
         mDateStart = dateStart;
         mDateEnd = dateEnd;
     }
-    public Loand(String cover, String title , String dateStart , String dateEnd , long percentage)
+    public LoandBook(String cover, String title , String dateStart , String dateEnd , long percentage)
     {
         super(null,title);
         mCover = cover;
