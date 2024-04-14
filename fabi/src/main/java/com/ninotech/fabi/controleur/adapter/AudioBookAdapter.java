@@ -18,11 +18,13 @@ import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.activity.AudioPlayerActivity;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
 import com.ninotech.fabi.model.data.AudioBook;
+import com.ninotech.fabi.model.data.ElectronicBook;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class AudioBookAdapter extends RecyclerView.Adapter<AudioBookAdapter.MyViewHolder> {
@@ -75,7 +77,10 @@ public class AudioBookAdapter extends RecyclerView.Adapter<AudioBookAdapter.MyVi
         mAudioBooks.remove(position);
         notifyItemRemoved(position);
     }
-
+    public void filterList(ArrayList<AudioBook> filteredList) {
+        mAudioBooks = filteredList;
+        notifyDataSetChanged();
+    }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener{
         private final ImageView mCoverImageView;

@@ -19,12 +19,17 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.R;
+import com.ninotech.fabi.controleur.adapter.AudioBookAdapter;
 import com.ninotech.fabi.controleur.adapter.BookAdapter;
 import com.ninotech.fabi.controleur.adapter.ElectronicBookAdapter;
 import com.ninotech.fabi.controleur.adapter.NoConnectionAdapter;
+import com.ninotech.fabi.controleur.adapter.VoidContainerAdapter;
+import com.ninotech.fabi.model.data.AudioBook;
 import com.ninotech.fabi.model.data.Connection;
 import com.ninotech.fabi.model.data.ElectronicBook;
 import com.ninotech.fabi.model.data.OnlineBook;
+import com.ninotech.fabi.model.data.VoidContainer;
+import com.ninotech.fabi.model.table.AudioTable;
 import com.ninotech.fabi.model.table.ElectronicTable;
 import com.ninotech.fabi.model.table.Session;
 
@@ -70,10 +75,16 @@ public class SearchActivity extends AppCompatActivity {
                 switch (Objects.requireNonNull(searchIntent.getStringExtra("search_key")))
                 {
                     case "ONLINE_BOOK":
-                        filterOnlineBook(s.toString());
+                        if(!mOnlineBooks.isEmpty())
+                            filterOnlineBook(s.toString());
                         break;
                     case "ELECTRONIC_BOOK":
-                        filterElectronicBook(s.toString());
+                        if(!mElectronicBooks.isEmpty())
+                            filterElectronicBook(s.toString());
+                        break;
+                    case "AUDIO_BOOK":
+                        if(!mAudioBooks.isEmpty())
+                            filterAudioBook(s.toString());
                         break;
                 }
             }
@@ -81,7 +92,7 @@ public class SearchActivity extends AppCompatActivity {
         switch (Objects.requireNonNull(searchIntent.getStringExtra("search_key")))
         {
             case "ONLINE_BOOK":
-                mOnlineBookList = new ArrayList<>();
+                mOnlineBooks = new ArrayList<>();
                 mFilteredOnlineBookList = new ArrayList<>();
                 waitConnection();
                 switch (Objects.requireNonNull(searchIntent.getStringExtra("online_book_key")))
@@ -98,6 +109,9 @@ public class SearchActivity extends AppCompatActivity {
                 searchElectronicBook();
                 break;
             case "AUDIO_BOOK":
+                searchAudioBook();
+                break;
+            case "LOAND_BOOK":
                 break;
         }
     }
@@ -202,12 +216,12 @@ public class SearchActivity extends AppCompatActivity {
                 }
                 for (int i=0;i<jsonArray.length();i++) {
                     try {
-                        mOnlineBookList.add(new OnlineBook(jsonArray.getJSONObject(i).getString("idBook"),jsonArray.getJSONObject(i).getString("blanket"),jsonArray.getJSONObject(i).getString("bookTitle"),jsonArray.getJSONObject(i).getString("categoryTitle"),jsonArray.getJSONObject(i).getString("isPhysic"),jsonArray.getJSONObject(i).getString("electronic"),jsonArray.getJSONObject(i).getString("isAudio"),Integer.parseInt(jsonArray.getJSONObject(i).getString("numberLike")),Integer.parseInt(jsonArray.getJSONObject(i).getString("numberLike"))));
+                        mOnlineBooks.add(new OnlineBook(jsonArray.getJSONObject(i).getString("idBook"),jsonArray.getJSONObject(i).getString("blanket"),jsonArray.getJSONObject(i).getString("bookTitle"),jsonArray.getJSONObject(i).getString("categoryTitle"),jsonArray.getJSONObject(i).getString("isPhysic"),jsonArray.getJSONObject(i).getString("electronic"),jsonArray.getJSONObject(i).getString("isAudio"),Integer.parseInt(jsonArray.getJSONObject(i).getString("numberLike")),Integer.parseInt(jsonArray.getJSONObject(i).getString("numberLike"))));
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
                 }
-                mBookAdapter = new BookAdapter(mOnlineBookList);
+                mBookAdapter = new BookAdapter(mOnlineBooks);
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                 mRecyclerView.setAdapter(mBookAdapter);
             }
@@ -265,12 +279,12 @@ public class SearchActivity extends AppCompatActivity {
                     }
                     for (int i=0;i<jsonArray.length();i++) {
                         try {
-                            mOnlineBookList.add(new OnlineBook(jsonArray.getJSONObject(i).getString("idBook"),jsonArray.getJSONObject(i).getString("blanket"),jsonArray.getJSONObject(i).getString("bookTitle"),jsonArray.getJSONObject(i).getString("categoryTitle"),jsonArray.getJSONObject(i).getString("isPhysic"),jsonArray.getJSONObject(i).getString("electronic"),jsonArray.getJSONObject(i).getString("isAudio"),0,0));
+                            mOnlineBooks.add(new OnlineBook(jsonArray.getJSONObject(i).getString("idBook"),jsonArray.getJSONObject(i).getString("blanket"),jsonArray.getJSONObject(i).getString("bookTitle"),jsonArray.getJSONObject(i).getString("categoryTitle"),jsonArray.getJSONObject(i).getString("isPhysic"),jsonArray.getJSONObject(i).getString("electronic"),jsonArray.getJSONObject(i).getString("isAudio"),0,0));
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
                     }
-                    mBookAdapter = new BookAdapter(mOnlineBookList);
+                    mBookAdapter = new BookAdapter(mOnlineBooks);
                     mRecyclerView.setLayoutManager(new LinearLayoutManager(SearchActivity.this));
                     mRecyclerView.setAdapter(mBookAdapter);
                 }
@@ -302,12 +316,13 @@ public class SearchActivity extends AppCompatActivity {
             mRecyclerView.setAdapter(mElectronicBookAdapter);
         }catch (Exception e)
         {
+            voidContainer(R.drawable.img_telecharge_local,getString(R.string.no_electronic_book));
             Log.e("ErrorElectronic",e.getMessage());
         }
     }
     private void filterOnlineBook(String text) {
         mFilteredOnlineBookList.clear();
-        for (OnlineBook item : mOnlineBookList) {
+        for (OnlineBook item : mOnlineBooks) {
             if (item.getTitle().toLowerCase().contains(text.toLowerCase())) {
                 mFilteredOnlineBookList.add(item);
             }
@@ -323,8 +338,45 @@ public class SearchActivity extends AppCompatActivity {
         }
         mElectronicBookAdapter.filterList(mFilteredElectronicBooks);
     }
+    private void filterAudioBook(String text) {
+        mFilteredAudioBook.clear();
+        for (AudioBook item : mAudioBooks) {
+            if (item.getTitle().toLowerCase().contains(text.toLowerCase())) {
+                mFilteredAudioBook.add(item);
+            }
+        }
+        mAudioBookAdapter.filterList(mFilteredAudioBook);
+    }
+    public void searchAudioBook()
+    {
+        try {
+            mAudioBooks = new ArrayList<>();
+            mFilteredAudioBook = new ArrayList<>();
+            AudioTable audioTable = new AudioTable(this);
+            Cursor audioCursor = audioTable.getData(mSession.getIdNumber());
+            audioCursor.moveToFirst();
+            do {
+                mAudioBooks.add(new AudioBook(audioCursor.getString(2),audioCursor.getString(5),audioCursor.getString(8),audioCursor.getString(4),audioCursor.getString(11),audioCursor.getString(6)));
+            }while (audioCursor.moveToNext());
+            mAudioBookAdapter = new AudioBookAdapter(mAudioBooks);
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+            mRecyclerView.setAdapter(mAudioBookAdapter);
+        }catch (Exception e)
+        {
+            voidContainer(R.drawable.img_playliste_local,getString(R.string.no_audio_book));
+            Log.e("ErrorAudio",e.getMessage());
+        }
+    }
+    public void voidContainer(int image , String message)
+    {
+        ArrayList<VoidContainer> voidContainers = new ArrayList<>();
+        voidContainers.add(new VoidContainer(image,message));
+        VoidContainerAdapter voidContainerAdapter = new VoidContainerAdapter(voidContainers);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.setAdapter(voidContainerAdapter);
+    }
     private RecyclerView mRecyclerView;
-    private ArrayList<OnlineBook> mOnlineBookList;
+    private ArrayList<OnlineBook> mOnlineBooks;
     private NoConnectionAdapter mNoConnectionAdapter;
     private Session mSession;
     private EditText mSearchEditText;
@@ -333,4 +385,7 @@ public class SearchActivity extends AppCompatActivity {
     private ArrayList<ElectronicBook> mFilteredElectronicBooks;
     private ArrayList<ElectronicBook> mElectronicBooks;
     private ElectronicBookAdapter mElectronicBookAdapter;
+    private ArrayList<AudioBook> mAudioBooks;
+    private ArrayList<AudioBook> mFilteredAudioBook;
+    private AudioBookAdapter mAudioBookAdapter;
 }
