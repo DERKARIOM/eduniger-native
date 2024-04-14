@@ -46,10 +46,7 @@ public class CategoryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category);
-       // Objects.requireNonNull(getSupportActionBar()).hide();
-
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-//        mToolbar = findViewById(R.id.toolbar_simple);
         mSession = new Session(this);
         mRecyclerView = findViewById(R.id.recylerCategorie2);
         mList = new ArrayList<>();
@@ -153,7 +150,6 @@ public class CategoryActivity extends AppCompatActivity {
                 else
                 {
                     voidContainer(R.drawable.img_telecharge_local,"Aucun livre de categorie " + mCategorie);
-                    Toast.makeText(CategoryActivity.this, "OK", Toast.LENGTH_SHORT).show();
                 }
                 //Toast.makeText(getContext(), jsonData, Toast.LENGTH_SHORT).show();
             }
@@ -176,10 +172,20 @@ public class CategoryActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == android.R.id.home) {
-            onBackPressed(); // Appel de la méthode onBackPressed() pour simuler le comportement du bouton retour
-            return true;
+        switch (id)
+        {
+            case android.R.id.home:
+                onBackPressed(); // Appel de la méthode onBackPressed() pour simuler le comportement du bouton retour
+                return true;
+            case 2131361871:
+                Intent searchIntent = new Intent(CategoryActivity.this,SearchActivity.class);
+                searchIntent.putExtra("search_key","ONLINE_BOOK");
+                searchIntent.putExtra("online_book_key","CATEGORY_ACTIVITY");
+                searchIntent.putExtra("title_category",mCategorie);
+                startActivity(searchIntent);
+                return true;
         }
+        Log.e("idRecherche",String.valueOf(id));
         return super.onOptionsItemSelected(item);
     }
     public void voidContainer(int image , String message)

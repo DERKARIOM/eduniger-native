@@ -30,6 +30,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.ninotech.fabi.model.table.DigitalPrintTable;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
@@ -66,6 +67,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent searchIntent = new Intent(MainActivity.this,SearchActivity.class);
+                searchIntent.putExtra("search_key","ONLINE_BOOK");
+                searchIntent.putExtra("online_book_key","MAIN_ACTIVITY");
                 startActivity(searchIntent);
             }
         });
