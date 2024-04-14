@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
@@ -19,9 +20,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.adapter.BookAdapter;
+import com.ninotech.fabi.controleur.adapter.ElectronicBookAdapter;
 import com.ninotech.fabi.controleur.adapter.NoConnectionAdapter;
 import com.ninotech.fabi.model.data.Connection;
+import com.ninotech.fabi.model.data.ElectronicBook;
 import com.ninotech.fabi.model.data.OnlineBook;
+import com.ninotech.fabi.model.table.ElectronicTable;
 import com.ninotech.fabi.model.table.Session;
 
 import org.json.JSONArray;
@@ -68,8 +72,8 @@ public class SearchActivity extends AppCompatActivity {
                     case "ONLINE_BOOK":
                         filterOnlineBook(s.toString());
                         break;
-                    case "CATEGORY_ACTIVITY":
-                       // filterOnlineBook(s.toString());
+                    case "ELECTRONIC_BOOK":
+                        filterElectronicBook(s.toString());
                         break;
                 }
             }
@@ -78,7 +82,7 @@ public class SearchActivity extends AppCompatActivity {
         {
             case "ONLINE_BOOK":
                 mOnlineBookList = new ArrayList<>();
-                mFilteredList = new ArrayList<>();
+                mFilteredOnlineBookList = new ArrayList<>();
                 waitConnection();
                 switch (Objects.requireNonNull(searchIntent.getStringExtra("online_book_key")))
                 {
@@ -89,9 +93,11 @@ public class SearchActivity extends AppCompatActivity {
                         onLineBookSwitchCategory(searchIntent.getStringExtra("title_category"));
                         break;
                 }
-
                 break;
-            case "CATEGORY_ACTIVITY":
+            case "ELECTRONIC_BOOK":
+                searchElectronicBook();
+                break;
+            case "AUDIO_BOOK":
                 break;
         }
     }
@@ -280,20 +286,51 @@ public class SearchActivity extends AppCompatActivity {
 
         }
     }
+    public void searchElectronicBook()
+    {
+        try {
+            mElectronicBooks = new ArrayList<>();
+            mFilteredElectronicBooks = new ArrayList<>();
+            ElectronicTable electronicTable = new ElectronicTable(this);
+            Cursor electronicCursor = electronicTable.getData(mSession.getIdNumber());
+            electronicCursor.moveToFirst();
+            do {
+                mElectronicBooks.add(new ElectronicBook(electronicCursor.getString(2),electronicCursor.getString(5),electronicCursor.getString(8),electronicCursor.getString(7),electronicCursor.getString(4),electronicCursor.getString(6)));
+            }while(electronicCursor.moveToNext());
+            mElectronicBookAdapter = new ElectronicBookAdapter(mElectronicBooks);
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+            mRecyclerView.setAdapter(mElectronicBookAdapter);
+        }catch (Exception e)
+        {
+            Log.e("ErrorElectronic",e.getMessage());
+        }
+    }
     private void filterOnlineBook(String text) {
-        mFilteredList.clear();
+        mFilteredOnlineBookList.clear();
         for (OnlineBook item : mOnlineBookList) {
             if (item.getTitle().toLowerCase().contains(text.toLowerCase())) {
-                mFilteredList.add(item);
+                mFilteredOnlineBookList.add(item);
             }
         }
-        mBookAdapter.filterList(mFilteredList);
+        mBookAdapter.filterList(mFilteredOnlineBookList);
+    }
+    private void filterElectronicBook(String text) {
+        mFilteredElectronicBooks.clear();
+        for (ElectronicBook item : mElectronicBooks) {
+            if (item.getTitle().toLowerCase().contains(text.toLowerCase())) {
+                mFilteredElectronicBooks.add(item);
+            }
+        }
+        mElectronicBookAdapter.filterList(mFilteredElectronicBooks);
     }
     private RecyclerView mRecyclerView;
     private ArrayList<OnlineBook> mOnlineBookList;
     private NoConnectionAdapter mNoConnectionAdapter;
     private Session mSession;
     private EditText mSearchEditText;
-    private ArrayList<OnlineBook> mFilteredList;
+    private ArrayList<OnlineBook> mFilteredOnlineBookList;
     private BookAdapter mBookAdapter;
+    private ArrayList<ElectronicBook> mFilteredElectronicBooks;
+    private ArrayList<ElectronicBook> mElectronicBooks;
+    private ElectronicBookAdapter mElectronicBookAdapter;
 }

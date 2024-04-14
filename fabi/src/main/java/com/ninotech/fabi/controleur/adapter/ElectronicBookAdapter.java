@@ -18,10 +18,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
 import com.ninotech.fabi.model.data.ElectronicBook;
+import com.ninotech.fabi.model.data.OnlineBook;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ElectronicBookAdapter extends RecyclerView.Adapter<ElectronicBookAdapter.MyViewHolder> {
@@ -75,6 +77,10 @@ public class ElectronicBookAdapter extends RecyclerView.Adapter<ElectronicBookAd
         notifyItemRemoved(position);
     }
 
+    public void filterList(ArrayList<ElectronicBook> filteredList) {
+        mElectronicBookList = filteredList;
+        notifyDataSetChanged();
+    }
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener{
         private ImageView mCoverImageView;

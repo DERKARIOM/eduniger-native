@@ -62,8 +62,8 @@ public class ContainerActivity extends AppCompatActivity {
         mSession = new Session(this);
         mElectronicTable = new ElectronicTable(this);
         Intent libraryIntent = getIntent();
-        int id = libraryIntent.getIntExtra("id",0);
-        switch (id)
+        mId = libraryIntent.getIntExtra("id",0);
+        switch (mId)
         {
             case 1: // Electronic Book
                 actionBarTitle.setText(R.string.your_electronic_books);
@@ -210,7 +210,26 @@ public class ContainerActivity extends AppCompatActivity {
                 onBackPressed(); // Appel de la méthode onBackPressed() pour simuler le comportement du bouton retour
                 return true;
             case R.id.item_menu_search:
-                Toast.makeText(this, "ok", Toast.LENGTH_SHORT).show();
+                Intent searchIntent = new Intent(ContainerActivity.this,SearchActivity.class);
+                switch (mId)
+                {
+                    case 1:
+                        searchIntent.putExtra("search_key","ELECTRONIC_BOOK");
+                        break;
+                    case 2:
+                        searchIntent.putExtra("search_key","AUDIO_BOOK");
+                        break;
+                    case 3:
+                        searchIntent.putExtra("search_key","LOAND_BOOK");
+                        break;
+                    case 4:
+                        searchIntent.putExtra("search_key","CATEGORY");
+                        break;
+                    case 5:
+                        searchIntent.putExtra("search_key","AUTHOR");
+                        break;
+                }
+                startActivity(searchIntent);
                 return true;
         }
         Log.e("idRecherche",String.valueOf(id));
@@ -229,4 +248,5 @@ public class ContainerActivity extends AppCompatActivity {
     private List<Category> mList4;
     private ElectronicTable mElectronicTable;
     private Session mSession;
+    private int mId;
 }
