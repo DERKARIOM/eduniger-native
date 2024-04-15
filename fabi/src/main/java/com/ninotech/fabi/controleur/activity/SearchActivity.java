@@ -21,11 +21,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.adapter.AudioBookAdapter;
 import com.ninotech.fabi.controleur.adapter.BookAdapter;
+import com.ninotech.fabi.controleur.adapter.CategoryAdapter;
+import com.ninotech.fabi.controleur.adapter.CategoryLocalAdapter;
 import com.ninotech.fabi.controleur.adapter.ElectronicBookAdapter;
 import com.ninotech.fabi.controleur.adapter.LoandBookAdapter;
 import com.ninotech.fabi.controleur.adapter.NoConnectionAdapter;
 import com.ninotech.fabi.controleur.adapter.VoidContainerAdapter;
 import com.ninotech.fabi.model.data.AudioBook;
+import com.ninotech.fabi.model.data.Category;
 import com.ninotech.fabi.model.data.Connection;
 import com.ninotech.fabi.model.data.ElectronicBook;
 import com.ninotech.fabi.model.data.LoandBook;
@@ -96,6 +99,10 @@ public class SearchActivity extends AppCompatActivity {
                         if(!mLoandBooks.isEmpty())
                             filterLoandBook(s.toString());
                         break;
+                    case "CATEGORY":
+                        if(!mCategorys.isEmpty())
+                            filterCategory(s.toString());
+                        break;
                 }
             }
         });
@@ -125,6 +132,7 @@ public class SearchActivity extends AppCompatActivity {
                 searchLoandBook();
                 break;
             case "CATEGORY":
+                searchCategory();
                 break;
         }
     }
@@ -369,6 +377,15 @@ public class SearchActivity extends AppCompatActivity {
         }
         mLoandBookAdapter.filterList(mFilteredLoandBooks);
     }
+    private void filterCategory(String text) {
+        mFilteredCategorys.clear();
+        for (Category item : mCategorys) {
+            if (item.getTitle().toLowerCase().contains(text.toLowerCase())) {
+                mFilteredCategorys.add(item);
+            }
+        }
+        mCategoryLocalAdapter.filterList(mFilteredCategorys);
+    }
     public void searchAudioBook()
     {
         try {
@@ -406,6 +423,26 @@ public class SearchActivity extends AppCompatActivity {
         }catch (Exception e)
         {
             voidContainer(R.drawable.img_physical,getString(R.string.no_loand_book));
+        }
+    }
+    void searchCategory()
+    {
+        try {
+            mCategorys = new ArrayList<>();
+            mFilteredCategorys = new ArrayList<>();
+            ElectronicTable electronicTable = new ElectronicTable(this);
+            Cursor categoryCursor = electronicTable.getCategoryData(mSession.getIdNumber());
+            categoryCursor.moveToFirst();
+            do {
+                mCategorys.add(new Category(categoryCursor.getString(0),categoryCursor.getString(1)));
+            }while (categoryCursor.moveToNext());
+            mCategoryLocalAdapter = new CategoryLocalAdapter(mCategorys);
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+            mRecyclerView.setAdapter(mCategoryLocalAdapter);
+        }
+        catch (Exception e)
+        {
+            voidContainer(R.drawable.img_categorie,getString(R.string.no_category));
         }
     }
     public void voidContainer(int image , String message)
@@ -466,4 +503,7 @@ public class SearchActivity extends AppCompatActivity {
     private ArrayList<LoandBook> mLoandBooks;
     private ArrayList<LoandBook> mFilteredLoandBooks;
     private LoandBookAdapter mLoandBookAdapter;
+    private ArrayList<Category> mCategorys;
+    private ArrayList<Category> mFilteredCategorys;
+    private CategoryLocalAdapter mCategoryLocalAdapter;
 }

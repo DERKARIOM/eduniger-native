@@ -15,11 +15,12 @@ import com.ninotech.fabi.controleur.activity.CategoryActivity;
 import com.ninotech.fabi.model.data.Category;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyViewHolder> {
-    List<Category> mListCategory;
+    List<Category> mCategorys;
 
     public int getPosition() {
         return mPosition;
@@ -30,8 +31,8 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyView
     }
 
     private int mPosition;
-    public CategoryAdapter(List<Category> listCategory) {
-        mListCategory = listCategory;
+    public CategoryAdapter(List<Category> categorys) {
+        mCategorys = categorys;
     }
     @Override
     public CategoryAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -42,7 +43,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyView
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        Category item = mListCategory.get(position);
+        Category item = mCategorys.get(position);
         int i = position;
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -52,24 +53,27 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyView
                 return true;
             }
         });
-        holder.display(mListCategory.get(position));
+        holder.display(mCategorys.get(position));
 
     }
     @Override
     public int getItemCount() {
-        return mListCategory.size();
+        return mCategorys.size();
     }
 
     public Category getItem(int position) {
-        return mListCategory.get(position);
+        return mCategorys.get(position);
     }
 
     public void Remove(int position){
-        mListCategory.remove(position);
+        mCategorys.remove(position);
         notifyItemRemoved(position);
     }
 
-
+    public void filterList(ArrayList<Category> filteredList) {
+        mCategorys = filteredList;
+        notifyDataSetChanged();
+    }
     public static class MyViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener{
         private final ImageView mBlanketImageView;
         private final TextView mTitleTextView;
