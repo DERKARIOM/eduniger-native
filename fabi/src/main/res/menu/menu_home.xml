@@ -22,7 +22,7 @@
     android:title="Offres" />
     <item android:title="Réservation" />
     <item
-        android:id="@+id/parametre"
+        android:id="@+id/setting"
         android:title="Paramètres" />
 
     <item

@@ -8,5 +8,6 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_activity_notification"
         style="@style/match_parent_all"
+        android:layout_marginTop="10dp"
         />
   </RelativeLayout>

@@ -1,6 +1,6 @@
 package com.ninotech.fabi.model.data;
 
-public class Parametre {
+public class Setting {
     public int getIcone() {
         return mIcone;
     }
@@ -26,7 +26,7 @@ public class Parametre {
     }
 
 
-    public Parametre(int icone, String tritre, String sousTritre) {
+    public Setting(int icone, String tritre, String sousTritre) {
         mIcone = icone;
         mTritre = tritre;
         mSousTritre = sousTritre;

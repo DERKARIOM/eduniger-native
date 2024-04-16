@@ -27,6 +27,7 @@ import com.ninotech.fabi.controleur.adapter.ElectronicBookAdapter;
 import com.ninotech.fabi.controleur.adapter.LoandBookAdapter;
 import com.ninotech.fabi.controleur.adapter.NoConnectionAdapter;
 import com.ninotech.fabi.controleur.adapter.NotificationAdapter;
+import com.ninotech.fabi.controleur.adapter.SettingAdapter;
 import com.ninotech.fabi.controleur.adapter.VoidContainerAdapter;
 import com.ninotech.fabi.model.data.AudioBook;
 import com.ninotech.fabi.model.data.Author;
@@ -36,6 +37,7 @@ import com.ninotech.fabi.model.data.ElectronicBook;
 import com.ninotech.fabi.model.data.LoandBook;
 import com.ninotech.fabi.model.data.Notification;
 import com.ninotech.fabi.model.data.OnlineBook;
+import com.ninotech.fabi.model.data.Setting;
 import com.ninotech.fabi.model.data.VoidContainer;
 import com.ninotech.fabi.model.table.AudioTable;
 import com.ninotech.fabi.model.table.ElectronicTable;
@@ -115,6 +117,10 @@ public class SearchActivity extends AppCompatActivity {
                         if(!mNotifications.isEmpty())
                             filterNotification(s.toString());
                         break;
+                    case "SETTING":
+                        if(!mSettings.isEmpty())
+                            filterSettings(s.toString());
+                        break;
                 }
             }
         });
@@ -151,6 +157,9 @@ public class SearchActivity extends AppCompatActivity {
                 break;
             case "NOTIFICATION":
                 searchNotification();
+                break;
+            case "SETTING":
+                searchSetting();
                 break;
         }
     }
@@ -422,6 +431,15 @@ public class SearchActivity extends AppCompatActivity {
         }
         mNotificationAdapter.filterList(mFilteredNotifications);
     }
+    private void filterSettings(String text) {
+        mFilteredSettings.clear();
+        for (Setting item : mSettings) {
+            if (item.getSousTritre().toLowerCase().contains(text.toLowerCase())) {
+                mFilteredSettings.add(item);
+            }
+        }
+        mSettingAdapter.filterList(mFilteredSettings);
+    }
     public void searchAudioBook()
     {
         try {
@@ -513,6 +531,7 @@ public class SearchActivity extends AppCompatActivity {
     }
     public void searchNotification()
     {
+        mSearchEditText.setHint(R.string.search_notification);
         mNotifications = new ArrayList<Notification>();
         mFilteredNotifications = new ArrayList<>();
         NotificationTable notificationTable = new NotificationTable(this);
@@ -531,6 +550,22 @@ public class SearchActivity extends AppCompatActivity {
             Log.e("ErrGetDataNotification",e.getMessage());
             voidContainer(R.drawable.img_message_suggestion,getString(R.string.no_notification));
         }
+    }
+    public void searchSetting()
+    {
+        mSearchEditText.setHint(R.string.search_setting);
+        mSettings = new ArrayList<>();
+        mFilteredSettings = new ArrayList<>();
+        mSettings.add(new Setting(R.drawable.vector_purple_200_compte,getString(R.string.account),getString(R.string.change_password)));
+        mSettings.add(new Setting(R.drawable.vector_purple_200_digital,getString(R.string.digital_print),getString(R.string.secure_session)));
+        mSettings.add(new Setting(R.drawable.vector_purple_200_messagerie,getString(R.string.send_suggestion),getString(R.string.subject_suggestion)));
+        mSettings.add(new Setting(R.drawable.vector_purple_200_start,getString(R.string.evaluate_us),getString(R.string.opservation_you)));
+        mSettings.add(new Setting(R.drawable.vector_purple_200_phone,getString(R.string.contact_us),getString(R.string.call_number)));
+        mSettings.add(new Setting(R.drawable.vector_purple_200_video,getString(R.string.how_it_works),getString(R.string.tutorial_that_explains_you_from_a_z)));
+        mSettings.add(new Setting(R.drawable.vector_purple_200_information,getString(R.string.app_information),getString(R.string.sub_app_information)));
+        mSettingAdapter = new SettingAdapter(mSettings);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getApplicationContext()));
+        mRecyclerView.setAdapter(mSettingAdapter);
     }
     public long percentage(long startDate , long endDate , long nowDate)
     {
@@ -591,4 +626,7 @@ public class SearchActivity extends AppCompatActivity {
     private ArrayList<Notification> mNotifications;
     private ArrayList<Notification> mFilteredNotifications;
     private NotificationAdapter mNotificationAdapter;
+    private ArrayList<Setting> mSettings;
+    private ArrayList<Setting> mFilteredSettings;
+    private SettingAdapter mSettingAdapter;
 }

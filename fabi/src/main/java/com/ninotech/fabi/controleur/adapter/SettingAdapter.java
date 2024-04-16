@@ -28,11 +28,12 @@ import com.ninotech.fabi.controleur.activity.FingerPrintActivity;
 import com.ninotech.fabi.controleur.activity.InfosActivity;
 import com.ninotech.fabi.controleur.activity.SuggestionActivity;
 import com.ninotech.fabi.R;
+import com.ninotech.fabi.model.data.Setting;
 import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.controleur.dialog.SucceSuggesionDialog;
-import com.ninotech.fabi.model.data.Parametre;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.MultipartBody;
@@ -41,8 +42,8 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class ParametreAdapter extends RecyclerView.Adapter<ParametreAdapter.MyViewHolder> {
-    List<Parametre> mListParametre;
+public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.MyViewHolder> {
+    List<Setting> mSettings;
 
     public int getPosition() {
         return mPosition;
@@ -53,18 +54,18 @@ public class ParametreAdapter extends RecyclerView.Adapter<ParametreAdapter.MyVi
     }
 
     private int mPosition;
-    public ParametreAdapter(List<Parametre> listParametre) {
-        mListParametre = listParametre;
+    public SettingAdapter(List<Setting> settings) {
+        mSettings = settings;
     }
     @Override
-    public ParametreAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public SettingAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         View view = layoutInflater.inflate(R.layout.adapter_parametre,parent,false);
         return new MyViewHolder(view);
     }
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        Parametre item = mListParametre.get(position);
+        Setting item = mSettings.get(position);
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
@@ -73,23 +74,26 @@ public class ParametreAdapter extends RecyclerView.Adapter<ParametreAdapter.MyVi
                 return true;
             }
         });
-        holder.display(mListParametre.get(position));
+        holder.display(mSettings.get(position));
 
     }
     @Override
     public int getItemCount() {
-        return mListParametre.size();
+        return mSettings.size();
     }
 
-    public Parametre getItem(int position) {
-        return mListParametre.get(position);
+    public Setting getItem(int position) {
+        return mSettings.get(position);
     }
 
     public void Remove(int position){
-        mListParametre.remove(position);
+        mSettings.remove(position);
         notifyItemRemoved(position);
     }
-
+    public void filterList(ArrayList<Setting> filteredList) {
+        mSettings = filteredList;
+        notifyDataSetChanged();
+    }
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener{
         private ImageView mIcone;
@@ -118,14 +122,14 @@ public class ParametreAdapter extends RecyclerView.Adapter<ParametreAdapter.MyVi
 //            menu.add(Menu.NONE,R.id.suppNotif,Menu.NONE,"Supprimer");
 //            menu.add(Menu.NONE,R.id.inportanteNotif,Menu.NONE,"Message importants");
         }
-        void display(Parametre parametre){
-            mIcone.setImageResource(parametre.getIcone());
-            mTitre.setText(parametre.getTritre());
-            mSousTitre.setText(parametre.getSousTritre());
+        void display(Setting setting){
+            mIcone.setImageResource(setting.getIcone());
+            mTitre.setText(setting.getTritre());
+            mSousTitre.setText(setting.getSousTritre());
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    switch (parametre.getTritre())
+                    switch (setting.getTritre())
                     {
                         case "Compte":
                             Intent password = new Intent(itemView.getContext(),ChangePasswordActivity.class);

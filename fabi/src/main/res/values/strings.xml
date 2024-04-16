@@ -230,5 +230,7 @@
     <string name="search_category">Recherche des categorie</string>
     <string name="search_author">Recherche des auteurs</string>
     <string name="no_notification">Auccune Notification</string>
+    <string name="search_notification">Recherche des notification</string>
+    <string name="search_setting">Recherche des paramètre</string>
 
 </resources>
