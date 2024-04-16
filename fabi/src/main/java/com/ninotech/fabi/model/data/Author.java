@@ -5,6 +5,11 @@ public class Author extends User {
         super(idNumber, name, firstName);
         mProfile = profile;
     }
+    public Author(String profile , String name)
+    {
+        super(null,name,null);
+        mProfile = profile;
+    }
 
     public String getProfile() {
         return mProfile;

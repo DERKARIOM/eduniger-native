@@ -20,14 +20,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.adapter.AudioBookAdapter;
+import com.ninotech.fabi.controleur.adapter.AuthorLocalAdapter;
 import com.ninotech.fabi.controleur.adapter.BookAdapter;
-import com.ninotech.fabi.controleur.adapter.CategoryAdapter;
 import com.ninotech.fabi.controleur.adapter.CategoryLocalAdapter;
 import com.ninotech.fabi.controleur.adapter.ElectronicBookAdapter;
 import com.ninotech.fabi.controleur.adapter.LoandBookAdapter;
 import com.ninotech.fabi.controleur.adapter.NoConnectionAdapter;
 import com.ninotech.fabi.controleur.adapter.VoidContainerAdapter;
 import com.ninotech.fabi.model.data.AudioBook;
+import com.ninotech.fabi.model.data.Author;
 import com.ninotech.fabi.model.data.Category;
 import com.ninotech.fabi.model.data.Connection;
 import com.ninotech.fabi.model.data.ElectronicBook;
@@ -103,6 +104,10 @@ public class SearchActivity extends AppCompatActivity {
                         if(!mCategorys.isEmpty())
                             filterCategory(s.toString());
                         break;
+                    case "AUTHOR":
+                        if(!mAuthors.isEmpty())
+                            filterAuthor(s.toString());
+                        break;
                 }
             }
         });
@@ -133,6 +138,9 @@ public class SearchActivity extends AppCompatActivity {
                 break;
             case "CATEGORY":
                 searchCategory();
+                break;
+            case "AUTHOR":
+                searchAuthor();
                 break;
         }
     }
@@ -386,6 +394,15 @@ public class SearchActivity extends AppCompatActivity {
         }
         mCategoryLocalAdapter.filterList(mFilteredCategorys);
     }
+    private void filterAuthor(String text) {
+        mFilteredAuthors.clear();
+        for (Author item : mAuthors) {
+            if (item.getName().toLowerCase().contains(text.toLowerCase())) {
+                mFilteredAuthors.add(item);
+            }
+        }
+        mAuthorLocalAdapter.filterList(mFilteredAuthors);
+    }
     public void searchAudioBook()
     {
         try {
@@ -453,6 +470,26 @@ public class SearchActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setAdapter(voidContainerAdapter);
     }
+    void searchAuthor()
+    {
+        try {
+            mAuthors = new ArrayList<>();
+            mFilteredAuthors = new ArrayList<>();
+            ElectronicTable electronicTable = new ElectronicTable(this);
+            Cursor authorCursor = electronicTable.getAuthorData(mSession.getIdNumber());
+            authorCursor.moveToFirst();
+            do {
+                mAuthors.add(new Author(authorCursor.getString(0),authorCursor.getString(1)));
+            }while (authorCursor.moveToNext());
+            mAuthorLocalAdapter = new AuthorLocalAdapter(mAuthors);
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+            mRecyclerView.setAdapter(mAuthorLocalAdapter);
+        }catch (Exception e)
+        {
+            voidContainer(R.drawable.img_auteur_local,getString(R.string.no_author));
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
     public long percentage(long startDate , long endDate , long nowDate)
     {
         return (long) (((float)(nowDate - startDate)/(float) (endDate - startDate))*100);
@@ -506,4 +543,7 @@ public class SearchActivity extends AppCompatActivity {
     private ArrayList<Category> mCategorys;
     private ArrayList<Category> mFilteredCategorys;
     private CategoryLocalAdapter mCategoryLocalAdapter;
+    private ArrayList<Author> mAuthors;
+    private ArrayList<Author> mFilteredAuthors;
+    private AuthorLocalAdapter mAuthorLocalAdapter;
 }

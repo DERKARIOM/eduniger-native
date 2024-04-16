@@ -7,8 +7,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,7 +22,7 @@ import com.ninotech.fabi.controleur.adapter.CategoryLocalAdapter;
 import com.ninotech.fabi.controleur.adapter.ElectronicBookAdapter;
 import com.ninotech.fabi.controleur.adapter.VoidContainerAdapter;
 import com.ninotech.fabi.controleur.adapter.LoandBookAdapter;
-import com.ninotech.fabi.model.data.AuthorLocal;
+import com.ninotech.fabi.model.data.Author;
 import com.ninotech.fabi.model.data.AudioBook;
 import com.ninotech.fabi.model.data.Category;
 import com.ninotech.fabi.model.data.ElectronicBook;
@@ -137,16 +135,14 @@ public class ContainerActivity extends AppCompatActivity {
             case 5: // Auteurs
                 actionBarTitle.setText(R.string.author);
                 try {
-                    ArrayList<AuthorLocal> authorLocals = new ArrayList<>();
+                    ArrayList<Author> authors = new ArrayList<>();
+
                     Cursor authorCursor = mElectronicTable.getAuthorData(mSession.getIdNumber());
                     authorCursor.moveToFirst();
                     do {
-                        byte[] imageBytes = authorCursor.getBlob(0);
-                        // Convertir le tableau d'octets en Bitmap
-                        Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-                        authorLocals.add(new AuthorLocal(bitmap,authorCursor.getString(1)));
+                        authors.add(new Author(authorCursor.getString(0),authorCursor.getString(1)));
                     }while (authorCursor.moveToNext());
-                    AuthorLocalAdapter authorLocalAdapter = new AuthorLocalAdapter(authorLocals);
+                    AuthorLocalAdapter authorLocalAdapter = new AuthorLocalAdapter(authors);
                     mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
                     mRecyclerView.setAdapter(authorLocalAdapter);
                 }catch (Exception e)

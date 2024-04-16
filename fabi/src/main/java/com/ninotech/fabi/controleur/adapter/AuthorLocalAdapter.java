@@ -12,19 +12,20 @@ import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.ninotech.fabi.R;
-import com.ninotech.fabi.controleur.animation.RoundedTransformation;
-import com.ninotech.fabi.model.data.AuthorLocal;
-import com.ninotech.fabi.model.data.Category;
-import com.squareup.picasso.Picasso;
+import com.ninotech.fabi.model.data.Author;
+import com.ninotech.fabi.model.data.OnlineBook;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 
 public class AuthorLocalAdapter extends RecyclerView.Adapter<AuthorLocalAdapter.MyViewHolder> {
-    List<AuthorLocal> mAuthorLocals;
+    List<Author> mAuthors;
 
     public int getPosition() {
         return mPosition;
@@ -35,8 +36,8 @@ public class AuthorLocalAdapter extends RecyclerView.Adapter<AuthorLocalAdapter.
     }
 
     private int mPosition;
-    public AuthorLocalAdapter(List<AuthorLocal> authorLocals) {
-        mAuthorLocals = authorLocals;
+    public AuthorLocalAdapter(List<Author> authors) {
+        mAuthors = authors;
     }
     @Override
     public AuthorLocalAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -47,7 +48,7 @@ public class AuthorLocalAdapter extends RecyclerView.Adapter<AuthorLocalAdapter.
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        AuthorLocal item = mAuthorLocals.get(position);
+        Author item = mAuthors.get(position);
         int i = position;
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -57,24 +58,26 @@ public class AuthorLocalAdapter extends RecyclerView.Adapter<AuthorLocalAdapter.
                 return true;
             }
         });
-        holder.display(mAuthorLocals.get(position));
+        holder.display(mAuthors.get(position));
 
     }
     @Override
     public int getItemCount() {
-        return mAuthorLocals.size();
+        return mAuthors.size();
     }
 
-    public AuthorLocal getItem(int position) {
-        return mAuthorLocals.get(position);
+    public Author getItem(int position) {
+        return mAuthors.get(position);
     }
 
     public void Remove(int position){
-        mAuthorLocals.remove(position);
+        mAuthors.remove(position);
         notifyItemRemoved(position);
     }
-
-
+    public void filterList(ArrayList<Author> filteredList) {
+        mAuthors = filteredList;
+        notifyDataSetChanged();
+    }
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener{
         private ImageView mProfileImageView;
         private TextView mUsernameTextView;
@@ -90,38 +93,13 @@ public class AuthorLocalAdapter extends RecyclerView.Adapter<AuthorLocalAdapter.
 //            menu.add(Menu.NONE,R.id.suppNotif,Menu.NONE,"Supprimer");
 //            menu.add(Menu.NONE,R.id.inportanteNotif,Menu.NONE,"Message importants");
         }
-        void display(AuthorLocal authorLocal){
-            File file = bitmapToFile(itemView.getContext(), authorLocal.getName() + ".png", authorLocal.getProfile());
-            Picasso.get().load(file)
-                    .placeholder(R.drawable.img_default_book)
-                    .error(R.drawable.img_default_book)
-                    .transform(new RoundedTransformation(10000,4))
-                    .resize(200,200)
+        void display(Author author){
+            File file = new File(author.getProfile());
+            Glide.with(itemView.getContext())
+                    .load(file)
+                    .apply(RequestOptions.circleCropTransform())
                     .into(mProfileImageView);
-            mUsernameTextView.setText(authorLocal.getName());
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Toast.makeText(itemView.getContext(), "OK", Toast.LENGTH_SHORT).show();
-//                    Intent category = new Intent(itemView.getContext(), CategoryActivity.class);
-//                    category.putExtra("nomCat",mTitre.getText().toString());
-//                    itemView.getContext().startActivity(category);
-                }
-            });
-        }
-        public File bitmapToFile(Context context, String filename, Bitmap bitmap) {
-            // Créer un fichier dans le répertoire de cache de l'application
-            File file = new File(context.getCacheDir(), filename);
-            try {
-                // Convertir le Bitmap en un fichier de sortie
-                file.createNewFile();
-                FileOutputStream ostream = new FileOutputStream(file);
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, ostream);
-                ostream.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return file;
+            mUsernameTextView.setText(author.getName());
         }
     }
 }
