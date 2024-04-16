@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.activity.BookActivity;
-import com.ninotech.fabi.model.data.Category;
 import com.ninotech.fabi.model.data.OnlineBook;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
 import com.squareup.picasso.Picasso;
@@ -21,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BookAdapter extends RecyclerView.Adapter<BookAdapter.MyViewHolder> {
-    List<OnlineBook> mListOnlineBook;
+    List<OnlineBook> mOnlineBooks;
 
     public int getPosition() {
         return mPosition;
@@ -32,8 +31,8 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.MyViewHolder> 
     }
 
     private int mPosition;
-    public BookAdapter(List<OnlineBook> listOnlineBook) {
-        mListOnlineBook = listOnlineBook;
+    public BookAdapter(List<OnlineBook> onlineBooks) {
+        mOnlineBooks = onlineBooks;
     }
     @Override
     public BookAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -44,7 +43,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.MyViewHolder> 
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        OnlineBook item = mListOnlineBook.get(position);
+        OnlineBook item = mOnlineBooks.get(position);
         int i = position;
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -54,24 +53,24 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.MyViewHolder> 
                 return true;
             }
         });
-        holder.display(mListOnlineBook.get(position));
+        holder.display(mOnlineBooks.get(position));
 
     }
     @Override
     public int getItemCount() {
-        return mListOnlineBook.size();
+        return mOnlineBooks.size();
     }
 
     public OnlineBook getItem(int position) {
-        return mListOnlineBook.get(position);
+        return mOnlineBooks.get(position);
     }
 
     public void Remove(int position){
-        mListOnlineBook.remove(position);
+        mOnlineBooks.remove(position);
         notifyItemRemoved(position);
     }
     public void filterList(ArrayList<OnlineBook> filteredList) {
-        mListOnlineBook = filteredList;
+        mOnlineBooks = filteredList;
         notifyDataSetChanged();
     }
 

@@ -57,8 +57,8 @@ public class CategoryActivity extends AppCompatActivity {
         ab.setHomeAsUpIndicator(R.drawable.vector_back);
         ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         ab.setCustomView(R.layout.custom_action_bar);
-        TextView actionBarTitle = ab.getCustomView().findViewById(R.id.action_bar_title);
         ab.setDisplayHomeAsUpEnabled(true);
+        TextView actionBarTitle = ab.getCustomView().findViewById(R.id.action_bar_title);
         mCategorie=null;
         if (intent != null && intent.hasExtra("intent_adapter_category_title")) {
             mCategorie = intent.getStringExtra("intent_adapter_category_title");

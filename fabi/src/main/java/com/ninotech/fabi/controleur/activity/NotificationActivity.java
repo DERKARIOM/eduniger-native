@@ -1,13 +1,18 @@
 package com.ninotech.fabi.controleur.activity;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.ninotech.fabi.controleur.adapter.VoidContainerAdapter;
 import com.ninotech.fabi.model.data.Notification;
@@ -25,54 +30,67 @@ public class NotificationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notification);
-        getSupportActionBar().hide();
-        // Activer le bouton de retour de l'action barre
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        mRecyclerView = (RecyclerView) findViewById(R.id.recyler2);
+        ActionBar ab = getSupportActionBar();
+        assert ab != null;
+        ab.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.white)));
+        ab.setHomeAsUpIndicator(R.drawable.vector_back);
+        ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        ab.setCustomView(R.layout.custom_action_bar);
+        ab.setDisplayHomeAsUpEnabled(true);
+        TextView actionBarTitle = ab.getCustomView().findViewById(R.id.action_bar_title);
+        actionBarTitle.setText(R.string.notification);
+        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view_activity_notification);
         mSession = new Session(this);
         mNotificationTable = new NotificationTable(this);
-        mList = new ArrayList<Notification>();
+        mNotifications = new ArrayList<Notification>();
         Cursor cursor = mNotificationTable.getData(mSession.getIdNumber());
         cursor.moveToFirst();
         try {
             do {
-                mList.add(new Notification(cursor.getString(2),cursor.getString(3),cursor.getString(4)));
+                mNotifications.add(new Notification(cursor.getString(2),cursor.getString(3),cursor.getString(4)));
             }while(cursor.moveToNext());
-            mNotificationAdapter = new NotificationAdapter(mList);
+            mNotificationAdapter = new NotificationAdapter(mNotifications);
             mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getApplicationContext()));
             mRecyclerView.setAdapter(mNotificationAdapter);
             mRecyclerView.smoothScrollToPosition(mNotificationAdapter.getItemCount()-1);
         }catch (Exception e)
         {
             Log.e("ErrGetDataNotification",e.getMessage());
-            ArrayList<VoidContainer> voidContainers = new ArrayList<>();
-            voidContainers.add(new VoidContainer(R.drawable.img_message_suggestion,"Auccune Notification"));
-            VoidContainerAdapter voidContainerAdapter = new VoidContainerAdapter(voidContainers);
-            mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-            mRecyclerView.setAdapter(voidContainerAdapter);
+            voidContainer(R.drawable.img_message_suggestion,getString(R.string.no_notification));
         }
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_search, menu);
+        return true;
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Gérer les clics sur les éléments de l'action barre
-        switch (item.getItemId()) {
+        int id = item.getItemId();
+        switch (id)
+        {
             case android.R.id.home:
-                // Appeler onBackPressed() lorsque le bouton de retour de l'action barre est pressé
-                onBackPressed();
+                onBackPressed(); // Appel de la méthode onBackPressed() pour simuler le comportement du bouton retour
                 return true;
-            default:
-                return super.onOptionsItemSelected(item);
+            case R.id.item_menu_search:
+                Intent searchIntent = new Intent(NotificationActivity.this,SearchActivity.class);
+                searchIntent.putExtra("search_key","NOTIFICATION");
+                startActivity(searchIntent);
+                return true;
         }
+        return super.onOptionsItemSelected(item);
     }
-
-    @Override
-    public void onBackPressed() {
-        // Revenir en arrière tout simplement
-        super.onBackPressed();
+    public void voidContainer(int image , String message)
+    {
+        ArrayList<VoidContainer> voidContainers = new ArrayList<>();
+        voidContainers.add(new VoidContainer(image,message));
+        VoidContainerAdapter voidContainerAdapter = new VoidContainerAdapter(voidContainers);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.setAdapter(voidContainerAdapter);
     }
     private RecyclerView mRecyclerView;
     private NotificationAdapter mNotificationAdapter;
-    private ArrayList<Notification> mList;
+    private ArrayList<Notification> mNotifications;
     private NotificationTable mNotificationTable;
     private Session mSession;
 }

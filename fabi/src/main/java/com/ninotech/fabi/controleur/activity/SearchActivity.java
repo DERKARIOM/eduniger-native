@@ -26,6 +26,7 @@ import com.ninotech.fabi.controleur.adapter.CategoryLocalAdapter;
 import com.ninotech.fabi.controleur.adapter.ElectronicBookAdapter;
 import com.ninotech.fabi.controleur.adapter.LoandBookAdapter;
 import com.ninotech.fabi.controleur.adapter.NoConnectionAdapter;
+import com.ninotech.fabi.controleur.adapter.NotificationAdapter;
 import com.ninotech.fabi.controleur.adapter.VoidContainerAdapter;
 import com.ninotech.fabi.model.data.AudioBook;
 import com.ninotech.fabi.model.data.Author;
@@ -33,11 +34,13 @@ import com.ninotech.fabi.model.data.Category;
 import com.ninotech.fabi.model.data.Connection;
 import com.ninotech.fabi.model.data.ElectronicBook;
 import com.ninotech.fabi.model.data.LoandBook;
+import com.ninotech.fabi.model.data.Notification;
 import com.ninotech.fabi.model.data.OnlineBook;
 import com.ninotech.fabi.model.data.VoidContainer;
 import com.ninotech.fabi.model.table.AudioTable;
 import com.ninotech.fabi.model.table.ElectronicTable;
 import com.ninotech.fabi.model.table.LoandTable;
+import com.ninotech.fabi.model.table.NotificationTable;
 import com.ninotech.fabi.model.table.Session;
 
 import org.json.JSONArray;
@@ -108,6 +111,10 @@ public class SearchActivity extends AppCompatActivity {
                         if(!mAuthors.isEmpty())
                             filterAuthor(s.toString());
                         break;
+                    case "NOTIFICATION":
+                        if(!mNotifications.isEmpty())
+                            filterNotification(s.toString());
+                        break;
                 }
             }
         });
@@ -141,6 +148,9 @@ public class SearchActivity extends AppCompatActivity {
                 break;
             case "AUTHOR":
                 searchAuthor();
+                break;
+            case "NOTIFICATION":
+                searchNotification();
                 break;
         }
     }
@@ -403,6 +413,15 @@ public class SearchActivity extends AppCompatActivity {
         }
         mAuthorLocalAdapter.filterList(mFilteredAuthors);
     }
+    private void filterNotification(String text) {
+        mFilteredNotifications.clear();
+        for (Notification item : mNotifications) {
+            if (item.getMessage().toLowerCase().contains(text.toLowerCase())) {
+                mFilteredNotifications.add(item);
+            }
+        }
+        mNotificationAdapter.filterList(mFilteredNotifications);
+    }
     public void searchAudioBook()
     {
         try {
@@ -444,6 +463,7 @@ public class SearchActivity extends AppCompatActivity {
     }
     void searchCategory()
     {
+        mSearchEditText.setHint(R.string.search_category);
         try {
             mCategorys = new ArrayList<>();
             mFilteredCategorys = new ArrayList<>();
@@ -470,8 +490,9 @@ public class SearchActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setAdapter(voidContainerAdapter);
     }
-    void searchAuthor()
+    public void searchAuthor()
     {
+        mSearchEditText.setHint(R.string.search_author);
         try {
             mAuthors = new ArrayList<>();
             mFilteredAuthors = new ArrayList<>();
@@ -488,6 +509,27 @@ public class SearchActivity extends AppCompatActivity {
         {
             voidContainer(R.drawable.img_auteur_local,getString(R.string.no_author));
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+    public void searchNotification()
+    {
+        mNotifications = new ArrayList<Notification>();
+        mFilteredNotifications = new ArrayList<>();
+        NotificationTable notificationTable = new NotificationTable(this);
+        Cursor cursor = notificationTable.getData(mSession.getIdNumber());
+        cursor.moveToFirst();
+        try {
+            do {
+                mNotifications.add(new Notification(cursor.getString(2),cursor.getString(3),cursor.getString(4)));
+            }while(cursor.moveToNext());
+            mNotificationAdapter = new NotificationAdapter(mNotifications);
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getApplicationContext()));
+            mRecyclerView.setAdapter(mNotificationAdapter);
+            mRecyclerView.smoothScrollToPosition(mNotificationAdapter.getItemCount()-1);
+        }catch (Exception e)
+        {
+            Log.e("ErrGetDataNotification",e.getMessage());
+            voidContainer(R.drawable.img_message_suggestion,getString(R.string.no_notification));
         }
     }
     public long percentage(long startDate , long endDate , long nowDate)
@@ -546,4 +588,7 @@ public class SearchActivity extends AppCompatActivity {
     private ArrayList<Author> mAuthors;
     private ArrayList<Author> mFilteredAuthors;
     private AuthorLocalAdapter mAuthorLocalAdapter;
+    private ArrayList<Notification> mNotifications;
+    private ArrayList<Notification> mFilteredNotifications;
+    private NotificationAdapter mNotificationAdapter;
 }

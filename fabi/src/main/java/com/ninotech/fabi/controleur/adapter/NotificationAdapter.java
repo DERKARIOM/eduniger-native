@@ -10,10 +10,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.model.data.Notification;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.MyViewHolder> {
-    List<Notification> mListNotification;
+    List<Notification> mNotifications;
 
     public int getPosition() {
         return mPosition;
@@ -24,8 +25,8 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     }
 
     private int mPosition;
-    public NotificationAdapter(List<Notification> listNotification) {
-        mListNotification = listNotification;
+    public NotificationAdapter(List<Notification> notifications) {
+        mNotifications = notifications;
     }
     @Override
     public NotificationAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -35,7 +36,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     }
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        Notification item = mListNotification.get(position);
+        Notification item = mNotifications.get(position);
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
@@ -44,23 +45,26 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                 return true;
             }
         });
-        holder.display(mListNotification.get(position));
+        holder.display(mNotifications.get(position));
 
     }
     @Override
     public int getItemCount() {
-        return mListNotification.size();
+        return mNotifications.size();
     }
 
     public Notification getItem(int position) {
-        return mListNotification.get(position);
+        return mNotifications.get(position);
     }
 
     public void Remove(int position){
-        mListNotification.remove(position);
+        mNotifications.remove(position);
         notifyItemRemoved(position);
     }
-
+    public void filterList(ArrayList<Notification> filteredList) {
+        mNotifications = filteredList;
+        notifyDataSetChanged();
+    }
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener{
         private TextView mTitre;
