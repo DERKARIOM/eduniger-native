@@ -7,25 +7,14 @@
     <RelativeLayout
         style="@style/wrap_content_all"
         android:layout_marginStart="5dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
         android:id="@+id/BtoolbarCategorie">
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/relative_layout_toolbar_simple"
-           style="@style/match_wrap"
-            app:menu="@menu/menu_home"
-            app:logo="@drawable/vector_back"
-            android:layout_centerVertical="true"
-            app:titleMarginStart="15dp"
-            android:paddingStart="20dp"
-            app:titleTextColor="@color/black3"
-            android:layout_alignParentTop="true"
-            app:titleTextAppearance="@style/toolbar"
-            tools:ignore="RtlSymmetry" />
+        <include layout="@layout/toolbar_book"/>
         <androidx.core.widget.NestedScrollView
             android:id="@+id/nested_scroll_view_activity_book"
             android:visibility="gone"
            style="@style/match_parent_all"
-            android:layout_below="@id/relative_layout_toolbar_simple">
+            android:layout_below="@id/relative_layout_toolbar_book">
             <RelativeLayout
                 style="@style/wrap_content_all">
                 <RelativeLayout

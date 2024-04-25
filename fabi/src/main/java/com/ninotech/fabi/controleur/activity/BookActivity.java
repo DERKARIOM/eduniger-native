@@ -130,11 +130,18 @@ public class BookActivity extends AppCompatActivity {
         mReservationLinearLayout = findViewById(R.id.linear_layout_activity_book_reservation);
         mAudioLinearLayout = findViewById(R.id.linear_layout_activity_book_audio);
         mElectronicLinearLayout = findViewById(R.id.linear_layout_activity_book_electronic);
+        mBackImageView = findViewById(R.id.image_view_toolbar_book);
         mReservationDialog = new ReservationDialog(this);
         mElectronicTable = new ElectronicTable(this);
         mHandler = new Handler();
         mMediaPlayer = new MediaPlayer();
         mTimer = new Timer();
+        mBackImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
         ArrayList<Connection> list = new ArrayList<>();
         list.add(new Connection(getString(R.string.wait),null,true));
         mNoConnectionAdapter = new NoConnectionAdapter(list);
@@ -1373,4 +1380,5 @@ public class BookActivity extends AppCompatActivity {
     private NestedScrollView mNestedScrollView;
     private NoConnectionAdapter mNoConnectionAdapter;
     private Author mAuthor;
+    private ImageView mBackImageView;
 }
