@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -48,7 +49,14 @@ public class SuggestionActivity extends AppCompatActivity {
         mErrorTextView = findViewById(R.id.text_view_activity_suggestion_error);
         CheckBox phoneCheckBox = findViewById(R.id.check_box_activity_suggestion_information_phone);
         mConnectionProgressBar = findViewById(R.id.progress_bar_activity_suggestion_connection);
+        mBackImageView = findViewById(R.id.image_view_toolbar_suggestion);
         mPhone = new Phone(Build.MODEL,Build.VERSION.RELEASE);
+        mBackImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.options_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mObjetSpinner.setAdapter(adapter);
@@ -165,4 +173,5 @@ public class SuggestionActivity extends AppCompatActivity {
     private TextView mErrorTextView;
     private Phone mPhone;
     private ProgressBar mConnectionProgressBar;
+    private ImageView mBackImageView;
 }

@@ -2,12 +2,12 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/relative_layout_toolbar_book"
+    android:id="@+id/relative_layout_toolbar_suggestion"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginTop="20dp">
     <ImageView
-        android:id="@+id/image_view_toolbar_book"
+        android:id="@+id/image_view_toolbar_suggestion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
@@ -17,7 +17,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/image_view_toolbar_book"
+        android:layout_toRightOf="@id/image_view_toolbar_suggestion"
         android:text="Suggestion"
         android:layout_margin="10dp"
         android:textStyle="bold"

@@ -4,20 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/match_parent_all"
     tools:context="com.ninotech.fabi.controleur.activity.SuggestionActivity">
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar_activity_suggestion"
-        style="@style/match_wrap"
-        app:logo="@drawable/vector_back"
-        app:title="Suggestion"
-        android:layout_centerVertical="true"
-        app:titleMarginStart="15dp"
-        android:paddingStart="20dp"
-        app:titleTextColor="@color/black3"
-        android:layout_alignParentTop="true"
-        app:titleTextAppearance="@style/toolbar"
-        tools:ignore="RtlSymmetry" />
+   <include layout="@layout/toolbar_suggestion"/>
     <ScrollView
-        android:layout_below="@+id/toolbar_activity_suggestion"
+        android:layout_below="@+id/relative_layout_toolbar_suggestion"
         style="@style/match_parent_all"
         android:layout_centerInParent="true"
         >
