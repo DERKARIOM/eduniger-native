@@ -10,7 +10,9 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -71,9 +73,16 @@ public class SearchActivity extends AppCompatActivity {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         mRecyclerView = findViewById(R.id.recycler_view_activity_search);
         mSearchEditText = findViewById(R.id.edit_text_toolbar_search);
+        mBackImageView = findViewById(R.id.image_view_toolbar_search);
         mSession = new Session(this);
         mSearchEditText.requestFocus();
         Intent searchIntent = getIntent();
+        mBackImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
         mSearchEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -629,4 +638,5 @@ public class SearchActivity extends AppCompatActivity {
     private ArrayList<Setting> mSettings;
     private ArrayList<Setting> mFilteredSettings;
     private SettingAdapter mSettingAdapter;
+    private ImageView mBackImageView;
 }
