@@ -4,7 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
-import com.ninotech.fabi.controleur.fragment.DiscussionFragment;
+import com.ninotech.fabi.controleur.fragment.FabiolaChatFragment;
 import com.ninotech.fabi.controleur.fragment.HistoriqueFragment;
 
 public class AssistanceViewPagerAdapter extends FragmentStateAdapter {
@@ -19,11 +19,11 @@ public class AssistanceViewPagerAdapter extends FragmentStateAdapter {
         // Retournez le fragment associé à chaque onglet
         switch (position) {
             case 0:
-                return new DiscussionFragment();
+                return new FabiolaChatFragment();
             case 1:
                 return new HistoriqueFragment();
         }
-        return new DiscussionFragment(); // Fragment par défaut
+        return new FabiolaChatFragment(); // Fragment par défaut
     }
 
     @Override

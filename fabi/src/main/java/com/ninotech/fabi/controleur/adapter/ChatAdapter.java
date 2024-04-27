@@ -85,11 +85,22 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
 //            menu.add(Menu.NONE,R.id.inportanteNotif,Menu.NONE,"Message importants");
         }
         void display(Chat chat){
-            Picasso.get()
-                    .load(itemView.getContext().getString(R.string.ip_server) + "ressources/profile/" + chat.getProfile())
-                    .placeholder(R.drawable.img_default_book)
-                    .error(R.drawable.img_default_book)
-                    .into(mProfile);
+            if(chat.isChat())
+            {
+                Picasso.get()
+                        .load(R.drawable.img_fabiola_beta)
+                        .placeholder(R.drawable.img_default_book)
+                        .error(R.drawable.img_default_book)
+                        .into(mProfile);
+            }
+            else
+            {
+                Picasso.get()
+                        .load(R.drawable.img_moi)
+                        .placeholder(R.drawable.img_default_book)
+                        .error(R.drawable.img_default_book)
+                        .into(mProfile);
+            }
             mNom.setText(chat.getUserName());
             mMessage.setText(chat.getMessage());
         }
