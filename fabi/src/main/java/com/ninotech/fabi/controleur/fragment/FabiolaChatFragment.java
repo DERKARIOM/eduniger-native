@@ -1,7 +1,11 @@
 package com.ninotech.fabi.controleur.fragment;
 
+import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +18,9 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.ninotech.fabi.controleur.activity.BookActivity;
+import com.ninotech.fabi.controleur.activity.MainActivity;
+import com.ninotech.fabi.controleur.activity.SearchActivity;
 import com.ninotech.fabi.controleur.adapter.ChatAdapter;
 import com.ninotech.fabi.model.Arm;
 import com.ninotech.fabi.model.data.Chat;
@@ -45,6 +52,27 @@ public class FabiolaChatFragment extends Fragment {
         mChatAdapter = new ChatAdapter(mList);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(mChatAdapter);
+        mEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+            @Override
+            public void afterTextChanged(Editable s) {
+                switch (s.charAt(s.length()-1))
+                {
+                    case '#':
+                        Intent searchIntent = new Intent(getContext(), SearchActivity.class);
+                        searchIntent.putExtra("search_key","ONLINE_BOOK");
+                        searchIntent.putExtra("online_book_key","MAIN_ACTIVITY");
+                        startActivity(searchIntent);
+                }
+            }
+        });
         mEnvoie.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -58,6 +86,8 @@ public class FabiolaChatFragment extends Fragment {
                 {
                     mArm.setTitle(mArm.extractBookTitle(mRequete));
                     mArm.setNumberOfDays(mArm.extractDuration(mRequete));
+                    Reservation reservation = new Reservation();
+                    //reservation.execute(getString(R.string.ip_server_android),mSession.getIdNumber(),mSess)
                     mList.add(new Chat("fabiola.png","abiola","Votre réservation du livre \"" + mArm.getTitle() + "\" pour une durée de " + String.valueOf(mArm.getNumberOfDays())  + " jours a été enregistrée avec succès. Merci pour votre demande !",true));
                     mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                     mRecyclerView.setAdapter(mChatAdapter);
@@ -106,6 +136,46 @@ public class FabiolaChatFragment extends Fragment {
             mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
             mRecyclerView.setAdapter(mChatAdapter);
             mRecyclerView.smoothScrollToPosition(mChatAdapter.getItemCount()-1);
+        }
+    }
+    private class Reservation extends AsyncTask<String,Void,String> {
+        @Override
+        protected String doInBackground(String... params) {
+
+            try {
+                OkHttpClient client = new OkHttpClient();
+                RequestBody requestBody = new MultipartBody.Builder()
+                        .setType(MultipartBody.FORM)
+                        .addFormDataPart("idNumber",params[1])
+                        .addFormDataPart("idBook",params[2])
+                        .addFormDataPart("numberOfDay",params[3])
+                        .build();
+                Request request = new Request.Builder()
+                        .url(params[0])
+                        .post(requestBody)
+                        .build();
+                try {
+                    Response response = client.newCall(request).execute();
+                    assert response.body() != null;
+                    return response.body().string();
+                }catch (IOException e)
+                {
+                    Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+
+            }catch (Exception e)
+            {
+                return null;
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(String jsonData){
+            if(jsonData != null)
+            {
+               // si la reservation est fait
+            }
+
         }
     }
     private RecyclerView mRecyclerView;
