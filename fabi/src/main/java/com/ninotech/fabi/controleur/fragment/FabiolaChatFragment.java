@@ -1,6 +1,9 @@
 package com.ninotech.fabi.controleur.fragment;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -48,6 +51,17 @@ public class FabiolaChatFragment extends Fragment {
         mSession = new Session(view.getContext());
         mList = new ArrayList<>();
         mArm = new Arm();
+        BroadcastReceiver receiverFabiolaBookAdapter = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if ("ACTION_RECOVER_BOOK".equals(intent.getAction())) {
+                    mArm.setTitle(intent.getStringExtra("titleBook"));
+                    mEditText.setText(mEditText.getText().toString().replace('#',' ') + "\"" + mArm.getTitle() + "\" ");
+                    mEditText.setSelection(mEditText.getText().length());
+                }
+            }
+        };
+        getContext().registerReceiver(receiverFabiolaBookAdapter, new IntentFilter("ACTION_RECOVER_BOOK"));
         mList.add(new Chat("fabiola.png","abiola","Salut que puis-je faire pour vous ?",true));
         mChatAdapter = new ChatAdapter(mList);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -63,13 +77,15 @@ public class FabiolaChatFragment extends Fragment {
             }
             @Override
             public void afterTextChanged(Editable s) {
-                switch (s.charAt(s.length()-1))
+                if(!s.toString().isEmpty())
                 {
-                    case '#':
-                        Intent searchIntent = new Intent(getContext(), SearchActivity.class);
-                        searchIntent.putExtra("search_key","ONLINE_BOOK");
-                        searchIntent.putExtra("online_book_key","MAIN_ACTIVITY");
-                        startActivity(searchIntent);
+                    switch (s.charAt(s.length()-1))
+                    {
+                        case '#':
+                            Intent searchIntent = new Intent(getContext(), SearchActivity.class);
+                            searchIntent.putExtra("search_key","FABIOLA_BOOK");
+                            startActivity(searchIntent);
+                    }
                 }
             }
         });

@@ -19,7 +19,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.ninotech.fabi.controleur.adapter.BookAdapter;
+import com.ninotech.fabi.controleur.adapter.OnlineBookAdapter;
 import com.ninotech.fabi.controleur.adapter.NoConnectionAdapter;
 import com.ninotech.fabi.controleur.adapter.VoidContainerAdapter;
 import com.ninotech.fabi.model.data.OnlineBook;
@@ -143,9 +143,9 @@ public class CategoryActivity extends AppCompatActivity {
                             throw new RuntimeException(e);
                         }
                     }
-                    mBookAdapter = new BookAdapter(mList);
+                    mOnlineBookAdapter = new OnlineBookAdapter(mList);
                     mRecyclerView.setLayoutManager(new LinearLayoutManager(CategoryActivity.this));
-                    mRecyclerView.setAdapter(mBookAdapter);
+                    mRecyclerView.setAdapter(mOnlineBookAdapter);
                 }
                 else
                 {
@@ -196,7 +196,7 @@ public class CategoryActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(voidContainerAdapter);
     }
     private RecyclerView mRecyclerView;
-    private BookAdapter mBookAdapter;
+    private OnlineBookAdapter mOnlineBookAdapter;
     private ArrayList<OnlineBook> mList;
     private Session mSession;
     private String mCategorie;

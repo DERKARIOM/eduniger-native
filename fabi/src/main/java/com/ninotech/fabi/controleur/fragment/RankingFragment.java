@@ -16,7 +16,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.ninotech.fabi.controleur.adapter.BookAdapter;
+import com.ninotech.fabi.controleur.adapter.OnlineBookAdapter;
 import com.ninotech.fabi.controleur.adapter.NoConnectionAdapter;
 import com.ninotech.fabi.model.data.OnlineBook;
 import com.ninotech.fabi.model.data.Connection;
@@ -119,9 +119,9 @@ public class RankingFragment extends Fragment {
                         throw new RuntimeException(e);
                     }
                 }
-                BookAdapter bookAdapter = new BookAdapter(mOnlineBookList);
+                OnlineBookAdapter onlineBookAdapter = new OnlineBookAdapter(mOnlineBookList);
                 mBookRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                mBookRecyclerView.setAdapter(bookAdapter);
+                mBookRecyclerView.setAdapter(onlineBookAdapter);
             }
             else
             {

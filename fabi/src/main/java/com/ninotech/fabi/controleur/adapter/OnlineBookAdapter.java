@@ -19,7 +19,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BookAdapter extends RecyclerView.Adapter<BookAdapter.MyViewHolder> {
+public class OnlineBookAdapter extends RecyclerView.Adapter<OnlineBookAdapter.MyViewHolder> {
     List<OnlineBook> mOnlineBooks;
 
     public int getPosition() {
@@ -31,11 +31,11 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.MyViewHolder> 
     }
 
     private int mPosition;
-    public BookAdapter(List<OnlineBook> onlineBooks) {
+    public OnlineBookAdapter(List<OnlineBook> onlineBooks) {
         mOnlineBooks = onlineBooks;
     }
     @Override
-    public BookAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public OnlineBookAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         View view = layoutInflater.inflate(R.layout.adapter_book,parent,false);
         return new MyViewHolder(view);
@@ -119,9 +119,9 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.MyViewHolder> 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intentLivre = new Intent(itemView.getContext(), BookActivity.class);
-                    intentLivre.putExtra("intent_adapter_book_id", onlineBook.getId());
-                    itemView.getContext().startActivity(intentLivre);
+                    Intent intentBook = new Intent(itemView.getContext(), BookActivity.class);
+                    intentBook.putExtra("intent_adapter_book_id", onlineBook.getId());
+                    itemView.getContext().startActivity(intentBook);
                 }
             });
         }

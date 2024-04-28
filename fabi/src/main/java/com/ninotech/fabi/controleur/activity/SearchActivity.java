@@ -23,7 +23,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.adapter.AudioBookAdapter;
 import com.ninotech.fabi.controleur.adapter.AuthorLocalAdapter;
-import com.ninotech.fabi.controleur.adapter.BookAdapter;
+import com.ninotech.fabi.controleur.adapter.FabiolaBookAdapter;
+import com.ninotech.fabi.controleur.adapter.OnlineBookAdapter;
 import com.ninotech.fabi.controleur.adapter.CategoryLocalAdapter;
 import com.ninotech.fabi.controleur.adapter.ElectronicBookAdapter;
 import com.ninotech.fabi.controleur.adapter.LoandBookAdapter;
@@ -77,6 +78,15 @@ public class SearchActivity extends AppCompatActivity {
         mSession = new Session(this);
         mSearchEditText.requestFocus();
         Intent searchIntent = getIntent();
+        BroadcastReceiver receiverFabiolaBookAdapter = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if ("ACTION_RECOVER_BOOK".equals(intent.getAction())) {
+                    finish();
+                }
+            }
+        };
+        registerReceiver(receiverFabiolaBookAdapter, new IntentFilter("ACTION_RECOVER_BOOK"));
         mBackImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -113,6 +123,9 @@ public class SearchActivity extends AppCompatActivity {
                     case "LOAND_BOOK":
                         if(!mLoandBooks.isEmpty())
                             filterLoandBook(s.toString());
+                        break;
+                    case "FABIOLA_BOOK":
+                        filterFabiolaBook(s.toString());
                         break;
                     case "CATEGORY":
                         if(!mCategorys.isEmpty())
@@ -158,6 +171,11 @@ public class SearchActivity extends AppCompatActivity {
             case "LOAND_BOOK":
                 searchLoandBook();
                 break;
+            case "FABIOLA_BOOK":
+                mOnlineBooks = new ArrayList<>();
+                mFilteredOnlineBookList = new ArrayList<>();
+                searchFabiolaBook();
+                break;
             case "CATEGORY":
                 searchCategory();
                 break;
@@ -192,7 +210,7 @@ public class SearchActivity extends AppCompatActivity {
                         NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
                         mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                         mRecyclerView.setAdapter(noConnectionAdapter);
-                        RankingSyn rankingSyn = new RankingSyn();
+                        FabiolaBookSyn rankingSyn = new FabiolaBookSyn();
                         rankingSyn.execute(getString(R.string.ip_server_android) + "Ranking.php", mSession.getIdNumber());
                     }catch (Exception e)
                     {
@@ -203,8 +221,34 @@ public class SearchActivity extends AppCompatActivity {
             }
         };
         registerReceiver(receiverNoConnectionAdapter, new IntentFilter("RANKING_FRAGMENT"));
-        RankingSyn rankingSyn = new RankingSyn();
+        FabiolaBookSyn rankingSyn = new FabiolaBookSyn();
         rankingSyn.execute(getString(R.string.ip_server_android) + "Ranking.php", mSession.getIdNumber());
+    }
+    public void searchFabiolaBook()
+    {
+        BroadcastReceiver receiverNoConnectionAdapter = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if ("RANKING_FRAGMENT".equals(intent.getAction())) {
+                    try {
+                        ArrayList<Connection> list = new ArrayList<>();
+                        list.add(new Connection(getString(R.string.wait),"RANKING_FRAGMENT",true));
+                        NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
+                        mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                        mRecyclerView.setAdapter(noConnectionAdapter);
+                        FabiolaBookSyn fabiolaBookSyn = new FabiolaBookSyn();
+                        fabiolaBookSyn.execute(getString(R.string.ip_server_android) + "FabiolaBook.php", mSession.getIdNumber());
+                    }catch (Exception e)
+                    {
+                        Log.e("errRankingFragment",e.getMessage());
+                    }
+
+                }
+            }
+        };
+        registerReceiver(receiverNoConnectionAdapter, new IntentFilter("RANKING_FRAGMENT"));
+        FabiolaBookSyn fabiolaBookSyn = new FabiolaBookSyn();
+        fabiolaBookSyn.execute(getString(R.string.ip_server_android) + "FabiolaBook.php", mSession.getIdNumber());
     }
     public void onLineBookSwitchCategory(String category)
     {
@@ -261,6 +305,7 @@ public class SearchActivity extends AppCompatActivity {
             }
             return null;
         }
+
         @Override
         protected void onPostExecute(String jsonData){
             if(jsonData != null)
@@ -278,9 +323,71 @@ public class SearchActivity extends AppCompatActivity {
                         throw new RuntimeException(e);
                     }
                 }
-                mBookAdapter = new BookAdapter(mOnlineBooks);
+                mOnlineBookAdapter = new OnlineBookAdapter(mOnlineBooks);
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                mRecyclerView.setAdapter(mBookAdapter);
+                mRecyclerView.setAdapter(mOnlineBookAdapter);
+            }
+            else
+            {
+                ArrayList<Connection> list = new ArrayList<>();
+                list.add(new Connection(getString(R.string.no_connection_available),"RANKING_FRAGMENT",false));
+                NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
+                mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                mRecyclerView.setAdapter(noConnectionAdapter);
+            }
+        }
+    }
+
+    private class FabiolaBookSyn extends AsyncTask<String,Void,String> {
+        @Override
+        protected String doInBackground(String... params) {
+
+            try {
+                OkHttpClient client = new OkHttpClient();
+                RequestBody requestBody = new MultipartBody.Builder()
+                        .setType(MultipartBody.FORM)
+                        .addFormDataPart("idNumber",params[1])
+                        .build();
+                Request request = new Request.Builder()
+                        .url(params[0])
+                        .post(requestBody)
+                        .build();
+                try {
+                    Response response = client.newCall(request).execute();
+                    assert response.body() != null;
+                    return response.body().string();
+                }catch (IOException e)
+                {
+                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+
+            }catch (Exception e)
+            {
+                return null;
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String jsonData){
+            if(jsonData != null)
+            {
+                JSONArray jsonArray = null;
+                try {
+                    jsonArray = new JSONArray(jsonData);
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+                for (int i=0;i<jsonArray.length();i++) {
+                    try {
+                        mOnlineBooks.add(new OnlineBook(jsonArray.getJSONObject(i).getString("idBook"),jsonArray.getJSONObject(i).getString("blanket"),jsonArray.getJSONObject(i).getString("bookTitle"),jsonArray.getJSONObject(i).getString("categoryTitle"),jsonArray.getJSONObject(i).getString("isPhysic"),jsonArray.getJSONObject(i).getString("electronic"),jsonArray.getJSONObject(i).getString("isAudio"),Integer.parseInt(jsonArray.getJSONObject(i).getString("numberLike")),Integer.parseInt(jsonArray.getJSONObject(i).getString("numberLike"))));
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                mFabiolaBookAdapter = new FabiolaBookAdapter(mOnlineBooks);
+                mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                mRecyclerView.setAdapter(mFabiolaBookAdapter);
             }
             else
             {
@@ -341,9 +448,9 @@ public class SearchActivity extends AppCompatActivity {
                             throw new RuntimeException(e);
                         }
                     }
-                    mBookAdapter = new BookAdapter(mOnlineBooks);
+                    mOnlineBookAdapter = new OnlineBookAdapter(mOnlineBooks);
                     mRecyclerView.setLayoutManager(new LinearLayoutManager(SearchActivity.this));
-                    mRecyclerView.setAdapter(mBookAdapter);
+                    mRecyclerView.setAdapter(mOnlineBookAdapter);
                 }
             }
             else
@@ -384,7 +491,16 @@ public class SearchActivity extends AppCompatActivity {
                 mFilteredOnlineBookList.add(item);
             }
         }
-        mBookAdapter.filterList(mFilteredOnlineBookList);
+        mOnlineBookAdapter.filterList(mFilteredOnlineBookList);
+    }
+    private void filterFabiolaBook(String text) {
+        mFilteredOnlineBookList.clear();
+        for (OnlineBook item : mOnlineBooks) {
+            if (item.getTitle().toLowerCase().contains(text.toLowerCase())) {
+                mFilteredOnlineBookList.add(item);
+            }
+        }
+        mFabiolaBookAdapter.filterList(mFilteredOnlineBookList);
     }
     private void filterElectronicBook(String text) {
         mFilteredElectronicBooks.clear();
@@ -616,7 +732,7 @@ public class SearchActivity extends AppCompatActivity {
     private Session mSession;
     private EditText mSearchEditText;
     private ArrayList<OnlineBook> mFilteredOnlineBookList;
-    private BookAdapter mBookAdapter;
+    private OnlineBookAdapter mOnlineBookAdapter;
     private ArrayList<ElectronicBook> mFilteredElectronicBooks;
     private ArrayList<ElectronicBook> mElectronicBooks;
     private ElectronicBookAdapter mElectronicBookAdapter;
@@ -639,4 +755,5 @@ public class SearchActivity extends AppCompatActivity {
     private ArrayList<Setting> mFilteredSettings;
     private SettingAdapter mSettingAdapter;
     private ImageView mBackImageView;
+    private FabiolaBookAdapter mFabiolaBookAdapter;
 }

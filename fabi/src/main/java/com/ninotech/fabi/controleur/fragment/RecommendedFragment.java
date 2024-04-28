@@ -17,8 +17,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.ninotech.fabi.controleur.activity.MainActivity;
-import com.ninotech.fabi.controleur.adapter.BookAdapter;
+import com.ninotech.fabi.controleur.adapter.OnlineBookAdapter;
 import com.ninotech.fabi.controleur.adapter.NoConnectionAdapter;
 import com.ninotech.fabi.model.data.OnlineBook;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
@@ -130,9 +129,9 @@ public class RecommendedFragment extends Fragment {
                     }
                 }
                 mPub.setVisibility(View.VISIBLE);
-                BookAdapter bookAdapter = new BookAdapter(mOnlineBookList);
+                OnlineBookAdapter onlineBookAdapter = new OnlineBookAdapter(mOnlineBookList);
                 mBookRecommendedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                mBookRecommendedRecyclerView.setAdapter(bookAdapter);
+                mBookRecommendedRecyclerView.setAdapter(onlineBookAdapter);
             }
             else
             {
