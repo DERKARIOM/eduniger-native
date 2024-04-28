@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -21,11 +20,9 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.ninotech.fabi.controleur.activity.BookActivity;
-import com.ninotech.fabi.controleur.activity.MainActivity;
 import com.ninotech.fabi.controleur.activity.SearchActivity;
 import com.ninotech.fabi.controleur.adapter.ChatAdapter;
-import com.ninotech.fabi.model.Arm;
+import com.ninotech.fabi.model.data.Arm;
 import com.ninotech.fabi.model.data.Chat;
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.model.table.Session;
@@ -56,6 +53,7 @@ public class FabiolaChatFragment extends Fragment {
             public void onReceive(Context context, Intent intent) {
                 if ("ACTION_RECOVER_BOOK".equals(intent.getAction())) {
                     mArm.setTitle(intent.getStringExtra("titleBook"));
+                    mArm.setId(intent.getStringExtra("idBook"));
                     mEditText.setText(mEditText.getText().toString().replace('#',' ') + "\"" + mArm.getTitle() + "\" ");
                     mEditText.setSelection(mEditText.getText().length());
                 }
@@ -100,14 +98,9 @@ public class FabiolaChatFragment extends Fragment {
                 mRecyclerView.smoothScrollToPosition(mChatAdapter.getItemCount()-1);
                 if(mArm.containsReservation(mRequete))
                 {
-                    mArm.setTitle(mArm.extractBookTitle(mRequete));
                     mArm.setNumberOfDays(mArm.extractDuration(mRequete));
-                    Reservation reservation = new Reservation();
-                    //reservation.execute(getString(R.string.ip_server_android),mSession.getIdNumber(),mSess)
-                    mList.add(new Chat("fabiola.png","abiola","Votre réservation du livre \"" + mArm.getTitle() + "\" pour une durée de " + String.valueOf(mArm.getNumberOfDays())  + " jours a été enregistrée avec succès. Merci pour votre demande !",true));
-                    mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                    mRecyclerView.setAdapter(mChatAdapter);
-                    mRecyclerView.smoothScrollToPosition(mChatAdapter.getItemCount()-1);
+                    Reservation reservationSyn = new Reservation();
+                    reservationSyn.execute(getString(R.string.ip_server_android) + "Reservation.php",mSession.getIdNumber(),mArm.getId(),String.valueOf(mArm.getNumberOfDays()));
                 }
 //                CallOpenAi callOpenAi = new CallOpenAi();
 //                callOpenAi.execute("http://192.168.43.1:2222/fabi/android/callOpenAi.php");
@@ -176,6 +169,7 @@ public class FabiolaChatFragment extends Fragment {
                     return response.body().string();
                 }catch (IOException e)
                 {
+                    Log.e("ReservationFabiola",e.getMessage());
                     Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
 
@@ -189,7 +183,17 @@ public class FabiolaChatFragment extends Fragment {
         protected void onPostExecute(String jsonData){
             if(jsonData != null)
             {
-               // si la reservation est fait
+                if(jsonData.equals("true"))
+                {
+                    mList.add(new Chat("fabiola.png","abiola","Votre réservation du livre \"" + mArm.getTitle() + "\" pour une durée de " + String.valueOf(mArm.getNumberOfDays())  + " jours a été enregistrée avec succès. Merci pour votre demande !",true));
+                }
+                else
+                {
+                    mList.add(new Chat("fabiola.png","abiola","Je suis désolé il semble que le livre n'existe dans Fabi. Merci pour votre demande !",true));
+                }
+                mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                mRecyclerView.setAdapter(mChatAdapter);
+                mRecyclerView.smoothScrollToPosition(mChatAdapter.getItemCount()-1);
             }
 
         }

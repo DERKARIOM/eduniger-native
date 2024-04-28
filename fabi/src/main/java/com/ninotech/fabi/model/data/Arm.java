@@ -1,4 +1,4 @@
-package com.ninotech.fabi.model;
+package com.ninotech.fabi.model.data;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.Scanner;
@@ -20,8 +20,9 @@ public class Arm {
     }
     public Arm()
     {
+        mId = null;
         mTitle = null;
-        mNumberOfDays = 0;
+        mNumberOfDays = -1;
     }
     public boolean containsReservation(String input) {
         Pattern pattern = Pattern.compile("\\b(r[eÃ©]servation|r[eÃ©]serve)\\b", Pattern.CASE_INSENSITIVE);
@@ -46,6 +47,16 @@ public class Arm {
         }
         return 0;
     }
+
+    public String getId() {
+        return mId;
+    }
+
+    public void setId(String id) {
+        mId = id;
+    }
+
+    private String mId;
     private String mTitle;
     private int mNumberOfDays;
 }
