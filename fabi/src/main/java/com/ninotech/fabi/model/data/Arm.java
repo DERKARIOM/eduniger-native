@@ -25,7 +25,12 @@ public class Arm {
         mNumberOfDays = -1;
     }
     public boolean containsReservation(String input) {
-        Pattern pattern = Pattern.compile("\\b(r[eÃ©]servation|r[eÃ©]serve)\\b", Pattern.CASE_INSENSITIVE);
+        Pattern pattern = Pattern.compile("\\b(r[eé]servation|r[eé]serv[eé])\\b", Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(input);
+        return matcher.find();
+    }
+    public boolean containsJournee(String input) {
+        Pattern pattern = Pattern.compile("\\b(journ[eé][eé])\\b", Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(input);
         return matcher.find();
     }
@@ -45,7 +50,7 @@ public class Arm {
         if (matcher.find()) {
             return Integer.parseInt(matcher.group());
         }
-        return 0;
+        return -1;
     }
 
     public String getId() {
@@ -55,7 +60,6 @@ public class Arm {
     public void setId(String id) {
         mId = id;
     }
-
     private String mId;
     private String mTitle;
     private int mNumberOfDays;

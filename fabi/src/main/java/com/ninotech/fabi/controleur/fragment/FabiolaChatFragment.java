@@ -99,8 +99,27 @@ public class FabiolaChatFragment extends Fragment {
                 if(mArm.containsReservation(mRequete))
                 {
                     mArm.setNumberOfDays(mArm.extractDuration(mRequete));
-                    Reservation reservationSyn = new Reservation();
-                    reservationSyn.execute(getString(R.string.ip_server_android) + "Reservation.php",mSession.getIdNumber(),mArm.getId(),String.valueOf(mArm.getNumberOfDays()));
+                    if(mArm.getNumberOfDays() <= 5)
+                    {
+                        Reservation reservationSyn = new Reservation();
+                        reservationSyn.execute(getString(R.string.ip_server_android) + "Reservation.php",mSession.getIdNumber(),mArm.getId(),String.valueOf(mArm.getNumberOfDays()));
+                    }
+                    else
+                    {
+                        if(mArm.containsJournee(mRequete))
+                        {
+                            mArm.setNumberOfDays(1);
+                            Reservation reservationSyn = new Reservation();
+                            reservationSyn.execute(getString(R.string.ip_server_android) + "Reservation.php",mSession.getIdNumber(),mArm.getId(),String.valueOf(mArm.getNumberOfDays()));
+                        }
+                        else
+                        {
+                            mList.add(new Chat("fabiola.png","abiola","je suis désolé la politique de la bibliothèque permet aux utilisateurs d'emprunter un livre pour une durée maximale de 5 jours. Merci pour votre compréhension.",true));
+                            mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                            mRecyclerView.setAdapter(mChatAdapter);
+                            mRecyclerView.smoothScrollToPosition(mChatAdapter.getItemCount()-1);
+                        }
+                    }
                 }
 //                CallOpenAi callOpenAi = new CallOpenAi();
 //                callOpenAi.execute("http://192.168.43.1:2222/fabi/android/callOpenAi.php");
@@ -183,13 +202,20 @@ public class FabiolaChatFragment extends Fragment {
         protected void onPostExecute(String jsonData){
             if(jsonData != null)
             {
-                if(jsonData.equals("true"))
-                {
-                    mList.add(new Chat("fabiola.png","abiola","Votre réservation du livre \"" + mArm.getTitle() + "\" pour une durée de " + String.valueOf(mArm.getNumberOfDays())  + " jours a été enregistrée avec succès. Merci pour votre demande !",true));
+                if(jsonData.equals("true")) {
+                    if (mArm.getNumberOfDays() != -1)
+                        mList.add(new Chat("fabiola.png", "abiola", "Votre réservation du livre \"" + mArm.getTitle() + "\" pour une durée de " + String.valueOf(mArm.getNumberOfDays()) + " jours a été enregistrée avec succès. Merci pour votre demande !", true));
+                    else
+                    {
+                        if(mArm.getNumberOfDays() == 0)
+                            mList.add(new Chat("fabiola.png", "abiola", "Votre réservation sur place du livre \"" + mArm.getTitle() + "\" a été enregistrée avec succès. Merci pour votre demande !", true));
+                        else
+                            mList.add(new Chat("fabiola.png", "abiola", "Votre réservation du livre \"" + mArm.getTitle() + "\"  pour une journée  a été enregistrée avec succès. Merci pour votre demande !", true));
+                    }
                 }
                 else
                 {
-                    mList.add(new Chat("fabiola.png","abiola","Je suis désolé il semble que le livre n'existe dans Fabi. Merci pour votre demande !",true));
+                    mList.add(new Chat("fabiola.png","abiola","je suis désolé vous avez déjà effectué une réservation sur le livre \"" + mArm.getTitle() + "\". Merci pour votre demande !",true));
                 }
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                 mRecyclerView.setAdapter(mChatAdapter);

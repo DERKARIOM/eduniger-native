@@ -221,7 +221,7 @@ public class SearchActivity extends AppCompatActivity {
             }
         };
         registerReceiver(receiverNoConnectionAdapter, new IntentFilter("RANKING_FRAGMENT"));
-        FabiolaBookSyn rankingSyn = new FabiolaBookSyn();
+        RankingSyn rankingSyn = new RankingSyn();
         rankingSyn.execute(getString(R.string.ip_server_android) + "Ranking.php", mSession.getIdNumber());
     }
     public void searchFabiolaBook()
