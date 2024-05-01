@@ -83,6 +83,12 @@ public class FabiolaChatFragment extends Fragment {
                             Intent searchIntent = new Intent(getContext(), SearchActivity.class);
                             searchIntent.putExtra("search_key","FABIOLA_BOOK");
                             startActivity(searchIntent);
+                            break;
+                        case '@':
+                            Intent searchBookReservationIntent = new Intent(getContext(), SearchActivity.class);
+                            searchBookReservationIntent.putExtra("search_key","FABIOLA_BOOK_RESERVATION");
+                            startActivity(searchBookReservationIntent);
+                            break;
                     }
                 }
             }
