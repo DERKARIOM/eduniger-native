@@ -6,6 +6,7 @@
     android:background="@drawable/forme_white_radius_10dp"
     >
     <Spinner
+        android:visibility="gone"
         android:id="@+id/spinner_dialog_reservation_time_limit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -17,6 +18,7 @@
         android:backgroundTint="@color/purple_200"
         android:padding="10dp"/>
     <LinearLayout
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
@@ -40,10 +42,13 @@
             android:layout_marginStart="10dp"/>
     </LinearLayout>
     <EditText
+
         android:id="@+id/edit_text_dialog_reservation_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-       android:layout_margin="10dp"
+       android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="20dp"
         android:textColor="@color/black3"
         android:background="@drawable/forme_white_radius_10dp"
         android:elevation="2dp"

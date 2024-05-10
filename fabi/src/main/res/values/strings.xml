@@ -163,7 +163,7 @@
     <string name="user_name">Nom de l\' utilisateur</string>
     <string name="message_default">Salut que puis-je faire pour vous</string>
     <string name="cancel_reservation">Annuler La reservation</string>
-    <string name="reservation_book">Réservation du livre</string>
+    <string name="reservation_book">Consultation sur Place</string>
     <string name="your_electronic_books">Vos Livres Électronique</string>
     <string name="your_audio_books">Vos Livres Audio</string>
     <string name="your_loand_books">Vos Livres Emprunter</string>
@@ -207,7 +207,7 @@
     <string name="details_information_phone">Les details techniques tels que le modele de votre appareil peuvent nous aide a repondre a votre question</string>
     <string name="search">Recherche</string>
     <string name="default_time">00:00</string>
-    <string name="to_book_reservation">Reservation de ce livre</string>
+    <string name="to_book_reservation">Consulter ce livre</string>
     <string name="audio_format">Format Audio</string>
     <string name="electronic_format">Format Electronique</string>
     <string name="open">Ouvrir</string>

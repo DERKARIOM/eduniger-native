@@ -514,6 +514,7 @@ public class BookActivity extends AppCompatActivity {
                     mOnlineBook.setAuthor(jsonObject.getString("authorName"));
                     mOnlineBook.setDescription(jsonObject.getString("description"));
                     mOnlineBook.setCategory(jsonObject.getString("categoryTitle"));
+                    mOnlineBook.setIsAvailable(jsonObject.getString("available"));
                     mOnlineBook.setNumberLikes(Integer.parseInt(jsonObject.getString("numberLike")));
                     mOnlineBook.setNumberNoLikes(Integer.parseInt(jsonObject.getString("numberNoLike")));
                     mOnlineBook.setNumberSubscribe(Integer.parseInt(jsonObject.getString("numberSubscribe")));
@@ -529,7 +530,7 @@ public class BookActivity extends AppCompatActivity {
                     mNumberLikeTextView.setText(String.valueOf(mOnlineBook.getNumberLikes()));
                     mNumberNoLikeTextView.setText(String.valueOf(mOnlineBook.getNumberNoLikes()));
                     mNumberSubscribeTextView.setText(String.valueOf(mOnlineBook.getNumberSubscribe()));
-                    if(mOnlineBook.getIsPhysic().equals("1"))
+                    if(mOnlineBook.getIsPhysic().equals("1") && !mOnlineBook.getIsAvailable().equals("0"))
                         mReservationLinearLayout.setVisibility(View.VISIBLE);
                     if(mOnlineBook.getIsAudio().equals("1"))
                         mAudioLinearLayout.setVisibility(View.VISIBLE);
