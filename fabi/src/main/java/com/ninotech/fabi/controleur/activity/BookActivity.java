@@ -511,7 +511,7 @@ public class BookActivity extends AppCompatActivity {
                     mOnlineBook.setIsPhysic(jsonObject.getString("isPhysic"));
                     mOnlineBook.setIsAudio(jsonObject.getString("isAudio"));
                     mOnlineBook.setElectronic(jsonObject.getString("electronic"));
-                    mOnlineBook.setAuthor(jsonObject.getString("authorName"));
+                    //mOnlineBook.setAuthor(jsonObject.getString("authorName"));
                     mOnlineBook.setDescription(jsonObject.getString("description"));
                     mOnlineBook.setCategory(jsonObject.getString("categoryTitle"));
                     mOnlineBook.setIsAvailable(jsonObject.getString("available"));
@@ -938,17 +938,27 @@ public class BookActivity extends AppCompatActivity {
             //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
             if(jsonData != null)
             {
-                if(!jsonData.equals("RAS"))
+                if(!jsonData.equals("ras"))
                 {
-                    if(jsonData.equals(mSession.getIdNumber()))
-                    {
-                        mReservationButton.setText(R.string.cancel_reservation);
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            mReservationButton.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.rouge)));
-                        }
+                    JSONObject jsonObject = null;
+                    try {
+                        jsonObject = new JSONObject(jsonData);
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
                     }
-                    else
-                        mReservationButton.setText(R.string.reservation_book);
+                    try {
+                        if(jsonObject.getString("state").equals("1") && jsonObject.getString("treat").equals("1"))
+                        {
+                            mReservationButton.setText(R.string.cancel_reservation);
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                mReservationButton.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.rouge)));
+                            }
+                        }
+                        else
+                            mReservationButton.setText(R.string.reservation_book);
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
         }

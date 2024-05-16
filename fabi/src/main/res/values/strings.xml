@@ -162,7 +162,7 @@
     <string name="title_tones">Titre du morco</string>
     <string name="user_name">Nom de l\' utilisateur</string>
     <string name="message_default">Salut que puis-je faire pour vous</string>
-    <string name="cancel_reservation">Annuler La reservation</string>
+    <string name="cancel_reservation">Annuler la consultation</string>
     <string name="reservation_book">Consultation sur Place</string>
     <string name="your_electronic_books">Vos Livres Électronique</string>
     <string name="your_audio_books">Vos Livres Audio</string>
