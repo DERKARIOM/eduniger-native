@@ -195,8 +195,11 @@ public class BookActivity extends AppCompatActivity {
                     ReservationDialog();
                 else
                 {
-                    CancelReservationSyn cancelReservationSyn = new CancelReservationSyn();
-                    cancelReservationSyn.execute(getString(R.string.ip_server_android) + "CancelReservation.php",mSession.getIdNumber(), mOnlineBook.getId());
+                    if(mReservationButton.getText().toString().equals(getString(R.string.cancel_reservation)))
+                    {
+                        CancelReservationSyn cancelReservationSyn = new CancelReservationSyn();
+                        cancelReservationSyn.execute(getString(R.string.ip_server_android) + "CancelReservation.php",mSession.getIdNumber(), mOnlineBook.getId());
+                    }
                 }
             }
         });
@@ -530,8 +533,18 @@ public class BookActivity extends AppCompatActivity {
                     mNumberLikeTextView.setText(String.valueOf(mOnlineBook.getNumberLikes()));
                     mNumberNoLikeTextView.setText(String.valueOf(mOnlineBook.getNumberNoLikes()));
                     mNumberSubscribeTextView.setText(String.valueOf(mOnlineBook.getNumberSubscribe()));
-                    if(mOnlineBook.getIsPhysic().equals("1") && !mOnlineBook.getIsAvailable().equals("0"))
+                    if(mOnlineBook.getIsPhysic().equals("1"))
+                    {
                         mReservationLinearLayout.setVisibility(View.VISIBLE);
+                        if(mOnlineBook.getIsAvailable().equals("0"))
+                        {
+                            mReservationButton.setText("En cours de consultation");
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                mReservationButton.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.whiteSombre)));
+                                mReservationButton.setEnabled(false);
+                            }
+                        }
+                    }
                     if(mOnlineBook.getIsAudio().equals("1"))
                         mAudioLinearLayout.setVisibility(View.VISIBLE);
                     if(!mOnlineBook.getElectronic().equals("null"))
@@ -955,7 +968,16 @@ public class BookActivity extends AppCompatActivity {
                             }
                         }
                         else
-                            mReservationButton.setText(R.string.reservation_book);
+                        {
+                            if(jsonObject.getString("state").equals("2") && jsonObject.getString("treat").equals("1"))
+                            {
+                                mReservationButton.setText("En cours de consultation");
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                    mReservationButton.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.whiteSombre)));
+                                    mReservationButton.setEnabled(false);
+                                }
+                            }
+                        }
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
