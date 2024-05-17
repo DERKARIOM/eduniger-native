@@ -102,7 +102,6 @@ public class BookActivity extends AppCompatActivity {
         mListTones = new ArrayList<>();
         mNestedScrollView = findViewById(R.id.nested_scroll_view_activity_book);
         mCommentsRecyclerView = findViewById(R.id.recycler_view_activity_book_Comments);
-        mSimilarRecyclerView = findViewById(R.id.recycler_view_activity_book_similar);
         mNoConnectionRecyclerView = findViewById(R.id.recycler_view_activity_book_no_connection);
         mBlanketImageView = findViewById(R.id.image_view_adapter_book_simple_cover);
         mTitleTextView = findViewById(R.id.text_view_adapter_book_simple_title);
@@ -550,7 +549,7 @@ public class BookActivity extends AppCompatActivity {
                     if(!mOnlineBook.getElectronic().equals("null"))
                         mElectronicLinearLayout.setVisibility(View.VISIBLE);
                     mTitleTextView.setText(mOnlineBook.getTitle());
-                    mCategoryTextView.setText(mOnlineBook.getCategory());
+                    mCategoryTextView.setText("Catégorie : " + mOnlineBook.getCategory());
                     mDescriptionTextView.setText(mOnlineBook.getDescription());
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
