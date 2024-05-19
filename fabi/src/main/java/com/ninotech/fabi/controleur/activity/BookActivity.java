@@ -116,6 +116,7 @@ public class BookActivity extends AppCompatActivity {
         mNumberLikeTextView = findViewById(R.id.text_view_activity_book_number_like);
         mNumberNoLikeTextView = findViewById(R.id.text_view_activity_book_number_no_like);
         mNumberSubscribeTextView = findViewById(R.id.text_view_activity_book_number_subscribe);
+        mCote = findViewById(R.id.text_view_adapter_book_simple_id_book);
         ImageView addCommentsImageView = findViewById(R.id.image_view_activity_book_add_comments);
         ImageView stopImageView = findViewById(R.id.image_view_activity_book_stop);
         LinearLayout likeLinearLayout = findViewById(R.id.linear_layout_activity_book_like);
@@ -130,6 +131,7 @@ public class BookActivity extends AppCompatActivity {
         mAudioLinearLayout = findViewById(R.id.linear_layout_activity_book_audio);
         mElectronicLinearLayout = findViewById(R.id.linear_layout_activity_book_electronic);
         mBackImageView = findViewById(R.id.image_view_toolbar_book);
+        mNameAuthor = findViewById(R.id.text_view_adapter_book_simple_author_name);
         mReservationDialog = new ReservationDialog(this);
         mElectronicTable = new ElectronicTable(this);
         mHandler = new Handler();
@@ -151,11 +153,6 @@ public class BookActivity extends AppCompatActivity {
             public void onReceive(Context context, Intent intent) {
                 if ("BOOK_ACTIVITY".equals(intent.getAction())) {
                     try {
-//                        ArrayList<Connection> list = new ArrayList<>();
-//                        list.add(new Connection(getString(R.string.wait),"CATEGORY_ACTIVITY",true));
-//                        NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
-//                        mNoConnectionRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-//                        mNoConnectionRecyclerView.setAdapter(noConnectionAdapter);
                         finish();
                         startActivity(getIntent());
                     }catch (Exception e)
@@ -226,8 +223,7 @@ public class BookActivity extends AppCompatActivity {
             public void onClick(View view) {
                 ElectronicDownloader electronicDownloader = new ElectronicDownloader(getApplicationContext(),mSession.getIdNumber(), mOnlineBook);
                 electronicDownloader.execute(mOnlineBook.getCover(), mOnlineBook.getElectronic(),mCategory.getCover(),mAuthor.getProfile());
-               // if(mElectronicTable.insert(mSession.getIdNumber(),mBook.getId(), mDescriptionTextView.getText().toString(),"ras",imageDownloader.getBytes(),mBook.getElectronic(), mCategoryTextView.getText().toString(), mBook.getTitle(),"ras","ras"))
-                    succeDowloadPDFDialog("Le livre " + mTitleTextView.getText().toString() + " format PDF a été téléchargé avec succès. N'hésitez pas à explorer son contenu dans l'application et contactez-nous en cas de besoin.");
+                succeDowloadPDFDialog("Le livre " + mTitleTextView.getText().toString() + " format PDF a été téléchargé avec succès. N'hésitez pas à explorer son contenu dans l'application et contactez-nous en cas de besoin.");
             }
         });
         audioButton.setOnClickListener(new View.OnClickListener() {
@@ -291,21 +287,19 @@ public class BookActivity extends AppCompatActivity {
         });
         RecoveryBook recoveryBook = new RecoveryBook();
         ReceiveComments receiveComments = new ReceiveComments();
-        Similar similar = new Similar();
         RecoveryTones recoveryTones = new RecoveryTones();
         IsLikeSyn isLikeSyn = new IsLikeSyn();
         IsNoLikeSyn isNoLikeSyn = new IsNoLikeSyn();
         IsSubscribeBookSyn isSubscribeBookSyn = new IsSubscribeBookSyn();
         InsertViewSyn insertViewSyn = new InsertViewSyn();
         IsReservationSyn isReservationSyn = new IsReservationSyn();
+        recoveryBook.execute(getString(R.string.ip_server_android) + "Book.php",mSession.getIdNumber(), mOnlineBook.getId());
         isReservationSyn.execute(getString(R.string.ip_server_android) + "IsReservation.php",mSession.getIdNumber(), mOnlineBook.getId());
         insertViewSyn.execute(getString(R.string.ip_server_android) + "InsertView.php",mSession.getIdNumber(), mOnlineBook.getId());
         isSubscribeBookSyn.execute(getString(R.string.ip_server_android) + "IsSubscribeBook.php",mSession.getIdNumber(), mOnlineBook.getId());
         isLikeSyn.execute(getString(R.string.ip_server_android) + "IsLike.php",mSession.getIdNumber(), mOnlineBook.getId());
         isNoLikeSyn.execute(getString(R.string.ip_server_android) + "IsNoLike.php",mSession.getIdNumber(), mOnlineBook.getId());
-        recoveryBook.execute(getString(R.string.ip_server_android) + "Book.php",mSession.getIdNumber(), mOnlineBook.getId());
         receiveComments.execute(getString(R.string.ip_server_android) + "ReceiveComments.php",mSession.getIdNumber(), mOnlineBook.getId());
-        similar.execute(getString(R.string.ip_server_android) + "SimilarBook.php",mSession.getIdNumber(),mCategoryTextView.getText().toString(), mOnlineBook.getId());
         recoveryTones.execute(getString(R.string.ip_server_android) + "Tones.php");
         addCommentsImageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -513,7 +507,6 @@ public class BookActivity extends AppCompatActivity {
                     mOnlineBook.setIsPhysic(jsonObject.getString("isPhysic"));
                     mOnlineBook.setIsAudio(jsonObject.getString("isAudio"));
                     mOnlineBook.setElectronic(jsonObject.getString("electronic"));
-                    //mOnlineBook.setAuthor(jsonObject.getString("authorName"));
                     mOnlineBook.setDescription(jsonObject.getString("description"));
                     mOnlineBook.setCategory(jsonObject.getString("categoryTitle"));
                     mOnlineBook.setIsAvailable(jsonObject.getString("available"));
@@ -549,6 +542,8 @@ public class BookActivity extends AppCompatActivity {
                     if(!mOnlineBook.getElectronic().equals("null"))
                         mElectronicLinearLayout.setVisibility(View.VISIBLE);
                     mTitleTextView.setText(mOnlineBook.getTitle());
+                    mNameAuthor.setText("De " + jsonObject.getString("name") + " " + jsonObject.getString("firstName"));
+                    mCote.setText("Cote : " + mOnlineBook.getId());
                     mCategoryTextView.setText("Catégorie : " + mOnlineBook.getCategory());
                     mDescriptionTextView.setText(mOnlineBook.getDescription());
                 } catch (JSONException e) {
@@ -600,7 +595,6 @@ public class BookActivity extends AppCompatActivity {
         }
         @Override
         protected void onPostExecute(String jsonData){
-            //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
             if(jsonData != null)
             {
                 if(!jsonData.equals("RAS"))
@@ -766,7 +760,6 @@ public class BookActivity extends AppCompatActivity {
         }
         @Override
         protected void onPostExecute(String jsonData){
-            //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
             if(jsonData != null)
             {
                 if(!jsonData.equals("RAS"))
@@ -1080,65 +1073,6 @@ public class BookActivity extends AppCompatActivity {
         }
     }
 
-    private class Similar extends AsyncTask<String,Void,String> {
-        @Override
-        protected String doInBackground(String... params) {
-
-            try {
-                OkHttpClient client = new OkHttpClient();
-                RequestBody requestBody = new MultipartBody.Builder()
-                        .setType(MultipartBody.FORM)
-                        .addFormDataPart("idNumber",params[1])
-                        .addFormDataPart("categoryTitle",params[2])
-                        .addFormDataPart("idBook",params[3])
-                        .build();
-                Request request = new Request.Builder()
-                        .url(params[0])
-                        .post(requestBody)
-                        .build();
-                try {
-                    Response response = client.newCall(request).execute();
-                    assert response.body() != null;
-                    return response.body().string();
-                }catch (IOException e)
-                {
-                    Log.e("errorBookActivity",e.getMessage());
-                }
-            }catch (Exception e)
-            {
-                return null;
-            }
-            return null;
-        }
-        @Override
-        protected void onPostExecute(String jsonData){
-            //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
-            if(jsonData != null)
-            {
-                if(!jsonData.equals("RAS"))
-                {
-                    JSONArray jsonArray = null;
-                    try {
-                        jsonArray = new JSONArray(jsonData);
-                    } catch (JSONException e) {
-                        throw new RuntimeException(e);
-                    }
-//                    for (int i=0;i<jsonArray.length();i++) {
-//                        try {
-//                            mListSimilar.add(new SimilarBook(mBook.getId(),jsonArray.getJSONObject(i).getString("blanket"),null));
-//                        } catch (JSONException e) {
-//                            throw new RuntimeException(e);
-//                        }
-//                    }
-                    SimilarAdapter similarAdapter = new SimilarAdapter(mListSimilar);
-                    mSimilarRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(),LinearLayoutManager.HORIZONTAL,false));
-                    mSimilarRecyclerView.setAdapter(similarAdapter);
-                }
-            }
-
-        }
-    }
-
     private class RecoveryTones extends AsyncTask<String,Void,String> {
         @Override
         protected String doInBackground(String... params) {
@@ -1391,6 +1325,8 @@ public class BookActivity extends AppCompatActivity {
     private TextView mNumberNoLikeTextView;
     private TextView mNumberSubscribeTextView;
     private TextView mTimeNowTextView;
+    private TextView mNameAuthor;
+    private TextView mCote;
     private EditText mMessageTextView;
     private ImageView mLikeImageView;
     private ImageView mNoLikeImageView;
