@@ -11,7 +11,7 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven {
-            url "https://my.pspdfkit.com/maven/"
+            url = uri("https://customers.pspdfkit.com/maven");
         }
     }
 }
