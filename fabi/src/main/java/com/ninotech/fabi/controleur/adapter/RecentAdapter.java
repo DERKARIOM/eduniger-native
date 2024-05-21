@@ -19,6 +19,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
 import com.ninotech.fabi.model.data.SimilarBook;
+import com.pspdfkit.configuration.activity.PdfActivityConfiguration;
+import com.pspdfkit.ui.PdfActivity;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -96,73 +98,12 @@ public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.MyViewHold
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-//                    downloadAndOpenPDF(similarBook.getPDF());
+                    File file = new File(similarBook.getPDF());
+                    Uri uri = Uri.parse(Uri.fromFile(file).toString());
+                    PdfActivityConfiguration config = new PdfActivityConfiguration.Builder(itemView.getContext()).build();
+                    PdfActivity.showDocument(itemView.getContext(),uri,config);
                 }
             });
         }
-        private void downloadAndOpenPDF(String nomPdf) {
-            new AsyncTask<Void, Void, File>() {
-                @Override
-                protected File doInBackground(Void... voids) {
-                    try {
-                        // URL du PDF distant
-                        String pdfUrl = "http://192.168.43.1:2222/fabi/pdf/" + nomPdf;
-                        URL url = new URL(pdfUrl);
-
-                        // Ouvrir la connexion
-                        HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                        urlConnection.setRequestMethod("GET");
-
-                        // Télécharger le PDF dans le répertoire de téléchargement
-                        File pdfFile = new File(Environment.getExternalStoragePublicDirectory(
-                                Environment.DIRECTORY_DOWNLOADS), nomPdf);
-
-                        InputStream inputStream = urlConnection.getInputStream();
-                        FileOutputStream outputStream = new FileOutputStream(pdfFile);
-
-                        byte[] buffer = new byte[1024];
-                        int bytesRead;
-                        while ((bytesRead = inputStream.read(buffer)) != -1) {
-                            outputStream.write(buffer, 0, bytesRead);
-                        }
-
-                        outputStream.close();
-                        inputStream.close();
-
-                        return pdfFile;
-
-                    } catch (IOException e) {
-                        Log.e("DownloadTask", "Error while downloading PDF", e);
-                        return null;
-                    }
-                }
-
-                @Override
-                protected void onPostExecute(File pdfFile) {
-                    super.onPostExecute(pdfFile);
-
-                    if (pdfFile != null) {
-                        // Ouvrir le PDF avec Adobe PDF Reader
-                        openPDFWithAdobeReader(pdfFile);
-                    } else {
-                        Log.e("DownloadTask", "PDF file is null");
-                    }
-                }
-            }.execute();
-        }
-        private void openPDFWithAdobeReader(File pdfFile) {
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            Uri pdfUri = FileProvider.getUriForFile(itemView.getContext(),itemView.getContext().getPackageName() + ".provider", pdfFile);
-            intent.setDataAndType(pdfUri, "application/pdf");
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-
-            try {
-                itemView.getContext().startActivity(intent);
-            } catch (Exception e) {
-                Toast.makeText(itemView.getContext(), "OpenPDF : " + e, Toast.LENGTH_LONG).show();
-            }
-        }
-
     }
 }

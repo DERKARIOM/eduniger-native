@@ -91,7 +91,7 @@ public class LibraryFragment extends Fragment {
             Cursor cursor = electronicTable.getData(session.getIdNumber());
             cursor.moveToFirst();
             do {
-                similarBookList.add(new SimilarBook(cursor.getString(2),cursor.getString(5),null));
+                similarBookList.add(new SimilarBook(cursor.getString(2),cursor.getString(5),cursor.getString(6)));
             }while(cursor.moveToNext());
         }catch (Exception e)
         {
