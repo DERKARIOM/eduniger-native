@@ -61,6 +61,8 @@ import com.ninotech.fabi.model.data.Tones;
 import com.ninotech.fabi.controleur.adapter.TonesAdapter;
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.dialog.SimpleOkDialog;
+import com.pspdfkit.configuration.activity.PdfActivityConfiguration;
+import com.pspdfkit.ui.PdfActivity;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -203,18 +205,22 @@ public class BookActivity extends AppCompatActivity {
         openPDFButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Vérifier et demander la permission d'écriture externe si nécessaire
-                if (ContextCompat.checkSelfPermission(getApplicationContext(),
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                        != PackageManager.PERMISSION_GRANTED) {
-
-                    ActivityCompat.requestPermissions(BookActivity.this,
-                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                            STORAGE_PERMISSION_REQUEST_CODE);
-                } else {
-                    // Si la permission est déjà accordée, télécharger et ouvrir le PDF
-                    downloadAndOpenPDF(mOnlineBook.getElectronic());
-                }
+                String url="http://192.168.43.1:2222/fabi/ressources/pdf/NINO0001.pdf";
+                Uri uri = Uri.parse(url);
+                PdfActivityConfiguration config = new PdfActivityConfiguration.Builder(getApplicationContext()).build();
+                PdfActivity.showDocument(getApplicationContext(),uri,config);
+//                // Vérifier et demander la permission d'écriture externe si nécessaire
+//                if (ContextCompat.checkSelfPermission(getApplicationContext(),
+//                        Manifest.permission.WRITE_EXTERNAL_STORAGE)
+//                        != PackageManager.PERMISSION_GRANTED) {
+//
+//                    ActivityCompat.requestPermissions(BookActivity.this,
+//                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+//                            STORAGE_PERMISSION_REQUEST_CODE);
+//                } else {
+//                    // Si la permission est déjà accordée, télécharger et ouvrir le PDF
+//                    downloadAndOpenPDF(mOnlineBook.getElectronic());
+//                }
             }
         });
 

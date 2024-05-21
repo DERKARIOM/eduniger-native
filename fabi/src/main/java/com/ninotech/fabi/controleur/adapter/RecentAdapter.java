@@ -3,6 +3,8 @@ package com.ninotech.fabi.controleur.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Shader;
+import android.graphics.drawable.ShapeDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
@@ -19,7 +21,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
 import com.ninotech.fabi.model.data.SimilarBook;
+import com.pspdfkit.configuration.PdfConfiguration;
 import com.pspdfkit.configuration.activity.PdfActivityConfiguration;
+import com.pspdfkit.configuration.sharing.ShareFeatures;
 import com.pspdfkit.ui.PdfActivity;
 import com.squareup.picasso.Picasso;
 
@@ -30,6 +34,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.EnumSet;
 import java.util.List;
 
 public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.MyViewHolder> {
@@ -100,7 +105,19 @@ public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.MyViewHold
                 public void onClick(View view) {
                     File file = new File(similarBook.getPDF());
                     Uri uri = Uri.parse(Uri.fromFile(file).toString());
-                    PdfActivityConfiguration config = new PdfActivityConfiguration.Builder(itemView.getContext()).build();
+                    PdfActivityConfiguration config = new PdfActivityConfiguration.Builder(itemView.getContext())
+                            .hideThumbnailGrid().setEnabledShareFeatures(ShareFeatures.none())
+                            .disablePrinting()
+                            .disablePrinting()
+                            .disableAnnotationEditing()
+                            .disableBookmarkEditing()
+                            .disableDocumentEditor()
+                            .disableAnnotationList()
+                            .disableAnnotationLimitedToPageBounds()
+                            .disableCopyPaste()
+                            .disableFormEditing()
+                            .disableContentEditing()
+                            .build();
                     PdfActivity.showDocument(itemView.getContext(),uri,config);
                 }
             });
