@@ -3,6 +3,7 @@ package com.ninotech.fabi.controleur.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Shader;
 import android.graphics.drawable.ShapeDrawable;
 import android.net.Uri;
@@ -20,11 +21,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
+import com.ninotech.fabi.model.data.Setting;
 import com.ninotech.fabi.model.data.SimilarBook;
 import com.pspdfkit.configuration.PdfConfiguration;
 import com.pspdfkit.configuration.activity.PdfActivityConfiguration;
+import com.pspdfkit.configuration.page.PageScrollDirection;
+import com.pspdfkit.configuration.page.PageScrollMode;
+import com.pspdfkit.configuration.settings.SettingsMenuItemType;
 import com.pspdfkit.configuration.sharing.ShareFeatures;
 import com.pspdfkit.ui.PdfActivity;
+import com.pspdfkit.ui.toolbar.popup.PdfTextSelectionPopupToolbar;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -113,10 +119,20 @@ public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.MyViewHold
                             .disableBookmarkEditing()
                             .disableDocumentEditor()
                             .disableAnnotationList()
+                            .scrollDirection(PageScrollDirection.VERTICAL)
+                            .scrollMode(PageScrollMode.CONTINUOUS)
                             .disableAnnotationLimitedToPageBounds()
                             .disableCopyPaste()
                             .disableFormEditing()
                             .disableContentEditing()
+                            .textSelectionEnabled(false)
+                            .enableDocumentInfoView()
+                            .setSettingsMenuItems(EnumSet.of(
+                                    SettingsMenuItemType.THEME,
+                                    SettingsMenuItemType.PAGE_LAYOUT,
+                                    SettingsMenuItemType.PAGE_TRANSITION,
+                                    SettingsMenuItemType.PRESETS
+                            ))
                             .build();
                     PdfActivity.showDocument(itemView.getContext(),uri,config);
                 }
