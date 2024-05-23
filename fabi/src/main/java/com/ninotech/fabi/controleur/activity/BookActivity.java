@@ -201,26 +201,9 @@ public class BookActivity extends AppCompatActivity {
                 }
             }
         });
-
         openPDFButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String url="http://192.168.43.1:2222/fabi/ressources/pdf/NINO0001.pdf";
-                Uri uri = Uri.parse(url);
-                PdfActivityConfiguration config = new PdfActivityConfiguration.Builder(getApplicationContext()).build();
-                PdfActivity.showDocument(getApplicationContext(),uri,config);
-//                // Vérifier et demander la permission d'écriture externe si nécessaire
-//                if (ContextCompat.checkSelfPermission(getApplicationContext(),
-//                        Manifest.permission.WRITE_EXTERNAL_STORAGE)
-//                        != PackageManager.PERMISSION_GRANTED) {
-//
-//                    ActivityCompat.requestPermissions(BookActivity.this,
-//                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-//                            STORAGE_PERMISSION_REQUEST_CODE);
-//                } else {
-//                    // Si la permission est déjà accordée, télécharger et ouvrir le PDF
-//                    downloadAndOpenPDF(mOnlineBook.getElectronic());
-//                }
             }
         });
 
@@ -315,7 +298,7 @@ public class BookActivity extends AppCompatActivity {
                 {
                     Chat chat = new Chat(mSession.getIdNumber(),getApplicationContext(),mMessageTextView.getText().toString());
                     mMessageTextView.setText("");
-                    mTalksList.add(new Talks(chat.getProfile(),chat.getUserName(),chat.getMessage()));
+                    mTalksList.add(new Talks("user.png",chat.getUserName(),chat.getMessage()));
                     TalksAdapter talksAdapter = new TalksAdapter(mTalksList);
                     mCommentsRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                     mCommentsRecyclerView.setAdapter(talksAdapter);
@@ -332,138 +315,6 @@ public class BookActivity extends AppCompatActivity {
         mMediaPlayer.release();
         mTimer.cancel();
         mMediaPlayer = null;
-    }
-
-    // Fonction pour enregistrer l'image localement
-    private void downloadImg(String nomImg) {
-        new AsyncTask<Void, Void, File>() {
-            @Override
-            protected File doInBackground(Void... voids) {
-                try {
-                    // URL du PDF distant
-                    String imgUrl = getString(R.string.ip_server) + "ressources/cover/" + nomImg;
-                    URL url = new URL(imgUrl);
-
-                    // Ouvrir la connexion
-                    HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                    urlConnection.setRequestMethod("GET");
-
-                    // Télécharger le PDF dans le répertoire de téléchargement
-                    File pdfFile = new File(Environment.getExternalStoragePublicDirectory(
-                            Environment.DIRECTORY_DOWNLOADS), nomImg);
-
-                    InputStream inputStream = urlConnection.getInputStream();
-                    FileOutputStream outputStream = new FileOutputStream(pdfFile);
-
-                    byte[] buffer = new byte[1024];
-                    int bytesRead;
-                    while ((bytesRead = inputStream.read(buffer)) != -1) {
-                        outputStream.write(buffer, 0, bytesRead);
-                    }
-
-                    outputStream.close();
-                    inputStream.close();
-
-                    return pdfFile;
-
-                } catch (IOException e) {
-                    Log.e("DownloadTask", "Error while downloading PDF", e);
-                    return null;
-                }
-            }
-            @Override
-            protected void onPostExecute(File pdfFile) {
-                super.onPostExecute(pdfFile);
-
-                if (pdfFile != null) {
-                    // Ouvrir le PDF avec Adobe PDF Reader
-//                    openPDFWithAdobeReader(pdfFile);
-                } else {
-                    Log.e("DownloadTask", "PDF file is null");
-                }
-            }
-        }.execute();
-    }
-
-    private void downloadAndOpenPDF(String nomPdf) {
-        new AsyncTask<Void, Void, File>() {
-            @Override
-            protected File doInBackground(Void... voids) {
-                try {
-                    // URL du PDF distant
-                    String pdfUrl = getString(R.string.ip_server) + "ressources/pdf/" + mOnlineBook.getElectronic();
-                    URL url = new URL(pdfUrl);
-
-                    // Ouvrir la connexion
-                    HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                    urlConnection.setRequestMethod("GET");
-
-                    // Télécharger le PDF dans le répertoire de téléchargement
-                    File pdfFile = new File(Environment.getExternalStoragePublicDirectory(
-                            Environment.DIRECTORY_DOWNLOADS), mOnlineBook.getElectronic());
-
-                    InputStream inputStream = urlConnection.getInputStream();
-                    FileOutputStream outputStream = new FileOutputStream(pdfFile);
-
-                    byte[] buffer = new byte[1024];
-                    int bytesRead;
-                    while ((bytesRead = inputStream.read(buffer)) != -1) {
-                        outputStream.write(buffer, 0, bytesRead);
-                    }
-
-                    outputStream.close();
-                    inputStream.close();
-
-                    return pdfFile;
-
-                } catch (IOException e) {
-                    Log.e("DownloadTask", "Error while downloading PDF", e);
-                    return null;
-                }
-            }
-
-            @Override
-            protected void onPostExecute(File pdfFile) {
-                super.onPostExecute(pdfFile);
-
-                if (pdfFile != null) {
-                    // Ouvrir le PDF avec Adobe PDF Reader
-                    openPDFWithAdobeReader(pdfFile);
-                } else {
-                    Log.e("DownloadTask", "PDF file is null");
-                }
-            }
-        }.execute();
-    }
-
-    private void openPDFWithAdobeReader(File pdfFile) {
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        Uri pdfUri = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".provider", pdfFile);
-        intent.setDataAndType(pdfUri, "application/pdf");
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-
-        try {
-            startActivity(intent);
-        } catch (Exception e) {
-            Toast.makeText(this, "OpenPDF : " + e, Toast.LENGTH_LONG).show();
-
-        }
-    }
-
-        @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (requestCode == STORAGE_PERMISSION_REQUEST_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission accordée, télécharger et ouvrir le PDF
-                downloadAndOpenPDF(mOnlineBook.getElectronic());
-            } else {
-                // Permission refusée, gérer en conséquence
-                Log.e("Permission", "Storage permission denied");
-            }
-        }
     }
 
     private class RecoveryBook extends AsyncTask<String,Void,String> {
@@ -614,7 +465,7 @@ public class BookActivity extends AppCompatActivity {
                     }
                     for (int i=0;i<jsonArray.length();i++) {
                         try {
-                            mTalksList.add(new Talks(jsonArray.getJSONObject(i).getString("profile"),jsonArray.getJSONObject(i).getString("name"),jsonArray.getJSONObject(i).getString("message")));
+                            mTalksList.add(new Talks(jsonArray.getJSONObject(i).getString("profile"),jsonArray.getJSONObject(i).getString("name") + " " + jsonArray.getJSONObject(i).getString("firstName"),jsonArray.getJSONObject(i).getString("message")));
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
