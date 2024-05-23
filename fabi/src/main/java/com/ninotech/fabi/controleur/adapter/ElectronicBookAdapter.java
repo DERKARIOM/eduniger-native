@@ -19,11 +19,18 @@ import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
 import com.ninotech.fabi.model.data.ElectronicBook;
 import com.ninotech.fabi.model.data.OnlineBook;
+import com.pspdfkit.configuration.activity.PdfActivityConfiguration;
+import com.pspdfkit.configuration.page.PageScrollDirection;
+import com.pspdfkit.configuration.page.PageScrollMode;
+import com.pspdfkit.configuration.settings.SettingsMenuItemType;
+import com.pspdfkit.configuration.sharing.ShareFeatures;
+import com.pspdfkit.ui.PdfActivity;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 public class ElectronicBookAdapter extends RecyclerView.Adapter<ElectronicBookAdapter.MyViewHolder> {
@@ -112,23 +119,34 @@ public class ElectronicBookAdapter extends RecyclerView.Adapter<ElectronicBookAd
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    openPDFWithAdobeReader(new File(electronicBook.getPdf()));
+                    File file = new File(electronicBook.getPdf());
+                    Uri uri = Uri.parse(Uri.fromFile(file).toString());
+                    PdfActivityConfiguration config = new PdfActivityConfiguration.Builder(itemView.getContext())
+                            .hideThumbnailGrid().setEnabledShareFeatures(ShareFeatures.none())
+                            .disablePrinting()
+                            .disablePrinting()
+                            .disableAnnotationEditing()
+                            .disableBookmarkEditing()
+                            .disableDocumentEditor()
+                            .disableAnnotationList()
+                            .scrollDirection(PageScrollDirection.VERTICAL)
+                            .scrollMode(PageScrollMode.CONTINUOUS)
+                            .disableAnnotationLimitedToPageBounds()
+                            .disableCopyPaste()
+                            .disableFormEditing()
+                            .disableContentEditing()
+                            .textSelectionEnabled(false)
+                            .enableDocumentInfoView()
+                            .setSettingsMenuItems(EnumSet.of(
+                                    SettingsMenuItemType.THEME,
+                                    SettingsMenuItemType.PAGE_LAYOUT,
+                                    SettingsMenuItemType.PAGE_TRANSITION,
+                                    SettingsMenuItemType.PRESETS
+                            ))
+                            .build();
+                    PdfActivity.showDocument(itemView.getContext(),uri,config);
                 }
             });
-        }
-        private void openPDFWithAdobeReader(File pdfFile) {
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            Uri pdfUri = Uri.fromFile(pdfFile);
-            intent.setDataAndType(pdfUri, "application/pdf");
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-
-            try {
-                itemView.getContext().startActivity(intent);
-            } catch (Exception e) {
-                Toast.makeText(itemView.getContext(), "OpenPDF : " + e, Toast.LENGTH_LONG).show();
-
-            }
         }
     }
 }

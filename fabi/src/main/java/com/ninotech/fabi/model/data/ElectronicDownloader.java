@@ -39,7 +39,7 @@ public class ElectronicDownloader extends AsyncTask<String, Void, ElectronicBook
     protected void onPostExecute(ElectronicBook result) {
         if (result != null) {
             ElectronicTable electronicTable = new ElectronicTable(mContext);
-            electronicTable.insert(mIdNumber, mOnlineBook.getId(), mOnlineBook.getDescription(),"RAs",result.getCover(),result.getPdf(), mOnlineBook.getCategory(), mOnlineBook.getTitle(),result.getCoverCategory(),result.getProfileAuthor());
+            electronicTable.insert(mIdNumber, mOnlineBook.getId(), mOnlineBook.getDescription(),"Auteur",result.getCover(),result.getPdf(), mOnlineBook.getCategory(), mOnlineBook.getTitle(),result.getCoverCategory(),result.getProfileAuthor());
         }
         // Sauvegarder l'image dans la base de données SQLite
         // Utilisez votre DatabaseHelper pour insérer l'image dans la base de données
