@@ -45,13 +45,7 @@ public class RecommendedFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_recommended, container, false);
         Session session = new Session(getContext());
         mBookRecommendedRecyclerView = view.findViewById(R.id.recycler_view_ranking);
-        mPub = view.findViewById(R.id.image_view_fragment_recommended_welcome);
         mOnlineBookList = new ArrayList<>();
-//        Picasso.get()
-//                .load(getString(R.string.ip_server) + "ressources/pub/pub1.jpg")
-//                .transform(new RoundedTransformation(200,10))
-//                .resize(6200,3333)
-//                .into(mPub);
         BroadcastReceiver receiverNoConnectionAdapter = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -128,14 +122,12 @@ public class RecommendedFragment extends Fragment {
                         throw new RuntimeException(e);
                     }
                 }
-                mPub.setVisibility(View.VISIBLE);
                 OnlineBookAdapter onlineBookAdapter = new OnlineBookAdapter(mOnlineBookList);
                 mBookRecommendedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                 mBookRecommendedRecyclerView.setAdapter(onlineBookAdapter);
             }
             else
             {
-                mPub.setVisibility(View.INVISIBLE);
                 ArrayList<Connection> list = new ArrayList<>();
                 list.add(new Connection(getString(R.string.no_connection_available),"RECOMMENDED_FRAGMENT",false));
                 NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
@@ -146,7 +138,6 @@ public class RecommendedFragment extends Fragment {
     }
     private RecyclerView mBookRecommendedRecyclerView;
     private ArrayList<OnlineBook> mOnlineBookList;
-    private ImageView mPub;
     private NoConnectionAdapter mNoConnectionAdapter;
 
 }
