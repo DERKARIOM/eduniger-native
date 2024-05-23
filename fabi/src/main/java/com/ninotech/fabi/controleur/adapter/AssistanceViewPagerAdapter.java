@@ -5,7 +5,7 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.ninotech.fabi.controleur.fragment.FabiolaChatFragment;
-import com.ninotech.fabi.controleur.fragment.HistoriqueFragment;
+import com.ninotech.fabi.controleur.fragment.SuggestionFragment;
 
 public class AssistanceViewPagerAdapter extends FragmentStateAdapter {
 
@@ -21,7 +21,7 @@ public class AssistanceViewPagerAdapter extends FragmentStateAdapter {
             case 0:
                 return new FabiolaChatFragment();
             case 1:
-                return new HistoriqueFragment();
+                return new SuggestionFragment();
         }
         return new FabiolaChatFragment(); // Fragment par défaut
     }

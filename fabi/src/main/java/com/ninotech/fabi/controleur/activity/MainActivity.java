@@ -23,6 +23,7 @@ import androidx.appcompat.widget.Toolbar;
 import com.ninotech.fabi.controleur.fragment.HomeFragment;
 import com.ninotech.fabi.controleur.fragment.AssistanceFragment;
 import com.ninotech.fabi.controleur.fragment.LibraryFragment;
+import com.ninotech.fabi.controleur.fragment.SuggestionFragment;
 import com.ninotech.fabi.model.data.Account;
 import com.ninotech.fabi.model.data.Initialization;
 import com.ninotech.fabi.R;
@@ -59,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("MODE", Context.MODE_PRIVATE);
         boolean nightMODE = sharedPreferences.getBoolean("night", false);
         mHomeFragment = new HomeFragment();
-        mAssistanceFragment = new AssistanceFragment();
+        mSuggestionFragment = new SuggestionFragment();
         LibraryFragment libraryFragment = new LibraryFragment();
         MenuItem menuItem = toolbar.getMenu().findItem(R.id.menuHomeNotification);
         mDigitalPrintTable = new DigitalPrintTable(this);
@@ -199,12 +200,12 @@ public class MainActivity extends AppCompatActivity {
                         }
                         return true;
                     case R.id.assistance:
-                        if (mAssistanceFragment.isAdded()) {
-                            getSupportFragmentManager().beginTransaction().replace(R.id.Top_comtainer,mAssistanceFragment).commit();
+                        if (mSuggestionFragment.isAdded()) {
+                            getSupportFragmentManager().beginTransaction().replace(R.id.Top_comtainer,mSuggestionFragment).commit();
                         }
                         else
                         {
-                            getSupportFragmentManager().beginTransaction().replace(R.id.Top_comtainer,new AssistanceFragment()).commit();
+                            getSupportFragmentManager().beginTransaction().replace(R.id.Top_comtainer,new SuggestionFragment()).commit();
                         }
                         return true;
                     case R.id.bibliotheque:
@@ -234,7 +235,7 @@ public class MainActivity extends AppCompatActivity {
     private SQLiteDatabase mDatabase;
     private BottomNavigationView mBottomNavigationView;
     private HomeFragment mHomeFragment = new HomeFragment();
-    private AssistanceFragment mAssistanceFragment = new AssistanceFragment();
+    private SuggestionFragment mSuggestionFragment = new SuggestionFragment();
     private Account mAccount;
     private DigitalPrintTable mDigitalPrintTable;
 

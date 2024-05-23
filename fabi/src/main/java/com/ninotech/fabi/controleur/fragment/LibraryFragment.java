@@ -44,6 +44,7 @@ public class LibraryFragment extends Fragment {
         RecyclerView recentRecyclerView = view.findViewById(R.id.recycler_view_electronic_fragment_recent);
         TextView usernameTextView = view.findViewById(R.id.text_view_fragment_library_username);
         TextView emailTextView = view.findViewById(R.id.text_view_fragment_library_email);
+        mView = view.findViewById(R.id.view_fragment_library_2);
         List<Library> libraryList = new ArrayList<>();
         List<SimilarBook> similarBookList = new ArrayList<>();
         ElectronicTable electronicTable = new ElectronicTable(getContext());
@@ -98,6 +99,7 @@ public class LibraryFragment extends Fragment {
             TextView recentReadBookTextView;
             recentReadBookTextView = view.findViewById(R.id.text_view_fragment_library_recent_read_book);
             recentReadBookTextView.setVisibility(View.GONE);
+            mView.setVisibility(View.GONE);
             Log.e("errElectronicFragment",e.getMessage());
         }
 
@@ -162,4 +164,5 @@ public class LibraryFragment extends Fragment {
     private StudentTable mStudentTable;
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_IMAGE_GALLERY = 2;
+    private View mView;
 }

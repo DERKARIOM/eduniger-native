@@ -13,8 +13,8 @@
         >
         <ImageView
             android:id="@+id/image_view_fragment_library_photo"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_centerVertical="true"
             android:src="@drawable/user"
             />

@@ -48,7 +48,7 @@ public class RecommendedFragment extends Fragment {
         mPub = view.findViewById(R.id.image_view_fragment_recommended_welcome);
         mOnlineBookList = new ArrayList<>();
         Picasso.get()
-                .load(getString(R.string.ip_server) + "ressources/pub/pub1.jpg")
+                .load(R.drawable.pub1)
                 .transform(new RoundedTransformation(200,10))
                 .resize(6200,3333)
                 .into(mPub);

@@ -27,7 +27,7 @@
     <string name="account_not_exist">Ce compte n\' existe pas</string>
     <string name="incorrect_password">Mot de passe incorrect</string>
     <string name="forgot_password">j\'ai oublié mon mot de passe</string>
-    <string name="find_book">  Recherche des livre</string>
+    <string name="find_book">  Recherche des livres</string>
     <string name="recomended_title">Recommandé</string>
     <string name="category_title">Catégorie</string>
     <string name="ranking">Classement</string>
@@ -219,7 +219,7 @@
     <string name="no_connection_available">Aucun reseau disponible</string>
     <string name="wait">Veuillez patienter</string>
     <string name="download_book">Téléchargement récent</string>
-    <string name="recent_read">Lecture récentes des livre Électronique</string>
+    <string name="recent_read">Lecture récentes des livres Électronique</string>
     <string name="no_loand_book">Aucun livre Emprunté</string>
     <string name="no_audio_book">Aucun livre audio</string>
     <string name="no_electronic_book">Aucun livre électronique</string>
@@ -227,10 +227,10 @@
     <string name="no_category">"Aucune catégorie "</string>
     <string name="year">2023-2024</string>
     <string name="notification">Notification</string>
-    <string name="search_category">Recherche des categorie</string>
+    <string name="search_category">Recherche des categories</string>
     <string name="search_author">Recherche des auteurs</string>
     <string name="no_notification">Auccune Notification</string>
-    <string name="search_notification">Recherche des notification</string>
-    <string name="search_setting">Recherche des paramètre</string>
+    <string name="search_notification">Recherche des notifications</string>
+    <string name="search_setting">Recherche des paramètres</string>
 
 </resources>

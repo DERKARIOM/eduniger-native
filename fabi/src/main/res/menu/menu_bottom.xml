@@ -9,7 +9,7 @@
     <item
         android:id="@+id/assistance"
         android:icon="@drawable/vector_white_messagerie"
-        android:title="Assistance" />
+        android:title="Suggestion" />
     <item
         android:id="@+id/bibliotheque"
         android:icon="@drawable/vector_purple_200_bibliotheque"
