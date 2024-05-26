@@ -18,7 +18,7 @@ public class Chat {
         Cursor cursor = studentTable.getData(idNumber);
         cursor.moveToFirst();
         mUserName = cursor.getString(1) + " " +cursor.getString(2);
-        mProfile = cursor.getString(6);
+//        mProfile = cursor.getString(6);
         mMessage = message;
     }
     public String getProfile() {

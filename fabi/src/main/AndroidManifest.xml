@@ -24,9 +24,13 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
-        <activity android:name="com.pspdfkit.ui.PdfActivity"
+        <activity
+            android:name=".controleur.activity.PdfNinoView"
+            android:exported="false" />
+        <activity
+            android:name="com.pspdfkit.ui.PdfActivity"
             android:theme="@style/MyApp.PSPDFKitTheme"
-            android:windowSoftInputMode="adjustNothing"/>
+            android:windowSoftInputMode="adjustNothing" />
         <activity
             android:name=".controleur.activity.SearchActivity"
             android:exported="false" />
@@ -126,6 +130,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <service
             android:name=".model.service.MyFirebaseMessagingService"
             android:exported="false">

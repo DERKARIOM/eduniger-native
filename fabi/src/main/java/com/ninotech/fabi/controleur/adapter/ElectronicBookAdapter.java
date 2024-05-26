@@ -8,6 +8,7 @@ import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,6 +17,7 @@ import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.R;
+import com.ninotech.fabi.controleur.activity.PdfNinoView;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
 import com.ninotech.fabi.model.data.ElectronicBook;
 import com.ninotech.fabi.model.data.OnlineBook;
@@ -144,7 +146,7 @@ public class ElectronicBookAdapter extends RecyclerView.Adapter<ElectronicBookAd
                                     SettingsMenuItemType.PRESETS
                             ))
                             .build();
-                    PdfActivity.showDocument(itemView.getContext(),uri,config);
+                    PdfNinoView.showDocument(itemView.getContext(),uri,config);
                 }
             });
         }
