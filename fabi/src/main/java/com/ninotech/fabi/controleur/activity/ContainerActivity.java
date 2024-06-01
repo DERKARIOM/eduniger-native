@@ -37,6 +37,7 @@ import com.ninotech.fabi.model.table.ElectronicTable;
 import com.ninotech.fabi.model.table.LoandTable;
 import com.ninotech.fabi.model.table.Session;
 
+import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -253,8 +254,20 @@ public class ContainerActivity extends AppCompatActivity {
         switch (item.getItemId())
         {
             case R.id.menu_item_delete:
-                mElectronicTable.remove(mSession.getIdNumber(),mElectronicBookSelect.getId());
-                mElectronicBookAdapter.Remove(mElectronicBookAdapter.getPosition());
+                File electronicFile = new File(mElectronicBookSelect.getPdf());
+                File coverFile = new File(mElectronicBookSelect.getCover());
+                if(electronicFile.exists() && coverFile.exists())
+                {
+                    if(electronicFile.delete() && coverFile.delete())
+                    {
+                        mElectronicTable.remove(mSession.getIdNumber(),mElectronicBookSelect.getId());
+                        mElectronicBookAdapter.Remove(mElectronicBookAdapter.getPosition());
+                    }
+                    else
+                    {
+                        Toast.makeText(this, "Une erreur s'est produite lors de la suppression", Toast.LENGTH_SHORT).show();
+                    }
+                }
                 break;
             default:
                 return super.onContextItemSelected(item);
