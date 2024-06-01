@@ -82,6 +82,12 @@ public class ElectronicTable extends SQLiteOpenHelper {
         res.moveToFirst();
         return res.getInt(0);
     }
+    public boolean remove(String idNumber , String idBook)
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+        db.execSQL("DELETE FROM " + NAME_TABLE + " WHERE idNumberElectronic='" + idNumber + "' AND idBookElectronic='" + idBook + "';");
+        return true;
+    }
     public boolean insert (String idNumber , String idBook , String description , String author ,String cover, String electronic , String category , String title ,String coverCategory,String profileAuthor)
     {
         SQLiteDatabase db = this.getWritableDatabase();

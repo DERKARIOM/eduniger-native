@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,7 +61,6 @@ public class ElectronicBookAdapter extends RecyclerView.Adapter<ElectronicBookAd
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         ElectronicBook item = mElectronicBookList.get(position);
-        int i = position;
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {

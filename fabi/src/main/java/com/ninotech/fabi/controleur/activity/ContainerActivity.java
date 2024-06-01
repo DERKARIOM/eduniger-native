@@ -10,8 +10,11 @@ import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -69,9 +72,10 @@ public class ContainerActivity extends AppCompatActivity {
                    do {
                        mElectronicBookList.add(new ElectronicBook(electronicCursor.getString(2),electronicCursor.getString(5),electronicCursor.getString(8),electronicCursor.getString(7),electronicCursor.getString(4),electronicCursor.getString(6)));
                    }while(electronicCursor.moveToNext());
-                   ElectronicBookAdapter electronicBookAdapter = new ElectronicBookAdapter(mElectronicBookList);
+                   mElectronicBookAdapter = new ElectronicBookAdapter(mElectronicBookList);
                    mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-                   mRecyclerView.setAdapter(electronicBookAdapter);
+                   registerForContextMenu(mRecyclerView);
+                   mRecyclerView.setAdapter(mElectronicBookAdapter);
                }catch (Exception e)
                {
                    voidContainer(R.drawable.img_telecharge_local,getString(R.string.no_electronic_book));
@@ -236,10 +240,33 @@ public class ContainerActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setAdapter(voidContainerAdapter);
     }
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_item,menu);
+        // AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
+        mElectronicBookSelect = mElectronicBookAdapter.getItem(mElectronicBookAdapter.getPosition());
+    }
+    @Override
+    public boolean onContextItemSelected(MenuItem item){
+        switch (item.getItemId())
+        {
+            case R.id.menu_item_delete:
+                mElectronicTable.remove(mSession.getIdNumber(),mElectronicBookSelect.getId());
+                mElectronicBookAdapter.Remove(mElectronicBookAdapter.getPosition());
+                break;
+            default:
+                return super.onContextItemSelected(item);
+        }
+        return false;
+    }
     private RecyclerView mRecyclerView;
     private List<ElectronicBook> mElectronicBookList;
     private List<Category> mList4;
     private ElectronicTable mElectronicTable;
     private Session mSession;
     private int mId;
+    private ElectronicBook mElectronicBookSelect;
+    private ElectronicBookAdapter mElectronicBookAdapter;
 }
