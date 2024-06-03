@@ -88,6 +88,12 @@ public class AudioTable extends SQLiteOpenHelper {
         res.moveToFirst();
         return res.getInt(0);
     }
+    public boolean remove(String idNumber , String idBook)
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+        db.execSQL("DELETE FROM " + NAME_TABLE + " WHERE idNumberAudio='" + idNumber + "' AND idBookAudio='" + idBook + "';");
+        return true;
+    }
     public boolean insert (String idNumber , String idBook , String description , String author ,String cover, String audio , String category , String title ,String coverCategory,String profileAuthor , String duration)
     {
         SQLiteDatabase db = this.getWritableDatabase();

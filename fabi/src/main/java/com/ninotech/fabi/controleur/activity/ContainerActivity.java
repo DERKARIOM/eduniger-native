@@ -87,15 +87,16 @@ public class ContainerActivity extends AppCompatActivity {
                 try {
                     actionBarTitle.setText(R.string.your_audio_books);
                     ArrayList<AudioBook> audioBooks = new ArrayList<>();
-                    AudioTable audioTable = new AudioTable(this);
-                    Cursor audioCursor = audioTable.getData(mSession.getIdNumber());
+                    mAudioTable = new AudioTable(this);
+                    Cursor audioCursor = mAudioTable.getData(mSession.getIdNumber());
                     audioCursor.moveToFirst();
                     do {
                         audioBooks.add(new AudioBook(audioCursor.getString(2),audioCursor.getString(5),audioCursor.getString(8),audioCursor.getString(4),audioCursor.getString(11),audioCursor.getString(6)));
                     }while (audioCursor.moveToNext());
-                    AudioBookAdapter audioBookAdapter = new AudioBookAdapter(audioBooks);
+                    mAudioBookAdapter = new AudioBookAdapter(audioBooks);
                     mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-                    mRecyclerView.setAdapter(audioBookAdapter);
+                    registerForContextMenu(mRecyclerView);
+                    mRecyclerView.setAdapter(mAudioBookAdapter);
                 }catch (Exception e)
                 {
                     voidContainer(R.drawable.img_playliste_local,getString(R.string.no_audio_book));
@@ -246,27 +247,55 @@ public class ContainerActivity extends AppCompatActivity {
         super.onCreateContextMenu(menu, v, menuInfo);
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_item,menu);
-        // AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
-        mElectronicBookSelect = mElectronicBookAdapter.getItem(mElectronicBookAdapter.getPosition());
+        switch (mId)
+        {
+            case 1:
+                mElectronicBookSelect = mElectronicBookAdapter.getItem(mElectronicBookAdapter.getPosition());
+                break;
+            case 2:
+                mAudioBookSelect = mAudioBookAdapter.getItem(mAudioBookAdapter.getPosition());
+
+        }
     }
     @Override
     public boolean onContextItemSelected(MenuItem item){
         switch (item.getItemId())
         {
             case R.id.menu_item_delete:
-                File electronicFile = new File(mElectronicBookSelect.getPdf());
-                File coverFile = new File(mElectronicBookSelect.getCover());
-                if(electronicFile.exists() && coverFile.exists())
+                switch (mId)
                 {
-                    if(electronicFile.delete() && coverFile.delete())
-                    {
-                        mElectronicTable.remove(mSession.getIdNumber(),mElectronicBookSelect.getId());
-                        mElectronicBookAdapter.Remove(mElectronicBookAdapter.getPosition());
-                    }
-                    else
-                    {
-                        Toast.makeText(this, "Une erreur s'est produite lors de la suppression", Toast.LENGTH_SHORT).show();
-                    }
+                    case 1:
+                        File electronicFile = new File(mElectronicBookSelect.getPdf());
+                        File coverFile = new File(mElectronicBookSelect.getCover());
+                        if(electronicFile.exists() && coverFile.exists())
+                        {
+                            if(electronicFile.delete() && coverFile.delete())
+                            {
+                                mElectronicTable.remove(mSession.getIdNumber(),mElectronicBookSelect.getId());
+                                mElectronicBookAdapter.Remove(mElectronicBookAdapter.getPosition());
+                            }
+                            else
+                            {
+                                Toast.makeText(this, "Une erreur s'est produite lors de la suppression", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                        break;
+                    case 2:
+                        File audioFile = new File(mAudioBookSelect.getAudio());
+                        File coverAudioFile = new File(mAudioBookSelect.getCover());
+                        if(audioFile.exists() && coverAudioFile.exists())
+                        {
+                            if(audioFile.delete() && coverAudioFile.delete())
+                            {
+                                mAudioTable.remove(mSession.getIdNumber(),mAudioBookSelect.getId());
+                                mAudioBookAdapter.Remove(mAudioBookAdapter.getPosition());
+                            }
+                            else
+                            {
+                                Toast.makeText(this, "Une erreur s'est produite lors de la suppression", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                        break;
                 }
                 break;
             default:
@@ -282,4 +311,7 @@ public class ContainerActivity extends AppCompatActivity {
     private int mId;
     private ElectronicBook mElectronicBookSelect;
     private ElectronicBookAdapter mElectronicBookAdapter;
+    private AudioBook mAudioBookSelect;
+    private AudioBookAdapter mAudioBookAdapter;
+    private AudioTable mAudioTable;
 }
