@@ -10,9 +10,13 @@ import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ninotech.fabi.controleur.adapter.VoidContainerAdapter;
 import com.ninotech.fabi.model.data.Notification;
@@ -22,6 +26,7 @@ import com.ninotech.fabi.model.data.VoidContainer;
 import com.ninotech.fabi.model.table.NotificationTable;
 import com.ninotech.fabi.model.table.Session;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class NotificationActivity extends AppCompatActivity {
@@ -47,10 +52,11 @@ public class NotificationActivity extends AppCompatActivity {
         cursor.moveToFirst();
         try {
             do {
-                mNotifications.add(new Notification(cursor.getString(2),cursor.getString(3),cursor.getString(4)));
+                mNotifications.add(new Notification(cursor.getString(0),cursor.getString(2),cursor.getString(3),cursor.getString(4)));
             }while(cursor.moveToNext());
             mNotificationAdapter = new NotificationAdapter(mNotifications);
             mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getApplicationContext()));
+            registerForContextMenu(mRecyclerView);
             mRecyclerView.setAdapter(mNotificationAdapter);
             mRecyclerView.smoothScrollToPosition(mNotificationAdapter.getItemCount()-1);
         }catch (Exception e)
@@ -88,9 +94,30 @@ public class NotificationActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setAdapter(voidContainerAdapter);
     }
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_item,menu);
+        mNotificationSelect = mNotificationAdapter.getItem(mNotificationAdapter.getPosition());
+    }
+    @Override
+    public boolean onContextItemSelected(MenuItem item){
+        switch (item.getItemId())
+        {
+            case R.id.menu_item_delete:
+                mNotificationTable.remove(mNotificationSelect.getId());
+                mNotificationAdapter.remove(mNotificationAdapter.getPosition());
+                break;
+            default:
+                return super.onContextItemSelected(item);
+        }
+        return false;
+    }
     private RecyclerView mRecyclerView;
     private NotificationAdapter mNotificationAdapter;
     private ArrayList<Notification> mNotifications;
+    private Notification mNotificationSelect;
     private NotificationTable mNotificationTable;
     private Session mSession;
 }

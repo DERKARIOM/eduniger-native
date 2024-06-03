@@ -57,7 +57,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         return mNotifications.get(position);
     }
 
-    public void Remove(int position){
+    public void remove(int position){
         mNotifications.remove(position);
         notifyItemRemoved(position);
     }

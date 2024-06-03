@@ -664,7 +664,7 @@ public class SearchActivity extends AppCompatActivity {
         cursor.moveToFirst();
         try {
             do {
-                mNotifications.add(new Notification(cursor.getString(2),cursor.getString(3),cursor.getString(4)));
+                mNotifications.add(new Notification(cursor.getString(0),cursor.getString(2),cursor.getString(3),cursor.getString(4)));
             }while(cursor.moveToNext());
             mNotificationAdapter = new NotificationAdapter(mNotifications);
             mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getApplicationContext()));

@@ -42,6 +42,12 @@ public class NotificationTable extends SQLiteOpenHelper {
         Cursor res = db.rawQuery("SELECT * FROM Notification WHERE notifMatriculeUt='" + matricule + "';",null);
         return res;
     }
+    public boolean remove(String id)
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+        db.execSQL("DELETE FROM " + NAME_TABLE + " WHERE idNotification=" + id);
+        return true;
+    }
     public boolean insert (String matricule , String titre , String message , String date)
     {
         SQLiteDatabase db = this.getWritableDatabase();

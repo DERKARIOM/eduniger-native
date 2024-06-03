@@ -1,7 +1,8 @@
 package com.ninotech.fabi.model.data;
 
 public class Notification {
-    public Notification(String titre, String message, String date) {
+    public Notification(String id, String titre, String message, String date) {
+        mId = id;
         mTitre = titre;
         mMessage = message;
         mDate = date;
@@ -31,6 +32,15 @@ public class Notification {
         mDate = date;
     }
 
+    public String getId() {
+        return mId;
+    }
+
+    public void setId(String id) {
+        this.mId = id;
+    }
+
+    private String mId;
     private String mTitre;
     private String mMessage;
     private String mDate;
