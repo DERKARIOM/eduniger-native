@@ -40,7 +40,7 @@ public class AudioDownloader extends AsyncTask<String, Void, AudioBook> {
         if (result != null) {
             // Convertir l'image Bitmap en un tableau d'octets
             AudioTable audioTable = new AudioTable(mContext);
-            audioTable.insert(mIdNumber, mOnlineBook.getId(), mOnlineBook.getDescription(), mOnlineBook.getAuthor(),result.getCover(),result.getAudio(), mOnlineBook.getCategory(), mOnlineBook.getTitle(),result.getCoverCategory(),result.getProfileAuthor(),mTones.getDuration());
+            audioTable.insert(mIdNumber, mOnlineBook.getId(), mOnlineBook.getDescription(), "Auteur",result.getCover(),result.getAudio(), mOnlineBook.getCategory(), mOnlineBook.getTitle(),result.getCoverCategory(),result.getProfileAuthor(),mTones.getDuration());
         }
         // Sauvegarder l'image dans la base de données SQLite
         // Utilisez votre DatabaseHelper pour insérer l'image dans la base de données
