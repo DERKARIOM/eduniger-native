@@ -3,15 +3,15 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/accueil"
+        android:id="@+id/navigation_home"
         android:icon="@drawable/vector_white_home"
         android:title="Accueil" />
     <item
-        android:id="@+id/assistance"
+        android:id="@+id/navigation_suggestion"
         android:icon="@drawable/vector_white_messagerie"
         android:title="Suggestion" />
     <item
-        android:id="@+id/bibliotheque"
+        android:id="@+id/navigation_library"
         android:icon="@drawable/vector_purple_200_bibliotheque"
         android:title="Bibliothèque" />
 </menu>

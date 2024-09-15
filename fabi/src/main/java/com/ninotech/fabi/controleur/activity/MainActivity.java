@@ -12,16 +12,13 @@ import android.os.StrictMode;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 
 import com.ninotech.fabi.controleur.fragment.HomeFragment;
-import com.ninotech.fabi.controleur.fragment.AssistanceFragment;
 import com.ninotech.fabi.controleur.fragment.LibraryFragment;
 import com.ninotech.fabi.controleur.fragment.SuggestionFragment;
 import com.ninotech.fabi.model.data.Account;
@@ -29,10 +26,12 @@ import com.ninotech.fabi.model.data.Initialization;
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.model.service.NotificationService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationBarView;
 import com.ninotech.fabi.model.table.DigitalPrintTable;
-
-import java.util.ArrayList;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
@@ -42,9 +41,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Objects.requireNonNull(getSupportActionBar()).hide();
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-        //getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
-
-        /* Initialisation des attributs membre */
         Handler handler = new Handler();
         Runnable runnable = new Runnable() {
             @Override
@@ -182,39 +178,46 @@ public class MainActivity extends AppCompatActivity {
         }
 
         /* La mise en place du Fragment par defeaut */
-       getSupportFragmentManager().beginTransaction().replace(R.id.Top_comtainer, mHomeFragment).commit();
+      // getSupportFragmentManager().beginTransaction().replace(R.id.Top_comtainer, mHomeFragment).commit();
+
+        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
+                R.id.navigation_home, R.id.navigation_suggestion, R.id.navigation_library)
+                .build();
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
+        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+        NavigationUI.setupWithNavController(mBottomNavigationView, navController);
 
         /* En Clikquant sur les boutton de la barre de navigation */
-        mBottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(MenuItem item) {
-                switch (item.getItemId())
-                {
-                    case R.id.accueil:
-                        if (mHomeFragment.isAdded()) {
-                            getSupportFragmentManager().beginTransaction().replace(R.id.Top_comtainer, mHomeFragment).commit();
-                        }
-                        else
-                        {
-                            getSupportFragmentManager().beginTransaction().replace(R.id.Top_comtainer,new HomeFragment()).commit();
-                        }
-                        return true;
-                    case R.id.assistance:
-                        if (mSuggestionFragment.isAdded()) {
-                            getSupportFragmentManager().beginTransaction().replace(R.id.Top_comtainer,mSuggestionFragment).commit();
-                        }
-                        else
-                        {
-                            getSupportFragmentManager().beginTransaction().replace(R.id.Top_comtainer,new SuggestionFragment()).commit();
-                        }
-                        return true;
-                    case R.id.bibliotheque:
-                        getSupportFragmentManager().beginTransaction().replace(R.id.Top_comtainer,new LibraryFragment()).commit();
-                        return true;
-                }
-                return false;
-            }
-        });
+//        mBottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+//            @Override
+//            public boolean onNavigationItemSelected(MenuItem item) {
+//                switch (item.getItemId())
+//                {
+//                    case R.id.accueil:
+//                        if (mHomeFragment.isAdded()) {
+//                            getSupportFragmentManager().beginTransaction().replace(R.id.Top_comtainer, mHomeFragment).commit();
+//                        }
+//                        else
+//                        {
+//                            getSupportFragmentManager().beginTransaction().replace(R.id.Top_comtainer,new HomeFragment()).commit();
+//                        }
+//                        return true;
+//                    case R.id.assistance:
+//                        if (mSuggestionFragment.isAdded()) {
+//                            getSupportFragmentManager().beginTransaction().replace(R.id.Top_comtainer,mSuggestionFragment).commit();
+//                        }
+//                        else
+//                        {
+//                            getSupportFragmentManager().beginTransaction().replace(R.id.Top_comtainer,new SuggestionFragment()).commit();
+//                        }
+//                        return true;
+//                    case R.id.bibliotheque:
+//                        getSupportFragmentManager().beginTransaction().replace(R.id.Top_comtainer,new LibraryFragment()).commit();
+//                        return true;
+//                }
+//                return false;
+//            }
+//        });
     }
 
     private void reboot() {
