@@ -54,6 +54,7 @@
             android:layout_height="wrap_content"
             android:text="@string/ok"
             android:layout_margin="10dp"
+            android:padding="15dp"
             android:textColor="@color/purple_200"
             android:fontFamily="@font/linux2"
             android:textSize="@dimen/size_button"
