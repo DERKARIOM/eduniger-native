@@ -23,6 +23,7 @@ import android.widget.TextView;
 
 import com.ninotech.fabi.model.data.Account;
 import com.ninotech.fabi.R;
+import com.ninotech.fabi.model.table.DigitalPrintTable;
 import com.ninotech.fabi.model.table.Session;
 
 import java.util.Objects;
@@ -41,7 +42,8 @@ public class LockActivity extends AppCompatActivity {
         mHelpTextView = findViewById(R.id.text_view_activity_digital_print_helper);
         mLockImageView = findViewById(R.id.image_view_activity_digital_print_lock);
         mSession = new Session(this);
-        mIdNumberEditText.setText("+227 " + mSession.getIdNumber());
+        mDigitalPrintTable = new DigitalPrintTable(this);
+        mIdNumberEditText.setText(mSession.getIdNumber());
         mIdNumberEditText.setEnabled(false);
         handler = new Handler();
         runnable = new Runnable() {
@@ -119,15 +121,6 @@ public class LockActivity extends AppCompatActivity {
             @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
             @Override
             public void onClick(View v) {
-
-                if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_PHONE_STATE)
-                        != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(LockActivity.this,
-                            new String[]{Manifest.permission.READ_PHONE_STATE,Manifest.permission.CALL_PHONE,Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.POST_NOTIFICATIONS},
-                            1);
-                }
-                else {
-
                     mAccount = new Account(mIdNumberEditText.getText().toString(),mPasswordEditText.getText().toString());
                     switch (mAccount.inputControl())
                     {
@@ -167,11 +160,9 @@ public class LockActivity extends AppCompatActivity {
                                         R.string.incorrect_password
                                 );
                             }
-
                             break;
                     }
                 }
-            }
         });
     }
     @Override
@@ -183,12 +174,12 @@ public class LockActivity extends AppCompatActivity {
     }
     private void authenticate()
     {
-        mLockImageView.setImageResource(R.drawable.img_digital);
+        mLockImageView.setImageResource(R.drawable.vector_purple_200_digital);
         mErrorTextView.setText(R.string.touch_the_fingerprint_sensor);
     }
     private void Home()
     {
-        Lock.savePass(getApplicationContext(),1);
+        mDigitalPrintTable.onUpdate("1");
         Intent mainA = new Intent(LockActivity.this, MainActivity.class);
         startActivity(mainA);
         finish();
@@ -213,4 +204,5 @@ public class LockActivity extends AppCompatActivity {
     private Handler handler;
     private Runnable runnable;
     private Runnable home;
+    private DigitalPrintTable mDigitalPrintTable;
 }
