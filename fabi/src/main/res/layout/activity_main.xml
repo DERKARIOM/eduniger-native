@@ -15,13 +15,6 @@
         android:layout_below="@+id/relative_layout_toolbar_search"
         android:layout_above="@+id/bottom_navigation_main"
         app:navGraph="@navigation/mobile_navigation" />
-<!--    <FrameLayout-->
-<!--        android:id="@+id/frame_layout_main_activity"-->
-<!--        android:layout_below="@+id/relative_layout_toolbar_search"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent"-->
-<!--        android:layout_above="@+id/bottom_navigation_main"-->
-<!--        />-->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation_main"
         android:layout_width="match_parent"

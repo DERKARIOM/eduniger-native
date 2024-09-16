@@ -58,7 +58,7 @@
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".controleur.activity.DigitalPrintActivity"
+            android:name=".controleur.activity.LockActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity

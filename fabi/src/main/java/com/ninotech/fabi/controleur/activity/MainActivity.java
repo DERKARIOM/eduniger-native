@@ -27,7 +27,7 @@ import com.ninotech.fabi.R;
 import com.ninotech.fabi.model.service.NotificationService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.ninotech.fabi.model.table.DigitalPrintTable;
-import androidx.appcompat.app.AppCompatActivity;
+
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             if(mDigitalPrintTable.getPass().equals("0"))
             {
-                Intent emprient = new Intent(MainActivity.this, DigitalPrintActivity.class);
+                Intent emprient = new Intent(MainActivity.this, LockActivity.class);
                 startActivity(emprient);
                 finish();
             }
