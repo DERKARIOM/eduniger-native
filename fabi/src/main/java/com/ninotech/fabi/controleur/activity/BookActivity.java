@@ -201,11 +201,12 @@ public class BookActivity extends AppCompatActivity {
                 }
             }
         });
-        openPDFButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-            }
-        });
+        openPDFButton.setVisibility(View.GONE);
+//        openPDFButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//            }
+//        });
 
         downloadPDFButton.setOnClickListener(new View.OnClickListener() {
             @Override
