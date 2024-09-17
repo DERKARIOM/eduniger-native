@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".controleur.activity.PreRegistrationActivity">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <RelativeLayout
+            android:id="@+id/relative_layout_activity_register_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            >
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="150dp"
+                android:src="@drawable/img_regester"
+                android:contentDescription="@string/todo" />
+        </RelativeLayout>
+        <EditText
+            android:layout_marginTop="50dp"
+            android:id="@+id/edit_text_activity_pre_register_id_number"
+            android:hint="  Matricule"
+            android:layout_below="@id/relative_layout_activity_register_img"
+            android:drawableStart="@drawable/vector_black3_identify"
+            android:inputType="number"
+            style="@style/edit_text_register"
+            android:autofillHints="" />
+        <EditText
+            android:id="@+id/edit_text_activity_pre_register_name"
+            android:hint="  Nom"
+            android:layout_below="@id/edit_text_activity_pre_register_id_number"
+            android:drawableStart="@drawable/vector_black3_identify"
+            android:inputType="text"
+            style="@style/edit_text_register"
+            android:autofillHints="" />
+        <EditText
+            android:id="@+id/edit_text_activity_pre_register_first_name"
+            android:hint="  Prénom"
+            android:layout_below="@id/edit_text_activity_pre_register_name"
+            android:drawableStart="@drawable/vector_family"
+            android:inputType="text"
+            style="@style/edit_text_register"
+            android:autofillHints="" />
+        <EditText
+            android:id="@+id/edit_text_activity_pre_register_section"
+            android:hint="  Section"
+            android:layout_below="@id/edit_text_activity_pre_register_first_name"
+            android:drawableStart="@drawable/vector_section"
+            android:inputType="number"
+            style="@style/edit_text_register"
+            android:autofillHints=""
+            />
+        <EditText
+            android:id="@+id/edit_text_activity_pre_register_departement"
+            android:hint="  Département"
+            android:layout_below="@id/edit_text_activity_pre_register_section"
+            android:drawableStart="@drawable/vector_departement"
+            android:inputType="text"
+            style="@style/edit_text_register"
+            android:autofillHints="" />
+        <TextView
+            android:id="@+id/text_view_activity_register_error"
+            style="@style/text_view_error_register"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/edit_text_activity_pre_register_departement"
+            android:layout_marginBottom="31dp" />
+        <RelativeLayout
+            android:id="@+id/relative_layout_activity_register_connection"
+            style="@style/wrap_content_all"
+            android:layout_below="@+id/text_view_activity_register_error"
+            android:layout_marginStart="28dp"
+            android:layout_marginEnd="28dp"
+            android:layout_marginBottom="20dp"
+            >
+
+            <ProgressBar
+                android:id="@+id/progress_bar_activity_register_connection"
+                android:layout_alignStart="@id/button_activity_pre_register_connection"
+                style="@style/progress_bar_connection"/>
+
+            <Button
+                android:id="@+id/button_activity_pre_register_connection"
+                style="@style/button_pre_register" />
+        </RelativeLayout>
+    </RelativeLayout>
+</androidx.core.widget.NestedScrollView>

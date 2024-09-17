@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -121,34 +122,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        /* En cliquant sur "Archiver" */
-        toolbar.getMenu().getItem(3).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        toolbar.getMenu().getItem(2).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
-                return false;
-            }
-        });
-
-        /* En cliquant sur "Suggestion" */
-        toolbar.getMenu().getItem(4).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem menuItem) {
-//                Intent reclamation = new Intent(MainActivity.this, SuggestionActivity.class);
-//                startActivity(reclamation);
+                Intent preRegisterIntent = new Intent(MainActivity.this,PreRegistrationActivity.class);
+                startActivity(preRegisterIntent);
                 return false;
             }
         });
 
         /* En cliquant sur "Paramètres" */
-        toolbar.getMenu().getItem(5).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem menuItem) {
-//                Intent parametre = new Intent(MainActivity.this,ParametreActivity.class);
-//                startActivity(parametre);
-                return false;
-            }
-        });
-        toolbar.getMenu().getItem(6).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        toolbar.getMenu().getItem(3).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
                 Intent test = new Intent(MainActivity.this, SettingActivity.class);
@@ -158,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         /* En cliquant sur "Déconnecter" */
-        toolbar.getMenu().getItem(7).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        toolbar.getMenu().getItem(4).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
                 if(mAccount.logout(getApplicationContext()))

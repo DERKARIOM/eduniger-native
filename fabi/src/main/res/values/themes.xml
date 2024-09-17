@@ -77,6 +77,14 @@
         <item name="android:text">@string/button_text_connection</item>
     </style>
 
+    <style name="button_pre_register">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerInParent">true</item>
+        <item name="android:background">@drawable/form_purple_200_radius_10dp</item>
+        <item name="android:text">Enregister</item>
+    </style>
+
 <!--    Le themes de texte (TextView) de type login et register -->
     <style name="text_view_pass_login_register">
         <item name="android:layout_width">wrap_content</item>

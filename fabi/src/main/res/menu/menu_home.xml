@@ -11,16 +11,7 @@
         android:icon="@drawable/vector_black3_off_subscribe"
         android:title="notification"
         app:showAsAction="always|never|collapseActionView|withText" />
-    <item
-        android:id="@+id/archiver"
-        android:title="Archives" />
-    <item
-        android:id="@+id/signaler"
-        android:title="Signaler" />
-    <item
-    android:id="@+id/offres"
-    android:title="Offres" />
-    <item android:title="Réservation" />
+    <item android:title="Préinscription" />
     <item
         android:id="@+id/setting"
         android:title="Paramètres" />

@@ -25,6 +25,11 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".controleur.activity.PreRegistrationActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"/>
+        <activity
             android:name=".controleur.activity.PdfNinoView"
             android:exported="false" />
         <activity

@@ -87,13 +87,13 @@ public class Account {
         }
         return "noConnection";
     }
-    public boolean register(Context context, String name , String firstName , String department , String section , String email , byte[] profile)
+    public boolean register(Context context, String name , String firstName , String department , String section , String email , byte[] profile , String isDelegue)
     {
         StudentTable studentTable = new StudentTable(context);
             if(studentTable.isUserExist(mIdNumber))
                 return true;
             else
-                return (studentTable.insert(mIdNumber,name,firstName,department,section,email,profile));
+                return (studentTable.insert(mIdNumber,name,firstName,department,section,email,profile,isDelegue));
     }
     public boolean login(Context context)
     {

@@ -24,7 +24,8 @@ public class StudentTable extends SQLiteOpenHelper {
                 "    department VARCHAR(100) NOT NULL,\n" +
                 "    section VARCHAR(100) NOT NULL,\n" +
                 "    email VARCHAR(100) NOT NULL,\n" +
-                "    profile BLOB\n" +
+                "    profile BLOB,\n" +
+                "    isDelegue VARCHAR(100)\n" +
                 ");");
     }
 
@@ -49,6 +50,27 @@ public class StudentTable extends SQLiteOpenHelper {
         Cursor cursor = database.rawQuery("SELECT * FROM " + NAME_TABLE + " WHERE idNumber=\"" + idNumber + "\";",null);
         return cursor.moveToFirst();
     }
+    public String getDepartement(String idNumber)
+    {
+        SQLiteDatabase database = this.getReadableDatabase();
+        Cursor cursor = database.rawQuery("SELECT department FROM " + NAME_TABLE + " WHERE idNumber='" + idNumber + "'",null);
+        cursor.moveToFirst();
+        return cursor.getString(0);
+    }
+    public String getSection(String idNumber)
+    {
+        SQLiteDatabase database = this.getReadableDatabase();
+        Cursor cursor = database.rawQuery("SELECT section FROM " + NAME_TABLE + " WHERE idNumber='" + idNumber + "'",null);
+        cursor.moveToFirst();
+        return cursor.getString(0);
+    }
+    public String getIsDelegue(String idNumber)
+    {
+        SQLiteDatabase database = this.getReadableDatabase();
+        Cursor cursor = database.rawQuery("SELECT isDelegue FROM " + NAME_TABLE + " WHERE idNumber='" + idNumber + "'",null);
+        cursor.moveToFirst();
+        return cursor.getString(0);
+    }
     public void setPhoto(byte[] photo)
     {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -56,7 +78,7 @@ public class StudentTable extends SQLiteOpenHelper {
         contentValues.put("profile",photo);
         db.update(NAME_TABLE,contentValues,null,null);
     }
-    public boolean insert (String idNumber , String name , String firstName , String department , String section , String email , byte[] profile)
+    public boolean insert (String idNumber , String name , String firstName , String department , String section , String email , byte[] profile , String isDelegue)
     {
         try {
             SQLiteDatabase db = this.getWritableDatabase();
@@ -68,6 +90,7 @@ public class StudentTable extends SQLiteOpenHelper {
             contentValues.put("section",section);
             contentValues.put("email",email);
             contentValues.put("profile",profile);
+            contentValues.put("isDelegue",isDelegue);
             db.insert(NAME_TABLE,null,contentValues);
             return  true;
         }catch (Exception e)
