@@ -82,7 +82,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_centerInParent">true</item>
         <item name="android:background">@drawable/form_purple_200_radius_10dp</item>
-        <item name="android:text">Enregister</item>
+        <item name="android:text">Enregistrer</item>
     </style>
 
 <!--    Le themes de texte (TextView) de type login et register -->

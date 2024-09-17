@@ -14,6 +14,11 @@
     <string name="text_view_pass_register_login">Avez-Vous un compte ?</string>
     <string name="register_error_0000">Veuillez remplir ces champs svp</string>
     <string name="register_error_0111">Votre matricule svp</string>
+    <string name="register_error_01111">Veuillez saisir le matricule</string>
+    <string name="register_error_10111">Veuillez saisir le nom</string>
+    <string name="register_error_11011">Veuillez saisir le prénom</string>
+    <string name="register_error_11101">Veuillez saisir la section</string>
+    <string name="register_error_11110">Veuillez saisir le departement</string>
     <string name="register_error_1011">Votre email svp</string>
     <string name="register_error_1101">Votre mot de passe svp</string>
     <string name="register_error_1110">Confirmer votre mot de passe svp</string>
