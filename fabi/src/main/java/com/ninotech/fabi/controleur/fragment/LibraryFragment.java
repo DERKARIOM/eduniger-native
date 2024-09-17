@@ -55,7 +55,7 @@ public class LibraryFragment extends Fragment {
         Cursor studentCursor = mStudentTable.getData(session.getIdNumber());
         studentCursor.moveToFirst();
         mPhotoImageView = view.findViewById(R.id.image_view_fragment_library_photo);
-        usernameTextView.setText(studentCursor.getString(1) + "" + studentCursor.getString(2));
+        usernameTextView.setText(studentCursor.getString(1) + " " + studentCursor.getString(2));
         emailTextView.setText(studentCursor.getString(5));
         try {
             byte[] photoByte = studentCursor.getBlob(6);

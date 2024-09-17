@@ -171,10 +171,10 @@
     <string name="message_default">Salut que puis-je faire pour vous</string>
     <string name="cancel_reservation">Annuler la consultation</string>
     <string name="reservation_book">Consultation sur Place</string>
-    <string name="your_electronic_books">Vos Livres Électronique</string>
+    <string name="your_electronic_books">Vos Livres Électroniques</string>
     <string name="your_audio_books">Vos Livres Audio</string>
-    <string name="your_loand_books">Vos Livres Emprunter</string>
-    <string name="cetegory">Categorie</string>
+    <string name="your_loand_books">"Vos Livres Empruntés</string>
+    <string name="cetegory">Catégorie</string>
     <string name="author">Auteurs</string>
     <string name="account">Compte</string>
     <string name="change_password">Changer votre mot de passe , email...</string>
@@ -226,7 +226,7 @@
     <string name="no_connection_available">Aucun reseau disponible</string>
     <string name="wait">Veuillez patienter</string>
     <string name="download_book">Téléchargement récent</string>
-    <string name="recent_read">Lecture récentes des livres Électronique</string>
+    <string name="recent_read">Lectures récentes des livres électroniques</string>
     <string name="no_loand_book">Aucun livre Emprunté</string>
     <string name="no_audio_book">Aucun livre audio</string>
     <string name="no_electronic_book">Aucun livre électronique</string>

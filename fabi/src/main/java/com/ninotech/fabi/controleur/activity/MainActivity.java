@@ -28,6 +28,8 @@ import com.ninotech.fabi.R;
 import com.ninotech.fabi.model.service.NotificationService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.ninotech.fabi.model.table.DigitalPrintTable;
+import com.ninotech.fabi.model.table.Session;
+import com.ninotech.fabi.model.table.StudentTable;
 
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -102,6 +104,8 @@ public class MainActivity extends AppCompatActivity {
         /* ########## Gestion du menu principale ########## */
 
         /* En cliquant sur "Actualiser" */
+        Session session = new Session(getApplicationContext());
+        StudentTable studentTable = new StudentTable(getApplicationContext());
         toolbar.getMenu().getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
@@ -122,6 +126,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        if(studentTable.getIsDelegue(session.getIdNumber()).equals("0"))
+            toolbar.getMenu().getItem(2).setVisible(false);
         toolbar.getMenu().getItem(2).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
