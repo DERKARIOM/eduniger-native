@@ -3,6 +3,7 @@ package com.ninotech.fabi.controleur.activity;
 import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -24,6 +25,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
@@ -111,9 +113,9 @@ public class BookActivity extends AppCompatActivity {
         mDescriptionTextView = findViewById(R.id.text_view_activity_book_description);
         mTimeNowTextView = findViewById(R.id.text_view_activity_book_time_now);
         mReservationButton = findViewById(R.id.button_activity_book_reservation);
-        Button audioButton = findViewById(R.id.button_activity_book_audio);
+        audioButton = findViewById(R.id.button_activity_book_audio);
         Button openPDFButton = findViewById(R.id.button_activity_book_open_pdf);
-        Button downloadPDFButton = findViewById(R.id.button_activity_book_download_pdf);
+        downloadPDFButton = findViewById(R.id.button_activity_book_download_pdf);
         mMessageTextView = findViewById(R.id.text_view_activity_book_message);
         mNumberLikeTextView = findViewById(R.id.text_view_activity_book_number_like);
         mNumberNoLikeTextView = findViewById(R.id.text_view_activity_book_number_no_like);
@@ -134,6 +136,8 @@ public class BookActivity extends AppCompatActivity {
         mElectronicLinearLayout = findViewById(R.id.linear_layout_activity_book_electronic);
         mBackImageView = findViewById(R.id.image_view_toolbar_book);
         mNameAuthor = findViewById(R.id.text_view_adapter_book_simple_author_name);
+        downloadAudioProgressBar = findViewById(R.id.progress_bar_download_audio);
+        downloadPdfProgressBar = findViewById(R.id.progress_bar_download_pdf);
         mReservationDialog = new ReservationDialog(this);
         mElectronicTable = new ElectronicTable(this);
         mHandler = new Handler();
@@ -211,6 +215,8 @@ public class BookActivity extends AppCompatActivity {
         downloadPDFButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                downloadPDFButton.setText("");
+                downloadPdfProgressBar.setVisibility(View.VISIBLE);
                 ElectronicDownloader electronicDownloader = new ElectronicDownloader(getApplicationContext(),mSession.getIdNumber(), mOnlineBook);
                // Toast.makeText(BookActivity.this, mOnlineBook.getAuthor(), Toast.LENGTH_SHORT).show();
                 electronicDownloader.execute(mOnlineBook.getCover(), mOnlineBook.getElectronic(),mCategory.getCover(),mAuthor.getProfile());
@@ -220,9 +226,11 @@ public class BookActivity extends AppCompatActivity {
         audioButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                audioButton.setText("");
+                downloadAudioProgressBar.setVisibility(View.VISIBLE);
                 AudioDownloader audioDownloader = new AudioDownloader(getApplicationContext(),mSession.getIdNumber(), mOnlineBook,mTones);
                 audioDownloader.execute(mOnlineBook.getCover(), mOnlineBook.getElectronic(),mCategory.getCover(),mAuthor.getProfile(),mTones.getAudio());
-                succeDowloadPDFDialog("Le livre " + mTitleTextView.getText().toString() + " format audio a été téléchargé avec succès. N'hésitez pas à explorer son contenu dans l'application et contactez-nous en cas de besoin.");
+                succeDowloadAudioDialog("Le livre " + mTitleTextView.getText().toString() + " format audio a été téléchargé avec succès. N'hésitez pas à explorer son contenu dans l'application et contactez-nous en cas de besoin.");
             }
         });
         mPlayerImageView.setOnClickListener(new View.OnClickListener() {
@@ -1153,7 +1161,41 @@ public class BookActivity extends AppCompatActivity {
         ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                mSuggestion.setText("");
+                downloadPDFButton.setText("Format PDF");
+                downloadPdfProgressBar.setVisibility(View.INVISIBLE);
+                simpleOkDialog.cancel();
+            }
+        });
+        simpleOkDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                downloadPDFButton.setText("Format PDF");
+                downloadPdfProgressBar.setVisibility(View.INVISIBLE);
+                simpleOkDialog.cancel();
+            }
+        });
+        simpleOkDialog.build();
+    }
+    private void succeDowloadAudioDialog(String message){
+        SimpleOkDialog simpleOkDialog = new SimpleOkDialog(this);
+        simpleOkDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        simpleOkDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        TextView messageTextView = simpleOkDialog.findViewById(R.id.text_view_dialog_simple_ok_message);
+        TextView ok = simpleOkDialog.findViewById(R.id.text_view_dialog_simple_ok);
+        messageTextView.setText(message);
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                audioButton.setText("Format Audio");
+                downloadAudioProgressBar.setVisibility(View.INVISIBLE);
+                simpleOkDialog.cancel();
+            }
+        });
+        simpleOkDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                audioButton.setText("Format Audio");
+                downloadAudioProgressBar.setVisibility(View.INVISIBLE);
                 simpleOkDialog.cancel();
             }
         });
@@ -1212,4 +1254,8 @@ public class BookActivity extends AppCompatActivity {
     private NoConnectionAdapter mNoConnectionAdapter;
     private Author mAuthor;
     private ImageView mBackImageView;
+    private ProgressBar downloadAudioProgressBar;
+    private ProgressBar downloadPdfProgressBar;
+    private Button downloadPDFButton;
+    private Button audioButton;
 }

@@ -7,7 +7,7 @@
     <include layout="@layout/toolbar_book"/>
     <androidx.core.widget.NestedScrollView
         android:id="@+id/nested_scroll_view_activity_book"
-        android:visibility="visible"
+        android:visibility="gone"
         style="@style/match_parent_all"
         android:layout_below="@id/relative_layout_toolbar_book">
         <RelativeLayout
@@ -234,17 +234,32 @@
                             android:progress="100"/>
                     </LinearLayout>
                 </LinearLayout>
-                <Button
-                    android:id="@+id/button_activity_book_audio"
-                    style="@style/wrap_content_all"
-                    android:text="@string/audio_format"
-                    android:textAllCaps="false"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
-                    app:icon="@drawable/vector_white_download"
-                    android:textSize="@dimen/size_button"
-                    android:backgroundTint="@color/dark"/>
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp">
+                    <ProgressBar
+                        android:id="@+id/progress_bar_download_audio"
+                        style="@android:style/Widget.Holo.ProgressBar.Small"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_centerInParent="true"
+                        android:elevation="5dp"
+                        android:layout_marginStart="10dp"
+                        android:padding="18dp"
+                        android:visibility="invisible"
+                        android:progressDrawable="@drawable/form_circular_bar_connexion" />
+                    <Button
+                        android:id="@+id/button_activity_book_audio"
+                        style="@style/wrap_content_all"
+                        android:text="@string/audio_format"
+                        android:textAllCaps="false"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="5dp"
+                        app:icon="@drawable/vector_white_download"
+                        android:textSize="@dimen/size_button"
+                        android:backgroundTint="@color/dark"/>
+                </RelativeLayout>
             </LinearLayout>
             <LinearLayout
                 android:id="@+id/linear_layout_activity_book_electronic"
@@ -281,17 +296,32 @@
                     app:icon="@drawable/vector_black3_pdf"
                     android:textSize="@dimen/size_button"
                     android:backgroundTint="@color/dark"/>
-                <Button
-                    android:id="@+id/button_activity_book_download_pdf"
-                    style="@style/wrap_content_all"
-                    android:text="@string/pdf_format"
-                    android:textAllCaps="false"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
-                    app:icon="@drawable/vector_white_download"
-                    android:textSize="@dimen/size_button"
-                    android:backgroundTint="@color/dark"/>
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp">
+                    <ProgressBar
+                        android:id="@+id/progress_bar_download_pdf"
+                        style="@android:style/Widget.Holo.ProgressBar.Small"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_centerInParent="true"
+                        android:elevation="5dp"
+                        android:layout_marginStart="10dp"
+                        android:padding="18dp"
+                        android:visibility="invisible"
+                        android:progressDrawable="@drawable/form_circular_bar_connexion" />
+                    <Button
+                        android:id="@+id/button_activity_book_download_pdf"
+                        style="@style/wrap_content_all"
+                        android:text="@string/pdf_format"
+                        android:textAllCaps="false"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="5dp"
+                        app:icon="@drawable/vector_white_download"
+                        android:textSize="@dimen/size_button"
+                        android:backgroundTint="@color/dark"/>
+                </RelativeLayout>
             </LinearLayout>
             <LinearLayout
                 android:id="@+id/linear_layout_activity_book_about"
