@@ -1050,20 +1050,7 @@ public class BookActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    if(!passwordEditText.getText().toString().equals(mSession.getPassword()))
-                    {
-                        errorTextView.setText(R.string.incorrect_password);
-                        passwordEditText.setBackground(getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
-                    }
-                    else
-                    {
-                        if(timeLimitSpinner.isEnabled())
-                            mNbrJour = String.valueOf(timeLimitSpinner.getSelectedItemPosition() + 1);
-                        else
-                            mNbrJour = String.valueOf(-1);
-                        Reservation reservation = new Reservation();
-                        reservation.execute(getString(R.string.ip_server_android) + "Reservation.php",mSession.getIdNumber(), mOnlineBook.getId(),mNbrJour);
-                    }
+                   simpleDialogOk(R.drawable.vector_sorry,"Réservation indisponible","La réservation des livres n'est actuellement pas disponible. Veuillez vous rendre directement à la bibliothèque pour la consultation de ce livre.");
                 }
             }
         });
@@ -1071,8 +1058,25 @@ public class BookActivity extends AppCompatActivity {
         mReservationDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
         mReservationDialog.build();
     }
-
-
+    private void simpleDialogOk(int ico , String title , String message){
+        SimpleOkDialog simpleOkDialog = new SimpleOkDialog(this);
+        Objects.requireNonNull(simpleOkDialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        simpleOkDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        ImageView icoImageView = simpleOkDialog.findViewById(R.id.image_view_dialog_simple_ok_icon);
+        TextView titleTextView = simpleOkDialog.findViewById(R.id.text_view_dialog_simple_ok_title);
+        TextView messageTextView = simpleOkDialog.findViewById(R.id.text_view_dialog_simple_ok_message);
+        TextView okTextView = simpleOkDialog.findViewById(R.id.text_view_dialog_simple_ok);
+        icoImageView.setImageResource(ico);
+        titleTextView.setText(title);
+        messageTextView.setText(message);
+        okTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                simpleOkDialog.cancel();
+            }
+        });
+        simpleOkDialog.build();
+    }
     private class Reservation extends AsyncTask<String,Void,String> {
         @Override
         protected String doInBackground(String... params) {
@@ -1111,7 +1115,7 @@ public class BookActivity extends AppCompatActivity {
                 if(jsonData.equals("true"))
                 {
                     mReservationDialog.cancel();
-                    successReservationDialog();
+                    successReservationDialog("Merci d'avoir réservé \"" + mTitleTextView.getText().toString() + "\" sur fabi; nous traitons votre demande et vous confirmerons la disponibilité bientôt.");
                     mReservationButton.setText(R.string.cancel_reservation);
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         mReservationButton.setBackgroundTintList(getColorStateList(R.color.rouge));
@@ -1122,13 +1126,13 @@ public class BookActivity extends AppCompatActivity {
         }
     }
 
-    private void successReservationDialog(){
+    private void successReservationDialog(String message){
         SimpleOkDialog simpleOkDialog = new SimpleOkDialog(this);
         simpleOkDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         simpleOkDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
         TextView messageTextView = simpleOkDialog.findViewById(R.id.text_view_dialog_simple_ok_message);
         TextView okTextView = simpleOkDialog.findViewById(R.id.text_view_dialog_simple_ok);
-        messageTextView.setText("Merci d'avoir réservé \"" + mTitleTextView.getText().toString() + "\" sur fabi; nous traitons votre demande et vous confirmerons la disponibilité bientôt.");
+        messageTextView.setText(message);
         okTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
