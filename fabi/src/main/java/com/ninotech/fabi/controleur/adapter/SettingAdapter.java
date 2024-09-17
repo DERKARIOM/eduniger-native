@@ -2,6 +2,8 @@ package com.ninotech.fabi.controleur.adapter;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -147,15 +149,58 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.MyViewHo
                             EvaluezDialog();
                             break;
                         case "Contactez-nous":
-                            makePhoneCall();
+                            showOptionsDialog("+22794961793");
                             break;
                         case "Empreinte digitale":
                             Intent emreinte = new Intent(itemView.getContext(), FingerPrintActivity.class);
                             itemView.getContext().startActivity(emreinte);
                             break;
+                        case "Comment ça marche":
+                            String ccmUrl = "https://www.youtube.com/playlist?list=PL9OgjL2isuO-UXRTnPaeRYap-Rb5kwY8J&playnext=1&index=1";
+                            Intent ccmIntent = new Intent(Intent.ACTION_VIEW);
+                            ccmIntent.setData(Uri.parse(ccmUrl));
+                            if (ccmIntent.resolveActivity(itemView.getContext().getPackageManager()) != null) {
+                                itemView.getContext().startActivity(ccmIntent);
+                            }
+                            break;
                     }
                 }
             });
+        }
+        private void showOptionsDialog(String phoneNumber) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(itemView.getContext());
+            builder.setTitle("Choisir une action");
+            builder.setItems(new CharSequence[]{"Appeler", "WhatsApp", "Envoyer SMS"},
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            switch (which) {
+                                case 0:
+                                    // Lancer l'appel
+                                    Intent callIntent = new Intent(Intent.ACTION_CALL);
+                                    callIntent.setData(Uri.parse("tel:" + phoneNumber));
+                                    itemView.getContext().startActivity(callIntent);
+                                    break;
+                                case 1:
+                                    // Envoyer via WhatsApp
+                                    Intent whatsappIntent = new Intent(Intent.ACTION_SEND);
+                                    whatsappIntent.setType("text/plain");
+                                    whatsappIntent.putExtra(Intent.EXTRA_TEXT, "Message via WhatsApp");
+                                    whatsappIntent.putExtra("jid", phoneNumber + "@s.whatsapp.net");
+                                    whatsappIntent.setPackage("com.whatsapp");
+                                    itemView.getContext().startActivity(whatsappIntent);
+                                    break;
+                                case 2:
+                                    // Envoyer via SMS
+                                    Intent smsIntent = new Intent(Intent.ACTION_VIEW);
+                                    smsIntent.setData(Uri.parse("sms:" + phoneNumber));
+                                    smsIntent.putExtra("sms_body", "Votre message ici");
+                                    itemView.getContext().startActivity(smsIntent);
+                                    break;
+                            }
+                        }
+                    });
+            builder.show();
         }
         public void EvaluezDialog() {
             mEvaluez.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));

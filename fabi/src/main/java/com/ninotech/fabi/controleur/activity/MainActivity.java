@@ -79,9 +79,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         /* Ouverteur de la session si ca existe  si non lancement de la page login */
-        if(mAccount.isSession(getApplicationContext()))
-            startService(reservationService);
-        else
+        if(!mAccount.isSession(getApplicationContext()))
         {
             Intent login = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(login);
@@ -224,7 +222,6 @@ public class MainActivity extends AppCompatActivity {
         Intent login = new Intent(MainActivity.this, MainActivity.class);
         startActivity(login);
         finish();
-        exit(1);
     }
 
     private void Lock() {

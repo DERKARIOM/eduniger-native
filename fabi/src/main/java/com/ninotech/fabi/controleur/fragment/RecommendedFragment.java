@@ -2,8 +2,12 @@ package com.ninotech.fabi.controleur.fragment;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,14 +15,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.ninotech.fabi.controleur.activity.LoginActivity;
 import com.ninotech.fabi.controleur.adapter.OnlineBookAdapter;
 import com.ninotech.fabi.controleur.adapter.NoConnectionAdapter;
+import com.ninotech.fabi.controleur.dialog.UpdateDialog;
+import com.ninotech.fabi.model.data.Account;
 import com.ninotech.fabi.model.data.OnlineBook;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
 import com.ninotech.fabi.model.data.Connection;
@@ -73,7 +81,7 @@ public class RecommendedFragment extends Fragment {
         mBookRecommendedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mBookRecommendedRecyclerView.setAdapter(mNoConnectionAdapter);
         RecommendedSyn recommendedSyn = new RecommendedSyn();
-        recommendedSyn.execute(getString(R.string.ip_server_android) + "Recommended.php", session.getIdNumber());
+        recommendedSyn.execute(getString(R.string.ip_server_android) + "Recommended.php", session.getIdNumber(),getString(R.string.app_version));
         return view;
     }
     private class RecommendedSyn extends AsyncTask<String,Void,String> {
@@ -85,6 +93,7 @@ public class RecommendedFragment extends Fragment {
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
                         .addFormDataPart("idNumber",params[1])
+                        .addFormDataPart("version",params[2])
                         .build();
                 Request request = new Request.Builder()
                         .url(params[0])
@@ -109,22 +118,27 @@ public class RecommendedFragment extends Fragment {
         protected void onPostExecute(String jsonData){
             if(jsonData != null)
             {
-                JSONArray jsonArray = null;
-                try {
-                    jsonArray = new JSONArray(jsonData);
-                } catch (JSONException e) {
-                    throw new RuntimeException(e);
-                }
-                for (int i=0;i<jsonArray.length();i++) {
+                if(!jsonData.equals("expiresVersion"))
+                {
+                    JSONArray jsonArray = null;
                     try {
-                        mOnlineBookList.add(new OnlineBook(jsonArray.getJSONObject(i).getString("idBook"),jsonArray.getJSONObject(i).getString("blanket"),jsonArray.getJSONObject(i).getString("bookTitle"),jsonArray.getJSONObject(i).getString("categoryTitle"),jsonArray.getJSONObject(i).getString("isPhysic"),jsonArray.getJSONObject(i).getString("electronic"),jsonArray.getJSONObject(i).getString("isAudio"),Integer.parseInt(jsonArray.getJSONObject(i).getString("numberLike")),Integer.parseInt(jsonArray.getJSONObject(i).getString("numberLike"))));
+                        jsonArray = new JSONArray(jsonData);
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
+                    for (int i=0;i<jsonArray.length();i++) {
+                        try {
+                            mOnlineBookList.add(new OnlineBook(jsonArray.getJSONObject(i).getString("idBook"),jsonArray.getJSONObject(i).getString("blanket"),jsonArray.getJSONObject(i).getString("bookTitle"),jsonArray.getJSONObject(i).getString("categoryTitle"),jsonArray.getJSONObject(i).getString("isPhysic"),jsonArray.getJSONObject(i).getString("electronic"),jsonArray.getJSONObject(i).getString("isAudio"),Integer.parseInt(jsonArray.getJSONObject(i).getString("numberLike")),Integer.parseInt(jsonArray.getJSONObject(i).getString("numberLike"))));
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    OnlineBookAdapter onlineBookAdapter = new OnlineBookAdapter(mOnlineBookList);
+                    mBookRecommendedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                    mBookRecommendedRecyclerView.setAdapter(onlineBookAdapter);
                 }
-                OnlineBookAdapter onlineBookAdapter = new OnlineBookAdapter(mOnlineBookList);
-                mBookRecommendedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                mBookRecommendedRecyclerView.setAdapter(onlineBookAdapter);
+                else
+                    update();
             }
             else
             {
@@ -134,6 +148,48 @@ public class RecommendedFragment extends Fragment {
                 mBookRecommendedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                 mBookRecommendedRecyclerView.setAdapter(noConnectionAdapter);
             }
+        }
+        private void update(){
+            UpdateDialog updateDialog = new UpdateDialog(getActivity());
+            updateDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            updateDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+            TextView annuler = updateDialog.findViewById(R.id.annuler);
+            TextView installer = updateDialog.findViewById(R.id.installer);
+            Account account = new Account();
+            annuler.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(account.logout(getContext()))
+                    {
+                        Intent loginIntent = new Intent(getContext(), LoginActivity.class);
+                        startActivity(loginIntent);
+                        getActivity().finish();
+                        updateDialog.cancel();
+                    }
+                }
+            });
+
+            installer.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    String url = getString(R.string.ip_server); // Remplacez ceci par l'URL que vous souhaitez ouvrir
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    startActivity(intent);
+                }
+            });
+            updateDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    if(account.logout(getContext()))
+                    {
+                        Intent loginIntent = new Intent(getContext(), LoginActivity.class);
+                        startActivity(loginIntent);
+                        getActivity().finish();
+                        updateDialog.cancel();
+                    }
+                }
+            });
+            updateDialog.build();
         }
     }
     private RecyclerView mBookRecommendedRecyclerView;

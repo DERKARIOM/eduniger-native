@@ -3,6 +3,7 @@ package com.ninotech.fabi.controleur.activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -281,6 +282,24 @@ public class RegisterActivity extends AppCompatActivity {
         UpdateDialog updateDialog = new UpdateDialog(this);
         updateDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         updateDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        TextView annuler = updateDialog.findViewById(R.id.annuler);
+        TextView installer = updateDialog.findViewById(R.id.installer);
+        annuler.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                updateDialog.cancel();
+            }
+        });
+
+        installer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String url = getString(R.string.ip_server); // Remplacez ceci par l'URL que vous souhaitez ouvrir
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                startActivity(intent);
+            }
+        });
+
         updateDialog.build();
     }
     private EditText mIdNumberEditText;

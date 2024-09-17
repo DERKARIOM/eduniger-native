@@ -256,7 +256,7 @@ public class LoginActivity extends AppCompatActivity {
         installer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String url = "http://192.168.43.1:2222/build/fastpv.apk"; // Remplacez ceci par l'URL que vous souhaitez ouvrir
+                String url = getString(R.string.ip_server); // Remplacez ceci par l'URL que vous souhaitez ouvrir
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                 startActivity(intent);
             }
