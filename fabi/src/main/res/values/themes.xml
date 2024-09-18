@@ -85,6 +85,10 @@
         <item name="android:text">Enregistrer</item>
     </style>
 
+    <style name="web" parent="AppTheme">
+        <item name="colorPrimary">@color/purple_200</item>
+    </style>
+
 <!--    Le themes de texte (TextView) de type login et register -->
     <style name="text_view_pass_login_register">
         <item name="android:layout_width">wrap_content</item>
@@ -172,7 +176,7 @@
         <item name="android:background">@drawable/forme_purple2_200_radius_10dp</item>
     </style>
     <style name="button_verify_connexion" parent="AppTheme">
-        <item name="colorPrimary">@color/white3</item>
+        <item name="colorPrimary">@color/purple_200</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_centerInParent">true</item>

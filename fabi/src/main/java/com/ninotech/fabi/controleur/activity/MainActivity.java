@@ -104,8 +104,6 @@ public class MainActivity extends AppCompatActivity {
         /* ########## Gestion du menu principale ########## */
 
         /* En cliquant sur "Actualiser" */
-        Session session = new Session(getApplicationContext());
-        StudentTable studentTable = new StudentTable(getApplicationContext());
         toolbar.getMenu().getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
@@ -125,9 +123,16 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+        try {
+            Session session = new Session(getApplicationContext());
+            StudentTable studentTable = new StudentTable(getApplicationContext());
+            if(studentTable.getIsDelegue(session.getIdNumber()).equals("0"))
+                toolbar.getMenu().getItem(2).setVisible(false);
+        }catch (Exception e)
+        {
+            Log.e("Err",e.getMessage());
+        }
 
-        if(studentTable.getIsDelegue(session.getIdNumber()).equals("0"))
-            toolbar.getMenu().getItem(2).setVisible(false);
         toolbar.getMenu().getItem(2).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {

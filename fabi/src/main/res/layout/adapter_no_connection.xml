@@ -10,9 +10,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
+        android:fontFamily="@font/apple1"
         android:layout_marginBottom="20dp"
         android:text="@string/wait"
-        android:textSize="20dp" />
+        android:textSize="18sp" />
 
     <ProgressBar
         android:id="@+id/progress_bar_adapter_no_connection"
@@ -21,16 +22,17 @@
         style="@style/progress_bar_try_connection" />
 
     <Button
-        android:visibility="gone"
+        android:visibility="invisible"
         android:id="@+id/button_adapter_no_connection_try"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
         android:layout_below="@id/text_view_adapter_no_connection_message"
         android:layout_centerInParent="true"
-        android:padding="10dp"
+        android:background="@drawable/forme_purple_200_radius_25dp"
+        android:padding="15dp"
         android:text="Réessayer"
         android:textAllCaps="false"
-        android:textColor="@color/black"
         android:theme="@style/button_verify_connexion" />
 
 

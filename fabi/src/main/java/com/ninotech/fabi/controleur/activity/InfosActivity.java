@@ -37,38 +37,8 @@ public class InfosActivity extends AppCompatActivity {
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Cursor cursor = mElectronicTable.getData("62331");
-                cursor.moveToFirst();
-                File file = new File(cursor.getString(6));
-                Uri uri = Uri.parse(Uri.fromFile(file).toString());
-                Toast.makeText(InfosActivity.this, Uri.fromFile(file).toString(), Toast.LENGTH_SHORT).show();
-
-                PdfActivityConfiguration config = new PdfActivityConfiguration.Builder(getApplicationContext())
-                        .hideThumbnailGrid().setEnabledShareFeatures(ShareFeatures.none())
-                        .disablePrinting()
-                        .disablePrinting()
-                        .disableAnnotationEditing()
-                        .disableBookmarkEditing()
-                        .disableDocumentEditor()
-                        .disableAnnotationList()
-                        .scrollDirection(PageScrollDirection.VERTICAL)
-                        .scrollMode(PageScrollMode.CONTINUOUS)
-                        .disableAnnotationLimitedToPageBounds()
-                        .disableCopyPaste()
-                        .disableFormEditing()
-                        .disableContentEditing()
-                        .textSelectionEnabled(false)
-                        .enableDocumentInfoView()
-                        .setSettingsMenuItems(EnumSet.of(
-                                SettingsMenuItemType.THEME,
-                                SettingsMenuItemType.PAGE_LAYOUT,
-                                SettingsMenuItemType.PAGE_TRANSITION,
-                                SettingsMenuItemType.PRESETS
-                        ))
-                        .build();
-                PdfActivity.showDocument(getApplicationContext(),uri,config);
-//                Intent licence = new Intent(InfosActivity.this, LicenceActivity.class);
-//                startActivity(licence);
+                Intent licence = new Intent(InfosActivity.this, LicenceActivity.class);
+                startActivity(licence);
             }
         });
     }
