@@ -155,7 +155,7 @@ public class ContainerActivity extends AppCompatActivity {
                 }catch (Exception e)
                 {
                     voidContainer(R.drawable.img_auteur_local,getString(R.string.no_author));
-                    Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                   // Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
 
                 break;
