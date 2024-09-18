@@ -38,6 +38,7 @@
             android:windowSoftInputMode="adjustNothing" />
         <activity
             android:name=".controleur.activity.SearchActivity"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".controleur.activity.AudioPlayerActivity"

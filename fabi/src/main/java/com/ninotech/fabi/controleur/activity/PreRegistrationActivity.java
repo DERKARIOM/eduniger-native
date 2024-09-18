@@ -125,7 +125,7 @@ public class PreRegistrationActivity extends AppCompatActivity {
                         break;
                     case "11111":
                         mProgressBar.setVisibility(View.VISIBLE);
-                        mRegisterButton.setText("Enregistrement...");
+                        mRegisterButton.setText("Enregistrement.");
                         preRegisterSyn.execute(getString(R.string.ip_server_android) + "PreRegister.php",
                                 mIdNumberEditText.getText().toString(),
                                 mNameEditText.getText().toString(),
@@ -178,7 +178,7 @@ public class PreRegistrationActivity extends AppCompatActivity {
                 {
                     mProgressBar.setVisibility(View.INVISIBLE);
                     mRegisterButton.setText("Enregistrer");
-                    simpleDialogOk(R.drawable.vector_vert_success,"Préinscription réussie","La préinscription de l'étudiant avec le numéro de matricule " + mIdNumberEditText.getText().toString() +" a été effectuée avec succès.");
+                    simpleDialogOk(R.drawable.vector_vert_success_2,"Préinscription réussie","La préinscription de l'étudiant avec le numéro de matricule " + mIdNumberEditText.getText().toString() +" a été effectuée avec succès.");
                     mIdNumberEditText.setText("");
                     mNameEditText.setText("");
                     mFirstNameEditText.setText("");

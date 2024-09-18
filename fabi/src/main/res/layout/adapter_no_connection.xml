@@ -9,8 +9,7 @@
         android:id="@+id/text_view_adapter_no_connection_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:fontFamily="@font/apple1"
+        android:layout_centerInParent="true"
         android:layout_marginBottom="20dp"
         android:text="@string/wait"
         android:textSize="18sp" />
@@ -18,11 +17,11 @@
     <ProgressBar
         android:id="@+id/progress_bar_adapter_no_connection"
         android:layout_below="@id/text_view_adapter_no_connection_message"
-        android:layout_centerHorizontal="true"
+        android:layout_centerInParent="true"
         style="@style/progress_bar_try_connection" />
 
     <Button
-        android:visibility="invisible"
+        android:visibility="gone"
         android:id="@+id/button_adapter_no_connection_try"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -34,7 +33,5 @@
         android:text="Réessayer"
         android:textAllCaps="false"
         android:theme="@style/button_verify_connexion" />
-
-
 
 </RelativeLayout>
