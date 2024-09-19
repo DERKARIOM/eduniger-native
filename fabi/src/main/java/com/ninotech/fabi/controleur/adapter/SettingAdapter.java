@@ -177,9 +177,7 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.MyViewHo
                             switch (which) {
                                 case 0:
                                     // Lancer l'appel
-                                    Intent callIntent = new Intent(Intent.ACTION_CALL);
-                                    callIntent.setData(Uri.parse("tel:" + phoneNumber));
-                                    itemView.getContext().startActivity(callIntent);
+                                    makePhoneCall();
                                     break;
                                 case 1:
                                     // Envoyer via WhatsApp
