@@ -3,133 +3,81 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.ninotech.fabi.controleur.fragment.SuggestionFragment">
-    <ScrollView
-        style="@style/match_parent_all"
-        android:layout_centerInParent="true"
+
+    <!-- TODO: Update blank fragment layout -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recylerDisscution"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/messageNotifB"
+        android:layout_marginBottom="-24dp" />
+
+    <RelativeLayout
+        android:id="@+id/messageNotifB"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/envoyer"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="61dp"
+        android:layout_marginBottom="20dp"
         >
-        <RelativeLayout
-            style="@style/match_wrap">
-            <LinearLayout
-                android:id="@+id/linear_layout_activity_suggestion_image"
-                style="@style/wrap_content_all"
-                android:layout_marginTop="10dp"
-                >
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="200dp"
-                    android:src="@drawable/img_message_suggestion"
-                    android:contentDescription="@string/todo" />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_below="@id/linear_layout_activity_suggestion_image"
-                android:id="@+id/BlockJuggestion"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="40dp"
-                android:orientation="vertical">
-                <Spinner
-                    android:id="@+id/spinner_activity_suggestion_object"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:autofillHints="rasdkdkdkdkdkd"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginBottom="25dp"
-                    android:layout_marginEnd="20dp"
-                    android:fontFamily="sans-serif-smallcaps"
-                    android:gravity="center"
-                    android:backgroundTint="@color/purple_200"
-                    android:padding="10dp"/>
-                <ScrollView
-                    style="@style/wrap_content_all"
-                    tools:ignore="NestedScrolling">
+        <Button
+            android:id="@+id/bttMemorisation"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@android:color/transparent"
+            android:layout_alignEnd="@id/messageNotif"
+            android:layout_alignBottom="@id/messageNotif"
+            android:drawableEnd="@drawable/vector_black3_scanner"/>
 
-                    <EditText
-                        android:id="@+id/edit_text_activity_suggestion_message"
-                        style="@style/match_wrap"
-                        android:layout_marginStart="30dp"
-                        android:layout_marginTop="20dp"
-                        android:backgroundTint="@color/purple_200"
-                        android:layout_marginEnd="30dp"
-                        android:fontFamily="@font/apple1"
-                        android:gravity="top"
-                        android:hint="@string/suggestion_hint_message"
-                        android:inputType="textMultiLine"
-                        android:minLines="4"
-                        android:padding="10dp"
-                        android:scrollbars="vertical"
-                        android:autofillHints="" />
-                </ScrollView>
-                <LinearLayout
-                    style="@style/match_wrap"
-                    android:layout_marginTop="25dp"
-                    android:layout_marginEnd="5dp"
-                    android:layout_marginStart="25dp"
-                    >
-                    <TextView
-                        style="@style/wrap_content_all"
-                        android:fontFamily="@font/apple1"
-                        android:textColor="@color/black"
-                        android:text="@string/information_phone"
-                        />
-                    <CheckBox
-                        android:id="@+id/check_box_activity_suggestion_information_phone"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"/>
-                </LinearLayout>
+        <Button
+            android:id="@+id/importerMedia"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignStart="@+id/bttMemorisation"
+            android:layout_alignBottom="@id/messageNotif"
+            android:layout_marginStart="-33dp"
+            android:background="@android:color/transparent"
+            android:drawableEnd="@drawable/vector_black3_importe" />
 
-                <TextView
-                    style="@style/wrap_content_all"
-                    android:layout_marginStart="25dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="20dp"
-                    android:fontFamily="@font/apple1"
-                    android:text="@string/details_information_phone" />
+        <Button
+            android:id="@+id/emoji"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignStart="@+id/messageNotif"
+            android:layout_alignBottom="@id/messageNotif"
+            android:background="@android:color/transparent"
+            android:inputType=""
+            android:drawableEnd="@drawable/vector_black3_micro" />
 
-                <TextView
-                    android:id="@+id/text_view_activity_suggestion_error"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:layout_marginBottom="10dp"
-                    android:text=""
-                    android:textColor="@color/rouge"
-                    android:textSize="@dimen/size_sub_title" />
-                <RelativeLayout
-                    android:id="@+id/BlockButtonConnect"
-                    style="@style/wrap_content_all"
-                    android:layout_marginStart="30dp"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginEnd="30dp"
-                    >
 
-                    <ProgressBar
-                        android:id="@+id/progress_bar_activity_suggestion_connection"
-                        style="@android:style/Widget.Holo.ProgressBar.Small"
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        android:layout_centerInParent="true"
-                        android:layout_marginStart="40dp"
-                        android:layout_centerVertical="true"
-                        android:elevation="5dp"
-                        android:padding="20dp"
-                        android:visibility="invisible"
-                        android:progressDrawable="@drawable/form_circular_bar_connexion" />
-                    <Button
-                        android:id="@+id/button_activity_suggestion_send"
-                        style="@style/match_wrap"
-                        android:layout_centerInParent="true"
-                        android:background="@drawable/form_purple_200_radius_10dp"
-                        android:textAllCaps="false"
-                        android:text="@string/send" />
-                </RelativeLayout>
-            </LinearLayout>
-        </RelativeLayout>
-    </ScrollView>
+        <EditText
+            android:id="@+id/messageNotif"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/forme_white_sombre_radius_100dp"
+            android:hint="Message"
+            android:paddingStart="50dp"
+            android:paddingEnd="65dp"
+            android:padding="10dp"
+            android:textColorHint="@color/dark" />
+
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/envoyer"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignBottom="@+id/messageNotifB"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/forme_white_circulaire"
+        app:icon="@drawable/vector_white_send" />
+
 </RelativeLayout>

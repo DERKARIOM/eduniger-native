@@ -1,33 +1,34 @@
 package com.ninotech.fabi.controleur.fragment;
 
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.Spinner;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.ninotech.fabi.controleur.activity.SearchActivity;
+import com.ninotech.fabi.controleur.adapter.ChatAdapter;
+import com.ninotech.fabi.model.data.Arm;
+import com.ninotech.fabi.model.data.Chat;
 import com.ninotech.fabi.R;
-import com.ninotech.fabi.controleur.activity.SuggestionActivity;
-import com.ninotech.fabi.controleur.dialog.SimpleOkDialog;
-import com.ninotech.fabi.model.data.Phone;
-import com.ninotech.fabi.model.data.Suggestion;
 import com.ninotech.fabi.model.table.Session;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -36,50 +37,152 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class SuggestionFragment extends Fragment {
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_suggestion, container, false);
-        mSession = new Session(getContext());
-        mSuggestionSendButton = view.findViewById(R.id.button_activity_suggestion_send);
-        mObjetSpinner = view.findViewById(R.id.spinner_activity_suggestion_object);
-        mMessageEditText = view.findViewById(R.id.edit_text_activity_suggestion_message);
-        mErrorTextView = view.findViewById(R.id.text_view_activity_suggestion_error);
-        CheckBox phoneCheckBox = view.findViewById(R.id.check_box_activity_suggestion_information_phone);
-        mConnectionProgressBar = view.findViewById(R.id.progress_bar_activity_suggestion_connection);
-        mPhone = new Phone(Build.MODEL,Build.VERSION.RELEASE);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(), R.array.options_array, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mObjetSpinner.setAdapter(adapter);
-        mSuggestionSendButton.setOnClickListener(new View.OnClickListener()  {
+        View view = inflater.inflate(R.layout.fragment_fabiola_chat, container, false);
+        mRecyclerView = view.findViewById(R.id.recylerDisscution);
+        mEnvoie = view.findViewById(R.id.envoyer);
+        mEditText = view.findViewById(R.id.messageNotif);
+        mSession = new Session(view.getContext());
+        mList = new ArrayList<>();
+        mArm = new Arm();
+        BroadcastReceiver receiverFabiolaBookAdapter = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if ("ACTION_RECOVER_BOOK".equals(intent.getAction())) {
+                    mArm.setTitle(intent.getStringExtra("titleBook"));
+                    mArm.setId(intent.getStringExtra("idBook"));
+                    mEditText.setText(mEditText.getText().toString().replace('#',' ') + "\"" + mArm.getTitle() + "\" ");
+                    mEditText.setSelection(mEditText.getText().length());
+                }
+            }
+        };
+        getContext().registerReceiver(receiverFabiolaBookAdapter, new IntentFilter("ACTION_RECOVER_BOOK"));
+        mList.add(new Chat("fabiola.png","abiola","Salut que puis-je faire pour vous ?",true));
+        mChatAdapter = new ChatAdapter(mList);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mRecyclerView.setAdapter(mChatAdapter);
+        mEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(!s.toString().isEmpty())
+                {
+                    switch (s.charAt(s.length()-1))
+                    {
+                        case '#':
+                            Intent searchIntent = new Intent(getContext(), SearchActivity.class);
+                            searchIntent.putExtra("search_key","FABIOLA_BOOK");
+                            startActivity(searchIntent);
+                            break;
+                        case '@':
+                            Intent searchBookReservationIntent = new Intent(getContext(), SearchActivity.class);
+                            searchBookReservationIntent.putExtra("search_key","FABIOLA_BOOK_RESERVATION");
+                            startActivity(searchBookReservationIntent);
+                            break;
+                    }
+                }
+            }
+        });
+        mEnvoie.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mSuggestion = new Suggestion(mSession.getIdNumber(),mObjetSpinner.getSelectedItem().toString(),mMessageEditText.getText().toString());
-                if(mSuggestion.getMessage().equals(""))
-                    mErrorTextView.setText(R.string.register_error_0000);
-                else
+                mRequete = mEditText.getText().toString();
+                mEditText.setText("");
+                mList.add(new Chat("moi.png","Derkariom",mRequete,false));
+                mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                mRecyclerView.setAdapter(mChatAdapter);
+                mRecyclerView.smoothScrollToPosition(mChatAdapter.getItemCount()-1);
+                if(mArm.containsReservation(mRequete))
                 {
-                    mConnectionProgressBar.setVisibility(View.VISIBLE);
-                    mSuggestionSendButton.setText("");
-                    SuggestionSyn suggestionSyn = new SuggestionSyn();
-                    suggestionSyn.execute(getString(R.string.ip_server_android ) + "Suggestion.php",mSuggestion.getIdNumber(),mSuggestion.getObjet(),mSuggestion.getMessage(),mPhone.getModel(),mPhone.getVersion());
+                    mArm.setNumberOfDays(mArm.extractDuration(mRequete));
+                    if(mArm.getNumberOfDays() <= 5)
+                    {
+                        Reservation reservationSyn = new Reservation();
+                        reservationSyn.execute(getString(R.string.ip_server_android) + "Reservation.php",mSession.getIdNumber(),mArm.getId(),String.valueOf(mArm.getNumberOfDays()));
+                    }
+                    else
+                    {
+                        if(mArm.containsJournee(mRequete))
+                        {
+                            mArm.setNumberOfDays(1);
+                            Reservation reservationSyn = new Reservation();
+                            reservationSyn.execute(getString(R.string.ip_server_android) + "Reservation.php",mSession.getIdNumber(),mArm.getId(),String.valueOf(mArm.getNumberOfDays()));
+                        }
+                        else
+                        {
+                            mList.add(new Chat("fabiola.png","abiola","je suis désolé la politique de la bibliothèque permet aux utilisateurs d'emprunter un livre pour une durée maximale de 5 jours. Merci pour votre compréhension.",true));
+                            mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                            mRecyclerView.setAdapter(mChatAdapter);
+                            mRecyclerView.smoothScrollToPosition(mChatAdapter.getItemCount()-1);
+                        }
+                    }
                 }
+//                CallOpenAi callOpenAi = new CallOpenAi();
+//                callOpenAi.execute("http://192.168.43.1:2222/fabi/android/callOpenAi.php");
             }
         });
         return view;
     }
-    private class SuggestionSyn extends AsyncTask<String,Void,String> {
+    private class CallOpenAi extends AsyncTask<String,Void,String> {
         @Override
         protected String doInBackground(String... params) {
+            OkHttpClient client = new OkHttpClient();
+            RequestBody requestBody = new MultipartBody.Builder()
+                    .setType(MultipartBody.FORM)
+                    .addFormDataPart("matricule",mSession.getIdNumber())
+                    .addFormDataPart("message",mRequete)
+                    .build();
+            Request request = new Request.Builder()
+                    .url(params[0])
+                    .post(requestBody)
+                    .build();
+            try {
+                Response response = client.newCall(request).execute();
+                return response.body().string();
+            }catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(String response){
+            Toast.makeText(getContext(), response, Toast.LENGTH_SHORT).show();
+            if(response != null)
+            {
+                Log.e("resChat",response);
+                mList.add(new Chat("fabiola.png","abila",response,true));
+            }
+            else
+            {
+                mList.add(new Chat("fabiola.png","abila","Aucune connexion",true));
+            }
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+            mRecyclerView.setAdapter(mChatAdapter);
+            mRecyclerView.smoothScrollToPosition(mChatAdapter.getItemCount()-1);
+        }
+    }
+    private class Reservation extends AsyncTask<String,Void,String> {
+        @Override
+        protected String doInBackground(String... params) {
+
             try {
                 OkHttpClient client = new OkHttpClient();
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
                         .addFormDataPart("idNumber",params[1])
-                        .addFormDataPart("objet", params[2])
-                        .addFormDataPart("message", params[3])
-                        .addFormDataPart("model",params[4])
-                        .addFormDataPart("version",params[5])
+                        .addFormDataPart("idBook",params[2])
+                        .addFormDataPart("numberOfDay",params[3])
                         .build();
                 Request request = new Request.Builder()
                         .url(params[0])
@@ -91,58 +194,49 @@ public class SuggestionFragment extends Fragment {
                     return response.body().string();
                 }catch (IOException e)
                 {
-                    Log.e("errorSuggestionActivity",e.getMessage());
+                    Log.e("ReservationFabiola",e.getMessage());
+                    Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
 
             }catch (Exception e)
             {
-                Log.e("errorSuggestionActivity",e.getMessage());
+                return null;
             }
             return null;
         }
         @Override
-        protected void onPostExecute(String response){
-            //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
-            if(response != null)
+        protected void onPostExecute(String jsonData){
+            if(jsonData != null)
             {
-                if(response.equals("true"))
-                {
-                    SuccessSuggestionDialog();
-                    mConnectionProgressBar.setVisibility(View.INVISIBLE);
-                    mSuggestionSendButton.setText(R.string.send);
+                if(jsonData.equals("true")) {
+                    if (mArm.getNumberOfDays() != -1)
+                        mList.add(new Chat("fabiola.png", "abiola", "Votre réservation du livre \"" + mArm.getTitle() + "\" pour une durée de " + String.valueOf(mArm.getNumberOfDays()) + " jours a été enregistrée avec succès. Merci pour votre demande !", true));
+                    else
+                    {
+                        if(mArm.getNumberOfDays() == 0)
+                            mList.add(new Chat("fabiola.png", "abiola", "Votre réservation sur place du livre \"" + mArm.getTitle() + "\" a été enregistrée avec succès. Merci pour votre demande !", true));
+                        else
+                            mList.add(new Chat("fabiola.png", "abiola", "Votre réservation du livre \"" + mArm.getTitle() + "\"  pour une journée  a été enregistrée avec succès. Merci pour votre demande !", true));
+                    }
                 }
+                else
+                {
+                    mList.add(new Chat("fabiola.png","abiola","je suis désolé vous avez déjà effectué une réservation sur le livre \"" + mArm.getTitle() + "\". Merci pour votre demande !",true));
+                }
+                mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                mRecyclerView.setAdapter(mChatAdapter);
+                mRecyclerView.smoothScrollToPosition(mChatAdapter.getItemCount()-1);
             }
-            else
-            {
-                mErrorTextView.setText(R.string.no_connection);
-                mConnectionProgressBar.setVisibility(View.INVISIBLE);
-                mSuggestionSendButton.setText(R.string.send);
-            }
+
         }
     }
-    private void SuccessSuggestionDialog(){
-        SimpleOkDialog simpleOkDialog = new SimpleOkDialog(getActivity());
-        simpleOkDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        simpleOkDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
-        TextView okTextView = simpleOkDialog.findViewById(R.id.text_view_dialog_simple_ok);
-        TextView messageTextView = simpleOkDialog.findViewById(R.id.text_view_dialog_simple_ok_message);
-        messageTextView.setText(R.string.suggestion_message_dialog);
-        okTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mMessageEditText.setText("");
-                simpleOkDialog.cancel();
-            }
-        });
-        simpleOkDialog.build();
-    }
-    private Button mSuggestionSendButton;
-    private EditText mMessageEditText;
-    private Suggestion mSuggestion;
+    private RecyclerView mRecyclerView;
+    private ChatAdapter mChatAdapter;
+    private ArrayList<Chat> mList;
+    private Button mEnvoie;
+    private EditText mEditText;
+    private Button mMemorisation;
     private Session mSession;
-    private Spinner mObjetSpinner;
-    private TextView mErrorTextView;
-    private Phone mPhone;
-    private ProgressBar mConnectionProgressBar;
-    private ImageView mBackImageView;
+    private String mRequete;
+    private Arm mArm;
 }
