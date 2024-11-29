@@ -1056,7 +1056,20 @@ public class BookActivity extends AppCompatActivity {
                 }
                 else
                 {
-                   simpleDialogOk(R.drawable.vector_sorry,"Réservation indisponible","La réservation des livres n'est actuellement pas disponible. Veuillez vous rendre directement à la bibliothèque pour la consultation de ce livre.");
+                    if(!passwordEditText.getText().toString().equals(mSession.getPassword()))
+                    {
+                        errorTextView.setText(R.string.incorrect_password);
+                        passwordEditText.setBackground(getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
+                    }
+                    else
+                    {
+                        if(timeLimitSpinner.isEnabled())
+                            mNbrJour = String.valueOf(timeLimitSpinner.getSelectedItemPosition() + 1);
+                        else
+                            mNbrJour = String.valueOf(-1);
+                        Reservation reservation = new Reservation();
+                        reservation.execute(getString(R.string.ip_server_android) + "Reservation.php",mSession.getIdNumber(), mOnlineBook.getId(),mNbrJour);
+                    }
                 }
             }
         });
