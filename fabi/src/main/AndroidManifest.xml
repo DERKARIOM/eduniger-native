@@ -17,9 +17,9 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@drawable/img_default_book"
+        android:icon="@mipmap/ic_fabi"
         android:label="Fabi"
-        android:logo="@drawable/img_default_book"
+        android:logo="@mipmap/ic_fabi"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
@@ -126,9 +126,9 @@
         <activity
             android:name=".controleur.activity.MainActivity"
             android:exported="true"
-            android:icon="@drawable/img_default_book"
+            android:icon="@mipmap/ic_fabi"
             android:label="Fabi"
-            android:logo="@drawable/img_default_book"
+            android:logo="@mipmap/ic_fabi"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
