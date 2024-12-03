@@ -84,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(login);
             finish();
         }
+        startService(reservationService);
         try {
             if(mDigitalPrintTable.getPass().equals("0"))
             {

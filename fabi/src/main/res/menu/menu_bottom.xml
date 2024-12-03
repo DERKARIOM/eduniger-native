@@ -9,7 +9,7 @@
     <item
         android:id="@+id/navigation_suggestion"
         android:icon="@drawable/vector_white_messagerie"
-        android:title="Suggestion" />
+        android:title="Fabiola" />
     <item
         android:id="@+id/navigation_library"
         android:icon="@drawable/vector_purple_200_bibliotheque"
