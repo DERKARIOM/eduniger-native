@@ -29,6 +29,7 @@
         android:layout_above="@id/edit_text_register_email"
         android:drawableStart="@drawable/vector_black3_identify"
         android:inputType="number"
+        android:importantForAutofill="no"
         style="@style/edit_text_register"
         android:autofillHints="" />
 
