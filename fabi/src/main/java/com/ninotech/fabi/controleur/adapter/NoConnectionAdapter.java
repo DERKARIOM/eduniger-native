@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -69,13 +70,15 @@ public class NoConnectionAdapter extends RecyclerView.Adapter<NoConnectionAdapte
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener{
        private final TextView mMessageTextView;
-       private final Button mTryButton;
+       private final ImageView mTryButton;
        private final ProgressBar mWaitProgressBar;
+       private final ImageView mErr404ImageView;
         MyViewHolder(View itemView){
             super(itemView);
            mMessageTextView = itemView.findViewById(R.id.text_view_adapter_no_connection_message);
-           mTryButton = itemView.findViewById(R.id.button_adapter_no_connection_try);
+           mTryButton = itemView.findViewById(R.id.image_view_adapter_no_connection_btt_reload);
            mWaitProgressBar = itemView.findViewById(R.id.progress_bar_adapter_no_connection);
+           mErr404ImageView = itemView.findViewById(R.id.image_view_adapter_no_connection_img_404);
             itemView.setOnCreateContextMenuListener(this);
         }
         @Override
@@ -90,7 +93,9 @@ public class NoConnectionAdapter extends RecyclerView.Adapter<NoConnectionAdapte
             else
             {
                 mTryButton.setVisibility(View.VISIBLE);
+                mErr404ImageView.setVisibility(View.VISIBLE);
                 mWaitProgressBar.setVisibility(View.INVISIBLE);
+                mMessageTextView.setVisibility(View.GONE);
             }
             mTryButton.setOnClickListener(new View.OnClickListener() {
                 @Override

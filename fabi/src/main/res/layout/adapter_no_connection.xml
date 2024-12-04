@@ -10,28 +10,34 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
+        android:visibility="visible"
         android:layout_marginBottom="20dp"
         android:text="@string/wait"
         android:textSize="18sp" />
-
+    <ImageView
+        android:id="@+id/image_view_adapter_no_connection_img_404"
+        android:layout_width="wrap_content"
+        android:layout_height="250dp"
+        android:visibility="gone"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="30dp"
+        android:src="@drawable/img_error_404"
+        android:contentDescription="@string/todo" />
+    <ImageView
+        android:id="@+id/image_view_adapter_no_connection_btt_reload"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:visibility="gone"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="30dp"
+        android:src="@drawable/btt_reload"
+        android:layout_below="@+id/image_view_adapter_no_connection_img_404"
+        android:contentDescription="@string/todo" />
     <ProgressBar
         android:id="@+id/progress_bar_adapter_no_connection"
         android:layout_below="@id/text_view_adapter_no_connection_message"
         android:layout_centerInParent="true"
+        android:visibility="visible"
         style="@style/progress_bar_try_connection" />
-
-    <Button
-        android:visibility="gone"
-        android:id="@+id/button_adapter_no_connection_try"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:layout_below="@id/text_view_adapter_no_connection_message"
-        android:layout_centerInParent="true"
-        android:background="@drawable/forme_purple_200_radius_25dp"
-        android:padding="15dp"
-        android:text="Réessayer"
-        android:textAllCaps="false"
-        android:theme="@style/button_verify_connexion" />
 
 </RelativeLayout>
