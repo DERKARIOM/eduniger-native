@@ -4,16 +4,6 @@
     android:layout_height="match_parent"
     android:gravity="center"
     >
-
-    <TextView
-        android:id="@+id/text_view_adapter_no_connection_message"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:visibility="visible"
-        android:layout_marginBottom="20dp"
-        android:text="@string/wait"
-        android:textSize="18sp" />
     <ImageView
         android:id="@+id/image_view_adapter_no_connection_img_404"
         android:layout_width="wrap_content"
@@ -26,7 +16,7 @@
     <ImageView
         android:id="@+id/image_view_adapter_no_connection_btt_reload"
         android:layout_width="wrap_content"
-        android:layout_height="50dp"
+        android:layout_height="40dp"
         android:visibility="gone"
         android:layout_centerInParent="true"
         android:layout_marginBottom="30dp"
@@ -35,9 +25,14 @@
         android:contentDescription="@string/todo" />
     <ProgressBar
         android:id="@+id/progress_bar_adapter_no_connection"
-        android:layout_below="@id/text_view_adapter_no_connection_message"
         android:layout_centerInParent="true"
         android:visibility="visible"
+        android:rotation="180"
         style="@style/progress_bar_try_connection" />
+    <ProgressBar
+        android:id="@+id/progress_bar_adapter_no_connection2"
+        android:layout_centerInParent="true"
+        android:visibility="visible"
+        style="@style/progress_bar_try_connection2" />
 
 </RelativeLayout>

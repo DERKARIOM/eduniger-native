@@ -69,15 +69,15 @@ public class NoConnectionAdapter extends RecyclerView.Adapter<NoConnectionAdapte
 
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener{
-       private final TextView mMessageTextView;
        private final ImageView mTryButton;
        private final ProgressBar mWaitProgressBar;
+       private final ProgressBar mWaitProgressBar2;
        private final ImageView mErr404ImageView;
         MyViewHolder(View itemView){
             super(itemView);
-           mMessageTextView = itemView.findViewById(R.id.text_view_adapter_no_connection_message);
            mTryButton = itemView.findViewById(R.id.image_view_adapter_no_connection_btt_reload);
            mWaitProgressBar = itemView.findViewById(R.id.progress_bar_adapter_no_connection);
+            mWaitProgressBar2 = itemView.findViewById(R.id.progress_bar_adapter_no_connection2);
            mErr404ImageView = itemView.findViewById(R.id.image_view_adapter_no_connection_img_404);
             itemView.setOnCreateContextMenuListener(this);
         }
@@ -88,6 +88,7 @@ public class NoConnectionAdapter extends RecyclerView.Adapter<NoConnectionAdapte
             if(connection.isWait())
             {
                 mWaitProgressBar.setVisibility(View.VISIBLE);
+                mWaitProgressBar2.setVisibility(View.VISIBLE);
                 mTryButton.setVisibility(View.INVISIBLE);
             }
             else
@@ -95,7 +96,7 @@ public class NoConnectionAdapter extends RecyclerView.Adapter<NoConnectionAdapte
                 mTryButton.setVisibility(View.VISIBLE);
                 mErr404ImageView.setVisibility(View.VISIBLE);
                 mWaitProgressBar.setVisibility(View.INVISIBLE);
-                mMessageTextView.setVisibility(View.GONE);
+                mWaitProgressBar2.setVisibility(View.INVISIBLE);
             }
             mTryButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -104,7 +105,6 @@ public class NoConnectionAdapter extends RecyclerView.Adapter<NoConnectionAdapte
                     itemView.getContext().sendBroadcast(intent);
                 }
             });
-           mMessageTextView.setText(connection.getMessage());
         }
     }
 }

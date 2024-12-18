@@ -58,14 +58,16 @@
         <item name="android:layout_marginStart">40dp</item>
     </style>
 
-    <style name="progress_bar_try_connection" parent="@android:style/Widget.Holo.ProgressBar.Small">
-        <item name="android:layout_width">100dp</item>
-        <item name="android:layout_height">100dp</item>
-        <item name="android:elevation">5dp</item>
-        <item name="android:padding">20dp</item>
+    <style name="progress_bar_try_connection">
+        <item name="android:layout_width">50dp</item>
+        <item name="android:layout_height">50dp</item>
         <item name="android:visibility">visible</item>
-        <item name="android:progressDrawable">@drawable/form_circular_bar_connexion</item>
         <item name="android:layout_marginStart">40dp</item>
+    </style>
+
+    <style name="progress_bar_try_connection2" parent="progress_bar_try_connection">
+        <item name="android:layout_width">30dp</item>
+        <item name="android:layout_height">30dp</item>
     </style>
 
 <!--    Le themes du boutton(Button) de type connexion -->
