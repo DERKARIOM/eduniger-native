@@ -7,6 +7,10 @@
         android:icon="@drawable/vector_white_home"
         android:title="Accueil" />
     <item
+        android:id="@+id/navigation_structure"
+        android:icon="@drawable/vector_structure"
+        android:title="Structure" />
+    <item
         android:id="@+id/navigation_suggestion"
         android:icon="@drawable/vector_white_messagerie"
         android:title="Fabiola" />

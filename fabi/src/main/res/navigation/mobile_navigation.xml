@@ -12,6 +12,12 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
+        android:id="@+id/navigation_structure"
+        android:name="com.ninotech.fabi.controleur.fragment.CategoryFragment"
+        android:label="Structure"
+        tools:layout="@layout/fragment_category" />
+
+    <fragment
         android:id="@+id/navigation_suggestion"
         android:name="com.ninotech.fabi.controleur.fragment.SuggestionFragment"
         android:label="Suggestion"

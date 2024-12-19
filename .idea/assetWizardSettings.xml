@@ -28,7 +28,7 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="vector_departement" />
+                            <entry key="outputName" value="vector_structure" />
                           </map>
                         </option>
                       </PersistentState>
