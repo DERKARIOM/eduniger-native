@@ -18,7 +18,7 @@
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_fabi"
-        android:label="Fabi"
+        android:label="EduNiger"
         android:logo="@mipmap/ic_fabi"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
@@ -127,7 +127,7 @@
             android:name=".controleur.activity.MainActivity"
             android:exported="true"
             android:icon="@mipmap/ic_fabi"
-            android:label="Fabi"
+            android:label="EduNiger"
             android:logo="@mipmap/ic_fabi"
             android:screenOrientation="portrait">
             <intent-filter>
