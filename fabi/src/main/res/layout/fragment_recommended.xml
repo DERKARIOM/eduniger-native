@@ -1,14 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/match_parent_all"
     tools:context="com.ninotech.fabi.controleur.fragment.RecommendedFragment">
     <RelativeLayout
         style="@style/match_parent_all">
+        <ImageView
+            android:id="@+id/image_view_fragment_recommended_welcome"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="20dp"
+            android:elevation="6dp"
+            android:contentDescription="@string/todo" />
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view_ranking"
             android:nestedScrollingEnabled="false"
+            android:layout_below="@id/image_view_fragment_recommended_welcome"
             style="@style/match_parent_all"
             />
     </RelativeLayout>
-</RelativeLayout>
+</androidx.core.widget.NestedScrollView>

@@ -53,6 +53,7 @@ public class RecommendedFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_recommended, container, false);
         Session session = new Session(getContext());
         mBookRecommendedRecyclerView = view.findViewById(R.id.recycler_view_ranking);
+        mWelcomeImageView = view.findViewById(R.id.image_view_fragment_recommended_welcome);
         mOnlineBookList = new ArrayList<>();
         BroadcastReceiver receiverNoConnectionAdapter = new BroadcastReceiver() {
             @Override
@@ -118,6 +119,11 @@ public class RecommendedFragment extends Fragment {
         protected void onPostExecute(String jsonData){
             if(jsonData != null)
             {
+                Picasso.get()
+                        .load(getString(R.string.ip_server) + "ressources/pub/pub3.jpg")
+                        .transform(new RoundedTransformation(200,10))
+                        .resize(6200,3333)
+                        .into(mWelcomeImageView);
                 if(!jsonData.equals("expiresVersion"))
                 {
                     JSONArray jsonArray = null;
@@ -195,5 +201,6 @@ public class RecommendedFragment extends Fragment {
     private RecyclerView mBookRecommendedRecyclerView;
     private ArrayList<OnlineBook> mOnlineBookList;
     private NoConnectionAdapter mNoConnectionAdapter;
+    private ImageView mWelcomeImageView;
 
 }
