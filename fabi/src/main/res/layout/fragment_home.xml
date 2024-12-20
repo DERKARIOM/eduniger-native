@@ -2,9 +2,11 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/match_parent_all"
+    android:background="@color/whiteVert"
     tools:context="com.ninotech.fabi.controleur.fragment.HomeFragment">
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab_layout_accuiel"
+        android:background="@color/whiteVert"
         style="@style/match_wrap">
         <com.google.android.material.tabs.TabItem
             style="@style/wrap_content_all"
