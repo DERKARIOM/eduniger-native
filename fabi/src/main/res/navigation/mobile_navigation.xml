@@ -13,7 +13,7 @@
 
     <fragment
         android:id="@+id/navigation_structure"
-        android:name="com.ninotech.fabi.controleur.fragment.CategoryFragment"
+        android:name="com.ninotech.fabi.controleur.fragment.StructureFragment"
         android:label="Structure"
         tools:layout="@layout/fragment_category" />
 

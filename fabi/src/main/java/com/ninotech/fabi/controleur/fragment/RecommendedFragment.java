@@ -23,6 +23,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.controleur.activity.LoginActivity;
+import com.ninotech.fabi.controleur.activity.MainActivity;
+import com.ninotech.fabi.controleur.activity.SearchActivity;
 import com.ninotech.fabi.controleur.adapter.OnlineBookAdapter;
 import com.ninotech.fabi.controleur.adapter.NoConnectionAdapter;
 import com.ninotech.fabi.controleur.dialog.UpdateDialog;
@@ -54,6 +56,7 @@ public class RecommendedFragment extends Fragment {
         Session session = new Session(getContext());
         mBookRecommendedRecyclerView = view.findViewById(R.id.recycler_view_ranking);
         mWelcomeImageView = view.findViewById(R.id.image_view_fragment_recommended_welcome);
+        mTextViewMore = view.findViewById(R.id.text_view_recommended_more);
         mOnlineBookList = new ArrayList<>();
         BroadcastReceiver receiverNoConnectionAdapter = new BroadcastReceiver() {
             @Override
@@ -75,6 +78,15 @@ public class RecommendedFragment extends Fragment {
                 }
             }
         };
+        mTextViewMore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent searchIntent = new Intent(getContext(), SearchActivity.class);
+                searchIntent.putExtra("search_key","ONLINE_BOOK");
+                searchIntent.putExtra("online_book_key","MAIN_ACTIVITY");
+                startActivity(searchIntent);
+            }
+        });
         getContext().registerReceiver(receiverNoConnectionAdapter, new IntentFilter("RECOMMENDED_FRAGMENT")); /* Appel de la fonction cregisterReceviver */
         ArrayList<Connection> list = new ArrayList<>();
         list.add(new Connection(getString(R.string.wait),null,true));
@@ -120,10 +132,11 @@ public class RecommendedFragment extends Fragment {
             if(jsonData != null)
             {
                 Picasso.get()
-                        .load(getString(R.string.ip_server) + "ressources/pub/pub3.jpg")
+                        .load(getString(R.string.ip_server) + "ressources/pub/p.jpg")
                         .transform(new RoundedTransformation(200,10))
                         .resize(6200,3333)
                         .into(mWelcomeImageView);
+                mWelcomeImageView.setVisibility(View.VISIBLE);
                 if(!jsonData.equals("expiresVersion"))
                 {
                     JSONArray jsonArray = null;
@@ -202,5 +215,5 @@ public class RecommendedFragment extends Fragment {
     private ArrayList<OnlineBook> mOnlineBookList;
     private NoConnectionAdapter mNoConnectionAdapter;
     private ImageView mWelcomeImageView;
-
+    private TextView mTextViewMore;
 }

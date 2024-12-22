@@ -1,37 +1,27 @@
 package com.ninotech.fabi.controleur.adapter;
 
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.activity.PdfNinoView;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
 import com.ninotech.fabi.model.data.ElectronicBook;
-import com.ninotech.fabi.model.data.OnlineBook;
 import com.pspdfkit.configuration.activity.PdfActivityConfiguration;
 import com.pspdfkit.configuration.page.PageScrollDirection;
 import com.pspdfkit.configuration.page.PageScrollMode;
 import com.pspdfkit.configuration.settings.SettingsMenuItemType;
 import com.pspdfkit.configuration.sharing.ShareFeatures;
-import com.pspdfkit.ui.PdfActivity;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -100,7 +90,7 @@ public class ElectronicBookAdapter extends RecyclerView.Adapter<ElectronicBookAd
             super(itemView);
             mCoverImageView = itemView.findViewById(R.id.image_view_adapter_book_simple_cover);
             mTitleTextView = itemView.findViewById(R.id.text_view_adapter_book_simple_title);
-            mCategoryTextView = itemView.findViewById(R.id.text_view_adapter_book_simple_category);
+            mCategoryTextView = itemView.findViewById(R.id.text_view_adapter_description_category);
             mAuthorTextView = itemView.findViewById(R.id.text_view_adapter_book_simple_author);
             itemView.setOnCreateContextMenuListener(this);
         }

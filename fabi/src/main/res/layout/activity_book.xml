@@ -57,7 +57,7 @@
                         android:textSize="@dimen/size_sub_title" />
 
                     <TextView
-                        android:id="@+id/text_view_adapter_book_simple_category"
+                        android:id="@+id/text_view_adapter_description_category"
                         style="@style/wrap_content_all"
                         android:layout_below="@id/text_view_adapter_book_simple_id_book"
                         android:layout_margin="5dp"
@@ -65,7 +65,7 @@
                         android:textSize="@dimen/size_sub_title" />
                     <LinearLayout
                         style="@style/wrap_content_all"
-                        android:layout_below="@id/text_view_adapter_book_simple_category">
+                        android:layout_below="@id/text_view_adapter_description_category">
                         <LinearLayout
                             android:id="@+id/linear_layout_activity_book_like"
                             style="@style/wrap_content_all"
