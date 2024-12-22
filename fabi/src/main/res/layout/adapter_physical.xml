@@ -9,7 +9,7 @@
         android:layout_height="100dp"
         android:layout_margin="10dp"
         android:elevation="10dp"
-        android:src="@drawable/img_default_book" />
+        android:src="@mipmap/ic_fabi_round" />
     <RelativeLayout
         android:id="@+id/info_livre_pysique"
         android:layout_width="wrap_content"

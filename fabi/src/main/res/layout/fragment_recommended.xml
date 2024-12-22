@@ -46,9 +46,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view_ranking"
             android:nestedScrollingEnabled="false"
-            android:elevation="2dp"
             android:layout_margin="10dp"
-            android:background="@drawable/forme_white_radius_10dp"
             android:layout_below="@id/relative_layout_fragment_recommended"
             style="@style/match_parent_all"
             />

@@ -12,7 +12,7 @@
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
         android:elevation="5dp"
-        android:src="@drawable/img_default_book"
+        android:src="@mipmap/ic_fabi_round"
         android:contentDescription="@string/todo" />
     <RelativeLayout
         android:id="@+id/info_livre2"
