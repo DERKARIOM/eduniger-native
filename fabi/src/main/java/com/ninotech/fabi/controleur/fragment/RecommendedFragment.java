@@ -27,11 +27,13 @@ import com.ninotech.fabi.controleur.activity.MainActivity;
 import com.ninotech.fabi.controleur.activity.SearchActivity;
 import com.ninotech.fabi.controleur.adapter.OnlineBookAdapter;
 import com.ninotech.fabi.controleur.adapter.NoConnectionAdapter;
+import com.ninotech.fabi.controleur.adapter.StructureAdapter;
 import com.ninotech.fabi.controleur.dialog.UpdateDialog;
 import com.ninotech.fabi.model.data.Account;
 import com.ninotech.fabi.model.data.OnlineBook;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
 import com.ninotech.fabi.model.data.Connection;
+import com.ninotech.fabi.model.data.Structure;
 import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.R;
 import com.squareup.picasso.Picasso;
@@ -57,7 +59,9 @@ public class RecommendedFragment extends Fragment {
         mBookRecommendedRecyclerView = view.findViewById(R.id.recycler_view_ranking);
         mWelcomeImageView = view.findViewById(R.id.image_view_fragment_recommended_welcome);
         mTextViewMore = view.findViewById(R.id.text_view_recommended_more);
+        mStructureRecyclerView = view.findViewById(R.id.recycler_view_fragment_recommended_structure);
         mOnlineBookList = new ArrayList<>();
+        mStructures = new ArrayList<>();
         BroadcastReceiver receiverNoConnectionAdapter = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -70,6 +74,8 @@ public class RecommendedFragment extends Fragment {
                         mBookRecommendedRecyclerView.setAdapter(noConnectionAdapter);
                         RecommendedSyn recommendedSyn = new RecommendedSyn();
                         recommendedSyn.execute(getString(R.string.ip_server_android) + "Recommended.php", session.getIdNumber());
+                        StructureSyn structureSyn = new StructureSyn();
+                        structureSyn.execute(getString(R.string.ip_server_android) + "Structure.php", session.getIdNumber());
                     }catch (Exception e)
                     {
                         Log.e("errRecommendedFragment",e.getMessage());
@@ -95,6 +101,8 @@ public class RecommendedFragment extends Fragment {
         mBookRecommendedRecyclerView.setAdapter(mNoConnectionAdapter);
         RecommendedSyn recommendedSyn = new RecommendedSyn();
         recommendedSyn.execute(getString(R.string.ip_server_android) + "Recommended.php", session.getIdNumber(),getString(R.string.app_version));
+        StructureSyn structureSyn = new StructureSyn();
+        structureSyn.execute(getString(R.string.ip_server_android) + "Structure.php", session.getIdNumber());
         return view;
     }
     private class RecommendedSyn extends AsyncTask<String,Void,String> {
@@ -211,8 +219,69 @@ public class RecommendedFragment extends Fragment {
             updateDialog.build();
         }
     }
+    private class StructureSyn extends AsyncTask<String,Void,String> {
+        @Override
+        protected String doInBackground(String... params) {
+
+            try {
+                OkHttpClient client = new OkHttpClient();
+                RequestBody requestBody = new MultipartBody.Builder()
+                        .setType(MultipartBody.FORM)
+                        .addFormDataPart("idNumber",params[1])
+                        .build();
+                Request request = new Request.Builder()
+                        .url(params[0])
+                        .post(requestBody)
+                        .build();
+                try {
+                    Response response = client.newCall(request).execute();
+                    assert response.body() != null;
+                    return response.body().string();
+                }catch (IOException e)
+                {
+                    Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+
+            }catch (Exception e)
+            {
+                return null;
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(String jsonData){
+            if(jsonData != null)
+            {
+                JSONArray jsonArray = null;
+                try {
+                    jsonArray = new JSONArray(jsonData);
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+                for (int i=0;i<jsonArray.length();i++) {
+                    try {
+                        mStructures.add(new Structure(jsonArray.getJSONObject(i).getString("id"),jsonArray.getJSONObject(i).getString("logo"),jsonArray.getJSONObject(i).getString("nameStruct"),"RAS",true));
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                StructureAdapter categoryAdapter = new StructureAdapter(mStructures);
+                mStructureRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                mStructureRecyclerView.setAdapter(categoryAdapter);
+            }
+            else {
+                ArrayList<Connection> list = new ArrayList<>();
+                list.add(new Connection(getString(R.string.no_connection_available),"CATEGORY_FRAGMENT",false));
+                NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
+                mStructureRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                mStructureRecyclerView.setAdapter(noConnectionAdapter);
+            }
+        }
+    }
     private RecyclerView mBookRecommendedRecyclerView;
     private ArrayList<OnlineBook> mOnlineBookList;
+    private RecyclerView mStructureRecyclerView;
+    private ArrayList<Structure> mStructures;
     private NoConnectionAdapter mNoConnectionAdapter;
     private ImageView mWelcomeImageView;
     private TextView mTextViewMore;

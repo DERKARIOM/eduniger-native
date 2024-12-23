@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/wrap_content_all"
+    android:layout_margin="5dp">
+    <ImageView
+        android:id="@+id/image_view_adapter_similar_cover"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:src="@mipmap/ic_fabi_round"
+        android:contentDescription="@string/todo" />
+</RelativeLayout>
