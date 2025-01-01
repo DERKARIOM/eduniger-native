@@ -25,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.ninotech.fabi.controleur.activity.LoginActivity;
 import com.ninotech.fabi.controleur.activity.MainActivity;
 import com.ninotech.fabi.controleur.activity.SearchActivity;
+import com.ninotech.fabi.controleur.adapter.HorizontaleAdapter;
 import com.ninotech.fabi.controleur.adapter.OnlineBookAdapter;
 import com.ninotech.fabi.controleur.adapter.NoConnectionAdapter;
 import com.ninotech.fabi.controleur.adapter.StructureAdapter;
@@ -160,8 +161,9 @@ public class RecommendedFragment extends Fragment {
                             throw new RuntimeException(e);
                         }
                     }
-                    OnlineBookAdapter onlineBookAdapter = new OnlineBookAdapter(mOnlineBookList);
-                    mBookRecommendedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+                    HorizontaleAdapter onlineBookAdapter = new HorizontaleAdapter(mOnlineBookList);
+                    mBookRecommendedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
                     mBookRecommendedRecyclerView.setAdapter(onlineBookAdapter);
                 }
                 else
