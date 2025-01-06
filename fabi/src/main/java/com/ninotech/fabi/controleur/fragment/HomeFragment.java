@@ -25,13 +25,13 @@ public class HomeFragment extends Fragment {
         new TabLayoutMediator(tabLayout, viewPager2,(tab, position) -> {
             switch (position){
                 case 0:
-                    tab.setText(getString(R.string.recomended_title));
+                    tab.setText(getString(R.string.books_title));
                     break;
                 case 1:
                     tab.setText(getString(R.string.category_title));
                     break;
                 case 2:
-                    tab.setText(R.string.ranking);
+                    tab.setText(R.string.structure);
                     break;
             }
         }).attach();
