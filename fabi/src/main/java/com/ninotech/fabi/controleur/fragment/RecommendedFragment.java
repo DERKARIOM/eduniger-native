@@ -1,5 +1,4 @@
 package com.ninotech.fabi.controleur.fragment;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -17,16 +16,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.controleur.activity.LoginActivity;
-import com.ninotech.fabi.controleur.activity.MainActivity;
 import com.ninotech.fabi.controleur.activity.SearchActivity;
 import com.ninotech.fabi.controleur.adapter.HorizontaleAdapter;
-import com.ninotech.fabi.controleur.adapter.OnlineBookAdapter;
 import com.ninotech.fabi.controleur.adapter.NoConnectionAdapter;
 import com.ninotech.fabi.controleur.adapter.StructureAdapter;
 import com.ninotech.fabi.controleur.dialog.UpdateDialog;
@@ -38,13 +34,10 @@ import com.ninotech.fabi.model.data.Structure;
 import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.R;
 import com.squareup.picasso.Picasso;
-
 import org.json.JSONArray;
 import org.json.JSONException;
-
 import java.io.IOException;
 import java.util.ArrayList;
-
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;

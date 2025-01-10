@@ -7,6 +7,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 import com.ninotech.fabi.controleur.fragment.RankingFragment;
 import com.ninotech.fabi.controleur.fragment.RecommendedFragment;
 import com.ninotech.fabi.controleur.fragment.CategoryFragment;
+import com.ninotech.fabi.controleur.fragment.StructureFragment;
 
 public class AccueilViewPagerAdapter extends FragmentStateAdapter {
 
@@ -20,11 +21,11 @@ public class AccueilViewPagerAdapter extends FragmentStateAdapter {
         // Retournez le fragment associé à chaque onglet
         switch (position) {
             case 0:
-                return new RecommendedFragment();
+                return new RankingFragment();
             case 1:
                 return new CategoryFragment();
             case 2:
-                return new RankingFragment();
+                return new StructureFragment();
         }
         return new RecommendedFragment(); // Fragment par défaut
     }

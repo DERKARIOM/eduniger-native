@@ -9,7 +9,7 @@
     <item
         android:id="@+id/navigation_structure"
         android:icon="@drawable/vector_structure"
-        android:title="Structure" />
+        android:title="Librairie" />
     <item
         android:id="@+id/navigation_suggestion"
         android:icon="@drawable/vector_white_messagerie"
