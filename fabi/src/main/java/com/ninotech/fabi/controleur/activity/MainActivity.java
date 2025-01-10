@@ -15,7 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 
-import com.ninotech.fabi.controleur.fragment.HomeFragment;
+import com.ninotech.fabi.controleur.fragment.BookStoreFragment;
 import com.ninotech.fabi.controleur.fragment.LibraryFragment;
 import com.ninotech.fabi.controleur.fragment.SuggestionFragment;
 import com.ninotech.fabi.model.data.Account;
@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
         mEditText = findViewById(R.id.edit_text_toolbar_search);
         SharedPreferences sharedPreferences = getSharedPreferences("MODE", Context.MODE_PRIVATE);
         boolean nightMODE = sharedPreferences.getBoolean("night", false);
-        mHomeFragment = new HomeFragment();
+        mBookStoreFragment = new BookStoreFragment();
         mSuggestionFragment = new SuggestionFragment();
         LibraryFragment libraryFragment = new LibraryFragment();
         MenuItem menuItem = toolbar.getMenu().findItem(R.id.menuHomeNotification);
@@ -226,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
     /* Les attributs de la Classe MainActivity */
     private SQLiteDatabase mDatabase;
     private BottomNavigationView mBottomNavigationView;
-    private HomeFragment mHomeFragment = new HomeFragment();
+    private BookStoreFragment mBookStoreFragment = new BookStoreFragment();
     private SuggestionFragment mSuggestionFragment = new SuggestionFragment();
     private Account mAccount;
     private DigitalPrintTable mDigitalPrintTable;

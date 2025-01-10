@@ -35,11 +35,11 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class RankingFragment extends Fragment {
+public class BooksFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-       View view = inflater.inflate(R.layout.fragment_classement, container, false);
+       View view = inflater.inflate(R.layout.fragment_books, container, false);
         Session session = new Session(getContext());
        mBookRecyclerView = view.findViewById(R.id.recycler_view_ranking);
         mOnlineBookList = new ArrayList<>();
