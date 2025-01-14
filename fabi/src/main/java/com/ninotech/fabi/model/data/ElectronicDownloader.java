@@ -1,27 +1,13 @@
 package com.ninotech.fabi.model.data;
 
-import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.widget.Toast;
-
 import androidx.core.app.NotificationCompat;
-
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.model.table.ElectronicTable;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 
 public class ElectronicDownloader extends AsyncTask<String, Integer, ElectronicBook> {
 

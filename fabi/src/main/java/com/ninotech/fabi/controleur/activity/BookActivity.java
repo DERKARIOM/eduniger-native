@@ -218,7 +218,7 @@ public class BookActivity extends AppCompatActivity {
                 downloadAudioProgressBar.setVisibility(View.VISIBLE);
                 AudioDownloader audioDownloader = new AudioDownloader(getApplicationContext(),mSession.getIdNumber(), mOnlineBook,mTones);
                 audioDownloader.execute(mOnlineBook.getCover(), mOnlineBook.getElectronic(),mCategory.getCover(),mAuthor.getProfile(),mTones.getAudio());
-                succeDowloadAudioDialog("Le livre " + mTitleTextView.getText().toString() + " format audio a été téléchargé avec succès. N'hésitez pas à explorer son contenu dans l'application et contactez-nous en cas de besoin.");
+                //succeDowloadAudioDialog("Le livre " + mTitleTextView.getText().toString() + " format audio a été téléchargé avec succès. N'hésitez pas à explorer son contenu dans l'application et contactez-nous en cas de besoin.");
             }
         });
         mPlayerImageView.setOnClickListener(new View.OnClickListener() {
