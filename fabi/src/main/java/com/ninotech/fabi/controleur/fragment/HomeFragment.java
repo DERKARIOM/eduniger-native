@@ -56,13 +56,14 @@ public class HomeFragment extends Fragment {
         mStructureRecyclerView = view.findViewById(R.id.recycler_view_fragment_recommended_structure);
         mOnlineBookList = new ArrayList<>();
         mStructures = new ArrayList<>();
+        mAccount = new Account();
         BroadcastReceiver receiverNoConnectionAdapter = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 if ("RECOMMENDED_FRAGMENT".equals(intent.getAction())) {
                     try {
                         ArrayList<Connection> list = new ArrayList<>();
-                        list.add(new Connection(getString(R.string.wait),"RECOMMENDED_FRAGMENT",true));
+                        list.add(new Connection(getString(R.string.wait), "RECOMMENDED_FRAGMENT", true));
                         NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
                         mBookRecommendedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                         mBookRecommendedRecyclerView.setAdapter(noConnectionAdapter);
@@ -70,9 +71,8 @@ public class HomeFragment extends Fragment {
                         recommendedSyn.execute(getString(R.string.ip_server_android) + "Recommended.php", session.getIdNumber());
                         StructureSyn structureSyn = new StructureSyn();
                         structureSyn.execute(getString(R.string.ip_server_android) + "Structure.php", session.getIdNumber());
-                    }catch (Exception e)
-                    {
-                        Log.e("errRecommendedFragment",e.getMessage());
+                    } catch (Exception e) {
+                        Log.e("errRecommendedFragment", e.getMessage());
                     }
 
                 }
@@ -82,21 +82,24 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent searchIntent = new Intent(getContext(), SearchActivity.class);
-                searchIntent.putExtra("search_key","ONLINE_BOOK");
-                searchIntent.putExtra("online_book_key","MAIN_ACTIVITY");
+                searchIntent.putExtra("search_key", "ONLINE_BOOK");
+                searchIntent.putExtra("online_book_key", "MAIN_ACTIVITY");
                 startActivity(searchIntent);
             }
         });
         getContext().registerReceiver(receiverNoConnectionAdapter, new IntentFilter("RECOMMENDED_FRAGMENT")); /* Appel de la fonction cregisterReceviver */
         ArrayList<Connection> list = new ArrayList<>();
-        list.add(new Connection(getString(R.string.wait),null,true));
-       mNoConnectionAdapter = new NoConnectionAdapter(list);
+        list.add(new Connection(getString(R.string.wait), null, true));
+        mNoConnectionAdapter = new NoConnectionAdapter(list);
         mBookRecommendedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mBookRecommendedRecyclerView.setAdapter(mNoConnectionAdapter);
-        RecommendedSyn recommendedSyn = new RecommendedSyn();
-        recommendedSyn.execute(getString(R.string.ip_server_android) + "Recommended.php", session.getIdNumber(),getString(R.string.app_version));
-        StructureSyn structureSyn = new StructureSyn();
-        structureSyn.execute(getString(R.string.ip_server_android) + "Structure.php", session.getIdNumber());
+        if (mAccount.isSession(getContext()))
+        {
+            RecommendedSyn recommendedSyn = new RecommendedSyn();
+            recommendedSyn.execute(getString(R.string.ip_server_android) + "Recommended.php", session.getIdNumber(),getString(R.string.app_version));
+            StructureSyn structureSyn = new StructureSyn();
+            structureSyn.execute(getString(R.string.ip_server_android) + "Structure.php", session.getIdNumber());
+        }
         return view;
     }
     private class RecommendedSyn extends AsyncTask<String,Void,String> {
@@ -280,4 +283,5 @@ public class HomeFragment extends Fragment {
     private NoConnectionAdapter mNoConnectionAdapter;
     private ImageView mWelcomeImageView;
     private TextView mTextViewMore;
+    private Account mAccount;
 }
