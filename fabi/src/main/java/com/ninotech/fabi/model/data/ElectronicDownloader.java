@@ -76,40 +76,33 @@ public class ElectronicDownloader extends AsyncTask<String, Integer, ElectronicB
         ElectronicBook electronicBook = new ElectronicBook();
         DownloadFile downloadFile = new DownloadFile(mContext);
         try {
-            for (int i = 0; i < names.length; i++) {
-                String url;
-                if (i == 1)
-                    url = mContext.getString(R.string.ip_server) + "ressources/pdf/" + names[i];
-                else
-                    url = mContext.getString(R.string.ip_server) + "ressources/cover/" + names[i];
-                String fileName = names[i];
+            // Télécharger les fichiers avec progression
+            electronicBook.setCover(downloadFile.start(
+                    mContext.getString(R.string.ip_server) + "ressources/cover/" + names[0],
+                    names[0],
+                    progress -> publishProgress(progress)
+            ));
 
-                // Simuler la progression pour chaque fichier
-                for (int progress = 0; progress <= 100; progress += 20) {
-                    Thread.sleep(500); // Pause de 500 ms pour simuler le téléchargement
-                    publishProgress(progress); // Publier la progression
-                }
+            electronicBook.setPdf(downloadFile.start(
+                    mContext.getString(R.string.ip_server) + "ressources/pdf/" + names[1],
+                    names[1],
+                    progress -> publishProgress(progress)
+            ));
 
-                // Télécharger le fichier (méthode start)
-                switch (i) {
-                    case 0:
-                        electronicBook.setCover(downloadFile.start(url, fileName));
-                        break;
-                    case 1:
-                        electronicBook.setPdf(downloadFile.start(url, fileName));
-                        break;
-                    case 2:
-                        electronicBook.setCoverCategory(downloadFile.start(url, fileName));
-                        break;
-                    case 3:
-                        electronicBook.setProfileAuthor(downloadFile.start(url, fileName));
-                        break;
-                }
-            }
+            electronicBook.setCoverCategory(downloadFile.start(
+                    mContext.getString(R.string.ip_server) + "ressources/cover/" + names[2],
+                    names[2],
+                    progress -> publishProgress(progress)
+            ));
+
+            electronicBook.setProfileAuthor(downloadFile.start(
+                    mContext.getString(R.string.ip_server) + "ressources/profile/" + names[3],
+                    names[3],
+                    progress -> publishProgress(progress)
+            ));
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return electronicBook;
     }
 
