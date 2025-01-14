@@ -134,7 +134,7 @@ public class BookActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
-        createNotificationChannel();
+       // createNotificationChannel();
         ArrayList<Connection> list = new ArrayList<>();
         list.add(new Connection(getString(R.string.wait),null,true));
         mNoConnectionAdapter = new NoConnectionAdapter(list);
@@ -202,13 +202,13 @@ public class BookActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Toast.makeText(BookActivity.this, "Téléchargement démarrer", Toast.LENGTH_SHORT).show();
-                showProgressNotification(mTitleTextView.getText().toString() + " Format PDF");
-               /* downloadPDFButton.setText("");
+                //showProgressNotification(mTitleTextView.getText().toString() + " Format PDF");
+               downloadPDFButton.setText("");
                 downloadPdfProgressBar.setVisibility(View.VISIBLE);
                 ElectronicDownloader electronicDownloader = new ElectronicDownloader(getApplicationContext(),mSession.getIdNumber(), mOnlineBook);
                // Toast.makeText(BookActivity.this, mOnlineBook.getAuthor(), Toast.LENGTH_SHORT).show();
                 electronicDownloader.execute(mOnlineBook.getCover(), mOnlineBook.getElectronic(),mCategory.getCover(),mAuthor.getProfile());
-                succeDowloadPDFDialog("Le livre " + mTitleTextView.getText().toString() + " format PDF a été téléchargé avec succès. N'hésitez pas à explorer son contenu dans l'application et contactez-nous en cas de besoin."); */
+               // succeDowloadPDFDialog("Le livre " + mTitleTextView.getText().toString() + " format PDF a été téléchargé avec succès. N'hésitez pas à explorer son contenu dans l'application et contactez-nous en cas de besoin.");
             }
         });
         audioButton.setOnClickListener(new View.OnClickListener() {
