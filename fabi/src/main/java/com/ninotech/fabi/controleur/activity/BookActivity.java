@@ -1,4 +1,6 @@
 package com.ninotech.fabi.controleur.activity;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -12,6 +14,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -26,7 +29,7 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import androidx.core.app.NotificationCompat;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.widget.NestedScrollView;
@@ -131,6 +134,7 @@ public class BookActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
+        createNotificationChannel();
         ArrayList<Connection> list = new ArrayList<>();
         list.add(new Connection(getString(R.string.wait),null,true));
         mNoConnectionAdapter = new NoConnectionAdapter(list);
@@ -197,12 +201,14 @@ public class BookActivity extends AppCompatActivity {
         downloadPDFButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                downloadPDFButton.setText("");
+                Toast.makeText(BookActivity.this, "Téléchargement démarrer", Toast.LENGTH_SHORT).show();
+                showProgressNotification(mTitleTextView.getText().toString() + " Format PDF");
+               /* downloadPDFButton.setText("");
                 downloadPdfProgressBar.setVisibility(View.VISIBLE);
                 ElectronicDownloader electronicDownloader = new ElectronicDownloader(getApplicationContext(),mSession.getIdNumber(), mOnlineBook);
                // Toast.makeText(BookActivity.this, mOnlineBook.getAuthor(), Toast.LENGTH_SHORT).show();
                 electronicDownloader.execute(mOnlineBook.getCover(), mOnlineBook.getElectronic(),mCategory.getCover(),mAuthor.getProfile());
-                succeDowloadPDFDialog("Le livre " + mTitleTextView.getText().toString() + " format PDF a été téléchargé avec succès. N'hésitez pas à explorer son contenu dans l'application et contactez-nous en cas de besoin.");
+                succeDowloadPDFDialog("Le livre " + mTitleTextView.getText().toString() + " format PDF a été téléchargé avec succès. N'hésitez pas à explorer son contenu dans l'application et contactez-nous en cas de besoin."); */
             }
         });
         audioButton.setOnClickListener(new View.OnClickListener() {
@@ -1203,6 +1209,67 @@ public class BookActivity extends AppCompatActivity {
                 TimeUnit.MILLISECONDS.toSeconds(duration) -
                         TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(duration)));
     }
+
+
+
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "Channel Progress";
+            String description = "Channel for progress notification";
+            int importance = NotificationManager.IMPORTANCE_LOW;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+
+            notificationManager = getSystemService(NotificationManager.class);
+            if (notificationManager != null) {
+                notificationManager.createNotificationChannel(channel);
+            }
+        } else {
+            notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        }
+    }
+
+    private void showProgressNotification(String title) {
+        final NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(R.mipmap.ic_fabi)
+                .setContentTitle(title)
+                .setContentText("Téléchargement en cours")
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .setProgress(100, 0, false);
+
+        if (notificationManager != null) {
+            notificationManager.notify(notificationId, builder.build());
+        }
+
+        // Simuler une progression
+        Handler handler = new Handler(Looper.getMainLooper());
+        new Thread(() -> {
+            for (int progress = 0; progress <= 100; progress += 10) {
+                int finalProgress = progress;
+                handler.post(() -> {
+                    builder.setProgress(100, finalProgress, false);
+                    if (notificationManager != null) {
+                        notificationManager.notify(notificationId, builder.build());
+                    }
+                });
+
+                try {
+                    Thread.sleep(500); // Pause de 500 ms entre chaque progression
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            // Notification terminée
+            handler.post(() -> {
+                builder.setContentText("Téléchargement terminé")
+                        .setProgress(100, 0, false);
+                if (notificationManager != null) {
+                    notificationManager.notify(notificationId, builder.build());
+                }
+            });
+        }).start();
+    }
     private LinearLayout mReservationLinearLayout;
     private LinearLayout mAudioLinearLayout;
     private LinearLayout mElectronicLinearLayout;
@@ -1253,4 +1320,8 @@ public class BookActivity extends AppCompatActivity {
     private ProgressBar downloadPdfProgressBar;
     private Button downloadPDFButton;
     private Button audioButton;
+
+    private static final String CHANNEL_ID = "progress_channel";
+    private NotificationManager notificationManager;
+    private int notificationId = 1;
 }
