@@ -208,7 +208,7 @@ public class BookActivity extends AppCompatActivity {
                 ElectronicDownloader electronicDownloader = new ElectronicDownloader(getApplicationContext(),mSession.getIdNumber(), mOnlineBook);
                // Toast.makeText(BookActivity.this, mOnlineBook.getAuthor(), Toast.LENGTH_SHORT).show();
                 electronicDownloader.execute(mOnlineBook.getCover(), mOnlineBook.getElectronic(),mCategory.getCover(),mAuthor.getProfile());
-               // succeDowloadPDFDialog("Le livre " + mTitleTextView.getText().toString() + " format PDF a été téléchargé avec succès. N'hésitez pas à explorer son contenu dans l'application et contactez-nous en cas de besoin.");
+               //succeDowloadPDFDialog("Le livre " + mTitleTextView.getText().toString() + " format PDF a été téléchargé avec succès. N'hésitez pas à explorer son contenu dans l'application et contactez-nous en cas de besoin.");
             }
         });
         audioButton.setOnClickListener(new View.OnClickListener() {

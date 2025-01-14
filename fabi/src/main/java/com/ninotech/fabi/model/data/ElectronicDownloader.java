@@ -75,10 +75,13 @@ public class ElectronicDownloader extends AsyncTask<String, Integer, ElectronicB
     protected ElectronicBook doInBackground(String... names) {
         ElectronicBook electronicBook = new ElectronicBook();
         DownloadFile downloadFile = new DownloadFile(mContext);
-
         try {
             for (int i = 0; i < names.length; i++) {
-                String url = mContext.getString(R.string.ip_server) + "ressources/cover/" + names[i];
+                String url;
+                if (i == 1)
+                    url = mContext.getString(R.string.ip_server) + "ressources/pdf/" + names[i];
+                else
+                    url = mContext.getString(R.string.ip_server) + "ressources/cover/" + names[i];
                 String fileName = names[i];
 
                 // Simuler la progression pour chaque fichier
