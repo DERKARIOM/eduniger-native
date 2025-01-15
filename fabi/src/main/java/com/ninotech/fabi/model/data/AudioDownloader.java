@@ -1,12 +1,21 @@
 package com.ninotech.fabi.model.data;
 
+import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.view.View;
+import android.widget.TextView;
+
 import androidx.core.app.NotificationCompat;
 import com.ninotech.fabi.R;
+import com.ninotech.fabi.controleur.dialog.SimpleOkDialog;
 import com.ninotech.fabi.model.table.AudioTable;
 import com.ninotech.fabi.model.table.ElectronicTable;
 
@@ -108,5 +117,8 @@ public class AudioDownloader extends AsyncTask<String, Integer, AudioBook> {
                 .setProgress(0, 0, false)
                 .setSmallIcon(android.R.drawable.stat_sys_download_done);
         notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
+        Intent finishDownloadIntent = new Intent("ACTION_FINISH_DOWNLOAD");
+        finishDownloadIntent.putExtra("format","audio");
+        mContext.sendBroadcast(finishDownloadIntent);
     }
 }

@@ -128,6 +128,25 @@ public class BookActivity extends AppCompatActivity {
         mHandler = new Handler();
         mMediaPlayer = new MediaPlayer();
         mTimer = new Timer();
+
+        BroadcastReceiver finishDownloadReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if ("ACTION_FINISH_DOWNLOAD".equals(intent.getAction())) {
+                    String formatString = intent.getStringExtra("format");
+                    switch (formatString)
+                    {
+                        case "audio":
+                            succeDowloadAudioDialog("Le livre " + mTitleTextView.getText().toString() + " format audio a été téléchargé avec succès. N'hésitez pas à explorer son contenu dans l'application et contactez-nous en cas de besoin.");
+                            break;
+                        case "pdf":
+                            succeDowloadPDFDialog("Le livre " + mTitleTextView.getText().toString() + " format PDF a été téléchargé avec succès. N'hésitez pas à explorer son contenu dans l'application et contactez-nous en cas de besoin.");
+                            break;
+                    }
+                }
+            }
+        };
+        registerReceiver(finishDownloadReceiver, new IntentFilter("ACTION_FINISH_DOWNLOAD"));
         mBackImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -208,7 +227,6 @@ public class BookActivity extends AppCompatActivity {
                 ElectronicDownloader electronicDownloader = new ElectronicDownloader(getApplicationContext(),mSession.getIdNumber(), mOnlineBook);
                // Toast.makeText(BookActivity.this, mOnlineBook.getAuthor(), Toast.LENGTH_SHORT).show();
                 electronicDownloader.execute(mOnlineBook.getCover(), mOnlineBook.getElectronic(),mCategory.getCover(),mAuthor.getProfile());
-               //succeDowloadPDFDialog("Le livre " + mTitleTextView.getText().toString() + " format PDF a été téléchargé avec succès. N'hésitez pas à explorer son contenu dans l'application et contactez-nous en cas de besoin.");
             }
         });
         audioButton.setOnClickListener(new View.OnClickListener() {
@@ -218,7 +236,6 @@ public class BookActivity extends AppCompatActivity {
                 downloadAudioProgressBar.setVisibility(View.VISIBLE);
                 AudioDownloader audioDownloader = new AudioDownloader(getApplicationContext(),mSession.getIdNumber(), mOnlineBook,mTones);
                 audioDownloader.execute(mOnlineBook.getCover(), mOnlineBook.getElectronic(),mCategory.getCover(),mAuthor.getProfile(),mTones.getAudio());
-                //succeDowloadAudioDialog("Le livre " + mTitleTextView.getText().toString() + " format audio a été téléchargé avec succès. N'hésitez pas à explorer son contenu dans l'application et contactez-nous en cas de besoin.");
             }
         });
         mPlayerImageView.setOnClickListener(new View.OnClickListener() {
