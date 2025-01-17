@@ -83,5 +83,31 @@
             android:layout_below="@id/relative_layout_fragment_recommended_structure"
             style="@style/match_parent_all"
             />
+        <RelativeLayout
+            android:id="@+id/relative_layout_fragment_recommended_author"
+            android:layout_below="@id/recycler_view_fragment_recommended_structure"
+            style="@style/match_wrap">
+
+            <TextView
+                style="@style/wrap_content_all"
+                android:layout_marginStart="25dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:text="Les Auteurs"
+                android:textStyle="bold"
+                android:textSize="14sp" />
+            <TextView
+                android:id="@+id/text_view_recommended_more_author"
+                style="@style/wrap_content_all"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="25dp"
+                android:layout_marginBottom="10dp"
+                android:text="Voir plus"
+                android:layout_alignParentEnd="true"
+                android:textColor="@color/purple_200"
+                android:textStyle="bold"
+                android:textSize="14sp" />
+        </RelativeLayout>
     </RelativeLayout>
 </androidx.core.widget.NestedScrollView>
