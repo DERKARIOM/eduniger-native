@@ -22,11 +22,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.controleur.activity.LoginActivity;
 import com.ninotech.fabi.controleur.activity.SearchActivity;
+import com.ninotech.fabi.controleur.adapter.AuthorHorizontaleAdapter;
 import com.ninotech.fabi.controleur.adapter.HorizontaleAdapter;
 import com.ninotech.fabi.controleur.adapter.NoConnectionAdapter;
 import com.ninotech.fabi.controleur.adapter.StructureAdapter;
 import com.ninotech.fabi.controleur.dialog.UpdateDialog;
 import com.ninotech.fabi.model.data.Account;
+import com.ninotech.fabi.model.data.Author;
 import com.ninotech.fabi.model.data.OnlineBook;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
 import com.ninotech.fabi.model.data.Connection;
@@ -54,8 +56,10 @@ public class HomeFragment extends Fragment {
         mWelcomeImageView = view.findViewById(R.id.image_view_fragment_recommended_welcome);
         mTextViewMore = view.findViewById(R.id.text_view_recommended_more);
         mStructureRecyclerView = view.findViewById(R.id.recycler_view_fragment_recommended_structure);
+        mAuthorRecyclerView = view.findViewById(R.id.recycler_view_author);
         mOnlineBookList = new ArrayList<>();
         mStructures = new ArrayList<>();
+        mAuthorArrayList = new ArrayList<>();
         mAccount = new Account();
         BroadcastReceiver receiverNoConnectionAdapter = new BroadcastReceiver() {
             @Override
@@ -157,10 +161,16 @@ public class HomeFragment extends Fragment {
                             throw new RuntimeException(e);
                         }
                     }
-
+                    mAuthorArrayList.add(new Author(R.drawable.img_robert,"Robert.K"));
+                    mAuthorArrayList.add(new Author(R.drawable.img_bachir,"BA.Kader"));
+                    mAuthorArrayList.add(new Author(R.drawable.img_alazi,"ID.Alazi"));
+                    mAuthorArrayList.add(new Author(R.drawable.img_moi,"DERK@RIOM"));
                     HorizontaleAdapter onlineBookAdapter = new HorizontaleAdapter(mOnlineBookList);
+                    AuthorHorizontaleAdapter authorHorizontaleAdapter = new AuthorHorizontaleAdapter(mAuthorArrayList);
                     mBookRecommendedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
+                    mAuthorRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
                     mBookRecommendedRecyclerView.setAdapter(onlineBookAdapter);
+                    mAuthorRecyclerView.setAdapter(authorHorizontaleAdapter);
                 }
                 else
                     update();
@@ -278,7 +288,9 @@ public class HomeFragment extends Fragment {
     }
     private RecyclerView mBookRecommendedRecyclerView;
     private ArrayList<OnlineBook> mOnlineBookList;
+    private ArrayList<Author> mAuthorArrayList;
     private RecyclerView mStructureRecyclerView;
+    private RecyclerView mAuthorRecyclerView;
     private ArrayList<Structure> mStructures;
     private NoConnectionAdapter mNoConnectionAdapter;
     private ImageView mWelcomeImageView;

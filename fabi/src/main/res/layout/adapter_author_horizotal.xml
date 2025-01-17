@@ -1,21 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/wrap_content_all"
+    android:layout_margin="5dp"
     android:orientation="vertical"
    >
     <ImageView
-        android:id="@+id/image_view_adapter_similar_cover"
-        android:layout_width="100dp"
-        android:layout_height="150dp"
+        android:id="@+id/image_view_adapter_author_horizontal_profile"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
         android:layout_margin="5dp"
         android:src="@drawable/img_moi"
+        android:layout_gravity="center_horizontal"
         android:contentDescription="@string/todo" />
     <TextView
         android:id="@+id/text_view_adapter_author_horizontal_name"
         style="@style/wrap_content_all"
-        android:layout_margin="10dp"
+
         android:layout_gravity="center_horizontal"
         android:text="DERK@RIOM"
         android:textStyle="bold"
-        android:textSize="@dimen/size_title"/>
+        android:textSize="@dimen/size_sub_title"/>
 </LinearLayout>

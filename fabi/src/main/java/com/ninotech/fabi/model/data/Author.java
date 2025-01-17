@@ -10,6 +10,11 @@ public class Author extends User {
         super(null,name,null);
         mProfile = profile;
     }
+    public Author(int photo , String name)
+    {
+        super(null,name,null);
+        profile = photo;
+    }
 
     public String getProfile() {
         return mProfile;
@@ -21,4 +26,9 @@ public class Author extends User {
 
 
     private String mProfile;
+    private int profile;
+    public int getPhoto()
+    {
+        return profile;
+    }
 }

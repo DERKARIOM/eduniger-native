@@ -109,5 +109,12 @@
                 android:textStyle="bold"
                 android:textSize="14sp" />
         </RelativeLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view_author"
+            android:nestedScrollingEnabled="false"
+            android:layout_margin="10dp"
+            android:layout_below="@id/relative_layout_fragment_recommended_author"
+            style="@style/match_parent_all"
+            />
     </RelativeLayout>
 </androidx.core.widget.NestedScrollView>
