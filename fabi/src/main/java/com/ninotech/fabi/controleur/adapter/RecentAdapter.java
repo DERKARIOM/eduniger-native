@@ -61,7 +61,7 @@ public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.MyViewHold
     @Override
     public RecentAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View view = layoutInflater.inflate(R.layout.adapter_similar,parent,false);
+        View view = layoutInflater.inflate(R.layout.adapter_book_horizotal,parent,false);
         return new MyViewHolder(view);
     }
     @Override
