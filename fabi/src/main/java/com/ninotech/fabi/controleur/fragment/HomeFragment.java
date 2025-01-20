@@ -141,7 +141,7 @@ public class HomeFragment extends Fragment {
             if(jsonData != null)
             {
                 Picasso.get()
-                        .load(getString(R.string.ip_server) + "ressources/pub/p.jpg")
+                        .load(R.drawable.pub2)
                         .transform(new RoundedTransformation(200,10))
                         .resize(6200,3333)
                         .into(mWelcomeImageView);
@@ -161,6 +161,10 @@ public class HomeFragment extends Fragment {
                             throw new RuntimeException(e);
                         }
                     }
+                    mAuthorArrayList.add(new Author(R.drawable.img_robert,"Robert.K"));
+                    mAuthorArrayList.add(new Author(R.drawable.img_bachir,"BA.Kader"));
+                    mAuthorArrayList.add(new Author(R.drawable.img_alazi,"ID.Alazi"));
+                    mAuthorArrayList.add(new Author(R.drawable.img_moi,"DERK@RIOM"));
                     mAuthorArrayList.add(new Author(R.drawable.img_robert,"Robert.K"));
                     mAuthorArrayList.add(new Author(R.drawable.img_bachir,"BA.Kader"));
                     mAuthorArrayList.add(new Author(R.drawable.img_alazi,"ID.Alazi"));
