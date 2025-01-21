@@ -52,7 +52,7 @@ public class LoginActivity extends AppCompatActivity {
         mConnectionButton = findViewById(R.id.button_login_connection);
         mHelperTextView = findViewById(R.id.text_view_login_helper);
         mErrorTextView = findViewById(R.id.text_view_login_error);
-        mConnectionProgressBar = findViewById(R.id.progress_bar_login_connection);
+        mConnectionProgressBar = findViewById(R.id.progress_bar_register_connection);
         mJeton="null";
 
         /* Generation de jeton FireBase */

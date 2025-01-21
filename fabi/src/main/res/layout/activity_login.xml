@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/match_parent_all"
-    android:background="@color/white"
+    android:background="@color/whiteVert"
     tools:context="com.ninotech.fabi.controleur.activity.LoginActivity">
 
     <RelativeLayout
@@ -16,7 +16,7 @@
         android:layout_marginBottom="60dp">
         <ImageView
             style="@style/wrap_content_all"
-            android:src="@drawable/img_login"/>
+            android:src="@drawable/img_login2"/>
     </RelativeLayout>
 
     <EditText
@@ -53,7 +53,7 @@
         >
 
         <ProgressBar
-            android:id="@+id/progress_bar_login_connection"
+            android:id="@+id/progress_bar_register_connection"
            style="@style/progress_bar_connection" />
         <Button
             android:id="@+id/button_login_connection"

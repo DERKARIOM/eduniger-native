@@ -23,7 +23,6 @@ import com.ninotech.fabi.controleur.dialog.SimpleOkDialog;
 import com.ninotech.fabi.model.data.Phone;
 import com.ninotech.fabi.model.data.Suggestion;
 import com.ninotech.fabi.model.table.Session;
-import com.ninotech.fabi.controleur.dialog.SucceSuggesionDialog;
 import com.ninotech.fabi.R;
 
 import java.io.IOException;
@@ -44,7 +43,7 @@ public class SuggestionActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mSession = new Session(this);
         mSuggestionSendButton = findViewById(R.id.button_activity_suggestion_send);
-        mObjetSpinner = findViewById(R.id.spinner_activity_suggestion_object);
+        mObjetSpinner = findViewById(R.id.spinner_activity_register_profesion);
         mMessageEditText = findViewById(R.id.edit_text_activity_suggestion_message);
         mErrorTextView = findViewById(R.id.text_view_activity_suggestion_error);
         CheckBox phoneCheckBox = findViewById(R.id.check_box_activity_suggestion_information_phone);

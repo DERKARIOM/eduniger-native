@@ -46,9 +46,9 @@ public class RegisterActivity extends AppCompatActivity {
 
 
         /* Initialisation des attributs membre(propiete) */
-       mIdNumberEditText = findViewById(R.id.edit_textRegister_activity_id_number);
+       mIdNumberEditText = findViewById(R.id.edit_text_login_id_number);
        mEmailEditText = findViewById(R.id.edit_text_register_email);
-       mPasswordEditText = findViewById(R.id.edit_text_register_password);
+       mPasswordEditText = findViewById(R.id.edit_text_register_password_confirm);
        mPasswordConfirmEditText = findViewById(R.id.edit_text_register_password_confirm);
        mConnectionButton = findViewById(R.id.button_register_connection);
        mLoginTextView = findViewById(R.id.text_view_register_login);
