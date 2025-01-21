@@ -141,7 +141,7 @@ public class HomeFragment extends Fragment {
             if(jsonData != null)
             {
                 Picasso.get()
-                        .load(R.drawable.pub2)
+                        .load(getString(R.string.ip_server) + "ressources/pub/p4.jpg")
                         .transform(new RoundedTransformation(200,10))
                         .resize(6200,3333)
                         .into(mWelcomeImageView);
