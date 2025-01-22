@@ -1,5 +1,6 @@
 package com.ninotech.fabi.controleur.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -8,9 +9,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,6 +41,7 @@ import okhttp3.Response;
 
 public class RegisterActivity extends AppCompatActivity {
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +50,9 @@ public class RegisterActivity extends AppCompatActivity {
 
 
         /* Initialisation des attributs membre(propiete) */
+        mNameEditText = findViewById(R.id.edit_text_activity_register_name);
+        mFirstNameEditText = findViewById(R.id.edit_text_activity_register_first_name);
+        mProfesionSpinner = findViewById(R.id.spinner_activity_register_profesion);
        mIdNumberEditText = findViewById(R.id.edit_text_login_id_number);
        mEmailEditText = findViewById(R.id.edit_text_register_email);
        mPasswordEditText = findViewById(R.id.edit_text_register_password_confirm);
@@ -55,7 +62,9 @@ public class RegisterActivity extends AppCompatActivity {
        mErrorTextView = findViewById(R.id.text_view_register_error);
        mConnectionProgressBar = findViewById(R.id.progress_bar_register_connection);
        mJeton = "null";
-
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.profesion_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mProfesionSpinner.setAdapter(adapter);
         /* Generation de jeton FireBase */
         FirebaseMessaging.getInstance().getToken()
                 .addOnCompleteListener(new OnCompleteListener<String>() {
@@ -302,6 +311,9 @@ public class RegisterActivity extends AppCompatActivity {
 
         updateDialog.build();
     }
+    private EditText mNameEditText;
+    private EditText mFirstNameEditText;
+    private Spinner mProfesionSpinner;
     private EditText mIdNumberEditText;
     private EditText mPasswordEditText;
     private EditText mPasswordConfirmEditText;

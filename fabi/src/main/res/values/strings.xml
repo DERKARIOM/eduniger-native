@@ -58,6 +58,13 @@
         <item>Amélioration des performances</item>
     </string-array>
 
+    <string-array name="profesion_array">
+        <item>Élève</item>
+        <item>Étudiant(e)</item>
+        <item>Enseignant(e)</item>
+        <item>Professionnel</item>
+    </string-array>
+
     <string-array name="delait_reservation">
         <item>Pour une journée</item>
         <item>Pour deux jours</item>
