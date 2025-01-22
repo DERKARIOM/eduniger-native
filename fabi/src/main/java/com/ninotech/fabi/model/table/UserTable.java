@@ -21,7 +21,6 @@ public class UserTable extends SQLiteOpenHelper {
                 "    idUser VARCHAR(256) PRIMARY KEY,\n" +
                 "    nameUser VARCHAR(256) NOT NULL,\n" +
                 "    firstNameUser VARCHAR(256) NOT NULL,\n" +
-                "    phoneNumberUser VARCHAR(256) NOT NULL,\n" +
                 "    email VARCHAR(256) NOT NULL,\n" +
                 "    professionUser VARCHAR(256) NOT NULL,\n" +
                 "    profileUser BLOB,\n" +

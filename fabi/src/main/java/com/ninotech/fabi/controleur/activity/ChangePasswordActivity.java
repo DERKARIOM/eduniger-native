@@ -69,7 +69,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
         mConnectionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mAccount = new Account(mIdNumberEditText.getText().toString(),mMailEditText.getText().toString(),mPasswordEditText.getText().toString(),null);
+               // mAccount = new Account(mIdNumberEditText.getText().toString(),mMailEditText.getText().toString(),mPasswordEditText.getText().toString(),null);
                 switch (mAccount.inputControl(mConfirmPassword.getText().toString()))
                 {
                     case "0000":

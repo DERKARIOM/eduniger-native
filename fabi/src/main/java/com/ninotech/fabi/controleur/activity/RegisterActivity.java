@@ -27,9 +27,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.FirebaseMessaging;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
 import java.util.Objects;
 
@@ -41,7 +38,7 @@ import okhttp3.Response;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    @SuppressLint("MissingInflatedId")
+    @SuppressLint({"MissingInflatedId", "CutPasteId"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,19 +49,19 @@ public class RegisterActivity extends AppCompatActivity {
         /* Initialisation des attributs membre(propiete) */
         mNameEditText = findViewById(R.id.edit_text_activity_register_name);
         mFirstNameEditText = findViewById(R.id.edit_text_activity_register_first_name);
-        mProfesionSpinner = findViewById(R.id.spinner_activity_register_profesion);
-       mIdNumberEditText = findViewById(R.id.edit_text_login_id_number);
+        mProfessionSpinner = findViewById(R.id.spinner_activity_register_profesion);
+       mIdNumberEditText = findViewById(R.id.edit_text_activity_register_id_number);
        mEmailEditText = findViewById(R.id.edit_text_register_email);
        mPasswordEditText = findViewById(R.id.edit_text_register_password_confirm);
        mPasswordConfirmEditText = findViewById(R.id.edit_text_register_password_confirm);
        mConnectionButton = findViewById(R.id.button_register_connection);
        mLoginTextView = findViewById(R.id.text_view_register_login);
        mErrorTextView = findViewById(R.id.text_view_register_error);
-       mConnectionProgressBar = findViewById(R.id.progress_bar_register_connection);
+       mConnectionProgressBar = findViewById(R.id.progress_bar_activity_register_connection);
        mJeton = "null";
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.profesion_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mProfesionSpinner.setAdapter(adapter);
+        mProfessionSpinner.setAdapter(adapter);
         /* Generation de jeton FireBase */
         FirebaseMessaging.getInstance().getToken()
                 .addOnCompleteListener(new OnCompleteListener<String>() {
@@ -85,8 +82,11 @@ public class RegisterActivity extends AppCompatActivity {
            public void onClick(View view) {
                mAccount = new Account(
                        mIdNumberEditText.getText().toString(),
+                       mNameEditText.getText().toString(),
+                       mFirstNameEditText.getText().toString(),
                        mEmailEditText.getText().toString(),
-                       mPasswordEditText.getText().toString(), null);
+                       mPasswordEditText.getText().toString(), null,
+                       mProfessionSpinner.getSelectedItemId());
                switch (mAccount.inputControl(mPasswordConfirmEditText.getText().toString()))
                {
                    case "0000":
@@ -150,8 +150,11 @@ public class RegisterActivity extends AppCompatActivity {
                        registerSyn.execute(
                                getResources().getString(R.string.ip_server_android) + "Register.php",
                                mAccount.getIdNumber(),
+                               mAccount.getName(),
+                               mAccount.getFirstName(),
                                mAccount.getEmail(),
-                               mAccount.getPassword()
+                               mAccount.getPassword(),
+                               String.valueOf(mAccount.getProfession())
                        );
                        break;
                }
@@ -192,10 +195,12 @@ public class RegisterActivity extends AppCompatActivity {
                 OkHttpClient client = new OkHttpClient();
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
-                        .addFormDataPart("idNumber",params[1])
-                        .addFormDataPart("email",params[2])
-                        .addFormDataPart("password",params[3])
-                        .addFormDataPart("token",mJeton)
+                        .addFormDataPart("idUser",params[1])
+                        .addFormDataPart("name",params[2])
+                        .addFormDataPart("firstName",params[3])
+                        .addFormDataPart("email",params[4])
+                        .addFormDataPart("password",params[5])
+                        .addFormDataPart("profession",params[6])
                         .addFormDataPart("version", getResources().getString(R.string.app_version))
                         .build();
                 Request request = new Request.Builder()
@@ -218,6 +223,7 @@ public class RegisterActivity extends AppCompatActivity {
         }
         @Override
         protected void onPostExecute(String jsonData){
+            Toast.makeText(RegisterActivity.this, jsonData, Toast.LENGTH_SHORT).show();
             switch (mAccount.dataControl(jsonData))
             {
                 case "0111_1":
@@ -238,21 +244,13 @@ public class RegisterActivity extends AppCompatActivity {
                             R.string.register_error_1011_data
                     );
                     break;
-                case "0111_0":
-                    dataControl(
-                            R.drawable.forme_white_radius_100dp_border_rouge,
-                            R.drawable.forme_white_radius_10dp,
-                            R.drawable.forme_white_radius_10dp,
-                            R.drawable.forme_white_radius_10dp,
-                            R.string.register_error_0111_0_data
-                    );
-                    break;
                 case "update":
                     Update();
                     mConnectionProgressBar.setVisibility(View.INVISIBLE);
                     mConnectionButton.setText(R.string.button_text_connection);
                     break;
                 case "1111":
+                    /*
                     JSONObject jsonObject = null;
                     try {
                         jsonObject = new JSONObject(jsonData);
@@ -277,7 +275,7 @@ public class RegisterActivity extends AppCompatActivity {
                         }
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
-                    }
+                    }*/
                     break;
                 default:
                     mErrorTextView.setText(R.string.no_connection);
@@ -313,7 +311,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
     private EditText mNameEditText;
     private EditText mFirstNameEditText;
-    private Spinner mProfesionSpinner;
+    private Spinner mProfessionSpinner;
     private EditText mIdNumberEditText;
     private EditText mPasswordEditText;
     private EditText mPasswordConfirmEditText;

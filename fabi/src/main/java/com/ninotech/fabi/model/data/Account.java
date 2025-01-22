@@ -11,11 +11,14 @@ import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.model.table.StudentTable;
 
 public class Account {
-    public Account(String idNumber, String email, String password, byte[] profile) {
+    public Account(String idNumber , String name , String firstName , String email, String password, byte[] profile , long profession) {
         mIdNumber = idNumber;
+        mName = name;
+        mFirstName = firstName;
         mEmail = email;
         mPassword = password;
         mProfile = profile;
+        mProfession = profession;
     }
     public Account()
     {
@@ -164,9 +167,42 @@ public class Account {
     public void setProfile(byte[] profile) {
         mProfile = profile;
     }
+    public String getName() {
+        return mName;
+    }
 
+    public void setName(String name) {
+        mName = name;
+    }
+
+    public String getFirstName() {
+        return mFirstName;
+    }
+
+    public void setFirstName(String firstName) {
+        mFirstName = firstName;
+    }
+
+    public long getProfession() {
+        return mProfession;
+    }
+
+    public void setProfession(long profession) {
+        mProfession = profession;
+    }
+    public String getPhoneNumber() {
+        return mPhoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        mPhoneNumber = phoneNumber;
+    }
     private String mIdNumber;
+    private String mName;
+    private String mFirstName;
+    private String mPhoneNumber;
     private String mEmail;
+    private long mProfession;
     private String mPassword;
     private byte[] mProfile;
 }

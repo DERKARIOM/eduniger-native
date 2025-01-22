@@ -72,7 +72,7 @@ public class ChangeEmailActivity extends AppCompatActivity {
         mConnectionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mAccount = new Account(mIdNumberEditText.getText().toString(),mEmailEditText.getText().toString(),mPasswordEditText.getText().toString(),null);
+               // mAccount = new Account(mIdNumberEditText.getText().toString(),mEmailEditText.getText().toString(),mPasswordEditText.getText().toString(),null);
                 switch (mAccount.inputControl())
                 {
                     case "00":
