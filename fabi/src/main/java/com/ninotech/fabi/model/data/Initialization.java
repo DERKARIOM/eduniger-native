@@ -11,11 +11,13 @@ import com.ninotech.fabi.model.table.ElectronicTable;
 import com.ninotech.fabi.model.table.LoandTable;
 import com.ninotech.fabi.model.table.NotificationTable;
 import com.ninotech.fabi.model.table.StudentTable;
+import com.ninotech.fabi.model.table.UserTable;
 
 public class Initialization {
     public Initialization(Context context)
     {
         mStudentTable = new StudentTable(context);
+        mUserTable = new UserTable(context);
         mElectronicTable = new ElectronicTable(context);
         mNotificationTable = new NotificationTable(context);
         mLoandTable = new LoandTable(context);
@@ -26,6 +28,7 @@ public class Initialization {
         try {
             SQLiteDatabase database = context.openOrCreateDatabase(context.getResources().getString(R.string.database_name),MODE_PRIVATE,null);
             mStudentTable.onCreate(database);
+            mUserTable.onCreate(database);
             mElectronicTable.onCreate(database);
             mNotificationTable.onCreate(database);
             mLoandTable.onCreate(database);
@@ -37,6 +40,7 @@ public class Initialization {
         }
     }
     private final StudentTable mStudentTable;
+    private final UserTable mUserTable;
     private final ElectronicTable mElectronicTable;
     private final NotificationTable mNotificationTable;
     private final LoandTable mLoandTable;
