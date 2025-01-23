@@ -27,6 +27,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.Objects;
 
@@ -144,18 +147,23 @@ public class RegisterActivity extends AppCompatActivity {
                        );
                        break;
                    case "1111":
-                       mConnectionProgressBar.setVisibility(View.VISIBLE);
-                       mConnectionButton.setText(R.string.register_succes_1111);
-                       RegisterSyn registerSyn = new RegisterSyn();
-                       registerSyn.execute(
-                               getResources().getString(R.string.ip_server_android) + "Register.php",
-                               mAccount.getIdNumber(),
-                               mAccount.getName(),
-                               mAccount.getFirstName(),
-                               mAccount.getEmail(),
-                               mAccount.getPassword(),
-                               String.valueOf(mAccount.getProfession())
-                       );
+                       if(mProfessionSpinner.getSelectedItemPosition() != 0)
+                       {
+                           mConnectionProgressBar.setVisibility(View.VISIBLE);
+                           mConnectionButton.setText(R.string.register_succes_1111);
+                           RegisterSyn registerSyn = new RegisterSyn();
+                           registerSyn.execute(
+                                   getResources().getString(R.string.ip_server_android) + "Register.php",
+                                   mAccount.getIdNumber(),
+                                   mAccount.getName(),
+                                   mAccount.getFirstName(),
+                                   mAccount.getEmail(),
+                                   mAccount.getPassword(),
+                                   String.valueOf(mAccount.getProfession())
+                           );
+                       }
+                       else
+                           mErrorTextView.setText("Votre profession svp ?");
                        break;
                }
            }
@@ -223,7 +231,6 @@ public class RegisterActivity extends AppCompatActivity {
         }
         @Override
         protected void onPostExecute(String jsonData){
-            Toast.makeText(RegisterActivity.this, jsonData, Toast.LENGTH_SHORT).show();
             switch (mAccount.dataControl(jsonData))
             {
                 case "0111_1":
@@ -250,32 +257,21 @@ public class RegisterActivity extends AppCompatActivity {
                     mConnectionButton.setText(R.string.button_text_connection);
                     break;
                 case "1111":
-                    /*
-                    JSONObject jsonObject = null;
-                    try {
-                        jsonObject = new JSONObject(jsonData);
-                    } catch (JSONException e) {
-                        throw new RuntimeException(e);
+                    if(mAccount.register(getApplicationContext()))
+                    {
+                        if(mAccount.login(getApplicationContext()))
+                        {
+                            Intent  home= new Intent(RegisterActivity.this , MainActivity.class);
+                            startActivity(home);
+                            finish();
+                        }
                     }
-                    try {
-                        if(mAccount.register(getApplicationContext(), jsonObject.getString("name"), jsonObject.getString("firstName") ,jsonObject.getString("department"), jsonObject.getString("section"),mAccount.getEmail(),null,jsonObject.getString("isDelegue")))
-                        {
-                            if(mAccount.login(getApplicationContext()))
-                            {
-                                Intent  home= new Intent(RegisterActivity.this , MainActivity.class);
-                                startActivity(home);
-                                finish();
-                            }
-                        }
-                        else
-                        {
-                            mErrorTextView.setText(R.string.no_connection);
-                            mConnectionProgressBar.setVisibility(View.INVISIBLE);
-                            mConnectionButton.setText(R.string.button_text_connection);
-                        }
-                    } catch (JSONException e) {
-                        throw new RuntimeException(e);
-                    }*/
+                    else
+                    {
+                        mErrorTextView.setText(R.string.no_connection);
+                        mConnectionProgressBar.setVisibility(View.INVISIBLE);
+                        mConnectionButton.setText(R.string.button_text_connection);
+                    }
                     break;
                 default:
                     mErrorTextView.setText(R.string.no_connection);

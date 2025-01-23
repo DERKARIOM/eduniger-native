@@ -22,6 +22,7 @@ public class UserTable extends SQLiteOpenHelper {
                 "    nameUser VARCHAR(256) NOT NULL,\n" +
                 "    firstNameUser VARCHAR(256) NOT NULL,\n" +
                 "    email VARCHAR(256) NOT NULL,\n" +
+                "    password VARCHAR(256) NOT NULL,\n" +
                 "    professionUser VARCHAR(256) NOT NULL,\n" +
                 "    profileUser BLOB,\n" +
                 "    isAdminUser VARCHAR(256)\n" +
@@ -71,7 +72,7 @@ public class UserTable extends SQLiteOpenHelper {
         contentValues.put("profileUser",photo);
         db.update(NAME_TABLE,contentValues,null,null);
     }
-    public boolean insert (String idUser , String name , String firstName , String profession , String email , byte[] profile , String isAdmin)
+    public boolean insert (String idUser , String name , String firstName , String email , String password, byte[] profile , String profession)
     {
         try {
             SQLiteDatabase db = this.getWritableDatabase();
@@ -81,8 +82,9 @@ public class UserTable extends SQLiteOpenHelper {
             contentValues.put("firstNameUser",firstName);
             contentValues.put("professionUser",profession);
             contentValues.put("emailUser",email);
+            contentValues.put("password",password);
             contentValues.put("profileUser",profile);
-            contentValues.put("isAdmin",isAdmin);
+            contentValues.put("isAdmin","0");
             db.insert(NAME_TABLE,null,contentValues);
             return  true;
         }catch (Exception e)

@@ -217,6 +217,7 @@ public class LoginActivity extends AppCompatActivity {
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
+                    /*
                     try {
                         if(mAccount.register(getApplicationContext(), jsonObject.getString("name"), jsonObject.getString("firstName"), jsonObject.getString("department"),jsonObject.getString("section"),jsonObject.getString("email"),null,jsonObject.getString("isDelegue")))
                         {
@@ -235,7 +236,7 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
-                    }
+                    }*/
                     break;
             }
         }

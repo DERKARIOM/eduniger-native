@@ -59,6 +59,7 @@
     </string-array>
 
     <string-array name="profesion_array">
+        <item>Profession</item>
         <item>Élève</item>
         <item>Étudiant(e)</item>
         <item>Enseignant(e)</item>
