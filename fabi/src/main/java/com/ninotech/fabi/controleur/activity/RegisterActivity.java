@@ -26,6 +26,7 @@ import com.ninotech.fabi.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.ninotech.fabi.model.data.PasswordUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -88,9 +89,9 @@ public class RegisterActivity extends AppCompatActivity {
                        mNameEditText.getText().toString(),
                        mFirstNameEditText.getText().toString(),
                        mEmailEditText.getText().toString(),
-                       mPasswordEditText.getText().toString(), null,
+                       PasswordUtil.hashPassword(mPasswordEditText.getText().toString()), null,
                        mProfessionSpinner.getSelectedItemId());
-               switch (mAccount.inputControl(mPasswordConfirmEditText.getText().toString()))
+               switch (mAccount.inputControl(PasswordUtil.hashPassword(mPasswordConfirmEditText.getText().toString())))
                {
                    case "0000":
                        inputControl(

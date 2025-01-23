@@ -23,6 +23,7 @@ import com.ninotech.fabi.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.ninotech.fabi.model.data.PasswordUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -73,7 +74,9 @@ public class LoginActivity extends AppCompatActivity {
         mConnectionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mAccount = new Account(mIdNumberEditText.getText().toString(),mPassewordEditText.getText().toString());
+                mAccount = new Account(
+                        mIdNumberEditText.getText().toString(),
+                        PasswordUtil.hashPassword(mPassewordEditText.getText().toString()));
                 switch (mAccount.inputControl())
                 {
                     case "00":
