@@ -257,7 +257,7 @@ public class RegisterActivity extends AppCompatActivity {
                     mConnectionButton.setText(R.string.button_text_connection);
                     break;
                 case "1111":
-                    if(mAccount.register(getApplicationContext()))
+                    if(mAccount.register(getApplicationContext(),"no"))
                     {
                         if(mAccount.login(getApplicationContext()))
                         {

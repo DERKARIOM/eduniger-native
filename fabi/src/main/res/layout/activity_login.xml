@@ -22,7 +22,7 @@
     <EditText
         android:id="@+id/edit_text_login_id_number"
         android:layout_above="@+id/edit_text_login_password"
-        android:hint="@string/edit_text_hint_id_number"
+        android:hint=" Votre numéro"
         android:inputType="number"
         android:selectAllOnFocus="false"
         android:drawableStart="@drawable/vector_black3_identify"
@@ -34,7 +34,7 @@
         android:id="@+id/edit_text_login_password"
         android:layout_above="@+id/text_view_login_error"
         android:inputType="textPassword"
-        android:hint="@string/edit_text_hint_password"
+        android:hint=" Votre mot de passe ?"
         android:drawableStart="@drawable/vector_black3_password"
         style="@style/edit_text_register"/>
 

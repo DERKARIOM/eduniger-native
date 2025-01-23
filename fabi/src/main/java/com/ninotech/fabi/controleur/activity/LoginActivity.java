@@ -217,9 +217,12 @@ public class LoginActivity extends AppCompatActivity {
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
-                    /*
                     try {
-                        if(mAccount.register(getApplicationContext(), jsonObject.getString("name"), jsonObject.getString("firstName"), jsonObject.getString("department"),jsonObject.getString("section"),jsonObject.getString("email"),null,jsonObject.getString("isDelegue")))
+                        mAccount.setName(jsonObject.getString("name"));
+                        mAccount.setFirstName(jsonObject.getString("firstName"));
+                        mAccount.setEmail(jsonObject.getString("email"));
+                        mAccount.setProfession(Long.parseLong(jsonObject.getString("profession")));
+                        if(mAccount.register(getApplicationContext(),jsonObject.getString("isAdmin")))
                         {
                             if(mAccount.login(getApplicationContext()))
                             {
@@ -236,7 +239,7 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
-                    }*/
+                    }
                     break;
             }
         }

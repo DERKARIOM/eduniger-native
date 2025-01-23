@@ -13,7 +13,7 @@
     <string name="button_text_connection">Connexion</string>
     <string name="text_view_pass_register_login">Avez-Vous un compte ?</string>
     <string name="register_error_0000">Veuillez remplir ces champs svp</string>
-    <string name="register_error_0111">Votre matricule svp</string>
+    <string name="register_error_0111">Votre muméro svp</string>
     <string name="register_error_01111">Veuillez saisir le matricule</string>
     <string name="register_error_10111">Veuillez saisir le nom</string>
     <string name="register_error_11011">Veuillez saisir le prénom</string>
@@ -30,7 +30,7 @@
     <string name="no_connection">Aucune conexion</string>
     <string name="text_view_to_register">S\'inscrire</string>
     <string name="text_help">Besoin d\'aide</string>
-    <string name="login_error_00">Votre matricule et mot de passe svp</string>
+    <string name="login_error_00">Votre numéro et mot de passe svp</string>
     <string name="account_not_exist">Ce compte n\' existe pas</string>
     <string name="incorrect_password">Mot de passe incorrect</string>
     <string name="forgot_password">j\'ai oublié mon mot de passe</string>

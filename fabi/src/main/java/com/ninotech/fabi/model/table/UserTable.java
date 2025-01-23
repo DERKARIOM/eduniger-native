@@ -72,7 +72,7 @@ public class UserTable extends SQLiteOpenHelper {
         contentValues.put("profileUser",photo);
         db.update(NAME_TABLE,contentValues,null,null);
     }
-    public boolean insert (String idUser , String name , String firstName , String email , String password, byte[] profile , String profession)
+    public boolean insert (String idUser , String name , String firstName , String email , String password, byte[] profile , String profession ,String isAdmin)
     {
         try {
             SQLiteDatabase db = this.getWritableDatabase();
@@ -84,7 +84,7 @@ public class UserTable extends SQLiteOpenHelper {
             contentValues.put("emailUser",email);
             contentValues.put("password",password);
             contentValues.put("profileUser",profile);
-            contentValues.put("isAdmin","0");
+            contentValues.put("isAdmin",isAdmin);
             db.insert(NAME_TABLE,null,contentValues);
             return  true;
         }catch (Exception e)

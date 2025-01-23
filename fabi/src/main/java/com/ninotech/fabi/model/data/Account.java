@@ -91,13 +91,13 @@ public class Account {
         }
         return "noConnection";
     }
-    public boolean register(Context context)
+    public boolean register(Context context, String isAdmin)
     {
         UserTable userTable = new UserTable(context);
             if(userTable.isUserExist(mIdNumber))
                 return true;
             else
-                return (userTable.insert(mIdNumber,mName,mFirstName,mEmail,mPassword,mProfile, String.valueOf(mProfession)));
+                return (userTable.insert(mIdNumber,mName,mFirstName,mEmail,mPassword,mProfile, String.valueOf(mProfession),isAdmin));
     }
     public boolean login(Context context)
     {
