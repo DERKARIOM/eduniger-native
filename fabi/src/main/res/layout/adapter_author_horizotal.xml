@@ -6,8 +6,8 @@
    >
     <ImageView
         android:id="@+id/image_view_adapter_author_horizontal_profile"
-        android:layout_width="65dp"
-        android:layout_height="65dp"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
         android:layout_margin="5dp"
         android:src="@drawable/img_moi"
         android:layout_gravity="center_horizontal"
