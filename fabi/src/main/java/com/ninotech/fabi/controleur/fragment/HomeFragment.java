@@ -268,21 +268,24 @@ public class HomeFragment extends Fragment {
         protected void onPostExecute(String jsonData){
             if(jsonData != null)
             {
-                JSONArray jsonArray = null;
-                try {
-                    jsonArray = new JSONArray(jsonData);
-                } catch (JSONException e) {
-                    throw new RuntimeException(e);
-                }
-                for (int i=0;i<jsonArray.length();i++) {
+                if (!jsonData.equals("RAS"))
+                {
+                    JSONArray jsonArray = null;
                     try {
-                        mStructures.add(new Structure(jsonArray.getJSONObject(i).getString("id"),jsonArray.getJSONObject(i).getString("logo"),jsonArray.getJSONObject(i).getString("nameStruct"),"RAS",true));
+                        jsonArray = new JSONArray(jsonData);
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
+                    for (int i=0;i<jsonArray.length();i++) {
+                        try {
+                            mStructures.add(new Structure(jsonArray.getJSONObject(i).getString("id"),jsonArray.getJSONObject(i).getString("logo"),jsonArray.getJSONObject(i).getString("nameStruct"),"RAS",true));
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    mStructureRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                    mStructureRecyclerView.setAdapter(StructAdapter);
                 }
-                mStructureRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                mStructureRecyclerView.setAdapter(StructAdapter);
             }
             else {
                 ArrayList<Connection> list = new ArrayList<>();

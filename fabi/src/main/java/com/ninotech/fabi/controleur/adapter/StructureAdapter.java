@@ -6,6 +6,7 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.R;
+import com.ninotech.fabi.controleur.activity.BookActivity;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
 import com.ninotech.fabi.controleur.dialog.StructDeleteDialog;
 import com.ninotech.fabi.controleur.dialog.UpdateDialog;
@@ -28,9 +30,16 @@ import com.ninotech.fabi.model.data.Structure;
 import com.ninotech.fabi.model.table.Session;
 import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 
 public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyViewHolder> {
@@ -92,11 +101,13 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
         private final ImageView mBlanketImageView;
         private final TextView mTitleTextView;
         private final Button mAdhereButton;
+        private Session mSession;
         MyViewHolder(View itemView){
             super(itemView);
             mBlanketImageView = itemView.findViewById(R.id.image_view_adapter_structure_cover);
             mTitleTextView = itemView.findViewById(R.id.text_view_adapter_structure_title);
             mAdhereButton = itemView.findViewById(R.id.button_adapter_structure);
+            mSession = new Session(itemView.getContext());
             itemView.setOnCreateContextMenuListener(this);
         }
         @Override
@@ -124,22 +135,30 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
                     switch (structure.getId())
                     {
                         case "1":
-                            if ((structure.isAdhere()))
-                                structDelete();
+                            if (mAdhereButton.getText().toString().equals("Détacher"))
+                                structDelete(structure.getId());
+                            else
+                            {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                    mAdhereButton.setBackgroundTintList(ColorStateList.valueOf(itemView.getContext().getColor(R.color.rouge)));
+                                }
+                                mAdhereButton.setText("Détacher");
+                                structure.setAdhere(false);
+                                DetachStructSyn detachStructSyn = new DetachStructSyn();
+                                detachStructSyn.execute(itemView.getContext().getString(R.string.ip_server_android) + "AdhererStruct.php",mSession.getIdNumber(),structure.getId());
+                            }
                     }
 
                 }
             });
         }
-        private void structDelete(){
+        private void structDelete(String id){
             StructDeleteDialog structDeleteDialog = new StructDeleteDialog((Activity) itemView.getContext());
             structDeleteDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             structDeleteDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
             TextView no = structDeleteDialog.findViewById(R.id.no);
             TextView yes = structDeleteDialog.findViewById(R.id.yes);
             EditText password = structDeleteDialog.findViewById(R.id.edit_text_dialog_struct_delete_password);
-            Session session = new Session(itemView.getContext());
-            Toast.makeText(itemView.getContext(), session.getPassword(), Toast.LENGTH_SHORT).show();
             no.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -152,17 +171,111 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
                 public void onClick(View view) {
                     if (!password.getText().toString().isEmpty())
                     {
-                        if (Objects.equals(PasswordUtil.hashPassword(password.getText().toString()), session.getPassword()))
+                        if (Objects.equals(PasswordUtil.hashPassword(password.getText().toString()), mSession.getPassword()))
                         {
-                            Toast.makeText(itemView.getContext(), "Delete", Toast.LENGTH_SHORT).show();
-                            structDeleteDialog.cancel();
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                structDeleteDialog.cancel();
+                                mAdhereButton.setBackgroundTintList(ColorStateList.valueOf(itemView.getContext().getColor(R.color.purple_200)));
+                                mAdhereButton.setText("Adhérer");
+                                DetachStructSyn detachStructSyn = new DetachStructSyn();
+                                detachStructSyn.execute(itemView.getContext().getString(R.string.ip_server_android) + "DetachStruct.php",mSession.getIdNumber(),id);
+                            }
                         }
                     }
                     password.setBackground(itemView.getContext().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
                 }
             });
-
             structDeleteDialog.build();
+        }
+        private class DetachStructSyn extends AsyncTask<String,Void,String> {
+            @Override
+            protected String doInBackground(String... params) {
+
+                try {
+                    OkHttpClient client = new OkHttpClient();
+                    RequestBody requestBody = new MultipartBody.Builder()
+                            .setType(MultipartBody.FORM)
+                            .addFormDataPart("idUser",params[1])
+                            .addFormDataPart("idStruct",params[2])
+                            .build();
+                    Request request = new Request.Builder()
+                            .url(params[0])
+                            .post(requestBody)
+                            .build();
+                    try {
+                        Response response = client.newCall(request).execute();
+                        assert response.body() != null;
+                        return response.body().string();
+                    }catch (IOException e)
+                    {
+                        Toast.makeText(itemView.getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+
+                }catch (Exception e)
+                {
+                    return null;
+                }
+                return null;
+            }
+            @Override
+            protected void onPostExecute(String jsonData){
+                //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
+                if(jsonData != null)
+                {
+                    if(!jsonData.equals("RAS"))
+                    {
+                        if(jsonData.equals("true"))
+                        {
+                            Toast.makeText(itemView.getContext(), "Structure détacher", Toast.LENGTH_SHORT);
+                        }
+                    }
+                }
+            }
+        }
+        private class AdhererStructSyn extends AsyncTask<String,Void,String> {
+            @Override
+            protected String doInBackground(String... params) {
+
+                try {
+                    OkHttpClient client = new OkHttpClient();
+                    RequestBody requestBody = new MultipartBody.Builder()
+                            .setType(MultipartBody.FORM)
+                            .addFormDataPart("idUser",params[1])
+                            .addFormDataPart("idStruct",params[2])
+                            .build();
+                    Request request = new Request.Builder()
+                            .url(params[0])
+                            .post(requestBody)
+                            .build();
+                    try {
+                        Response response = client.newCall(request).execute();
+                        assert response.body() != null;
+                        return response.body().string();
+                    }catch (IOException e)
+                    {
+                        Toast.makeText(itemView.getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+
+                }catch (Exception e)
+                {
+                    return null;
+                }
+                return null;
+            }
+            @Override
+            protected void onPostExecute(String jsonData){
+                //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
+                if(jsonData != null)
+                {
+                    if(!jsonData.equals("RAS"))
+                    {
+                        if(jsonData.equals("true"))
+                        {
+                            Toast.makeText(itemView.getContext(), "Structure Adhérer", Toast.LENGTH_SHORT);
+                        }
+                    }
+                }
+            }
         }
     }
 }
