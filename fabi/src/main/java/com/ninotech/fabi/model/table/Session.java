@@ -17,8 +17,8 @@ public class Session extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase database) {
         database.execSQL("CREATE TABLE IF NOT EXISTS " + NAME_TABLE + "\n" +
                 "(\n" +
-                "    idNumber VARCHAR(10) PRIMARY KEY,\n" +
-                "    password VARCHAR(100)\n" +
+                "    idNumber VARCHAR(256) PRIMARY KEY,\n" +
+                "    password VARCHAR(1000)\n" +
                 ");");
     }
 

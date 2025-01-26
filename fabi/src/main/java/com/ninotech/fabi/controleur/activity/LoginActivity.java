@@ -224,6 +224,7 @@ public class LoginActivity extends AppCompatActivity {
                         mAccount.setName(jsonObject.getString("name"));
                         mAccount.setFirstName(jsonObject.getString("firstName"));
                         mAccount.setEmail(jsonObject.getString("email"));
+                        mAccount.setPassword(jsonObject.getString("password"));
                         mAccount.setProfession(Long.parseLong(jsonObject.getString("profession")));
                         if(mAccount.register(getApplicationContext(),jsonObject.getString("isAdmin")))
                         {

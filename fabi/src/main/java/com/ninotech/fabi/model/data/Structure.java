@@ -41,7 +41,7 @@ public class Structure {
         mDescription = description;
     }
 
-    public Boolean getAdhere() {
+    public Boolean isAdhere() {
         return isAdhere;
     }
 
