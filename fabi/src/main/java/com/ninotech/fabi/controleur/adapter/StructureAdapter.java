@@ -1,6 +1,8 @@
 package com.ninotech.fabi.controleur.adapter;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.os.Build;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -92,7 +94,13 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
         public void onCreateContextMenu(ContextMenu menu , View v , ContextMenu.ContextMenuInfo menuInfo){
         }
         void display(Structure structure){
-
+            if(structure.getAdhere())
+            {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    mAdhereButton.setBackgroundTintList(ColorStateList.valueOf(itemView.getContext().getColor(R.color.rouge)));
+                    mAdhereButton.setText("Détacher");
+                }
+            }
             Picasso.get()
                     .load(itemView.getResources().getString(R.string.ip_server) + "ressources/cover/" + structure.getCover())
                     .placeholder(R.drawable.img_default_book)

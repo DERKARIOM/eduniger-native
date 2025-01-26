@@ -34,7 +34,7 @@
     </RelativeLayout>
     <Button
         android:id="@+id/button_adapter_structure"
-        android:layout_width="85dp"
+        android:layout_width="wrap_content"
         android:layout_height="40dp"
         android:text="Adhérer"
         android:textAllCaps="false"
