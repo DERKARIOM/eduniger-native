@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.activity.BookActivity;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
+import com.ninotech.fabi.controleur.dialog.SimpleOkDialog;
 import com.ninotech.fabi.controleur.dialog.StructDeleteDialog;
 import com.ninotech.fabi.controleur.dialog.UpdateDialog;
 import com.ninotech.fabi.model.data.PasswordUtil;
@@ -147,6 +148,11 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
                                 DetachStructSyn detachStructSyn = new DetachStructSyn();
                                 detachStructSyn.execute(itemView.getContext().getString(R.string.ip_server_android) + "AdhererStruct.php",mSession.getIdNumber(),structure.getId());
                             }
+                            break;
+                        case "2":
+                            simpleOkDialog(R.drawable.vector_purple_200_desole,"Structure Exclusive","Cette structure est exclusivement réservée aux étudiants de la FAST UAM. Veuillez vérifier que vous remplissez les critères d'adhésion puis contacter les numéro suivante :\n+22796627534 / +22794961793.");
+                            break;
+
                     }
 
                 }
@@ -276,6 +282,25 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
                     }
                 }
             }
+        }
+        private void simpleOkDialog(int ico , String title , String message){
+            SimpleOkDialog simpleOkDialog = new SimpleOkDialog((Activity) itemView.getContext());
+            simpleOkDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            simpleOkDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+            ImageView icoImageView = simpleOkDialog.findViewById(R.id.image_view_dialog_simple_ok_icon);
+            TextView titleTextView = simpleOkDialog.findViewById(R.id.text_view_dialog_simple_ok_title);
+            TextView messageTextView = simpleOkDialog.findViewById(R.id.text_view_dialog_simple_ok_message);
+            TextView okTextView = simpleOkDialog.findViewById(R.id.text_view_dialog_simple_ok);
+            icoImageView.setImageResource(ico);
+            titleTextView.setText(title);
+            messageTextView.setText(message);
+            okTextView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    simpleOkDialog.cancel();
+                }
+            });
+            simpleOkDialog.build();
         }
     }
 }

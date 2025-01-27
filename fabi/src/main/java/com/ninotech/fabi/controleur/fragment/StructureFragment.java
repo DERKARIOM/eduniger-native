@@ -48,6 +48,7 @@ public class StructureFragment extends Fragment {
         mNoConnectionAdapter = new NoConnectionAdapter(list);
         mStructureRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mStructureRecyclerView.setAdapter(mNoConnectionAdapter);
+        StructAdapter = new StructureAdapter(mStructures);
         BroadcastReceiver receiverNoConnectionAdapter = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -60,6 +61,8 @@ public class StructureFragment extends Fragment {
                         mStructureRecyclerView.setAdapter(noConnectionAdapter);
                         StructureSyn structureSyn = new StructureSyn();
                         structureSyn.execute(getString(R.string.ip_server_android) + "Structure.php", session.getIdNumber());
+                        StructureSyn2 structureSyn2 = new StructureSyn2();
+                        structureSyn2.execute(getString(R.string.ip_server_android) + "Structure2.php", session.getIdNumber());
                     }catch (Exception e)
                     {
                         Log.e("errCategoryFragment",e.getMessage());
@@ -71,6 +74,8 @@ public class StructureFragment extends Fragment {
         getContext().registerReceiver(receiverNoConnectionAdapter, new IntentFilter("CATEGORY_FRAGMENT"));
         StructureSyn structureSyn = new StructureSyn();
         structureSyn.execute(getString(R.string.ip_server_android) + "Structure.php", session.getIdNumber());
+        StructureSyn2 structureSyn2 = new StructureSyn2();
+        structureSyn2.execute(getString(R.string.ip_server_android) + "Structure2.php", session.getIdNumber());
         return view;
     }
 
@@ -82,7 +87,68 @@ public class StructureFragment extends Fragment {
                 OkHttpClient client = new OkHttpClient();
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
-                        .addFormDataPart("idNumber",params[1])
+                        .addFormDataPart("idUser",params[1])
+                        .build();
+                Request request = new Request.Builder()
+                        .url(params[0])
+                        .post(requestBody)
+                        .build();
+                try {
+                    Response response = client.newCall(request).execute();
+                    assert response.body() != null;
+                    return response.body().string();
+                }catch (IOException e)
+                {
+                    Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+
+            }catch (Exception e)
+            {
+                return null;
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(String jsonData){
+            if(jsonData != null)
+            {
+                if (!jsonData.equals("RAS"))
+                {
+                    JSONArray jsonArray = null;
+                    try {
+                        jsonArray = new JSONArray(jsonData);
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                    for (int i=0;i<jsonArray.length();i++) {
+                        try {
+                            mStructures.add(new Structure(jsonArray.getJSONObject(i).getString("id"),jsonArray.getJSONObject(i).getString("logo"),jsonArray.getJSONObject(i).getString("nameStruct"),"RAS",true));
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    mStructureRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                    mStructureRecyclerView.setAdapter(StructAdapter);
+                }
+            }
+            else {
+                ArrayList<Connection> list = new ArrayList<>();
+                list.add(new Connection(getString(R.string.no_connection_available),"CATEGORY_FRAGMENT",false));
+                NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
+                mStructureRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                mStructureRecyclerView.setAdapter(noConnectionAdapter);
+            }
+        }
+    }
+    private class StructureSyn2 extends AsyncTask<String,Void,String> {
+        @Override
+        protected String doInBackground(String... params) {
+
+            try {
+                OkHttpClient client = new OkHttpClient();
+                RequestBody requestBody = new MultipartBody.Builder()
+                        .setType(MultipartBody.FORM)
+                        .addFormDataPart("idUser",params[1])
                         .build();
                 Request request = new Request.Builder()
                         .url(params[0])
@@ -115,14 +181,14 @@ public class StructureFragment extends Fragment {
                 }
                 for (int i=0;i<jsonArray.length();i++) {
                     try {
-                        mStructures.add(new Structure(jsonArray.getJSONObject(i).getString("id"),jsonArray.getJSONObject(i).getString("logo"),jsonArray.getJSONObject(i).getString("nameStruct"),"RAS",true));
+                        if(!isExistsS(mStructures,jsonArray.getJSONObject(i).getString("id")))
+                            mStructures.add(new Structure(jsonArray.getJSONObject(i).getString("id"),jsonArray.getJSONObject(i).getString("logo"),jsonArray.getJSONObject(i).getString("nameStruct"),"RAS",false));
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
                 }
-                StructureAdapter categoryAdapter = new StructureAdapter(mStructures);
                 mStructureRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                mStructureRecyclerView.setAdapter(categoryAdapter);
+                mStructureRecyclerView.setAdapter(StructAdapter);
             }
             else {
                 ArrayList<Connection> list = new ArrayList<>();
@@ -133,7 +199,17 @@ public class StructureFragment extends Fragment {
             }
         }
     }
+    public boolean isExistsS(ArrayList<Structure> structures , String id)
+    {
+        for(int i=0 ; i<structures.size() ; i++)
+        {
+            if(structures.get(i).getId().equals(id))
+                return true;
+        }
+        return false;
+    }
     private RecyclerView mStructureRecyclerView;
     private ArrayList<Structure> mStructures;
     private NoConnectionAdapter mNoConnectionAdapter;
+    private StructureAdapter StructAdapter;
 }

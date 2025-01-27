@@ -76,7 +76,8 @@ public class HomeFragment extends Fragment {
                         recommendedSyn.execute(getString(R.string.ip_server_android) + "Recommended.php", session.getIdNumber());
                         StructureSyn structureSyn = new StructureSyn();
                         structureSyn.execute(getString(R.string.ip_server_android) + "Structure.php", session.getIdNumber());
-                        structureSyn.execute(getString(R.string.ip_server_android) + "Structure2.php", session.getIdNumber());
+                        StructureSyn2 structureSyn2 = new StructureSyn2();
+                        structureSyn2.execute(getString(R.string.ip_server_android) + "Structure2.php", session.getIdNumber());
                     } catch (Exception e) {
                         Log.e("errRecommendedFragment", e.getMessage());
                     }
