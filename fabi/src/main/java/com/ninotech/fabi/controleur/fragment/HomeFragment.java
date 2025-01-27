@@ -54,7 +54,8 @@ public class HomeFragment extends Fragment {
         Session session = new Session(getContext());
         mBookRecommendedRecyclerView = view.findViewById(R.id.recycler_view_ranking);
         mWelcomeImageView = view.findViewById(R.id.image_view_fragment_recommended_welcome);
-        mTextViewMore = view.findViewById(R.id.text_view_recommended_more);
+        mBookMoreTextView = view.findViewById(R.id.text_view_recommended_more);
+        mStructMoreTextView = view.findViewById(R.id.text_view_recommended_more_structure);
         mStructureRecyclerView = view.findViewById(R.id.recycler_view_fragment_recommended_structure);
         mAuthorRecyclerView = view.findViewById(R.id.recycler_view_author);
         mOnlineBookList = new ArrayList<>();
@@ -85,11 +86,21 @@ public class HomeFragment extends Fragment {
                 }
             }
         };
-        mTextViewMore.setOnClickListener(new View.OnClickListener() {
+        mBookMoreTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent searchIntent = new Intent(getContext(), SearchActivity.class);
                 searchIntent.putExtra("search_key", "ONLINE_BOOK");
+                searchIntent.putExtra("online_book_key", "MAIN_ACTIVITY");
+                startActivity(searchIntent);
+            }
+        });
+
+        mStructMoreTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent searchIntent = new Intent(getContext(), SearchActivity.class);
+                searchIntent.putExtra("search_key", "STRUCTURE");
                 searchIntent.putExtra("online_book_key", "MAIN_ACTIVITY");
                 startActivity(searchIntent);
             }
@@ -373,7 +384,8 @@ public class HomeFragment extends Fragment {
     private ArrayList<Structure> mStructures;
     private NoConnectionAdapter mNoConnectionAdapter;
     private ImageView mWelcomeImageView;
-    private TextView mTextViewMore;
+    private TextView mBookMoreTextView;
+    private TextView mStructMoreTextView;
     private Account mAccount;
     private StructureAdapter StructAdapter;
 }

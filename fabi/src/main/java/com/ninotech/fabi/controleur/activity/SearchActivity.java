@@ -31,7 +31,9 @@ import com.ninotech.fabi.controleur.adapter.LoandBookAdapter;
 import com.ninotech.fabi.controleur.adapter.NoConnectionAdapter;
 import com.ninotech.fabi.controleur.adapter.NotificationAdapter;
 import com.ninotech.fabi.controleur.adapter.SettingAdapter;
+import com.ninotech.fabi.controleur.adapter.StructureAdapter;
 import com.ninotech.fabi.controleur.adapter.VoidContainerAdapter;
+import com.ninotech.fabi.controleur.fragment.StructureFragment;
 import com.ninotech.fabi.model.data.AudioBook;
 import com.ninotech.fabi.model.data.Author;
 import com.ninotech.fabi.model.data.Category;
@@ -41,6 +43,7 @@ import com.ninotech.fabi.model.data.LoandBook;
 import com.ninotech.fabi.model.data.Notification;
 import com.ninotech.fabi.model.data.OnlineBook;
 import com.ninotech.fabi.model.data.Setting;
+import com.ninotech.fabi.model.data.Structure;
 import com.ninotech.fabi.model.data.VoidContainer;
 import com.ninotech.fabi.model.table.AudioTable;
 import com.ninotech.fabi.model.table.ElectronicTable;
@@ -131,6 +134,10 @@ public class SearchActivity extends AppCompatActivity {
                         if(!mCategorys.isEmpty())
                             filterCategory(s.toString());
                         break;
+                    case "STRUCTURE":
+                        if(!mStructures.isEmpty())
+                            filterOnlineStructure(s.toString());
+                        break;
                     case "AUTHOR":
                         if(!mAuthors.isEmpty())
                             filterAuthor(s.toString());
@@ -161,6 +168,12 @@ public class SearchActivity extends AppCompatActivity {
                         onLineBookSwitchCategory(searchIntent.getStringExtra("title_category"));
                         break;
                 }
+                break;
+            case "STRUCTURE":
+                mStructures = new ArrayList<>();
+                mFilterStructures = new ArrayList<>();
+                StructAdapter = new StructureAdapter(mStructures);
+                searchOnLineStructure();
                 break;
             case "ELECTRONIC_BOOK":
                 searchElectronicBook();
@@ -223,6 +236,38 @@ public class SearchActivity extends AppCompatActivity {
         registerReceiver(receiverNoConnectionAdapter, new IntentFilter("RANKING_FRAGMENT"));
         RankingSyn rankingSyn = new RankingSyn();
         rankingSyn.execute(getString(R.string.ip_server_android) + "Ranking.php", mSession.getIdNumber());
+    }
+
+    public void searchOnLineStructure()
+    {
+
+        BroadcastReceiver receiverNoConnectionAdapter = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if ("RANKING_FRAGMENT".equals(intent.getAction())) {
+                    try {
+                        ArrayList<Connection> list = new ArrayList<>();
+                        list.add(new Connection(getString(R.string.wait),"RANKING_FRAGMENT",true));
+                        NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
+                        mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                        mRecyclerView.setAdapter(noConnectionAdapter);
+                        StructureSyn structureSyn = new StructureSyn();
+                        structureSyn.execute(getString(R.string.ip_server_android) + "Structure.php", mSession.getIdNumber());
+                        StructureSyn2 structureSyn2 = new StructureSyn2();
+                        structureSyn2.execute(getString(R.string.ip_server_android) + "Structure2.php", mSession.getIdNumber());
+                    }catch (Exception e)
+                    {
+                        Log.e("errRankingFragment",e.getMessage());
+                    }
+
+                }
+            }
+        };
+        registerReceiver(receiverNoConnectionAdapter, new IntentFilter("RANKING_FRAGMENT"));
+        StructureSyn structureSyn = new StructureSyn();
+        structureSyn.execute(getString(R.string.ip_server_android) + "Structure.php", mSession.getIdNumber());
+        StructureSyn2 structureSyn2 = new StructureSyn2();
+        structureSyn2.execute(getString(R.string.ip_server_android) + "Structure2.php", mSession.getIdNumber());
     }
     public void searchFabiolaBook()
     {
@@ -493,6 +538,15 @@ public class SearchActivity extends AppCompatActivity {
         }
         mOnlineBookAdapter.filterList(mFilteredOnlineBookList);
     }
+    private void filterOnlineStructure(String text) {
+        mFilterStructures.clear();
+        for (Structure item : mStructures) {
+            if (item.getName().toLowerCase().contains(text.toLowerCase())) {
+                mFilterStructures.add(item);
+            }
+        }
+        StructAdapter.filterList(mFilterStructures);
+    }
     private void filterFabiolaBook(String text) {
         mFilteredOnlineBookList.clear();
         for (OnlineBook item : mOnlineBooks) {
@@ -726,6 +780,135 @@ public class SearchActivity extends AppCompatActivity {
         }
         return dateInSeconds;
     }
+    private class StructureSyn extends AsyncTask<String,Void,String> {
+        @Override
+        protected String doInBackground(String... params) {
+
+            try {
+                OkHttpClient client = new OkHttpClient();
+                RequestBody requestBody = new MultipartBody.Builder()
+                        .setType(MultipartBody.FORM)
+                        .addFormDataPart("idUser",params[1])
+                        .build();
+                Request request = new Request.Builder()
+                        .url(params[0])
+                        .post(requestBody)
+                        .build();
+                try {
+                    Response response = client.newCall(request).execute();
+                    assert response.body() != null;
+                    return response.body().string();
+                }catch (IOException e)
+                {
+                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+
+            }catch (Exception e)
+            {
+                return null;
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(String jsonData){
+            if(jsonData != null)
+            {
+                if (!jsonData.equals("RAS"))
+                {
+                    JSONArray jsonArray = null;
+                    try {
+                        jsonArray = new JSONArray(jsonData);
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                    for (int i=0;i<jsonArray.length();i++) {
+                        try {
+                            mStructures.add(new Structure(jsonArray.getJSONObject(i).getString("id"),jsonArray.getJSONObject(i).getString("logo"),jsonArray.getJSONObject(i).getString("nameStruct"),"RAS",true));
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                    mRecyclerView.setAdapter(StructAdapter);
+                }
+            }
+            else {
+                ArrayList<Connection> list = new ArrayList<>();
+                list.add(new Connection(getString(R.string.no_connection_available),"CATEGORY_FRAGMENT",false));
+                NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
+                mStructureRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                mStructureRecyclerView.setAdapter(noConnectionAdapter);
+            }
+        }
+    }
+    private class StructureSyn2 extends AsyncTask<String,Void,String> {
+        @Override
+        protected String doInBackground(String... params) {
+
+            try {
+                OkHttpClient client = new OkHttpClient();
+                RequestBody requestBody = new MultipartBody.Builder()
+                        .setType(MultipartBody.FORM)
+                        .addFormDataPart("idUser",params[1])
+                        .build();
+                Request request = new Request.Builder()
+                        .url(params[0])
+                        .post(requestBody)
+                        .build();
+                try {
+                    Response response = client.newCall(request).execute();
+                    assert response.body() != null;
+                    return response.body().string();
+                }catch (IOException e)
+                {
+                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+
+            }catch (Exception e)
+            {
+                return null;
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(String jsonData){
+            if(jsonData != null)
+            {
+                JSONArray jsonArray = null;
+                try {
+                    jsonArray = new JSONArray(jsonData);
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+                for (int i=0;i<jsonArray.length();i++) {
+                    try {
+                        if(!isExistsS(mStructures,jsonArray.getJSONObject(i).getString("id")))
+                            mStructures.add(new Structure(jsonArray.getJSONObject(i).getString("id"),jsonArray.getJSONObject(i).getString("logo"),jsonArray.getJSONObject(i).getString("nameStruct"),"RAS",false));
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                mRecyclerView.setAdapter(StructAdapter);
+            }
+            else {
+                ArrayList<Connection> list = new ArrayList<>();
+                list.add(new Connection(getString(R.string.no_connection_available),"CATEGORY_FRAGMENT",false));
+                NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
+                mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                mStructureRecyclerView.setAdapter(noConnectionAdapter);
+            }
+        }
+    }
+    public boolean isExistsS(ArrayList<Structure> structures , String id)
+    {
+        for(int i=0 ; i<structures.size() ; i++)
+        {
+            if(structures.get(i).getId().equals(id))
+                return true;
+        }
+        return false;
+    }
     private RecyclerView mRecyclerView;
     private ArrayList<OnlineBook> mOnlineBooks;
     private NoConnectionAdapter mNoConnectionAdapter;
@@ -742,6 +925,10 @@ public class SearchActivity extends AppCompatActivity {
     private ArrayList<LoandBook> mLoandBooks;
     private ArrayList<LoandBook> mFilteredLoandBooks;
     private LoandBookAdapter mLoandBookAdapter;
+    private RecyclerView mStructureRecyclerView;
+    private ArrayList<Structure> mStructures;
+    private ArrayList<Structure> mFilterStructures;
+    private StructureAdapter StructAdapter;
     private ArrayList<Category> mCategorys;
     private ArrayList<Category> mFilteredCategorys;
     private CategoryLocalAdapter mCategoryLocalAdapter;
