@@ -177,14 +177,14 @@ public class HomeFragment extends Fragment {
                             throw new RuntimeException(e);
                         }
                     }
+                    mAuthorArrayList.add(new Author(R.drawable.tony_allen,"T.Allen"));
+                    mAuthorArrayList.add(new Author(R.drawable.kim_chakanetsa,"K.Chakanetsa"));
+                    mAuthorArrayList.add(new Author(R.drawable.wole_soyinka,"W.Sayinka"));
+                    mAuthorArrayList.add(new Author(R.drawable.chimamanda_ngozi_adichie,"C.N.Adichie"));
                     mAuthorArrayList.add(new Author(R.drawable.img_robert,"Robert.K"));
                     mAuthorArrayList.add(new Author(R.drawable.img_bachir,"BA.Kader"));
-                    mAuthorArrayList.add(new Author(R.drawable.img_alazi,"ID.Alazi"));
-                    mAuthorArrayList.add(new Author(R.drawable.img_moi,"DERK@RIOM"));
-                    mAuthorArrayList.add(new Author(R.drawable.img_robert,"Robert.K"));
-                    mAuthorArrayList.add(new Author(R.drawable.img_bachir,"BA.Kader"));
-                    mAuthorArrayList.add(new Author(R.drawable.img_alazi,"ID.Alazi"));
-                    mAuthorArrayList.add(new Author(R.drawable.img_moi,"DERK@RIOM"));
+                    mAuthorArrayList.add(new Author(R.drawable.img_alazi,"I.D.Alazi"));
+                    mAuthorArrayList.add(new Author(R.drawable.serge_philippe_lecourt,"S.P.Lecourt"));
                     HorizontaleAdapter onlineBookAdapter = new HorizontaleAdapter(mOnlineBookList);
                     AuthorHorizontaleAdapter authorHorizontaleAdapter = new AuthorHorizontaleAdapter(mAuthorArrayList);
                     mBookRecommendedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));

@@ -30,6 +30,7 @@ import com.ninotech.fabi.model.table.ElectronicTable;
 import com.ninotech.fabi.model.table.LoandTable;
 import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.model.table.StudentTable;
+import com.ninotech.fabi.model.table.UserTable;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -51,14 +52,16 @@ public class LibraryFragment extends Fragment {
         LoandTable loandTable = new LoandTable(getContext());
         AudioTable audioTable = new AudioTable(getContext());
         Session session = new Session(getContext());
-        mStudentTable = new StudentTable(getContext());
-        Cursor studentCursor = mStudentTable.getData(session.getIdNumber());
-        studentCursor.moveToFirst();
+        mUserTable = new UserTable(getContext());
+        Cursor userCursor = mUserTable.getData(session.getIdNumber());
+        userCursor.moveToFirst();
         mPhotoImageView = view.findViewById(R.id.image_view_fragment_library_photo);
-        usernameTextView.setText(studentCursor.getString(1) + " " + studentCursor.getString(2));
-        emailTextView.setText(studentCursor.getString(5));
+//        emailTextView.setText(userCursor.getString(3));
+        usernameTextView.setText("Bachir Abdoul Kader");
+        mPhotoImageView = view.findViewById(R.id.image_view_fragment_library_photo);
         try {
-            byte[] photoByte = studentCursor.getBlob(6);
+            /*
+            byte[] photoByte = userCursor.getBlob(6);
             if(photoByte != null)
             {
                 Glide.with(this)
@@ -68,7 +71,7 @@ public class LibraryFragment extends Fragment {
             }else
             {
                 mPhotoImageView = view.findViewById(R.id.image_view_fragment_library_photo);
-            }
+            } */
 
         }catch (Exception e)
         {
@@ -124,7 +127,7 @@ public class LibraryFragment extends Fragment {
                         .load(compressedImageBytes)
                         .apply(RequestOptions.circleCropTransform())
                         .into(mPhotoImageView);
-                mStudentTable.setPhoto(compressedImageBytes);
+                mUserTable.setPhoto(compressedImageBytes);
             } catch (Exception e) {
                 e.printStackTrace();
                 Toast.makeText(getContext(), "Erreur lors du chargement de l'image." + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -161,7 +164,7 @@ public class LibraryFragment extends Fragment {
         startActivityForResult(galleryIntent, REQUEST_IMAGE_GALLERY);
     }
     private ImageView mPhotoImageView;
-    private StudentTable mStudentTable;
+    private UserTable mUserTable;
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_IMAGE_GALLERY = 2;
     private View mView;
