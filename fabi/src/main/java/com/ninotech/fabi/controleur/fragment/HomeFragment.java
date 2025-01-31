@@ -119,6 +119,8 @@ public class HomeFragment extends Fragment {
             structureSyn.execute(getString(R.string.ip_server_android) + "Structure.php", session.getIdNumber());
             StructureSyn2 structureSyn2 = new StructureSyn2();
             structureSyn2.execute(getString(R.string.ip_server_android) + "Structure2.php", session.getIdNumber());
+            AuthorSyn authorSyn = new AuthorSyn();
+            authorSyn.execute(getString(R.string.ip_server_android) + "AuthorTop.php", session.getIdNumber());
         }
         return view;
     }
@@ -177,20 +179,9 @@ public class HomeFragment extends Fragment {
                             throw new RuntimeException(e);
                         }
                     }
-                    mAuthorArrayList.add(new Author(R.drawable.tony_allen,"T.Allen"));
-                    mAuthorArrayList.add(new Author(R.drawable.kim_chakanetsa,"K.Chakanetsa"));
-                    mAuthorArrayList.add(new Author(R.drawable.wole_soyinka,"W.Sayinka"));
-                    mAuthorArrayList.add(new Author(R.drawable.chimamanda_ngozi_adichie,"C.N.Adichie"));
-                    mAuthorArrayList.add(new Author(R.drawable.img_robert,"Robert.K"));
-                    mAuthorArrayList.add(new Author(R.drawable.img_bachir,"BA.Kader"));
-                    mAuthorArrayList.add(new Author(R.drawable.img_alazi,"I.D.Alazi"));
-                    mAuthorArrayList.add(new Author(R.drawable.serge_philippe_lecourt,"S.P.Lecourt"));
-                    HorizontaleAdapter onlineBookAdapter = new HorizontaleAdapter(mOnlineBookList);
-                    AuthorHorizontaleAdapter authorHorizontaleAdapter = new AuthorHorizontaleAdapter(mAuthorArrayList);
+                    HorizontaleAdapter horizontaleAdapter = new HorizontaleAdapter(mOnlineBookList);
                     mBookRecommendedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
-                    mAuthorRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
-                    mBookRecommendedRecyclerView.setAdapter(onlineBookAdapter);
-                    mAuthorRecyclerView.setAdapter(authorHorizontaleAdapter);
+                    mBookRecommendedRecyclerView.setAdapter(horizontaleAdapter);
                 }
                 else
                     update();
@@ -364,6 +355,65 @@ public class HomeFragment extends Fragment {
                 NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
                 mStructureRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                 mStructureRecyclerView.setAdapter(noConnectionAdapter);
+            }
+        }
+    }
+    private class AuthorSyn extends AsyncTask<String,Void,String> {
+        @Override
+        protected String doInBackground(String... params) {
+
+            try {
+                OkHttpClient client = new OkHttpClient();
+                RequestBody requestBody = new MultipartBody.Builder()
+                        .setType(MultipartBody.FORM)
+                        .addFormDataPart("idUser",params[1])
+                        .build();
+                Request request = new Request.Builder()
+                        .url(params[0])
+                        .post(requestBody)
+                        .build();
+                try {
+                    Response response = client.newCall(request).execute();
+                    assert response.body() != null;
+                    return response.body().string();
+                }catch (IOException e)
+                {
+                    Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+
+            }catch (Exception e)
+            {
+                return null;
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(String jsonData){
+            if(jsonData != null)
+            {
+                JSONArray jsonArray = null;
+                try {
+                    jsonArray = new JSONArray(jsonData);
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+                for (int i=0;i<jsonArray.length();i++) {
+                    try {
+                        mAuthorArrayList.add(new Author(jsonArray.getJSONObject(i).getString("idAuthor"),jsonArray.getJSONObject(i).getString("name"),jsonArray.getJSONObject(i).getString("firstName"),jsonArray.getJSONObject(i).getString("profile")));
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                AuthorHorizontaleAdapter authorHorizontaleAdapter = new AuthorHorizontaleAdapter(mAuthorArrayList);
+                mAuthorRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
+                mAuthorRecyclerView.setAdapter(authorHorizontaleAdapter);
+            }
+            else {
+                ArrayList<Connection> list = new ArrayList<>();
+                list.add(new Connection(getString(R.string.no_connection_available),"CATEGORY_FRAGMENT",false));
+                NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
+                mAuthorRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
+                mAuthorRecyclerView.setAdapter(noConnectionAdapter);
             }
         }
     }

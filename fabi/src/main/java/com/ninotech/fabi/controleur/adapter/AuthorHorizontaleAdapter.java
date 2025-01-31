@@ -67,9 +67,12 @@ public class AuthorHorizontaleAdapter extends RecyclerView.Adapter<AuthorHorizon
         }
 
         void display(Author author) throws SQLException, IOException {
-            Glide.with(itemView.getContext())
-                    .load(author.getPhoto())
-                    .apply(RequestOptions.circleCropTransform())
+            Picasso.get()
+                    .load(itemView.getResources().getString(R.string.ip_server) + "ressources/profile/" + author.getProfile())
+                    .placeholder(R.drawable.img_default_book)
+                    .error(R.drawable.img_default_book)
+                    .transform(new RoundedTransformation(1000,4))
+                    .resize(284,284)
                     .into(mProfileImageView);
             mNameTextView.setText(author.getName());
         }
