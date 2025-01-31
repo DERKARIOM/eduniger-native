@@ -22,7 +22,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.adapter.AudioBookAdapter;
+import com.ninotech.fabi.controleur.adapter.AuthorHorizontaleAdapter;
 import com.ninotech.fabi.controleur.adapter.AuthorLocalAdapter;
+import com.ninotech.fabi.controleur.adapter.AuthorVerticaleAdapter;
 import com.ninotech.fabi.controleur.adapter.FabiolaBookAdapter;
 import com.ninotech.fabi.controleur.adapter.OnlineBookAdapter;
 import com.ninotech.fabi.controleur.adapter.CategoryLocalAdapter;
@@ -33,6 +35,7 @@ import com.ninotech.fabi.controleur.adapter.NotificationAdapter;
 import com.ninotech.fabi.controleur.adapter.SettingAdapter;
 import com.ninotech.fabi.controleur.adapter.StructureAdapter;
 import com.ninotech.fabi.controleur.adapter.VoidContainerAdapter;
+import com.ninotech.fabi.controleur.fragment.HomeFragment;
 import com.ninotech.fabi.controleur.fragment.StructureFragment;
 import com.ninotech.fabi.model.data.AudioBook;
 import com.ninotech.fabi.model.data.Author;
@@ -138,7 +141,7 @@ public class SearchActivity extends AppCompatActivity {
                         if(!mStructures.isEmpty())
                             filterOnlineStructure(s.toString());
                         break;
-                    case "AUTHOR":
+                    case "AUTHOR","AUTHOR_ONLINE":
                         if(!mAuthors.isEmpty())
                             filterAuthor(s.toString());
                         break;
@@ -192,6 +195,11 @@ public class SearchActivity extends AppCompatActivity {
             case "CATEGORY":
                 searchCategory();
                 break;
+            case "AUTHOR_ONLINE":
+                mAuthors = new ArrayList<>();
+                mFilteredAuthors = new ArrayList<>();
+                searchAuthorOnline();
+                break;
             case "AUTHOR":
                 searchAuthor();
                 break;
@@ -203,6 +211,7 @@ public class SearchActivity extends AppCompatActivity {
                 break;
         }
     }
+
     public void waitConnection()
     {
         ArrayList<Connection> list = new ArrayList<>();
@@ -900,6 +909,32 @@ public class SearchActivity extends AppCompatActivity {
             }
         }
     }
+
+    private void searchAuthorOnline() {
+        BroadcastReceiver receiverNoConnectionAdapter = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if ("RANKING_FRAGMENT".equals(intent.getAction())) {
+                    try {
+                        ArrayList<Connection> list = new ArrayList<>();
+                        list.add(new Connection(getString(R.string.wait),"RANKING_FRAGMENT",true));
+                        NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
+                        mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                        mRecyclerView.setAdapter(noConnectionAdapter);
+                        AuthorSyn authorSyn = new AuthorSyn();
+                        authorSyn.execute(getString(R.string.ip_server_android) + "Author.php", mSession.getIdNumber());
+                    }catch (Exception e)
+                    {
+                        Log.e("errRankingFragment",e.getMessage());
+                    }
+
+                }
+            }
+        };
+        registerReceiver(receiverNoConnectionAdapter, new IntentFilter("RANKING_FRAGMENT"));
+        AuthorSyn authorSyn = new AuthorSyn();
+        authorSyn.execute(getString(R.string.ip_server_android) + "Author.php", mSession.getIdNumber());
+    }
     public boolean isExistsS(ArrayList<Structure> structures , String id)
     {
         for(int i=0 ; i<structures.size() ; i++)
@@ -908,6 +943,66 @@ public class SearchActivity extends AppCompatActivity {
                 return true;
         }
         return false;
+    }
+
+    private class AuthorSyn extends AsyncTask<String,Void,String> {
+        @Override
+        protected String doInBackground(String... params) {
+
+            try {
+                OkHttpClient client = new OkHttpClient();
+                RequestBody requestBody = new MultipartBody.Builder()
+                        .setType(MultipartBody.FORM)
+                        .addFormDataPart("idUser",params[1])
+                        .build();
+                Request request = new Request.Builder()
+                        .url(params[0])
+                        .post(requestBody)
+                        .build();
+                try {
+                    Response response = client.newCall(request).execute();
+                    assert response.body() != null;
+                    return response.body().string();
+                }catch (IOException e)
+                {
+                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+
+            }catch (Exception e)
+            {
+                return null;
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(String jsonData){
+            if(jsonData != null)
+            {
+                JSONArray jsonArray = null;
+                try {
+                    jsonArray = new JSONArray(jsonData);
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+                for (int i=0;i<jsonArray.length();i++) {
+                    try {
+                        mAuthors.add(new Author(jsonArray.getJSONObject(i).getString("idAuthor"),jsonArray.getJSONObject(i).getString("name"),jsonArray.getJSONObject(i).getString("firstName"),jsonArray.getJSONObject(i).getString("profile")));
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                AuthorVerticaleAdapter authorVerticaleAdapter = new AuthorVerticaleAdapter(mAuthors);
+                mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                mRecyclerView.setAdapter(authorVerticaleAdapter);
+            }
+            else {
+                ArrayList<Connection> list = new ArrayList<>();
+                list.add(new Connection(getString(R.string.no_connection_available),"CATEGORY_FRAGMENT",false));
+                NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
+                mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                mRecyclerView.setAdapter(noConnectionAdapter);
+            }
+        }
     }
     private RecyclerView mRecyclerView;
     private ArrayList<OnlineBook> mOnlineBooks;

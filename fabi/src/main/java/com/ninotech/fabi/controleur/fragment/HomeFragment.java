@@ -56,6 +56,7 @@ public class HomeFragment extends Fragment {
         mWelcomeImageView = view.findViewById(R.id.image_view_fragment_recommended_welcome);
         mBookMoreTextView = view.findViewById(R.id.text_view_recommended_more);
         mStructMoreTextView = view.findViewById(R.id.text_view_recommended_more_structure);
+        mAuthorMoreTextView = view.findViewById(R.id.text_view_recommended_more_author);
         mStructureRecyclerView = view.findViewById(R.id.recycler_view_fragment_recommended_structure);
         mAuthorRecyclerView = view.findViewById(R.id.recycler_view_author);
         mOnlineBookList = new ArrayList<>();
@@ -79,6 +80,8 @@ public class HomeFragment extends Fragment {
                         structureSyn.execute(getString(R.string.ip_server_android) + "Structure.php", session.getIdNumber());
                         StructureSyn2 structureSyn2 = new StructureSyn2();
                         structureSyn2.execute(getString(R.string.ip_server_android) + "Structure2.php", session.getIdNumber());
+                        AuthorSyn authorSyn = new AuthorSyn();
+                        authorSyn.execute(getString(R.string.ip_server_android) + "AuthorTop.php", session.getIdNumber());
                     } catch (Exception e) {
                         Log.e("errRecommendedFragment", e.getMessage());
                     }
@@ -101,6 +104,16 @@ public class HomeFragment extends Fragment {
             public void onClick(View v) {
                 Intent searchIntent = new Intent(getContext(), SearchActivity.class);
                 searchIntent.putExtra("search_key", "STRUCTURE");
+                searchIntent.putExtra("online_book_key", "MAIN_ACTIVITY");
+                startActivity(searchIntent);
+            }
+        });
+
+        mAuthorMoreTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent searchIntent = new Intent(getContext(), SearchActivity.class);
+                searchIntent.putExtra("search_key", "AUTHOR_ONLINE");
                 searchIntent.putExtra("online_book_key", "MAIN_ACTIVITY");
                 startActivity(searchIntent);
             }
@@ -436,6 +449,7 @@ public class HomeFragment extends Fragment {
     private ImageView mWelcomeImageView;
     private TextView mBookMoreTextView;
     private TextView mStructMoreTextView;
+    private TextView mAuthorMoreTextView;
     private Account mAccount;
     private StructureAdapter StructAdapter;
 }
