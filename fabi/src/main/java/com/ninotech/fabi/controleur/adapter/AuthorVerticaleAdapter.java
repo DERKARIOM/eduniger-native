@@ -15,6 +15,7 @@ import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class AuthorVerticaleAdapter extends RecyclerView.Adapter<AuthorVerticaleAdapter.MyViewHolder> {
@@ -50,6 +51,10 @@ public class AuthorVerticaleAdapter extends RecyclerView.Adapter<AuthorVerticale
     @Override
     public int getItemCount() {
         return mAuthors.size();
+    }
+    public void filterList(ArrayList<Author> filteredList) {
+        mAuthors = filteredList;
+        notifyDataSetChanged();
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder{

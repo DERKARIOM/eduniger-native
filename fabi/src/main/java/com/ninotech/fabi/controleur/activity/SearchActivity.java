@@ -141,9 +141,12 @@ public class SearchActivity extends AppCompatActivity {
                         if(!mStructures.isEmpty())
                             filterOnlineStructure(s.toString());
                         break;
-                    case "AUTHOR","AUTHOR_ONLINE":
+                    case "AUTHOR":
                         if(!mAuthors.isEmpty())
                             filterAuthor(s.toString());
+                    case "AUTHOR_ONLINE":
+                        if(!mAuthors.isEmpty())
+                            filterAuthorOnline(s.toString());
                         break;
                     case "NOTIFICATION":
                         if(!mNotifications.isEmpty())
@@ -211,6 +214,8 @@ public class SearchActivity extends AppCompatActivity {
                 break;
         }
     }
+
+
 
     public void waitConnection()
     {
@@ -610,6 +615,15 @@ public class SearchActivity extends AppCompatActivity {
         }
         mAuthorLocalAdapter.filterList(mFilteredAuthors);
     }
+    private void filterAuthorOnline(String text) {
+        mFilteredAuthors.clear();
+        for (Author item : mAuthors) {
+            if (item.getName().toLowerCase().contains(text.toLowerCase())) {
+                mFilteredAuthors.add(item);
+            }
+        }
+        mAuthorVerticaleAdapter.filterList(mFilteredAuthors);
+    }
     private void filterNotification(String text) {
         mFilteredNotifications.clear();
         for (Notification item : mNotifications) {
@@ -991,9 +1005,9 @@ public class SearchActivity extends AppCompatActivity {
                         throw new RuntimeException(e);
                     }
                 }
-                AuthorVerticaleAdapter authorVerticaleAdapter = new AuthorVerticaleAdapter(mAuthors);
+                mAuthorVerticaleAdapter = new AuthorVerticaleAdapter(mAuthors);
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                mRecyclerView.setAdapter(authorVerticaleAdapter);
+                mRecyclerView.setAdapter(mAuthorVerticaleAdapter);
             }
             else {
                 ArrayList<Connection> list = new ArrayList<>();
@@ -1038,4 +1052,5 @@ public class SearchActivity extends AppCompatActivity {
     private SettingAdapter mSettingAdapter;
     private ImageView mBackImageView;
     private FabiolaBookAdapter mFabiolaBookAdapter;
+    private AuthorVerticaleAdapter mAuthorVerticaleAdapter;
 }
