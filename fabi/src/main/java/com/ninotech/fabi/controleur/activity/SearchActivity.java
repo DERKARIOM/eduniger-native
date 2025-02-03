@@ -179,6 +179,7 @@ public class SearchActivity extends AppCompatActivity {
                 mStructures = new ArrayList<>();
                 mFilterStructures = new ArrayList<>();
                 StructAdapter = new StructureAdapter(mStructures);
+                mSearchEditText.setHint(R.string.search_structure);
                 searchOnLineStructure();
                 break;
             case "ELECTRONIC_BOOK":
@@ -201,6 +202,7 @@ public class SearchActivity extends AppCompatActivity {
             case "AUTHOR_ONLINE":
                 mAuthors = new ArrayList<>();
                 mFilteredAuthors = new ArrayList<>();
+                mSearchEditText.setHint(R.string.search_author);
                 searchAuthorOnline();
                 break;
             case "AUTHOR":

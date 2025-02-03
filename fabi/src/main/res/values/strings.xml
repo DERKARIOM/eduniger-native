@@ -244,6 +244,7 @@
     <string name="notification">Notification</string>
     <string name="search_category">Recherche des categories</string>
     <string name="search_author">Recherche des auteurs</string>
+    <string name="search_structure">Recherche des structures</string>
     <string name="no_notification">Auccune Notification</string>
     <string name="search_notification">Recherche des notifications</string>
     <string name="search_setting">Recherche des paramètres</string>
