@@ -20,9 +20,12 @@
                 >
                 <ImageView
                     android:id="@+id/image_view_adapter_book_simple_cover"
-                    android:layout_height="130dp"
-                    android:layout_width="130dp"
-                    android:layout_margin="10dp"
+                    android:layout_height="150dp"
+                    android:layout_width="100dp"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="10dp"
                     android:elevation="2dp"
                     android:src="@drawable/img_default_book"
                     android:contentDescription="@string/todo" />
@@ -169,7 +172,7 @@
                     android:layout_marginBottom="5dp"
                     app:icon="@drawable/vector_black3_physical"
                     android:textSize="@dimen/size_button"
-                    android:backgroundTint="@color/dark"/>
+                    android:backgroundTint="@color/purple_200"/>
             </LinearLayout>
             <LinearLayout
                 android:id="@+id/linear_layout_activity_book_audio"
@@ -258,7 +261,7 @@
                         android:layout_marginBottom="5dp"
                         app:icon="@drawable/vector_white_download"
                         android:textSize="@dimen/size_button"
-                        android:backgroundTint="@color/dark"/>
+                        android:backgroundTint="@color/purple_200"/>
                 </RelativeLayout>
             </LinearLayout>
             <LinearLayout
@@ -295,7 +298,7 @@
                     android:layout_marginBottom="5dp"
                     app:icon="@drawable/vector_black3_pdf"
                     android:textSize="@dimen/size_button"
-                    android:backgroundTint="@color/dark"/>
+                    android:backgroundTint="@color/purple_200"/>
                 <RelativeLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -320,7 +323,7 @@
                         android:layout_marginBottom="5dp"
                         app:icon="@drawable/vector_white_download"
                         android:textSize="@dimen/size_button"
-                        android:backgroundTint="@color/dark"/>
+                        android:backgroundTint="@color/purple_200"/>
                 </RelativeLayout>
             </LinearLayout>
             <LinearLayout

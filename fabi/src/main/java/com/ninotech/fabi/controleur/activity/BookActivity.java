@@ -392,7 +392,7 @@ public class BookActivity extends AppCompatActivity {
                             .placeholder(R.drawable.img_default_book)
                             .error(R.drawable.img_default_book)
                             .transform(new RoundedTransformation(15,4))
-                            .resize(200,334)
+                            .resize(270,404)
                             .into(mBlanketImageView);
                     mNumberLikeTextView.setText(String.valueOf(mOnlineBook.getNumberLikes()));
                     mNumberNoLikeTextView.setText(String.valueOf(mOnlineBook.getNumberNoLikes()));
