@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.view.ContextMenu;
@@ -21,11 +20,10 @@ import android.widget.Toast;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.R;
-import com.ninotech.fabi.controleur.activity.BookActivity;
+import com.ninotech.fabi.controleur.activity.StructureActivity;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
 import com.ninotech.fabi.controleur.dialog.SimpleOkDialog;
 import com.ninotech.fabi.controleur.dialog.StructDeleteDialog;
-import com.ninotech.fabi.controleur.dialog.UpdateDialog;
 import com.ninotech.fabi.model.data.PasswordUtil;
 import com.ninotech.fabi.model.data.Structure;
 import com.ninotech.fabi.model.table.Session;
@@ -129,6 +127,13 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
                     mAdhereButton.setText("Détacher");
                 }
             }
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent structureIntent = new Intent(itemView.getContext(), StructureActivity.class);
+                    itemView.getContext().startActivity(structureIntent);
+                }
+            });
             mTitleTextView.setText(structure.getName());
             mAdhereButton.setOnClickListener(new View.OnClickListener() {
                 @Override

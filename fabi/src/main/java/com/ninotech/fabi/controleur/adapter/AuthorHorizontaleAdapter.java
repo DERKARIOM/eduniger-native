@@ -12,7 +12,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.ninotech.fabi.R;
+import com.ninotech.fabi.controleur.activity.AuthorActivity;
 import com.ninotech.fabi.controleur.activity.BookActivity;
+import com.ninotech.fabi.controleur.activity.StructureActivity;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
 import com.ninotech.fabi.model.data.Author;
 import com.ninotech.fabi.model.data.Book;
@@ -75,6 +77,14 @@ public class AuthorHorizontaleAdapter extends RecyclerView.Adapter<AuthorHorizon
                     .resize(284,284)
                     .into(mProfileImageView);
             mNameTextView.setText(author.getName());
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent authorIntent = new Intent(itemView.getContext(), AuthorActivity.class);
+                    itemView.getContext().startActivity(authorIntent);
+                }
+            });
+
         }
 
     }
