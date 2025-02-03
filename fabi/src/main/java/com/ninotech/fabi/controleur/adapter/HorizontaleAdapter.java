@@ -73,9 +73,9 @@ public class HorizontaleAdapter extends RecyclerView.Adapter<HorizontaleAdapter.
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intentLivre = new Intent(itemView.getContext(), BookActivity.class);
-                    intentLivre.putExtra("idLivre", book.getId());
-                    itemView.getContext().startActivity(intentLivre);
+                    Intent intentBook = new Intent(itemView.getContext(), BookActivity.class);
+                    intentBook.putExtra("intent_adapter_book_id", book.getId());
+                    itemView.getContext().startActivity(intentBook);
                 }
             });
         }
