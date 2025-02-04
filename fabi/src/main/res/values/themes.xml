@@ -81,10 +81,12 @@
 
     <style name="button_adhere">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_height">40dp</item>
         <item name="android:layout_centerInParent">true</item>
         <item name="android:background">@drawable/form_purple_200_radius_10dp</item>
-        <item name="android:text">@string/button_text_connection</item>
+        <item name="icon">@drawable/vector_black3_off_subscribe</item>
+       <item name="iconGravity">textStart</item>
+        <item name="android:text">@string/button_text_adhere</item>
     </style>
 
     <style name="button_pre_register">
