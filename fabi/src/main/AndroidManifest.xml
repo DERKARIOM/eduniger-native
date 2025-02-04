@@ -29,7 +29,8 @@
             android:exported="false" />
         <activity
             android:name=".controleur.activity.StructureActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".controleur.activity.PreRegistrationActivity"
             android:exported="false"

@@ -29,7 +29,6 @@ import com.ninotech.fabi.model.table.AudioTable;
 import com.ninotech.fabi.model.table.ElectronicTable;
 import com.ninotech.fabi.model.table.LoandTable;
 import com.ninotech.fabi.model.table.Session;
-import com.ninotech.fabi.model.table.StudentTable;
 import com.ninotech.fabi.model.table.UserTable;
 
 import java.io.ByteArrayOutputStream;
@@ -55,10 +54,10 @@ public class LibraryFragment extends Fragment {
         mUserTable = new UserTable(getContext());
         Cursor userCursor = mUserTable.getData(session.getIdNumber());
         userCursor.moveToFirst();
-        mPhotoImageView = view.findViewById(R.id.image_view_fragment_library_photo);
+        mPhotoImageView = view.findViewById(R.id.image_view_structure_activity_profile);
 //        emailTextView.setText(userCursor.getString(3));
         usernameTextView.setText("Bachir Abdoul Kader");
-        mPhotoImageView = view.findViewById(R.id.image_view_fragment_library_photo);
+        mPhotoImageView = view.findViewById(R.id.image_view_structure_activity_profile);
         try {
             /*
             byte[] photoByte = userCursor.getBlob(6);

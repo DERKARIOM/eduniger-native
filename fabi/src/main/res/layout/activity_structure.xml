@@ -5,12 +5,96 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:background="@color/whiteVert"
     tools:context=".controleur.activity.StructureActivity">
-    <TextView
+
+    <include
+        android:id="@+id/include2"
+        layout="@layout/toolbar_simple" />
+
+    <ImageView
+        android:id="@+id/image_view_structure_activity_welcome"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_below="@+id/include2"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:contentDescription="@string/todo"
+        android:elevation="6dp" />
+
+    <RelativeLayout
+        android:layout_marginStart="20dp"
+        android:id="@+id/relative_layout_structure_activity_profile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="La page structures"
-        android:textSize="15sp"
-        android:layout_centerInParent="true"/>
+        android:layout_below="@id/image_view_structure_activity_welcome"
+        >
+        <ImageView
+            android:id="@+id/image_view_structure_activity_profile"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_centerVertical="true"
+            android:src="@drawable/user"
+            />
+        <LinearLayout
+            android:layout_margin="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/image_view_structure_activity_profile"
+            android:layout_centerVertical="true"
+            android:orientation="vertical"
+            >
+            <TextView
+                android:id="@+id/text_view_structure_activity_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="OpenLab"
+                android:textStyle="bold"
+                android:textSize="20dp"/>
+            <TextView
+                android:id="@+id/text_view_fragment_library_email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="\@ninotech"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1,48 M d'Adhérents ° 293 Livres"/>
+        </LinearLayout>
+    </RelativeLayout>
+    <LinearLayout
+        android:id="@+id/linear_layout_activity_structure_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="20dp"
+        android:layout_below="@id/relative_layout_structure_activity_profile">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Bienvenue sur l'struture OpenLab !"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="...plus"/>
+    </LinearLayout>
+    <RelativeLayout
+        android:id="@+id/BlockButtonConnect"
+        style="@style/wrap_content_all"
+        android:layout_below="@+id/linear_layout_activity_structure_button"
+        android:layout_marginStart="28dp"
+        android:layout_marginEnd="28dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="40dp"
+        >
 
+        <ProgressBar
+            android:id="@+id/progress_bar_register_connection"
+            style="@style/progress_bar_connection" />
+        <Button
+            android:id="@+id/button_login_connection"
+            style="@style/button_adhere" />
+    </RelativeLayout>
 </RelativeLayout>
