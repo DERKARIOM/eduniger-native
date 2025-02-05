@@ -81,7 +81,7 @@
             android:text="...plus"/>
     </LinearLayout>
     <RelativeLayout
-        android:id="@+id/BlockButtonConnect"
+        android:id="@+id/relative_layout_activity_structure_btt"
         style="@style/wrap_content_all"
         android:layout_below="@+id/linear_layout_activity_structure_button"
         android:layout_marginStart="20dp"
@@ -97,4 +97,37 @@
             android:id="@+id/button_login_connection"
             style="@style/button_adhere" />
     </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/relative_layout_activity_structure_more_book"
+        android:layout_below="@id/relative_layout_activity_structure_btt"
+        style="@style/match_wrap">
+
+        <TextView
+            style="@style/wrap_content_all"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:text="Livres"
+            android:textStyle="bold"
+            android:textSize="14sp" />
+        <TextView
+            android:id="@+id/text_view_activity_structure_more_books"
+            style="@style/wrap_content_all"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="25dp"
+            android:layout_marginBottom="10dp"
+            android:text="Voir plus"
+            android:layout_alignParentEnd="true"
+            android:textColor="@color/purple_200"
+            android:textStyle="bold"
+            android:textSize="14sp" />
+    </RelativeLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_activity_structure_books"
+        android:nestedScrollingEnabled="false"
+        android:layout_margin="10dp"
+        android:layout_below="@id/relative_layout_activity_structure_more_book"
+        style="@style/match_parent_all"
+        />
 </RelativeLayout>
