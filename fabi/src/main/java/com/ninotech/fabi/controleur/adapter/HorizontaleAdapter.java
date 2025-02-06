@@ -5,10 +5,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.R;
+import com.ninotech.fabi.controleur.activity.AddBookActivity;
 import com.ninotech.fabi.controleur.activity.BookActivity;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
 import com.ninotech.fabi.model.data.Book;
@@ -73,9 +75,17 @@ public class HorizontaleAdapter extends RecyclerView.Adapter<HorizontaleAdapter.
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intentBook = new Intent(itemView.getContext(), BookActivity.class);
-                    intentBook.putExtra("intent_adapter_book_id", book.getId());
-                    itemView.getContext().startActivity(intentBook);
+                    if (!book.getId().equals("add"))
+                    {
+                        Intent intentBook = new Intent(itemView.getContext(), BookActivity.class);
+                        intentBook.putExtra("intent_adapter_book_id", book.getId());
+                        itemView.getContext().startActivity(intentBook);
+                    }
+                    else
+                    {
+                        Intent intentAddBook = new Intent(itemView.getContext(), AddBookActivity.class);
+                        itemView.getContext().startActivity(intentAddBook);
+                    }
                 }
             });
         }

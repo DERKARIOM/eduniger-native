@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".controleur.activity.AddBookActivity">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_marginTop="10dp"
+            android:id="@+id/relative_layout_activity_declaration_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            >
+            <ImageView
+                android:id="@+id/image_view_fragment_my_information"
+                android:layout_width="wrap_content"
+                android:layout_height="200dp"
+                android:src="@drawable/pub1"
+                android:contentDescription="@string/todo" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_below="@id/relative_layout_activity_declaration_img"
+            android:id="@+id/linear_layout_activity_declaration"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_marginBottom="40dp"
+            android:orientation="vertical">
+            <Spinner
+                android:id="@+id/spinner_fragment_my_information_card_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="25dp"
+                android:layout_marginEnd="20dp"
+                android:fontFamily="sans-serif-smallcaps"
+                android:gravity="center"
+                android:backgroundTint="@color/purple_200"
+                android:paddingTop="15dp"
+                android:paddingBottom="15dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Titre"
+                android:textSize="@dimen/size_title"
+                android:textStyle="bold"
+                android:layout_marginStart="30dp"
+                android:textColor="@color/black"/>
+            <EditText
+                android:id="@+id/edit_text_fragment_my_information_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="25dp"
+                android:backgroundTint="@color/purple_200"
+                android:layout_marginEnd="25dp"
+                android:layout_marginBottom="20dp"
+                android:fontFamily="@font/apple1"
+                android:hint="Saisir le title"
+                android:inputType="textMultiLine"
+                android:paddingBottom="15dp"
+                android:paddingTop="15dp"
+                android:scrollbars="vertical"
+                android:autofillHints="" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Description"
+                android:textSize="@dimen/size_title"
+                android:textStyle="bold"
+                android:layout_marginStart="30dp"
+                android:textColor="@color/black"/>
+            <EditText
+                android:id="@+id/edit_text_fragment_my_information_first_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="25dp"
+                android:backgroundTint="@color/purple_200"
+                android:layout_marginEnd="25dp"
+                android:layout_marginBottom="20dp"
+                android:fontFamily="@font/apple1"
+                android:hint="Saisir la description"
+                android:inputType="textMultiLine"
+                android:paddingBottom="15dp"
+                android:paddingTop="15dp"
+                android:scrollbars="vertical"
+                android:autofillHints="" />
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginEnd="30dp"
+                >
+
+                <ProgressBar
+                    android:id="@+id/progress_bar_fragment_my_information_connection"
+                    style="@android:style/Widget.Holo.ProgressBar.Small"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_centerInParent="true"
+                    android:layout_marginStart="40dp"
+                    android:layout_centerVertical="true"
+                    android:elevation="5dp"
+                    android:padding="20dp"
+                    android:visibility="invisible"
+                    android:progressDrawable="@drawable/form_circular_bar_connexion" />
+                <Button
+                    android:id="@+id/button_fragment_my_information_send"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/forme_purple2_200_radius_10dp"
+                    android:textAllCaps="false"
+                    android:text="@string/send" />
+            </RelativeLayout>
+        </LinearLayout>
+    </RelativeLayout>
+</androidx.core.widget.NestedScrollView>
