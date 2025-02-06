@@ -81,6 +81,18 @@
         <item>Pour quatre heurs</item>
         <item>Pour cinq heurs</item>
     </string-array>
+    <string-array name="array_structure">
+        <item>Structure</item>
+        <item>OpenLab</item>
+        <item>Fabi by Fast</item>
+        <item>Kit TD</item>
+    </string-array>
+    <string-array name="array_categoty">
+        <item>Categorie</item>
+        <item>Informatique</item>
+        <item>Maths</item>
+        <item>Culture générale</item>
+    </string-array>
     <string name="large_text">
         "Material is the metaphor.\n\n"
 
@@ -217,6 +229,7 @@
     <string name="touch_the_fingerprint_sensor">Toucher le capteur d\'empreinte</string>
     <string name="no_book_loand">Aucun livre emprunté</string>
     <string name="send">Envoyer</string>
+    <string name="add">Ajouter</string>
     <string name="suggestion_message_dialog">Merci beaucoup pour votre suggestion ! Nous apprécions vraiment que vous preniez le temps de nous faire part de vos idées pour améliorer Fabi</string>
     <string name="suggestion_hint_message">Distes-nous comment nous pouvons amélioré l\'application Fabi</string>
     <string name="information_phone">Inclure les information de l\' appariel ? (facultatif)</string>
