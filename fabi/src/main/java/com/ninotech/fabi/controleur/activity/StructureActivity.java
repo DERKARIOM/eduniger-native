@@ -1,12 +1,16 @@
 package com.ninotech.fabi.controleur.activity;
 
+import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -17,7 +21,6 @@ import com.ninotech.fabi.controleur.adapter.AuthorHorizontaleAdapter;
 import com.ninotech.fabi.controleur.adapter.HorizontaleAdapter;
 import com.ninotech.fabi.controleur.adapter.NoConnectionAdapter;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
-import com.ninotech.fabi.controleur.fragment.HomeFragment;
 import com.ninotech.fabi.model.data.Author;
 import com.ninotech.fabi.model.data.Connection;
 import com.ninotech.fabi.model.data.OnlineBook;
@@ -46,21 +49,54 @@ public class StructureActivity extends AppCompatActivity {
         setContentView(R.layout.activity_structure);
         Objects.requireNonNull(getSupportActionBar()).hide();
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        Intent intentStructure = getIntent();
         mWelcomeImageView = findViewById(R.id.image_view_structure_activity_welcome);
         mProfileImageView = findViewById(R.id.image_view_structure_activity_profile);
         mAuthorRecyclerView = findViewById(R.id.recycler_view_activity_structure_author);
+        mNameTextView = findViewById(R.id.text_view_structure_activity_name);
+        mAuthorTextView = findViewById(R.id.text_view_activity_structure_author);
+        mNumberTextView = findViewById(R.id.image_view_activity_structure_number);
+        mDescriptionTextView = findViewById(R.id.text_view_activity_structure_description);
+        mMoreDescTextView = findViewById(R.id.text_view_activity_structure_more_desc);
+        mAdhererButton = findViewById(R.id.button_activity_structure_adherer);
         mBookRecommendedRecyclerView = findViewById(R.id.recycler_view_activity_structure_books);
         mSession = new Session(getApplicationContext());
         mOnlineBookList = new ArrayList<>();
         mAuthorArrayList = new ArrayList<>();
+        mStructure = new Structure(
+                intentStructure.getStringExtra("intent_structure_adapter_id"),
+                intentStructure.getStringExtra("intent_structure_adapter_logo"),
+                intentStructure.getStringExtra("intent_structure_adapter_name"),
+                intentStructure.getStringExtra("intent_structure_adapter_description"),
+                intentStructure.getBooleanExtra("intent_structure_adapter_is_adhere",false),
+                intentStructure.getStringExtra("intent_structure_adapter_banner"),
+                intentStructure.getStringExtra("intent_structure_adapter_author"),
+                intentStructure.getStringExtra("intent_structure_adapter_adherer_number"),
+                intentStructure.getStringExtra("intent_structure_adapter_book_number")
+        );
+        mNameTextView.setText(mStructure.getName());
+        mAuthorTextView.setText("@" + mStructure.getAuthor());
+        mNumberTextView.setText(mStructure.getAdhererNumber() + " Adhérents ° " + mStructure.getBookNumber() + " Livres");
+        mDescriptionTextView.setText("Bienvenue sur l'struture " + mStructure.getName() + "!");
+        if(mStructure.isAdhere())
+        {
+            mAdhererButton.setText("Détacher");
+        }
+        mMoreDescTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDescriptionTextView.setText(mStructure.getDescription());
+                mMoreDescTextView.setText("moin");
+            }
+        });
         Picasso.get()
-                .load(getString(R.string.ip_server) + "ressources/baniere/openlab.png")
+                .load(getString(R.string.ip_server) + "ressources/baniere/" + mStructure.getBanner())
                 .transform(new RoundedTransformation(200,10))
                 .resize(6200,2222)
                 .into(mWelcomeImageView);
         mWelcomeImageView.setVisibility(View.VISIBLE);
         Picasso.get()
-                .load(getResources().getString(R.string.ip_server) + "ressources/cover/openlab.png")
+                .load(getResources().getString(R.string.ip_server) + "ressources/cover/" + mStructure.getCover())
                 .placeholder(R.drawable.img_default_book)
                 .error(R.drawable.img_default_book)
                 .transform(new RoundedTransformation(1000,4))
@@ -201,9 +237,16 @@ public class StructureActivity extends AppCompatActivity {
     }
     private ImageView mWelcomeImageView;
     private ImageView mProfileImageView;
+    private TextView mNameTextView;
     private RecyclerView mBookRecommendedRecyclerView;
     private ArrayList<OnlineBook> mOnlineBookList;
     private ArrayList<Author> mAuthorArrayList;
     private RecyclerView mAuthorRecyclerView;
     private Session mSession;
+    private Structure mStructure;
+    private TextView mAuthorTextView;
+    private TextView mNumberTextView;
+    private TextView mDescriptionTextView;
+    private TextView mMoreDescTextView;
+    private Button mAdhererButton;
 }

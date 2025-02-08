@@ -57,11 +57,12 @@
                     android:textStyle="bold"
                     android:textSize="20dp"/>
                 <TextView
-                    android:id="@+id/text_view_fragment_library_email"
+                    android:id="@+id/text_view_activity_structure_author"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="\@ninotech"/>
                 <TextView
+                    android:id="@+id/image_view_activity_structure_number"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="1,48 M d'Adhérents ° 293 Livres"/>
@@ -75,10 +76,12 @@
             android:layout_marginStart="20dp"
             android:layout_below="@id/relative_layout_structure_activity_profile">
             <TextView
+                android:id="@+id/text_view_activity_structure_description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Bienvenue sur l'struture OpenLab !"/>
             <TextView
+                android:id="@+id/text_view_activity_structure_more_desc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
@@ -98,7 +101,9 @@
                 android:id="@+id/progress_bar_register_connection"
                 style="@style/progress_bar_connection" />
             <Button
-                android:id="@+id/button_login_connection"
+                android:id="@+id/button_activity_structure_adherer"
+                android:textAllCaps="false"
+                android:gravity="center"
                 style="@style/button_adhere" />
         </RelativeLayout>
         <RelativeLayout

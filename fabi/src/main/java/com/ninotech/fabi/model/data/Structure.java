@@ -1,12 +1,16 @@
 package com.ninotech.fabi.model.data;
 
 public class Structure {
-    public Structure(String id, String cover, String name, String description, Boolean isAdhere) {
+    public Structure(String id, String cover, String name, String description, Boolean isAdhere, String banner, String author, String adhererNumber , String bookNumber) {
         mId = id;
         mCover = cover;
         mName = name;
         mDescription = description;
         this.isAdhere = isAdhere;
+        mBanner = banner;
+        mAuthor = author;
+        mAdhererNumber = adhererNumber;
+        mBookNumber = bookNumber;
     }
 
     public String getId() {
@@ -48,10 +52,44 @@ public class Structure {
     public void setAdhere(Boolean adhere) {
         isAdhere = adhere;
     }
+    public String getBanner() {
+        return mBanner;
+    }
+
+    public void setBanner(String banner) {
+        mBanner = banner;
+    }
+    public String getAuthor() {
+        return mAuthor;
+    }
+
+    public void setAuthor(String author) {
+        mAuthor = author;
+    }
+
+    public String getAdhererNumber() {
+        return mAdhererNumber;
+    }
+
+    public void setAdhererNumber(String adhererNumber) {
+        mAdhererNumber = adhererNumber;
+    }
+
+    public String getBookNumber() {
+        return mBookNumber;
+    }
+
+    public void setBookNumber(String bookNumber) {
+        mBookNumber = bookNumber;
+    }
 
     private String mId;
     private String mCover;
     private String mName;
     private String mDescription;
     private Boolean isAdhere;
+    private String mBanner;
+    private String mAuthor;
+    private String mAdhererNumber;
+    private String mBookNumber;
 }

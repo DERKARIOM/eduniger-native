@@ -131,6 +131,16 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
                 @Override
                 public void onClick(View v) {
                     Intent structureIntent = new Intent(itemView.getContext(), StructureActivity.class);
+                    structureIntent.putExtra("intent_structure_adapter_id", structure.getId());
+                    structureIntent.putExtra("intent_structure_adapter_logo", structure.getCover());
+                    structureIntent.putExtra("intent_structure_adapter_name", structure.getName());
+                    structureIntent.putExtra("intent_structure_adapter_description", structure.getDescription());
+                    structureIntent.putExtra("intent_structure_adapter_is_adhere", structure.isAdhere());
+                    structureIntent.putExtra("intent_structure_adapter_banner", structure.getBanner());
+                    structureIntent.putExtra("intent_structure_adapter_author", structure.getAuthor());
+                    structureIntent.putExtra("intent_structure_adapter_adherer_number", structure.getAdhererNumber());
+                    structureIntent.putExtra("intent_structure_adapter_book_number", structure.getBookNumber());
+
                     itemView.getContext().startActivity(structureIntent);
                 }
             });
