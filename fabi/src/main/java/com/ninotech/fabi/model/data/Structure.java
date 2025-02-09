@@ -1,7 +1,7 @@
 package com.ninotech.fabi.model.data;
 
 public class Structure {
-    public Structure(String id, String cover, String name, String description, Boolean isAdhere, String banner, String author, String adhererNumber , String bookNumber) {
+    public Structure(String id, String cover, String name, String description, Boolean isAdhere, String banner, String author, String adhererNumber , String bookNumber, String admin) {
         mId = id;
         mCover = cover;
         mName = name;
@@ -11,6 +11,7 @@ public class Structure {
         mAuthor = author;
         mAdhererNumber = adhererNumber;
         mBookNumber = bookNumber;
+        mAdmin = admin;
     }
 
     public String getId() {
@@ -82,6 +83,13 @@ public class Structure {
     public void setBookNumber(String bookNumber) {
         mBookNumber = bookNumber;
     }
+    public String getAdmin() {
+        return mAdmin;
+    }
+
+    public void setAdmin(String admin) {
+        mAdmin = admin;
+    }
 
     private String mId;
     private String mCover;
@@ -92,4 +100,5 @@ public class Structure {
     private String mAuthor;
     private String mAdhererNumber;
     private String mBookNumber;
+    private String mAdmin;
 }

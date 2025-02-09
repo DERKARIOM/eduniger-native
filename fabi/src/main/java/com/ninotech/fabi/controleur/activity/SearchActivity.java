@@ -856,7 +856,8 @@ public class SearchActivity extends AppCompatActivity {
                                     jsonArray.getJSONObject(i).getString("banner"),
                                     jsonArray.getJSONObject(i).getString("author"),
                                     jsonArray.getJSONObject(i).getString("adhererNumber"),
-                                    jsonArray.getJSONObject(i).getString("bookNumber")));
+                                    jsonArray.getJSONObject(i).getString("bookNumber"),
+                                    jsonArray.getJSONObject(i).getString("isAdmin")));
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
@@ -924,7 +925,7 @@ public class SearchActivity extends AppCompatActivity {
                                     jsonArray.getJSONObject(i).getString("banner"),
                                     jsonArray.getJSONObject(i).getString("author"),
                                     jsonArray.getJSONObject(i).getString("adhererNumber"),
-                                    jsonArray.getJSONObject(i).getString("bookNumber")));
+                                    jsonArray.getJSONObject(i).getString("bookNumber"),"0"));
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }

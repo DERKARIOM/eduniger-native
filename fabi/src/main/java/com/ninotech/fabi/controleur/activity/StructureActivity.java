@@ -72,7 +72,8 @@ public class StructureActivity extends AppCompatActivity {
                 intentStructure.getStringExtra("intent_structure_adapter_banner"),
                 intentStructure.getStringExtra("intent_structure_adapter_author"),
                 intentStructure.getStringExtra("intent_structure_adapter_adherer_number"),
-                intentStructure.getStringExtra("intent_structure_adapter_book_number")
+                intentStructure.getStringExtra("intent_structure_adapter_book_number"),
+                intentStructure.getStringExtra("intent_structure_adapter_admin")
         );
         mNameTextView.setText(mStructure.getName());
         mAuthorTextView.setText("@" + mStructure.getAuthor());
@@ -146,7 +147,8 @@ public class StructureActivity extends AppCompatActivity {
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
-                    mOnlineBookList.add(new OnlineBook("add", "addbook.png", "Ajouter un livre", "EduNiger", "oui","oui", "oui", 9,9));
+                    if(mStructure.isAdhere() && mStructure.getAdmin().equals("1"))
+                        mOnlineBookList.add(new OnlineBook("add", "addbook.png", "Ajouter un livre", "EduNiger", "oui","oui", "oui", 9,9));
                     for (int i = 0; i < jsonArray.length(); i++) {
                         try {
                             mOnlineBookList.add(new OnlineBook(jsonArray.getJSONObject(i).getString("idBook"), jsonArray.getJSONObject(i).getString("blanket"), jsonArray.getJSONObject(i).getString("bookTitle"), jsonArray.getJSONObject(i).getString("categoryTitle"), jsonArray.getJSONObject(i).getString("isPhysic"), jsonArray.getJSONObject(i).getString("electronic"), jsonArray.getJSONObject(i).getString("isAudio"), Integer.parseInt(jsonArray.getJSONObject(i).getString("numberLike")), Integer.parseInt(jsonArray.getJSONObject(i).getString("numberLike"))));

@@ -143,6 +143,7 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
                     structureIntent.putExtra("intent_structure_adapter_author", structure.getAuthor());
                     structureIntent.putExtra("intent_structure_adapter_adherer_number", structure.getAdhererNumber());
                     structureIntent.putExtra("intent_structure_adapter_book_number", structure.getBookNumber());
+                    structureIntent.putExtra("intent_structure_adapter_admin", structure.getAdmin());
 
                     itemView.getContext().startActivity(structureIntent);
                 }
