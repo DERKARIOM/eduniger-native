@@ -37,7 +37,7 @@
         android:focusable="false"
         android:selectAllOnFocus="false" />
     <ImageView
-        android:id="@+id/image_view_structure_activity_profile"
+        android:id="@+id/image_view_toolbar_main_profile"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_margin="10dp"

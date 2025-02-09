@@ -55,12 +55,10 @@ public class LibraryFragment extends Fragment {
         Cursor userCursor = mUserTable.getData(session.getIdNumber());
         userCursor.moveToFirst();
         mPhotoImageView = view.findViewById(R.id.image_view_structure_activity_profile);
-        Toast.makeText(getContext(),userCursor.getString(3) , Toast.LENGTH_SHORT).show();
-//        emailTextView.setText(userCursor.getString(3));
+        emailTextView.setText(userCursor.getString(3));
         usernameTextView.setText("Bachir Abdoul Kader");
         mPhotoImageView = view.findViewById(R.id.image_view_structure_activity_profile);
         try {
-            /*
             byte[] photoByte = userCursor.getBlob(6);
             if(photoByte != null)
             {
@@ -70,8 +68,8 @@ public class LibraryFragment extends Fragment {
                         .into(mPhotoImageView);
             }else
             {
-                mPhotoImageView = view.findViewById(R.id.image_view_fragment_library_photo);
-            } */
+                mPhotoImageView = view.findViewById(R.id.image_view_structure_activity_profile);
+            }
 
         }catch (Exception e)
         {

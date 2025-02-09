@@ -2,6 +2,7 @@ package com.ninotech.fabi.controleur.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,11 +11,15 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.ninotech.fabi.controleur.fragment.BookStoreFragment;
 import com.ninotech.fabi.controleur.fragment.LibraryFragment;
 import com.ninotech.fabi.controleur.fragment.SuggestionFragment;
@@ -26,6 +31,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.ninotech.fabi.model.table.DigitalPrintTable;
 import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.model.table.StudentTable;
+import com.ninotech.fabi.model.table.UserTable;
 
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -52,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
         mBottomNavigationView = findViewById(R.id.bottom_navigation_main);
         Toolbar toolbar = findViewById(R.id.toolbar_search);
         mEditText = findViewById(R.id.edit_text_toolbar_search);
+        mProfileImageView = findViewById(R.id.image_view_toolbar_main_profile);
         SharedPreferences sharedPreferences = getSharedPreferences("MODE", Context.MODE_PRIVATE);
         boolean nightMODE = sharedPreferences.getBoolean("night", false);
         mBookStoreFragment = new BookStoreFragment();
@@ -84,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(login);
             finish();
         }
+
         //startService(reservationService);
         try {
             if(mDigitalPrintTable.getPass().equals("0"))
@@ -97,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
         }catch (Exception e){
             Log.e("errorMainActivity",e.getMessage());
         };
+
 
         /* ########## Gestion du menu principale ########## */
 
@@ -122,8 +131,23 @@ public class MainActivity extends AppCompatActivity {
         });
         try {
             Session session = new Session(getApplicationContext());
-            StudentTable studentTable = new StudentTable(getApplicationContext());
-            if(studentTable.getIsDelegue(session.getIdNumber()).equals("0"))
+            UserTable userTable = new UserTable(getApplicationContext());
+            Cursor userCursor = userTable.getData(session.getIdNumber());
+            userCursor.moveToFirst();
+            try {
+                byte[] photoByte = userCursor.getBlob(6);
+                if(photoByte != null)
+                {
+                    Glide.with(this)
+                            .load(photoByte)
+                            .apply(RequestOptions.circleCropTransform())
+                            .into(mProfileImageView);
+                }
+            }catch (Exception e)
+            {
+                Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+            if(userTable.getIsDelegue(session.getIdNumber()).equals("0"))
                 toolbar.getMenu().getItem(2).setVisible(false);
         }catch (Exception e)
         {
@@ -240,4 +264,5 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private EditText mEditText;
+    private ImageView mProfileImageView;
 }
