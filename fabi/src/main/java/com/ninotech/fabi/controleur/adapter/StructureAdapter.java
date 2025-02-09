@@ -99,12 +99,14 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
     public static class MyViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener{
         private final ImageView mBlanketImageView;
         private final TextView mTitleTextView;
+        private final TextView mBookNumberTextView;
         private final Button mAdhereButton;
         private Session mSession;
         MyViewHolder(View itemView){
             super(itemView);
             mBlanketImageView = itemView.findViewById(R.id.image_view_adapter_structure_cover);
             mTitleTextView = itemView.findViewById(R.id.text_view_adapter_structure_title);
+            mBookNumberTextView = itemView.findViewById(R.id.image_view_adapter_structure_book_number);
             mAdhereButton = itemView.findViewById(R.id.button_adapter_structure);
             mSession = new Session(itemView.getContext());
             itemView.setOnCreateContextMenuListener(this);
@@ -127,6 +129,7 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
                     mAdhereButton.setText("Détacher");
                 }
             }
+            mBookNumberTextView.setText(structure.getBookNumber() + " Livres");
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
