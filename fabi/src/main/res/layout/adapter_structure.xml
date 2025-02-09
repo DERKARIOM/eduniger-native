@@ -5,12 +5,13 @@
     android:layout_margin="10dp">
     <ImageView
         android:id="@+id/image_view_adapter_structure_cover"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
+        android:layout_centerVertical="true"
         android:elevation="5dp"
         android:src="@mipmap/ic_fabi_round"
         android:contentDescription="@string/todo" />
@@ -31,6 +32,13 @@
             android:text="NinoLib"
             android:textStyle="bold"
             android:textSize="@dimen/size_title" />
+        <TextView
+            android:id="@+id/image_view_activity_structure_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_below="@id/text_view_adapter_structure_title"
+            android:text="293 Livres"/>
     </RelativeLayout>
     <Button
         android:id="@+id/button_adapter_structure"
