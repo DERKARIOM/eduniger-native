@@ -55,6 +55,7 @@ public class LibraryFragment extends Fragment {
         Cursor userCursor = mUserTable.getData(session.getIdNumber());
         userCursor.moveToFirst();
         mPhotoImageView = view.findViewById(R.id.image_view_structure_activity_profile);
+        Toast.makeText(getContext(),userCursor.getString(3) , Toast.LENGTH_SHORT).show();
 //        emailTextView.setText(userCursor.getString(3));
         usernameTextView.setText("Bachir Abdoul Kader");
         mPhotoImageView = view.findViewById(R.id.image_view_structure_activity_profile);

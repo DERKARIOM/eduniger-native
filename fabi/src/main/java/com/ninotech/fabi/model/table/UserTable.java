@@ -21,7 +21,7 @@ public class UserTable extends SQLiteOpenHelper {
                 "    idUser VARCHAR(256) PRIMARY KEY,\n" +
                 "    nameUser VARCHAR(256) NOT NULL,\n" +
                 "    firstNameUser VARCHAR(256) NOT NULL,\n" +
-                "    email VARCHAR(256) NOT NULL,\n" +
+                "    emailUser VARCHAR(256) NOT NULL,\n" +
                 "    password VARCHAR(256) NOT NULL,\n" +
                 "    professionUser VARCHAR(256) NOT NULL,\n" +
                 "    profileUser BLOB,\n" +
@@ -84,7 +84,7 @@ public class UserTable extends SQLiteOpenHelper {
             contentValues.put("emailUser",email);
             contentValues.put("password",password);
             contentValues.put("profileUser",profile);
-            contentValues.put("isAdmin",isAdmin);
+            contentValues.put("isAdminUser",isAdmin);
             db.insert(NAME_TABLE,null,contentValues);
             return  true;
         }catch (Exception e)
