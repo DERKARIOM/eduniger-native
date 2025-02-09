@@ -102,12 +102,12 @@ public class StructureActivity extends AppCompatActivity {
                 .transform(new RoundedTransformation(1000,4))
                 .resize(284,284)
                 .into(mProfileImageView);
-        RecommendedSyn recommendedSyn = new RecommendedSyn();
-        recommendedSyn.execute(getString(R.string.ip_server_android) + "Recommended.php", mSession.getIdNumber(),getString(R.string.app_version));
+        StructBookSyn structBookSyn = new StructBookSyn();
+        structBookSyn.execute(getString(R.string.ip_server_android) + "StructBook.php", mSession.getIdNumber(),mStructure.getId());
         AuthorSyn authorSyn = new AuthorSyn();
         authorSyn.execute(getString(R.string.ip_server_android) + "AuthorTop.php", mSession.getIdNumber());
     }
-    private class RecommendedSyn extends AsyncTask<String,Void,String> {
+    private class StructBookSyn extends AsyncTask<String,Void,String> {
         @Override
         protected String doInBackground(String... params) {
 
@@ -116,7 +116,7 @@ public class StructureActivity extends AppCompatActivity {
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
                         .addFormDataPart("idNumber", params[1])
-                        .addFormDataPart("version", params[2])
+                        .addFormDataPart("idStruct", params[2])
                         .build();
                 Request request = new Request.Builder()
                         .url(params[0])
@@ -139,7 +139,7 @@ public class StructureActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String jsonData) {
             if (jsonData != null) {
-                if (!jsonData.equals("expiresVersion")) {
+                if (!jsonData.equals("RAS")) {
                     JSONArray jsonArray = null;
                     try {
                         jsonArray = new JSONArray(jsonData);
