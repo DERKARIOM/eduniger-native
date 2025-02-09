@@ -9,20 +9,21 @@
         android:layout_margin="10dp"
         android:id="@+id/relative_layout_fragment_library_profile"
         android:layout_width="wrap_content"
+        android:layout_centerHorizontal="true"
         android:layout_height="wrap_content"
         >
         <ImageView
             android:id="@+id/image_view_structure_activity_profile"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_centerVertical="true"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_centerHorizontal="true"
             android:src="@drawable/user"
             />
         <LinearLayout
             android:layout_margin="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/image_view_structure_activity_profile"
+            android:layout_below="@id/image_view_structure_activity_profile"
             android:layout_centerVertical="true"
             android:orientation="vertical"
             >
@@ -36,6 +37,7 @@
                 android:id="@+id/text_view_fragment_library_email"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:text="2023-2024-Master-1-IFA"/>
 
         </LinearLayout>
