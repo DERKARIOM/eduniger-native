@@ -58,6 +58,7 @@ public class StructureActivity extends AppCompatActivity {
         mNumberTextView = findViewById(R.id.image_view_activity_structure_number);
         mDescriptionTextView = findViewById(R.id.text_view_activity_structure_description);
         mMoreDescTextView = findViewById(R.id.text_view_activity_structure_more_desc);
+        mMoreBookTextView = findViewById(R.id.text_view_activity_structure_more_books);
         mAdhererButton = findViewById(R.id.button_activity_structure_adherer);
         mBookRecommendedRecyclerView = findViewById(R.id.recycler_view_activity_structure_books);
         mSession = new Session(getApplicationContext());
@@ -88,6 +89,17 @@ public class StructureActivity extends AppCompatActivity {
             public void onClick(View v) {
                 mDescriptionTextView.setText(mStructure.getDescription());
                 mMoreDescTextView.setText("moin");
+            }
+        });
+
+        mMoreBookTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent searchIntent = new Intent(getApplicationContext(), SearchActivity.class);
+                searchIntent.putExtra("search_key", "ONLINE_BOOK");
+                searchIntent.putExtra("online_book_key", "STRUCTURE_ACTIVITY");
+                searchIntent.putExtra("id_struct_key",mStructure.getId());
+                startActivity(searchIntent);
             }
         });
         Picasso.get()
@@ -250,5 +262,6 @@ public class StructureActivity extends AppCompatActivity {
     private TextView mNumberTextView;
     private TextView mDescriptionTextView;
     private TextView mMoreDescTextView;
+    private TextView mMoreBookTextView;
     private Button mAdhererButton;
 }
