@@ -57,7 +57,7 @@ public class LibraryFragment extends Fragment {
         userCursor.moveToFirst();
         mPhotoImageView = view.findViewById(R.id.image_view_structure_activity_profile);
         emailTextView.setText(userCursor.getString(3));
-        usernameTextView.setText("Bachir Abdoul Kader");
+        usernameTextView.setText(userCursor.getString(2) + " " + userCursor.getString(1));
         mPhotoImageView = view.findViewById(R.id.image_view_structure_activity_profile);
         try {
             byte[] photoByte = userCursor.getBlob(6);
