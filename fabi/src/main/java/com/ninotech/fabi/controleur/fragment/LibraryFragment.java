@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.ninotech.fabi.R;
+import com.ninotech.fabi.controleur.activity.MainActivity;
 import com.ninotech.fabi.controleur.adapter.ElectronicAdapter;
 import com.ninotech.fabi.controleur.adapter.RecentAdapter;
 import com.ninotech.fabi.model.data.Library;
