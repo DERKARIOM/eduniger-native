@@ -1,14 +1,17 @@
 package com.ninotech.fabi.controleur.adapter;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.R;
+import com.ninotech.fabi.controleur.activity.AudioPlayerActivity;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
 import com.ninotech.fabi.model.data.LocalBooks;
 import com.pspdfkit.configuration.activity.PdfActivityConfiguration;
@@ -77,11 +80,10 @@ public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.MyViewHold
             mCoverImageView = (ImageView) itemView.findViewById(R.id.image_view_adapter_similar_cover);
         }
         void display(LocalBooks localBooks) throws SQLException, IOException {
-            //mCoverImageView.setImageBitmap(similarBook.getCover());
             // Convertir le Bitmap en un fichier
             File file = new File(localBooks.getCover());
 
-// Charger le fichier avec Picasso
+            // Charger le fichier avec Picasso
             Picasso.get().load(file)
                     .placeholder(R.drawable.img_default_book)
                     .error(R.drawable.img_default_book)
@@ -91,32 +93,42 @@ public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.MyViewHold
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    File file = new File(localBooks.getPDF());
-                    Uri uri = Uri.parse(Uri.fromFile(file).toString());
-                    PdfActivityConfiguration config = new PdfActivityConfiguration.Builder(itemView.getContext())
-                            .hideThumbnailGrid().setEnabledShareFeatures(ShareFeatures.none())
-                            .disablePrinting()
-                            .disablePrinting()
-                            .disableAnnotationEditing()
-                            .disableBookmarkEditing()
-                            .disableDocumentEditor()
-                            .disableAnnotationList()
-                            .scrollDirection(PageScrollDirection.VERTICAL)
-                            .scrollMode(PageScrollMode.CONTINUOUS)
-                            .disableAnnotationLimitedToPageBounds()
-                            .disableCopyPaste()
-                            .disableFormEditing()
-                            .disableContentEditing()
-                            .textSelectionEnabled(false)
-                            .enableDocumentInfoView()
-                            .setSettingsMenuItems(EnumSet.of(
-                                    SettingsMenuItemType.THEME,
-                                    SettingsMenuItemType.PAGE_LAYOUT,
-                                    SettingsMenuItemType.PAGE_TRANSITION,
-                                    SettingsMenuItemType.PRESETS
-                            ))
-                            .build();
-                    PdfActivity.showDocument(itemView.getContext(),uri,config);
+                    switch (localBooks.getFormat())
+                    {
+                        case "pdf":
+                            File file = new File(localBooks.getPDF());
+                            Uri uri = Uri.parse(Uri.fromFile(file).toString());
+                            PdfActivityConfiguration config = new PdfActivityConfiguration.Builder(itemView.getContext())
+                                    .hideThumbnailGrid().setEnabledShareFeatures(ShareFeatures.none())
+                                    .disablePrinting()
+                                    .disablePrinting()
+                                    .disableAnnotationEditing()
+                                    .disableBookmarkEditing()
+                                    .disableDocumentEditor()
+                                    .disableAnnotationList()
+                                    .scrollDirection(PageScrollDirection.VERTICAL)
+                                    .scrollMode(PageScrollMode.CONTINUOUS)
+                                    .disableAnnotationLimitedToPageBounds()
+                                    .disableCopyPaste()
+                                    .disableFormEditing()
+                                    .disableContentEditing()
+                                    .textSelectionEnabled(false)
+                                    .enableDocumentInfoView()
+                                    .setSettingsMenuItems(EnumSet.of(
+                                            SettingsMenuItemType.THEME,
+                                            SettingsMenuItemType.PAGE_LAYOUT,
+                                            SettingsMenuItemType.PAGE_TRANSITION,
+                                            SettingsMenuItemType.PRESETS
+                                    ))
+                                    .build();
+                            PdfActivity.showDocument(itemView.getContext(),uri,config);
+                            break;
+                        case "audio":
+                            Intent audioPayerIntent = new Intent(itemView.getContext(), AudioPlayerActivity.class);
+                            audioPayerIntent.putExtra("key_adapter_audio_book_id",localBooks.getId());
+                            itemView.getContext().startActivity(audioPayerIntent);
+                            break;
+                    }
                 }
             });
         }
