@@ -49,7 +49,7 @@ import com.ninotech.fabi.model.data.ElectronicDownloader;
 import com.ninotech.fabi.model.data.Talks;
 import com.ninotech.fabi.model.syn.SendComments;
 import com.ninotech.fabi.model.table.ElectronicTable;
-import com.ninotech.fabi.model.data.SimilarBook;
+import com.ninotech.fabi.model.data.LocalBooks;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
 import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.model.data.Tones;
@@ -1299,7 +1299,7 @@ public class BookActivity extends AppCompatActivity {
     private TonesAdapter mTonesAdapter;
     private List<Tones> mListTones;
     private Tones mTones;
-    private List<SimilarBook> mListSimilar;
+    private List<LocalBooks> mListSimilar;
     private Session mSession;
     private ImageView mBlanketImageView;
     private TextView mTitleTextView;

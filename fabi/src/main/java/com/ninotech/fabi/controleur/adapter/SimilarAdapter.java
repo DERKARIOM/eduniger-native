@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.ninotech.fabi.controleur.activity.BookActivity;
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
-import com.ninotech.fabi.model.data.SimilarBook;
+import com.ninotech.fabi.model.data.LocalBooks;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
@@ -19,7 +19,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class SimilarAdapter extends RecyclerView.Adapter<SimilarAdapter.MyViewHolder> {
-    List<SimilarBook> mListSimilarBook;
+    List<LocalBooks> mListLocalBooks;
 
     public int getPosition() {
         return mPosition;
@@ -30,8 +30,8 @@ public class SimilarAdapter extends RecyclerView.Adapter<SimilarAdapter.MyViewHo
     }
 
     private int mPosition;
-    public SimilarAdapter(List<SimilarBook> listSimilarBook) {
-        mListSimilarBook = listSimilarBook;
+    public SimilarAdapter(List<LocalBooks> listLocalBooks) {
+        mListLocalBooks = listLocalBooks;
     }
     @Override
     public SimilarAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -41,9 +41,9 @@ public class SimilarAdapter extends RecyclerView.Adapter<SimilarAdapter.MyViewHo
     }
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        SimilarBook item = mListSimilarBook.get(position);
+        LocalBooks item = mListLocalBooks.get(position);
         try {
-            holder.display(mListSimilarBook.get(position));
+            holder.display(mListLocalBooks.get(position));
         } catch (SQLException | IOException e) {
             throw new RuntimeException(e);
         }
@@ -51,7 +51,7 @@ public class SimilarAdapter extends RecyclerView.Adapter<SimilarAdapter.MyViewHo
     }
     @Override
     public int getItemCount() {
-        return mListSimilarBook.size();
+        return mListLocalBooks.size();
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder{
@@ -61,9 +61,9 @@ public class SimilarAdapter extends RecyclerView.Adapter<SimilarAdapter.MyViewHo
             mCoverImageView = (ImageView) itemView.findViewById(R.id.image_view_adapter_similar_cover);
         }
 
-        void display(SimilarBook similarBook) throws SQLException, IOException {
+        void display(LocalBooks localBooks) throws SQLException, IOException {
             Picasso.get()
-                    .load(itemView.getContext().getString(R.string.ip_server) + "ressources/cover/"  + similarBook.getCover())
+                    .load(itemView.getContext().getString(R.string.ip_server) + "ressources/cover/"  + localBooks.getCover())
                     .placeholder(R.drawable.img_default_book)
                     .error(R.drawable.img_default_book)
                     .transform(new RoundedTransformation(15,4))
@@ -73,7 +73,7 @@ public class SimilarAdapter extends RecyclerView.Adapter<SimilarAdapter.MyViewHo
                 @Override
                 public void onClick(View view) {
                     Intent intentLivre = new Intent(itemView.getContext(), BookActivity.class);
-                    intentLivre.putExtra("idLivre", similarBook.getId());
+                    intentLivre.putExtra("idLivre", localBooks.getId());
                     itemView.getContext().startActivity(intentLivre);
                 }
             });

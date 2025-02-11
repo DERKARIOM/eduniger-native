@@ -24,7 +24,7 @@ import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.adapter.ElectronicAdapter;
 import com.ninotech.fabi.controleur.adapter.RecentAdapter;
 import com.ninotech.fabi.model.data.Library;
-import com.ninotech.fabi.model.data.SimilarBook;
+import com.ninotech.fabi.model.data.LocalBooks;
 import com.ninotech.fabi.model.table.AudioTable;
 import com.ninotech.fabi.model.table.ElectronicTable;
 import com.ninotech.fabi.model.table.LoandTable;
@@ -57,7 +57,7 @@ public class LibraryFragment extends Fragment {
         TextView emailTextView = view.findViewById(R.id.text_view_fragment_library_email);
         mView = view.findViewById(R.id.view_fragment_library_2);
         List<Library> libraryList = new ArrayList<>();
-        List<SimilarBook> similarBookList = new ArrayList<>();
+        List<LocalBooks> localBooksList = new ArrayList<>();
         ElectronicTable electronicTable = new ElectronicTable(getContext());
         LoandTable loandTable = new LoandTable(getContext());
         AudioTable audioTable = new AudioTable(getContext());
@@ -94,24 +94,38 @@ public class LibraryFragment extends Fragment {
             }
         });
         ElectronicAdapter electronicAdapter = new ElectronicAdapter(libraryList);
-        RecentAdapter recentAdapter = new RecentAdapter(similarBookList);
+        RecentAdapter recentAdapter = new RecentAdapter(localBooksList);
         libraryList.add(new Library(1,R.drawable.img_electronic_book,getString(R.string.your_electronic_books), electronicTable.getNbrElectronic(session.getIdNumber())));
         libraryList.add(new Library(2,R.drawable.img_audio_book,getString(R.string.your_audio_books),audioTable.getNbrAudio(session.getIdNumber())));
         libraryList.add(new Library(3,R.drawable.img_loand_book,getString(R.string.your_loand_books),loandTable.getNbrLoand(session.getIdNumber())));
         libraryList.add(new Library(4,R.drawable.img_category,getString(R.string.cetegory), electronicTable.getNbrCategory(session.getIdNumber())));
         libraryList.add(new Library(5,R.drawable.img_author,getString(R.string.author), electronicTable.getNbrAuthor(session.getIdNumber())));
         try {
-            Cursor cursor = electronicTable.getData(session.getIdNumber());
-            cursor.moveToFirst();
-            do {
-                similarBookList.add(new SimilarBook(cursor.getString(2),cursor.getString(5),cursor.getString(6)));
-            }while(cursor.moveToNext());
+            int i=0;
+            Cursor cursorPdf = electronicTable.getData(session.getIdNumber());
+            if(cursorPdf.moveToFirst())
+            {
+                i++;
+                do {
+                    localBooksList.add(new LocalBooks(cursorPdf.getString(2),cursorPdf.getString(5),cursorPdf.getString(6),"pdf"));
+                }while(cursorPdf.moveToNext());
+            }
+            Cursor cursorAudio = audioTable.getData(session.getIdNumber());
+            if(cursorAudio.moveToFirst())
+            {
+                i++;
+                do {
+                    localBooksList.add(new LocalBooks(cursorAudio.getString(2),cursorAudio.getString(5),cursorAudio.getString(6),"audio"));
+                }while(cursorAudio.moveToNext());
+            }
+            if(i == 0){
+                TextView recentReadBookTextView;
+                recentReadBookTextView = view.findViewById(R.id.text_view_fragment_library_recent_read_book);
+                recentReadBookTextView.setVisibility(View.GONE);
+                mView.setVisibility(View.GONE);
+            }
         }catch (Exception e)
         {
-            TextView recentReadBookTextView;
-            recentReadBookTextView = view.findViewById(R.id.text_view_fragment_library_recent_read_book);
-            recentReadBookTextView.setVisibility(View.GONE);
-            mView.setVisibility(View.GONE);
             Log.e("errElectronicFragment",e.getMessage());
         }
 

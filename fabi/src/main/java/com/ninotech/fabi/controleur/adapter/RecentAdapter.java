@@ -1,50 +1,32 @@
 package com.ninotech.fabi.controleur.adapter;
 
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.Shader;
-import android.graphics.drawable.ShapeDrawable;
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Environment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
-import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
-import com.ninotech.fabi.model.data.Setting;
-import com.ninotech.fabi.model.data.SimilarBook;
-import com.pspdfkit.configuration.PdfConfiguration;
+import com.ninotech.fabi.model.data.LocalBooks;
 import com.pspdfkit.configuration.activity.PdfActivityConfiguration;
 import com.pspdfkit.configuration.page.PageScrollDirection;
 import com.pspdfkit.configuration.page.PageScrollMode;
 import com.pspdfkit.configuration.settings.SettingsMenuItemType;
 import com.pspdfkit.configuration.sharing.ShareFeatures;
 import com.pspdfkit.ui.PdfActivity;
-import com.pspdfkit.ui.toolbar.popup.PdfTextSelectionPopupToolbar;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.sql.SQLException;
 import java.util.EnumSet;
 import java.util.List;
 
 public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.MyViewHolder> {
-    List<SimilarBook> mListSimilarBook;
+    List<LocalBooks> mListLocalBooks;
 
     public int getPosition() {
         return mPosition;
@@ -55,8 +37,8 @@ public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.MyViewHold
     }
 
     private int mPosition;
-    public RecentAdapter(List<SimilarBook> listSimilarBook) {
-        mListSimilarBook = listSimilarBook;
+    public RecentAdapter(List<LocalBooks> listLocalBooks) {
+        mListLocalBooks = listLocalBooks;
     }
     @Override
     public RecentAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -66,9 +48,9 @@ public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.MyViewHold
     }
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        SimilarBook item = mListSimilarBook.get(position);
+        LocalBooks item = mListLocalBooks.get(position);
         try {
-            holder.display(mListSimilarBook.get(position));
+            holder.display(mListLocalBooks.get(position));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
@@ -78,7 +60,7 @@ public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.MyViewHold
     }
     @Override
     public int getItemCount() {
-        return mListSimilarBook.size();
+        return mListLocalBooks.size();
     }
 
 
@@ -94,10 +76,10 @@ public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.MyViewHold
             super(itemView);
             mCoverImageView = (ImageView) itemView.findViewById(R.id.image_view_adapter_similar_cover);
         }
-        void display(SimilarBook similarBook) throws SQLException, IOException {
+        void display(LocalBooks localBooks) throws SQLException, IOException {
             //mCoverImageView.setImageBitmap(similarBook.getCover());
             // Convertir le Bitmap en un fichier
-            File file = new File(similarBook.getCover());
+            File file = new File(localBooks.getCover());
 
 // Charger le fichier avec Picasso
             Picasso.get().load(file)
@@ -109,7 +91,7 @@ public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.MyViewHold
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    File file = new File(similarBook.getPDF());
+                    File file = new File(localBooks.getPDF());
                     Uri uri = Uri.parse(Uri.fromFile(file).toString());
                     PdfActivityConfiguration config = new PdfActivityConfiguration.Builder(itemView.getContext())
                             .hideThumbnailGrid().setEnabledShareFeatures(ShareFeatures.none())
