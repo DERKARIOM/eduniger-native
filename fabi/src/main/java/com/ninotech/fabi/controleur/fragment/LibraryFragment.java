@@ -210,7 +210,7 @@ public class LibraryFragment extends Fragment {
         });
     }
     private File convertBitmapToFile(Bitmap bitmap) throws IOException {
-        File file = new File(getActivity().getCacheDir(), "image.jpeg");
+        File file = new File(getActivity().getCacheDir(),session.getIdNumber() + ".png");
         file.createNewFile();
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
