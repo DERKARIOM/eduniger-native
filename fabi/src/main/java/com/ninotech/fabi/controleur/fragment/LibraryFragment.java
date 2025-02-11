@@ -21,7 +21,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.ninotech.fabi.R;
-import com.ninotech.fabi.controleur.activity.MainActivity;
 import com.ninotech.fabi.controleur.adapter.ElectronicAdapter;
 import com.ninotech.fabi.controleur.adapter.RecentAdapter;
 import com.ninotech.fabi.model.data.Library;
@@ -33,8 +32,19 @@ import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.model.table.UserTable;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class LibraryFragment extends Fragment {
     @Override
@@ -51,7 +61,7 @@ public class LibraryFragment extends Fragment {
         ElectronicTable electronicTable = new ElectronicTable(getContext());
         LoandTable loandTable = new LoandTable(getContext());
         AudioTable audioTable = new AudioTable(getContext());
-        Session session = new Session(getContext());
+        session = new Session(getContext());
         mUserTable = new UserTable(getContext());
         Cursor userCursor = mUserTable.getData(session.getIdNumber());
         userCursor.moveToFirst();
@@ -118,7 +128,7 @@ public class LibraryFragment extends Fragment {
             try {
                 // Récupération de l'image sélectionnée depuis la galerie
                 Bitmap imageBitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), data.getData());
-
+                mImageFile = convertBitmapToFile(imageBitmap);
                 // Compression de l'image
                 byte[] compressedImageBytes = compressImage(imageBitmap);
                 // Affichage de l'image compressée
@@ -127,6 +137,10 @@ public class LibraryFragment extends Fragment {
                         .apply(RequestOptions.circleCropTransform())
                         .into(mPhotoImageView);
                 mUserTable.setPhoto(compressedImageBytes);
+                if(mImageFile != null)
+                {
+                    uploadImage(mImageFile);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
                 Toast.makeText(getContext(), "Erreur lors du chargement de l'image." + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -162,9 +176,59 @@ public class LibraryFragment extends Fragment {
         Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(galleryIntent, REQUEST_IMAGE_GALLERY);
     }
+    private void uploadImage(File imageFile) {
+        String serverUrl = getString(R.string.ip_server) + "ressources/uploadProfile.php"; // Remplace par ton URL de serveur
+
+        OkHttpClient client = new OkHttpClient();
+
+        RequestBody requestBody = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("image", imageFile.getName(),
+                        RequestBody.create(MediaType.parse("image/jpeg"), imageFile))
+                .build();
+
+        Request request = new Request.Builder()
+                .url(serverUrl)
+                .post(requestBody)
+                .build();
+
+        client.newCall(request).enqueue(new okhttp3.Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+                requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Échec de l'upload : " + e.getMessage(), Toast.LENGTH_SHORT).show());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Image téléversée avec succès " + response.toString(), Toast.LENGTH_SHORT).show());
+                } else {
+                    requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Erreur lors de l'upload " + response.toString(), Toast.LENGTH_SHORT).show());
+                }
+            }
+        });
+    }
+    private File convertBitmapToFile(Bitmap bitmap) throws IOException {
+        File file = new File(getActivity().getCacheDir(), "image.jpeg");
+        file.createNewFile();
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+        byte[] bitmapData = bos.toByteArray();
+
+        FileOutputStream fos = new FileOutputStream(file);
+        fos.write(bitmapData);
+        fos.flush();
+        fos.close();
+
+        return file;
+    }
     private ImageView mPhotoImageView;
     private UserTable mUserTable;
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_IMAGE_GALLERY = 2;
     private View mView;
+    private File mImageFile;
+    private Session session;
 }
