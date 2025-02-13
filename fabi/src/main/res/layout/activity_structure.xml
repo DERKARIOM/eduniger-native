@@ -104,6 +104,7 @@
                 android:id="@+id/button_activity_structure_adherer"
                 android:textAllCaps="false"
                 android:gravity="center"
+                android:paddingTop="-1dp"
                 style="@style/button_adhere" />
         </RelativeLayout>
         <RelativeLayout

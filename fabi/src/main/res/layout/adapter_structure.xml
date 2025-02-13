@@ -43,12 +43,14 @@
     <Button
         android:id="@+id/button_adapter_structure"
         android:layout_width="wrap_content"
-        android:layout_height="40dp"
+        android:layout_height="33dp"
         android:text="Adhérer"
         android:textAllCaps="false"
         android:layout_margin="10dp"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:textSize="12sp"
+        android:paddingTop="-1dp"
+        android:background="@drawable/form_purple_200_radius_100dp"
         android:backgroundTint="@color/purple_200"/>
 </RelativeLayout>
