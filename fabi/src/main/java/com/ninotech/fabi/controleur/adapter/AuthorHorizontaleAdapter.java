@@ -81,6 +81,10 @@ public class AuthorHorizontaleAdapter extends RecyclerView.Adapter<AuthorHorizon
                 @Override
                 public void onClick(View v) {
                     Intent authorIntent = new Intent(itemView.getContext(), AuthorActivity.class);
+                    authorIntent.putExtra("intent_author_adapter_id",author.getIdNumber());
+                    authorIntent.putExtra("intent_author_adapter_name",author.getName());
+                    authorIntent.putExtra("intent_author_adapter_first_name",author.getFirstName());
+                    authorIntent.putExtra("intent_author_adapter_first_profile",author.getProfile());
                     itemView.getContext().startActivity(authorIntent);
                 }
             });
