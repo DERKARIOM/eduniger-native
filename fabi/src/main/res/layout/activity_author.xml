@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/whiteVert"
     tools:context="com.ninotech.fabi.controleur.activity.AuthorActivity">
 
     <RelativeLayout
@@ -33,13 +34,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
+                android:layout_gravity="center_horizontal"
                 android:textSize="20dp"/>
             <TextView
                 android:id="@+id/text_view_activity_author_email"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="2023-2024-Master-1-IFA"/>
+                android:text="Bibliographie...plus"/>
 
         </LinearLayout>
         <View
@@ -65,7 +67,7 @@
 
         <!-- TODO: Update blank fragment layout -->
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view_electronic_fragment_recent"
+            android:id="@+id/recycler_view_activity_author_books"
             android:layout_below="@+id/text_view_fragment_library_recent_read_book"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
@@ -75,13 +77,38 @@
             android:layout_height="1dp"
             android:layout_marginTop="20dp"
             android:background="@color/separator"
-            android:layout_below="@+id/recycler_view_electronic_fragment_recent"
+            android:layout_below="@+id/recycler_view_activity_author_books"
             />
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view_electronic_fragment_media"
+            android:id="@+id/recycler_view_activity_author_format_books"
             android:layout_below="@+id/view_fragment_library_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"/>
+        <View
+            android:id="@+id/view_fragment_library_3"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/separator"
+            android:layout_below="@+id/recycler_view_activity_author_format_books"
+            />
+        <TextView
+            android:id="@+id/text_view_activity_author"
+            style="@style/wrap_content_all"
+            android:layout_below="@+id/view_fragment_library_3"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="20dp"
+
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="20dp"
+            android:text="Les auteurs similaire"
+            android:textStyle="bold"
+            android:textSize="@dimen/size_title" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view_activity_author"
+            android:layout_below="@+id/text_view_activity_author"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
     </RelativeLayout>
 </androidx.core.widget.NestedScrollView>
