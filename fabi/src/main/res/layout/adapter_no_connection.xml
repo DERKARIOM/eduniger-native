@@ -2,14 +2,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
+    android:layout_centerInParent="true"
     >
     <ImageView
         android:id="@+id/image_view_adapter_no_connection_img_404"
         android:layout_width="wrap_content"
         android:layout_height="250dp"
         android:visibility="gone"
-        android:layout_centerInParent="true"
         android:layout_marginBottom="30dp"
         android:src="@drawable/img_error_404"
         android:contentDescription="@string/todo" />
@@ -18,7 +17,6 @@
         android:layout_width="wrap_content"
         android:layout_height="40dp"
         android:visibility="gone"
-        android:layout_centerInParent="true"
         android:layout_marginBottom="30dp"
         android:src="@drawable/btt_reload"
         android:layout_below="@+id/image_view_adapter_no_connection_img_404"

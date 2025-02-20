@@ -236,14 +236,14 @@ public class SearchActivity extends AppCompatActivity {
         BroadcastReceiver receiverNoConnectionAdapter = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if ("RANKING_FRAGMENT".equals(intent.getAction())) {
+                if ("BOOKS_SEARCH".equals(intent.getAction())) {
                     try {
                         ArrayList<Connection> list = new ArrayList<>();
-                        list.add(new Connection(getString(R.string.wait),"RANKING_FRAGMENT",true));
+                        list.add(new Connection(getString(R.string.wait),"BOOKS_SEARCH",true));
                         NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
                         mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                         mRecyclerView.setAdapter(noConnectionAdapter);
-                        FabiolaBookSyn rankingSyn = new FabiolaBookSyn();
+                        RankingSyn rankingSyn = new RankingSyn();
                         rankingSyn.execute(getString(R.string.ip_server_android) + "Ranking.php", mSession.getIdNumber());
                     }catch (Exception e)
                     {
@@ -253,7 +253,7 @@ public class SearchActivity extends AppCompatActivity {
                 }
             }
         };
-        registerReceiver(receiverNoConnectionAdapter, new IntentFilter("RANKING_FRAGMENT"));
+        registerReceiver(receiverNoConnectionAdapter, new IntentFilter("BOOKS_SEARCH"));
         RankingSyn rankingSyn = new RankingSyn();
         rankingSyn.execute(getString(R.string.ip_server_android) + "Ranking.php", mSession.getIdNumber());
     }
@@ -263,10 +263,10 @@ public class SearchActivity extends AppCompatActivity {
         BroadcastReceiver receiverNoConnectionAdapter = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if ("RANKING_FRAGMENT".equals(intent.getAction())) {
+                if ("STRUCT_SEARCH".equals(intent.getAction())) {
                     try {
                         ArrayList<Connection> list = new ArrayList<>();
-                        list.add(new Connection(getString(R.string.wait),"RANKING_FRAGMENT",true));
+                        list.add(new Connection(getString(R.string.wait),"STRUCT_SEARCH",true));
                         NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
                         mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                         mRecyclerView.setAdapter(noConnectionAdapter);
@@ -280,7 +280,7 @@ public class SearchActivity extends AppCompatActivity {
                 }
             }
         };
-        registerReceiver(receiverNoConnectionAdapter, new IntentFilter("RANKING_FRAGMENT"));
+        registerReceiver(receiverNoConnectionAdapter, new IntentFilter("STRUCT_SEARCH"));
         StructBookSyn structBookSyn = new StructBookSyn();
         structBookSyn.execute(getString(R.string.ip_server_android) + "StructBookMore.php", mSession.getIdNumber(),idStruct);
     }
@@ -291,10 +291,10 @@ public class SearchActivity extends AppCompatActivity {
         BroadcastReceiver receiverNoConnectionAdapter = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if ("RANKING_FRAGMENT".equals(intent.getAction())) {
+                if ("STRUCT_SEARCH".equals(intent.getAction())) {
                     try {
                         ArrayList<Connection> list = new ArrayList<>();
-                        list.add(new Connection(getString(R.string.wait),"RANKING_FRAGMENT",true));
+                        list.add(new Connection(getString(R.string.wait),"STRUCT_SEARCH",true));
                         NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
                         mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                         mRecyclerView.setAdapter(noConnectionAdapter);
@@ -310,7 +310,7 @@ public class SearchActivity extends AppCompatActivity {
                 }
             }
         };
-        registerReceiver(receiverNoConnectionAdapter, new IntentFilter("RANKING_FRAGMENT"));
+        registerReceiver(receiverNoConnectionAdapter, new IntentFilter("STRUCT_SEARCH"));
         StructureSyn structureSyn = new StructureSyn();
         structureSyn.execute(getString(R.string.ip_server_android) + "Structure.php", mSession.getIdNumber());
         StructureSyn2 structureSyn2 = new StructureSyn2();
@@ -423,7 +423,7 @@ public class SearchActivity extends AppCompatActivity {
             else
             {
                 ArrayList<Connection> list = new ArrayList<>();
-                list.add(new Connection(getString(R.string.no_connection_available),"RANKING_FRAGMENT",false));
+                list.add(new Connection(getString(R.string.no_connection_available),"BOOKS_SEARCH",false));
                 NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                 mRecyclerView.setAdapter(noConnectionAdapter);
@@ -548,7 +548,7 @@ public class SearchActivity extends AppCompatActivity {
             else
             {
                 ArrayList<Connection> list = new ArrayList<>();
-                list.add(new Connection(getString(R.string.no_connection_available),"RANKING_FRAGMENT",false));
+                list.add(new Connection(getString(R.string.no_connection_available),"STRUCT_SEARCH",false));
                 NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                 mRecyclerView.setAdapter(noConnectionAdapter);
@@ -963,10 +963,10 @@ public class SearchActivity extends AppCompatActivity {
             }
             else {
                 ArrayList<Connection> list = new ArrayList<>();
-                list.add(new Connection(getString(R.string.no_connection_available),"CATEGORY_FRAGMENT",false));
+                list.add(new Connection(getString(R.string.no_connection_available),"STRUCT_SEARCH",false));
                 NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
-                mStructureRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                mStructureRecyclerView.setAdapter(noConnectionAdapter);
+                mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                mRecyclerView.setAdapter(noConnectionAdapter);
             }
         }
     }
@@ -1030,10 +1030,10 @@ public class SearchActivity extends AppCompatActivity {
             }
             else {
                 ArrayList<Connection> list = new ArrayList<>();
-                list.add(new Connection(getString(R.string.no_connection_available),"CATEGORY_FRAGMENT",false));
+                list.add(new Connection(getString(R.string.no_connection_available),"STRUCT_SEARCH",false));
                 NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                mStructureRecyclerView.setAdapter(noConnectionAdapter);
+                mRecyclerView.setAdapter(noConnectionAdapter);
             }
         }
     }
@@ -1042,10 +1042,10 @@ public class SearchActivity extends AppCompatActivity {
         BroadcastReceiver receiverNoConnectionAdapter = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if ("RANKING_FRAGMENT".equals(intent.getAction())) {
+                if ("AUTHOR_SEARCH".equals(intent.getAction())) {
                     try {
                         ArrayList<Connection> list = new ArrayList<>();
-                        list.add(new Connection(getString(R.string.wait),"RANKING_FRAGMENT",true));
+                        list.add(new Connection(getString(R.string.wait),"AUTHOR_SEARCH",true));
                         NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
                         mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                         mRecyclerView.setAdapter(noConnectionAdapter);
@@ -1059,7 +1059,7 @@ public class SearchActivity extends AppCompatActivity {
                 }
             }
         };
-        registerReceiver(receiverNoConnectionAdapter, new IntentFilter("RANKING_FRAGMENT"));
+        registerReceiver(receiverNoConnectionAdapter, new IntentFilter("AUTHOR_SEARCH"));
         AuthorSyn authorSyn = new AuthorSyn();
         authorSyn.execute(getString(R.string.ip_server_android) + "Author.php", mSession.getIdNumber());
     }
@@ -1125,7 +1125,7 @@ public class SearchActivity extends AppCompatActivity {
             }
             else {
                 ArrayList<Connection> list = new ArrayList<>();
-                list.add(new Connection(getString(R.string.no_connection_available),"CATEGORY_FRAGMENT",false));
+                list.add(new Connection(getString(R.string.no_connection_available),"AUTHOR_SEARCH",false));
                 NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                 mRecyclerView.setAdapter(noConnectionAdapter);

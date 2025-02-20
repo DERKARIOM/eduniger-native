@@ -14,8 +14,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -59,6 +62,8 @@ public class HomeFragment extends Fragment {
         mAuthorMoreTextView = view.findViewById(R.id.text_view_recommended_more_author);
         mStructureRecyclerView = view.findViewById(R.id.recycler_view_fragment_recommended_structure);
         mAuthorRecyclerView = view.findViewById(R.id.recycler_view_author);
+        mWaitRecyclerView = view.findViewById(R.id.recycler_view_fragment_recommended_wait);
+        mNestedScrollView = view.findViewById(R.id.nested_scroll_view_fragment_home);
         mOnlineBookList = new ArrayList<>();
         mStructures = new ArrayList<>();
         mAuthorArrayList = new ArrayList<>();
@@ -67,15 +72,15 @@ public class HomeFragment extends Fragment {
         BroadcastReceiver receiverNoConnectionAdapter = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if ("RECOMMENDED_FRAGMENT".equals(intent.getAction())) {
+                if ("HOME_FRAGMENT".equals(intent.getAction())) {
                     try {
                         ArrayList<Connection> list = new ArrayList<>();
-                        list.add(new Connection(getString(R.string.wait), "RECOMMENDED_FRAGMENT", true));
+                        list.add(new Connection(getString(R.string.wait), "HOME_FRAGMENT", true));
                         NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
-                        mBookRecommendedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                        mBookRecommendedRecyclerView.setAdapter(noConnectionAdapter);
+                        mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                        mWaitRecyclerView.setAdapter(noConnectionAdapter);
                         RecommendedSyn recommendedSyn = new RecommendedSyn();
-                        recommendedSyn.execute(getString(R.string.ip_server_android) + "Recommended.php", session.getIdNumber());
+                        recommendedSyn.execute(getString(R.string.ip_server_android) + "Recommended.php", session.getIdNumber(),getString(R.string.app_version));
                         StructureSyn structureSyn = new StructureSyn();
                         structureSyn.execute(getString(R.string.ip_server_android) + "Structure.php", session.getIdNumber());
                         StructureSyn2 structureSyn2 = new StructureSyn2();
@@ -88,7 +93,8 @@ public class HomeFragment extends Fragment {
 
                 }
             }
-        };
+        };getContext().registerReceiver(receiverNoConnectionAdapter, new IntentFilter("HOME_FRAGMENT")); /* Appel de la fonction cregisterReceviver */
+
         mBookMoreTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -118,12 +124,11 @@ public class HomeFragment extends Fragment {
                 startActivity(searchIntent);
             }
         });
-        getContext().registerReceiver(receiverNoConnectionAdapter, new IntentFilter("RECOMMENDED_FRAGMENT")); /* Appel de la fonction cregisterReceviver */
         ArrayList<Connection> list = new ArrayList<>();
         list.add(new Connection(getString(R.string.wait), null, true));
         mNoConnectionAdapter = new NoConnectionAdapter(list);
-        mBookRecommendedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mBookRecommendedRecyclerView.setAdapter(mNoConnectionAdapter);
+        mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mWaitRecyclerView.setAdapter(mNoConnectionAdapter);
         if (mAccount.isSession(getContext()))
         {
             RecommendedSyn recommendedSyn = new RecommendedSyn();
@@ -176,7 +181,8 @@ public class HomeFragment extends Fragment {
                         .transform(new RoundedTransformation(200,10))
                         .resize(6200,3333)
                         .into(mWelcomeImageView);
-                mWelcomeImageView.setVisibility(View.VISIBLE);
+                mWaitRecyclerView.setVisibility(View.GONE);
+                mNestedScrollView.setVisibility(View.VISIBLE);
                 if(!jsonData.equals("expiresVersion"))
                 {
                     JSONArray jsonArray = null;
@@ -202,10 +208,10 @@ public class HomeFragment extends Fragment {
             else
             {
                 ArrayList<Connection> list = new ArrayList<>();
-                list.add(new Connection(getString(R.string.no_connection_available),"RECOMMENDED_FRAGMENT",false));
+                list.add(new Connection(getString(R.string.no_connection_available),"HOME_FRAGMENT",false));
                 NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
-                mBookRecommendedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                mBookRecommendedRecyclerView.setAdapter(noConnectionAdapter);
+                mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                mWaitRecyclerView.setAdapter(noConnectionAdapter);
             }
         }
         private void update(){
@@ -469,4 +475,6 @@ public class HomeFragment extends Fragment {
     private TextView mAuthorMoreTextView;
     private Account mAccount;
     private StructureAdapter StructAdapter;
+    private RecyclerView mWaitRecyclerView;
+    private NestedScrollView mNestedScrollView;
 }
