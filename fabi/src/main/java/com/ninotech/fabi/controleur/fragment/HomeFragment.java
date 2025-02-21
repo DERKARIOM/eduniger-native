@@ -300,16 +300,19 @@ public class HomeFragment extends Fragment {
                     }
                     for (int i=0;i<jsonArray.length();i++) {
                         try {
-                            mStructures.add(new Structure(
-                                    jsonArray.getJSONObject(i).getString("id"),
-                                    jsonArray.getJSONObject(i).getString("logo"),
-                                    jsonArray.getJSONObject(i).getString("nameStruct"),
-                                    jsonArray.getJSONObject(i).getString("description"),true,
-                                    jsonArray.getJSONObject(i).getString("banner"),
-                                    jsonArray.getJSONObject(i).getString("author"),
-                                    jsonArray.getJSONObject(i).getString("adhererNumber"),
-                                    jsonArray.getJSONObject(i).getString("bookNumber"),
-                                    jsonArray.getJSONObject(i).getString("isAdmin")));
+                            if(!isExistsS(mStructures,jsonArray.getJSONObject(i).getString("id")))
+                            {
+                                mStructures.add(new Structure(
+                                        jsonArray.getJSONObject(i).getString("id"),
+                                        jsonArray.getJSONObject(i).getString("logo"),
+                                        jsonArray.getJSONObject(i).getString("nameStruct"),
+                                        jsonArray.getJSONObject(i).getString("description"),true,
+                                        jsonArray.getJSONObject(i).getString("banner"),
+                                        jsonArray.getJSONObject(i).getString("author"),
+                                        jsonArray.getJSONObject(i).getString("adhererNumber"),
+                                        jsonArray.getJSONObject(i).getString("bookNumber"),
+                                        jsonArray.getJSONObject(i).getString("isAdmin")));
+                            }
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
