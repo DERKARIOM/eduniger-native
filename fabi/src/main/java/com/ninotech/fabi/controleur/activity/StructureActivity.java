@@ -7,6 +7,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -50,6 +51,8 @@ public class StructureActivity extends AppCompatActivity {
         Objects.requireNonNull(getSupportActionBar()).hide();
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         Intent intentStructure = getIntent();
+        mBackImageView = findViewById(R.id.image_view_toolbar_search);
+        mSearchEditText = findViewById(R.id.edit_text_toolbar_search);
         mWelcomeImageView = findViewById(R.id.image_view_structure_activity_welcome);
         mProfileImageView = findViewById(R.id.image_view_structure_activity_profile);
         mAuthorRecyclerView = findViewById(R.id.recycler_view_activity_structure_author);
@@ -76,6 +79,23 @@ public class StructureActivity extends AppCompatActivity {
                 intentStructure.getStringExtra("intent_structure_adapter_book_number"),
                 intentStructure.getStringExtra("intent_structure_adapter_admin")
         );
+        mBackImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+        mSearchEditText.setSelectAllOnFocus(false);
+        mSearchEditText.setFocusable(false);
+        mSearchEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent searchIntent = new Intent(StructureActivity.this,SearchActivity.class);
+                searchIntent.putExtra("search_key","ONLINE_BOOK");
+                searchIntent.putExtra("online_book_key","MAIN_ACTIVITY");
+                startActivity(searchIntent);
+            }
+        });
         mNameTextView.setText(mStructure.getName());
         mAuthorTextView.setText("@" + mStructure.getAuthor());
         mNumberTextView.setText(mStructure.getAdhererNumber() + " Adhérents ° " + mStructure.getBookNumber() + " Livres");
@@ -264,4 +284,6 @@ public class StructureActivity extends AppCompatActivity {
     private TextView mMoreDescTextView;
     private TextView mMoreBookTextView;
     private Button mAdhererButton;
+    private ImageView mBackImageView;
+    private EditText mSearchEditText;
 }

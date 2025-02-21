@@ -15,7 +15,7 @@
         >
         <include
             android:id="@+id/include2"
-            layout="@layout/toolbar_structure" />
+            layout="@layout/toolbar_search" />
 
         <ImageView
             android:id="@+id/image_view_structure_activity_welcome"
