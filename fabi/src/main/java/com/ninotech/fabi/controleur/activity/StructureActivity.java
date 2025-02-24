@@ -118,9 +118,10 @@ public class StructureActivity extends AppCompatActivity {
         mSearchEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent searchIntent = new Intent(StructureActivity.this,SearchActivity.class);
-                searchIntent.putExtra("search_key","ONLINE_BOOK");
-                searchIntent.putExtra("online_book_key","MAIN_ACTIVITY");
+                Intent searchIntent = new Intent(getApplicationContext(), SearchActivity.class);
+                searchIntent.putExtra("search_key", "ONLINE_BOOK");
+                searchIntent.putExtra("online_book_key", "STRUCTURE_ACTIVITY");
+                searchIntent.putExtra("id_struct_key",mStructure.getId());
                 startActivity(searchIntent);
             }
         });
