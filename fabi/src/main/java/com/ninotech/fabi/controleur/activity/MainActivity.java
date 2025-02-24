@@ -42,6 +42,7 @@ import androidx.navigation.ui.NavigationUI;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
+    private boolean isFirstLaunch = true; // Variable pour suivre le premier lancement
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -202,13 +203,12 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
 
 // Vérifier la connexion avant d'initialiser la navigation
-        if (!isConnectedToInternet()) {
+        if (isFirstLaunch && !isConnectedToInternet()) {
             navController.navigate(R.id.navigation_library);
         }
-
+        isFirstLaunch = false;
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(mBottomNavigationView, navController);
-
        // AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                // R.id.navigation_home, R.id.navigation_suggestion, R.id.navigation_library)
               //  .build();
