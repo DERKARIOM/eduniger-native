@@ -46,6 +46,7 @@ import com.ninotech.fabi.model.data.Category;
 import com.ninotech.fabi.model.data.Chat;
 import com.ninotech.fabi.model.data.Connection;
 import com.ninotech.fabi.model.data.ElectronicDownloader;
+import com.ninotech.fabi.model.data.PasswordUtil;
 import com.ninotech.fabi.model.data.Talks;
 import com.ninotech.fabi.model.table.ElectronicTable;
 import com.ninotech.fabi.model.data.LocalBooks;
@@ -1050,6 +1051,8 @@ public class BookActivity extends AppCompatActivity {
         TextView errorTextView = mReservationDialog.findViewById(R.id.text_view_dialog_reservation_error);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.delait_reservation, android.R.layout.simple_spinner_item);
         ArrayAdapter<CharSequence> adapterConsult = ArrayAdapter.createFromResource(this, R.array.delait_cosultation, android.R.layout.simple_spinner_item);
+        sendButton.setBackgroundColor(Color.parseColor("#42B998"));
+        sendButton.setBackground(getDrawable(R.drawable.form_purple_200_radius_10dp));
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         adapterConsult.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         timeLimitSpinner.setAdapter(adapter);
@@ -1069,7 +1072,7 @@ public class BookActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    if(!passwordEditText.getText().toString().equals(mSession.getPassword()))
+                    if(!PasswordUtil.hashPassword(passwordEditText.getText().toString()).equals(mSession.getPassword()))
                     {
                         errorTextView.setText(R.string.incorrect_password);
                         passwordEditText.setBackground(getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
@@ -1142,6 +1145,7 @@ public class BookActivity extends AppCompatActivity {
         }
         @Override
         protected void onPostExecute(String jsonData){
+            Toast.makeText(BookActivity.this, jsonData, Toast.LENGTH_SHORT).show();
             if(jsonData != null)
             {
                 if(jsonData.equals("true"))
@@ -1252,47 +1256,6 @@ public class BookActivity extends AppCompatActivity {
         }
     }
 
-    private void showProgressNotification(String title) {
-        final NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.mipmap.ic_fabi)
-                .setContentTitle(title)
-                .setContentText("Téléchargement en cours")
-                .setPriority(NotificationCompat.PRIORITY_LOW)
-                .setProgress(100, 0, false);
-
-        if (notificationManager != null) {
-            notificationManager.notify(notificationId, builder.build());
-        }
-
-        // Simuler une progression
-        Handler handler = new Handler(Looper.getMainLooper());
-        new Thread(() -> {
-            for (int progress = 0; progress <= 100; progress += 10) {
-                int finalProgress = progress;
-                handler.post(() -> {
-                    builder.setProgress(100, finalProgress, false);
-                    if (notificationManager != null) {
-                        notificationManager.notify(notificationId, builder.build());
-                    }
-                });
-
-                try {
-                    Thread.sleep(500); // Pause de 500 ms entre chaque progression
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            // Notification terminée
-            handler.post(() -> {
-                builder.setContentText("Téléchargement terminé")
-                        .setProgress(100, 0, false);
-                if (notificationManager != null) {
-                    notificationManager.notify(notificationId, builder.build());
-                }
-            });
-        }).start();
-    }
     public class SendComments extends AsyncTask<String,Void,String> {
         @Override
         protected String doInBackground(String... params) {
