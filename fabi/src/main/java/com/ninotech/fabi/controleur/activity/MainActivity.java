@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
@@ -193,13 +195,26 @@ public class MainActivity extends AppCompatActivity {
 
         /* La mise en place du Fragment par defeaut */
       // getSupportFragmentManager().beginTransaction().replace(R.id.Top_comtainer, mHomeFragment).commit();
-
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_home, R.id.navigation_suggestion, R.id.navigation_library)
                 .build();
+
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
+
+// Vérifier la connexion avant d'initialiser la navigation
+        if (!isConnectedToInternet()) {
+            navController.navigate(R.id.navigation_library);
+        }
+
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(mBottomNavigationView, navController);
+
+       // AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
+               // R.id.navigation_home, R.id.navigation_suggestion, R.id.navigation_library)
+              //  .build();
+        //NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
+        //NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+        //NavigationUI.setupWithNavController(mBottomNavigationView, navController);
 
         /* En Clikquant sur les boutton de la barre de navigation */
 //        mBottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
@@ -261,6 +276,14 @@ public class MainActivity extends AppCompatActivity {
 
     public void setEditText(EditText editText) {
         mEditText = editText;
+    }
+    private boolean isConnectedToInternet() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager != null) {
+            NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+            return networkInfo != null && networkInfo.isConnected();
+        }
+        return false;
     }
 
     private EditText mEditText;
