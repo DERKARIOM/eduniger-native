@@ -137,19 +137,18 @@ public class BookActivity extends AppCompatActivity {
                     switch (formatString)
                     {
                         case "audio":
-                            downloadPDFButton.setText("Terminé");
-                            downloadPdfProgressBar.setVisibility(View.VISIBLE);
-                            Toast.makeText(context, mOnlineBook.getTitle() + " Télécharger avec succès", Toast.LENGTH_SHORT).show();
+                            audioButton.setText("Terminé");
+                            downloadAudioProgressBar.setVisibility(View.GONE);
                            // succeDowloadAudioDialog("Le livre " + mTitleTextView.getText().toString() + " format audio a été téléchargé avec succès. N'hésitez pas à explorer son contenu dans l'application et contactez-nous en cas de besoin.");
 
                             break;
                         case "pdf":
                             downloadPDFButton.setText("Terminé");
                             downloadPdfProgressBar.setVisibility(View.GONE);
-                            Toast.makeText(context, mOnlineBook.getTitle() + " Télécharger avec succès", Toast.LENGTH_SHORT).show();
                             //succeDowloadPDFDialog("Le livre " + mTitleTextView.getText().toString() + " format PDF a été téléchargé avec succès. N'hésitez pas à explorer son contenu dans l'application et contactez-nous en cas de besoin.");
                             break;
                     }
+                    Toast.makeText(context, mOnlineBook.getTitle() + " Télécharger avec succès", Toast.LENGTH_SHORT).show();
                 }
             }
         };
@@ -229,8 +228,8 @@ public class BookActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Toast.makeText(BookActivity.this, "Téléchargement démarrer", Toast.LENGTH_SHORT).show();
                 //showProgressNotification(mTitleTextView.getText().toString() + " Format PDF");
-               downloadPDFButton.setText("");
-                downloadPdfProgressBar.setVisibility(View.VISIBLE);
+               downloadPDFButton.setText("En Cours...");
+                downloadPdfProgressBar.setVisibility(View.GONE);
                 ElectronicDownloader electronicDownloader = new ElectronicDownloader(getApplicationContext(),mSession.getIdNumber(), mOnlineBook);
                // Toast.makeText(BookActivity.this, mOnlineBook.getAuthor(), Toast.LENGTH_SHORT).show();
                 electronicDownloader.execute(mOnlineBook.getCover(), mOnlineBook.getElectronic(),mCategory.getCover(),mAuthor.getProfile());
@@ -239,8 +238,8 @@ public class BookActivity extends AppCompatActivity {
         audioButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                audioButton.setText("");
-                downloadAudioProgressBar.setVisibility(View.VISIBLE);
+                audioButton.setText("En Cours...");
+                downloadAudioProgressBar.setVisibility(View.GONE);
                 AudioDownloader audioDownloader = new AudioDownloader(getApplicationContext(),mSession.getIdNumber(), mOnlineBook,mTones);
                 audioDownloader.execute(mOnlineBook.getCover(), mOnlineBook.getElectronic(),mCategory.getCover(),mAuthor.getProfile(),mTones.getAudio());
             }

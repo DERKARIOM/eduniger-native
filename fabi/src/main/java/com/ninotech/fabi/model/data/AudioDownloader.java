@@ -117,6 +117,7 @@ public class AudioDownloader extends AsyncTask<String, Integer, AudioBook> {
                 .setProgress(0, 0, false)
                 .setSmallIcon(android.R.drawable.stat_sys_download_done);
         notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
+        notificationManager.cancel(NOTIFICATION_ID);
         Intent finishDownloadIntent = new Intent("ACTION_FINISH_DOWNLOAD");
         finishDownloadIntent.putExtra("format","audio");
         mContext.sendBroadcast(finishDownloadIntent);
