@@ -485,7 +485,7 @@ public class BookActivity extends AppCompatActivity {
                     }
                     for (int i=0;i<jsonArray.length();i++) {
                         try {
-                            mTalksList.add(new Talks(jsonArray.getJSONObject(i).getString("profile"),jsonArray.getJSONObject(i).getString("name") + " " + jsonArray.getJSONObject(i).getString("firstName"),jsonArray.getJSONObject(i).getString("message")));
+                            mTalksList.add(new Talks(jsonArray.getJSONObject(i).getString("idUser") + ".png",jsonArray.getJSONObject(i).getString("name") + " " + jsonArray.getJSONObject(i).getString("firstName"),jsonArray.getJSONObject(i).getString("message")));
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
