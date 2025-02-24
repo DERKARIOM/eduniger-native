@@ -137,10 +137,17 @@ public class BookActivity extends AppCompatActivity {
                     switch (formatString)
                     {
                         case "audio":
-                            succeDowloadAudioDialog("Le livre " + mTitleTextView.getText().toString() + " format audio a été téléchargé avec succès. N'hésitez pas à explorer son contenu dans l'application et contactez-nous en cas de besoin.");
+                            downloadPDFButton.setText("Terminé");
+                            downloadPdfProgressBar.setVisibility(View.VISIBLE);
+                            Toast.makeText(context, mOnlineBook.getTitle() + " Télécharger avec succès", Toast.LENGTH_SHORT).show();
+                           // succeDowloadAudioDialog("Le livre " + mTitleTextView.getText().toString() + " format audio a été téléchargé avec succès. N'hésitez pas à explorer son contenu dans l'application et contactez-nous en cas de besoin.");
+
                             break;
                         case "pdf":
-                            succeDowloadPDFDialog("Le livre " + mTitleTextView.getText().toString() + " format PDF a été téléchargé avec succès. N'hésitez pas à explorer son contenu dans l'application et contactez-nous en cas de besoin.");
+                            downloadPDFButton.setText("Terminé");
+                            downloadPdfProgressBar.setVisibility(View.GONE);
+                            Toast.makeText(context, mOnlineBook.getTitle() + " Télécharger avec succès", Toast.LENGTH_SHORT).show();
+                            //succeDowloadPDFDialog("Le livre " + mTitleTextView.getText().toString() + " format PDF a été téléchargé avec succès. N'hésitez pas à explorer son contenu dans l'application et contactez-nous en cas de besoin.");
                             break;
                     }
                 }
@@ -1341,4 +1348,5 @@ public class BookActivity extends AppCompatActivity {
     private static final String CHANNEL_ID = "progress_channel";
     private NotificationManager notificationManager;
     private int notificationId = 1;
+    private boolean isDownloading = true;
 }
