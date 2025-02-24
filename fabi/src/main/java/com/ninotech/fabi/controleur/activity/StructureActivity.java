@@ -1,10 +1,14 @@
 package com.ninotech.fabi.controleur.activity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.ColorStateList;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,6 +26,7 @@ import com.ninotech.fabi.controleur.adapter.AuthorHorizontaleAdapter;
 import com.ninotech.fabi.controleur.adapter.HorizontaleAdapter;
 import com.ninotech.fabi.controleur.adapter.NoConnectionAdapter;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
+import com.ninotech.fabi.controleur.fragment.BooksFragment;
 import com.ninotech.fabi.model.data.Author;
 import com.ninotech.fabi.model.data.Connection;
 import com.ninotech.fabi.model.data.OnlineBook;
@@ -79,6 +84,29 @@ public class StructureActivity extends AppCompatActivity {
                 intentStructure.getStringExtra("intent_structure_adapter_book_number"),
                 intentStructure.getStringExtra("intent_structure_adapter_admin")
         );
+        BroadcastReceiver receiverNoConnectionAdapter = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if ("STRUCTURE_ACTIVITY".equals(intent.getAction())) {
+                    try {
+                        ArrayList<Connection> list = new ArrayList<>();
+                        list.add(new Connection(getString(R.string.wait),"STRUCTURE_ACTIVITY",true));
+                        NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
+                        mBookRecommendedRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                        mBookRecommendedRecyclerView.setAdapter(noConnectionAdapter);
+                        StructBookSyn structBookSyn = new StructBookSyn();
+                        structBookSyn.execute(getString(R.string.ip_server_android) + "StructBook.php", mSession.getIdNumber(),mStructure.getId());
+                        AuthorSyn authorSyn = new AuthorSyn();
+                        authorSyn.execute(getString(R.string.ip_server_android) + "AuthorTop.php", mSession.getIdNumber());
+                    }catch (Exception e)
+                    {
+                        Log.e("errRankingFragment",e.getMessage());
+                    }
+
+                }
+            }
+        };
+        registerReceiver(receiverNoConnectionAdapter, new IntentFilter("STRUCTURE_ACTIVITY"));
         mBackImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -194,7 +222,7 @@ public class StructureActivity extends AppCompatActivity {
                 }
             } else {
                 ArrayList<Connection> list = new ArrayList<>();
-                list.add(new Connection(getString(R.string.no_connection_available), "RECOMMENDED_FRAGMENT", false));
+                list.add(new Connection(getString(R.string.no_connection_available), "STRUCTURE_ACTIVITY", false));
                 NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
                 mBookRecommendedRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                 mBookRecommendedRecyclerView.setAdapter(noConnectionAdapter);
