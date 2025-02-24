@@ -47,7 +47,6 @@ import com.ninotech.fabi.model.data.Chat;
 import com.ninotech.fabi.model.data.Connection;
 import com.ninotech.fabi.model.data.ElectronicDownloader;
 import com.ninotech.fabi.model.data.Talks;
-import com.ninotech.fabi.model.syn.SendComments;
 import com.ninotech.fabi.model.table.ElectronicTable;
 import com.ninotech.fabi.model.data.LocalBooks;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
@@ -318,7 +317,7 @@ public class BookActivity extends AppCompatActivity {
                 {
                     Chat chat = new Chat(mSession.getIdNumber(),getApplicationContext(),mMessageTextView.getText().toString());
                     mMessageTextView.setText("");
-                    mTalksList.add(new Talks("user.png",chat.getUserName(),chat.getMessage()));
+                    mTalksList.add(new Talks(mSession.getIdNumber() + ".png",chat.getUserName(),chat.getMessage()));
                     TalksAdapter talksAdapter = new TalksAdapter(mTalksList);
                     mCommentsRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                     mCommentsRecyclerView.setAdapter(talksAdapter);
@@ -328,6 +327,7 @@ public class BookActivity extends AppCompatActivity {
                 }
             }
         });
+
     }
     @Override
     public void onDestroy() {
@@ -1292,6 +1292,40 @@ public class BookActivity extends AppCompatActivity {
                 }
             });
         }).start();
+    }
+    public class SendComments extends AsyncTask<String,Void,String> {
+        @Override
+        protected String doInBackground(String... params) {
+            try {
+                OkHttpClient client = new OkHttpClient();
+                RequestBody requestBody = new MultipartBody.Builder()
+                        .setType(MultipartBody.FORM)
+                        .addFormDataPart("idNumber",params[1])
+                        .addFormDataPart("idBook",params[2])
+                        .addFormDataPart("message",params[3])
+                        .build();
+                Request request = new Request.Builder()
+                        .url(params[0])
+                        .post(requestBody)
+                        .build();
+                try {
+                    Response response = client.newCall(request).execute();
+                    assert response.body() != null;
+                    return response.body().string();
+                }catch (IOException e)
+                {
+                    Log.e("errSendComments",e.getMessage());
+                }
+
+            }catch (Exception e)
+            {
+                return null;
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(String jsonData){
+        }
     }
     private LinearLayout mReservationLinearLayout;
     private LinearLayout mAudioLinearLayout;

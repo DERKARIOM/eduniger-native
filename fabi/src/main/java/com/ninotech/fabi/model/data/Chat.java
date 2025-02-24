@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 
 import com.ninotech.fabi.model.table.StudentTable;
+import com.ninotech.fabi.model.table.UserTable;
 
 public class Chat {
     public Chat(String profile, String userName, String message, boolean isChat) {
@@ -14,11 +15,10 @@ public class Chat {
     }
     public Chat(String idNumber , Context context , String message)
     {
-        StudentTable studentTable = new StudentTable(context);
-        Cursor cursor = studentTable.getData(idNumber);
+        UserTable userTable = new UserTable(context);
+        Cursor cursor = userTable.getData(idNumber);
         cursor.moveToFirst();
         mUserName = cursor.getString(1) + " " +cursor.getString(2);
-//        mProfile = cursor.getString(6);
         mMessage = message;
     }
     public String getProfile() {
