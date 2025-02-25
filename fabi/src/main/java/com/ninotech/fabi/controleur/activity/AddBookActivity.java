@@ -6,17 +6,18 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
@@ -36,6 +37,16 @@ public class AddBookActivity extends AppCompatActivity {
         mStructureSpinner = findViewById(R.id.spinner_activity_add_book_structure);
         mCategorySpinner = findViewById(R.id.spinner_activity_add_book_cotegory);
         mCoverImageView = findViewById(R.id.image_view_activity_add_book_cover);
+        mIdBookEditText = findViewById(R.id.edit_text_activity_add_book_id_book);
+        mTitleEditText = findViewById(R.id.edit_text_activity_add_book_title);
+        mDescriptionEditText = findViewById(R.id.edit_text_activity_add_book_description);
+        mIdAuthorEditText = findViewById(R.id.edit_text_activity_add_book_id_author);
+        mIsPhysiqueCheckBox = findViewById(R.id.check_box_activity_add_book_is_physique);
+        mIsPdfCheckBox = findViewById(R.id.check_box_activity_add_book_is_pdf);
+        mIsAudioCheckBox = findViewById(R.id.check_box_activity_add_book_is_audio);
+        mErrorTextView = findViewById(R.id.text_view_activity_add_book_error);
+        mWaitProgressBar = findViewById(R.id.progress_bar_activity_add_book_whait);
+        mAddButton = findViewById(R.id.button_activity_add_book);
         Picasso.get()
                 .load(R.drawable.img_add_cover)
                 .placeholder(R.drawable.img_default_book)
@@ -96,4 +107,14 @@ public class AddBookActivity extends AppCompatActivity {
     private ImageView mCoverImageView;
     private Spinner mStructureSpinner;
     private Spinner mCategorySpinner;
+    private EditText mIdBookEditText;
+    private EditText mTitleEditText;
+    private EditText mDescriptionEditText;
+    private EditText mIdAuthorEditText;
+    private CheckBox mIsPhysiqueCheckBox;
+    private CheckBox mIsPdfCheckBox;
+    private CheckBox mIsAudioCheckBox;
+    private TextView mErrorTextView;
+    private ProgressBar mWaitProgressBar;
+    private Button mAddButton;
 }

@@ -34,17 +34,40 @@
 
             android:layout_marginBottom="40dp"
             android:orientation="vertical">
-
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ID"
+                android:textSize="@dimen/size_title"
+                android:textStyle="bold"
+                android:layout_marginStart="30dp"
+                android:textColor="@color/black"/>
+            <EditText
+                android:id="@+id/edit_text_activity_add_book_id_book"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="25dp"
+                android:backgroundTint="@color/purple_200"
+                android:layout_marginEnd="25dp"
+                android:layout_marginBottom="20dp"
+                android:fontFamily="@font/apple1"
+                android:hint="Saisir le ID du livre"
+                android:inputType="textMultiLine"
+                android:paddingBottom="15dp"
+                android:paddingTop="15dp"
+                android:scrollbars="vertical"
+                android:autofillHints="" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Titre"
                 android:textSize="@dimen/size_title"
                 android:textStyle="bold"
+                android:layout_marginTop="10dp"
                 android:layout_marginStart="30dp"
                 android:textColor="@color/black"/>
             <EditText
-                android:id="@+id/edit_text_fragment_my_information_name"
+                android:id="@+id/edit_text_activity_add_book_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="25dp"
@@ -62,12 +85,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Description"
+                android:layout_marginTop="10dp"
                 android:textSize="@dimen/size_title"
                 android:textStyle="bold"
                 android:layout_marginStart="30dp"
                 android:textColor="@color/black"/>
             <EditText
-                android:id="@+id/edit_text_fragment_my_information_first_name"
+                android:id="@+id/edit_text_activity_add_book_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="25dp"
@@ -81,6 +105,87 @@
                 android:paddingTop="15dp"
                 android:scrollbars="vertical"
                 android:autofillHints="" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ID Author"
+                android:textSize="@dimen/size_title"
+                android:layout_marginTop="10dp"
+                android:textStyle="bold"
+                android:layout_marginStart="30dp"
+                android:textColor="@color/black"/>
+            <EditText
+                android:id="@+id/edit_text_activity_add_book_id_author"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="25dp"
+                android:backgroundTint="@color/purple_200"
+                android:layout_marginEnd="25dp"
+                android:layout_marginBottom="20dp"
+                android:fontFamily="@font/apple1"
+                android:hint="Saisir le ID de l'auteur"
+                android:inputType="textMultiLine"
+                android:paddingBottom="15dp"
+                android:paddingTop="15dp"
+                android:scrollbars="vertical"
+                android:autofillHints="" />
+            <LinearLayout
+                style="@style/match_wrap"
+                android:layout_marginEnd="5dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="25dp"
+                >
+                <TextView
+                    style="@style/wrap_content_all"
+                    android:fontFamily="@font/apple1"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    android:text="Cochez cette case si vous avez le format Physique."
+                    />
+                <CheckBox
+                    android:id="@+id/check_box_activity_add_book_is_physique"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"/>
+            </LinearLayout>
+            <LinearLayout
+                style="@style/match_wrap"
+                android:layout_marginEnd="5dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="25dp"
+                >
+                <TextView
+                    style="@style/wrap_content_all"
+                    android:fontFamily="@font/apple1"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    android:text="Le format électronique."
+                    />
+                <CheckBox
+                    android:id="@+id/check_box_activity_add_book_is_pdf"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"/>
+            </LinearLayout>
+            <LinearLayout
+                style="@style/match_wrap"
+                android:layout_marginEnd="5dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="25dp"
+                >
+                <TextView
+                    style="@style/wrap_content_all"
+                    android:fontFamily="@font/apple1"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    android:text="Le format audio."
+                    />
+                <CheckBox
+                    android:id="@+id/check_box_activity_add_book_is_audio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"/>
+            </LinearLayout>
             <Spinner
                 android:id="@+id/spinner_activity_add_book_cotegory"
                 android:layout_width="match_parent"
@@ -91,7 +196,8 @@
                 android:layout_marginEnd="20dp"
                 android:fontFamily="sans-serif-smallcaps"
                 android:gravity="center"
-                android:backgroundTint="@color/purple_200"
+
+                android:background="@drawable/forme_white_radius_100dp_border_vert"
                 android:paddingTop="15dp"
                 android:paddingBottom="15dp"/>
             <Spinner
@@ -104,20 +210,38 @@
                 android:layout_marginEnd="20dp"
                 android:fontFamily="sans-serif-smallcaps"
                 android:gravity="center"
-                android:backgroundTint="@color/purple_200"
+               android:background="@drawable/forme_white_radius_100dp_border_vert"
                 android:paddingTop="15dp"
                 android:paddingBottom="15dp"/>
-            <RelativeLayout
-                android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/text_view_activity_add_book_error"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="30dp"
+                android:gravity="center"
+                android:layout_marginBottom="10dp"
+                android:text=""
+                android:textColor="@color/rouge"
+                android:textSize="@dimen/size_sub_title" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="10dp"
-                android:layout_marginEnd="30dp"
+                android:layout_marginEnd="20dp"
                 >
+                <TextView
+                    android:id="@+id/text_view_activity_suggestion_error"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_marginBottom="10dp"
+                    android:text=""
+                    android:textColor="@color/rouge"
+                    android:textSize="@dimen/size_sub_title" />
 
                 <ProgressBar
-                    android:id="@+id/progress_bar_fragment_my_information_connection"
+                    android:id="@+id/progress_bar_activity_add_book_whait"
                     style="@android:style/Widget.Holo.ProgressBar.Small"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
@@ -129,7 +253,7 @@
                     android:visibility="invisible"
                     android:progressDrawable="@drawable/form_circular_bar_connexion" />
                 <Button
-                    android:id="@+id/button_fragment_my_information_send"
+                    android:id="@+id/button_activity_add_book"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"

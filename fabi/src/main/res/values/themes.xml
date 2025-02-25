@@ -22,7 +22,6 @@
         <!-- PSPDFKit comes with several styleable components. -->
     </style>
 
-
 <!-- Le themes de formulaire(EditText) du type register et login -->
     <style name="edit_text_register">
         <item name="android:layout_width">match_parent</item>
