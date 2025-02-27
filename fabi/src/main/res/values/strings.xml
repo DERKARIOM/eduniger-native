@@ -89,9 +89,15 @@
     </string-array>
     <string-array name="array_categoty">
         <item>Categorie</item>
+        <item>Mathématique</item>
         <item>Informatique</item>
-        <item>Maths</item>
-        <item>Culture générale</item>
+        <item>Physique</item>
+        <item>Biochimie</item>
+        <item>Biologie</item>
+        <item>Chimie</item>
+        <item>Geologie</item>
+        <item>Entrepreneuriat</item>
+        <item>Culture</item>
     </string-array>
     <string name="large_text">
         "Material is the metaphor.\n\n"

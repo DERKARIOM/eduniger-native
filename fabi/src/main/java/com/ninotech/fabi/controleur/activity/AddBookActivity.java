@@ -100,7 +100,11 @@ public class AddBookActivity extends AppCompatActivity {
                         mBook.getTitle(),
                         mBook.getDescription(),
                         mBook.getAuthor(),
-                        "1","1","1");
+                        boolToString(mIsPhysiqueCheckBox.isChecked()),
+                        boolToString(mIsPdfCheckBox.isChecked()),
+                        boolToString(mIsAudioCheckBox.isChecked()),
+                        String.valueOf(mCategorySpinner.getSelectedItemPosition()),
+                        String.valueOf(mStructureSpinner.getSelectedItemPosition()));
             }
         });
     }
@@ -151,6 +155,8 @@ public class AddBookActivity extends AppCompatActivity {
                         .addFormDataPart("isPhysique",params[6])
                         .addFormDataPart("isPdf",params[7])
                         .addFormDataPart("isAudio",params[8])
+                        .addFormDataPart("idCategory",params[9])
+                        .addFormDataPart("idStruct",params[10])
                         .build();
                 Request request = new Request.Builder()
                         .url(params[0])
@@ -208,6 +214,13 @@ public class AddBookActivity extends AppCompatActivity {
             }
         });
         simpleOkDialog.build();
+    }
+    String boolToString(boolean bool)
+    {
+        if (bool)
+            return "1";
+        else
+            return "0";
     }
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_IMAGE_GALLERY = 2;
