@@ -21,6 +21,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
+import com.ninotech.fabi.model.data.Book;
 import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
@@ -67,6 +68,18 @@ public class AddBookActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 openGallery();
+            }
+        });
+
+        mAddButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(AddBookActivity.this, "ok", Toast.LENGTH_SHORT).show();
+                mBook = new Book(mIdBookEditText.getText().toString(),
+                        mTitleEditText.getText().toString(),
+                        String.valueOf(mCategorySpinner.getSelectedItemPosition()),
+                        mIdAuthorEditText.getText().toString(),
+                        mDescriptionEditText.getText().toString());
             }
         });
     }
@@ -117,4 +130,5 @@ public class AddBookActivity extends AppCompatActivity {
     private TextView mErrorTextView;
     private ProgressBar mWaitProgressBar;
     private Button mAddButton;
+    private Book mBook;
 }
