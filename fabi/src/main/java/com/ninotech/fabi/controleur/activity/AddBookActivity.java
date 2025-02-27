@@ -2,8 +2,12 @@ package com.ninotech.fabi.controleur.activity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -21,11 +25,20 @@ import androidx.appcompat.app.AppCompatDelegate;
 
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
+import com.ninotech.fabi.controleur.dialog.SimpleOkDialog;
 import com.ninotech.fabi.model.data.Book;
+import com.ninotech.fabi.model.table.Session;
 import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Objects;
+
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class AddBookActivity extends AppCompatActivity {
 
@@ -48,6 +61,7 @@ public class AddBookActivity extends AppCompatActivity {
         mErrorTextView = findViewById(R.id.text_view_activity_add_book_error);
         mWaitProgressBar = findViewById(R.id.progress_bar_activity_add_book_whait);
         mAddButton = findViewById(R.id.button_activity_add_book);
+        mSession = new Session(getApplicationContext());
         Picasso.get()
                 .load(R.drawable.img_add_cover)
                 .placeholder(R.drawable.img_default_book)
@@ -74,12 +88,19 @@ public class AddBookActivity extends AppCompatActivity {
         mAddButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(AddBookActivity.this, "ok", Toast.LENGTH_SHORT).show();
                 mBook = new Book(mIdBookEditText.getText().toString(),
                         mTitleEditText.getText().toString(),
                         String.valueOf(mCategorySpinner.getSelectedItemPosition()),
                         mIdAuthorEditText.getText().toString(),
                         mDescriptionEditText.getText().toString());
+                AddBookSyn addBookSyn = new AddBookSyn();
+                addBookSyn.execute(getString(R.string.ip_server_android) + "AddBook.php",
+                        mSession.getIdNumber(),
+                        mBook.getId(),
+                        mBook.getTitle(),
+                        mBook.getDescription(),
+                        mBook.getAuthor(),
+                        "1","1","1");
             }
         });
     }
@@ -115,6 +136,79 @@ public class AddBookActivity extends AppCompatActivity {
             mCoverImageView.setImageBitmap(imageBitmap);
         }
     }
+    private class AddBookSyn extends AsyncTask<String,Void,String> {
+        @Override
+        protected String doInBackground(String... params) {
+            try {
+                OkHttpClient client = new OkHttpClient();
+                RequestBody requestBody = new MultipartBody.Builder()
+                        .setType(MultipartBody.FORM)
+                        .addFormDataPart("idNumber",params[1])
+                        .addFormDataPart("idBook", params[2])
+                        .addFormDataPart("title", params[3])
+                        .addFormDataPart("description",params[4])
+                        .addFormDataPart("idAuthor",params[5])
+                        .addFormDataPart("isPhysique",params[6])
+                        .addFormDataPart("isPdf",params[7])
+                        .addFormDataPart("isAudio",params[8])
+                        .build();
+                Request request = new Request.Builder()
+                        .url(params[0])
+                        .post(requestBody)
+                        .build();
+                try {
+                    Response response = client.newCall(request).execute();
+                    assert response.body() != null;
+                    return response.body().string();
+                }catch (IOException e)
+                {
+                    Log.e("errorAddBookActivity",e.getMessage());
+                }
+
+            }catch (Exception e)
+            {
+                Log.e("errorAddBookActivity",e.getMessage());
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(String response){
+            //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
+            Toast.makeText(AddBookActivity.this, response, Toast.LENGTH_SHORT).show();
+            if(response != null)
+            {
+                if(response.equals("true"))
+                {
+                    SuccessSuggestionDialog();
+                    mWaitProgressBar.setVisibility(View.INVISIBLE);
+                    mAddButton.setText("Ajouter");
+                }
+            }
+            else
+            {
+                mErrorTextView.setText(R.string.no_connection);
+                mWaitProgressBar.setVisibility(View.INVISIBLE);
+                mAddButton.setText("Ajouter");
+            }
+
+        }
+    }
+    private void SuccessSuggestionDialog(){
+        SimpleOkDialog simpleOkDialog = new SimpleOkDialog(this);
+        simpleOkDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        simpleOkDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        TextView okTextView = simpleOkDialog.findViewById(R.id.text_view_dialog_simple_ok);
+        TextView messageTextView = simpleOkDialog.findViewById(R.id.text_view_dialog_simple_ok_message);
+        messageTextView.setText(R.string.suggestion_message_dialog);
+        okTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mErrorTextView.setText("");
+                simpleOkDialog.cancel();
+            }
+        });
+        simpleOkDialog.build();
+    }
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_IMAGE_GALLERY = 2;
     private ImageView mCoverImageView;
@@ -131,4 +225,5 @@ public class AddBookActivity extends AppCompatActivity {
     private ProgressBar mWaitProgressBar;
     private Button mAddButton;
     private Book mBook;
+    private Session mSession;
 }
