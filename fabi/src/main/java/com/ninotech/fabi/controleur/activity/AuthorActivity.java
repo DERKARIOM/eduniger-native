@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.R;
+import com.ninotech.fabi.controleur.adapter.AuthorFormatBookAdapter;
 import com.ninotech.fabi.controleur.adapter.AuthorHorizontaleAdapter;
 import com.ninotech.fabi.controleur.adapter.ElectronicAdapter;
 import com.ninotech.fabi.controleur.adapter.HorizontaleAdapter;
@@ -52,16 +53,9 @@ public class AuthorActivity extends AppCompatActivity {
         mBooksRecyclerView = findViewById(R.id.recycler_view_activity_author_books);
         mAuthorRecyclerView = findViewById(R.id.recycler_view_activity_author);
         mSession = new Session(getApplicationContext());
-        RecyclerView recyclerView = findViewById(R.id.recycler_view_activity_author_format_books);
-        List<Library> libraryList = new ArrayList<>();
+        mAuthorFormatBookRecyclerView = findViewById(R.id.recycler_view_activity_author_format_books);
         mAuthorArrayList = new ArrayList<>();
-        ElectronicAdapter electronicAdapter = new ElectronicAdapter(libraryList);
-        libraryList.add(new Library(1,R.drawable.img_electronic_book,"Mes livres électronique", 0));
-        libraryList.add(new Library(2,R.drawable.img_audio_book,"Mes livres audio",0));
-        libraryList.add(new Library(3,R.drawable.img_loand_book,"Mes livres physique",0));
         mOnlineBookList = new ArrayList<>();
-        recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        recyclerView.setAdapter(electronicAdapter);
         Intent authorIntent = getIntent();
         mAuthor = new Author(
                 authorIntent.getStringExtra("intent_author_adapter_id"),
@@ -114,6 +108,7 @@ public class AuthorActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String jsonData) {
             if (jsonData != null) {
+                int nbrElectronic=0,nbrAudio=0,nbrPhysique=0;
                 if(!jsonData.equals("RAS"))
                 {
                     JSONArray jsonArray = null;
@@ -125,6 +120,12 @@ public class AuthorActivity extends AppCompatActivity {
                     for (int i = 0; i < jsonArray.length(); i++) {
                         try {
                             mOnlineBookList.add(new OnlineBook(jsonArray.getJSONObject(i).getString("idBook"), jsonArray.getJSONObject(i).getString("blanket"), jsonArray.getJSONObject(i).getString("bookTitle"), jsonArray.getJSONObject(i).getString("categoryTitle"), jsonArray.getJSONObject(i).getString("isPhysic"), jsonArray.getJSONObject(i).getString("electronic"), jsonArray.getJSONObject(i).getString("isAudio"), Integer.parseInt(jsonArray.getJSONObject(i).getString("numberLike")), Integer.parseInt(jsonArray.getJSONObject(i).getString("numberNoLike"))));
+                            if(!mOnlineBookList.get(i).getElectronic().equals("null"))
+                                nbrElectronic++;
+                            if (mOnlineBookList.get(i).getIsAudio().equals("1"))
+                                nbrAudio++;
+                            if (mOnlineBookList.get(i).getIsPhysic().equals("1"))
+                                nbrPhysique++;
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
@@ -133,6 +134,13 @@ public class AuthorActivity extends AppCompatActivity {
                     mBooksRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false));
                     mBooksRecyclerView.setAdapter(horizontaleAdapter);
                 }
+                List<Library> libraryList = new ArrayList<>();
+                AuthorFormatBookAdapter electronicAdapter = new AuthorFormatBookAdapter(libraryList);
+                libraryList.add(new Library(1,R.drawable.img_electronic_book,"Mes livres électronique", nbrElectronic));
+                libraryList.add(new Library(2,R.drawable.img_audio_book,"Mes livres audio",nbrAudio));
+                libraryList.add(new Library(3,R.drawable.img_loand_book,"Mes livres physique",nbrPhysique));
+                mAuthorFormatBookRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                mAuthorFormatBookRecyclerView.setAdapter(electronicAdapter);
             } else {
                 ArrayList<Connection> list = new ArrayList<>();
                 list.add(new Connection(getString(R.string.no_connection_available), "RECOMMENDED_FRAGMENT", false));
@@ -209,4 +217,5 @@ public class AuthorActivity extends AppCompatActivity {
     private ArrayList<Author> mAuthorArrayList;
     private RecyclerView mAuthorRecyclerView;
     private Session mSession;
+    private RecyclerView mAuthorFormatBookRecyclerView;
 }
