@@ -17,13 +17,12 @@ import com.ninotech.fabi.controleur.adapter.AuthorHorizontaleAdapter;
 import com.ninotech.fabi.controleur.adapter.ElectronicAdapter;
 import com.ninotech.fabi.controleur.adapter.HorizontaleAdapter;
 import com.ninotech.fabi.controleur.adapter.NoConnectionAdapter;
-import com.ninotech.fabi.controleur.adapter.RecentAdapter;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
-import com.ninotech.fabi.controleur.fragment.HomeFragment;
 import com.ninotech.fabi.model.data.Author;
 import com.ninotech.fabi.model.data.Connection;
 import com.ninotech.fabi.model.data.Library;
 import com.ninotech.fabi.model.data.OnlineBook;
+import com.ninotech.fabi.model.table.Session;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -52,6 +51,7 @@ public class AuthorActivity extends AppCompatActivity {
         mUsernameTextView = findViewById(R.id.text_view_activity_author_username);
         mBooksRecyclerView = findViewById(R.id.recycler_view_activity_author_books);
         mAuthorRecyclerView = findViewById(R.id.recycler_view_activity_author);
+        mSession = new Session(getApplicationContext());
         RecyclerView recyclerView = findViewById(R.id.recycler_view_activity_author_format_books);
         List<Library> libraryList = new ArrayList<>();
         mAuthorArrayList = new ArrayList<>();
@@ -77,12 +77,12 @@ public class AuthorActivity extends AppCompatActivity {
                 .resize(384,384)
                 .into(mProfileImageView);
         mUsernameTextView.setText(mAuthor.getFirstName() + " " + mAuthor.getName());
-        RecommendedSyn recommendedSyn = new RecommendedSyn();
-        recommendedSyn.execute(getString(R.string.ip_server_android) + "Recommended.php", "94961793",getString(R.string.app_version));
+        AuthorBookSyn authorBookSyn = new AuthorBookSyn();
+        authorBookSyn.execute(getString(R.string.ip_server_android) + "AuthorBook.php",mSession.getIdNumber(),mAuthor.getIdNumber());
         AuthorSyn authorSyn = new AuthorSyn();
         authorSyn.execute(getString(R.string.ip_server_android) + "AuthorTop.php", "94961793");
     }
-    private class RecommendedSyn extends AsyncTask<String,Void,String> {
+    private class AuthorBookSyn extends AsyncTask<String,Void,String> {
         @Override
         protected String doInBackground(String... params) {
 
@@ -91,7 +91,7 @@ public class AuthorActivity extends AppCompatActivity {
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
                         .addFormDataPart("idNumber", params[1])
-                        .addFormDataPart("version", params[2])
+                        .addFormDataPart("idAuthor", params[2])
                         .build();
                 Request request = new Request.Builder()
                         .url(params[0])
@@ -114,22 +114,25 @@ public class AuthorActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String jsonData) {
             if (jsonData != null) {
-                JSONArray jsonArray = null;
-                try {
-                    jsonArray = new JSONArray(jsonData);
-                } catch (JSONException e) {
-                    throw new RuntimeException(e);
-                }
-                for (int i = 0; i < jsonArray.length(); i++) {
+                if(!jsonData.equals("RAS"))
+                {
+                    JSONArray jsonArray = null;
                     try {
-                        mOnlineBookList.add(new OnlineBook(jsonArray.getJSONObject(i).getString("idBook"), jsonArray.getJSONObject(i).getString("blanket"), jsonArray.getJSONObject(i).getString("bookTitle"), jsonArray.getJSONObject(i).getString("categoryTitle"), jsonArray.getJSONObject(i).getString("isPhysic"), jsonArray.getJSONObject(i).getString("electronic"), jsonArray.getJSONObject(i).getString("isAudio"), Integer.parseInt(jsonArray.getJSONObject(i).getString("numberLike")), Integer.parseInt(jsonArray.getJSONObject(i).getString("numberLike"))));
+                        jsonArray = new JSONArray(jsonData);
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        try {
+                            mOnlineBookList.add(new OnlineBook(jsonArray.getJSONObject(i).getString("idBook"), jsonArray.getJSONObject(i).getString("blanket"), jsonArray.getJSONObject(i).getString("bookTitle"), jsonArray.getJSONObject(i).getString("categoryTitle"), jsonArray.getJSONObject(i).getString("isPhysic"), jsonArray.getJSONObject(i).getString("electronic"), jsonArray.getJSONObject(i).getString("isAudio"), Integer.parseInt(jsonArray.getJSONObject(i).getString("numberLike")), Integer.parseInt(jsonArray.getJSONObject(i).getString("numberNoLike"))));
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    HorizontaleAdapter horizontaleAdapter = new HorizontaleAdapter(mOnlineBookList);
+                    mBooksRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false));
+                    mBooksRecyclerView.setAdapter(horizontaleAdapter);
                 }
-                HorizontaleAdapter horizontaleAdapter = new HorizontaleAdapter(mOnlineBookList);
-                mBooksRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false));
-                mBooksRecyclerView.setAdapter(horizontaleAdapter);
             } else {
                 ArrayList<Connection> list = new ArrayList<>();
                 list.add(new Connection(getString(R.string.no_connection_available), "RECOMMENDED_FRAGMENT", false));
@@ -205,4 +208,5 @@ public class AuthorActivity extends AppCompatActivity {
     private ArrayList<OnlineBook> mOnlineBookList;
     private ArrayList<Author> mAuthorArrayList;
     private RecyclerView mAuthorRecyclerView;
+    private Session mSession;
 }
