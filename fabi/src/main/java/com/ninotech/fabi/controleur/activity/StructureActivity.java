@@ -67,6 +67,7 @@ public class StructureActivity extends AppCompatActivity {
         mDescriptionTextView = findViewById(R.id.text_view_activity_structure_description);
         mMoreDescTextView = findViewById(R.id.text_view_activity_structure_more_desc);
         mMoreBookTextView = findViewById(R.id.text_view_activity_structure_more_books);
+        mMoreAuthorTextView = findViewById(R.id.text_view_activity_structure_more_author);
         mAdhererButton = findViewById(R.id.button_activity_structure_adherer);
         mBookRecommendedRecyclerView = findViewById(R.id.recycler_view_activity_structure_books);
         mSession = new Session(getApplicationContext());
@@ -148,6 +149,15 @@ public class StructureActivity extends AppCompatActivity {
                 searchIntent.putExtra("search_key", "ONLINE_BOOK");
                 searchIntent.putExtra("online_book_key", "STRUCTURE_ACTIVITY");
                 searchIntent.putExtra("id_struct_key",mStructure.getId());
+                startActivity(searchIntent);
+            }
+        });
+        mMoreAuthorTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent searchIntent = new Intent(getApplicationContext(), SearchActivity.class);
+                searchIntent.putExtra("search_key", "AUTHOR_ONLINE");
+                searchIntent.putExtra("online_book_key", "MAIN_ACTIVITY");
                 startActivity(searchIntent);
             }
         });
@@ -312,6 +322,7 @@ public class StructureActivity extends AppCompatActivity {
     private TextView mDescriptionTextView;
     private TextView mMoreDescTextView;
     private TextView mMoreBookTextView;
+    private TextView mMoreAuthorTextView;
     private Button mAdhererButton;
     private ImageView mBackImageView;
     private EditText mSearchEditText;

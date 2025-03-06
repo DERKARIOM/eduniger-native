@@ -1,5 +1,6 @@
 package com.ninotech.fabi.controleur.adapter;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.R;
+import com.ninotech.fabi.controleur.activity.AuthorActivity;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
 import com.ninotech.fabi.model.data.Author;
 import com.squareup.picasso.Picasso;
@@ -75,6 +77,17 @@ public class AuthorVerticaleAdapter extends RecyclerView.Adapter<AuthorVerticale
                     .resize(284,284)
                     .into(mProfileImageView);
             mNameTextView.setText(author.getName() + " " + author.getFirstName());
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent authorIntent = new Intent(itemView.getContext(), AuthorActivity.class);
+                    authorIntent.putExtra("intent_author_adapter_id",author.getIdNumber());
+                    authorIntent.putExtra("intent_author_adapter_name",author.getName());
+                    authorIntent.putExtra("intent_author_adapter_first_name",author.getFirstName());
+                    authorIntent.putExtra("intent_author_adapter_first_profile",author.getProfile());
+                    itemView.getContext().startActivity(authorIntent);
+                }
+            });
         }
     }
 }
