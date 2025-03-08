@@ -106,8 +106,8 @@ public class ElectronicBookAdapter extends RecyclerView.Adapter<ElectronicBookAd
                     .resize(198,304)
                     .into(mCoverImageView);
             mTitleTextView.setText(electronicBook.getTitle());
-            mCategoryTextView.setText(electronicBook.getCategory());
-            mAuthorTextView.setText(electronicBook.getAuthor());
+            mCategoryTextView.setText("Catégorie : " + electronicBook.getCategory());
+            mAuthorTextView.setText("De " + electronicBook.getAuthor());
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

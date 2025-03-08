@@ -102,7 +102,7 @@ public class ElectronicDownloader extends AsyncTask<String, Integer, ElectronicB
                     mIdNumber,
                     mOnlineBook.getId(),
                     mOnlineBook.getDescription(),
-                    "Auteur",
+                    mOnlineBook.getAuthor(),
                     result.getCover(),
                     result.getPdf(),
                     mOnlineBook.getCategory(),

@@ -26,6 +26,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Titre du livre"
+            android:layout_margin="5dp"
             android:textSize="@dimen/size_title"
             android:textStyle="bold"
             />
@@ -33,31 +34,20 @@
             android:id="@+id/text_view_adapter_book_audio_author"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="5dp"
             android:layout_below="@id/text_view_adapter_book_audio_title"
             android:text="Auteur du livre"
             android:textSize="@dimen/size_sub_title"
             />
-        <RelativeLayout
-            android:layout_below="@id/text_view_adapter_book_audio_author"
+        <TextView
+            android:id="@+id/text_view_adapter_book_audio_duration"
+            android:layout_margin="5dp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <ImageView
-                android:id="@+id/image_view_adapter_book_audio_time"
-                android:layout_width="15dp"
-                android:layout_height="15dp"
-                android:layout_centerVertical="true"
-                android:src="@drawable/vector_black3_time"/>
-            <TextView
-                android:id="@+id/text_view_adapter_book_audio_duration"
-                android:layout_margin="5dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/image_view_adapter_book_audio_time"
-                android:text="30:15"
-                android:textSize="@dimen/size_mini_sub_title"
-                android:layout_centerVertical="true"/>
-
-        </RelativeLayout>
+            android:layout_height="wrap_content"
+            android:text="30:15"
+            android:layout_below="@id/text_view_adapter_book_audio_author"
+            android:textSize="@dimen/size_sub_title"
+            android:layout_centerVertical="true"/>
 
     </RelativeLayout>
 

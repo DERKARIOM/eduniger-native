@@ -31,27 +31,26 @@
             android:text="@string/book_title"
             android:textStyle="bold"
             android:textSize="@dimen/size_title" />
-
         <TextView
-            android:id="@+id/text_view_adapter_description_category"
+            android:id="@+id/text_view_adapter_book_simple_author"
             style="@style/wrap_content_all"
             android:layout_below="@id/text_view_adapter_book_simple_title"
             android:layout_marginStart="5dp"
             android:layout_marginTop="5dp"
             android:layout_marginEnd="5dp"
             android:layout_marginBottom="5dp"
-            android:text="@string/category_title"
+            android:text="@string/author"
             android:textSize="@dimen/size_sub_title" />
 
         <TextView
-            android:id="@+id/text_view_adapter_book_simple_author"
+            android:id="@+id/text_view_adapter_description_category"
             style="@style/wrap_content_all"
-            android:layout_below="@id/text_view_adapter_description_category"
+            android:layout_below="@id/text_view_adapter_book_simple_author"
             android:layout_marginStart="5dp"
             android:layout_marginTop="5dp"
             android:layout_marginEnd="5dp"
             android:layout_marginBottom="5dp"
-            android:text="@string/author"
+            android:text="@string/category_title"
             android:textSize="@dimen/size_sub_title" />
     </RelativeLayout>
 

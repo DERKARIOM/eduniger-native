@@ -392,6 +392,7 @@ public class BookActivity extends AppCompatActivity {
                     mOnlineBook.setNumberLikes(Integer.parseInt(jsonObject.getString("numberLike")));
                     mOnlineBook.setNumberNoLikes(Integer.parseInt(jsonObject.getString("numberNoLike")));
                     mOnlineBook.setNumberSubscribe(Integer.parseInt(jsonObject.getString("numberSubscribe")));
+                    mOnlineBook.setAuthor(jsonObject.getString("firstName") + " " + jsonObject.getString("name"));
                     mCategory = new Category(jsonObject.getString("categoryBlanket"),jsonObject.getString("categoryTitle"));
                     mAuthor = new Author(jsonObject.getString("idAuthor"),jsonObject.getString("name"),jsonObject.getString("firstName"),jsonObject.getString("profile"));
                     Picasso.get()

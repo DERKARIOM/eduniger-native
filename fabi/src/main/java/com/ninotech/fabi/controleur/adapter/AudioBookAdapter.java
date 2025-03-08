@@ -107,24 +107,14 @@ public class AudioBookAdapter extends RecyclerView.Adapter<AudioBookAdapter.MyVi
                     .resize(210,304)
                     .into(mCoverImageView);
             mTitleTextView.setText(audioBook.getTitle());
-            mAuthorTextView.setText(audioBook.getAuthor());
-            mDurationTextView.setText(audioBook.getDuration());
+            mAuthorTextView.setText("De " + audioBook.getAuthor());
+            mDurationTextView.setText("La durée : " + audioBook.getDuration());
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent audioPayerIntent = new Intent(itemView.getContext(), AudioPlayerActivity.class);
                     audioPayerIntent.putExtra("key_adapter_audio_book_id",audioBook.getId());
                     itemView.getContext().startActivity(audioPayerIntent);
-//                    Toast.makeText(itemView.getContext(), audioBook.getAudio(), Toast.LENGTH_SHORT).show();
-//                    MediaPlayer mediaPlayer = new MediaPlayer();
-//                    try {
-//                        // Spécifie le chemin d'accès au fichier audio dans le stockage interne
-//                        mediaPlayer.setDataSource(audioBook.getAudio());
-//                        mediaPlayer.prepare();
-//                        mediaPlayer.start();
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
                 }
             });
         }
