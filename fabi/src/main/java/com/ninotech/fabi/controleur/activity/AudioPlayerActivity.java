@@ -49,6 +49,7 @@ public class AudioPlayerActivity extends AppCompatActivity {
         mCoverImageView = findViewById(R.id.image_view_activity_audio_player_cover);
         mPlayImageView = findViewById(R.id.image_view_activity_audio_player_play);
         mSeekBar = findViewById(R.id.seek_bar_activity_audio_player);
+        mBackImageView = findViewById(R.id.image_view_activity_audio_player_back);
         mHandler = new Handler();
         String idBook = audioBookIntent.getStringExtra("key_adapter_audio_book_id");
         AudioTable audioTable = new AudioTable(this);
@@ -68,6 +69,12 @@ public class AudioPlayerActivity extends AppCompatActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
 
+            }
+        });
+        mBackImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
             }
         });
         try {
@@ -170,4 +177,5 @@ public class AudioPlayerActivity extends AppCompatActivity {
     private ImageView mPlayImageView;
     private SeekBar mSeekBar;
     private Handler mHandler;
+    private ImageView mBackImageView;
 }

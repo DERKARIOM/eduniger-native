@@ -42,7 +42,7 @@ public class AuthorLocalAdapter extends RecyclerView.Adapter<AuthorLocalAdapter.
     @Override
     public AuthorLocalAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View view = layoutInflater.inflate(R.layout.adapter_category,parent,false);
+        View view = layoutInflater.inflate(R.layout.adapter_author_verticale,parent,false);
         return new MyViewHolder(view);
     }
 
@@ -83,8 +83,8 @@ public class AuthorLocalAdapter extends RecyclerView.Adapter<AuthorLocalAdapter.
         private TextView mUsernameTextView;
         MyViewHolder(View itemView){
             super(itemView);
-            mProfileImageView = itemView.findViewById(R.id.image_view_adapter_category_blanket);
-            mUsernameTextView = itemView.findViewById(R.id.text_view_adapter_category_title);
+            mProfileImageView = itemView.findViewById(R.id.image_view_adapter_author_verticale_cover);
+            mUsernameTextView = itemView.findViewById(R.id.text_view_adapter_author_verticale_name);
             itemView.setOnCreateContextMenuListener(this);
         }
         @Override
