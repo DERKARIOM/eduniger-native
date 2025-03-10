@@ -66,6 +66,7 @@ public class StructureActivity extends AppCompatActivity {
         mNumberTextView = findViewById(R.id.image_view_activity_structure_number);
         mDescriptionTextView = findViewById(R.id.text_view_activity_structure_description);
         mMoreDescTextView = findViewById(R.id.text_view_activity_structure_more_desc);
+        mReduceTextView = findViewById(R.id.text_view_activity_structure_reduce_desc);
         mMoreBookTextView = findViewById(R.id.text_view_activity_structure_more_books);
         mMoreAuthorTextView = findViewById(R.id.text_view_activity_structure_more_author);
         mAdhererButton = findViewById(R.id.button_activity_structure_adherer);
@@ -129,7 +130,7 @@ public class StructureActivity extends AppCompatActivity {
         mNameTextView.setText(mStructure.getName());
         mAuthorTextView.setText("@" + mStructure.getAuthor());
         mNumberTextView.setText(mStructure.getAdhererNumber() + " Adhérents ° " + mStructure.getBookNumber() + " Livres");
-        mDescriptionTextView.setText("Bienvenue sur l'struture " + mStructure.getName() + "!");
+        mDescriptionTextView.setText("Bienvenue sur la struture " + mStructure.getName() + "!");
         if(mStructure.isAdhere())
         {
             mAdhererButton.setText("Détacher");
@@ -138,7 +139,16 @@ public class StructureActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mDescriptionTextView.setText(mStructure.getDescription());
-                mMoreDescTextView.setText("moin");
+                mMoreDescTextView.setVisibility(View.GONE);
+                mReduceTextView.setVisibility(View.VISIBLE);
+            }
+        });
+        mReduceTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mReduceTextView.setVisibility(View.GONE);
+                mMoreDescTextView.setVisibility(View.VISIBLE);
+                mDescriptionTextView.setText("Bienvenue sur la struture " + mStructure.getName() + "!");
             }
         });
 
@@ -321,6 +331,7 @@ public class StructureActivity extends AppCompatActivity {
     private TextView mNumberTextView;
     private TextView mDescriptionTextView;
     private TextView mMoreDescTextView;
+    private TextView mReduceTextView;
     private TextView mMoreBookTextView;
     private TextView mMoreAuthorTextView;
     private Button mAdhererButton;
