@@ -181,6 +181,7 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
             StructDeleteDialog structDeleteDialog = new StructDeleteDialog((Activity) itemView.getContext());
             structDeleteDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             structDeleteDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+            TextView err = structDeleteDialog.findViewById(R.id.text_view_dialog_structure_delete_err);
             TextView no = structDeleteDialog.findViewById(R.id.no);
             TextView yes = structDeleteDialog.findViewById(R.id.yes);
             EditText password = structDeleteDialog.findViewById(R.id.edit_text_dialog_struct_delete_password);
@@ -208,6 +209,8 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
                         }
                     }
                     password.setBackground(itemView.getContext().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
+                    err.setVisibility(View.VISIBLE);
+                    err.setText("Mot de passe incorrect");
                 }
             });
             structDeleteDialog.build();

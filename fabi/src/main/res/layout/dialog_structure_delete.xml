@@ -50,6 +50,19 @@
         android:inputType="textPassword"
         android:padding="7dp"
         android:selectAllOnFocus="false" />
+    <TextView
+        android:id="@+id/text_view_dialog_structure_delete_err"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:layout_marginTop="10dp"
+        android:gravity="center_horizontal"
+        android:layout_gravity="center_horizontal"
+        android:fontFamily="@font/linux2"
+        android:visibility="gone"
+        android:textColor="@color/rouge"
+        android:textSize="13dp"
+        />
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
