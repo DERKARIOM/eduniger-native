@@ -125,7 +125,7 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
             if(structure.isAdhere())
             {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    mAdhereButton.setBackgroundTintList(ColorStateList.valueOf(itemView.getContext().getColor(R.color.rouge)));
+                    mAdhereButton.setBackgroundTintList(ColorStateList.valueOf(itemView.getContext().getColor(R.color.black3)));
                     mAdhereButton.setText("Détacher");
                 }
             }
@@ -160,7 +160,7 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
                             else
                             {
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                    mAdhereButton.setBackgroundTintList(ColorStateList.valueOf(itemView.getContext().getColor(R.color.rouge)));
+                                    mAdhereButton.setBackgroundTintList(ColorStateList.valueOf(itemView.getContext().getColor(R.color.black3)));
                                 }
                                 mAdhereButton.setText("Détacher");
                                 structure.setAdhere(false);

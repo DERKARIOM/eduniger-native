@@ -1,10 +1,13 @@
 package com.ninotech.fabi.controleur.activity;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -25,11 +28,15 @@ import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.adapter.AuthorHorizontaleAdapter;
 import com.ninotech.fabi.controleur.adapter.HorizontaleAdapter;
 import com.ninotech.fabi.controleur.adapter.NoConnectionAdapter;
+import com.ninotech.fabi.controleur.adapter.StructureAdapter;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
+import com.ninotech.fabi.controleur.dialog.SimpleOkDialog;
+import com.ninotech.fabi.controleur.dialog.StructDeleteDialog;
 import com.ninotech.fabi.controleur.fragment.BooksFragment;
 import com.ninotech.fabi.model.data.Author;
 import com.ninotech.fabi.model.data.Connection;
 import com.ninotech.fabi.model.data.OnlineBook;
+import com.ninotech.fabi.model.data.PasswordUtil;
 import com.ninotech.fabi.model.data.Structure;
 import com.ninotech.fabi.model.table.Session;
 import com.squareup.picasso.Picasso;
@@ -134,6 +141,9 @@ public class StructureActivity extends AppCompatActivity {
         if(mStructure.isAdhere())
         {
             mAdhererButton.setText("Détacher");
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                mAdhererButton.setBackgroundTintList(ColorStateList.valueOf(getApplicationContext().getColor(R.color.black3)));
+            }
         }
         mMoreDescTextView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -149,6 +159,32 @@ public class StructureActivity extends AppCompatActivity {
                 mReduceTextView.setVisibility(View.GONE);
                 mMoreDescTextView.setVisibility(View.VISIBLE);
                 mDescriptionTextView.setText("Bienvenue sur la struture " + mStructure.getName() + "!");
+            }
+        });
+        mAdhererButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch (mStructure.getId())
+                {
+                    case "1","3":
+                        if (mAdhererButton.getText().toString().equals("Détacher"))
+                            structDelete(mStructure.getId());
+                        else
+                        {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                mAdhererButton.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.black3)));
+                            }
+                            mAdhererButton.setText("Détacher");
+                            mStructure.setAdhere(false);
+                            DetachStructSyn detachStructSyn = new DetachStructSyn();
+                            detachStructSyn.execute(getString(R.string.ip_server_android) + "AdhererStruct.php",mSession.getIdNumber(),mStructure.getId());
+                        }
+                        break;
+                    case "2":
+                        simpleOkDialog(R.drawable.vector_purple_200_desole,"Structure Exclusive","Cette structure est exclusivement réservée aux étudiants de la FAST UAM. Veuillez vérifier que vous remplissez les critères d'adhésion puis contacter les numéro suivante :\n+22796627534 / +22794961793.");
+                        break;
+
+                }
             }
         });
 
@@ -317,6 +353,150 @@ public class StructureActivity extends AppCompatActivity {
                 return true;
         }
         return false;
+    }
+    private void structDelete(String id){
+        StructDeleteDialog structDeleteDialog = new StructDeleteDialog(this);
+        structDeleteDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        structDeleteDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        TextView no = structDeleteDialog.findViewById(R.id.no);
+        TextView yes = structDeleteDialog.findViewById(R.id.yes);
+        EditText password = structDeleteDialog.findViewById(R.id.edit_text_dialog_struct_delete_password);
+        no.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                structDeleteDialog.cancel();
+            }
+        });
+
+        yes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!password.getText().toString().isEmpty())
+                {
+                    if (Objects.equals(PasswordUtil.hashPassword(password.getText().toString()), mSession.getPassword()))
+                    {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            structDeleteDialog.cancel();
+                            mAdhererButton.setBackgroundTintList(ColorStateList.valueOf(getApplicationContext().getColor(R.color.purple_200)));
+                            mAdhererButton.setText("Adhérer");
+                            DetachStructSyn detachStructSyn = new DetachStructSyn();
+                            detachStructSyn.execute(getString(R.string.ip_server_android) + "DetachStruct.php",mSession.getIdNumber(),id);
+                        }
+                    }
+                }
+                password.setBackground(getApplicationContext().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
+            }
+        });
+        structDeleteDialog.build();
+    }
+    private class DetachStructSyn extends AsyncTask<String,Void,String> {
+        @Override
+        protected String doInBackground(String... params) {
+
+            try {
+                OkHttpClient client = new OkHttpClient();
+                RequestBody requestBody = new MultipartBody.Builder()
+                        .setType(MultipartBody.FORM)
+                        .addFormDataPart("idUser",params[1])
+                        .addFormDataPart("idStruct",params[2])
+                        .build();
+                Request request = new Request.Builder()
+                        .url(params[0])
+                        .post(requestBody)
+                        .build();
+                try {
+                    Response response = client.newCall(request).execute();
+                    assert response.body() != null;
+                    return response.body().string();
+                }catch (IOException e)
+                {
+                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+
+            }catch (Exception e)
+            {
+                return null;
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(String jsonData){
+            //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
+            if(jsonData != null)
+            {
+                if(!jsonData.equals("RAS"))
+                {
+                    if(jsonData.equals("true"))
+                    {
+                        Toast.makeText(getApplicationContext(), "Structure détacher", Toast.LENGTH_SHORT);
+                    }
+                }
+            }
+        }
+    }
+    private class AdhererStructSyn extends AsyncTask<String,Void,String> {
+        @Override
+        protected String doInBackground(String... params) {
+
+            try {
+                OkHttpClient client = new OkHttpClient();
+                RequestBody requestBody = new MultipartBody.Builder()
+                        .setType(MultipartBody.FORM)
+                        .addFormDataPart("idUser",params[1])
+                        .addFormDataPart("idStruct",params[2])
+                        .build();
+                Request request = new Request.Builder()
+                        .url(params[0])
+                        .post(requestBody)
+                        .build();
+                try {
+                    Response response = client.newCall(request).execute();
+                    assert response.body() != null;
+                    return response.body().string();
+                }catch (IOException e)
+                {
+                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+
+            }catch (Exception e)
+            {
+                return null;
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(String jsonData){
+            //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
+            if(jsonData != null)
+            {
+                if(!jsonData.equals("RAS"))
+                {
+                    if(jsonData.equals("true"))
+                    {
+                        Toast.makeText(getApplicationContext(), "Structure Adhérer", Toast.LENGTH_SHORT);
+                    }
+                }
+            }
+        }
+    }
+    private void simpleOkDialog(int ico , String title , String message){
+        SimpleOkDialog simpleOkDialog = new SimpleOkDialog((Activity) getApplicationContext());
+        simpleOkDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        simpleOkDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        ImageView icoImageView = simpleOkDialog.findViewById(R.id.image_view_dialog_simple_ok_icon);
+        TextView titleTextView = simpleOkDialog.findViewById(R.id.text_view_dialog_simple_ok_title);
+        TextView messageTextView = simpleOkDialog.findViewById(R.id.text_view_dialog_simple_ok_message);
+        TextView okTextView = simpleOkDialog.findViewById(R.id.text_view_dialog_simple_ok);
+        icoImageView.setImageResource(ico);
+        titleTextView.setText(title);
+        messageTextView.setText(message);
+        okTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                simpleOkDialog.cancel();
+            }
+        });
+        simpleOkDialog.build();
     }
     private ImageView mWelcomeImageView;
     private ImageView mProfileImageView;
