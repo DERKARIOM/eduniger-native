@@ -48,8 +48,18 @@ public class AudioPlayerActivity extends AppCompatActivity {
         mDurationCurrentTextView = findViewById(R.id.text_view_activity_audio_player_duration_current);
         mCoverImageView = findViewById(R.id.image_view_activity_audio_player_cover);
         mPlayImageView = findViewById(R.id.image_view_activity_audio_player_play);
+        mReplayImageView = findViewById(R.id.image_view_activity_audio_player_replay);
+        mVolumeImageView = findViewById(R.id.image_view_activity_audio_player_volume);
         mSeekBar = findViewById(R.id.seek_bar_activity_audio_player);
         mBackImageView = findViewById(R.id.image_view_activity_audio_player_back);
+        mTonesImageView = findViewById(R.id.image_view_activity_audio_player_volume);
+        mPlayListImageView = findViewById(R.id.image_view_activity_audio_player_list);
+        mLoveImageView = findViewById(R.id.image_view_activity_audio_player_love);
+        mAddImageView = findViewById(R.id.image_view_activity_audio_player_add);
+        mRandomImageView = findViewById(R.id.image_view_activity_audio_player_random);
+        mBackPlayImageView = findViewById(R.id.image_view_activity_audio_player_back_player);
+        mNextPlayImageView = findViewById(R.id.image_view_activity_audio_player_next_play);
+        mAutoPlayImageView = findViewById(R.id.image_view_activity_audio_player_auto_play);
         mHandler = new Handler();
         String idBook = audioBookIntent.getStringExtra("key_adapter_audio_book_id");
         AudioTable audioTable = new AudioTable(this);
@@ -139,6 +149,13 @@ public class AudioPlayerActivity extends AppCompatActivity {
             }
         });
 
+        mReplayImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mMediaPlayer.seekTo(0);
+            }
+        });
+
     }
     @Override
     public void onDestroy() {
@@ -178,4 +195,14 @@ public class AudioPlayerActivity extends AppCompatActivity {
     private SeekBar mSeekBar;
     private Handler mHandler;
     private ImageView mBackImageView;
+    private ImageView mReplayImageView;
+    private ImageView mVolumeImageView;
+    private ImageView mTonesImageView;
+    private ImageView mPlayListImageView;
+    private ImageView mLoveImageView;
+    private ImageView mAddImageView;
+    private ImageView mRandomImageView;
+    private ImageView mBackPlayImageView;
+    private ImageView mNextPlayImageView;
+    private ImageView mAutoPlayImageView;
 }

@@ -12,6 +12,7 @@
         <androidx.appcompat.widget.Toolbar
             android:layout_width="match_parent"
             android:elevation="10dp"
+            android:layout_margin="10dp"
             android:id="@+id/toolbar_activity_audio_player"
             android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
@@ -22,6 +23,7 @@
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
+                android:padding="10dp"
                 android:id="@+id/image_view_activity_audio_player_back"
                 android:background="@drawable/vector_black2_back_player"
                 android:contentDescription="@string/todo" />
@@ -180,7 +182,7 @@
                 android:contentDescription="@string/todo" />
             <ImageView
                 android:layout_width="25dp"
-                android:id="@+id/bloc3_list_all"
+                android:id="@+id/image_view_activity_audio_player_auto_play"
                 android:layout_centerInParent="true"
                 android:layout_alignParentEnd="true"
                 android:layout_marginEnd="10dp"
@@ -188,23 +190,23 @@
                 android:layout_height="25dp"/>
 
             <ImageView
-                android:id="@+id/bloc3_plus"
+                android:id="@+id/image_view_activity_audio_player_next_play"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:layout_centerInParent="true"
                 android:layout_marginEnd="40dp"
-                android:layout_toLeftOf="@id/bloc3_list_all"
+                android:layout_toLeftOf="@id/image_view_activity_audio_player_auto_play"
                 android:background="@drawable/vector_black2_audio_player_next" />
             <ImageView android:layout_width="25dp"
-                android:id="@+id/bloc3_moin"
+                android:id="@+id/image_view_activity_audio_player_back_player"
                 android:layout_centerInParent="true"
-                android:layout_toEndOf="@id/bloc3_order"
+                android:layout_toEndOf="@id/image_view_activity_audio_player_random"
                 android:layout_marginStart="40dp"
                 android:background="@drawable/vector_black2_audio_player_back"
                 android:layout_height="25dp"/>
 
             <ImageView
-                android:id="@+id/bloc3_order"
+                android:id="@+id/image_view_activity_audio_player_random"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:layout_alignParentStart="true"

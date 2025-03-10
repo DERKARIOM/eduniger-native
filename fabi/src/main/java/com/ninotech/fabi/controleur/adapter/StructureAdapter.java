@@ -154,7 +154,7 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
                 public void onClick(View v) {
                     switch (structure.getId())
                     {
-                        case "1":
+                        case "1","3":
                             if (mAdhereButton.getText().toString().equals("Détacher"))
                                 structDelete(structure.getId());
                             else
