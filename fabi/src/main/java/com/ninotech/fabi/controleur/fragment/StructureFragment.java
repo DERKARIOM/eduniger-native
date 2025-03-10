@@ -196,7 +196,7 @@ public class StructureFragment extends Fragment {
                                     jsonArray.getJSONObject(i).getString("logo"),
                                     jsonArray.getJSONObject(i).getString("nameStruct"),
                                     jsonArray.getJSONObject(i).getString("description"),false,
-                                    jsonArray.getJSONObject(i).getString("id"),
+                                    jsonArray.getJSONObject(i).getString("banner"),
                                     jsonArray.getJSONObject(i).getString("author"),
                                     jsonArray.getJSONObject(i).getString("adhererNumber"),
                                     jsonArray.getJSONObject(i).getString("bookNumber"),"0"));
