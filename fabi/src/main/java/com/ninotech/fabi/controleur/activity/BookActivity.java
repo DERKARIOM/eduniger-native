@@ -10,6 +10,7 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -56,14 +57,22 @@ import com.ninotech.fabi.model.data.Tones;
 import com.ninotech.fabi.controleur.adapter.TonesAdapter;
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.dialog.SimpleOkDialog;
+import com.pspdfkit.configuration.activity.PdfActivityConfiguration;
+import com.pspdfkit.configuration.page.PageScrollDirection;
+import com.pspdfkit.configuration.page.PageScrollMode;
+import com.pspdfkit.configuration.settings.SettingsMenuItemType;
+import com.pspdfkit.configuration.sharing.ShareFeatures;
+import com.pspdfkit.ui.PdfActivity;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Timer;
@@ -143,7 +152,7 @@ public class BookActivity extends AppCompatActivity {
 
                             break;
                         case "pdf":
-                            downloadPDFButton.setText("Terminé");
+                            downloadPDFButton.setText("Ouvrir");
                             downloadPdfProgressBar.setVisibility(View.GONE);
                             //succeDowloadPDFDialog("Le livre " + mTitleTextView.getText().toString() + " format PDF a été téléchargé avec succès. N'hésitez pas à explorer son contenu dans l'application et contactez-nous en cas de besoin.");
                             break;
@@ -226,13 +235,47 @@ public class BookActivity extends AppCompatActivity {
         downloadPDFButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(BookActivity.this, "Téléchargement démarrer", Toast.LENGTH_SHORT).show();
-                //showProgressNotification(mTitleTextView.getText().toString() + " Format PDF");
-               downloadPDFButton.setText("En Cours...");
-                downloadPdfProgressBar.setVisibility(View.GONE);
-                ElectronicDownloader electronicDownloader = new ElectronicDownloader(getApplicationContext(),mSession.getIdNumber(), mOnlineBook);
-               // Toast.makeText(BookActivity.this, mOnlineBook.getAuthor(), Toast.LENGTH_SHORT).show();
-                electronicDownloader.execute(mOnlineBook.getCover(), mOnlineBook.getElectronic(),mCategory.getCover(),mAuthor.getProfile());
+                switch (downloadPDFButton.getText().toString())
+                {
+                    case "Format PDF":
+                        Toast.makeText(BookActivity.this, "Téléchargement démarrer", Toast.LENGTH_SHORT).show();
+                        //showProgressNotification(mTitleTextView.getText().toString() + " Format PDF");
+                        downloadPDFButton.setText("En Cours...");
+                        downloadPdfProgressBar.setVisibility(View.GONE);
+                        ElectronicDownloader electronicDownloader = new ElectronicDownloader(getApplicationContext(),mSession.getIdNumber(), mOnlineBook);
+                        // Toast.makeText(BookActivity.this, mOnlineBook.getAuthor(), Toast.LENGTH_SHORT).show();
+                        electronicDownloader.execute(mOnlineBook.getCover(), mOnlineBook.getElectronic(),mCategory.getCover(),mAuthor.getProfile());
+                        break;
+                    case "Ouvrir":
+                        File file = new File(mElectronicTable.getPdf(mOnlineBook.getId()));
+                        Uri uri = Uri.parse(Uri.fromFile(file).toString());
+                        PdfActivityConfiguration config = new PdfActivityConfiguration.Builder(BookActivity.this)
+                                .hideThumbnailGrid().setEnabledShareFeatures(ShareFeatures.none())
+                                .disablePrinting()
+                                .disablePrinting()
+                                .disableAnnotationEditing()
+                                .disableBookmarkEditing()
+                                .disableDocumentEditor()
+                                .disableAnnotationList()
+                                .scrollDirection(PageScrollDirection.VERTICAL)
+                                .scrollMode(PageScrollMode.CONTINUOUS)
+                                .disableAnnotationLimitedToPageBounds()
+                                .disableCopyPaste()
+                                .disableFormEditing()
+                                .disableContentEditing()
+                                .textSelectionEnabled(false)
+                                .enableDocumentInfoView()
+                                .setSettingsMenuItems(EnumSet.of(
+                                        SettingsMenuItemType.THEME,
+                                        SettingsMenuItemType.PAGE_LAYOUT,
+                                        SettingsMenuItemType.PAGE_TRANSITION,
+                                        SettingsMenuItemType.PRESETS
+                                ))
+                                .build();
+                        PdfActivity.showDocument(BookActivity.this,uri,config);
+                        break;
+                }
+
             }
         });
         audioButton.setOnClickListener(new View.OnClickListener() {

@@ -166,7 +166,7 @@ public class StructureActivity extends AppCompatActivity {
             public void onClick(View v) {
                 switch (mStructure.getId())
                 {
-                    case "1","3":
+                    case "1","3","4":
                         if (mAdhererButton.getText().toString().equals("Détacher"))
                             structDelete(mStructure.getId());
                         else
@@ -483,7 +483,7 @@ public class StructureActivity extends AppCompatActivity {
         }
     }
     private void simpleOkDialog(int ico , String title , String message){
-        SimpleOkDialog simpleOkDialog = new SimpleOkDialog((Activity) getApplicationContext());
+        SimpleOkDialog simpleOkDialog = new SimpleOkDialog((StructureActivity.this));
         simpleOkDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         simpleOkDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
         ImageView icoImageView = simpleOkDialog.findViewById(R.id.image_view_dialog_simple_ok_icon);
