@@ -157,6 +157,20 @@
         <service
             android:name=".model.service.NotificationService"
             android:exported="false" />
+        <service
+            android:name=".model.service.AudioService"
+            android:foregroundServiceType="mediaPlayback"
+            tools:ignore="ForegroundServicePermission" />
+        <receiver android:name=".model.service.AudioReceiver"
+            android:exported="true"
+            android:permission="TODO"
+            tools:ignore="ExportedReceiver">
+            <intent-filter>
+                <action android:name="PLAY" />
+                <action android:name="PAUSE" />
+                <action android:name="STOP" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
