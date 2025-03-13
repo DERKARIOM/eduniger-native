@@ -77,7 +77,6 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
                     onTrackPause();
                 }else
                     onTrackPlay();
-                CreateNotification.createNotification(AudioPlayerActivity.this,mTracks.get(1),R.drawable.vector_black3_pause,1,mTracks.size()-1);
             }
         });
         //initUI();
@@ -296,13 +295,13 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
                     onTrackPrevious();
                     break;
                 case CreateNotification.ACTION_NEXT:
+                    onTrackNext();
+                    break;
+                case CreateNotification.ACTION_PLAY:
                     if (isPlaying)
                         onTrackPause();
                     else
                         onTrackPlay();
-                    break;
-                case CreateNotification.ACTION_PLAY:
-                    onTrackNext();
                     break;
             }
         }
@@ -311,7 +310,7 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
     public void onTrackPrevious() {
         position--;
         CreateNotification.createNotification(AudioPlayerActivity.this,mTracks.get(position),
-                R.drawable.vector_back,position,mTracks.size()-1);
+                R.drawable.vector_black3_play,position,mTracks.size()-1);
     }
 
     @Override

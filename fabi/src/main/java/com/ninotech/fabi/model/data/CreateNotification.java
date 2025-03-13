@@ -39,7 +39,7 @@ public class CreateNotification {
                 Intent intentPrevious = new Intent(context, NotificationActionService.class)
                         .setAction(ACTION_PREVIUOS);
                 pendingIntentPrevious = PendingIntent.getBroadcast(context,0,intentPrevious,PendingIntent.FLAG_UPDATE_CURRENT);
-                drv_previous = R.drawable.vector_back;
+                drv_previous = R.drawable.vector_black2_audio_player_back;
             }
 
             Intent intentPlay = new Intent(context, NotificationActionService.class)
