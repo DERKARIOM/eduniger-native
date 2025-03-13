@@ -171,6 +171,8 @@
                 <action android:name="STOP" />
             </intent-filter>
         </receiver>
+        <receiver android:name=".model.service.NotificationActionService"/>
+        <service android:name=".model.service.OnClearFromRecentService"/>
     </application>
 
 </manifest>

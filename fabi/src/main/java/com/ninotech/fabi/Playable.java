@@ -1,0 +1,9 @@
+package com.ninotech.fabi;
+
+public interface Playable {
+    void onTrackPrevious();
+    void onTrackPlay();
+    void onTrackPause();
+    void onTrackNext();
+
+}

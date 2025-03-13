@@ -2,9 +2,10 @@ package com.ninotech.fabi.controleur.activity;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
@@ -22,19 +23,27 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.NotificationCompat;
 
+import com.ninotech.fabi.Playable;
 import com.ninotech.fabi.R;
+import com.ninotech.fabi.model.data.CreateNotification;
+import com.ninotech.fabi.model.data.Track;
+import com.ninotech.fabi.model.service.OnClearFromRecentService;
 import com.ninotech.fabi.model.table.AudioTable;
 import com.ninotech.fabi.model.table.Session;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-public class AudioPlayerActivity extends AppCompatActivity {
+public class AudioPlayerActivity extends AppCompatActivity implements Playable {
 
     private static final String CHANNEL_ID = "AUDIO_PLAYER_CHANNEL";
     private static final int NOTIFICATION_ID = 1;
+
+    private NotificationManager notificationManager;
 
     private Session mSession;
     private TextView mTitleTextView, mAuthorTextView, mDurationTotalTextView, mDurationCurrentTextView;
@@ -43,6 +52,8 @@ public class AudioPlayerActivity extends AppCompatActivity {
     private Handler mHandler;
     private MediaPlayer mMediaPlayer;
     private String audioPath;
+    private List<Track> mTracks;
+    private int position=0;
     private boolean isPlaying = false;
 
     @Override
@@ -51,9 +62,26 @@ public class AudioPlayerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_audio_player);
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         Objects.requireNonNull(getSupportActionBar()).hide();
-
-        initUI();
-        setupAudioPlayer();
+        mPlayImageView = findViewById(R.id.image_view_activity_audio_player_play);
+        popluateTracks();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            createChanel();
+            registerReceiver(broadcastReceiver,new IntentFilter("TRACKS_TRACKS"));
+            startService(new Intent(getBaseContext(), OnClearFromRecentService.class));
+        }
+        mPlayImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isPlaying)
+                {
+                    onTrackPause();
+                }else
+                    onTrackPlay();
+                CreateNotification.createNotification(AudioPlayerActivity.this,mTracks.get(1),R.drawable.vector_black3_pause,1,mTracks.size()-1);
+            }
+        });
+        //initUI();
+        //setupAudioPlayer();
     }
 
     private void initUI() {
@@ -89,7 +117,6 @@ public class AudioPlayerActivity extends AppCompatActivity {
             public void onStopTrackingTouch(SeekBar seekBar) {}
         });
 
-        createNotificationChannel();
     }
 
     private void setupAudioPlayer() {
@@ -231,9 +258,82 @@ public class AudioPlayerActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            notificationManager.cancelAll();
+        }
+        unregisterReceiver(broadcastReceiver);
         if (mMediaPlayer != null) {
             mMediaPlayer.release();
             mMediaPlayer = null;
         }
+    }
+    private void popluateTracks(){
+        mTracks = new ArrayList<>();
+        mTracks.add(new Track("Track 1","Artist 1",R.id.relative_layout_activity_declaration_img));
+        mTracks.add(new Track("Track 2","Artist 2",R.id.relative_layout_activity_declaration_img));
+        mTracks.add(new Track("Track 3","Artist 3",R.id.relative_layout_activity_declaration_img));
+
+    }
+    private void createChanel(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(CreateNotification.CHANNEL_ID,
+                    "Kod Dev",NotificationManager.IMPORTANCE_LOW);
+            notificationManager = getSystemService(NotificationManager.class);
+            if(notificationManager != null) {
+                notificationManager.createNotificationChannel(channel);
+            }
+        }
+    }
+
+
+    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getExtras().getString("actionname");
+            switch (action)
+            {
+                case CreateNotification.ACTION_PREVIUOS:
+                    onTrackPrevious();
+                    break;
+                case CreateNotification.ACTION_NEXT:
+                    if (isPlaying)
+                        onTrackPause();
+                    else
+                        onTrackPlay();
+                    break;
+                case CreateNotification.ACTION_PLAY:
+                    onTrackNext();
+                    break;
+            }
+        }
+    };
+    @Override
+    public void onTrackPrevious() {
+        position--;
+        CreateNotification.createNotification(AudioPlayerActivity.this,mTracks.get(position),
+                R.drawable.vector_back,position,mTracks.size()-1);
+    }
+
+    @Override
+    public void onTrackPlay() {
+        CreateNotification.createNotification(AudioPlayerActivity.this,mTracks.get(position),
+                R.drawable.vector_black3_play,position,mTracks.size()-1);
+        mPlayImageView.setImageResource(R.drawable.vector_black3_play);
+        isPlaying = true;
+    }
+
+    @Override
+    public void onTrackPause() {
+        CreateNotification.createNotification(AudioPlayerActivity.this,mTracks.get(position),
+                R.drawable.vector_black3_pause,position,mTracks.size()-1);
+        mPlayImageView.setImageResource(R.drawable.vector_black3_pause);
+        isPlaying = false;
+    }
+
+    @Override
+    public void onTrackNext() {
+        position++;
+        CreateNotification.createNotification(AudioPlayerActivity.this,mTracks.get(position),
+                R.drawable.vector_black3_play,position,mTracks.size()-1);
     }
 }
