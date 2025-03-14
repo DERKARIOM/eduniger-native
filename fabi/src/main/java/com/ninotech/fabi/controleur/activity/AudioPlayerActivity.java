@@ -161,7 +161,7 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
                                     int currentTime = mMediaPlayer.getCurrentPosition();
                                     mSeekBar.setProgress(currentTime);
                                     mDurationCurrentTextView.setText(convertedDurationToString(currentTime));
-                                    if (convertedDurationToString(mMediaPlayer.getDuration()-3000).equals(convertedDurationToString(currentTime)))
+                                    if ((mMediaPlayer.getDuration()-3000) <= currentTime)
                                         onTrackNext();
                                 }
                             }
