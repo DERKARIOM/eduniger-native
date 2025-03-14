@@ -69,16 +69,16 @@
             <ImageView
                 android:id="@+id/image_view_activity_audio_player_cover"
                 android:layout_width="150dp"
-                android:layout_height="220dp"
+                android:layout_height="268dp"
                 android:src="@drawable/vector_white_music"
-                android:layout_centerInParent="true"
+               android:layout_centerHorizontal="true"
                 android:contentDescription="@string/todo" />
             <TextView
                 android:id="@+id/text_view_activity_audio_player_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/image_view_activity_audio_player_cover"
-                android:layout_marginTop="100dp"
+                android:layout_marginTop="20dp"
                 android:textSize="@dimen/size_title"
                 android:layout_centerHorizontal="true"
                 android:padding="5dp"

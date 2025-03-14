@@ -161,6 +161,8 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
                                     int currentTime = mMediaPlayer.getCurrentPosition();
                                     mSeekBar.setProgress(currentTime);
                                     mDurationCurrentTextView.setText(convertedDurationToString(currentTime));
+                                    if (convertedDurationToString(mMediaPlayer.getDuration()-3000).equals(convertedDurationToString(currentTime)))
+                                        onTrackNext();
                                 }
                             }
                         });
@@ -213,7 +215,7 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
                 .placeholder(R.drawable.img_default_book)
                 .error(R.drawable.img_default_book)
                 .transform(new RoundedTransformation(15,4))
-                .resize(280,330)
+                .resize(356,568)
                 .into(mCoverImageView);
     }
 
@@ -269,7 +271,7 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
                 Picasso.get().load(coverFile)
                         .placeholder(R.drawable.img_default_book)
                         .error(R.drawable.img_default_book)
-                        .resize(280, 330)
+                        .resize(156, 868)
                         .into(mCoverImageView);
 
                 initializeMediaPlayer();
