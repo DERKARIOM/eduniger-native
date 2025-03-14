@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.os.Build;
@@ -25,6 +26,8 @@ import androidx.core.app.NotificationCompat;
 
 import com.ninotech.fabi.Playable;
 import com.ninotech.fabi.R;
+import com.ninotech.fabi.controleur.animation.RoundedTransformation;
+import com.ninotech.fabi.controleur.custo.StatusBarCusto;
 import com.ninotech.fabi.model.data.CreateNotification;
 import com.ninotech.fabi.model.data.Track;
 import com.ninotech.fabi.model.service.OnClearFromRecentService;
@@ -33,6 +36,7 @@ import com.ninotech.fabi.model.table.Session;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -44,13 +48,27 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
     private static final int NOTIFICATION_ID = 1;
 
     private NotificationManager notificationManager;
-
     private Session mSession;
-    private TextView mTitleTextView, mAuthorTextView, mDurationTotalTextView, mDurationCurrentTextView;
-    private ImageView mCoverImageView, mPlayImageView, mBackImageView, mReplayImageView;
+    private TextView mTitleTextView;
+    private TextView mAuthorTextView;
+    private ImageView mCoverImageView;
+    private TextView mDurationTotalTextView;
+    private TextView mDurationCurrentTextView;
+    private MediaPlayer mMediaPlayer;
+    private ImageView mPlayImageView;
     private SeekBar mSeekBar;
     private Handler mHandler;
-    private MediaPlayer mMediaPlayer;
+    private ImageView mBackImageView;
+    private ImageView mReplayImageView;
+    private ImageView mVolumeImageView;
+    private ImageView mTonesImageView;
+    private ImageView mPlayListImageView;
+    private ImageView mLoveImageView;
+    private ImageView mAddImageView;
+    private ImageView mRandomImageView;
+    private ImageView mBackPlayImageView;
+    private ImageView mNextPlayImageView;
+    private ImageView mAutoPlayImageView;
     private String audioPath;
     private List<Track> mTracks;
     private int position=0;
@@ -62,8 +80,103 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
         setContentView(R.layout.activity_audio_player);
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         Objects.requireNonNull(getSupportActionBar()).hide();
+        StatusBarCusto statusBarCusto = new StatusBarCusto(this,getWindow());
+        Intent audioBookIntent = getIntent();
+        mSession = new Session(this);
+        mTitleTextView = findViewById(R.id.text_view_activity_audio_player_title);
+        mAuthorTextView = findViewById(R.id.text_view_activity_audio_player_author);
+        mDurationTotalTextView = findViewById(R.id.text_view_activity_audio_player_duration_total);
+        mDurationCurrentTextView = findViewById(R.id.text_view_activity_audio_player_duration_current);
+        mCoverImageView = findViewById(R.id.image_view_activity_audio_player_cover);
         mPlayImageView = findViewById(R.id.image_view_activity_audio_player_play);
+        mReplayImageView = findViewById(R.id.image_view_activity_audio_player_replay);
+        mVolumeImageView = findViewById(R.id.image_view_activity_audio_player_volume);
+        mSeekBar = findViewById(R.id.seek_bar_activity_audio_player);
+        mBackImageView = findViewById(R.id.image_view_activity_audio_player_back);
+        mTonesImageView = findViewById(R.id.image_view_activity_audio_player_volume);
+        mPlayListImageView = findViewById(R.id.image_view_activity_audio_player_list);
+        mLoveImageView = findViewById(R.id.image_view_activity_audio_player_love);
+        mAddImageView = findViewById(R.id.image_view_activity_audio_player_add);
+        mRandomImageView = findViewById(R.id.image_view_activity_audio_player_random);
+        mBackPlayImageView = findViewById(R.id.image_view_activity_audio_player_back_player);
+        mNextPlayImageView = findViewById(R.id.image_view_activity_audio_player_next_play);
+        mAutoPlayImageView = findViewById(R.id.image_view_activity_audio_player_auto_play);
+        mHandler = new Handler();
         popluateTracks();
+        String idBook = audioBookIntent.getStringExtra("key_adapter_audio_book_id");
+        AudioTable audioTable = new AudioTable(this);
+        mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                if (b) {
+                    mMediaPlayer.seekTo(i);
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        mBackImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+        try {
+            Cursor audioCursor = audioTable.getData(mSession.getIdNumber(),idBook);
+            audioCursor.moveToFirst();
+            mTitleTextView.setText(audioCursor.getString(8));
+            mAuthorTextView.setText(audioCursor.getString(4));
+            mDurationTotalTextView.setText(audioCursor.getString(11));
+            File file = new File(audioCursor.getString(5));
+            Picasso.get().load(file)
+                    .placeholder(R.drawable.img_default_book)
+                    .error(R.drawable.img_default_book)
+                    .transform(new RoundedTransformation(15,4))
+                    .resize(280,330)
+                    .into(mCoverImageView);
+            mMediaPlayer = new MediaPlayer();
+            mMediaPlayer.setDataSource(audioCursor.getString(6));
+            mMediaPlayer.prepare();
+            mSeekBar.setMax(mMediaPlayer.getDuration());
+            onTrackPlay();
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (mMediaPlayer != null) {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        mHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (mMediaPlayer != null && mMediaPlayer.isPlaying())
+                                {
+                                    int currentTime = mMediaPlayer.getCurrentPosition();
+                                    mSeekBar.setProgress(currentTime);
+                                    mDurationCurrentTextView.setText(convertedDurationToString(currentTime));
+                                }
+                            }
+                        });
+                    }
+                }
+            }).start();
+        }catch (Exception e)
+        {
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            Log.e("ErrorAudioCursor", Objects.requireNonNull(e.getMessage()));
+        }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createChanel();
             registerReceiver(broadcastReceiver,new IntentFilter("TRACKS_TRACKS"));
@@ -77,6 +190,12 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
                     onTrackPause();
                 }else
                     onTrackPlay();
+            }
+        });
+        mReplayImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mMediaPlayer.seekTo(0);
             }
         });
         //initUI();
@@ -318,6 +437,7 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
         CreateNotification.createNotification(AudioPlayerActivity.this,mTracks.get(position),
                 R.drawable.vector_black3_play,position,mTracks.size()-1);
         mPlayImageView.setImageResource(R.drawable.vector_black3_play);
+        mMediaPlayer.start();
         isPlaying = true;
     }
 
@@ -326,6 +446,7 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
         CreateNotification.createNotification(AudioPlayerActivity.this,mTracks.get(position),
                 R.drawable.vector_black3_pause,position,mTracks.size()-1);
         mPlayImageView.setImageResource(R.drawable.vector_black3_pause);
+        mMediaPlayer.pause();
         isPlaying = false;
     }
 
