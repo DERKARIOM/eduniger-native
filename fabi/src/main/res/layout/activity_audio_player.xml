@@ -141,8 +141,8 @@
                 android:id="@+id/seek_bar_activity_audio_player"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="30dp"
-                android:layout_marginStart="30dp"
+                android:layout_marginEnd="25dp"
+                android:layout_marginStart="25dp"
                 android:layout_marginTop="5dp"
                 />
             <TextView
@@ -150,7 +150,7 @@
                 style="@style/wrap_content_all"
                 android:text="0:23"
                 android:layout_marginStart="40dp"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="10dp"
                 android:textColor="@color/black2"
                 android:textSize="@dimen/size_sub_title"
                 android:layout_below="@id/seek_bar_activity_audio_player"
@@ -161,10 +161,10 @@
                 android:text="31:49"
                 android:layout_alignParentEnd="true"
                 android:layout_marginEnd="40dp"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="10dp"
                 android:textColor="@color/black2"
                 android:textSize="@dimen/size_sub_title"
-                android:layout_above="@id/seek_bar_activity_audio_player"
+                android:layout_below="@id/seek_bar_activity_audio_player"
                 />
         </RelativeLayout>
         <RelativeLayout
