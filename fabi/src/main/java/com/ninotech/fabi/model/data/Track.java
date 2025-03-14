@@ -30,8 +30,42 @@ public class Track {
     public void setImage(int image) {
         this.image = image;
     }
+    public String getTime() {
+        return time;
+    }
 
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    public Track(String cover , String title, String artist, String audio ,  String time, int image) {
+        this.cover = cover;
+        this.title = title;
+        this.artist = artist;
+        this.audio = audio;
+        this.time = time;
+        this.image = image;
+    }
+    public String getAudio() {
+        return audio;
+    }
+
+    public void setAudio(String audio) {
+        this.audio = audio;
+    }
+
+    public String getCover() {
+        return cover;
+    }
+
+    public void setCover(String cover) {
+        this.cover = cover;
+    }
+
+    private String cover;
     private String title;
     private String artist;
+    private String audio;
+    private String time;
     private int image;
 }

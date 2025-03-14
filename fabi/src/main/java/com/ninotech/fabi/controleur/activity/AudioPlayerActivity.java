@@ -37,6 +37,7 @@ import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -102,9 +103,8 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
         mNextPlayImageView = findViewById(R.id.image_view_activity_audio_player_next_play);
         mAutoPlayImageView = findViewById(R.id.image_view_activity_audio_player_auto_play);
         mHandler = new Handler();
-        popluateTracks();
         String idBook = audioBookIntent.getStringExtra("key_adapter_audio_book_id");
-        AudioTable audioTable = new AudioTable(this);
+        popluateTracks(idBook);
         mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
@@ -129,23 +129,19 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
                 onBackPressed();
             }
         });
+        setRessourceBook();
+        mMediaPlayer = new MediaPlayer();
         try {
-            Cursor audioCursor = audioTable.getData(mSession.getIdNumber(),idBook);
-            audioCursor.moveToFirst();
-            mTitleTextView.setText(audioCursor.getString(8));
-            mAuthorTextView.setText(audioCursor.getString(4));
-            mDurationTotalTextView.setText(audioCursor.getString(11));
-            File file = new File(audioCursor.getString(5));
-            Picasso.get().load(file)
-                    .placeholder(R.drawable.img_default_book)
-                    .error(R.drawable.img_default_book)
-                    .transform(new RoundedTransformation(15,4))
-                    .resize(280,330)
-                    .into(mCoverImageView);
-            mMediaPlayer = new MediaPlayer();
-            mMediaPlayer.setDataSource(audioCursor.getString(6));
+            mMediaPlayer.setDataSource(mTracks.get(position).getAudio());
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+        try {
             mMediaPlayer.prepare();
-            mSeekBar.setMax(mMediaPlayer.getDuration());
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+        mSeekBar.setMax(mMediaPlayer.getDuration());
             onTrackPlay();
 
             new Thread(new Runnable() {
@@ -171,12 +167,6 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
                     }
                 }
             }).start();
-        }catch (Exception e)
-        {
-            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
-            Log.e("ErrorAudioCursor", Objects.requireNonNull(e.getMessage()));
-        }
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createChanel();
             registerReceiver(broadcastReceiver,new IntentFilter("TRACKS_TRACKS"));
@@ -192,6 +182,18 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
                     onTrackPlay();
             }
         });
+        mBackPlayImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onTrackPrevious();
+            }
+        });
+        mNextPlayImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onTrackNext();
+            }
+        });
         mReplayImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -200,6 +202,19 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
         });
         //initUI();
         //setupAudioPlayer();
+    }
+
+    public void setRessourceBook() {
+        mTitleTextView.setText(mTracks.get(position).getTitle());
+        mAuthorTextView.setText(mTracks.get(position).getArtist());
+        mDurationTotalTextView.setText(mTracks.get(position).getTime());
+        File file = new File(mTracks.get(position).getCover());
+        Picasso.get().load(file)
+                .placeholder(R.drawable.img_default_book)
+                .error(R.drawable.img_default_book)
+                .transform(new RoundedTransformation(15,4))
+                .resize(280,330)
+                .into(mCoverImageView);
     }
 
     private void initUI() {
@@ -385,12 +400,16 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
             mMediaPlayer = null;
         }
     }
-    private void popluateTracks(){
+    private void popluateTracks(String idBook){
+        AudioTable audioTable = new AudioTable(this);
         mTracks = new ArrayList<>();
-        mTracks.add(new Track("Track 1","Artist 1",R.id.relative_layout_activity_declaration_img));
-        mTracks.add(new Track("Track 2","Artist 2",R.id.relative_layout_activity_declaration_img));
-        mTracks.add(new Track("Track 3","Artist 3",R.id.relative_layout_activity_declaration_img));
-
+        Cursor audioCursor = audioTable.getData(mSession.getIdNumber());
+        audioCursor.moveToFirst();
+        do {
+            mTracks.add(new Track(audioCursor.getString(5),audioCursor.getString(8),audioCursor.getString(4),audioCursor.getString(6),audioCursor.getString(11),R.id.relative_layout_activity_declaration_img));
+            if (audioCursor.getString(2).equals(idBook))
+                position = mTracks.size()-1;
+        }while (audioCursor.moveToNext());
     }
     private void createChanel(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -427,7 +446,25 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
     };
     @Override
     public void onTrackPrevious() {
-        position--;
+        mMediaPlayer.reset();
+        if(!(position == 0))
+            position--;
+        else
+            position=(mTracks.size() - 1);
+        setRessourceBook();
+        try {
+            mMediaPlayer = new MediaPlayer();
+            mMediaPlayer.setDataSource(mTracks.get(position).getAudio());
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+        try {
+            mMediaPlayer.prepare();
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+        mSeekBar.setMax(mMediaPlayer.getDuration());
+        onTrackPlay();
         CreateNotification.createNotification(AudioPlayerActivity.this,mTracks.get(position),
                 R.drawable.vector_black3_play,position,mTracks.size()-1);
     }
@@ -452,7 +489,25 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
 
     @Override
     public void onTrackNext() {
-        position++;
+        mMediaPlayer.reset();
+        if(!(position == mTracks.size() - 1))
+            position++;
+        else
+            position=0;
+        setRessourceBook();
+        try {
+            mMediaPlayer = new MediaPlayer();
+            mMediaPlayer.setDataSource(mTracks.get(position).getAudio());
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+        try {
+            mMediaPlayer.prepare();
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+        mSeekBar.setMax(mMediaPlayer.getDuration());
+        onTrackPlay();
         CreateNotification.createNotification(AudioPlayerActivity.this,mTracks.get(position),
                 R.drawable.vector_black3_play,position,mTracks.size()-1);
     }
