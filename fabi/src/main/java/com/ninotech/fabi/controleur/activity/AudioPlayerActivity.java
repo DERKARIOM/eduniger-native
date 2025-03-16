@@ -213,8 +213,8 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
         mDurationTotalTextView.setText(mTracks.get(position).getTime());
         File file = new File(mTracks.get(position).getCover());
         Picasso.get().load(file)
-                .placeholder(R.drawable.img_default_book)
-                .error(R.drawable.img_default_book)
+                .placeholder(R.drawable.img_wait_cover_book)
+                .error(R.drawable.img_wait_cover_book)
                 .transform(new RoundedTransformation(15,4))
                 .resize(356,568)
                 .into(mCoverImageView);
@@ -270,8 +270,8 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
 
                 File coverFile = new File(audioCursor.getString(5));
                 Picasso.get().load(coverFile)
-                        .placeholder(R.drawable.img_default_book)
-                        .error(R.drawable.img_default_book)
+                        .placeholder(R.drawable.img_wait_cover_book)
+                        .error(R.drawable.img_wait_cover_book)
                         .resize(156, 868)
                         .into(mCoverImageView);
 
@@ -379,7 +379,7 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
     private void updateNotification() {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.mipmap.ic_v2)
-                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.img_default_book))
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.img_wait_cover_book))
                 .setContentTitle(mTitleTextView.getText())
                 .setContentText(isPlaying ? "Lecture en cours" : "En pause")
                 .setPriority(NotificationCompat.PRIORITY_LOW)

@@ -85,8 +85,8 @@ public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.MyViewHold
 
             // Charger le fichier avec Picasso
             Picasso.get().load(file)
-                    .placeholder(R.drawable.img_default_book)
-                    .error(R.drawable.img_default_book)
+                    .placeholder(R.drawable.img_wait_cover_book)
+                    .error(R.drawable.img_wait_cover_book)
                     .transform(new RoundedTransformation(15,4))
                     .resize(198,304)
                     .into(mCoverImageView);

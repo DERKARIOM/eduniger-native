@@ -166,7 +166,10 @@ public class StructureActivity extends AppCompatActivity {
             public void onClick(View v) {
                 switch (mStructure.getId())
                 {
-                    case "1","3","4":
+                    case "2":
+                        simpleOkDialog(R.drawable.vector_purple_200_desole,"Structure Exclusive","Cette structure est exclusivement réservée aux étudiants de la FAST UAM. Veuillez vérifier que vous remplissez les critères d'adhésion puis contacter les numéro suivante :\n+22796627534 / +22794961793.");
+                        break;
+                    default:
                         if (mAdhererButton.getText().toString().equals("Détacher"))
                             structDelete(mStructure.getId());
                         else
@@ -179,9 +182,6 @@ public class StructureActivity extends AppCompatActivity {
                             DetachStructSyn detachStructSyn = new DetachStructSyn();
                             detachStructSyn.execute(getString(R.string.ip_server_android) + "AdhererStruct.php",mSession.getIdNumber(),mStructure.getId());
                         }
-                        break;
-                    case "2":
-                        simpleOkDialog(R.drawable.vector_purple_200_desole,"Structure Exclusive","Cette structure est exclusivement réservée aux étudiants de la FAST UAM. Veuillez vérifier que vous remplissez les critères d'adhésion puis contacter les numéro suivante :\n+22796627534 / +22794961793.");
                         break;
 
                 }

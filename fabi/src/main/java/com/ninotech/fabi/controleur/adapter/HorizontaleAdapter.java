@@ -67,8 +67,8 @@ public class HorizontaleAdapter extends RecyclerView.Adapter<HorizontaleAdapter.
         void display(Book book) throws SQLException, IOException {
             Picasso.get()
                     .load(itemView.getContext().getString(R.string.ip_server) + "ressources/cover/"  + book.getCover())
-                    .placeholder(R.drawable.img_default_book)
-                    .error(R.drawable.img_default_book)
+                    .placeholder(R.drawable.img_wait_cover_book)
+                    .error(R.drawable.img_wait_cover_book)
                     .transform(new RoundedTransformation(15,4))
                     .resize(260,394)
                     .into(mCoverImageView);
