@@ -9,10 +9,13 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.media.audiofx.Equalizer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -94,7 +97,7 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
         mVolumeImageView = findViewById(R.id.image_view_activity_audio_player_volume);
         mSeekBar = findViewById(R.id.seek_bar_activity_audio_player);
         mBackImageView = findViewById(R.id.image_view_activity_audio_player_back);
-        mTonesImageView = findViewById(R.id.image_view_activity_audio_player_volume);
+        mTonesImageView = findViewById(R.id.image_view_activity_audio_player_tones);
         mPlayListImageView = findViewById(R.id.image_view_activity_audio_player_list);
         mLoveImageView = findViewById(R.id.image_view_activity_audio_player_love);
         mAddImageView = findViewById(R.id.image_view_activity_audio_player_add);
@@ -203,8 +206,69 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
                 mMediaPlayer.seekTo(0);
             }
         });
-        //initUI();
-        //setupAudioPlayer();
+
+        mVolumeImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+                if (audioManager != null) {
+                    // Afficher la barre de volume
+                    audioManager.adjustVolume(AudioManager.ADJUST_SAME, AudioManager.FLAG_SHOW_UI);
+                }
+            }
+        });
+
+        mTonesImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    Intent intent = new Intent(Intent.ACTION_MAIN);
+                    intent.setClassName("com.android.settings", "com.android.settings.SoundSettings");
+                    startActivity(intent);
+                } catch (Exception e) {
+                    // Si l'application native d'égaliseur n'est pas disponible, on peut lancer un intent standard
+                    Intent intent = new Intent(Equalizer.ACTION_OPEN_AUDIO_EFFECT_CONTROL_SESSION);
+                    intent.putExtra(Equalizer.EXTRA_AUDIO_SESSION, 0);
+                    intent.putExtra(Equalizer.EXTRA_PACKAGE_NAME, getPackageName());
+                    startActivity(intent);
+                }
+            }
+        });
+
+        mPlayListImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(AudioPlayerActivity.this, "Player Liste", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        mLoveImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(AudioPlayerActivity.this, "Favori", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        mAddImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(AudioPlayerActivity.this, "ADD", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        mRandomImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(AudioPlayerActivity.this, "Random", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        mAutoPlayImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(AudioPlayerActivity.this, "Auto", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     public void setRessourceBook() {
@@ -220,175 +284,11 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
                 .into(mCoverImageView);
     }
 
-    private void initUI() {
-        mSession = new Session(this);
-        mHandler = new Handler();
-
-        mTitleTextView = findViewById(R.id.text_view_activity_audio_player_title);
-        mAuthorTextView = findViewById(R.id.text_view_activity_audio_player_author);
-        mDurationTotalTextView = findViewById(R.id.text_view_activity_audio_player_duration_total);
-        mDurationCurrentTextView = findViewById(R.id.text_view_activity_audio_player_duration_current);
-        mCoverImageView = findViewById(R.id.image_view_activity_audio_player_cover);
-        mPlayImageView = findViewById(R.id.image_view_activity_audio_player_play);
-        mBackImageView = findViewById(R.id.image_view_activity_audio_player_back);
-        mReplayImageView = findViewById(R.id.image_view_activity_audio_player_replay);
-        mSeekBar = findViewById(R.id.seek_bar_activity_audio_player);
-
-        mBackImageView.setOnClickListener(v -> onBackPressed());
-        mPlayImageView.setOnClickListener(v -> togglePlayPause());
-        mReplayImageView.setOnClickListener(v -> replayAudio());
-
-        mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (fromUser && mMediaPlayer != null) {
-                    mMediaPlayer.seekTo(progress);
-                }
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {}
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {}
-        });
-
-    }
-
-    private void setupAudioPlayer() {
-        Intent intent = getIntent();
-        String idBook = intent.getStringExtra("key_adapter_audio_book_id");
-        AudioTable audioTable = new AudioTable(this);
-
-        try {
-            Cursor audioCursor = audioTable.getData(mSession.getIdNumber(), idBook);
-            if (audioCursor.moveToFirst()) {
-                mTitleTextView.setText(audioCursor.getString(8));
-                mAuthorTextView.setText(audioCursor.getString(4));
-                mDurationTotalTextView.setText(audioCursor.getString(11));
-                audioPath = audioCursor.getString(6);
-
-                File coverFile = new File(audioCursor.getString(5));
-                Picasso.get().load(coverFile)
-                        .placeholder(R.drawable.img_wait_cover_book)
-                        .error(R.drawable.img_wait_cover_book)
-                        .resize(156, 868)
-                        .into(mCoverImageView);
-
-                initializeMediaPlayer();
-            }
-        } catch (Exception e) {
-            Toast.makeText(this, "Erreur lors du chargement de l'audio", Toast.LENGTH_SHORT).show();
-            Log.e("AudioPlayerActivity", "Error: " + e.getMessage());
-        }
-    }
-
-    private void initializeMediaPlayer() {
-        if (mMediaPlayer != null) {
-            mMediaPlayer.release();
-        }
-
-        mMediaPlayer = new MediaPlayer();
-        try {
-            mMediaPlayer.setDataSource(audioPath);
-            mMediaPlayer.prepare();
-            mSeekBar.setMax(mMediaPlayer.getDuration());
-
-            mMediaPlayer.setOnCompletionListener(mp -> stopAudio());
-            updateSeekBar();
-            startAudio();
-        } catch (Exception e) {
-            Log.e("MediaPlayerError", "Erreur: " + e.getMessage());
-        }
-    }
-    private void startAudio() {
-        if (mMediaPlayer != null && !mMediaPlayer.isPlaying()) {
-            mMediaPlayer.start();
-            mPlayImageView.setImageResource(R.drawable.vector_black3_pause);
-            isPlaying = true;
-            updateNotification();
-        }
-    }
-
-    private void togglePlayPause() {
-        if (mMediaPlayer.isPlaying()) {
-            mMediaPlayer.pause();
-            mPlayImageView.setImageResource(R.drawable.vector_black3_play);
-            isPlaying = false;
-        } else {
-            mMediaPlayer.start();
-            mPlayImageView.setImageResource(R.drawable.vector_black3_pause);
-            isPlaying = true;
-        }
-        updateNotification();
-    }
-
-    private void replayAudio() {
-        if (mMediaPlayer != null) {
-            mMediaPlayer.seekTo(0);
-            mMediaPlayer.start();
-        }
-    }
-
-    private void stopAudio() {
-        if (mMediaPlayer != null) {
-            mMediaPlayer.stop();
-            mMediaPlayer.release();
-            mMediaPlayer = null;
-            isPlaying = false;
-        }
-        updateNotification();
-    }
-
-    private void updateSeekBar() {
-        new Thread(() -> {
-            while (mMediaPlayer != null) {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                mHandler.post(() -> {
-                    if (mMediaPlayer != null) {
-                        int currentTime = mMediaPlayer.getCurrentPosition();
-                        mSeekBar.setProgress(currentTime);
-                        mDurationCurrentTextView.setText(convertedDurationToString(currentTime));
-                    }
-                });
-            }
-        }).start();
-    }
-
     private String convertedDurationToString(int duration) {
         return String.format("%02d:%02d",
                 TimeUnit.MILLISECONDS.toMinutes(duration),
                 TimeUnit.MILLISECONDS.toSeconds(duration) -
                         TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(duration)));
-    }
-
-    private void createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Audio Player", NotificationManager.IMPORTANCE_LOW);
-            NotificationManager manager = getSystemService(NotificationManager.class);
-            if (manager != null) {
-                manager.createNotificationChannel(channel);
-            }
-        }
-    }
-
-    private void updateNotification() {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.mipmap.ic_v2)
-                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.img_wait_cover_book))
-                .setContentTitle(mTitleTextView.getText())
-                .setContentText(isPlaying ? "Lecture en cours" : "En pause")
-                .setPriority(NotificationCompat.PRIORITY_LOW)
-                .setOngoing(isPlaying);
-
-        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        if (manager != null) {
-            manager.notify(NOTIFICATION_ID, builder.build());
-        }
     }
 
     @Override
