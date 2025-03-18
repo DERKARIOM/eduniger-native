@@ -26,11 +26,15 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.NotificationCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.ninotech.fabi.Playable;
 import com.ninotech.fabi.R;
+import com.ninotech.fabi.controleur.adapter.NoConnectionAdapter;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
 import com.ninotech.fabi.controleur.custo.StatusBarCusto;
+import com.ninotech.fabi.controleur.fragment.HomeFragment;
+import com.ninotech.fabi.model.data.Connection;
 import com.ninotech.fabi.model.data.CreateNotification;
 import com.ninotech.fabi.model.data.Track;
 import com.ninotech.fabi.model.service.OnClearFromRecentService;
@@ -106,6 +110,15 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
         mNextPlayImageView = findViewById(R.id.image_view_activity_audio_player_next_play);
         mAutoPlayImageView = findViewById(R.id.image_view_activity_audio_player_auto_play);
         mHandler = new Handler();
+        BroadcastReceiver receiverNoConnectionAdapter = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if ("SELECT_LIST_PLAYER".equals(intent.getAction())) {
+                    Toast.makeText(context,String.valueOf(intent.getIntExtra("position",0)), Toast.LENGTH_SHORT).show();
+                    onTrackPlayPosition(intent.getIntExtra("position",0));
+                }
+            }
+        };registerReceiver(receiverNoConnectionAdapter, new IntentFilter("SELECT_LIST_PLAYER"));
         String idBook = audioBookIntent.getStringExtra("key_adapter_audio_book_id");
         popluateTracks(idBook);
         mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -239,6 +252,10 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
             @Override
             public void onClick(View v) {
                 Toast.makeText(AudioPlayerActivity.this, "Player Liste", Toast.LENGTH_SHORT).show();
+                Intent local = new Intent(AudioPlayerActivity.this, ListPlayerActivity.class);
+                local.putExtra("id",6);
+                local.putExtra("audio",mTracks.get(position).getAudio());
+                startActivity(local);
             }
         });
 
@@ -397,6 +414,26 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
             position++;
         else
             position=0;
+        setRessourceBook();
+        try {
+            mMediaPlayer = new MediaPlayer();
+            mMediaPlayer.setDataSource(mTracks.get(position).getAudio());
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+        try {
+            mMediaPlayer.prepare();
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+        mSeekBar.setMax(mMediaPlayer.getDuration());
+        onTrackPlay();
+        CreateNotification.createNotification(AudioPlayerActivity.this,mTracks.get(position),
+                R.drawable.vector_black3_play,position,mTracks.size()-1);
+    }
+    public void onTrackPlayPosition(int posi) {
+        mMediaPlayer.reset();
+        position = posi;
         setRessourceBook();
         try {
             mMediaPlayer = new MediaPlayer();

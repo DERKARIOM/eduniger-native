@@ -159,6 +159,29 @@ public class ContainerActivity extends AppCompatActivity {
                 }
 
                 break;
+            case 6:
+                try {
+                    actionBarTitle.setText("File de lecture");
+                    ArrayList<AudioBook> audioBooks = new ArrayList<>();
+                    mAudioTable = new AudioTable(this);
+                    Cursor audioCursor = mAudioTable.getData(mSession.getIdNumber());
+                    audioCursor.moveToFirst();
+                    do {
+                        if (!audioCursor.getString(6).equals(getIntent().getStringExtra("audio")))
+                            audioBooks.add(new AudioBook(audioCursor.getString(2),audioCursor.getString(5),audioCursor.getString(8),audioCursor.getString(4),audioCursor.getString(11),audioCursor.getString(6),false,true));
+                        else
+                            audioBooks.add(new AudioBook(audioCursor.getString(2),audioCursor.getString(5),audioCursor.getString(8),audioCursor.getString(4),audioCursor.getString(11),audioCursor.getString(6),true,true));
+                    }while (audioCursor.moveToNext());
+                    mAudioBookAdapter = new AudioBookAdapter(audioBooks);
+                    mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+                    registerForContextMenu(mRecyclerView);
+                    mRecyclerView.setAdapter(mAudioBookAdapter);
+                }catch (Exception e)
+                {
+                    voidContainer(R.drawable.img_playliste_local,getString(R.string.no_audio_book));
+                    Log.e("ErrorAudio",e.getMessage());
+                }
+                break;
         }
     }
     public long percentage(long startDate , long endDate , long nowDate)

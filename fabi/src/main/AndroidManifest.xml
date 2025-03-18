@@ -25,6 +25,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".controleur.activity.ListPlayerActivity"
+            android:exported="false" />
+        <activity
             android:name=".controleur.activity.AddBookActivity"
             android:exported="false" />
         <activity
@@ -161,7 +164,9 @@
             android:name=".model.service.AudioService"
             android:foregroundServiceType="mediaPlayback"
             tools:ignore="ForegroundServicePermission" />
-        <receiver android:name=".model.service.AudioReceiver"
+
+        <receiver
+            android:name=".model.service.AudioReceiver"
             android:exported="true"
             android:permission="TODO"
             tools:ignore="ExportedReceiver">
@@ -171,8 +176,9 @@
                 <action android:name="STOP" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".model.service.NotificationActionService"/>
-        <service android:name=".model.service.OnClearFromRecentService"/>
+        <receiver android:name=".model.service.NotificationActionService" />
+
+        <service android:name=".model.service.OnClearFromRecentService" />
     </application>
 
 </manifest>

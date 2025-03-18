@@ -1,8 +1,10 @@
 package com.ninotech.fabi.controleur.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -108,13 +110,35 @@ public class AudioBookAdapter extends RecyclerView.Adapter<AudioBookAdapter.MyVi
                     .into(mCoverImageView);
             mTitleTextView.setText(audioBook.getTitle());
             mAuthorTextView.setText("De " + audioBook.getAuthor());
-            mDurationTextView.setText("La durée : " + audioBook.getDuration());
+            mDurationTextView.setText("Durée : " + audioBook.getDuration());
+            if (audioBook.isPlayer())
+            {
+                mTitleTextView.setTextColor(Color.parseColor("#42B998"));
+                mAuthorTextView.setTextColor(Color.parseColor("#42B998"));
+                mDurationTextView.setTextColor(Color.parseColor("#42B998"));
+            }
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent audioPayerIntent = new Intent(itemView.getContext(), AudioPlayerActivity.class);
-                    audioPayerIntent.putExtra("key_adapter_audio_book_id",audioBook.getId());
-                    itemView.getContext().startActivity(audioPayerIntent);
+                    if (audioBook.isPlayerList())
+                    {
+                        Intent intent = new Intent("SELECT_LIST_PLAYER");
+                        intent.putExtra("position",getPosition());
+                        itemView.getContext().sendBroadcast(intent);
+                        try {
+                            ((Activity)itemView.getContext()).finish();
+                        }
+                        catch (Exception e)
+                        {
+                            Toast.makeText(itemView.getContext(),e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    else
+                    {
+                        Intent audioPayerIntent = new Intent(itemView.getContext(), AudioPlayerActivity.class);
+                        audioPayerIntent.putExtra("key_adapter_audio_book_id",audioBook.getId());
+                        itemView.getContext().startActivity(audioPayerIntent);
+                    }
                 }
             });
         }

@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">fabi</string>
-    <string name="app_version">1.0.0</string>
+    <string name="app_version">2.0.0</string>
     <string name="ip_server_android">http://192.168.1.25:2222/fabi/android/</string>
     <string name="ip_server">http://192.168.1.25:2222/fabi/</string>
     <!--        <string name="ip_server_android">https://telesafe.net/fabi/android/</string>-->
