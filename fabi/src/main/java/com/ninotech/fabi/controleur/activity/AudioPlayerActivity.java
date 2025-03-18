@@ -118,7 +118,10 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
                     onTrackPlayPosition(intent.getIntExtra("position",0));
                 }
             }
-        };registerReceiver(receiverNoConnectionAdapter, new IntentFilter("SELECT_LIST_PLAYER"));
+        };
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            registerReceiver(receiverNoConnectionAdapter, new IntentFilter("SELECT_LIST_PLAYER"),Context.RECEIVER_EXPORTED);
+        }
         String idBook = audioBookIntent.getStringExtra("key_adapter_audio_book_id");
         popluateTracks(idBook);
         mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {

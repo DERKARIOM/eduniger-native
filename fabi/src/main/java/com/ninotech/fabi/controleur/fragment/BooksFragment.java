@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -68,7 +69,9 @@ public class BooksFragment extends Fragment {
                 }
             }
         };
-        getContext().registerReceiver(receiverNoConnectionAdapter, new IntentFilter("RANKING_FRAGMENT"));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            getContext().registerReceiver(receiverNoConnectionAdapter, new IntentFilter("RANKING_FRAGMENT"),Context.RECEIVER_EXPORTED);
+        }
         RankingSyn rankingSyn = new RankingSyn();
         rankingSyn.execute(getString(R.string.ip_server_android) + "Ranking.php", session.getIdNumber());
         return view;

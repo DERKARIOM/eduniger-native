@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -93,7 +94,10 @@ public class HomeFragment extends Fragment {
 
                 }
             }
-        };getContext().registerReceiver(receiverNoConnectionAdapter, new IntentFilter("HOME_FRAGMENT")); /* Appel de la fonction cregisterReceviver */
+        };
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            getContext().registerReceiver(receiverNoConnectionAdapter, new IntentFilter("HOME_FRAGMENT"),Context.RECEIVER_EXPORTED); /* Appel de la fonction cregisterReceviver */
+        }
 
         mBookMoreTextView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -176,13 +180,16 @@ public class HomeFragment extends Fragment {
         protected void onPostExecute(String jsonData){
             if(jsonData != null)
             {
-                Picasso.get()
-                        .load(getString(R.string.ip_server) + "ressources/pub/p4.jpg")
-                        .transform(new RoundedTransformation(200,10))
-                        .resize(6200,3333)
-                        .into(mWelcomeImageView);
-                mWaitRecyclerView.setVisibility(View.GONE);
-                mNestedScrollView.setVisibility(View.VISIBLE);
+                if (isAdded())
+                {
+                    Picasso.get()
+                            .load(getString(R.string.ip_server) + "ressources/pub/p4.png")
+                            .transform(new RoundedTransformation(200,10))
+                            .resize(6200,3333)
+                            .into(mWelcomeImageView);
+                    mWaitRecyclerView.setVisibility(View.GONE);
+                    mNestedScrollView.setVisibility(View.VISIBLE);
+                }
                 if(!jsonData.equals("expiresVersion"))
                 {
                     JSONArray jsonArray = null;

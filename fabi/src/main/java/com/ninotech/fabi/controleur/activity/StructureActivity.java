@@ -115,7 +115,9 @@ public class StructureActivity extends AppCompatActivity {
                 }
             }
         };
-        registerReceiver(receiverNoConnectionAdapter, new IntentFilter("STRUCTURE_ACTIVITY"));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            registerReceiver(receiverNoConnectionAdapter, new IntentFilter("STRUCTURE_ACTIVITY"),Context.RECEIVER_EXPORTED);
+        }
         mBackImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

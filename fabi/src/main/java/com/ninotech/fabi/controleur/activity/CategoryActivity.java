@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -89,7 +90,9 @@ public class CategoryActivity extends AppCompatActivity {
                 }
             }
         };
-        registerReceiver(receiverNoConnectionAdapter, new IntentFilter("CATEGORY_ACTIVITY"));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            registerReceiver(receiverNoConnectionAdapter, new IntentFilter("CATEGORY_ACTIVITY"),Context.RECEIVER_EXPORTED);
+        }
         CategoryInSyn categoryInSyn = new CategoryInSyn();
         categoryInSyn.execute(getString(R.string.ip_server_android) + "CategoryIn.php",mSession.getIdNumber(),mCategorie);
     }

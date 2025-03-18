@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -93,7 +94,9 @@ public class SearchActivity extends AppCompatActivity {
                 }
             }
         };
-        registerReceiver(receiverFabiolaBookAdapter, new IntentFilter("ACTION_RECOVER_BOOK"));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            registerReceiver(receiverFabiolaBookAdapter, new IntentFilter("ACTION_RECOVER_BOOK"),Context.RECEIVER_EXPORTED);
+        }
         mBackImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -253,7 +256,9 @@ public class SearchActivity extends AppCompatActivity {
                 }
             }
         };
-        registerReceiver(receiverNoConnectionAdapter, new IntentFilter("BOOKS_SEARCH"));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            registerReceiver(receiverNoConnectionAdapter, new IntentFilter("BOOKS_SEARCH"),Context.RECEIVER_EXPORTED);
+        }
         RankingSyn rankingSyn = new RankingSyn();
         rankingSyn.execute(getString(R.string.ip_server_android) + "Ranking.php", mSession.getIdNumber());
     }
@@ -280,7 +285,9 @@ public class SearchActivity extends AppCompatActivity {
                 }
             }
         };
-        registerReceiver(receiverNoConnectionAdapter, new IntentFilter("STRUCT_SEARCH"));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            registerReceiver(receiverNoConnectionAdapter, new IntentFilter("STRUCT_SEARCH"),Context.RECEIVER_EXPORTED);
+        }
         StructBookSyn structBookSyn = new StructBookSyn();
         structBookSyn.execute(getString(R.string.ip_server_android) + "StructBookMore.php", mSession.getIdNumber(),idStruct);
     }
@@ -310,7 +317,7 @@ public class SearchActivity extends AppCompatActivity {
                 }
             }
         };
-        registerReceiver(receiverNoConnectionAdapter, new IntentFilter("STRUCT_SEARCH"));
+        registerReceiver(receiverNoConnectionAdapter, new IntentFilter("STRUCT_SEARCH"),Context.RECEIVER_EXPORTED);
         StructureSyn structureSyn = new StructureSyn();
         structureSyn.execute(getString(R.string.ip_server_android) + "Structure.php", mSession.getIdNumber());
         StructureSyn2 structureSyn2 = new StructureSyn2();
@@ -1059,7 +1066,9 @@ public class SearchActivity extends AppCompatActivity {
                 }
             }
         };
-        registerReceiver(receiverNoConnectionAdapter, new IntentFilter("AUTHOR_SEARCH"));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            registerReceiver(receiverNoConnectionAdapter, new IntentFilter("AUTHOR_SEARCH"),Context.RECEIVER_EXPORTED);
+        }
         AuthorSyn authorSyn = new AuthorSyn();
         authorSyn.execute(getString(R.string.ip_server_android) + "Author.php", mSession.getIdNumber());
     }

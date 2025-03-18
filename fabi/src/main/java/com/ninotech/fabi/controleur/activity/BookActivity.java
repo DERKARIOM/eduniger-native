@@ -161,7 +161,9 @@ public class BookActivity extends AppCompatActivity {
                 }
             }
         };
-        registerReceiver(finishDownloadReceiver, new IntentFilter("ACTION_FINISH_DOWNLOAD"));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            registerReceiver(finishDownloadReceiver, new IntentFilter("ACTION_FINISH_DOWNLOAD"),Context.RECEIVER_EXPORTED);
+        }
         mBackImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -189,7 +191,7 @@ public class BookActivity extends AppCompatActivity {
                 }
             }
         };
-        registerReceiver(receiverNoConnectionAdapter, new IntentFilter("BOOK_ACTIVITY"));
+        registerReceiver(receiverNoConnectionAdapter, new IntentFilter("BOOK_ACTIVITY"),Context.RECEIVER_EXPORTED);
         mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {

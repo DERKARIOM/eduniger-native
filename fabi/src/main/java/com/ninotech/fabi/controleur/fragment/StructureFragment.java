@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -71,7 +72,9 @@ public class StructureFragment extends Fragment {
                 }
             }
         };
-        getContext().registerReceiver(receiverNoConnectionAdapter, new IntentFilter("CATEGORY_FRAGMENT"));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            getContext().registerReceiver(receiverNoConnectionAdapter, new IntentFilter("CATEGORY_FRAGMENT"),Context.RECEIVER_EXPORTED);
+        }
         StructureSyn structureSyn = new StructureSyn();
         structureSyn.execute(getString(R.string.ip_server_android) + "Structure.php", session.getIdNumber());
         StructureSyn2 structureSyn2 = new StructureSyn2();
