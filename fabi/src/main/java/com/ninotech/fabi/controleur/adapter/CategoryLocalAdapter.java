@@ -1,15 +1,18 @@
 package com.ninotech.fabi.controleur.adapter;
 
+import android.content.Intent;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.R;
+import com.ninotech.fabi.controleur.activity.ContainerActivity;
 import com.ninotech.fabi.model.data.Category;
 import com.squareup.picasso.Picasso;
 
@@ -93,6 +96,16 @@ public class CategoryLocalAdapter extends RecyclerView.Adapter<CategoryLocalAdap
                     .error(R.drawable.img_default_book)
                     .into(mCoverImageView);
             mTitleTextView.setText(category.getTitle());
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(itemView.getContext(), "OK", Toast.LENGTH_SHORT).show();
+                    Intent local = new Intent(itemView.getContext(), ContainerActivity.class);
+                    local.putExtra("id",7);
+                    local.putExtra("titleCategory",category.getTitle());
+                    itemView.getContext().startActivity(local);
+                }
+            });
         }
     }
 }

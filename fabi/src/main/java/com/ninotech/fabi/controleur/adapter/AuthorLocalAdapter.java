@@ -100,6 +100,12 @@ public class AuthorLocalAdapter extends RecyclerView.Adapter<AuthorLocalAdapter.
                     .apply(RequestOptions.circleCropTransform())
                     .into(mProfileImageView);
             mUsernameTextView.setText(author.getName());
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(itemView.getContext(), "ok", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 }

@@ -54,6 +54,11 @@ public class AudioTable extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         return db.rawQuery("SELECT * FROM " + NAME_TABLE + " WHERE idNumberAudio='" + idNumber + "' AND idBookAudio='" + idBook + "';",null);
     }
+    public Cursor getDataC(String idNumber , String category)
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.rawQuery("SELECT * FROM " + NAME_TABLE + " WHERE categoryAudio='"+ category +"' AND idNumberAudio='" + idNumber + "';",null);
+    }
     public Cursor getCategoryData(String idNumber)
     {
         SQLiteDatabase db = this.getReadableDatabase();

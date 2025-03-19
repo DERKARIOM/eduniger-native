@@ -125,8 +125,8 @@ public class ContainerActivity extends AppCompatActivity {
             case 4: // Category
                 actionBarTitle.setText(R.string.category);
                 mAudioTable = new AudioTable(this);
-                int i=0;
                 ArrayList<Category> categories = new ArrayList<>();
+                int i=0;
                 try {
                     Cursor categoryCursor = mElectronicTable.getCategoryData(mSession.getIdNumber());
                     categoryCursor.moveToFirst();
@@ -138,15 +138,17 @@ public class ContainerActivity extends AppCompatActivity {
                 {
                     i++;
                 }
+
                 try {
                     Cursor categoryAudioCursor = mAudioTable.getCategoryData(mSession.getIdNumber());
                     categoryAudioCursor.moveToFirst();
                     do {
                         String name = categoryAudioCursor.getString(1);
-                        if (isExistsC(categories,name));
-                        categories.add(new Category(categoryAudioCursor.getString(0),name));
+                        if (!isExistsC(categories,name))
+                        {
+                            categories.add(new Category(categoryAudioCursor.getString(0),name));
+                        }
                     }while (categoryAudioCursor.moveToNext());
-
                 }catch (Exception e)
                 {
                     i++;
@@ -164,7 +166,6 @@ public class ContainerActivity extends AppCompatActivity {
                 actionBarTitle.setText(R.string.author);
                 try {
                     ArrayList<Author> authors = new ArrayList<>();
-
                     Cursor authorCursor = mElectronicTable.getAuthorData(mSession.getIdNumber());
                     authorCursor.moveToFirst();
                     do {
@@ -180,7 +181,7 @@ public class ContainerActivity extends AppCompatActivity {
                 }
 
                 break;
-            case 6:
+            case 6: // Liste Player
                 try {
                     actionBarTitle.setText("File de lecture");
                     ArrayList<AudioBook> audioBooks = new ArrayList<>();
@@ -202,6 +203,47 @@ public class ContainerActivity extends AppCompatActivity {
                     voidContainer(R.drawable.img_playliste_local,getString(R.string.no_audio_book));
                     Log.e("ErrorAudio",e.getMessage());
                 }
+                break;
+            case 7: // Liste des livre par category
+                String tile = libraryIntent.getStringExtra("titleCategory");
+                mAudioTable = new AudioTable(this);
+                actionBarTitle.setText(tile);
+                mElectronicBookList = new ArrayList<>();
+                int i7=0;
+                try {
+                    Cursor electronicCursor = mElectronicTable.getDataC(mSession.getIdNumber(),tile);
+                    electronicCursor.moveToFirst();
+                    do {
+                        mElectronicBookList.add(new ElectronicBook(electronicCursor.getString(2),electronicCursor.getString(5),electronicCursor.getString(8),electronicCursor.getString(7),electronicCursor.getString(4),electronicCursor.getString(6)));
+                    }while(electronicCursor.moveToNext());
+                    mElectronicBookAdapter = new ElectronicBookAdapter(mElectronicBookList);
+                    mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+                    registerForContextMenu(mRecyclerView);
+                    mRecyclerView.setAdapter(mElectronicBookAdapter);
+                }catch (Exception e)
+                {
+                    i7++;
+                }
+
+                try {
+                    Cursor audioCursor = mAudioTable.getDataC(mSession.getIdNumber(),tile);
+                    audioCursor.moveToFirst();
+                    do {
+                        mElectronicBookList.add(new ElectronicBook(audioCursor.getString(2),audioCursor.getString(5),audioCursor.getString(8),audioCursor.getString(7),audioCursor.getString(4),audioCursor.getString(6)));
+                    }while(audioCursor.moveToNext());
+                }catch (Exception e)
+                {
+                    i7++;
+                }
+
+                if (i7!=2)
+                {
+                    mElectronicBookAdapter = new ElectronicBookAdapter(mElectronicBookList);
+                    mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+                    registerForContextMenu(mRecyclerView);
+                    mRecyclerView.setAdapter(mElectronicBookAdapter);
+                }else
+                    voidContainer(R.drawable.img_telecharge_local,getString(R.string.no_electronic_book));
                 break;
         }
     }
@@ -351,7 +393,7 @@ public class ContainerActivity extends AppCompatActivity {
     {
         for(int i=0 ; i<categorys.size() ; i++)
         {
-            if(categorys.get(i).getId().equals(nameCategory))
+            if(categorys.get(i).getTitle().equals(nameCategory))
                 return true;
         }
         return false;

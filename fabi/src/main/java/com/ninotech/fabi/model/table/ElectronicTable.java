@@ -48,6 +48,12 @@ public class ElectronicTable extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         return db.rawQuery("SELECT * FROM " + NAME_TABLE + " WHERE idNumberElectronic='" + idNumber + "';",null);
     }
+
+    public Cursor getDataC(String idNumber , String category)
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.rawQuery("SELECT * FROM " + NAME_TABLE + " WHERE categoryElectronic='"+ category +"' AND idNumberElectronic='" + idNumber + "';",null);
+    }
     public Cursor getCategoryData(String idNumber)
     {
         SQLiteDatabase db = this.getReadableDatabase();
