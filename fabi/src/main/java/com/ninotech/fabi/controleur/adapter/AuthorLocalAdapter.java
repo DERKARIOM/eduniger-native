@@ -105,7 +105,6 @@ public class AuthorLocalAdapter extends RecyclerView.Adapter<AuthorLocalAdapter.
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(itemView.getContext(), "ok", Toast.LENGTH_SHORT).show();
                     Intent local = new Intent(itemView.getContext(), ContainerActivity.class);
                     local.putExtra("id",8);
                     local.putExtra("authorName",author.getName());

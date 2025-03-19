@@ -99,7 +99,6 @@ public class CategoryLocalAdapter extends RecyclerView.Adapter<CategoryLocalAdap
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(itemView.getContext(), "OK", Toast.LENGTH_SHORT).show();
                     Intent local = new Intent(itemView.getContext(), ContainerActivity.class);
                     local.putExtra("id",7);
                     local.putExtra("titleCategory",category.getTitle());

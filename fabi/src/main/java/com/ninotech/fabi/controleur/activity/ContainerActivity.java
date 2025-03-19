@@ -63,6 +63,7 @@ public class ContainerActivity extends AppCompatActivity {
         mRecyclerView = findViewById(R.id.recycler_view_activity_container);
         mSession = new Session(this);
         mElectronicTable = new ElectronicTable(this);
+        mAudioTable = new AudioTable(this);
         Intent libraryIntent = getIntent();
         mId = libraryIntent.getIntExtra("id",0);
         switch (mId)
@@ -126,7 +127,6 @@ public class ContainerActivity extends AppCompatActivity {
                 break;
             case 4: // Category
                 actionBarTitle.setText(R.string.category);
-                mAudioTable = new AudioTable(this);
                 ArrayList<Category> categories = new ArrayList<>();
                 int i=0;
                 try {
@@ -166,21 +166,46 @@ public class ContainerActivity extends AppCompatActivity {
                 break;
             case 5: // Auteurs
                 actionBarTitle.setText(R.string.author);
+                ArrayList<Author> authors = new ArrayList<>();
+                int i5=0;
                 try {
-                    ArrayList<Author> authors = new ArrayList<>();
                     Cursor authorCursor = mElectronicTable.getAuthorData(mSession.getIdNumber());
                     authorCursor.moveToFirst();
                     do {
                         authors.add(new Author(authorCursor.getString(0),authorCursor.getString(1)));
                     }while (authorCursor.moveToNext());
+                }catch (Exception e)
+                {
+                    i5++;
+                   // Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+
+                try {
+                    Cursor authorAudioCursor = mAudioTable.getAuthorData(mSession.getIdNumber());
+                    authorAudioCursor.moveToFirst();
+                    do {
+                        String nameAuthor = authorAudioCursor.getString(1);
+                        if(!isExistsA(authors,nameAuthor))
+                            authors.add(new Author(authorAudioCursor.getString(0),nameAuthor));
+                    }while (authorAudioCursor.moveToNext());
+                }catch (Exception e)
+                {
+                    i5++;
+                    // Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+
+                if(i5 != 2)
+                {
                     AuthorLocalAdapter authorLocalAdapter = new AuthorLocalAdapter(authors);
                     mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
                     mRecyclerView.setAdapter(authorLocalAdapter);
-                }catch (Exception e)
+                }
+                else
                 {
                     voidContainer(R.drawable.img_auteur_local,getString(R.string.no_author));
-                   // Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
+
+
 
                 break;
             case 6: // Liste Player
@@ -208,7 +233,6 @@ public class ContainerActivity extends AppCompatActivity {
                 break;
             case 7: // Liste des livre par category
                 String tile = libraryIntent.getStringExtra("titleCategory");
-                mAudioTable = new AudioTable(this);
                 actionBarTitle.setText(tile);
                 mLocalBooks = new ArrayList<>();
                 int i7=0;
@@ -243,32 +267,27 @@ public class ContainerActivity extends AppCompatActivity {
                 }else
                     voidContainer(R.drawable.img_telecharge_local,getString(R.string.no_electronic_book));
                 break;
-            case 8:
+            case 8: // Liste des livres par Auteurs
                 String authorName = libraryIntent.getStringExtra("authorName");
-                mAudioTable = new AudioTable(this);
                 actionBarTitle.setText(authorName);
-                mElectronicBookList = new ArrayList<>();
+                mLocalBooks = new ArrayList<>();
                 int i8=0;
                 try {
-                    Cursor electronicCursor = mElectronicTable.getDataC(mSession.getIdNumber(),authorName);
+                    Cursor electronicCursor = mElectronicTable.getDataA(mSession.getIdNumber(),authorName);
                     electronicCursor.moveToFirst();
                     do {
-                        mElectronicBookList.add(new ElectronicBook(electronicCursor.getString(2),electronicCursor.getString(5),electronicCursor.getString(8),electronicCursor.getString(7),electronicCursor.getString(4),electronicCursor.getString(6)));
+                        mLocalBooks.add(new LocalBooks(electronicCursor.getString(2),electronicCursor.getString(5),electronicCursor.getString(8),electronicCursor.getString(7),electronicCursor.getString(4),electronicCursor.getString(6),electronicCursor.getString(5),"Électronique"));
                     }while(electronicCursor.moveToNext());
-                    mElectronicBookAdapter = new ElectronicBookAdapter(mElectronicBookList);
-                    mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-                    registerForContextMenu(mRecyclerView);
-                    mRecyclerView.setAdapter(mElectronicBookAdapter);
                 }catch (Exception e)
                 {
                     i8++;
                 }
 
                 try {
-                    Cursor audioCursor = mAudioTable.getDataC(mSession.getIdNumber(),authorName);
+                    Cursor audioCursor = mAudioTable.getDataA(mSession.getIdNumber(),authorName);
                     audioCursor.moveToFirst();
                     do {
-                        mElectronicBookList.add(new ElectronicBook(audioCursor.getString(2),audioCursor.getString(5),audioCursor.getString(8),audioCursor.getString(7),audioCursor.getString(4),audioCursor.getString(6)));
+                        mLocalBooks.add(new LocalBooks(audioCursor.getString(2),audioCursor.getString(5),audioCursor.getString(8),audioCursor.getString(7),audioCursor.getString(4),audioCursor.getString(6),audioCursor.getString(5),"Audio"));
                     }while(audioCursor.moveToNext());
                 }catch (Exception e)
                 {
@@ -277,10 +296,10 @@ public class ContainerActivity extends AppCompatActivity {
 
                 if (i8!=2)
                 {
-                    mElectronicBookAdapter = new ElectronicBookAdapter(mElectronicBookList);
+                    mLocalBookAdapter = new LocalBookAdapter(mLocalBooks);
                     mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
                     registerForContextMenu(mRecyclerView);
-                    mRecyclerView.setAdapter(mElectronicBookAdapter);
+                    mRecyclerView.setAdapter(mLocalBookAdapter);
                 }else
                     voidContainer(R.drawable.img_telecharge_local,getString(R.string.no_electronic_book));
                 break;
@@ -434,6 +453,15 @@ public class ContainerActivity extends AppCompatActivity {
         for(int i=0 ; i<categorys.size() ; i++)
         {
             if(categorys.get(i).getTitle().equals(nameCategory))
+                return true;
+        }
+        return false;
+    }
+    public boolean isExistsA(ArrayList<Author> authors , String name)
+    {
+        for(int i=0 ; i<authors.size() ; i++)
+        {
+            if(authors.get(i).getName().equals(name))
                 return true;
         }
         return false;

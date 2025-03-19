@@ -59,6 +59,12 @@ public class AudioTable extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         return db.rawQuery("SELECT * FROM " + NAME_TABLE + " WHERE categoryAudio='"+ category +"' AND idNumberAudio='" + idNumber + "';",null);
     }
+
+    public Cursor getDataA(String idNumber , String author)
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.rawQuery("SELECT * FROM " + NAME_TABLE + " WHERE authorAudio='"+ author +"' AND idNumberAudio='" + idNumber + "';",null);
+    }
     public Cursor getCategoryData(String idNumber)
     {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -67,7 +73,7 @@ public class AudioTable extends SQLiteOpenHelper {
     public Cursor getAuthorData(String idNumber)
     {
         SQLiteDatabase db = this.getReadableDatabase();
-        return db.rawQuery("SELECT DISTINCT profileAuthor,author  FROM " + NAME_TABLE + " WHERE idNumberAudio='" + idNumber + "';",null);
+        return db.rawQuery("SELECT DISTINCT profileAuthorAudio,authorAudio  FROM " + NAME_TABLE + " WHERE idNumberAudio='" + idNumber + "';",null);
     }
 
     public int getNbrAudio(String idNumber)
