@@ -245,6 +245,48 @@ public class ContainerActivity extends AppCompatActivity {
                 }else
                     voidContainer(R.drawable.img_telecharge_local,getString(R.string.no_electronic_book));
                 break;
+            case 8:
+                String authorName = libraryIntent.getStringExtra("authorName");
+                mAudioTable = new AudioTable(this);
+                actionBarTitle.setText(authorName);
+                mElectronicBookList = new ArrayList<>();
+                int i8=0;
+                try {
+                    Cursor electronicCursor = mElectronicTable.getDataC(mSession.getIdNumber(),authorName);
+                    electronicCursor.moveToFirst();
+                    do {
+                        mElectronicBookList.add(new ElectronicBook(electronicCursor.getString(2),electronicCursor.getString(5),electronicCursor.getString(8),electronicCursor.getString(7),electronicCursor.getString(4),electronicCursor.getString(6)));
+                    }while(electronicCursor.moveToNext());
+                    mElectronicBookAdapter = new ElectronicBookAdapter(mElectronicBookList);
+                    mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+                    registerForContextMenu(mRecyclerView);
+                    mRecyclerView.setAdapter(mElectronicBookAdapter);
+                }catch (Exception e)
+                {
+                    i8++;
+                }
+
+                try {
+                    Cursor audioCursor = mAudioTable.getDataC(mSession.getIdNumber(),authorName);
+                    audioCursor.moveToFirst();
+                    do {
+                        mElectronicBookList.add(new ElectronicBook(audioCursor.getString(2),audioCursor.getString(5),audioCursor.getString(8),audioCursor.getString(7),audioCursor.getString(4),audioCursor.getString(6)));
+                    }while(audioCursor.moveToNext());
+                }catch (Exception e)
+                {
+                    i8++;
+                }
+
+                if (i8!=2)
+                {
+                    mElectronicBookAdapter = new ElectronicBookAdapter(mElectronicBookList);
+                    mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+                    registerForContextMenu(mRecyclerView);
+                    mRecyclerView.setAdapter(mElectronicBookAdapter);
+                }else
+                    voidContainer(R.drawable.img_telecharge_local,getString(R.string.no_electronic_book));
+                break;
+
         }
     }
     public long percentage(long startDate , long endDate , long nowDate)

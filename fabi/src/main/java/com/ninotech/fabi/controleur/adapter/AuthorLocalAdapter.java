@@ -1,6 +1,7 @@
 package com.ninotech.fabi.controleur.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.ninotech.fabi.R;
+import com.ninotech.fabi.controleur.activity.ContainerActivity;
 import com.ninotech.fabi.model.data.Author;
 import com.ninotech.fabi.model.data.OnlineBook;
 
@@ -104,6 +106,10 @@ public class AuthorLocalAdapter extends RecyclerView.Adapter<AuthorLocalAdapter.
                 @Override
                 public void onClick(View v) {
                     Toast.makeText(itemView.getContext(), "ok", Toast.LENGTH_SHORT).show();
+                    Intent local = new Intent(itemView.getContext(), ContainerActivity.class);
+                    local.putExtra("id",8);
+                    local.putExtra("authorName",author.getName());
+                    itemView.getContext().startActivity(local);
                 }
             });
         }
