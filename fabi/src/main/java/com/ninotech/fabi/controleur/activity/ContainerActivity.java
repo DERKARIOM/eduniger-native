@@ -372,6 +372,9 @@ public class ContainerActivity extends AppCompatActivity {
                     case 5:
                         searchIntent.putExtra("search_key","AUTHOR");
                         break;
+                    case 7:
+                        searchIntent.putExtra("search_key","BOOK_IN_CATEGORY");
+                        break;
                 }
                 startActivity(searchIntent);
                 return true;

@@ -221,6 +221,9 @@ public class SearchActivity extends AppCompatActivity {
             case "SETTING":
                 searchSetting();
                 break;
+            case "BOOK_IN_CATEGORY":
+                searchElectronicBook();
+                break;
         }
     }
 
