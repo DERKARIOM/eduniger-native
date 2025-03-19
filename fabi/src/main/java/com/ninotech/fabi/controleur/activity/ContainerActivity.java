@@ -24,6 +24,7 @@ import com.ninotech.fabi.controleur.adapter.AuthorLocalAdapter;
 import com.ninotech.fabi.controleur.adapter.AudioBookAdapter;
 import com.ninotech.fabi.controleur.adapter.CategoryLocalAdapter;
 import com.ninotech.fabi.controleur.adapter.ElectronicBookAdapter;
+import com.ninotech.fabi.controleur.adapter.LocalBookAdapter;
 import com.ninotech.fabi.controleur.adapter.VoidContainerAdapter;
 import com.ninotech.fabi.controleur.adapter.LoandBookAdapter;
 import com.ninotech.fabi.model.data.Author;
@@ -31,6 +32,7 @@ import com.ninotech.fabi.model.data.AudioBook;
 import com.ninotech.fabi.model.data.Category;
 import com.ninotech.fabi.model.data.ElectronicBook;
 import com.ninotech.fabi.model.data.LoandBook;
+import com.ninotech.fabi.model.data.LocalBooks;
 import com.ninotech.fabi.model.data.Structure;
 import com.ninotech.fabi.model.data.VoidContainer;
 import com.ninotech.fabi.model.table.AudioTable;
@@ -208,18 +210,14 @@ public class ContainerActivity extends AppCompatActivity {
                 String tile = libraryIntent.getStringExtra("titleCategory");
                 mAudioTable = new AudioTable(this);
                 actionBarTitle.setText(tile);
-                mElectronicBookList = new ArrayList<>();
+                mLocalBooks = new ArrayList<>();
                 int i7=0;
                 try {
                     Cursor electronicCursor = mElectronicTable.getDataC(mSession.getIdNumber(),tile);
                     electronicCursor.moveToFirst();
                     do {
-                        mElectronicBookList.add(new ElectronicBook(electronicCursor.getString(2),electronicCursor.getString(5),electronicCursor.getString(8),electronicCursor.getString(7),electronicCursor.getString(4),electronicCursor.getString(6)));
+                        mLocalBooks.add(new LocalBooks(electronicCursor.getString(2),electronicCursor.getString(5),electronicCursor.getString(8),electronicCursor.getString(7),electronicCursor.getString(4),electronicCursor.getString(6),electronicCursor.getString(5),"Électronique"));
                     }while(electronicCursor.moveToNext());
-                    mElectronicBookAdapter = new ElectronicBookAdapter(mElectronicBookList);
-                    mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-                    registerForContextMenu(mRecyclerView);
-                    mRecyclerView.setAdapter(mElectronicBookAdapter);
                 }catch (Exception e)
                 {
                     i7++;
@@ -229,7 +227,7 @@ public class ContainerActivity extends AppCompatActivity {
                     Cursor audioCursor = mAudioTable.getDataC(mSession.getIdNumber(),tile);
                     audioCursor.moveToFirst();
                     do {
-                        mElectronicBookList.add(new ElectronicBook(audioCursor.getString(2),audioCursor.getString(5),audioCursor.getString(8),audioCursor.getString(7),audioCursor.getString(4),audioCursor.getString(6)));
+                        mLocalBooks.add(new LocalBooks(audioCursor.getString(2),audioCursor.getString(5),audioCursor.getString(8),audioCursor.getString(7),audioCursor.getString(4),audioCursor.getString(6),audioCursor.getString(5),"Audio"));
                     }while(audioCursor.moveToNext());
                 }catch (Exception e)
                 {
@@ -238,10 +236,10 @@ public class ContainerActivity extends AppCompatActivity {
 
                 if (i7!=2)
                 {
-                    mElectronicBookAdapter = new ElectronicBookAdapter(mElectronicBookList);
+                    mLocalBookAdapter = new LocalBookAdapter(mLocalBooks);
                     mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
                     registerForContextMenu(mRecyclerView);
-                    mRecyclerView.setAdapter(mElectronicBookAdapter);
+                    mRecyclerView.setAdapter(mLocalBookAdapter);
                 }else
                     voidContainer(R.drawable.img_telecharge_local,getString(R.string.no_electronic_book));
                 break;
@@ -443,6 +441,7 @@ public class ContainerActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private List<ElectronicBook> mElectronicBookList;
     private List<Category> mList4;
+    private List<LocalBooks> mLocalBooks;
     private ElectronicTable mElectronicTable;
     private Session mSession;
     private int mId;
@@ -450,5 +449,6 @@ public class ContainerActivity extends AppCompatActivity {
     private ElectronicBookAdapter mElectronicBookAdapter;
     private AudioBook mAudioBookSelect;
     private AudioBookAdapter mAudioBookAdapter;
+    private LocalBookAdapter mLocalBookAdapter;
     private AudioTable mAudioTable;
 }
