@@ -57,7 +57,7 @@ public class AudioTable extends SQLiteOpenHelper {
     public Cursor getCategoryData(String idNumber)
     {
         SQLiteDatabase db = this.getReadableDatabase();
-        return db.rawQuery("SELECT DISTINCT blanketCategory,category  FROM " + NAME_TABLE + " WHERE idNumberAudio='" + idNumber + "';",null);
+        return db.rawQuery("SELECT DISTINCT coverCategoryAudio,categoryAudio  FROM " + NAME_TABLE + " WHERE idNumberAudio='" + idNumber + "';",null);
     }
     public Cursor getAuthorData(String idNumber)
     {

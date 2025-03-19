@@ -31,6 +31,7 @@ import com.ninotech.fabi.model.data.AudioBook;
 import com.ninotech.fabi.model.data.Category;
 import com.ninotech.fabi.model.data.ElectronicBook;
 import com.ninotech.fabi.model.data.LoandBook;
+import com.ninotech.fabi.model.data.Structure;
 import com.ninotech.fabi.model.data.VoidContainer;
 import com.ninotech.fabi.model.table.AudioTable;
 import com.ninotech.fabi.model.table.ElectronicTable;
@@ -122,22 +123,42 @@ public class ContainerActivity extends AppCompatActivity {
                 }
                 break;
             case 4: // Category
+                actionBarTitle.setText(R.string.category);
+                mAudioTable = new AudioTable(this);
+                int i=0;
+                ArrayList<Category> categories = new ArrayList<>();
                 try {
-                    actionBarTitle.setText(R.string.category);
-                    ArrayList<Category> categories = new ArrayList<>();
                     Cursor categoryCursor = mElectronicTable.getCategoryData(mSession.getIdNumber());
                     categoryCursor.moveToFirst();
                     do {
                         categories.add(new Category(categoryCursor.getString(0),categoryCursor.getString(1)));
                     }while (categoryCursor.moveToNext());
+                }
+                catch (Exception e)
+                {
+                    i++;
+                }
+                try {
+                    Cursor categoryAudioCursor = mAudioTable.getCategoryData(mSession.getIdNumber());
+                    categoryAudioCursor.moveToFirst();
+                    do {
+                        String name = categoryAudioCursor.getString(1);
+                        if (isExistsC(categories,name));
+                        categories.add(new Category(categoryAudioCursor.getString(0),name));
+                    }while (categoryAudioCursor.moveToNext());
+
+                }catch (Exception e)
+                {
+                    i++;
+                }
+                if (i!=2)
+                {
                     CategoryLocalAdapter categoryLoacalAdapter = new CategoryLocalAdapter(categories);
                     mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
                     mRecyclerView.setAdapter(categoryLoacalAdapter);
                 }
-                catch (Exception e)
-                {
+                else
                     voidContainer(R.drawable.img_categorie,getString(R.string.no_category));
-                }
                 break;
             case 5: // Auteurs
                 actionBarTitle.setText(R.string.author);
@@ -323,6 +344,15 @@ public class ContainerActivity extends AppCompatActivity {
                 break;
             default:
                 return super.onContextItemSelected(item);
+        }
+        return false;
+    }
+    public boolean isExistsC(ArrayList<Category> categorys , String nameCategory)
+    {
+        for(int i=0 ; i<categorys.size() ; i++)
+        {
+            if(categorys.get(i).getId().equals(nameCategory))
+                return true;
         }
         return false;
     }
