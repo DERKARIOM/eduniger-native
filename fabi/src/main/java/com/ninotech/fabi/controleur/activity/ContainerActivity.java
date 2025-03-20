@@ -408,6 +408,10 @@ public class ContainerActivity extends AppCompatActivity {
                 break;
             case 2:
                 mAudioBookSelect = mAudioBookAdapter.getItem(mAudioBookAdapter.getPosition());
+                break;
+            case 7:
+                mLocalBookSelect = mLocalBookAdapter.getItem(mLocalBookAdapter.getPosition());
+                break;
 
         }
     }
@@ -450,6 +454,26 @@ public class ContainerActivity extends AppCompatActivity {
                             }
                         }
                         break;
+                    case 7:
+                        File electronicFile7 = new File(mLocalBookSelect.getRessource());
+                        File coverFile7 = new File(mLocalBookSelect.getCover());
+                        if(electronicFile7.exists() && coverFile7.exists())
+                        {
+                            if(electronicFile7.delete() && coverFile7.delete())
+                            {
+                                if (mLocalBookSelect.getFormat().equals("Audio"))
+                                    mAudioTable.remove(mSession.getIdNumber(),mLocalBookSelect.getId());
+                                else
+                                    mElectronicTable.remove(mSession.getIdNumber(),mLocalBookSelect.getId());
+                                mLocalBookAdapter.Remove(mLocalBookAdapter.getPosition());
+                            }
+                            else
+                            {
+                                Toast.makeText(this, "Une erreur s'est produite lors de la suppression", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                        break;
+
                 }
                 break;
             default:
@@ -483,6 +507,7 @@ public class ContainerActivity extends AppCompatActivity {
     private Session mSession;
     private int mId;
     private ElectronicBook mElectronicBookSelect;
+    private LocalBooks mLocalBookSelect;
     private ElectronicBookAdapter mElectronicBookAdapter;
     private AudioBook mAudioBookSelect;
     private AudioBookAdapter mAudioBookAdapter;
