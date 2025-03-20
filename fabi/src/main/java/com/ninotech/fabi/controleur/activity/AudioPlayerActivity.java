@@ -82,6 +82,7 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
     private int position=0;
     private boolean isPlaying = false;
     private Intent audioBookIntent;
+    private String mListSource;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,7 +125,9 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
             registerReceiver(receiverNoConnectionAdapter, new IntentFilter("SELECT_LIST_PLAYER"),Context.RECEIVER_EXPORTED);
         }
         String idBook = audioBookIntent.getStringExtra("key_adapter_audio_book_id");
-        popluateTracks(idBook, Objects.requireNonNull(audioBookIntent.getStringExtra("list_audio_source")));
+        mListSource = audioBookIntent.getStringExtra("list_audio_source");
+        assert mListSource != null;
+        popluateTracks(idBook, mListSource);
         mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
@@ -259,6 +262,8 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
                 Intent local = new Intent(AudioPlayerActivity.this, ListPlayerActivity.class);
                 local.putExtra("id",6);
                 local.putExtra("audio",mTracks.get(position).getAudio());
+                local.putExtra("list_audio_source",mListSource);
+                local.putExtra("type",audioBookIntent.getStringExtra("type"));
                 startActivity(local);
             }
         });

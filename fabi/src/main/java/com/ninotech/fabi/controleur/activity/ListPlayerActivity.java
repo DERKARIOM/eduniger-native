@@ -43,6 +43,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 public class ListPlayerActivity extends AppCompatActivity {
     @Override
@@ -64,7 +65,21 @@ public class ListPlayerActivity extends AppCompatActivity {
             actionBarTitle.setText("File de lecture");
             ArrayList<AudioBook> audioBooks = new ArrayList<>();
             mAudioTable = new AudioTable(this);
-            Cursor audioCursor = mAudioTable.getData(mSession.getIdNumber());
+            Intent audioIntent = getIntent();
+            Cursor audioCursor=null;
+            switch (Objects.requireNonNull(audioIntent.getStringExtra("list_audio_source")))
+            {
+                case "all":
+                    audioCursor = mAudioTable.getData(mSession.getIdNumber());
+                    break;
+                case "category":
+                    audioCursor = mAudioTable.getDataC(mSession.getIdNumber(),audioIntent.getStringExtra("type"));
+                    break;
+                case "author":
+                    audioCursor = mAudioTable.getDataA(mSession.getIdNumber(),audioIntent.getStringExtra("type"));
+                    break;
+            }
+            assert audioCursor != null;
             audioCursor.moveToFirst();
             do {
                 if (!audioCursor.getString(6).equals(getIntent().getStringExtra("audio")))
