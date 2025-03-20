@@ -163,7 +163,7 @@ public class SearchActivity extends AppCompatActivity {
                         if(!mSettings.isEmpty())
                             filterSettings(s.toString());
                         break;
-                    case "BOOK_IN_CATEGORY":
+                    case "BOOK_IN_CATEGORY","BOOK_IN_AUTHOR":
                         if(!mLocalBooks.isEmpty())
                             filterBookInCategory(s.toString());
                         break;
@@ -231,6 +231,9 @@ public class SearchActivity extends AppCompatActivity {
                 break;
             case "BOOK_IN_CATEGORY":
                 searchBookInCategory(getIntent().getStringExtra("category"));
+                break;
+            case "BOOK_IN_AUTHOR":
+                searchBookInAuthor(getIntent().getStringExtra("author"));
                 break;
         }
     }
@@ -681,6 +684,46 @@ public class SearchActivity extends AppCompatActivity {
 
         try {
             Cursor audioCursor = audioTable.getDataC(mSession.getIdNumber(),category);
+            audioCursor.moveToFirst();
+            do {
+                mLocalBooks.add(new LocalBooks(audioCursor.getString(2),audioCursor.getString(5),audioCursor.getString(8),audioCursor.getString(7),audioCursor.getString(4),audioCursor.getString(6),audioCursor.getString(5),"Audio"));
+            }while(audioCursor.moveToNext());
+        }catch (Exception e)
+        {
+            i7++;
+        }
+
+        if (i7!=2)
+        {
+            mLocalBookAdapter = new LocalBookAdapter(mLocalBooks);
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+            registerForContextMenu(mRecyclerView);
+            mRecyclerView.setAdapter(mLocalBookAdapter);
+        }else
+            voidContainer(R.drawable.img_telecharge_local,getString(R.string.no_electronic_book));
+    }
+
+    public void searchBookInAuthor(String author)
+    {
+        mLocalBooks = new ArrayList<>();
+        mFilterLocalBooks = new ArrayList<>();
+        ElectronicTable electronicTable = new ElectronicTable(this);
+        AudioTable audioTable = new AudioTable(this);
+        mLocalBooks = new ArrayList<>();
+        int i7=0;
+        try {
+            Cursor electronicCursor = electronicTable.getDataA(mSession.getIdNumber(),author);
+            electronicCursor.moveToFirst();
+            do {
+                mLocalBooks.add(new LocalBooks(electronicCursor.getString(2),electronicCursor.getString(5),electronicCursor.getString(8),electronicCursor.getString(7),electronicCursor.getString(4),electronicCursor.getString(6),electronicCursor.getString(5),"Électronique"));
+            }while(electronicCursor.moveToNext());
+        }catch (Exception e)
+        {
+            i7++;
+        }
+
+        try {
+            Cursor audioCursor = audioTable.getDataA(mSession.getIdNumber(),author);
             audioCursor.moveToFirst();
             do {
                 mLocalBooks.add(new LocalBooks(audioCursor.getString(2),audioCursor.getString(5),audioCursor.getString(8),audioCursor.getString(7),audioCursor.getString(4),audioCursor.getString(6),audioCursor.getString(5),"Audio"));

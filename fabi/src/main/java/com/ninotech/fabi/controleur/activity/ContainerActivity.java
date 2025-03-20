@@ -269,12 +269,12 @@ public class ContainerActivity extends AppCompatActivity {
                     voidContainer(R.drawable.img_telecharge_local,getString(R.string.no_electronic_book));
                 break;
             case 8: // Liste des livres par Auteurs
-                String authorName = libraryIntent.getStringExtra("authorName");
-                actionBarTitle.setText(authorName);
+                mAuthorName = libraryIntent.getStringExtra("authorName");
+                actionBarTitle.setText(mAuthorName);
                 mLocalBooks = new ArrayList<>();
                 int i8=0;
                 try {
-                    Cursor electronicCursor = mElectronicTable.getDataA(mSession.getIdNumber(),authorName);
+                    Cursor electronicCursor = mElectronicTable.getDataA(mSession.getIdNumber(),mAuthorName);
                     electronicCursor.moveToFirst();
                     do {
                         mLocalBooks.add(new LocalBooks(electronicCursor.getString(2),electronicCursor.getString(5),electronicCursor.getString(8),electronicCursor.getString(7),electronicCursor.getString(4),electronicCursor.getString(6),electronicCursor.getString(5),"Électronique"));
@@ -285,7 +285,7 @@ public class ContainerActivity extends AppCompatActivity {
                 }
 
                 try {
-                    Cursor audioCursor = mAudioTable.getDataA(mSession.getIdNumber(),authorName);
+                    Cursor audioCursor = mAudioTable.getDataA(mSession.getIdNumber(),mAuthorName);
                     audioCursor.moveToFirst();
                     do {
                         mLocalBooks.add(new LocalBooks(audioCursor.getString(2),audioCursor.getString(5),audioCursor.getString(8),audioCursor.getString(7),audioCursor.getString(4),audioCursor.getString(6),audioCursor.getString(5),"Audio"));
@@ -376,6 +376,10 @@ public class ContainerActivity extends AppCompatActivity {
                     case 7:
                         searchIntent.putExtra("search_key","BOOK_IN_CATEGORY");
                         searchIntent.putExtra("category", mTitleCategory);
+                        break;
+                    case 8:
+                        searchIntent.putExtra("search_key","BOOK_IN_AUTHOR");
+                        searchIntent.putExtra("author",mAuthorName);
                         break;
                 }
                 startActivity(searchIntent);
@@ -485,4 +489,5 @@ public class ContainerActivity extends AppCompatActivity {
     private LocalBookAdapter mLocalBookAdapter;
     private AudioTable mAudioTable;
     private String mTitleCategory;
+    private String mAuthorName;
 }
