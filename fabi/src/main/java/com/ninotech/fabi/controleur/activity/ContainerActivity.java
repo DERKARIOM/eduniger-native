@@ -46,6 +46,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 public class ContainerActivity extends AppCompatActivity {
     @Override
@@ -232,12 +233,12 @@ public class ContainerActivity extends AppCompatActivity {
                 }
                 break;
             case 7: // Liste des livre par category
-                String tile = libraryIntent.getStringExtra("titleCategory");
-                actionBarTitle.setText(tile);
+                mTitleCategory = libraryIntent.getStringExtra("titleCategory");
+                actionBarTitle.setText(mTitleCategory);
                 mLocalBooks = new ArrayList<>();
                 int i7=0;
                 try {
-                    Cursor electronicCursor = mElectronicTable.getDataC(mSession.getIdNumber(),tile);
+                    Cursor electronicCursor = mElectronicTable.getDataC(mSession.getIdNumber(),mTitleCategory);
                     electronicCursor.moveToFirst();
                     do {
                         mLocalBooks.add(new LocalBooks(electronicCursor.getString(2),electronicCursor.getString(5),electronicCursor.getString(8),electronicCursor.getString(7),electronicCursor.getString(4),electronicCursor.getString(6),electronicCursor.getString(5),"Électronique"));
@@ -248,7 +249,7 @@ public class ContainerActivity extends AppCompatActivity {
                 }
 
                 try {
-                    Cursor audioCursor = mAudioTable.getDataC(mSession.getIdNumber(),tile);
+                    Cursor audioCursor = mAudioTable.getDataC(mSession.getIdNumber(),mTitleCategory);
                     audioCursor.moveToFirst();
                     do {
                         mLocalBooks.add(new LocalBooks(audioCursor.getString(2),audioCursor.getString(5),audioCursor.getString(8),audioCursor.getString(7),audioCursor.getString(4),audioCursor.getString(6),audioCursor.getString(5),"Audio"));
@@ -374,6 +375,7 @@ public class ContainerActivity extends AppCompatActivity {
                         break;
                     case 7:
                         searchIntent.putExtra("search_key","BOOK_IN_CATEGORY");
+                        searchIntent.putExtra("category", mTitleCategory);
                         break;
                 }
                 startActivity(searchIntent);
@@ -482,4 +484,5 @@ public class ContainerActivity extends AppCompatActivity {
     private AudioBookAdapter mAudioBookAdapter;
     private LocalBookAdapter mLocalBookAdapter;
     private AudioTable mAudioTable;
+    private String mTitleCategory;
 }

@@ -28,6 +28,7 @@ import com.ninotech.fabi.controleur.adapter.AuthorLocalAdapter;
 import com.ninotech.fabi.controleur.adapter.AuthorVerticaleAdapter;
 import com.ninotech.fabi.controleur.adapter.FabiolaBookAdapter;
 import com.ninotech.fabi.controleur.adapter.HorizontaleAdapter;
+import com.ninotech.fabi.controleur.adapter.LocalBookAdapter;
 import com.ninotech.fabi.controleur.adapter.OnlineBookAdapter;
 import com.ninotech.fabi.controleur.adapter.CategoryLocalAdapter;
 import com.ninotech.fabi.controleur.adapter.ElectronicBookAdapter;
@@ -45,6 +46,7 @@ import com.ninotech.fabi.model.data.Category;
 import com.ninotech.fabi.model.data.Connection;
 import com.ninotech.fabi.model.data.ElectronicBook;
 import com.ninotech.fabi.model.data.LoandBook;
+import com.ninotech.fabi.model.data.LocalBooks;
 import com.ninotech.fabi.model.data.Notification;
 import com.ninotech.fabi.model.data.OnlineBook;
 import com.ninotech.fabi.model.data.Setting;
@@ -64,6 +66,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 import okhttp3.MultipartBody;
@@ -160,6 +163,11 @@ public class SearchActivity extends AppCompatActivity {
                         if(!mSettings.isEmpty())
                             filterSettings(s.toString());
                         break;
+                    case "BOOK_IN_CATEGORY":
+                        if(!mLocalBooks.isEmpty())
+                            filterBookInCategory(s.toString());
+                        break;
+
                 }
             }
         });
@@ -222,7 +230,7 @@ public class SearchActivity extends AppCompatActivity {
                 searchSetting();
                 break;
             case "BOOK_IN_CATEGORY":
-                searchElectronicBook();
+                searchBookInCategory(getIntent().getStringExtra("category"));
                 break;
         }
     }
@@ -320,7 +328,9 @@ public class SearchActivity extends AppCompatActivity {
                 }
             }
         };
-        registerReceiver(receiverNoConnectionAdapter, new IntentFilter("STRUCT_SEARCH"),Context.RECEIVER_EXPORTED);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            registerReceiver(receiverNoConnectionAdapter, new IntentFilter("STRUCT_SEARCH"),Context.RECEIVER_EXPORTED);
+        }
         StructureSyn structureSyn = new StructureSyn();
         structureSyn.execute(getString(R.string.ip_server_android) + "Structure.php", mSession.getIdNumber());
         StructureSyn2 structureSyn2 = new StructureSyn2();
@@ -650,6 +660,45 @@ public class SearchActivity extends AppCompatActivity {
             Log.e("ErrorElectronic",e.getMessage());
         }
     }
+    public void searchBookInCategory(String category)
+    {
+        mLocalBooks = new ArrayList<>();
+        mFilterLocalBooks = new ArrayList<>();
+        ElectronicTable electronicTable = new ElectronicTable(this);
+        AudioTable audioTable = new AudioTable(this);
+        mLocalBooks = new ArrayList<>();
+        int i7=0;
+        try {
+            Cursor electronicCursor = electronicTable.getDataC(mSession.getIdNumber(),category);
+            electronicCursor.moveToFirst();
+            do {
+                mLocalBooks.add(new LocalBooks(electronicCursor.getString(2),electronicCursor.getString(5),electronicCursor.getString(8),electronicCursor.getString(7),electronicCursor.getString(4),electronicCursor.getString(6),electronicCursor.getString(5),"Électronique"));
+            }while(electronicCursor.moveToNext());
+        }catch (Exception e)
+        {
+            i7++;
+        }
+
+        try {
+            Cursor audioCursor = audioTable.getDataC(mSession.getIdNumber(),category);
+            audioCursor.moveToFirst();
+            do {
+                mLocalBooks.add(new LocalBooks(audioCursor.getString(2),audioCursor.getString(5),audioCursor.getString(8),audioCursor.getString(7),audioCursor.getString(4),audioCursor.getString(6),audioCursor.getString(5),"Audio"));
+            }while(audioCursor.moveToNext());
+        }catch (Exception e)
+        {
+            i7++;
+        }
+
+        if (i7!=2)
+        {
+            mLocalBookAdapter = new LocalBookAdapter(mLocalBooks);
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+            registerForContextMenu(mRecyclerView);
+            mRecyclerView.setAdapter(mLocalBookAdapter);
+        }else
+            voidContainer(R.drawable.img_telecharge_local,getString(R.string.no_electronic_book));
+    }
     private void filterOnlineBook(String text) {
         mFilteredOnlineBookList.clear();
         for (OnlineBook item : mOnlineBooks) {
@@ -748,6 +797,15 @@ public class SearchActivity extends AppCompatActivity {
             }
         }
         mSettingAdapter.filterList(mFilteredSettings);
+    }
+    private void filterBookInCategory(String text) {
+        mFilterLocalBooks.clear();
+        for (LocalBooks item : mLocalBooks) {
+            if (item.getTitle().toLowerCase().contains(text.toLowerCase())) {
+                mFilterLocalBooks.add(item);
+            }
+        }
+        mLocalBookAdapter.filterList(mFilterLocalBooks);
     }
     public void searchAudioBook()
     {
@@ -1179,4 +1237,7 @@ public class SearchActivity extends AppCompatActivity {
     private ImageView mBackImageView;
     private FabiolaBookAdapter mFabiolaBookAdapter;
     private AuthorVerticaleAdapter mAuthorVerticaleAdapter;
+    private List<LocalBooks> mLocalBooks;
+    private ArrayList<LocalBooks> mFilterLocalBooks;
+    private LocalBookAdapter mLocalBookAdapter;
 }
