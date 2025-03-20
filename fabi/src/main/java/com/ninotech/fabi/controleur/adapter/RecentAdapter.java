@@ -125,6 +125,7 @@ public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.MyViewHold
                         case "audio":
                             Intent audioPayerIntent = new Intent(itemView.getContext(), AudioPlayerActivity.class);
                             audioPayerIntent.putExtra("key_adapter_audio_book_id",localBooks.getId());
+                            audioPayerIntent.putExtra("list_audio_source","all");
                             itemView.getContext().startActivity(audioPayerIntent);
                             break;
                     }

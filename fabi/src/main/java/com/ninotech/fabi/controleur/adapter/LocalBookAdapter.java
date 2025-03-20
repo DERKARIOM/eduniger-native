@@ -147,6 +147,16 @@ public class LocalBookAdapter extends RecyclerView.Adapter<LocalBookAdapter.MyVi
                         case "Audio":
                             Intent audioPayerIntent = new Intent(itemView.getContext(), AudioPlayerActivity.class);
                             audioPayerIntent.putExtra("key_adapter_audio_book_id",localBooks.getId());
+                            if (localBooks.getPage().equals("category"))
+                            {
+                                audioPayerIntent.putExtra("list_audio_source","category");
+                                audioPayerIntent.putExtra("type",localBooks.getCategory());
+                            }
+                            else
+                            {
+                                audioPayerIntent.putExtra("list_audio_source","author");
+                                audioPayerIntent.putExtra("type",localBooks.getAuthor());
+                            }
                             itemView.getContext().startActivity(audioPayerIntent);
                             break;
                     }

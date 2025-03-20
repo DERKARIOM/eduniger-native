@@ -81,6 +81,7 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
     private List<Track> mTracks;
     private int position=0;
     private boolean isPlaying = false;
+    private Intent audioBookIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +90,7 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         Objects.requireNonNull(getSupportActionBar()).hide();
         StatusBarCusto statusBarCusto = new StatusBarCusto(this,getWindow());
-        Intent audioBookIntent = getIntent();
+        audioBookIntent = getIntent();
         mSession = new Session(this);
         mTitleTextView = findViewById(R.id.text_view_activity_audio_player_title);
         mAuthorTextView = findViewById(R.id.text_view_activity_audio_player_author);
@@ -123,7 +124,7 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
             registerReceiver(receiverNoConnectionAdapter, new IntentFilter("SELECT_LIST_PLAYER"),Context.RECEIVER_EXPORTED);
         }
         String idBook = audioBookIntent.getStringExtra("key_adapter_audio_book_id");
-        popluateTracks(idBook);
+        popluateTracks(idBook, Objects.requireNonNull(audioBookIntent.getStringExtra("list_audio_source")));
         mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
@@ -323,10 +324,23 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
             mMediaPlayer = null;
         }
     }
-    private void popluateTracks(String idBook){
+    private void popluateTracks(String idBook , String listSource){
         AudioTable audioTable = new AudioTable(this);
         mTracks = new ArrayList<>();
-        Cursor audioCursor = audioTable.getData(mSession.getIdNumber());
+        Cursor audioCursor = null;
+        switch (listSource)
+        {
+            case "all":
+                audioCursor = audioTable.getData(mSession.getIdNumber());
+                break;
+            case "category":
+                audioCursor = audioTable.getDataC(mSession.getIdNumber(),audioBookIntent.getStringExtra("type"));
+                break;
+            case "author":
+                audioCursor = audioTable.getDataA(mSession.getIdNumber(),audioBookIntent.getStringExtra("type"));
+                break;
+        }
+        assert audioCursor != null;
         audioCursor.moveToFirst();
         do {
             mTracks.add(new Track(audioCursor.getString(5),audioCursor.getString(8),audioCursor.getString(4),audioCursor.getString(6),audioCursor.getString(11),R.id.relative_layout_activity_declaration_img));

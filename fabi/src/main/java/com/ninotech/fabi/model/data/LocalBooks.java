@@ -8,7 +8,7 @@ public class LocalBooks {
         mFormat = format;
     }
 
-    public LocalBooks(String id, String cover, String title , String category , String author , String Ressource , String description , String format) {
+    public LocalBooks(String id, String cover, String title , String category , String author , String Ressource , String description , String format , String page) {
         mId = id;
         mCover = cover;
         mTitle = title;
@@ -17,6 +17,7 @@ public class LocalBooks {
         mRessource = Ressource;
         mDescription = description;
         mFormat = format;
+        mPage = page;
     }
 
     public String getId() {
@@ -79,6 +80,13 @@ public class LocalBooks {
     public void setAuthor(String author) {
         mAuthor = author;
     }
+    public String getPage() {
+        return mPage;
+    }
+
+    public void setPage(String page) {
+        mPage = page;
+    }
     private String mId;
     private String mCover;
     private String mTitle;
@@ -87,4 +95,5 @@ public class LocalBooks {
     private  String mRessource;
     private String mDescription;
     private String mFormat;
+    private String mPage;
 }

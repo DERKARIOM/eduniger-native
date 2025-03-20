@@ -241,7 +241,7 @@ public class ContainerActivity extends AppCompatActivity {
                     Cursor electronicCursor = mElectronicTable.getDataC(mSession.getIdNumber(),mTitleCategory);
                     electronicCursor.moveToFirst();
                     do {
-                        mLocalBooks.add(new LocalBooks(electronicCursor.getString(2),electronicCursor.getString(5),electronicCursor.getString(8),electronicCursor.getString(7),electronicCursor.getString(4),electronicCursor.getString(6),electronicCursor.getString(5),"Électronique"));
+                        mLocalBooks.add(new LocalBooks(electronicCursor.getString(2),electronicCursor.getString(5),electronicCursor.getString(8),electronicCursor.getString(7),electronicCursor.getString(4),electronicCursor.getString(6),electronicCursor.getString(5),"Électronique","category"));
                     }while(electronicCursor.moveToNext());
                 }catch (Exception e)
                 {
@@ -252,7 +252,7 @@ public class ContainerActivity extends AppCompatActivity {
                     Cursor audioCursor = mAudioTable.getDataC(mSession.getIdNumber(),mTitleCategory);
                     audioCursor.moveToFirst();
                     do {
-                        mLocalBooks.add(new LocalBooks(audioCursor.getString(2),audioCursor.getString(5),audioCursor.getString(8),audioCursor.getString(7),audioCursor.getString(4),audioCursor.getString(6),audioCursor.getString(5),"Audio"));
+                        mLocalBooks.add(new LocalBooks(audioCursor.getString(2),audioCursor.getString(5),audioCursor.getString(8),audioCursor.getString(7),audioCursor.getString(4),audioCursor.getString(6),audioCursor.getString(5),"Audio","category"));
                     }while(audioCursor.moveToNext());
                 }catch (Exception e)
                 {
@@ -277,7 +277,7 @@ public class ContainerActivity extends AppCompatActivity {
                     Cursor electronicCursor = mElectronicTable.getDataA(mSession.getIdNumber(),mAuthorName);
                     electronicCursor.moveToFirst();
                     do {
-                        mLocalBooks.add(new LocalBooks(electronicCursor.getString(2),electronicCursor.getString(5),electronicCursor.getString(8),electronicCursor.getString(7),electronicCursor.getString(4),electronicCursor.getString(6),electronicCursor.getString(5),"Électronique"));
+                        mLocalBooks.add(new LocalBooks(electronicCursor.getString(2),electronicCursor.getString(5),electronicCursor.getString(8),electronicCursor.getString(7),electronicCursor.getString(4),electronicCursor.getString(6),electronicCursor.getString(5),"Électronique","author"));
                     }while(electronicCursor.moveToNext());
                 }catch (Exception e)
                 {
@@ -288,7 +288,7 @@ public class ContainerActivity extends AppCompatActivity {
                     Cursor audioCursor = mAudioTable.getDataA(mSession.getIdNumber(),mAuthorName);
                     audioCursor.moveToFirst();
                     do {
-                        mLocalBooks.add(new LocalBooks(audioCursor.getString(2),audioCursor.getString(5),audioCursor.getString(8),audioCursor.getString(7),audioCursor.getString(4),audioCursor.getString(6),audioCursor.getString(5),"Audio"));
+                        mLocalBooks.add(new LocalBooks(audioCursor.getString(2),audioCursor.getString(5),audioCursor.getString(8),audioCursor.getString(7),audioCursor.getString(4),audioCursor.getString(6),audioCursor.getString(5),"Audio","author"));
                     }while(audioCursor.moveToNext());
                 }catch (Exception e)
                 {
