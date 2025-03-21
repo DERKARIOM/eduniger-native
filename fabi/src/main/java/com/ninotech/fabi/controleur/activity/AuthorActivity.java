@@ -3,6 +3,8 @@ package com.ninotech.fabi.controleur.activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -52,6 +54,8 @@ public class AuthorActivity extends AppCompatActivity {
         mUsernameTextView = findViewById(R.id.text_view_activity_author_username);
         mBooksRecyclerView = findViewById(R.id.recycler_view_activity_author_books);
         mAuthorRecyclerView = findViewById(R.id.recycler_view_activity_author);
+        mBackImageView = findViewById(R.id.image_view_toolbar_search);
+        mSearchEditText = findViewById(R.id.edit_text_toolbar_search);
         mSession = new Session(getApplicationContext());
         mAuthorFormatBookRecyclerView = findViewById(R.id.recycler_view_activity_author_format_books);
         mAuthorArrayList = new ArrayList<>();
@@ -63,6 +67,25 @@ public class AuthorActivity extends AppCompatActivity {
                 authorIntent.getStringExtra("intent_author_adapter_first_name"),
                 authorIntent.getStringExtra("intent_author_adapter_first_profile")
         );
+        mBackImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+        mSearchEditText.setSelectAllOnFocus(false);
+        mSearchEditText.setFocusable(false);
+        mSearchEditText.setHint("  Recherche mes livres");
+        mSearchEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent searchIntent = new Intent(getApplicationContext(), SearchActivity.class);
+                searchIntent.putExtra("search_key", "ONLINE_BOOK");
+                searchIntent.putExtra("online_book_key", "STRUCTURE_ACTIVITY");
+                searchIntent.putExtra("id_struct_key",1);
+                startActivity(searchIntent);
+            }
+        });
         Picasso.get()
                 .load(getString(R.string.ip_server) + "ressources/profile/" + mAuthor.getProfile())
                 .placeholder(R.drawable.img_default_book)
@@ -218,4 +241,6 @@ public class AuthorActivity extends AppCompatActivity {
     private RecyclerView mAuthorRecyclerView;
     private Session mSession;
     private RecyclerView mAuthorFormatBookRecyclerView;
+    private ImageView mBackImageView;
+    private EditText mSearchEditText;
 }

@@ -126,6 +126,7 @@ public class StructureActivity extends AppCompatActivity {
         });
         mSearchEditText.setSelectAllOnFocus(false);
         mSearchEditText.setFocusable(false);
+        mSearchEditText.setHint("  Recherche nos livres");
         mSearchEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
