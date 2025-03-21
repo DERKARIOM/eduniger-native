@@ -75,6 +75,12 @@ public class AudioTable extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         return db.rawQuery("SELECT DISTINCT profileAuthorAudio,authorAudio  FROM " + NAME_TABLE + " WHERE idNumberAudio='" + idNumber + "';",null);
     }
+    public boolean isExist(String idNumber , String idBook)
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = db.rawQuery("SELECT idBookAudio FROM " + NAME_TABLE + " WHERE idNumberAudio='"+idNumber+"' AND idBookAudio='"+idBook+"';",null);
+        return res.moveToFirst();
+    }
 
     public int getNbrAudio(String idNumber)
     {

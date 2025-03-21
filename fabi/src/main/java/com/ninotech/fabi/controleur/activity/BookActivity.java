@@ -49,6 +49,7 @@ import com.ninotech.fabi.model.data.Connection;
 import com.ninotech.fabi.model.data.ElectronicDownloader;
 import com.ninotech.fabi.model.data.PasswordUtil;
 import com.ninotech.fabi.model.data.Talks;
+import com.ninotech.fabi.model.table.AudioTable;
 import com.ninotech.fabi.model.table.ElectronicTable;
 import com.ninotech.fabi.model.data.LocalBooks;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
@@ -134,6 +135,7 @@ public class BookActivity extends AppCompatActivity {
         downloadPdfProgressBar = findViewById(R.id.progress_bar_download_pdf);
         mReservationDialog = new ReservationDialog(this);
         mElectronicTable = new ElectronicTable(this);
+        mAudioTable = new AudioTable(this);
         mHandler = new Handler();
         mMediaPlayer = new MediaPlayer();
         mTimer = new Timer();
@@ -476,7 +478,12 @@ public class BookActivity extends AppCompatActivity {
                         }
                     }
                     if(mOnlineBook.getIsAudio().equals("1"))
+                    {
                         mAudioLinearLayout.setVisibility(View.VISIBLE);
+                        if (mAudioTable.isExist(mSession.getIdNumber(),mOnlineBook.getId()))
+                            audioButton.setText("Lire");
+                    }
+
                     if(!mOnlineBook.getElectronic().equals("null"))
                     {
                         mElectronicLinearLayout.setVisibility(View.VISIBLE);
@@ -1392,6 +1399,7 @@ public class BookActivity extends AppCompatActivity {
     private String mAudio;
     private ReservationDialog mReservationDialog;
     private ElectronicTable mElectronicTable;
+    private AudioTable mAudioTable;
     private String mNbrJour;
     private OnlineBook mOnlineBook;
     private Category mCategory;
