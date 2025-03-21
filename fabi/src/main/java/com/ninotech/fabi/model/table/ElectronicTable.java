@@ -77,6 +77,16 @@ public class ElectronicTable extends SQLiteOpenHelper {
         return res.getString(0);
     }
 
+    public String isExist(String idNumber , String idBook)
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = db.rawQuery("SELECT electronic FROM " + NAME_TABLE + " WHERE idNumberElectronic='"+idNumber+"' AND idBookElectronic='"+idBook+"';",null);
+        if(res.moveToFirst())
+            return res.getString(0);
+        else
+            return "false";
+    }
+
     public int getNbrElectronic(String idNumber)
     {
         SQLiteDatabase db = this.getReadableDatabase();

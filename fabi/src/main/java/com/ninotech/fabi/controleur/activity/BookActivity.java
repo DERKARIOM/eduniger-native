@@ -191,7 +191,9 @@ public class BookActivity extends AppCompatActivity {
                 }
             }
         };
-        registerReceiver(receiverNoConnectionAdapter, new IntentFilter("BOOK_ACTIVITY"),Context.RECEIVER_EXPORTED);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            registerReceiver(receiverNoConnectionAdapter, new IntentFilter("BOOK_ACTIVITY"),Context.RECEIVER_EXPORTED);
+        }
         mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
@@ -233,7 +235,6 @@ public class BookActivity extends AppCompatActivity {
 //            public void onClick(View view) {
 //            }
 //        });
-
         downloadPDFButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -249,7 +250,7 @@ public class BookActivity extends AppCompatActivity {
                         electronicDownloader.execute(mOnlineBook.getCover(), mOnlineBook.getElectronic(),mCategory.getCover(),mAuthor.getProfile());
                         break;
                     case "Ouvrir":
-                        File file = new File(mElectronicTable.getPdf(mOnlineBook.getId()));
+                        File file = new File(mSourcePdf);
                         Uri uri = Uri.parse(Uri.fromFile(file).toString());
                         PdfActivityConfiguration config = new PdfActivityConfiguration.Builder(BookActivity.this)
                                 .hideThumbnailGrid().setEnabledShareFeatures(ShareFeatures.none())
@@ -465,7 +466,12 @@ public class BookActivity extends AppCompatActivity {
                     if(mOnlineBook.getIsAudio().equals("1"))
                         mAudioLinearLayout.setVisibility(View.VISIBLE);
                     if(!mOnlineBook.getElectronic().equals("null"))
+                    {
                         mElectronicLinearLayout.setVisibility(View.VISIBLE);
+                        mSourcePdf=mElectronicTable.isExist(mSession.getIdNumber(),mOnlineBook.getId());
+                        if (!mSourcePdf.equals("false"))
+                            downloadPDFButton.setText("Ouvrir");
+                    }
                     mTitleTextView.setText(mOnlineBook.getTitle());
                     mNameAuthor.setText("De " + jsonObject.getString("name") + " " + jsonObject.getString("firstName"));
                     mCote.setText("Cote : " + mOnlineBook.getId());
@@ -1389,6 +1395,7 @@ public class BookActivity extends AppCompatActivity {
 
     private static final String CHANNEL_ID = "progress_channel";
     private NotificationManager notificationManager;
+    private String mSourcePdf;
     private int notificationId = 1;
     private boolean isDownloading = true;
 }
