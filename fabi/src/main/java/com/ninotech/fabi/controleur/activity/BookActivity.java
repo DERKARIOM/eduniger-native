@@ -146,7 +146,7 @@ public class BookActivity extends AppCompatActivity {
                     switch (formatString)
                     {
                         case "audio":
-                            audioButton.setText("Terminé");
+                            audioButton.setText("Lire");
                             downloadAudioProgressBar.setVisibility(View.GONE);
                            // succeDowloadAudioDialog("Le livre " + mTitleTextView.getText().toString() + " format audio a été téléchargé avec succès. N'hésitez pas à explorer son contenu dans l'application et contactez-nous en cas de besoin.");
 
@@ -284,10 +284,22 @@ public class BookActivity extends AppCompatActivity {
         audioButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                audioButton.setText("En Cours...");
-                downloadAudioProgressBar.setVisibility(View.GONE);
-                AudioDownloader audioDownloader = new AudioDownloader(getApplicationContext(),mSession.getIdNumber(), mOnlineBook,mTones);
-                audioDownloader.execute(mOnlineBook.getCover(), mOnlineBook.getElectronic(),mCategory.getCover(),mAuthor.getProfile(),mTones.getAudio());
+                switch (audioButton.getText().toString())
+                {
+                    case "Format Audio":
+                        audioButton.setText("En Cours...");
+                        downloadAudioProgressBar.setVisibility(View.GONE);
+                        AudioDownloader audioDownloader = new AudioDownloader(getApplicationContext(),mSession.getIdNumber(), mOnlineBook,mTones);
+                        audioDownloader.execute(mOnlineBook.getCover(), mOnlineBook.getElectronic(),mCategory.getCover(),mAuthor.getProfile(),mTones.getAudio());
+                        break;
+                    case "Lire":
+                        Intent audioPayerIntent = new Intent(BookActivity.this, AudioPlayerActivity.class);
+                        audioPayerIntent.putExtra("key_adapter_audio_book_id",mOnlineBook.getId());
+                        audioPayerIntent.putExtra("list_audio_source","all");
+                        startActivity(audioPayerIntent);
+                        break;
+
+                }
             }
         });
         mPlayerImageView.setOnClickListener(new View.OnClickListener() {
