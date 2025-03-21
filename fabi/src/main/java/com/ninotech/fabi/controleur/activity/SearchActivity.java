@@ -1227,7 +1227,7 @@ public class SearchActivity extends AppCompatActivity {
                 }
                 for (int i=0;i<jsonArray.length();i++) {
                     try {
-                        mAuthors.add(new Author(jsonArray.getJSONObject(i).getString("idAuthor"),jsonArray.getJSONObject(i).getString("name"),jsonArray.getJSONObject(i).getString("firstName"),jsonArray.getJSONObject(i).getString("profile")));
+                        mAuthors.add(new Author(jsonArray.getJSONObject(i).getString("idAuthor"),jsonArray.getJSONObject(i).getString("name"),jsonArray.getJSONObject(i).getString("firstName"),jsonArray.getJSONObject(i).getString("profile"),jsonArray.getJSONObject(i).getString("profession")));
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }

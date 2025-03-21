@@ -41,24 +41,12 @@
                 android:textStyle="bold"
                 android:layout_gravity="center_horizontal"
                 android:textSize="20dp"/>
-            <LinearLayout
+            <TextView
+                android:id="@+id/text_view_activity_author_profession"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center">
-                <TextView
-                    android:id="@+id/text_view_activity_author_profession"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="DCEP NINOTECH"/>
-                <TextView
-                    android:id="@+id/text_view_activity_author_email"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textStyle="bold"
-                    android:layout_gravity="center"
-                    android:text="...plus"/>
-            </LinearLayout>
-
+                android:layout_gravity="center"
+                android:text="DCEP NINOTECH"/>
         </LinearLayout>
         <View
             android:id="@+id/view_fragment_library_1"

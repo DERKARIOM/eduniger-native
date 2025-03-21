@@ -52,6 +52,7 @@ public class AuthorActivity extends AppCompatActivity {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         mProfileImageView = findViewById(R.id.image_view_author_activity_profile);
         mUsernameTextView = findViewById(R.id.text_view_activity_author_username);
+        mProfessionTextView = findViewById(R.id.text_view_activity_author_profession);
         mBooksRecyclerView = findViewById(R.id.recycler_view_activity_author_books);
         mAuthorRecyclerView = findViewById(R.id.recycler_view_activity_author);
         mBackImageView = findViewById(R.id.image_view_toolbar_search);
@@ -65,7 +66,8 @@ public class AuthorActivity extends AppCompatActivity {
                 authorIntent.getStringExtra("intent_author_adapter_id"),
                 authorIntent.getStringExtra("intent_author_adapter_name"),
                 authorIntent.getStringExtra("intent_author_adapter_first_name"),
-                authorIntent.getStringExtra("intent_author_adapter_first_profile")
+                authorIntent.getStringExtra("intent_author_adapter_profile"),
+                authorIntent.getStringExtra("intent_author_adapter_profession")
         );
         mBackImageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,6 +96,7 @@ public class AuthorActivity extends AppCompatActivity {
                 .resize(384,384)
                 .into(mProfileImageView);
         mUsernameTextView.setText(mAuthor.getFirstName() + " " + mAuthor.getName());
+        mProfessionTextView.setText(mAuthor.getProfession());
         AuthorBookSyn authorBookSyn = new AuthorBookSyn();
         authorBookSyn.execute(getString(R.string.ip_server_android) + "AuthorBook.php",mSession.getIdNumber(),mAuthor.getIdNumber());
         AuthorSyn authorSyn = new AuthorSyn();
@@ -214,7 +217,7 @@ public class AuthorActivity extends AppCompatActivity {
                 }
                 for (int i=0;i<jsonArray.length();i++) {
                     try {
-                        mAuthorArrayList.add(new Author(jsonArray.getJSONObject(i).getString("idAuthor"),jsonArray.getJSONObject(i).getString("name"),jsonArray.getJSONObject(i).getString("firstName"),jsonArray.getJSONObject(i).getString("profile")));
+                        mAuthorArrayList.add(new Author(jsonArray.getJSONObject(i).getString("idAuthor"),jsonArray.getJSONObject(i).getString("name"),jsonArray.getJSONObject(i).getString("firstName"),jsonArray.getJSONObject(i).getString("profile"),jsonArray.getJSONObject(i).getString("profession")));
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
@@ -243,4 +246,5 @@ public class AuthorActivity extends AppCompatActivity {
     private RecyclerView mAuthorFormatBookRecyclerView;
     private ImageView mBackImageView;
     private EditText mSearchEditText;
+    private TextView mProfessionTextView;
 }
