@@ -20,11 +20,13 @@ import com.ninotech.fabi.controleur.adapter.AuthorHorizontaleAdapter;
 import com.ninotech.fabi.controleur.adapter.ElectronicAdapter;
 import com.ninotech.fabi.controleur.adapter.HorizontaleAdapter;
 import com.ninotech.fabi.controleur.adapter.NoConnectionAdapter;
+import com.ninotech.fabi.controleur.adapter.VoidContainerAdapter;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
 import com.ninotech.fabi.model.data.Author;
 import com.ninotech.fabi.model.data.Connection;
 import com.ninotech.fabi.model.data.Library;
 import com.ninotech.fabi.model.data.OnlineBook;
+import com.ninotech.fabi.model.data.VoidContainer;
 import com.ninotech.fabi.model.table.Session;
 import com.squareup.picasso.Picasso;
 
@@ -161,12 +163,12 @@ public class AuthorActivity extends AppCompatActivity {
                     mBooksRecyclerView.setAdapter(horizontaleAdapter);
                 }
                 List<Library> libraryList = new ArrayList<>();
-                AuthorFormatBookAdapter electronicAdapter = new AuthorFormatBookAdapter(libraryList);
-                libraryList.add(new Library(1,R.drawable.img_electronic_book,"Mes livres électronique", nbrElectronic));
-                libraryList.add(new Library(2,R.drawable.img_audio_book,"Mes livres audio",nbrAudio));
-                libraryList.add(new Library(3,R.drawable.img_loand_book,"Mes livres physique",nbrPhysique));
+                AuthorFormatBookAdapter authorFormatBookAdapter = new AuthorFormatBookAdapter(libraryList);
+                libraryList.add(new Library(1,R.drawable.img_electronic_book,"Mes livres électronique", nbrElectronic,mAuthor.getIdNumber()));
+                libraryList.add(new Library(2,R.drawable.img_audio_book,"Mes livres audio",nbrAudio,mAuthor.getIdNumber()));
+                libraryList.add(new Library(3,R.drawable.img_loand_book,"Mes livres physique",nbrPhysique,mAuthor.getIdNumber()));
                 mAuthorFormatBookRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                mAuthorFormatBookRecyclerView.setAdapter(electronicAdapter);
+                mAuthorFormatBookRecyclerView.setAdapter(authorFormatBookAdapter);
             } else {
                 ArrayList<Connection> list = new ArrayList<>();
                 list.add(new Connection(getString(R.string.no_connection_available), "RECOMMENDED_FRAGMENT", false));
@@ -209,22 +211,33 @@ public class AuthorActivity extends AppCompatActivity {
         protected void onPostExecute(String jsonData){
             if(jsonData != null)
             {
-                JSONArray jsonArray = null;
-                try {
-                    jsonArray = new JSONArray(jsonData);
-                } catch (JSONException e) {
-                    throw new RuntimeException(e);
-                }
-                for (int i=0;i<jsonArray.length();i++) {
+                if (!jsonData.equals("RAS"))
+                {
+                    JSONArray jsonArray = null;
                     try {
-                        mAuthorArrayList.add(new Author(jsonArray.getJSONObject(i).getString("idAuthor"),jsonArray.getJSONObject(i).getString("name"),jsonArray.getJSONObject(i).getString("firstName"),jsonArray.getJSONObject(i).getString("profile"),jsonArray.getJSONObject(i).getString("profession")));
+                        jsonArray = new JSONArray(jsonData);
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
+                    for (int i=0;i<jsonArray.length();i++) {
+                        try {
+                            mAuthorArrayList.add(new Author(jsonArray.getJSONObject(i).getString("idAuthor"),jsonArray.getJSONObject(i).getString("name"),jsonArray.getJSONObject(i).getString("firstName"),jsonArray.getJSONObject(i).getString("profile"),jsonArray.getJSONObject(i).getString("profession")));
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    AuthorHorizontaleAdapter authorHorizontaleAdapter = new AuthorHorizontaleAdapter(mAuthorArrayList);
+                    mAuthorRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(),LinearLayoutManager.HORIZONTAL,false));
+                    mAuthorRecyclerView.setAdapter(authorHorizontaleAdapter);
                 }
-                AuthorHorizontaleAdapter authorHorizontaleAdapter = new AuthorHorizontaleAdapter(mAuthorArrayList);
-                mAuthorRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(),LinearLayoutManager.HORIZONTAL,false));
-                mAuthorRecyclerView.setAdapter(authorHorizontaleAdapter);
+                else
+                {
+                    ArrayList<VoidContainer> voidContainers = new ArrayList<>();
+                    voidContainers.add(new VoidContainer(R.drawable.img_telecharge_local,"Aucun livre"));
+                    VoidContainerAdapter voidContainerAdapter = new VoidContainerAdapter(voidContainers);
+                    mAuthorRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                    mAuthorRecyclerView.setAdapter(voidContainerAdapter);
+                }
             }
             else {
                 ArrayList<Connection> list = new ArrayList<>();

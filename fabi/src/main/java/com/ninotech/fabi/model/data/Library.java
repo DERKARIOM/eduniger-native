@@ -9,6 +9,13 @@ public class Library {
         mNumber = number;
     }
 
+    public Library(int id, int icon , String label, int number, String idAuthor) {
+        mId = id;
+        mIcon = icon;
+        mLabel = label;
+        mNumber = number;
+        mIdAuthor = idAuthor;
+    }
     public int getId() {
         return mId;
     }
@@ -42,9 +49,17 @@ public class Library {
     public void setIcon(int icon) {
         mIcon = icon;
     }
+    public String getIdAuthor() {
+        return mIdAuthor;
+    }
+
+    public void setIdAuthor(String idAuthor) {
+        mIdAuthor = idAuthor;
+    }
 
     private int mIcon;
 
     private String mLabel;
     private int mNumber;
+    private String mIdAuthor;
 }

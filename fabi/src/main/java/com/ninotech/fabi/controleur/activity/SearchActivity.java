@@ -191,8 +191,18 @@ public class SearchActivity extends AppCompatActivity {
                         searchStructBook(searchIntent.getStringExtra("id_struct_key"));
                         break;
                     case "AUTHOR_ACTIVITY":
-                        searchAuthorBook(searchIntent.getStringExtra("id_author_key"));
+                        searchAuthorBook("AuthorBook.php",searchIntent.getStringExtra("id_author_key"));
                         break;
+                    case "AUTHOR_FORMAT_BOOK_PDF_ADAPTER":
+                        searchAuthorBook("AuthorPDFBook.php",searchIntent.getStringExtra("id_author_key"));
+                        break;
+                    case "AUTHOR_FORMAT_BOOK_AUDIO_ADAPTER":
+                        searchAuthorBook("AuthorAudioBook.php",searchIntent.getStringExtra("id_author_key"));
+                        break;
+                    case "AUTHOR_FORMAT_BOOK_PHYSIC_ADAPTER":
+                        searchAuthorBook("AuthorPhysicBook.php",searchIntent.getStringExtra("id_author_key"));
+                        break;
+
                 }
                 break;
             case "STRUCTURE":
@@ -311,7 +321,7 @@ public class SearchActivity extends AppCompatActivity {
         structBookSyn.execute(getString(R.string.ip_server_android) + "StructBookMore.php", mSession.getIdNumber(),idStruct);
     }
 
-    public void searchAuthorBook(String idAuthor)
+    public void searchAuthorBook(String fileSyn , String idAuthor)
     {
         BroadcastReceiver receiverNoConnectionAdapter = new BroadcastReceiver() {
             @Override
@@ -324,7 +334,7 @@ public class SearchActivity extends AppCompatActivity {
                         mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                         mRecyclerView.setAdapter(noConnectionAdapter);
                         AuthorBookSyn authorBookSyn = new AuthorBookSyn();
-                        authorBookSyn.execute(getString(R.string.ip_server_android) + "AuthorBook.php", mSession.getIdNumber(),idAuthor);
+                        authorBookSyn.execute(getString(R.string.ip_server_android) + fileSyn, mSession.getIdNumber(),idAuthor);
                     }catch (Exception e)
                     {
                         Log.e("errRankingFragment",e.getMessage());
@@ -337,7 +347,7 @@ public class SearchActivity extends AppCompatActivity {
             registerReceiver(receiverNoConnectionAdapter, new IntentFilter("STRUCT_SEARCH"),Context.RECEIVER_EXPORTED);
         }
         AuthorBookSyn authorBookSyn = new AuthorBookSyn();
-        authorBookSyn.execute(getString(R.string.ip_server_android) + "AuthorBook.php", mSession.getIdNumber(),idAuthor);
+        authorBookSyn.execute(getString(R.string.ip_server_android) + fileSyn, mSession.getIdNumber(),idAuthor);
     }
 
     public void searchOnLineStructure()

@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.activity.ContainerActivity;
+import com.ninotech.fabi.controleur.activity.SearchActivity;
 import com.ninotech.fabi.model.data.Library;
 
 import java.util.List;
@@ -76,9 +77,22 @@ public class AuthorFormatBookAdapter extends RecyclerView.Adapter<AuthorFormatBo
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent local = new Intent(itemView.getContext(), ContainerActivity.class);
-                    local.putExtra("id",library.getId());
-                    itemView.getContext().startActivity(local);
+                    Intent searchIntent = new Intent(itemView.getContext(), SearchActivity.class);
+                    searchIntent.putExtra("search_key", "ONLINE_BOOK");
+                    searchIntent.putExtra("id_author_key",library.getIdAuthor());
+                    switch (library.getId())
+                    {
+                        case 1:
+                            searchIntent.putExtra("online_book_key", "AUTHOR_FORMAT_BOOK_PDF_ADAPTER");
+                            break;
+                        case 2:
+                            searchIntent.putExtra("online_book_key", "AUTHOR_FORMAT_BOOK_AUDIO_ADAPTER");
+                            break;
+                        case 3:
+                            searchIntent.putExtra("online_book_key", "AUTHOR_FORMAT_BOOK_PHYSIC_ADAPTER");
+                            break;
+                    }
+                    itemView.getContext().startActivity(searchIntent);
                 }
             });
         }
