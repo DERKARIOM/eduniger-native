@@ -83,8 +83,8 @@ public class AuthorActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent searchIntent = new Intent(getApplicationContext(), SearchActivity.class);
                 searchIntent.putExtra("search_key", "ONLINE_BOOK");
-                searchIntent.putExtra("online_book_key", "STRUCTURE_ACTIVITY");
-                searchIntent.putExtra("id_struct_key",1);
+                searchIntent.putExtra("online_book_key", "AUTHOR_ACTIVITY");
+                searchIntent.putExtra("id_author_key",mAuthor.getIdNumber());
                 startActivity(searchIntent);
             }
         });

@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.adapter.AudioBookAdapter;
+import com.ninotech.fabi.controleur.adapter.AuthorFormatBookAdapter;
 import com.ninotech.fabi.controleur.adapter.AuthorHorizontaleAdapter;
 import com.ninotech.fabi.controleur.adapter.AuthorLocalAdapter;
 import com.ninotech.fabi.controleur.adapter.AuthorVerticaleAdapter;
@@ -45,6 +46,7 @@ import com.ninotech.fabi.model.data.Author;
 import com.ninotech.fabi.model.data.Category;
 import com.ninotech.fabi.model.data.Connection;
 import com.ninotech.fabi.model.data.ElectronicBook;
+import com.ninotech.fabi.model.data.Library;
 import com.ninotech.fabi.model.data.LoandBook;
 import com.ninotech.fabi.model.data.LocalBooks;
 import com.ninotech.fabi.model.data.Notification;
@@ -188,6 +190,9 @@ public class SearchActivity extends AppCompatActivity {
                     case "STRUCTURE_ACTIVITY":
                         searchStructBook(searchIntent.getStringExtra("id_struct_key"));
                         break;
+                    case "AUTHOR_ACTIVITY":
+                        searchAuthorBook(searchIntent.getStringExtra("id_author_key"));
+                        break;
                 }
                 break;
             case "STRUCTURE":
@@ -304,6 +309,35 @@ public class SearchActivity extends AppCompatActivity {
         }
         StructBookSyn structBookSyn = new StructBookSyn();
         structBookSyn.execute(getString(R.string.ip_server_android) + "StructBookMore.php", mSession.getIdNumber(),idStruct);
+    }
+
+    public void searchAuthorBook(String idAuthor)
+    {
+        BroadcastReceiver receiverNoConnectionAdapter = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if ("AUTHOR_SEARCH".equals(intent.getAction())) {
+                    try {
+                        ArrayList<Connection> list = new ArrayList<>();
+                        list.add(new Connection(getString(R.string.wait),"AUTHOR_SEARCH",true));
+                        NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
+                        mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                        mRecyclerView.setAdapter(noConnectionAdapter);
+                        AuthorBookSyn authorBookSyn = new AuthorBookSyn();
+                        authorBookSyn.execute(getString(R.string.ip_server_android) + "AuthorBook.php", mSession.getIdNumber(),idAuthor);
+                    }catch (Exception e)
+                    {
+                        Log.e("errRankingFragment",e.getMessage());
+                    }
+
+                }
+            }
+        };
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            registerReceiver(receiverNoConnectionAdapter, new IntentFilter("STRUCT_SEARCH"),Context.RECEIVER_EXPORTED);
+        }
+        AuthorBookSyn authorBookSyn = new AuthorBookSyn();
+        authorBookSyn.execute(getString(R.string.ip_server_android) + "AuthorBook.php", mSession.getIdNumber(),idAuthor);
     }
 
     public void searchOnLineStructure()
@@ -508,6 +542,68 @@ public class SearchActivity extends AppCompatActivity {
             }
             else
             {
+                ArrayList<Connection> list = new ArrayList<>();
+                list.add(new Connection(getString(R.string.no_connection_available),"RANKING_FRAGMENT",false));
+                NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
+                mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                mRecyclerView.setAdapter(noConnectionAdapter);
+            }
+        }
+    }
+
+    private class AuthorBookSyn extends AsyncTask<String,Void,String> {
+        @Override
+        protected String doInBackground(String... params) {
+
+            try {
+                OkHttpClient client = new OkHttpClient();
+                RequestBody requestBody = new MultipartBody.Builder()
+                        .setType(MultipartBody.FORM)
+                        .addFormDataPart("idNumber", params[1])
+                        .addFormDataPart("idAuthor", params[2])
+                        .build();
+                Request request = new Request.Builder()
+                        .url(params[0])
+                        .post(requestBody)
+                        .build();
+                try {
+                    Response response = client.newCall(request).execute();
+                    assert response.body() != null;
+                    return response.body().string();
+                } catch (IOException e) {
+                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+
+            } catch (Exception e) {
+                return null;
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String jsonData) {
+            if (jsonData != null) {
+                int nbrElectronic=0,nbrAudio=0,nbrPhysique=0;
+                if(!jsonData.equals("RAS"))
+                {
+                    JSONArray jsonArray = null;
+                    try {
+                        jsonArray = new JSONArray(jsonData);
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        try {
+                            mOnlineBooks.add(new OnlineBook(jsonArray.getJSONObject(i).getString("idBook"), jsonArray.getJSONObject(i).getString("blanket"), jsonArray.getJSONObject(i).getString("bookTitle"), jsonArray.getJSONObject(i).getString("categoryTitle"), jsonArray.getJSONObject(i).getString("isPhysic"), jsonArray.getJSONObject(i).getString("electronic"), jsonArray.getJSONObject(i).getString("isAudio"), Integer.parseInt(jsonArray.getJSONObject(i).getString("numberLike")), Integer.parseInt(jsonArray.getJSONObject(i).getString("numberNoLike"))));
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    mOnlineBookAdapter = new OnlineBookAdapter(mOnlineBooks);
+                    mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                    mRecyclerView.setAdapter(mOnlineBookAdapter);
+                }
+            } else {
                 ArrayList<Connection> list = new ArrayList<>();
                 list.add(new Connection(getString(R.string.no_connection_available),"RANKING_FRAGMENT",false));
                 NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
