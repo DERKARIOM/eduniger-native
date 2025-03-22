@@ -102,7 +102,7 @@ public class AuthorActivity extends AppCompatActivity {
         AuthorBookSyn authorBookSyn = new AuthorBookSyn();
         authorBookSyn.execute(getString(R.string.ip_server_android) + "AuthorBook.php",mSession.getIdNumber(),mAuthor.getIdNumber());
         AuthorSyn authorSyn = new AuthorSyn();
-        authorSyn.execute(getString(R.string.ip_server_android) + "AuthorTop.php", "94961793");
+        authorSyn.execute(getString(R.string.ip_server_android) + "AuthorSimular.php", mAuthor.getIdNumber());
     }
     private class AuthorBookSyn extends AsyncTask<String,Void,String> {
         @Override
