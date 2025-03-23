@@ -117,8 +117,8 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
         void display(Structure structure){
             Picasso.get()
                     .load(itemView.getResources().getString(R.string.ip_server) + "ressources/cover/" + structure.getCover())
-                    .placeholder(R.drawable.img_default_book)
-                    .error(R.drawable.img_default_book)
+                    .placeholder(R.drawable.img_wait_struct)
+                    .error(R.drawable.img_wait_struct)
                     .transform(new RoundedTransformation(1000,4))
                     .resize(284,284)
                     .into(mBlanketImageView);

@@ -71,8 +71,8 @@ public class AuthorHorizontaleAdapter extends RecyclerView.Adapter<AuthorHorizon
         void display(Author author) throws SQLException, IOException {
             Picasso.get()
                     .load(itemView.getResources().getString(R.string.ip_server) + "ressources/profile/" + author.getProfile())
-                    .placeholder(R.drawable.img_default_book)
-                    .error(R.drawable.img_default_book)
+                    .placeholder(R.drawable.img_wait_profile)
+                    .error(R.drawable.img_wait_profile)
                     .transform(new RoundedTransformation(1000,4))
                     .resize(284,284)
                     .into(mProfileImageView);
