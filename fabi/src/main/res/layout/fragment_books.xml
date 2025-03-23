@@ -10,6 +10,13 @@
         android:id="@+id/recycler_view_ranking"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:visibility="gone"
         />
-
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_fragment_books_wait"
+        android:nestedScrollingEnabled="false"
+        android:layout_margin="10dp"
+        android:layout_centerInParent="true"
+        style="@style/wrap_content_all"
+        />
 </RelativeLayout>

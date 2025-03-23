@@ -43,12 +43,13 @@ public class BooksFragment extends Fragment {
        View view = inflater.inflate(R.layout.fragment_books, container, false);
         Session session = new Session(getContext());
        mBookRecyclerView = view.findViewById(R.id.recycler_view_ranking);
+       mWaitRecyclerView = view.findViewById(R.id.recycler_view_fragment_books_wait);
         mOnlineBookList = new ArrayList<>();
         ArrayList<Connection> list = new ArrayList<>();
         list.add(new Connection(getString(R.string.wait),null,true));
         mNoConnectionAdapter = new NoConnectionAdapter(list);
-        mBookRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mBookRecyclerView.setAdapter(mNoConnectionAdapter);
+        mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mWaitRecyclerView.setAdapter(mNoConnectionAdapter);
         BroadcastReceiver receiverNoConnectionAdapter = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -57,8 +58,8 @@ public class BooksFragment extends Fragment {
                         ArrayList<Connection> list = new ArrayList<>();
                         list.add(new Connection(getString(R.string.wait),"RANKING_FRAGMENT",true));
                         NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
-                        mBookRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                        mBookRecyclerView.setAdapter(noConnectionAdapter);
+                        mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                        mWaitRecyclerView.setAdapter(noConnectionAdapter);
                         RankingSyn rankingSyn = new RankingSyn();
                         rankingSyn.execute(getString(R.string.ip_server_android) + "Ranking.php", session.getIdNumber());
                     }catch (Exception e)
@@ -109,6 +110,8 @@ public class BooksFragment extends Fragment {
         protected void onPostExecute(String jsonData){
             if(jsonData != null)
             {
+                mWaitRecyclerView.setVisibility(View.GONE);
+                mBookRecyclerView.setVisibility(View.VISIBLE);
                 if (!jsonData.equals("RAS"))
                 {
                     JSONArray jsonArray = null;
@@ -134,12 +137,13 @@ public class BooksFragment extends Fragment {
                 ArrayList<Connection> list = new ArrayList<>();
                 list.add(new Connection(getString(R.string.no_connection_available),"RANKING_FRAGMENT",false));
                 NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
-                mBookRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                mBookRecyclerView.setAdapter(noConnectionAdapter);
+                mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                mWaitRecyclerView.setAdapter(noConnectionAdapter);
             }
         }
     }
     private RecyclerView mBookRecyclerView;
+    private RecyclerView mWaitRecyclerView;
     private ArrayList<OnlineBook> mOnlineBookList;
     private NoConnectionAdapter mNoConnectionAdapter;
 }
