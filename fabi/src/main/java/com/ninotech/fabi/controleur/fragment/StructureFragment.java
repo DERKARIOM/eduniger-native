@@ -40,16 +40,17 @@ public class StructureFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_category, container, false);
-        mStructureRecyclerView = view.findViewById(R.id.recycler_view_fragment_category);
+        View view = inflater.inflate(R.layout.fragment_structure, container, false);
+        mStructureRecyclerView = view.findViewById(R.id.recycler_view_fragment_structure);
+        mWaitRecyclerView = view.findViewById(R.id.recycler_view_fragment_structure_wait);
         Session session = new Session(getContext());
         mStructures = new ArrayList<>();
+        StructAdapter = new StructureAdapter(mStructures);
         ArrayList<Connection> list = new ArrayList<>();
         list.add(new Connection(getString(R.string.wait),null,true));
         mNoConnectionAdapter = new NoConnectionAdapter(list);
-        mStructureRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mStructureRecyclerView.setAdapter(mNoConnectionAdapter);
-        StructAdapter = new StructureAdapter(mStructures);
+        mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mWaitRecyclerView.setAdapter(mNoConnectionAdapter);
         BroadcastReceiver receiverNoConnectionAdapter = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -58,8 +59,8 @@ public class StructureFragment extends Fragment {
                         ArrayList<Connection> list = new ArrayList<>();
                         list.add(new Connection(getString(R.string.wait),"CATEGORY_FRAGMENT",true));
                         NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
-                        mStructureRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                        mStructureRecyclerView.setAdapter(noConnectionAdapter);
+                        mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                        mWaitRecyclerView.setAdapter(noConnectionAdapter);
                         StructureSyn structureSyn = new StructureSyn();
                         structureSyn.execute(getString(R.string.ip_server_android) + "Structure.php", session.getIdNumber());
                         StructureSyn2 structureSyn2 = new StructureSyn2();
@@ -85,7 +86,6 @@ public class StructureFragment extends Fragment {
     private class StructureSyn extends AsyncTask<String,Void,String> {
         @Override
         protected String doInBackground(String... params) {
-
             try {
                 OkHttpClient client = new OkHttpClient();
                 RequestBody requestBody = new MultipartBody.Builder()
@@ -115,6 +115,8 @@ public class StructureFragment extends Fragment {
         protected void onPostExecute(String jsonData){
             if(jsonData != null)
             {
+                mWaitRecyclerView.setVisibility(View.GONE);
+                mStructureRecyclerView.setVisibility(View.VISIBLE);
                 if (!jsonData.equals("RAS"))
                 {
                     JSONArray jsonArray = null;
@@ -147,8 +149,8 @@ public class StructureFragment extends Fragment {
                 ArrayList<Connection> list = new ArrayList<>();
                 list.add(new Connection(getString(R.string.no_connection_available),"CATEGORY_FRAGMENT",false));
                 NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
-                mStructureRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                mStructureRecyclerView.setAdapter(noConnectionAdapter);
+                mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                mWaitRecyclerView.setAdapter(noConnectionAdapter);
             }
         }
     }
@@ -229,6 +231,7 @@ public class StructureFragment extends Fragment {
         return false;
     }
     private RecyclerView mStructureRecyclerView;
+    private RecyclerView mWaitRecyclerView;
     private ArrayList<Structure> mStructures;
     private NoConnectionAdapter mNoConnectionAdapter;
     private StructureAdapter StructAdapter;
