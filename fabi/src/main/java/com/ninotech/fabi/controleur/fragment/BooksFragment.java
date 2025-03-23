@@ -109,22 +109,25 @@ public class BooksFragment extends Fragment {
         protected void onPostExecute(String jsonData){
             if(jsonData != null)
             {
-                JSONArray jsonArray = null;
-                try {
-                    jsonArray = new JSONArray(jsonData);
-                } catch (JSONException e) {
-                    throw new RuntimeException(e);
-                }
-                for (int i=0;i<jsonArray.length();i++) {
+                if (!jsonData.equals("RAS"))
+                {
+                    JSONArray jsonArray = null;
                     try {
-                        mOnlineBookList.add(new OnlineBook(jsonArray.getJSONObject(i).getString("idBook"),jsonArray.getJSONObject(i).getString("blanket"),jsonArray.getJSONObject(i).getString("bookTitle"),jsonArray.getJSONObject(i).getString("nameStruct") + " : " +jsonArray.getJSONObject(i).getString("categoryTitle"),jsonArray.getJSONObject(i).getString("isPhysic"),jsonArray.getJSONObject(i).getString("electronic"),jsonArray.getJSONObject(i).getString("isAudio"),Integer.parseInt(jsonArray.getJSONObject(i).getString("numberLike")),Integer.parseInt(jsonArray.getJSONObject(i).getString("numberLike"))));
+                        jsonArray = new JSONArray(jsonData);
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
+                    for (int i=0;i<jsonArray.length();i++) {
+                        try {
+                            mOnlineBookList.add(new OnlineBook(jsonArray.getJSONObject(i).getString("idBook"),jsonArray.getJSONObject(i).getString("blanket"),jsonArray.getJSONObject(i).getString("bookTitle"),jsonArray.getJSONObject(i).getString("nameStruct") + " : " +jsonArray.getJSONObject(i).getString("categoryTitle"),jsonArray.getJSONObject(i).getString("isPhysic"),jsonArray.getJSONObject(i).getString("electronic"),jsonArray.getJSONObject(i).getString("isAudio"),Integer.parseInt(jsonArray.getJSONObject(i).getString("numberLike")),Integer.parseInt(jsonArray.getJSONObject(i).getString("numberLike"))));
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    OnlineBookAdapter onlineBookAdapter = new OnlineBookAdapter(mOnlineBookList);
+                    mBookRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                    mBookRecyclerView.setAdapter(onlineBookAdapter);
                 }
-                OnlineBookAdapter onlineBookAdapter = new OnlineBookAdapter(mOnlineBookList);
-                mBookRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                mBookRecyclerView.setAdapter(onlineBookAdapter);
             }
             else
             {

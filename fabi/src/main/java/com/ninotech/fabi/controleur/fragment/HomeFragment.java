@@ -192,22 +192,25 @@ public class HomeFragment extends Fragment {
                 }
                 if(!jsonData.equals("expiresVersion"))
                 {
-                    JSONArray jsonArray = null;
-                    try {
-                        jsonArray = new JSONArray(jsonData);
-                    } catch (JSONException e) {
-                        throw new RuntimeException(e);
-                    }
-                    for (int i=0;i<jsonArray.length();i++) {
+                    if(!jsonData.equals("RAS"))
+                    {
+                        JSONArray jsonArray = null;
                         try {
-                            mOnlineBookList.add(new OnlineBook(jsonArray.getJSONObject(i).getString("idBook"),jsonArray.getJSONObject(i).getString("blanket"),jsonArray.getJSONObject(i).getString("bookTitle"),jsonArray.getJSONObject(i).getString("categoryTitle"),jsonArray.getJSONObject(i).getString("isPhysic"),jsonArray.getJSONObject(i).getString("electronic"),jsonArray.getJSONObject(i).getString("isAudio"),Integer.parseInt(jsonArray.getJSONObject(i).getString("numberLike")),Integer.parseInt(jsonArray.getJSONObject(i).getString("numberLike"))));
+                            jsonArray = new JSONArray(jsonData);
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
+                        for (int i=0;i<jsonArray.length();i++) {
+                            try {
+                                mOnlineBookList.add(new OnlineBook(jsonArray.getJSONObject(i).getString("idBook"),jsonArray.getJSONObject(i).getString("blanket"),jsonArray.getJSONObject(i).getString("bookTitle"),jsonArray.getJSONObject(i).getString("categoryTitle"),jsonArray.getJSONObject(i).getString("isPhysic"),jsonArray.getJSONObject(i).getString("electronic"),jsonArray.getJSONObject(i).getString("isAudio"),Integer.parseInt(jsonArray.getJSONObject(i).getString("numberLike")),Integer.parseInt(jsonArray.getJSONObject(i).getString("numberLike"))));
+                            } catch (JSONException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                        HorizontaleAdapter horizontaleAdapter = new HorizontaleAdapter(mOnlineBookList);
+                        mBookRecommendedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
+                        mBookRecommendedRecyclerView.setAdapter(horizontaleAdapter);
                     }
-                    HorizontaleAdapter horizontaleAdapter = new HorizontaleAdapter(mOnlineBookList);
-                    mBookRecommendedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
-                    mBookRecommendedRecyclerView.setAdapter(horizontaleAdapter);
                 }
                 else
                     update();
