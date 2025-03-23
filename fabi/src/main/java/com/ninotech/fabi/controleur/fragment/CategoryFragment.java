@@ -42,13 +42,14 @@ public class CategoryFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_category, container, false);
         mCategoryRecyclerView = view.findViewById(R.id.recycler_view_fragment_category);
+        mWaitRecyclerView = view.findViewById(R.id.recycler_view_fragment_category_wait);
         Session session = new Session(getContext());
         mCategoryList = new ArrayList<>();
         ArrayList<Connection> list = new ArrayList<>();
         list.add(new Connection(getString(R.string.wait),null,true));
         mNoConnectionAdapter = new NoConnectionAdapter(list);
-        mCategoryRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mCategoryRecyclerView.setAdapter(mNoConnectionAdapter);
+        mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mWaitRecyclerView.setAdapter(mNoConnectionAdapter);
         BroadcastReceiver receiverNoConnectionAdapter = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -57,8 +58,8 @@ public class CategoryFragment extends Fragment {
                         ArrayList<Connection> list = new ArrayList<>();
                         list.add(new Connection(getString(R.string.wait),"CATEGORY_FRAGMENT",true));
                         NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
-                        mCategoryRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                        mCategoryRecyclerView.setAdapter(noConnectionAdapter);
+                        mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                        mWaitRecyclerView.setAdapter(noConnectionAdapter);
                         CategorySyn categorySyn = new CategorySyn();
                         categorySyn.execute(getString(R.string.ip_server_android) + "Category.php", session.getIdNumber());
                     }catch (Exception e)
@@ -110,33 +111,39 @@ public class CategoryFragment extends Fragment {
         protected void onPostExecute(String jsonData){
             if(jsonData != null)
             {
-                JSONArray jsonArray = null;
-                try {
-                    jsonArray = new JSONArray(jsonData);
-                } catch (JSONException e) {
-                    throw new RuntimeException(e);
-                }
-                for (int i=0;i<jsonArray.length();i++) {
+                mWaitRecyclerView.setVisibility(View.GONE);
+                mCategoryRecyclerView.setVisibility(View.VISIBLE);
+                if (!jsonData.equals("RAS"))
+                {
+                    JSONArray jsonArray = null;
                     try {
-                        mCategoryList.add(new Category(jsonArray.getJSONObject(i).getString("blanket"),jsonArray.getJSONObject(i).getString("title")));
+                        jsonArray = new JSONArray(jsonData);
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
+                    for (int i=0;i<jsonArray.length();i++) {
+                        try {
+                            mCategoryList.add(new Category(jsonArray.getJSONObject(i).getString("blanket"),jsonArray.getJSONObject(i).getString("title")));
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    CategoryAdapter categoryAdapter = new CategoryAdapter(mCategoryList);
+                    mCategoryRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                    mCategoryRecyclerView.setAdapter(categoryAdapter);
                 }
-                CategoryAdapter categoryAdapter = new CategoryAdapter(mCategoryList);
-                mCategoryRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                mCategoryRecyclerView.setAdapter(categoryAdapter);
             }
             else {
                 ArrayList<Connection> list = new ArrayList<>();
                 list.add(new Connection(getString(R.string.no_connection_available),"CATEGORY_FRAGMENT",false));
                 NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
-                mCategoryRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                mCategoryRecyclerView.setAdapter(noConnectionAdapter);
+                mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                mWaitRecyclerView.setAdapter(noConnectionAdapter);
             }
         }
     }
     private RecyclerView mCategoryRecyclerView;
+    private RecyclerView mWaitRecyclerView;
     private ArrayList<Category> mCategoryList;
     private NoConnectionAdapter mNoConnectionAdapter;
 }
