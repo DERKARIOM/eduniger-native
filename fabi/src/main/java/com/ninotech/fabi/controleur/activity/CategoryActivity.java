@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,6 +51,7 @@ public class CategoryActivity extends AppCompatActivity {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         mSession = new Session(this);
         mRecyclerView = findViewById(R.id.recylerCategorie2);
+        mWaitRecyclerView = findViewById(R.id.recycler_view_activity_category_wait);
         mList = new ArrayList<>();
         Intent intent = getIntent();
         ActionBar ab = getSupportActionBar();
@@ -68,8 +70,8 @@ public class CategoryActivity extends AppCompatActivity {
         ArrayList<Connection> list = new ArrayList<>();
         list.add(new Connection(getString(R.string.wait),null,true));
         mNoConnectionAdapter = new NoConnectionAdapter(list);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        mRecyclerView.setAdapter(mNoConnectionAdapter);
+        mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        mWaitRecyclerView.setAdapter(mNoConnectionAdapter);
         BroadcastReceiver receiverNoConnectionAdapter = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -78,8 +80,8 @@ public class CategoryActivity extends AppCompatActivity {
                         ArrayList<Connection> list = new ArrayList<>();
                         list.add(new Connection(getString(R.string.wait),"CATEGORY_ACTIVITY",true));
                         NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
-                        mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                        mRecyclerView.setAdapter(noConnectionAdapter);
+                        mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                        mWaitRecyclerView.setAdapter(noConnectionAdapter);
                         CategoryInSyn categoryInSyn = new CategoryInSyn();
                         categoryInSyn.execute(getString(R.string.ip_server_android) + "CategoryIn.php",mSession.getIdNumber(),mCategorie);
                     }catch (Exception e)
@@ -131,6 +133,8 @@ public class CategoryActivity extends AppCompatActivity {
             //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
             if(jsonData != null)
             {
+                mWaitRecyclerView.setVisibility(View.GONE);
+                mRecyclerView.setVisibility(View.VISIBLE);
                 if(!jsonData.equals("RAS"))
                 {
                     JSONArray jsonArray = null;
@@ -195,8 +199,8 @@ public class CategoryActivity extends AppCompatActivity {
         ArrayList<VoidContainer> voidContainers = new ArrayList<>();
         voidContainers.add(new VoidContainer(image,message));
         VoidContainerAdapter voidContainerAdapter = new VoidContainerAdapter(voidContainers);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mRecyclerView.setAdapter(voidContainerAdapter);
+        mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mWaitRecyclerView.setAdapter(voidContainerAdapter);
     }
     private RecyclerView mRecyclerView;
     private OnlineBookAdapter mOnlineBookAdapter;
@@ -204,4 +208,5 @@ public class CategoryActivity extends AppCompatActivity {
     private Session mSession;
     private String mCategorie;
     private NoConnectionAdapter mNoConnectionAdapter;
+    private RecyclerView mWaitRecyclerView;
 }

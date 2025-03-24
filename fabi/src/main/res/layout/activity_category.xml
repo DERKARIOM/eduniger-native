@@ -6,7 +6,15 @@
     android:layout_height="match_parent"
     tools:context="com.ninotech.fabi.controleur.activity.CategoryActivity">
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_activity_category_wait"
+        android:nestedScrollingEnabled="false"
+        android:layout_margin="10dp"
+        android:layout_centerInParent="true"
+        style="@style/wrap_content_all"
+        />
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recylerCategorie2"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="10dp"
