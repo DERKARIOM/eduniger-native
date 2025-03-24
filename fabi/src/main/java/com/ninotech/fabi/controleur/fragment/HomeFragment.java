@@ -186,6 +186,7 @@ public class HomeFragment extends Fragment {
                             .load(getString(R.string.ip_server) + "ressources/pub/p4.png")
                             .transform(new RoundedTransformation(200,10))
                             .resize(6200,3333)
+                            .placeholder(R.drawable.img_wait_pub)
                             .into(mWelcomeImageView);
                     mWaitRecyclerView.setVisibility(View.GONE);
                     mNestedScrollView.setVisibility(View.VISIBLE);
