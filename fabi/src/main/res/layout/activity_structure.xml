@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -8,182 +8,194 @@
     android:fitsSystemWindows="true"
     android:background="@color/whiteVert"
     tools:context=".controleur.activity.StructureActivity">
-
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        >
-        <include
-            android:id="@+id/include2"
-            layout="@layout/toolbar_search" />
-
-        <ImageView
-            android:id="@+id/image_view_structure_activity_welcome"
-            android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:layout_below="@+id/include2"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp"
-            android:contentDescription="@string/todo"
-            android:elevation="6dp" />
-
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_activity_structure_wait"
+        android:nestedScrollingEnabled="false"
+        android:layout_margin="10dp"
+        android:layout_centerInParent="true"
+        style="@style/wrap_content_all"
+        />
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nested_scroll_view_activity_structure"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
         <RelativeLayout
-            android:layout_marginStart="20dp"
-            android:id="@+id/relative_layout_structure_activity_profile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/image_view_structure_activity_welcome"
             >
+            <include
+                android:id="@+id/include2"
+                layout="@layout/toolbar_search" />
+
             <ImageView
-                android:id="@+id/image_view_structure_activity_profile"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:layout_centerVertical="true"
-                android:src="@drawable/user"
-                />
-            <LinearLayout
-                android:layout_margin="10dp"
+                android:id="@+id/image_view_structure_activity_welcome"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_below="@+id/include2"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:contentDescription="@string/todo"
+                android:elevation="6dp" />
+
+            <RelativeLayout
+                android:layout_marginStart="20dp"
+                android:id="@+id/relative_layout_structure_activity_profile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/image_view_structure_activity_profile"
-                android:layout_centerVertical="true"
-                android:orientation="vertical"
+                android:layout_below="@id/image_view_structure_activity_welcome"
                 >
-                <TextView
-                    android:id="@+id/text_view_structure_activity_name"
+                <ImageView
+                    android:id="@+id/image_view_structure_activity_profile"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/user"
+                    />
+                <LinearLayout
+                    android:layout_margin="10dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="OpenLab"
+                    android:layout_toRightOf="@id/image_view_structure_activity_profile"
+                    android:layout_centerVertical="true"
+                    android:orientation="vertical"
+                    >
+                    <TextView
+                        android:id="@+id/text_view_structure_activity_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="OpenLab"
+                        android:textStyle="bold"
+                        android:textSize="20dp"/>
+                    <TextView
+                        android:id="@+id/text_view_activity_structure_author"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="\@ninotech"/>
+                    <TextView
+                        android:id="@+id/image_view_activity_structure_number"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="1,48 M d'Adhérents ° 293 Livres"/>
+                </LinearLayout>
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/linear_layout_activity_structure_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="20dp"
+                android:layout_below="@id/relative_layout_structure_activity_profile">
+                <TextView
+                    android:id="@+id/text_view_activity_structure_description"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Bienvenue sur l'struture OpenLab !"/>
+                <TextView
+                    android:id="@+id/text_view_activity_structure_more_desc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:textStyle="bold"
-                    android:textSize="20dp"/>
+                    android:paddingEnd="10dp"
+                    android:layout_toRightOf="@+id/text_view_activity_structure_description"
+                    android:text="...plus"/>
                 <TextView
-                    android:id="@+id/text_view_activity_structure_author"
+                    android:id="@+id/text_view_activity_structure_reduce_desc"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="\@ninotech"/>
+                    android:textStyle="bold"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="10dp"
+                    android:visibility="gone"
+                    android:layout_below="@id/text_view_activity_structure_description"
+                    android:text="Réduire"/>
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/relative_layout_activity_structure_btt"
+                style="@style/wrap_content_all"
+                android:layout_below="@+id/linear_layout_activity_structure_button"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="20dp"
+                >
+
+                <ProgressBar
+                    android:id="@+id/progress_bar_register_connection"
+                    style="@style/progress_bar_connection" />
+                <Button
+                    android:id="@+id/button_activity_structure_adherer"
+                    android:textAllCaps="false"
+                    android:gravity="center"
+                    android:paddingTop="-1dp"
+                    style="@style/button_adhere" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/relative_layout_activity_structure_more_book"
+                android:layout_below="@id/relative_layout_activity_structure_btt"
+                style="@style/match_wrap">
+
                 <TextView
-                    android:id="@+id/image_view_activity_structure_number"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="1,48 M d'Adhérents ° 293 Livres"/>
-            </LinearLayout>
-        </RelativeLayout>
-        <RelativeLayout
-            android:id="@+id/linear_layout_activity_structure_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginStart="20dp"
-            android:layout_below="@id/relative_layout_structure_activity_profile">
-            <TextView
-                android:id="@+id/text_view_activity_structure_description"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Bienvenue sur l'struture OpenLab !"/>
-            <TextView
-                android:id="@+id/text_view_activity_structure_more_desc"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:paddingEnd="10dp"
-                android:layout_toRightOf="@+id/text_view_activity_structure_description"
-                android:text="...plus"/>
-            <TextView
-                android:id="@+id/text_view_activity_structure_reduce_desc"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:paddingTop="10dp"
-                android:paddingEnd="10dp"
-                android:visibility="gone"
-                android:layout_below="@id/text_view_activity_structure_description"
-                android:text="Réduire"/>
-        </RelativeLayout>
-        <RelativeLayout
-            android:id="@+id/relative_layout_activity_structure_btt"
-            style="@style/wrap_content_all"
-            android:layout_below="@+id/linear_layout_activity_structure_button"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="20dp"
-            >
+                    style="@style/wrap_content_all"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="Livres"
+                    android:textStyle="bold"
+                    android:textSize="14sp" />
+                <TextView
+                    android:id="@+id/text_view_activity_structure_more_books"
+                    style="@style/wrap_content_all"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="25dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="Voir plus"
+                    android:layout_alignParentEnd="true"
+                    android:textColor="@color/purple_200"
+                    android:textStyle="bold"
+                    android:textSize="14sp" />
+            </RelativeLayout>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view_activity_structure_books"
+                android:nestedScrollingEnabled="false"
+                android:layout_margin="10dp"
+                android:layout_below="@id/relative_layout_activity_structure_more_book"
+                style="@style/match_parent_all"
+                />
+            <RelativeLayout
+                android:id="@+id/relative_layout_activity_structure_author"
+                android:layout_below="@id/recycler_view_activity_structure_books"
+                style="@style/match_wrap">
 
-            <ProgressBar
-                android:id="@+id/progress_bar_register_connection"
-                style="@style/progress_bar_connection" />
-            <Button
-                android:id="@+id/button_activity_structure_adherer"
-                android:textAllCaps="false"
-                android:gravity="center"
-                android:paddingTop="-1dp"
-                style="@style/button_adhere" />
+                <TextView
+                    style="@style/wrap_content_all"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="Les Auteurs"
+                    android:textStyle="bold"
+                    android:textSize="14sp" />
+                <TextView
+                    android:id="@+id/text_view_activity_structure_more_author"
+                    style="@style/wrap_content_all"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="25dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="Voir plus"
+                    android:layout_alignParentEnd="true"
+                    android:textColor="@color/purple_200"
+                    android:textStyle="bold"
+                    android:textSize="14sp" />
+            </RelativeLayout>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view_activity_structure_author"
+                android:nestedScrollingEnabled="false"
+                android:layout_margin="10dp"
+                android:layout_below="@id/relative_layout_activity_structure_author"
+                style="@style/match_parent_all"
+                />
         </RelativeLayout>
-        <RelativeLayout
-            android:id="@+id/relative_layout_activity_structure_more_book"
-            android:layout_below="@id/relative_layout_activity_structure_btt"
-            style="@style/match_wrap">
-
-            <TextView
-                style="@style/wrap_content_all"
-                android:layout_marginStart="25dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginBottom="10dp"
-                android:text="Livres"
-                android:textStyle="bold"
-                android:textSize="14sp" />
-            <TextView
-                android:id="@+id/text_view_activity_structure_more_books"
-                style="@style/wrap_content_all"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="25dp"
-                android:layout_marginBottom="10dp"
-                android:text="Voir plus"
-                android:layout_alignParentEnd="true"
-                android:textColor="@color/purple_200"
-                android:textStyle="bold"
-                android:textSize="14sp" />
-        </RelativeLayout>
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view_activity_structure_books"
-            android:nestedScrollingEnabled="false"
-            android:layout_margin="10dp"
-            android:layout_below="@id/relative_layout_activity_structure_more_book"
-            style="@style/match_parent_all"
-            />
-        <RelativeLayout
-            android:id="@+id/relative_layout_activity_structure_author"
-            android:layout_below="@id/recycler_view_activity_structure_books"
-            style="@style/match_wrap">
-
-            <TextView
-                style="@style/wrap_content_all"
-                android:layout_marginStart="25dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginBottom="10dp"
-                android:text="Les Auteurs"
-                android:textStyle="bold"
-                android:textSize="14sp" />
-            <TextView
-                android:id="@+id/text_view_activity_structure_more_author"
-                style="@style/wrap_content_all"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="25dp"
-                android:layout_marginBottom="10dp"
-                android:text="Voir plus"
-                android:layout_alignParentEnd="true"
-                android:textColor="@color/purple_200"
-                android:textStyle="bold"
-                android:textSize="14sp" />
-        </RelativeLayout>
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view_activity_structure_author"
-            android:nestedScrollingEnabled="false"
-            android:layout_margin="10dp"
-            android:layout_below="@id/relative_layout_activity_structure_author"
-            style="@style/match_parent_all"
-            />
-    </RelativeLayout>
-</androidx.core.widget.NestedScrollView>
+    </androidx.core.widget.NestedScrollView>
+</RelativeLayout>

@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -63,6 +64,8 @@ public class StructureActivity extends AppCompatActivity {
         Objects.requireNonNull(getSupportActionBar()).hide();
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         Intent intentStructure = getIntent();
+        mWaitRecyclerView = findViewById(R.id.recycler_view_activity_structure_wait);
+        mNestedScrollView = findViewById(R.id.nested_scroll_view_activity_structure);
         mBackImageView = findViewById(R.id.image_view_toolbar_search);
         mSearchEditText = findViewById(R.id.edit_text_toolbar_search);
         mWelcomeImageView = findViewById(R.id.image_view_structure_activity_welcome);
@@ -101,8 +104,8 @@ public class StructureActivity extends AppCompatActivity {
                         ArrayList<Connection> list = new ArrayList<>();
                         list.add(new Connection(getString(R.string.wait),"STRUCTURE_ACTIVITY",true));
                         NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
-                        mBookRecommendedRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                        mBookRecommendedRecyclerView.setAdapter(noConnectionAdapter);
+                        mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                        mWaitRecyclerView.setAdapter(noConnectionAdapter);
                         StructBookSyn structBookSyn = new StructBookSyn();
                         structBookSyn.execute(getString(R.string.ip_server_android) + "StructBook.php", mSession.getIdNumber(),mStructure.getId());
                         AuthorSyn authorSyn = new AuthorSyn();
@@ -118,6 +121,11 @@ public class StructureActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             registerReceiver(receiverNoConnectionAdapter, new IntentFilter("STRUCTURE_ACTIVITY"),Context.RECEIVER_EXPORTED);
         }
+        ArrayList<Connection> list = new ArrayList<>();
+        list.add(new Connection(getString(R.string.wait),null,true));
+        NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
+        mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        mWaitRecyclerView.setAdapter(noConnectionAdapter);
         mBackImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -260,6 +268,8 @@ public class StructureActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String jsonData) {
             if (jsonData != null) {
+                mWaitRecyclerView.setVisibility(View.GONE);
+                mNestedScrollView.setVisibility(View.VISIBLE);
                 if (!jsonData.equals("RAS")) {
                     JSONArray jsonArray = null;
                     try {
@@ -284,8 +294,8 @@ public class StructureActivity extends AppCompatActivity {
                 ArrayList<Connection> list = new ArrayList<>();
                 list.add(new Connection(getString(R.string.no_connection_available), "STRUCTURE_ACTIVITY", false));
                 NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
-                mBookRecommendedRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                mBookRecommendedRecyclerView.setAdapter(noConnectionAdapter);
+                mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                mWaitRecyclerView.setAdapter(noConnectionAdapter);
             }
         }
     }
@@ -523,4 +533,6 @@ public class StructureActivity extends AppCompatActivity {
     private Button mAdhererButton;
     private ImageView mBackImageView;
     private EditText mSearchEditText;
+    private RecyclerView mWaitRecyclerView;
+    private NestedScrollView mNestedScrollView;
 }
