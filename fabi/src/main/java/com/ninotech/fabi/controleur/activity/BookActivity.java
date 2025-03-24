@@ -15,7 +15,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -30,7 +29,7 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import androidx.core.app.NotificationCompat;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.widget.NestedScrollView;
@@ -101,7 +100,7 @@ public class BookActivity extends AppCompatActivity {
         mListTones = new ArrayList<>();
         mNestedScrollView = findViewById(R.id.nested_scroll_view_activity_book);
         mCommentsRecyclerView = findViewById(R.id.recycler_view_activity_book_Comments);
-        mNoConnectionRecyclerView = findViewById(R.id.recycler_view_activity_book_no_connection);
+        mNoConnectionRecyclerView = findViewById(R.id.recycler_view_activity_book_wait);
         mBlanketImageView = findViewById(R.id.image_view_adapter_book_simple_cover);
         mTitleTextView = findViewById(R.id.text_view_adapter_book_simple_title);
         mCategoryTextView = findViewById(R.id.text_view_adapter_description_category);

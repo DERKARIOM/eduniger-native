@@ -417,8 +417,8 @@
         </RelativeLayout>
     </androidx.core.widget.NestedScrollView>
     <androidx.recyclerview.widget.RecyclerView
-        android:layout_below="@id/relative_layout_toolbar_book"
-        android:id="@+id/recycler_view_activity_book_no_connection"
-        style="@style/match_parent_all"
+        android:id="@+id/recycler_view_activity_book_wait"
+        android:layout_centerInParent="true"
+        style="@style/wrap_content_all"
         />
 </RelativeLayout>
