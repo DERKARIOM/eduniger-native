@@ -8,6 +8,9 @@
     android:fitsSystemWindows="true"
     android:background="@color/whiteVert"
     tools:context=".controleur.activity.StructureActivity">
+    <include
+        android:id="@+id/include2"
+        layout="@layout/toolbar_search" />
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_activity_structure_wait"
         android:nestedScrollingEnabled="false"
@@ -19,20 +22,16 @@
         android:id="@+id/nested_scroll_view_activity_structure"
         android:visibility="gone"
         android:layout_width="match_parent"
+        android:layout_below="@+id/include2"
         android:layout_height="match_parent">
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             >
-            <include
-                android:id="@+id/include2"
-                layout="@layout/toolbar_search" />
-
             <ImageView
                 android:id="@+id/image_view_structure_activity_welcome"
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
-                android:layout_below="@+id/include2"
                 android:layout_marginStart="15dp"
                 android:layout_marginEnd="15dp"
                 android:contentDescription="@string/todo"

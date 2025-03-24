@@ -121,6 +121,7 @@ public class StructureActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             registerReceiver(receiverNoConnectionAdapter, new IntentFilter("STRUCTURE_ACTIVITY"),Context.RECEIVER_EXPORTED);
         }
+        mSearchEditText.setVisibility(View.GONE);
         ArrayList<Connection> list = new ArrayList<>();
         list.add(new Connection(getString(R.string.wait),null,true));
         NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
@@ -270,6 +271,7 @@ public class StructureActivity extends AppCompatActivity {
             if (jsonData != null) {
                 mWaitRecyclerView.setVisibility(View.GONE);
                 mNestedScrollView.setVisibility(View.VISIBLE);
+                mSearchEditText.setVisibility(View.VISIBLE);
                 if (!jsonData.equals("RAS")) {
                     JSONArray jsonArray = null;
                     try {
@@ -332,22 +334,25 @@ public class StructureActivity extends AppCompatActivity {
         protected void onPostExecute(String jsonData){
             if(jsonData != null)
             {
-                JSONArray jsonArray = null;
-                try {
-                    jsonArray = new JSONArray(jsonData);
-                } catch (JSONException e) {
-                    throw new RuntimeException(e);
-                }
-                for (int i=0;i<jsonArray.length();i++) {
+                if (!jsonData.equals("RAS"))
+                {
+                    JSONArray jsonArray = null;
                     try {
-                        mAuthorArrayList.add(new Author(jsonArray.getJSONObject(i).getString("idAuthor"),jsonArray.getJSONObject(i).getString("name"),jsonArray.getJSONObject(i).getString("firstName"),jsonArray.getJSONObject(i).getString("profile"),jsonArray.getJSONObject(i).getString("profession")));
+                        jsonArray = new JSONArray(jsonData);
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
+                    for (int i=0;i<jsonArray.length();i++) {
+                        try {
+                            mAuthorArrayList.add(new Author(jsonArray.getJSONObject(i).getString("idAuthor"),jsonArray.getJSONObject(i).getString("name"),jsonArray.getJSONObject(i).getString("firstName"),jsonArray.getJSONObject(i).getString("profile"),jsonArray.getJSONObject(i).getString("profession")));
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    AuthorHorizontaleAdapter authorHorizontaleAdapter = new AuthorHorizontaleAdapter(mAuthorArrayList);
+                    mAuthorRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(),LinearLayoutManager.HORIZONTAL,false));
+                    mAuthorRecyclerView.setAdapter(authorHorizontaleAdapter);
                 }
-                AuthorHorizontaleAdapter authorHorizontaleAdapter = new AuthorHorizontaleAdapter(mAuthorArrayList);
-                mAuthorRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(),LinearLayoutManager.HORIZONTAL,false));
-                mAuthorRecyclerView.setAdapter(authorHorizontaleAdapter);
             }
             else {
                 ArrayList<Connection> list = new ArrayList<>();
