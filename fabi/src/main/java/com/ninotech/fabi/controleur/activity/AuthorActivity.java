@@ -1,8 +1,13 @@
 package com.ninotech.fabi.controleur.activity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -11,6 +16,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -52,6 +58,8 @@ public class AuthorActivity extends AppCompatActivity {
         setContentView(R.layout.activity_author);
         Objects.requireNonNull(getSupportActionBar()).hide();
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        mWaitRecyclerView = findViewById(R.id.recycler_view_activity_author_wait);
+        mNestedScrollView = findViewById(R.id.nested_scroll_view_activity_author);
         mProfileImageView = findViewById(R.id.image_view_author_activity_profile);
         mUsernameTextView = findViewById(R.id.text_view_activity_author_username);
         mProfessionTextView = findViewById(R.id.text_view_activity_author_profession);
@@ -64,6 +72,36 @@ public class AuthorActivity extends AppCompatActivity {
         mAuthorArrayList = new ArrayList<>();
         mOnlineBookList = new ArrayList<>();
         Intent authorIntent = getIntent();
+        BroadcastReceiver receiverNoConnectionAdapter = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if ("AUTHOR_ACTIVITY".equals(intent.getAction())) {
+                    try {
+                        ArrayList<Connection> list = new ArrayList<>();
+                        list.add(new Connection(getString(R.string.wait),"STRUCTURE_ACTIVITY",true));
+                        NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
+                        mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                        mWaitRecyclerView.setAdapter(noConnectionAdapter);
+                        AuthorBookSyn authorBookSyn = new AuthorBookSyn();
+                        authorBookSyn.execute(getString(R.string.ip_server_android) + "AuthorBook.php",mSession.getIdNumber(),mAuthor.getIdNumber());
+                        AuthorSyn authorSyn = new AuthorSyn();
+                        authorSyn.execute(getString(R.string.ip_server_android) + "AuthorSimular.php", mAuthor.getIdNumber());
+                    }catch (Exception e)
+                    {
+                        Log.e("errRankingFragment",e.getMessage());
+                    }
+
+                }
+            }
+        };
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            registerReceiver(receiverNoConnectionAdapter, new IntentFilter("AUTHOR_ACTIVITY"),Context.RECEIVER_EXPORTED);
+        }
+        ArrayList<Connection> list = new ArrayList<>();
+        list.add(new Connection(getString(R.string.wait),null,true));
+        NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
+        mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        mWaitRecyclerView.setAdapter(noConnectionAdapter);
         mAuthor = new Author(
                 authorIntent.getStringExtra("intent_author_adapter_id"),
                 authorIntent.getStringExtra("intent_author_adapter_name"),
@@ -136,6 +174,8 @@ public class AuthorActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String jsonData) {
             if (jsonData != null) {
+                mWaitRecyclerView.setVisibility(View.GONE);
+                mNestedScrollView.setVisibility(View.VISIBLE);
                 int nbrElectronic=0,nbrAudio=0,nbrPhysique=0;
                 if(!jsonData.equals("RAS"))
                 {
@@ -171,10 +211,10 @@ public class AuthorActivity extends AppCompatActivity {
                 mAuthorFormatBookRecyclerView.setAdapter(authorFormatBookAdapter);
             } else {
                 ArrayList<Connection> list = new ArrayList<>();
-                list.add(new Connection(getString(R.string.no_connection_available), "RECOMMENDED_FRAGMENT", false));
+                list.add(new Connection(getString(R.string.no_connection_available), "AUTHOR_ACTIVITY", false));
                 NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
-                mBooksRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                mBooksRecyclerView.setAdapter(noConnectionAdapter);
+                mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                mWaitRecyclerView.setAdapter(noConnectionAdapter);
             }
         }
     }
@@ -260,4 +300,6 @@ public class AuthorActivity extends AppCompatActivity {
     private ImageView mBackImageView;
     private EditText mSearchEditText;
     private TextView mProfessionTextView;
+    private RecyclerView mWaitRecyclerView;
+    private NestedScrollView mNestedScrollView;
 }
