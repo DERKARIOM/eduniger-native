@@ -5,6 +5,9 @@
     android:layout_height="match_parent"
     android:background="@color/whiteVert"
     tools:context="com.ninotech.fabi.controleur.activity.AuthorActivity">
+    <include
+        android:id="@+id/include2"
+        layout="@layout/toolbar_search" />
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_activity_author_wait"
         android:nestedScrollingEnabled="false"
@@ -16,6 +19,7 @@
         android:id="@+id/nested_scroll_view_activity_author"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@id/include2"
         android:visibility="gone">
         <RelativeLayout
             android:layout_margin="10dp"
@@ -24,15 +28,11 @@
             android:layout_centerHorizontal="true"
             android:layout_height="wrap_content"
             >
-            <include
-                android:id="@+id/include2"
-                layout="@layout/toolbar_search" />
             <ImageView
                 android:id="@+id/image_view_author_activity_profile"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_marginTop="10dp"
-                android:layout_below="@id/include2"
                 android:layout_centerHorizontal="true"
                 android:src="@drawable/user"
                 />

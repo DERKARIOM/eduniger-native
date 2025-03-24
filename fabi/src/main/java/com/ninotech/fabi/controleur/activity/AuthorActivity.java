@@ -98,6 +98,7 @@ public class AuthorActivity extends AppCompatActivity {
             registerReceiver(receiverNoConnectionAdapter, new IntentFilter("AUTHOR_ACTIVITY"),Context.RECEIVER_EXPORTED);
         }
         ArrayList<Connection> list = new ArrayList<>();
+        mSearchEditText.setVisibility(View.GONE);
         list.add(new Connection(getString(R.string.wait),null,true));
         NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
         mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
@@ -176,6 +177,7 @@ public class AuthorActivity extends AppCompatActivity {
             if (jsonData != null) {
                 mWaitRecyclerView.setVisibility(View.GONE);
                 mNestedScrollView.setVisibility(View.VISIBLE);
+                mSearchEditText.setVisibility(View.VISIBLE);
                 int nbrElectronic=0,nbrAudio=0,nbrPhysique=0;
                 if(!jsonData.equals("RAS"))
                 {
