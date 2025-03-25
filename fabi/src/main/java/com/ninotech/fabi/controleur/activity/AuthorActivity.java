@@ -103,6 +103,9 @@ public class AuthorActivity extends AppCompatActivity {
         NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
         mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         mWaitRecyclerView.setAdapter(noConnectionAdapter);
+
+        mAuthorRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        mAuthorRecyclerView.setAdapter(noConnectionAdapter);
         mAuthor = new Author(
                 authorIntent.getStringExtra("intent_author_adapter_id"),
                 authorIntent.getStringExtra("intent_author_adapter_name"),
@@ -131,8 +134,8 @@ public class AuthorActivity extends AppCompatActivity {
         });
         Picasso.get()
                 .load(getString(R.string.ip_server) + "ressources/profile/" + mAuthor.getProfile())
-                .placeholder(R.drawable.img_default_book)
-                .error(R.drawable.img_default_book)
+                .placeholder(R.drawable.img_wait_profile)
+                .error(R.drawable.img_wait_profile)
                 .transform(new RoundedTransformation(1000,4))
                 .resize(384,384)
                 .into(mProfileImageView);
