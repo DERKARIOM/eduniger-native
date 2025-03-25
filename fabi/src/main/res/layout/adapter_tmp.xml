@@ -5,19 +5,43 @@
     android:orientation="vertical"
     android:gravity="center"
     >
+    <RelativeLayout
+        android:id="@+id/relative_adapter_no_connection_wait"
+        android:layout_width="wrap_content"
+        android:padding="10dp"
+        android:layout_height="wrap_content"
+        >
+        <ProgressBar
+            android:id="@+id/progress_bar_adapter_no_connection"
+            android:layout_centerInParent="true"
+            android:visibility="visible"
+            android:rotation="180"
+            style="@style/progress_bar_try_connection" />
+        <ProgressBar
+            android:id="@+id/progress_bar_adapter_no_connection2"
+            android:layout_centerInParent="true"
+            android:visibility="visible"
+            style="@style/progress_bar_try_connection2" />
+    </RelativeLayout>
     <ImageView
+        android:id="@+id/image_view_adapter_no_connection"
         android:layout_width="100dp"
         android:layout_height="100dp"
+        android:visibility="gone"
         android:src="@drawable/img_no_wifi"/>
     <TextView
+        android:id="@+id/text_view_adapter_no_connection_title"
         android:layout_marginTop="20dp"
+        android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Vous etes hors connexion"
         android:textSize="20sp"
         android:textStyle="bold"/>
     <TextView
+        android:id="@+id/text_view_adapter_no_connection_desc"
         android:layout_width="wrap_content"
+        android:visibility="gone"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:layout_marginTop="10dp"
@@ -25,12 +49,15 @@
         android:textSize="18sp"
         />
     <LinearLayout
+        android:visibility="gone"
+        android:id="@+id/linear_layout_adapter_no_connection_action"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:gravity="center_horizontal"
         >
         <TextView
+            android:id="@+id/button_adapter_no_connection_off_line"
             android:layout_width="130dp"
             android:layout_height="50dp"
             android:text="HORS LIGNE"
@@ -40,6 +67,7 @@
             android:textSize="18sp"
             android:background="@drawable/forme_white_radius_1000dp_border_black3"/>
         <Button
+            android:id="@+id/button_adapter_no_connection_re_load"
             android:layout_width="130dp"
             android:layout_height="50dp"
             android:layout_margin="15dp"

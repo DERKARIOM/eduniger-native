@@ -6,7 +6,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -69,16 +71,25 @@ public class NoConnectionAdapter extends RecyclerView.Adapter<NoConnectionAdapte
 
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener{
-       private final ImageView mTryButton;
-       private final ProgressBar mWaitProgressBar;
-       private final ProgressBar mWaitProgressBar2;
-       private final ImageView mErr404ImageView;
+        private final RelativeLayout mWaitRelativeLayout;
+        private final ImageView mNoConnectionImageView;
+        private final TextView mTitleTextView;
+        private final TextView mDescTextView;
+        private final TextView mOffLineButton;
+        private final Button mReloadButton;
+        private final LinearLayout mActionLinearLayout;
+
+
         MyViewHolder(View itemView){
             super(itemView);
-           mTryButton = itemView.findViewById(R.id.image_view_adapter_no_connection_btt_reload);
-           mWaitProgressBar = itemView.findViewById(R.id.progress_bar_adapter_no_connection);
-            mWaitProgressBar2 = itemView.findViewById(R.id.progress_bar_adapter_no_connection2);
-           mErr404ImageView = itemView.findViewById(R.id.image_view_adapter_no_connection_img_404);
+            mWaitRelativeLayout = itemView.findViewById(R.id.relative_adapter_no_connection_wait);
+            mNoConnectionImageView = itemView.findViewById(R.id.image_view_adapter_no_connection);
+            mTitleTextView = itemView.findViewById(R.id.text_view_adapter_no_connection_title);
+            mDescTextView = itemView.findViewById(R.id.text_view_adapter_no_connection_desc);
+            mOffLineButton = itemView.findViewById(R.id.button_adapter_no_connection_off_line);
+            mReloadButton = itemView.findViewById(R.id.button_adapter_no_connection_re_load);
+            mActionLinearLayout = itemView.findViewById(R.id.linear_layout_adapter_no_connection_action);
+
             itemView.setOnCreateContextMenuListener(this);
         }
         @Override
@@ -87,18 +98,21 @@ public class NoConnectionAdapter extends RecyclerView.Adapter<NoConnectionAdapte
         void display(Connection connection){
             if(connection.isWait())
             {
-                mWaitProgressBar.setVisibility(View.VISIBLE);
-                mWaitProgressBar2.setVisibility(View.VISIBLE);
-                mTryButton.setVisibility(View.INVISIBLE);
+                mWaitRelativeLayout.setVisibility(View.VISIBLE);
+                mNoConnectionImageView.setVisibility(View.GONE);
+                mTitleTextView.setVisibility(View.GONE);
+                mDescTextView.setVisibility(View.GONE);
+                mActionLinearLayout.setVisibility(View.GONE);
             }
             else
             {
-                mTryButton.setVisibility(View.VISIBLE);
-                mErr404ImageView.setVisibility(View.VISIBLE);
-                mWaitProgressBar.setVisibility(View.INVISIBLE);
-                mWaitProgressBar2.setVisibility(View.INVISIBLE);
+                mWaitRelativeLayout.setVisibility(View.GONE);
+                mNoConnectionImageView.setVisibility(View.VISIBLE);
+                mTitleTextView.setVisibility(View.VISIBLE);
+                mDescTextView.setVisibility(View.VISIBLE);
+                mActionLinearLayout.setVisibility(View.VISIBLE);
             }
-            mTryButton.setOnClickListener(new View.OnClickListener() {
+            mReloadButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(connection.getSource());
