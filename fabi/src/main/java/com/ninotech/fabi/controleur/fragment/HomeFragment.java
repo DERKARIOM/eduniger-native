@@ -65,6 +65,8 @@ public class HomeFragment extends Fragment {
         mAuthorRecyclerView = view.findViewById(R.id.recycler_view_author);
         mWaitRecyclerView = view.findViewById(R.id.recycler_view_fragment_recommended_wait);
         mNestedScrollView = view.findViewById(R.id.nested_scroll_view_fragment_home);
+        mMoreStructRelativeLayout = view.findViewById(R.id.relative_layout_fragment_home_more_structure);
+        mMoreAuthorRelativeLayout = view.findViewById(R.id.relative_layout_fragment_home_more_author);
         mOnlineBookList = new ArrayList<>();
         mStructures = new ArrayList<>();
         mAuthorArrayList = new ArrayList<>();
@@ -128,6 +130,10 @@ public class HomeFragment extends Fragment {
                 startActivity(searchIntent);
             }
         });
+        mMoreStructRelativeLayout.setVisibility(View.GONE);
+        mStructureRecyclerView.setVisibility(View.GONE);
+        mAuthorRecyclerView.setVisibility(View.GONE);
+        mMoreAuthorRelativeLayout.setVisibility(View.GONE);
         ArrayList<Connection> list = new ArrayList<>();
         list.add(new Connection(getString(R.string.wait), null, true));
         mNoConnectionAdapter = new NoConnectionAdapter(list);
@@ -217,6 +223,8 @@ public class HomeFragment extends Fragment {
                         HorizontaleAdapter horizontaleAdapter = new HorizontaleAdapter(mOnlineBookList);
                         mBookRecommendedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
                         mBookRecommendedRecyclerView.setAdapter(horizontaleAdapter);
+
+                        mStructureRecyclerView.setVisibility(View.VISIBLE);
                     }
                 }
                 else
@@ -336,6 +344,9 @@ public class HomeFragment extends Fragment {
                     }
                     mStructureRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                     mStructureRecyclerView.setAdapter(StructAdapter);
+
+                    mMoreStructRelativeLayout.setVisibility(View.VISIBLE);
+                    mAuthorRecyclerView.setVisibility(View.VISIBLE);
                 }
             }
             else {
@@ -463,6 +474,7 @@ public class HomeFragment extends Fragment {
                 AuthorHorizontaleAdapter authorHorizontaleAdapter = new AuthorHorizontaleAdapter(mAuthorArrayList);
                 mAuthorRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
                 mAuthorRecyclerView.setAdapter(authorHorizontaleAdapter);
+                mMoreAuthorRelativeLayout.setVisibility(View.VISIBLE);
             }
             else {
                 ArrayList<Connection> list = new ArrayList<>();
@@ -497,4 +509,6 @@ public class HomeFragment extends Fragment {
     private StructureAdapter StructAdapter;
     private RecyclerView mWaitRecyclerView;
     private NestedScrollView mNestedScrollView;
+    private RelativeLayout mMoreStructRelativeLayout;
+    private RelativeLayout mMoreAuthorRelativeLayout;
 }

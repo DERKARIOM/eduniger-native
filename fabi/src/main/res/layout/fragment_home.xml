@@ -32,7 +32,7 @@
 
                 android:contentDescription="@string/todo" />
             <RelativeLayout
-                android:id="@+id/relative_layout_fragment_recommended"
+                android:id="@+id/relative_layout_fragment_home_more_book"
                 android:layout_below="@id/image_view_fragment_recommended_welcome"
                 style="@style/match_wrap">
 
@@ -61,7 +61,7 @@
                 android:id="@+id/recycler_view_ranking"
                 android:nestedScrollingEnabled="false"
                 android:layout_margin="10dp"
-                android:layout_below="@id/relative_layout_fragment_recommended"
+                android:layout_below="@id/relative_layout_fragment_home_more_book"
                 style="@style/match_parent_all"
                 />
             <RelativeLayout
