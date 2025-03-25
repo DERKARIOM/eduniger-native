@@ -133,6 +133,12 @@ public class HomeFragment extends Fragment {
         mNoConnectionAdapter = new NoConnectionAdapter(list);
         mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mWaitRecyclerView.setAdapter(mNoConnectionAdapter);
+
+        mStructureRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mStructureRecyclerView.setAdapter(mNoConnectionAdapter);
+
+        mAuthorRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mAuthorRecyclerView.setAdapter(mNoConnectionAdapter);
         if (mAccount.isSession(getContext()))
         {
             RecommendedSyn recommendedSyn = new RecommendedSyn();

@@ -127,6 +127,12 @@ public class StructureActivity extends AppCompatActivity {
         NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
         mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         mWaitRecyclerView.setAdapter(noConnectionAdapter);
+
+        mBookRecommendedRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        mBookRecommendedRecyclerView.setAdapter(noConnectionAdapter);
+
+        mAuthorRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        mAuthorRecyclerView.setAdapter(noConnectionAdapter);
         mBackImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -227,7 +233,7 @@ public class StructureActivity extends AppCompatActivity {
         mWelcomeImageView.setVisibility(View.VISIBLE);
         Picasso.get()
                 .load(getResources().getString(R.string.ip_server) + "ressources/cover/" + mStructure.getCover())
-                .placeholder(R.drawable.img_default_book)
+                .placeholder(R.drawable.img_wait_struct)
                 .error(R.drawable.img_default_book)
                 .transform(new RoundedTransformation(1000,4))
                 .resize(284,284)
