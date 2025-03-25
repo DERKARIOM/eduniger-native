@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    >
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/img_no_wifi"/>
+    <TextView
+        android:layout_marginTop="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Vous etes hors connexion"
+        android:textSize="20sp"
+        android:textStyle="bold"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:text="Vérifiez votre connexion Internet ou continuez en mode hors ligne."
+        android:textSize="18sp"
+        />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center_horizontal"
+        >
+        <TextView
+            android:layout_width="130dp"
+            android:layout_height="50dp"
+            android:text="HORS LIGNE"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_margin="15dp"
+            android:textSize="18sp"
+            android:background="@drawable/forme_white_radius_1000dp_border_black3"/>
+        <Button
+            android:layout_width="130dp"
+            android:layout_height="50dp"
+            android:layout_margin="15dp"
+            android:background="@drawable/forme_white_100dp"
+            android:text="Réessayer"
+
+            />
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    >
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Vous etes hors connexion"
+        android:textSize="20sp"
+        android:textStyle="bold"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:text="Nous vous avertirons lorsque la connexion sera rétablie"
+        android:textSize="18sp"
+        />
+
+    <Button
+        android:id="@+id/button_adapter_semi_no_connection"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/forme_white_radius_100dp_border_vert"
+        android:layout_marginTop="20dp"
+        android:text="Réssayer"/>
+</LinearLayout>
