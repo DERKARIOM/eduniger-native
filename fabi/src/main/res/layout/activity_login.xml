@@ -27,7 +27,7 @@
         </RelativeLayout>
         <EditText
             android:id="@+id/edit_text_login_id_number"
-            android:hint=" Entrer votre nom"
+            android:hint=" Entrer votre numéro"
             android:layout_below="@id/relative_layout_activity_register_img"
             android:drawableStart="@drawable/vector_black3_identify"
             android:inputType="text"
@@ -35,7 +35,7 @@
             android:autofillHints="" />
         <EditText
             android:id="@+id/edit_text_login_password"
-            android:hint="@string/edit_text_hint_password"
+            android:hint=" Votre mot de passe ?"
             android:layout_below="@id/edit_text_login_id_number"
             android:drawableStart="@drawable/vector_black3_password"
             android:inputType="textPassword"
@@ -66,7 +66,7 @@
        <LinearLayout
            android:id="@+id/linear_layout_activity_login_google"
            android:layout_width="match_parent"
-           android:layout_height="50dp"
+           android:layout_height="45dp"
            android:background="@drawable/forme_white_radius_10dp"
            android:layout_marginStart="28dp"
            android:layout_marginEnd="28dp"
@@ -78,15 +78,16 @@
 
            >
            <ImageView
-               android:layout_width="30dp"
-               android:layout_height="50dp"
+               android:layout_width="25dp"
+               android:layout_height="25dp"
                 android:src="@drawable/img_google"/>
            <TextView
                android:layout_width="wrap_content"
                android:layout_height="wrap_content"
                android:text="Continuer avec Google"
-               android:textSize="18sp"
+               android:textSize="16sp"
                android:layout_marginStart="10dp"
+               android:textStyle="bold"
                android:layout_gravity="center"/>
        </LinearLayout>
         <TextView

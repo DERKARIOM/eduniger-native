@@ -60,7 +60,7 @@ public class SuggestionFragment extends Fragment {
             }
         };
         getContext().registerReceiver(receiverFabiolaBookAdapter, new IntentFilter("ACTION_RECOVER_BOOK"));
-        mList.add(new Chat("fabiola.png","abiola","Salut que puis-je faire pour vous ?",true));
+        mList.add(new Chat("fabiola.png","duna","Salut que puis-je faire pour vous ?",true));
         mChatAdapter = new ChatAdapter(mList);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(mChatAdapter);
@@ -210,18 +210,18 @@ public class SuggestionFragment extends Fragment {
             {
                 if(jsonData.equals("true")) {
                     if (mArm.getNumberOfDays() != -1)
-                        mList.add(new Chat("fabiola.png", "abiola", "Votre réservation du livre \"" + mArm.getTitle() + "\" pour une durée de " + String.valueOf(mArm.getNumberOfDays()) + " jours a été enregistrée avec succès. Merci pour votre demande !", true));
+                        mList.add(new Chat("fabiola.png", "duna", "Votre réservation du livre \"" + mArm.getTitle() + "\" pour une durée de " + String.valueOf(mArm.getNumberOfDays()) + " jours a été enregistrée avec succès. Merci pour votre demande !", true));
                     else
                     {
                         if(mArm.getNumberOfDays() == 0)
-                            mList.add(new Chat("fabiola.png", "abiola", "Votre réservation sur place du livre \"" + mArm.getTitle() + "\" a été enregistrée avec succès. Merci pour votre demande !", true));
+                            mList.add(new Chat("fabiola.png", "duna", "Votre réservation sur place du livre \"" + mArm.getTitle() + "\" a été enregistrée avec succès. Merci pour votre demande !", true));
                         else
-                            mList.add(new Chat("fabiola.png", "abiola", "Votre réservation du livre \"" + mArm.getTitle() + "\"  pour une journée  a été enregistrée avec succès. Merci pour votre demande !", true));
+                            mList.add(new Chat("fabiola.png", "duna", "Votre réservation du livre \"" + mArm.getTitle() + "\"  pour une journée  a été enregistrée avec succès. Merci pour votre demande !", true));
                     }
                 }
                 else
                 {
-                    mList.add(new Chat("fabiola.png","abiola","je suis désolé vous avez déjà effectué une réservation sur le livre \"" + mArm.getTitle() + "\". Merci pour votre demande !",true));
+                    mList.add(new Chat("fabiola.png","duna","je suis désolé vous avez déjà effectué une réservation sur le livre \"" + mArm.getTitle() + "\". Merci pour votre demande !",true));
                 }
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                 mRecyclerView.setAdapter(mChatAdapter);

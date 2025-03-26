@@ -88,17 +88,17 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
             if(chat.isChat())
             {
                 Picasso.get()
-                        .load(R.drawable.img_fabiola_beta)
-                        .placeholder(R.drawable.img_default_book)
-                        .error(R.drawable.img_default_book)
+                        .load(R.mipmap.ic_v2)
+                        .placeholder(R.mipmap.ic_v2)
+                        .error(R.mipmap.ic_v2)
                         .into(mProfile);
             }
             else
             {
                 Picasso.get()
                         .load(R.drawable.img_moi)
-                        .placeholder(R.drawable.img_default_book)
-                        .error(R.drawable.img_default_book)
+                        .placeholder(R.drawable.img_wait_profile)
+                        .error(R.drawable.img_wait_profile)
                         .into(mProfile);
             }
             mNom.setText(chat.getUserName());

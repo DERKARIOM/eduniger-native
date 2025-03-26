@@ -35,7 +35,7 @@
         android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Vous etes hors connexion"
+        android:text="Vous êtes hors connexion"
         android:textSize="16sp"
         android:textStyle="bold"/>
     <TextView
