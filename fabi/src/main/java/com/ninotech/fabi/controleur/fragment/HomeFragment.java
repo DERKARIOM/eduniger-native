@@ -29,6 +29,7 @@ import com.ninotech.fabi.controleur.activity.SearchActivity;
 import com.ninotech.fabi.controleur.adapter.AuthorHorizontaleAdapter;
 import com.ninotech.fabi.controleur.adapter.HorizontaleAdapter;
 import com.ninotech.fabi.controleur.adapter.NoConnectionAdapter;
+import com.ninotech.fabi.controleur.adapter.SemiNoConnectionAdapter;
 import com.ninotech.fabi.controleur.adapter.StructureAdapter;
 import com.ninotech.fabi.controleur.dialog.UpdateDialog;
 import com.ninotech.fabi.model.data.Account;
@@ -140,8 +141,9 @@ public class HomeFragment extends Fragment {
         mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mWaitRecyclerView.setAdapter(mNoConnectionAdapter);
 
+        mSemiNoConnectionAdapter = new SemiNoConnectionAdapter(list);
         mStructureRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mStructureRecyclerView.setAdapter(mNoConnectionAdapter);
+        mStructureRecyclerView.setAdapter(mSemiNoConnectionAdapter);
 
         mAuthorRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mAuthorRecyclerView.setAdapter(mNoConnectionAdapter);
@@ -352,9 +354,9 @@ public class HomeFragment extends Fragment {
             else {
                 ArrayList<Connection> list = new ArrayList<>();
                 list.add(new Connection(getString(R.string.no_connection_available),"CATEGORY_FRAGMENT",false));
-                NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
+                SemiNoConnectionAdapter semiNoConnectionAdapter = new SemiNoConnectionAdapter(list);
                 mStructureRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                mStructureRecyclerView.setAdapter(noConnectionAdapter);
+                mStructureRecyclerView.setAdapter(semiNoConnectionAdapter);
             }
         }
     }
@@ -419,9 +421,9 @@ public class HomeFragment extends Fragment {
             else {
                 ArrayList<Connection> list = new ArrayList<>();
                 list.add(new Connection(getString(R.string.no_connection_available),"CATEGORY_FRAGMENT",false));
-                NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
+                SemiNoConnectionAdapter semiNoConnectionAdapter = new SemiNoConnectionAdapter(list);
                 mStructureRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                mStructureRecyclerView.setAdapter(noConnectionAdapter);
+                mStructureRecyclerView.setAdapter(semiNoConnectionAdapter);
             }
         }
     }
@@ -479,9 +481,9 @@ public class HomeFragment extends Fragment {
             else {
                 ArrayList<Connection> list = new ArrayList<>();
                 list.add(new Connection(getString(R.string.no_connection_available),"CATEGORY_FRAGMENT",false));
-                NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
+               SemiNoConnectionAdapter semiNoConnectionAdapter = new SemiNoConnectionAdapter(list);
                 mAuthorRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
-                mAuthorRecyclerView.setAdapter(noConnectionAdapter);
+                mAuthorRecyclerView.setAdapter(semiNoConnectionAdapter);
             }
         }
     }
@@ -501,6 +503,7 @@ public class HomeFragment extends Fragment {
     private RecyclerView mAuthorRecyclerView;
     private ArrayList<Structure> mStructures;
     private NoConnectionAdapter mNoConnectionAdapter;
+    private SemiNoConnectionAdapter mSemiNoConnectionAdapter;
     private ImageView mWelcomeImageView;
     private TextView mBookMoreTextView;
     private TextView mStructMoreTextView;

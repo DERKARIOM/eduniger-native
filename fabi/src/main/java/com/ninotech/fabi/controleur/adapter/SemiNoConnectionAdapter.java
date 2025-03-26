@@ -6,7 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -68,17 +69,38 @@ public class SemiNoConnectionAdapter extends RecyclerView.Adapter<SemiNoConnecti
 
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener{
-       private final Button mButton;
+        private final RelativeLayout mWaitRelativeLayout;
+        private final ImageView mNoConnectionImageView;
+        private final TextView mTitleTextView;
+       private final Button mTryButton;
         MyViewHolder(View itemView){
             super(itemView);
-           mButton = itemView.findViewById(R.id.button_adapter_semi_no_connection);
+            mWaitRelativeLayout = itemView.findViewById(R.id.relative_adapter_semi_no_connection_wait);
+            mTryButton = itemView.findViewById(R.id.button_adapter_semi_no_connection_try);
+            mNoConnectionImageView = itemView.findViewById(R.id.image_view_adapter_semi_no_connection);
+            mTitleTextView = itemView.findViewById(R.id.text_view_adapter_semi_no_connection_title);
             itemView.setOnCreateContextMenuListener(this);
         }
         @Override
         public void onCreateContextMenu(ContextMenu menu , View v , ContextMenu.ContextMenuInfo menuInfo){
         }
         void display(Connection connection){
-            mButton.setOnClickListener(new View.OnClickListener() {
+            if(connection.isWait())
+            {
+                mWaitRelativeLayout.setVisibility(View.VISIBLE);
+                mTryButton.setVisibility(View.GONE);
+                mNoConnectionImageView.setVisibility(View.GONE);
+                mTitleTextView.setVisibility(View.GONE);
+            }
+            else
+            {
+                mWaitRelativeLayout.setVisibility(View.GONE);
+                mTryButton.setVisibility(View.VISIBLE);
+                mNoConnectionImageView.setVisibility(View.VISIBLE);
+                mTitleTextView.setVisibility(View.VISIBLE);
+            }
+            mTryButton.setOnClickListener(new View.OnClickListener() {
+
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(connection.getSource());

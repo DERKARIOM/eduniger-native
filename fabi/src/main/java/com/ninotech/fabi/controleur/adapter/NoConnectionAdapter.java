@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -117,6 +118,13 @@ public class NoConnectionAdapter extends RecyclerView.Adapter<NoConnectionAdapte
                 public void onClick(View view) {
                     Intent intent = new Intent(connection.getSource());
                     itemView.getContext().sendBroadcast(intent);
+                }
+            });
+            mOffLineButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(itemView.getContext(), "HORS LIGNE", Toast.LENGTH_SHORT).show();
+
                 }
             });
         }
