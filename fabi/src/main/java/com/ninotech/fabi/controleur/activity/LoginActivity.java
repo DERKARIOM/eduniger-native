@@ -51,7 +51,6 @@ public class LoginActivity extends AppCompatActivity {
         mPassewordEditText = findViewById(R.id.edit_text_login_password);
         TextView registerTextView = findViewById(R.id.text_view_login_pass_register);
         mConnectionButton = findViewById(R.id.button_login_connection);
-        mHelperTextView = findViewById(R.id.text_view_login_helper);
         mErrorTextView = findViewById(R.id.text_view_login_error);
         mConnectionProgressBar = findViewById(R.id.progress_bar_register_connection);
         mJeton="null";
@@ -120,22 +119,7 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         /* En Cliquant sur le TextView d' aide */
-        mHelperTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    if(mHelperTextView.getText().equals(getString(R.string.forgot_password)))
-                    {
-                        Intent changePasseWord = new Intent(LoginActivity.this, ChangePasswordActivity.class);
-                        startActivity(changePasseWord);
-                    }else
-                        Toast.makeText(LoginActivity.this, "En cours de developement", Toast.LENGTH_SHORT).show();
-                }catch (Exception e)
-                {
-                    Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+
     }
     public void inputData(int idNumberForm , int passwordForm , int message)
     {

@@ -1,84 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/match_parent_all"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     android:background="@color/whiteVert"
     tools:context="com.ninotech.fabi.controleur.activity.LoginActivity">
-
     <RelativeLayout
-        android:id="@+id/relative_layout_digital_print_form"
-        style="@style/match_wrap"
-        android:layout_above="@+id/edit_text_login_id_number"
-        android:layout_alignParentTop="true"
-        android:background="@android:color/transparent"
-        android:elevation="10dp"
-        android:layout_marginTop="10dp"
-        >
-        <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <RelativeLayout
+            android:layout_marginTop="10dp"
+            android:id="@+id/relative_layout_activity_register_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            >
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:layout_marginStart="28dp"
+                android:layout_marginEnd="28dp"
+                android:layout_marginBottom="-5dp"
+                android:src="@drawable/img_login_edu_niger"
+                android:contentDescription="@string/todo" />
+        </RelativeLayout>
+        <EditText
+            android:id="@+id/edit_text_login_id_number"
+            android:hint=" Entrer votre nom"
+            android:layout_below="@id/relative_layout_activity_register_img"
+            android:drawableStart="@drawable/vector_black3_identify"
+            android:inputType="text"
+            style="@style/edit_text_register"
+            android:autofillHints="" />
+        <EditText
+            android:id="@+id/edit_text_login_password"
+            android:hint="@string/edit_text_hint_password"
+            android:layout_below="@id/edit_text_login_id_number"
+            android:drawableStart="@drawable/vector_black3_password"
+            android:inputType="textPassword"
+            style="@style/edit_text_register"
+            android:autofillHints="" />
+        <TextView
+            android:id="@+id/text_view_login_error"
+            android:layout_below="@id/edit_text_login_password"
+            style="@style/text_view_error_register"/>
+        <RelativeLayout
+            android:id="@+id/relative_layout_activity_register_connection"
             style="@style/wrap_content_all"
-            android:src="@drawable/img_login_edu_niger"/>
+            android:layout_below="@+id/text_view_login_error"
+            android:layout_marginStart="28dp"
+            android:layout_marginEnd="28dp"
+            android:layout_marginBottom="20dp"
+            >
+
+            <ProgressBar
+                android:id="@+id/progress_bar_register_connection"
+                android:layout_alignStart="@id/button_login_connection"
+                style="@style/progress_bar_connection"/>
+
+            <Button
+                android:id="@+id/button_login_connection"
+                style="@style/button_connexion" />
+        </RelativeLayout>
+       <LinearLayout
+           android:id="@+id/linear_layout_activity_login_google"
+           android:layout_width="match_parent"
+           android:layout_height="50dp"
+           android:background="@drawable/forme_white_radius_10dp"
+           android:layout_marginStart="28dp"
+           android:layout_marginEnd="28dp"
+           android:elevation="1dp"
+           android:gravity="center"
+           android:orientation="horizontal"
+           android:layout_marginBottom="30dp"
+           android:layout_below="@id/relative_layout_activity_register_connection"
+
+           >
+           <ImageView
+               android:layout_width="30dp"
+               android:layout_height="50dp"
+                android:src="@drawable/img_google"/>
+           <TextView
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:text="Continuer avec Google"
+               android:textSize="18sp"
+               android:layout_marginStart="10dp"
+               android:layout_gravity="center"/>
+       </LinearLayout>
+        <TextView
+            android:id="@+id/text_view_login_pass_register"
+            android:layout_below="@id/linear_layout_activity_login_google"
+            android:layout_marginBottom="10dp"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal"
+            style="@style/text_view_pass_login_register" />
     </RelativeLayout>
-
-    <EditText
-        android:id="@+id/edit_text_login_id_number"
-        android:layout_above="@+id/edit_text_login_password"
-        android:hint=" Votre numéro"
-        android:inputType="number"
-        android:selectAllOnFocus="false"
-        android:drawableStart="@drawable/vector_black3_identify"
-        style="@style/edit_text_register"
-
-         />
-
-    <EditText
-        android:id="@+id/edit_text_login_password"
-        android:layout_above="@+id/text_view_login_error"
-        android:inputType="textPassword"
-        android:hint=" Votre mot de passe ?"
-        android:drawableStart="@drawable/vector_black3_password"
-        style="@style/edit_text_register"/>
-
-    <TextView
-        android:id="@+id/text_view_login_error"
-        android:layout_above="@id/BlockButtonConnect"
-        style="@style/text_view_error_register"/>
-
-    <RelativeLayout
-        android:id="@+id/BlockButtonConnect"
-        style="@style/wrap_content_all"
-        android:layout_above="@+id/text_view_login_pass_register"
-        android:layout_marginStart="28dp"
-        android:layout_marginEnd="28dp"
-        android:layout_marginBottom="40dp"
-        >
-
-        <ProgressBar
-            android:id="@+id/progress_bar_register_connection"
-           style="@style/progress_bar_connection" />
-        <Button
-            android:id="@+id/button_login_connection"
-            style="@style/button_connexion" />
-    </RelativeLayout>
-
-    <TextView
-        android:id="@+id/text_view_login_pass_register"
-        android:layout_above="@+id/text_view_login_helper"
-        android:text="@string/text_view_to_register"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="60dp"
-        style="@style/text_view_pass_login_register"/>
-
-    <TextView
-        android:id="@+id/text_view_login_helper"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
-        android:text="@string/text_help"
-        android:textSize="@dimen/size_sub_title"
-        style="@style/text_view_pass_login_register" />
-</RelativeLayout>
+</androidx.core.widget.NestedScrollView>
