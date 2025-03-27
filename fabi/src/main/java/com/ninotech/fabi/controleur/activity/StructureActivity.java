@@ -229,6 +229,8 @@ public class StructureActivity extends AppCompatActivity {
                 .load(getString(R.string.ip_server) + "ressources/baniere/" + mStructure.getBanner())
                 .transform(new RoundedTransformation(200,10))
                 .resize(6200,2222)
+                .placeholder(R.drawable.img_wait_banner)
+                .error(R.drawable.img_wait_banner)
                 .into(mWelcomeImageView);
         mWelcomeImageView.setVisibility(View.VISIBLE);
         Picasso.get()
