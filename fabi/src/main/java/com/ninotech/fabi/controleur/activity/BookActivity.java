@@ -134,12 +134,14 @@ public class BookActivity extends AppCompatActivity {
         mNameAuthor = findViewById(R.id.text_view_adapter_book_simple_author_name);
         downloadAudioProgressBar = findViewById(R.id.progress_bar_download_audio);
         downloadPdfProgressBar = findViewById(R.id.progress_bar_download_pdf);
+        mWaitPlayerProgressBar = findViewById(R.id.progress_bar_activity_book_wait_player);
         mReservationDialog = new ReservationDialog(this);
         mElectronicTable = new ElectronicTable(this);
         mAudioTable = new AudioTable(this);
         mHandler = new Handler();
         mMediaPlayer = new MediaPlayer();
         mTimer = new Timer();
+        mPlayerImageView.setVisibility(View.GONE);
 
         BroadcastReceiver finishDownloadReceiver = new BroadcastReceiver() {
             @Override
@@ -1097,6 +1099,8 @@ public class BookActivity extends AppCompatActivity {
                         mMediaPlayer.prepare();
                         mSeekBar.setMax(mMediaPlayer.getDuration());
                         mTones.setDuration(convertedDurationToString(mMediaPlayer.getDuration()));
+                        mWaitPlayerProgressBar.setVisibility(View.GONE);
+                        mPlayerImageView.setVisibility(View.VISIBLE);
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
@@ -1434,4 +1438,5 @@ public class BookActivity extends AppCompatActivity {
     private SemiNoConnectionAdapter mSemiNoConnectionAdapter;
     private int notificationId = 1;
     private boolean isDownloading = true;
+    private ProgressBar mWaitPlayerProgressBar;
 }

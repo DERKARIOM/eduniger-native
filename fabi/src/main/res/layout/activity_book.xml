@@ -7,7 +7,7 @@
     <include layout="@layout/toolbar_book"/>
     <androidx.core.widget.NestedScrollView
         android:id="@+id/nested_scroll_view_activity_book"
-        android:visibility="gone"
+       android:visibility="gone"
         style="@style/match_parent_all"
         android:layout_below="@id/relative_layout_toolbar_book">
         <RelativeLayout
@@ -176,7 +176,7 @@
             </LinearLayout>
             <LinearLayout
                 android:id="@+id/linear_layout_activity_book_audio"
-                android:visibility="gone"
+               android:visibility="gone"
                 style="@style/match_wrap"
                 android:layout_below="@id/linear_layout_activity_book_reservation"
                 android:orientation="vertical">
@@ -204,12 +204,22 @@
                     <LinearLayout
                         style="@style/match_wrap"
                         android:orientation="horizontal">
-                        <ImageView
-                            android:id="@+id/image_view_activity_book_player"
-                            android:layout_margin="10dp"
-                            style="@style/wrap_content_all"
-                            android:src="@drawable/vector_black3_pause"
-                            android:contentDescription="@string/todo" />
+                        <RelativeLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp">
+                            <ProgressBar
+                                android:id="@+id/progress_bar_activity_book_wait_player"
+                                android:layout_width="25dp"
+                                android:layout_height="25dp"
+                                android:progressDrawable="@drawable/form_circular_bar_connexion"
+                                />
+                            <ImageView
+                                android:id="@+id/image_view_activity_book_player"
+                                style="@style/wrap_content_all"
+                                android:src="@drawable/vector_black3_pause"
+                                android:contentDescription="@string/todo" />
+                        </RelativeLayout>
                         <ImageView
                             android:id="@+id/image_view_activity_book_stop"
                             android:layout_marginStart="3dp"
