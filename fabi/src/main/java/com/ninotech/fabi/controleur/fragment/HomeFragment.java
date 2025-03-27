@@ -78,6 +78,8 @@ public class HomeFragment extends Fragment {
             public void onReceive(Context context, Intent intent) {
                 if ("HOME_FRAGMENT".equals(intent.getAction())) {
                     try {
+                        mNestedScrollView.setVisibility(View.GONE);
+                        mWaitRecyclerView.setVisibility(View.VISIBLE);
                         ArrayList<Connection> list = new ArrayList<>();
                         list.add(new Connection(getString(R.string.wait), "HOME_FRAGMENT", true));
                         NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
@@ -136,7 +138,7 @@ public class HomeFragment extends Fragment {
         mAuthorRecyclerView.setVisibility(View.GONE);
         mMoreAuthorRelativeLayout.setVisibility(View.GONE);
         ArrayList<Connection> list = new ArrayList<>();
-        list.add(new Connection(getString(R.string.wait), null, true));
+        list.add(new Connection(getString(R.string.wait), "HOME_FRAGMENT", true));
         mNoConnectionAdapter = new NoConnectionAdapter(list);
         mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mWaitRecyclerView.setAdapter(mNoConnectionAdapter);
@@ -353,7 +355,7 @@ public class HomeFragment extends Fragment {
             }
             else {
                 ArrayList<Connection> list = new ArrayList<>();
-                list.add(new Connection(getString(R.string.no_connection_available),"CATEGORY_FRAGMENT",false));
+                list.add(new Connection(getString(R.string.no_connection_available),"HOME_FRAGMENT",false));
                 SemiNoConnectionAdapter semiNoConnectionAdapter = new SemiNoConnectionAdapter(list);
                 mStructureRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                 mStructureRecyclerView.setAdapter(semiNoConnectionAdapter);
@@ -420,7 +422,7 @@ public class HomeFragment extends Fragment {
             }
             else {
                 ArrayList<Connection> list = new ArrayList<>();
-                list.add(new Connection(getString(R.string.no_connection_available),"CATEGORY_FRAGMENT",false));
+                list.add(new Connection(getString(R.string.no_connection_available),"HOME_FRAGMENT",false));
                 SemiNoConnectionAdapter semiNoConnectionAdapter = new SemiNoConnectionAdapter(list);
                 mStructureRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                 mStructureRecyclerView.setAdapter(semiNoConnectionAdapter);
@@ -480,7 +482,7 @@ public class HomeFragment extends Fragment {
             }
             else {
                 ArrayList<Connection> list = new ArrayList<>();
-                list.add(new Connection(getString(R.string.no_connection_available),"CATEGORY_FRAGMENT",false));
+                list.add(new Connection(getString(R.string.no_connection_available),"HOME_FRAGMENT",false));
                SemiNoConnectionAdapter semiNoConnectionAdapter = new SemiNoConnectionAdapter(list);
                 mAuthorRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
                 mAuthorRecyclerView.setAdapter(semiNoConnectionAdapter);
