@@ -569,11 +569,11 @@ public class BookActivity extends AppCompatActivity {
                             throw new RuntimeException(e);
                         }
                     }
-                    TalksAdapter talksAdapter = new TalksAdapter(mTalksList);
-                    mCommentsRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                    mCommentsRecyclerView.setAdapter(talksAdapter);
-                    mCommentRelativeLayout.setVisibility(View.VISIBLE);
                 }
+                TalksAdapter talksAdapter = new TalksAdapter(mTalksList);
+                mCommentsRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                mCommentsRecyclerView.setAdapter(talksAdapter);
+                mCommentRelativeLayout.setVisibility(View.VISIBLE);
             }
             else
             {
