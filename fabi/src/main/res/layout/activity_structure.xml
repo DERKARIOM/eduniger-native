@@ -165,6 +165,7 @@
             <RelativeLayout
                 android:id="@+id/relative_layout_activity_structure_author"
                 android:layout_below="@id/recycler_view_activity_structure_books"
+                android:visibility="gone"
                 style="@style/match_wrap">
 
                 <TextView

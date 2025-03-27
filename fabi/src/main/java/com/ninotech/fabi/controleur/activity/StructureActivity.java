@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +30,7 @@ import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.adapter.AuthorHorizontaleAdapter;
 import com.ninotech.fabi.controleur.adapter.HorizontaleAdapter;
 import com.ninotech.fabi.controleur.adapter.NoConnectionAdapter;
+import com.ninotech.fabi.controleur.adapter.SemiNoConnectionAdapter;
 import com.ninotech.fabi.controleur.adapter.StructureAdapter;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
 import com.ninotech.fabi.controleur.dialog.SimpleOkDialog;
@@ -81,6 +83,7 @@ public class StructureActivity extends AppCompatActivity {
         mMoreAuthorTextView = findViewById(R.id.text_view_activity_structure_more_author);
         mAdhererButton = findViewById(R.id.button_activity_structure_adherer);
         mBookRecommendedRecyclerView = findViewById(R.id.recycler_view_activity_structure_books);
+        mMoreAuthorRelativeLayout = findViewById(R.id.relative_layout_activity_structure_author);
         mSession = new Session(getApplicationContext());
         mOnlineBookList = new ArrayList<>();
         mAuthorArrayList = new ArrayList<>();
@@ -131,8 +134,9 @@ public class StructureActivity extends AppCompatActivity {
         mBookRecommendedRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         mBookRecommendedRecyclerView.setAdapter(noConnectionAdapter);
 
+        mSemiNoConnectionAdapter = new SemiNoConnectionAdapter(list);
         mAuthorRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        mAuthorRecyclerView.setAdapter(noConnectionAdapter);
+        mAuthorRecyclerView.setAdapter(mSemiNoConnectionAdapter);
         mBackImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -360,6 +364,7 @@ public class StructureActivity extends AppCompatActivity {
                     AuthorHorizontaleAdapter authorHorizontaleAdapter = new AuthorHorizontaleAdapter(mAuthorArrayList);
                     mAuthorRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(),LinearLayoutManager.HORIZONTAL,false));
                     mAuthorRecyclerView.setAdapter(authorHorizontaleAdapter);
+                    mMoreAuthorRelativeLayout.setVisibility(View.VISIBLE);
                 }
             }
             else {
@@ -548,4 +553,6 @@ public class StructureActivity extends AppCompatActivity {
     private EditText mSearchEditText;
     private RecyclerView mWaitRecyclerView;
     private NestedScrollView mNestedScrollView;
+    private SemiNoConnectionAdapter mSemiNoConnectionAdapter;
+    private RelativeLayout mMoreAuthorRelativeLayout;
 }
