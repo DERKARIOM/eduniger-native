@@ -7,7 +7,7 @@
     <include layout="@layout/toolbar_book"/>
     <androidx.core.widget.NestedScrollView
         android:id="@+id/nested_scroll_view_activity_book"
-       android:visibility="gone"
+        android:visibility="gone"
         style="@style/match_parent_all"
         android:layout_below="@id/relative_layout_toolbar_book">
         <RelativeLayout
@@ -176,7 +176,7 @@
             </LinearLayout>
             <LinearLayout
                 android:id="@+id/linear_layout_activity_book_audio"
-               android:visibility="gone"
+                android:visibility="gone"
                 style="@style/match_wrap"
                 android:layout_below="@id/linear_layout_activity_book_reservation"
                 android:orientation="vertical">
@@ -247,32 +247,83 @@
                             android:progress="100"/>
                     </LinearLayout>
                 </LinearLayout>
-                <RelativeLayout
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp">
-                    <ProgressBar
-                        android:id="@+id/progress_bar_download_audio"
-                        style="@android:style/Widget.Holo.ProgressBar.Small"
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        android:layout_centerInParent="true"
-                        android:elevation="5dp"
-                        android:layout_marginStart="10dp"
-                        android:padding="18dp"
-                        android:visibility="invisible"
-                        android:progressDrawable="@drawable/form_circular_bar_connexion" />
-                    <Button
-                        android:id="@+id/button_activity_book_audio"
+                    android:orientation="horizontal">
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp">
+                        <ProgressBar
+                            android:id="@+id/progress_bar_download_audio"
+                            style="@android:style/Widget.Holo.ProgressBar.Small"
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            android:layout_centerInParent="true"
+                            android:elevation="5dp"
+                            android:layout_marginStart="10dp"
+                            android:padding="18dp"
+                            android:visibility="invisible"
+                            android:progressDrawable="@drawable/form_circular_bar_connexion" />
+                        <Button
+                            android:id="@+id/button_activity_book_audio"
+                            style="@style/wrap_content_all"
+                            android:text="@string/audio_format"
+                            android:textAllCaps="false"
+                            android:layout_marginTop="5dp"
+                            android:layout_marginBottom="5dp"
+                            app:icon="@drawable/vector_white_download"
+                            android:textSize="@dimen/size_button"
+                            android:backgroundTint="@color/purple_200"/>
+                    </RelativeLayout>
+                    <LinearLayout
                         style="@style/wrap_content_all"
-                        android:text="@string/audio_format"
-                        android:textAllCaps="false"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginBottom="5dp"
-                        app:icon="@drawable/vector_white_download"
-                        android:textSize="@dimen/size_button"
-                        android:backgroundTint="@color/purple_200"/>
-                </RelativeLayout>
+                        android:layout_margin="10dp"
+                        android:layout_gravity="center_vertical"
+                        tools:ignore="UseCompoundDrawables">
+                        <ImageView
+                            android:layout_width="25dp"
+                            android:layout_height="25dp"
+                            android:elevation="10dp"
+                            android:src="@drawable/vector_audio"
+                            android:contentDescription="@string/todo" />
+                        <TextView
+                            android:id="@+id/text_view_activity_book_audio_size"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="3dp"
+                            android:gravity="center_vertical"
+                            android:textSize="14sp"
+                            android:layout_gravity="center_vertical"
+                            android:text="35Mo"
+                           />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        style="@style/wrap_content_all"
+                        android:layout_margin="10dp"
+                        android:layout_gravity="center_vertical"
+                        tools:ignore="UseCompoundDrawables">
+                        <ImageView
+                            android:layout_width="25dp"
+                            android:layout_height="25dp"
+                            android:elevation="10dp"
+                            android:src="@drawable/vector_black3_time"
+                            android:contentDescription="@string/todo" />
+                        <TextView
+                            android:id="@+id/text_view_activity_book_audio_max_time"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="3dp"
+                            android:gravity="center_vertical"
+                            android:textSize="14sp"
+                            android:layout_gravity="center_vertical"
+                            android:text="39:05"
+                            />
+                    </LinearLayout>
+                </LinearLayout>
+
             </LinearLayout>
             <LinearLayout
                 android:id="@+id/linear_layout_activity_book_electronic"
@@ -309,32 +360,82 @@
                     app:icon="@drawable/vector_black3_pdf"
                     android:textSize="@dimen/size_button"
                     android:backgroundTint="@color/purple_200"/>
-                <RelativeLayout
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp">
-                    <ProgressBar
-                        android:id="@+id/progress_bar_download_pdf"
-                        style="@android:style/Widget.Holo.ProgressBar.Small"
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        android:layout_centerInParent="true"
-                        android:elevation="5dp"
-                        android:layout_marginStart="10dp"
-                        android:padding="18dp"
-                        android:visibility="invisible"
-                        android:progressDrawable="@drawable/form_circular_bar_connexion" />
-                    <Button
-                        android:id="@+id/button_activity_book_download_pdf"
+                    android:orientation="horizontal">
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp">
+                        <ProgressBar
+                            android:id="@+id/progress_bar_download_pdf"
+                            style="@android:style/Widget.Holo.ProgressBar.Small"
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            android:layout_centerInParent="true"
+                            android:elevation="5dp"
+                            android:layout_marginStart="10dp"
+                            android:padding="18dp"
+                            android:visibility="invisible"
+                            android:progressDrawable="@drawable/form_circular_bar_connexion" />
+                        <Button
+                            android:id="@+id/button_activity_book_download_pdf"
+                            style="@style/wrap_content_all"
+                            android:text="@string/pdf_format"
+                            android:textAllCaps="false"
+                            android:layout_marginTop="5dp"
+                            android:layout_marginBottom="5dp"
+                            app:icon="@drawable/vector_white_download"
+                            android:textSize="@dimen/size_button"
+                            android:backgroundTint="@color/purple_200"/>
+                    </RelativeLayout>
+                    <LinearLayout
                         style="@style/wrap_content_all"
-                        android:text="@string/pdf_format"
-                        android:textAllCaps="false"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginBottom="5dp"
-                        app:icon="@drawable/vector_white_download"
-                        android:textSize="@dimen/size_button"
-                        android:backgroundTint="@color/purple_200"/>
-                </RelativeLayout>
+                        android:layout_margin="10dp"
+                        android:layout_gravity="center_vertical"
+                        tools:ignore="UseCompoundDrawables">
+                        <ImageView
+                            android:layout_width="25dp"
+                            android:layout_height="25dp"
+                            android:elevation="10dp"
+                            android:src="@drawable/vector_black3_pdf"
+                            android:contentDescription="@string/todo" />
+                        <TextView
+                            android:id="@+id/text_view_activity_book_pdf_size"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="3dp"
+                            android:gravity="center_vertical"
+                            android:textSize="14sp"
+                            android:layout_gravity="center_vertical"
+                            android:text="35Mo"
+                            />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        style="@style/wrap_content_all"
+                        android:layout_margin="10dp"
+                        android:layout_gravity="center_vertical"
+                        tools:ignore="UseCompoundDrawables">
+                        <ImageView
+                            android:layout_width="25dp"
+                            android:layout_height="25dp"
+                            android:elevation="10dp"
+                            android:src="@drawable/vector_black3_physical"
+                            android:contentDescription="@string/todo" />
+                        <TextView
+                            android:id="@+id/text_view_activity_book_pdf_max_page"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="3dp"
+                            android:gravity="center_vertical"
+                            android:textSize="14sp"
+                            android:layout_gravity="center_vertical"
+                            android:text="300P"
+                            />
+                    </LinearLayout>
+                </LinearLayout>
             </LinearLayout>
             <LinearLayout
                 android:id="@+id/linear_layout_activity_book_about"
