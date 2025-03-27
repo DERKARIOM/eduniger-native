@@ -178,34 +178,37 @@ public class AuthorActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String jsonData) {
             if (jsonData != null) {
-                mWaitRecyclerView.setVisibility(View.GONE);
-                mNestedScrollView.setVisibility(View.VISIBLE);
-                mSearchEditText.setVisibility(View.VISIBLE);
                 int nbrElectronic=0,nbrAudio=0,nbrPhysique=0;
-                if(!jsonData.equals("RAS"))
+                if (!jsonData.equals("RAS"))
                 {
-                    JSONArray jsonArray = null;
-                    try {
-                        jsonArray = new JSONArray(jsonData);
-                    } catch (JSONException e) {
-                        throw new RuntimeException(e);
-                    }
-                    for (int i = 0; i < jsonArray.length(); i++) {
+                    mWaitRecyclerView.setVisibility(View.GONE);
+                    mNestedScrollView.setVisibility(View.VISIBLE);
+                    mSearchEditText.setVisibility(View.VISIBLE);
+                    if(!jsonData.equals("RAS"))
+                    {
+                        JSONArray jsonArray = null;
                         try {
-                            mOnlineBookList.add(new OnlineBook(jsonArray.getJSONObject(i).getString("idBook"), jsonArray.getJSONObject(i).getString("blanket"), jsonArray.getJSONObject(i).getString("bookTitle"), jsonArray.getJSONObject(i).getString("categoryTitle"), jsonArray.getJSONObject(i).getString("isPhysic"), jsonArray.getJSONObject(i).getString("electronic"), jsonArray.getJSONObject(i).getString("isAudio"), Integer.parseInt(jsonArray.getJSONObject(i).getString("numberLike")), Integer.parseInt(jsonArray.getJSONObject(i).getString("numberNoLike"))));
-                            if(!mOnlineBookList.get(i).getElectronic().equals("null"))
-                                nbrElectronic++;
-                            if (mOnlineBookList.get(i).getIsAudio().equals("1"))
-                                nbrAudio++;
-                            if (mOnlineBookList.get(i).getIsPhysic().equals("1"))
-                                nbrPhysique++;
+                            jsonArray = new JSONArray(jsonData);
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            try {
+                                mOnlineBookList.add(new OnlineBook(jsonArray.getJSONObject(i).getString("idBook"), jsonArray.getJSONObject(i).getString("blanket"), jsonArray.getJSONObject(i).getString("bookTitle"), jsonArray.getJSONObject(i).getString("categoryTitle"), jsonArray.getJSONObject(i).getString("isPhysic"), jsonArray.getJSONObject(i).getString("electronic"), jsonArray.getJSONObject(i).getString("isAudio"), Integer.parseInt(jsonArray.getJSONObject(i).getString("numberLike")), Integer.parseInt(jsonArray.getJSONObject(i).getString("numberNoLike"))));
+                                if(!mOnlineBookList.get(i).getElectronic().equals("null"))
+                                    nbrElectronic++;
+                                if (mOnlineBookList.get(i).getIsAudio().equals("1"))
+                                    nbrAudio++;
+                                if (mOnlineBookList.get(i).getIsPhysic().equals("1"))
+                                    nbrPhysique++;
+                            } catch (JSONException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                        HorizontaleAdapter horizontaleAdapter = new HorizontaleAdapter(mOnlineBookList);
+                        mBooksRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false));
+                        mBooksRecyclerView.setAdapter(horizontaleAdapter);
                     }
-                    HorizontaleAdapter horizontaleAdapter = new HorizontaleAdapter(mOnlineBookList);
-                    mBooksRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false));
-                    mBooksRecyclerView.setAdapter(horizontaleAdapter);
                 }
                 List<Library> libraryList = new ArrayList<>();
                 AuthorFormatBookAdapter authorFormatBookAdapter = new AuthorFormatBookAdapter(libraryList);
@@ -271,18 +274,10 @@ public class AuthorActivity extends AppCompatActivity {
                             throw new RuntimeException(e);
                         }
                     }
-                    AuthorHorizontaleAdapter authorHorizontaleAdapter = new AuthorHorizontaleAdapter(mAuthorArrayList);
-                    mAuthorRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(),LinearLayoutManager.HORIZONTAL,false));
-                    mAuthorRecyclerView.setAdapter(authorHorizontaleAdapter);
                 }
-                else
-                {
-                    ArrayList<VoidContainer> voidContainers = new ArrayList<>();
-                    voidContainers.add(new VoidContainer(R.drawable.img_telecharge_local,"Aucun livre"));
-                    VoidContainerAdapter voidContainerAdapter = new VoidContainerAdapter(voidContainers);
-                    mAuthorRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                    mAuthorRecyclerView.setAdapter(voidContainerAdapter);
-                }
+                AuthorHorizontaleAdapter authorHorizontaleAdapter = new AuthorHorizontaleAdapter(mAuthorArrayList);
+                mAuthorRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(),LinearLayoutManager.HORIZONTAL,false));
+                mAuthorRecyclerView.setAdapter(authorHorizontaleAdapter);
             }
             else {
                 ArrayList<Connection> list = new ArrayList<>();

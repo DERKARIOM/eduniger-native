@@ -612,10 +612,10 @@ public class SearchActivity extends AppCompatActivity {
                             throw new RuntimeException(e);
                         }
                     }
-                    mOnlineBookAdapter = new OnlineBookAdapter(mOnlineBooks);
-                    mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                    mRecyclerView.setAdapter(mOnlineBookAdapter);
                 }
+                mOnlineBookAdapter = new OnlineBookAdapter(mOnlineBooks);
+                mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                mRecyclerView.setAdapter(mOnlineBookAdapter);
             } else {
                 ArrayList<Connection> list = new ArrayList<>();
                 list.add(new Connection(getString(R.string.no_connection_available),"RANKING_FRAGMENT",false));
