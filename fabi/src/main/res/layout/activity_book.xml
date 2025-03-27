@@ -391,7 +391,9 @@
                     style="@style/match_parent_all"
                     />
                 <RelativeLayout
+                    android:id="@+id/relative_layout_activity_book_comment"
                     style="@style/match_wrap"
+                    android:visibility="gone"
                     android:layout_margin="10dp"
                     >
                     <EditText

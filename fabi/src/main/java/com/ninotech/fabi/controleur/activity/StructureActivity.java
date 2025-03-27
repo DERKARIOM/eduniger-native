@@ -131,9 +131,6 @@ public class StructureActivity extends AppCompatActivity {
         mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         mWaitRecyclerView.setAdapter(noConnectionAdapter);
 
-        mBookRecommendedRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        mBookRecommendedRecyclerView.setAdapter(noConnectionAdapter);
-
         mSemiNoConnectionAdapter = new SemiNoConnectionAdapter(list);
         mAuthorRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         mAuthorRecyclerView.setAdapter(mSemiNoConnectionAdapter);
@@ -369,10 +366,10 @@ public class StructureActivity extends AppCompatActivity {
             }
             else {
                 ArrayList<Connection> list = new ArrayList<>();
-                list.add(new Connection(getString(R.string.no_connection_available),"CATEGORY_FRAGMENT",false));
-                NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
+                list.add(new Connection(getString(R.string.no_connection_available),"STRUCTURE_ACTIVITY",false));
+                SemiNoConnectionAdapter semiNoConnectionAdapter = new SemiNoConnectionAdapter(list);
                 mAuthorRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(),LinearLayoutManager.HORIZONTAL,false));
-                mAuthorRecyclerView.setAdapter(noConnectionAdapter);
+                mAuthorRecyclerView.setAdapter(semiNoConnectionAdapter);
             }
         }
     }

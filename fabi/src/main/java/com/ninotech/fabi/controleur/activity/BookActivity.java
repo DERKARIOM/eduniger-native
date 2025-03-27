@@ -37,6 +37,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.controleur.adapter.NoConnectionAdapter;
+import com.ninotech.fabi.controleur.adapter.SemiNoConnectionAdapter;
 import com.ninotech.fabi.controleur.adapter.TalksAdapter;
 import com.ninotech.fabi.controleur.dialog.ReservationDialog;
 import com.ninotech.fabi.model.data.AudioDownloader;
@@ -101,6 +102,7 @@ public class BookActivity extends AppCompatActivity {
         mNestedScrollView = findViewById(R.id.nested_scroll_view_activity_book);
         mCommentsRecyclerView = findViewById(R.id.recycler_view_activity_book_Comments);
         mNoConnectionRecyclerView = findViewById(R.id.recycler_view_activity_book_wait);
+        mCommentRelativeLayout = findViewById(R.id.relative_layout_activity_book_comment);
         mBlanketImageView = findViewById(R.id.image_view_adapter_book_simple_cover);
         mTitleTextView = findViewById(R.id.text_view_adapter_book_simple_title);
         mCategoryTextView = findViewById(R.id.text_view_adapter_description_category);
@@ -177,6 +179,10 @@ public class BookActivity extends AppCompatActivity {
         mNoConnectionAdapter = new NoConnectionAdapter(list);
         mNoConnectionRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         mNoConnectionRecyclerView.setAdapter(mNoConnectionAdapter);
+
+        mSemiNoConnectionAdapter = new SemiNoConnectionAdapter(list);
+        mCommentsRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        mCommentsRecyclerView.setAdapter(mSemiNoConnectionAdapter);
         BroadcastReceiver receiverNoConnectionAdapter = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -564,7 +570,16 @@ public class BookActivity extends AppCompatActivity {
                     TalksAdapter talksAdapter = new TalksAdapter(mTalksList);
                     mCommentsRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                     mCommentsRecyclerView.setAdapter(talksAdapter);
+                    mCommentRelativeLayout.setVisibility(View.VISIBLE);
                 }
+            }
+            else
+            {
+                ArrayList<Connection> list = new ArrayList<>();
+                list.add(new Connection(getString(R.string.no_connection_available), "BOOK_ACTIVITY", false));
+                SemiNoConnectionAdapter semiNoConnectionAdapter = new SemiNoConnectionAdapter(list);
+                mCommentsRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                mCommentsRecyclerView.setAdapter(semiNoConnectionAdapter);
             }
         }
     }
@@ -1411,10 +1426,12 @@ public class BookActivity extends AppCompatActivity {
     private ProgressBar downloadPdfProgressBar;
     private Button downloadPDFButton;
     private Button audioButton;
+    private RelativeLayout mCommentRelativeLayout;
 
     private static final String CHANNEL_ID = "progress_channel";
     private NotificationManager notificationManager;
     private String mSourcePdf;
+    private SemiNoConnectionAdapter mSemiNoConnectionAdapter;
     private int notificationId = 1;
     private boolean isDownloading = true;
 }
