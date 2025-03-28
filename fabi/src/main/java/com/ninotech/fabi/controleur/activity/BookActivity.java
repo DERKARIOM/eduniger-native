@@ -135,6 +135,10 @@ public class BookActivity extends AppCompatActivity {
         downloadAudioProgressBar = findViewById(R.id.progress_bar_download_audio);
         downloadPdfProgressBar = findViewById(R.id.progress_bar_download_pdf);
         mWaitPlayerProgressBar = findViewById(R.id.progress_bar_activity_book_wait_player);
+        mAudioSizeLinearLayout = findViewById(R.id.linear_layout_activity_book_audio_size);
+        mAudioSizeTextView = findViewById(R.id.text_view_activity_book_audio_size);
+        mMaxTimeLinearLayout = findViewById(R.id.linear_layout_activity_book_maxTime);
+        mMaxTimeTextView = findViewById(R.id.text_view_activity_book_audio_max_time);
         mReservationDialog = new ReservationDialog(this);
         mElectronicTable = new ElectronicTable(this);
         mAudioTable = new AudioTable(this);
@@ -1087,11 +1091,21 @@ public class BookActivity extends AppCompatActivity {
                             mListTones.add(new Tones(i+1,jsonArray.getJSONObject(i).getString("audio"),jsonArray.getJSONObject(i).getString("title"),0,false));
                             if(i==0)
                             {
-                                mTones = new Tones(0,jsonArray.getJSONObject(i).getString("audio"));
+                                mTones = new Tones(0,jsonArray.getJSONObject(i).getString("audio"),jsonArray.getJSONObject(i).getString("size"),jsonArray.getJSONObject(i).getString("maxTime"));
                             }
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
+                    }
+                    if (!mTones.getSize().equals("null"))
+                    {
+                        mAudioSizeTextView.setText(mTones.getSize());
+                        mAudioSizeLinearLayout.setVisibility(View.VISIBLE);
+                    }
+                    if (!mTones.getDuration().equals("null"))
+                    {
+                        mMaxTimeTextView.setText(mTones.getDuration());
+                        mMaxTimeLinearLayout.setVisibility(View.VISIBLE);
                     }
                     url = getString(R.string.ip_server) + "ressources/audio/" + mTones.getAudio();
                     try {
@@ -1439,4 +1453,8 @@ public class BookActivity extends AppCompatActivity {
     private int notificationId = 1;
     private boolean isDownloading = true;
     private ProgressBar mWaitPlayerProgressBar;
+    private LinearLayout mAudioSizeLinearLayout;
+    private TextView mAudioSizeTextView;
+    private LinearLayout mMaxTimeLinearLayout;
+    private TextView mMaxTimeTextView;
 }

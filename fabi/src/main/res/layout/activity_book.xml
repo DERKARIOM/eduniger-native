@@ -278,13 +278,15 @@
                             android:backgroundTint="@color/purple_200"/>
                     </RelativeLayout>
                     <LinearLayout
+                        android:id="@+id/linear_layout_activity_book_audio_size"
                         style="@style/wrap_content_all"
                         android:layout_margin="10dp"
                         android:layout_gravity="center_vertical"
+                        android:visibility="gone"
                         tools:ignore="UseCompoundDrawables">
                         <ImageView
-                            android:layout_width="25dp"
-                            android:layout_height="25dp"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
                             android:elevation="10dp"
                             android:src="@drawable/vector_audio"
                             android:contentDescription="@string/todo" />
@@ -294,20 +296,22 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="3dp"
                             android:gravity="center_vertical"
-                            android:textSize="14sp"
+                            android:textSize="12sp"
                             android:layout_gravity="center_vertical"
                             android:text="35Mo"
                            />
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/linear_layout_activity_book_maxTime"
                         style="@style/wrap_content_all"
                         android:layout_margin="10dp"
+                        android:visibility="gone"
                         android:layout_gravity="center_vertical"
                         tools:ignore="UseCompoundDrawables">
                         <ImageView
-                            android:layout_width="25dp"
-                            android:layout_height="25dp"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
                             android:elevation="10dp"
                             android:src="@drawable/vector_black3_time"
                             android:contentDescription="@string/todo" />
@@ -317,7 +321,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="3dp"
                             android:gravity="center_vertical"
-                            android:textSize="14sp"
+                            android:textSize="12sp"
                             android:layout_gravity="center_vertical"
                             android:text="39:05"
                             />

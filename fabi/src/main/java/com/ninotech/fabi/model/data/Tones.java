@@ -8,10 +8,12 @@ public class Tones {
         mIcoDownload = icoDownload;
         mIsPlaying = isPlaying;
     }
-    public Tones(int number , String audio)
+    public Tones(int number , String audio , String size , String duration)
     {
         mNumber = number;
         mAudio = audio;
+        mSize = size;
+        mDuration = duration;
     }
 
     public int getNumber() {
@@ -52,13 +54,13 @@ public class Tones {
     public void setPlaying(boolean playing) {
         mIsPlaying = playing;
     }
+    public String getSize() {
+        return mSize;
+    }
 
-    private int mNumber;
-    private String mAudio;
-    private String mTitle;
-    private int mIcoDownload;
-    private boolean mIsPlaying;
-
+    public void setSize(String size) {
+        mSize = size;
+    }
     public String getDuration() {
         return mDuration;
     }
@@ -67,5 +69,12 @@ public class Tones {
         mDuration = duration;
     }
 
+    private int mNumber;
+    private String mAudio;
+    private String mTitle;
+    private int mIcoDownload;
+    private boolean mIsPlaying;
+
     private String mDuration;
+    private String mSize;
 }
