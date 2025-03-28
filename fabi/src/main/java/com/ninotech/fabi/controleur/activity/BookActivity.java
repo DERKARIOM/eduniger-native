@@ -199,13 +199,33 @@ public class BookActivity extends AppCompatActivity {
             public void onReceive(Context context, Intent intent) {
                 if ("BOOK_ACTIVITY".equals(intent.getAction())) {
                     try {
-                        finish();
-                        startActivity(getIntent());
+                        mNestedScrollView.setVisibility(View.GONE);
+                        mNoConnectionRecyclerView.setVisibility(View.VISIBLE);
+                        ArrayList<Connection> list = new ArrayList<>();
+                        list.add(new Connection(getString(R.string.wait),null,true));
+                        mNoConnectionAdapter = new NoConnectionAdapter(list);
+                        mNoConnectionRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                        mNoConnectionRecyclerView.setAdapter(mNoConnectionAdapter);
+                        RecoveryBook recoveryBook = new RecoveryBook();
+                        ReceiveComments receiveComments = new ReceiveComments();
+                        RecoveryTones recoveryTones = new RecoveryTones();
+                        IsLikeSyn isLikeSyn = new IsLikeSyn();
+                        IsNoLikeSyn isNoLikeSyn = new IsNoLikeSyn();
+                        IsSubscribeBookSyn isSubscribeBookSyn = new IsSubscribeBookSyn();
+                        InsertViewSyn insertViewSyn = new InsertViewSyn();
+                        IsReservationSyn isReservationSyn = new IsReservationSyn();
+                        recoveryBook.execute(getString(R.string.ip_server_android) + "Book.php",mSession.getIdNumber(), mOnlineBook.getId());
+                        isReservationSyn.execute(getString(R.string.ip_server_android) + "IsReservation.php",mSession.getIdNumber(), mOnlineBook.getId());
+                        insertViewSyn.execute(getString(R.string.ip_server_android) + "InsertView.php",mSession.getIdNumber(), mOnlineBook.getId());
+                        isSubscribeBookSyn.execute(getString(R.string.ip_server_android) + "IsSubscribeBook.php",mSession.getIdNumber(), mOnlineBook.getId());
+                        isLikeSyn.execute(getString(R.string.ip_server_android) + "IsLike.php",mSession.getIdNumber(), mOnlineBook.getId());
+                        isNoLikeSyn.execute(getString(R.string.ip_server_android) + "IsNoLike.php",mSession.getIdNumber(), mOnlineBook.getId());
+                        receiveComments.execute(getString(R.string.ip_server_android) + "ReceiveComments.php",mSession.getIdNumber(), mOnlineBook.getId());
+                        recoveryTones.execute(getString(R.string.ip_server_android) + "Tones.php");
                     }catch (Exception e)
                     {
-                        Log.e("errRankingFragment",e.getMessage());
+                        Log.e("errBookActivity",e.getMessage());
                     }
-
                 }
             }
         };

@@ -104,6 +104,8 @@ public class StructureActivity extends AppCompatActivity {
             public void onReceive(Context context, Intent intent) {
                 if ("STRUCTURE_ACTIVITY".equals(intent.getAction())) {
                     try {
+                        mNestedScrollView.setVisibility(View.GONE);
+                        mWaitRecyclerView.setVisibility(View.VISIBLE);
                         ArrayList<Connection> list = new ArrayList<>();
                         list.add(new Connection(getString(R.string.wait),"STRUCTURE_ACTIVITY",true));
                         NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
@@ -115,7 +117,7 @@ public class StructureActivity extends AppCompatActivity {
                         authorSyn.execute(getString(R.string.ip_server_android) + "AuthorTop.php", mSession.getIdNumber());
                     }catch (Exception e)
                     {
-                        Log.e("errRankingFragment",e.getMessage());
+                        Log.e("errStructureActivity",e.getMessage());
                     }
 
                 }
