@@ -90,7 +90,7 @@ public class HomeFragment extends Fragment {
                         StructureSyn structureSyn = new StructureSyn();
                         structureSyn.execute(getString(R.string.ip_server_android) + "Structure.php", session.getIdNumber());
                         StructureSyn2 structureSyn2 = new StructureSyn2();
-                        structureSyn2.execute(getString(R.string.ip_server_android) + "Structure2.php", session.getIdNumber());
+                        structureSyn2.execute(getString(R.string.ip_server_android) + "StructureTop.php", session.getIdNumber());
                         AuthorSyn authorSyn = new AuthorSyn();
                         authorSyn.execute(getString(R.string.ip_server_android) + "AuthorTop.php", session.getIdNumber());
                     } catch (Exception e) {

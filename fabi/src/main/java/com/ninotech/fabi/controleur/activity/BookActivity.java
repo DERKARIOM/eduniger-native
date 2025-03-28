@@ -150,6 +150,7 @@ public class BookActivity extends AppCompatActivity {
         mMediaPlayer = new MediaPlayer();
         mTimer = new Timer();
         mPlayerImageView.setVisibility(View.GONE);
+        audioButton.setEnabled(false);
 
         BroadcastReceiver finishDownloadReceiver = new BroadcastReceiver() {
             @Override
@@ -532,6 +533,11 @@ public class BookActivity extends AppCompatActivity {
                         {
                             mPdfSizeTextView.setText(mOnlineBook.getSize());
                             mPdfSizeLinearLayout.setVisibility(View.VISIBLE);
+                        }
+                        else
+                        {
+                            downloadPDFButton.setEnabled(false);
+                            downloadPDFButton.setText("Bientôt");
                         }
                         if (!mOnlineBook.getNbrPage().equals("null"))
                         {
@@ -1141,8 +1147,14 @@ public class BookActivity extends AppCompatActivity {
                     }
                     if (!mTones.getDuration().equals("null"))
                     {
+                        audioButton.setEnabled(true);
                         mMaxTimeTextView.setText(mTones.getDuration());
                         mMaxTimeLinearLayout.setVisibility(View.VISIBLE);
+                    }
+                    else
+                    {
+                        audioButton.setEnabled(false);
+                        audioButton.setText("Bientôt");
                     }
                     url = getString(R.string.ip_server) + "ressources/audio/" + mTones.getAudio();
                     try {
