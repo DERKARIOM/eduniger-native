@@ -165,6 +165,7 @@ public class BookActivity extends AppCompatActivity {
 
                             break;
                         case "pdf":
+                            mSourcePdf = mElectronicTable.getPdf(mOnlineBook.getId());
                             downloadPDFButton.setText("Ouvrir");
                             downloadPdfProgressBar.setVisibility(View.GONE);
                             //succeDowloadPDFDialog("Le livre " + mTitleTextView.getText().toString() + " format PDF a été téléchargé avec succès. N'hésitez pas à explorer son contenu dans l'application et contactez-nous en cas de besoin.");
