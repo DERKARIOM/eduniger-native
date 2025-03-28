@@ -207,6 +207,12 @@ public class MainActivity extends AppCompatActivity {
            // Toast.makeText(this, "Pas de connexion", Toast.LENGTH_SHORT).show();
         //}
 
+        if (getIntent().getStringExtra("HORS_LINE") != null)
+        {
+            if (getIntent().getStringExtra("HORS_LINE").equals("ON"))
+                navController.navigate(R.id.navigation_library);
+        }
+
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(mBottomNavigationView, navController);
        // AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(

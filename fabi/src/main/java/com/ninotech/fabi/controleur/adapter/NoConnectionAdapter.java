@@ -1,4 +1,5 @@
 package com.ninotech.fabi.controleur.adapter;
+import android.app.Activity;
 import android.content.Intent;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.R;
+import com.ninotech.fabi.controleur.activity.MainActivity;
 import com.ninotech.fabi.model.data.Connection;
 
 import java.util.List;
@@ -123,8 +125,10 @@ public class NoConnectionAdapter extends RecyclerView.Adapter<NoConnectionAdapte
             mOffLineButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(itemView.getContext(), "HORS LIGNE", Toast.LENGTH_SHORT).show();
-
+                    Intent mainIntent = new Intent(itemView.getContext(), MainActivity.class);
+                    mainIntent.putExtra("HORS_LINE","ON");
+                    itemView.getContext().startActivity(mainIntent);
+                    ((Activity)itemView.getContext()).finish();
                 }
             });
         }
