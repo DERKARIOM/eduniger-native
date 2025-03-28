@@ -136,6 +136,21 @@ public class OnlineBook extends Book {
    public void setNumberSubscribe(int numberSubscribe) {
       mNumberSubscribe = numberSubscribe;
    }
+   public String getSize() {
+      return mSize;
+   }
+
+   public void setSize(String size) {
+      mSize = size;
+   }
+
+   public String getNbrPage() {
+      return mNbrPage;
+   }
+
+   public void setNbrPage(String nbrPage) {
+      mNbrPage = nbrPage;
+   }
 
    private String mCover;
    private String mElectronic;
@@ -148,5 +163,6 @@ public class OnlineBook extends Book {
    private int mNumberNoLikes;
 
    private int mNumberView;
-
+   private String mSize;
+   private String mNbrPage;
 }

@@ -139,6 +139,10 @@ public class BookActivity extends AppCompatActivity {
         mAudioSizeTextView = findViewById(R.id.text_view_activity_book_audio_size);
         mMaxTimeLinearLayout = findViewById(R.id.linear_layout_activity_book_maxTime);
         mMaxTimeTextView = findViewById(R.id.text_view_activity_book_audio_max_time);
+        mPdfSizeLinearLayout = findViewById(R.id.linear_layout_activity_book_pdf_size);
+        mPdfSizeTextView = findViewById(R.id.text_view_activity_book_pdf_size);
+        mNbrPageLinearLayout = findViewById(R.id.linear_layout_activity_book_nbr_page);
+        mNbrPageTextView = findViewById(R.id.text_view_activity_book_pdf_max_page);
         mReservationDialog = new ReservationDialog(this);
         mElectronicTable = new ElectronicTable(this);
         mAudioTable = new AudioTable(this);
@@ -460,6 +464,8 @@ public class BookActivity extends AppCompatActivity {
                     mOnlineBook.setDescription(jsonObject.getString("description"));
                     mOnlineBook.setCategory(jsonObject.getString("categoryTitle"));
                     mOnlineBook.setIsAvailable(jsonObject.getString("available"));
+                    mOnlineBook.setSize(jsonObject.getString("size"));
+                    mOnlineBook.setNbrPage(jsonObject.getString("nbrPage"));
                     mOnlineBook.setNumberLikes(Integer.parseInt(jsonObject.getString("numberLike")));
                     mOnlineBook.setNumberNoLikes(Integer.parseInt(jsonObject.getString("numberNoLike")));
                     mOnlineBook.setNumberSubscribe(Integer.parseInt(jsonObject.getString("numberSubscribe")));
@@ -501,6 +507,16 @@ public class BookActivity extends AppCompatActivity {
                         mSourcePdf=mElectronicTable.isExist(mSession.getIdNumber(),mOnlineBook.getId());
                         if (!mSourcePdf.equals("false"))
                             downloadPDFButton.setText("Ouvrir");
+                        if (!mOnlineBook.getSize().equals("null"))
+                        {
+                            mPdfSizeTextView.setText(mOnlineBook.getSize());
+                            mPdfSizeLinearLayout.setVisibility(View.VISIBLE);
+                        }
+                        if (!mOnlineBook.getNbrPage().equals("null"))
+                        {
+                            mNbrPageTextView.setText(mOnlineBook.getNbrPage());
+                            mNbrPageLinearLayout.setVisibility(View.VISIBLE);
+                        }
                     }
                     mTitleTextView.setText(mOnlineBook.getTitle());
                     mNameAuthor.setText("De " + jsonObject.getString("name") + " " + jsonObject.getString("firstName"));
@@ -1457,4 +1473,8 @@ public class BookActivity extends AppCompatActivity {
     private TextView mAudioSizeTextView;
     private LinearLayout mMaxTimeLinearLayout;
     private TextView mMaxTimeTextView;
+    private LinearLayout mPdfSizeLinearLayout;
+    private TextView mPdfSizeTextView;
+    private LinearLayout mNbrPageLinearLayout;
+    private TextView mNbrPageTextView;
 }
