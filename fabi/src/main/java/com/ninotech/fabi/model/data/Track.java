@@ -1,7 +1,8 @@
 package com.ninotech.fabi.model.data;
 
 public class Track {
-    public Track(String title, String artist, int image) {
+    public Track(String idBook, String title, String artist, int image) {
+        this.idBook = idBook;
         this.title = title;
         this.artist = artist;
         this.image = image;
@@ -38,7 +39,8 @@ public class Track {
         this.time = time;
     }
 
-    public Track(String cover , String title, String artist, String audio ,  String time, int image) {
+    public Track(String idBook ,String cover , String title, String artist, String audio ,  String time, int image) {
+        this.idBook = idBook;
         this.cover = cover;
         this.title = title;
         this.artist = artist;
@@ -61,6 +63,13 @@ public class Track {
     public void setCover(String cover) {
         this.cover = cover;
     }
+    public String getIdBook() {
+        return idBook;
+    }
+
+    public void setIdBook(String idBook) {
+        this.idBook = idBook;
+    }
 
     private String cover;
     private String title;
@@ -68,4 +77,5 @@ public class Track {
     private String audio;
     private String time;
     private int image;
+    private String idBook;
 }

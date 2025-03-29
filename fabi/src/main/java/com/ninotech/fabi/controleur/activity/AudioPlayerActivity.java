@@ -123,10 +123,11 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
         BroadcastReceiver receiverNoConnectionAdapter = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if ("SELECT_LIST_PLAYER".equals(intent.getAction())) {
-                    Toast.makeText(context,String.valueOf(intent.getIntExtra("position",0)), Toast.LENGTH_SHORT).show();
-                    onTrackPlayPosition(intent.getIntExtra("position",0));
-                }
+                Intent audioPayerIntent = new Intent(getApplicationContext(), AudioPlayerActivity.class);
+                audioPayerIntent.putExtra("key_adapter_audio_book_id",mTracks.get(position).getIdBook());
+                audioPayerIntent.putExtra("list_audio_source",mListSource);
+                startActivity(audioPayerIntent);
+                finish();
             }
         };
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -363,7 +364,7 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
         assert audioCursor != null;
         audioCursor.moveToFirst();
         do {
-            mTracks.add(new Track(audioCursor.getString(5),audioCursor.getString(8),audioCursor.getString(4),audioCursor.getString(6),audioCursor.getString(11),R.id.relative_layout_activity_declaration_img));
+            mTracks.add(new Track(audioCursor.getString(2),audioCursor.getString(5),audioCursor.getString(8),audioCursor.getString(4),audioCursor.getString(6),audioCursor.getString(11),R.id.relative_layout_activity_declaration_img));
             if (audioCursor.getString(2).equals(idBook))
                 position = mTracks.size()-1;
         }while (audioCursor.moveToNext());
@@ -469,23 +470,28 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
                 R.drawable.vector_black3_play,position,mTracks.size()-1);
     }
     public void onTrackPlayPosition(int posi) {
-        mMediaPlayer.reset();
+        if (mMediaPlayer != null) {
+            mMediaPlayer.stop();  // Arrêter la lecture actuelle
+            mMediaPlayer.reset();
+            mMediaPlayer.release();  // Libérer les ressources
+            mMediaPlayer = null;
+        }
+
+        mMediaPlayer = new MediaPlayer(); // Nouvelle instance propre
+
         position = posi;
         setRessourceBook();
+
         try {
-            mMediaPlayer = new MediaPlayer();
             mMediaPlayer.setDataSource(mTracks.get(position).getAudio());
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }
-        try {
             mMediaPlayer.prepare();
+            mMediaPlayer.start(); // Démarrer la lecture
+            mSeekBar.setMax(mMediaPlayer.getDuration());
+            onTrackPlay();
+            CreateNotification.createNotification(AudioPlayerActivity.this, mTracks.get(position),
+                    R.drawable.vector_black3_play, position, mTracks.size() - 1);
         } catch (IOException ex) {
-            throw new RuntimeException(ex);
+            ex.printStackTrace();
         }
-        mSeekBar.setMax(mMediaPlayer.getDuration());
-        onTrackPlay();
-        CreateNotification.createNotification(AudioPlayerActivity.this,mTracks.get(position),
-                R.drawable.vector_black3_play,position,mTracks.size()-1);
     }
 }
