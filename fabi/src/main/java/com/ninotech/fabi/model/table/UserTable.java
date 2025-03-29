@@ -34,6 +34,21 @@ public class UserTable extends SQLiteOpenHelper {
         database.execSQL("DROP TABLE IF EXISTS " + NAME_TABLE + ";");
         onCreate(database);
     }
+    public byte[] getPhoto(String number)
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor=db.rawQuery("SELECT profileUser FROM User WHERE idUser='"+number+"';",null);
+        cursor.moveToFirst();
+        return cursor.getBlob(0);
+    }
+    public boolean update(String idNumber,String column , String newValues)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(column,newValues);
+        db.update(NAME_TABLE,contentValues,"idUser = ?",new String[]{idNumber});
+        return true;
+    }
     public Cursor getData()
     {
         SQLiteDatabase database = this.getReadableDatabase();

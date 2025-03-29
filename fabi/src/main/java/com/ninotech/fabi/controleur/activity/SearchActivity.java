@@ -944,9 +944,9 @@ public class SearchActivity extends AppCompatActivity {
     private void filterSettings(String text) {
         mFilteredSettings.clear();
         for (Setting item : mSettings) {
-            if (item.getSousTritre().toLowerCase().contains(text.toLowerCase())) {
-                mFilteredSettings.add(item);
-            }
+           // if (item.getSousTritre().toLowerCase().contains(text.toLowerCase())) {
+               // mFilteredSettings.add(item);
+           // }
         }
         mSettingAdapter.filterList(mFilteredSettings);
     }

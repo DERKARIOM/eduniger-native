@@ -9,7 +9,7 @@ public class Setting {
         mIcone = icone;
     }
 
-    public String getTritre() {
+    public String getTitle() {
         return mTritre;
     }
 
@@ -17,7 +17,7 @@ public class Setting {
         mTritre = tritre;
     }
 
-    public String getSousTritre() {
+    public String getSubTitle() {
         return mSousTritre;
     }
 

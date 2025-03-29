@@ -174,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
         toolbar.getMenu().getItem(3).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
-                Intent test = new Intent(MainActivity.this, SettingActivity.class);
+                Intent test = new Intent(MainActivity.this, SettingV2Activity.class);
                 startActivity(test);
                 return false;
             }
