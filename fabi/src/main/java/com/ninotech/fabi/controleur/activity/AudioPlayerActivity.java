@@ -1,11 +1,14 @@
 package com.ninotech.fabi.controleur.activity;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -23,9 +26,12 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.ninotech.fabi.Playable;
@@ -54,6 +60,7 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
 
     private static final String CHANNEL_ID = "AUDIO_PLAYER_CHANNEL";
     private static final int NOTIFICATION_ID = 1;
+    private static final int REQUEST_CODE_PASS = 1 ;
 
     private NotificationManager notificationManager;
     private Session mSession;
@@ -84,6 +91,7 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
     private Intent audioBookIntent;
     private String mListSource;
 
+    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -124,6 +132,7 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             registerReceiver(receiverNoConnectionAdapter, new IntentFilter("SELECT_LIST_PLAYER"),Context.RECEIVER_EXPORTED);
         }
+
         String idBook = audioBookIntent.getStringExtra("key_adapter_audio_book_id");
         mListSource = audioBookIntent.getStringExtra("list_audio_source");
         assert mListSource != null;
@@ -165,8 +174,14 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
             throw new RuntimeException(ex);
         }
         mSeekBar.setMax(mMediaPlayer.getDuration());
-            onTrackPlay();
-
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_PHONE_STATE)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                ActivityCompat.requestPermissions(AudioPlayerActivity.this,
+                        new String[]{Manifest.permission.POST_NOTIFICATIONS}, 101);
+            }
+        }
+        onTrackPlay();
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -371,7 +386,7 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
             String action = intent.getExtras().getString("actionname");
             switch (action)
             {
-                case CreateNotification.ACTION_PREVIUOS:
+                case CreateNotification.ACTION_PREVIOUS:
                     onTrackPrevious();
                     break;
                 case CreateNotification.ACTION_NEXT:

@@ -1,11 +1,14 @@
 package com.ninotech.fabi.controleur.activity;
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
@@ -35,6 +38,8 @@ import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.model.table.StudentTable;
 import com.ninotech.fabi.model.table.UserTable;
 
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -80,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         /* Detection de reseau */
-        if(android.os.Build.VERSION.SDK_INT > 9)
+        if(Build.VERSION.SDK_INT > 9)
         {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
@@ -185,6 +190,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_PHONE_STATE)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                ActivityCompat.requestPermissions(MainActivity.this,
+                        new String[]{Manifest.permission.POST_NOTIFICATIONS}, 101);
+            }
+        }
 
         /* Activation du mode nuit et changement de couleur a la bar de navigation si le mode jour n' est pas activer */
         if(nightMODE)
