@@ -315,7 +315,7 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.MyViewHo
                                 updateDate(mSession.getIdNumber(),"password",PasswordUtil.hashPassword(editText.getText().toString()));
                                 break;
                             case "Email":
-                                mUpdate = new Update(mSession.getIdNumber(),"emailUs",editText.getText().toString());
+                                mUpdate = new Update(mSession.getIdNumber(),"emailUser",editText.getText().toString());
                                 updateDate(mSession.getIdNumber(),"email",editText.getText().toString());
                                 break;
                             case "Evaluez-nous":

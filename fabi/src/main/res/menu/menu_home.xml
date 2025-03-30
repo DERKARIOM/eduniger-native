@@ -11,7 +11,6 @@
         android:icon="@drawable/vector_black3_off_subscribe"
         android:title="notification"
         app:showAsAction="always|never|collapseActionView|withText" />
-    <item android:title="Préinscription" />
     <item
         android:id="@+id/setting"
         android:title="Paramètres" />

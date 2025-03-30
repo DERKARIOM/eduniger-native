@@ -161,17 +161,8 @@ public class MainActivity extends AppCompatActivity {
             Log.e("Err",e.getMessage());
         }
 
-        toolbar.getMenu().getItem(2).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem menuItem) {
-                Intent preRegisterIntent = new Intent(MainActivity.this,PreRegistrationActivity.class);
-                startActivity(preRegisterIntent);
-                return false;
-            }
-        });
-
         /* En cliquant sur "Paramètres" */
-        toolbar.getMenu().getItem(3).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        toolbar.getMenu().getItem(2).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
                 Intent test = new Intent(MainActivity.this, SettingV2Activity.class);
@@ -181,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         /* En cliquant sur "Déconnecter" */
-        toolbar.getMenu().getItem(4).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        toolbar.getMenu().getItem(3).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
                 if(mAccount.logout(getApplicationContext()))
