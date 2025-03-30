@@ -48,6 +48,11 @@ public class Session extends SQLiteOpenHelper {
         cursor.moveToFirst();
         return cursor.getString(0);
     }
+    public void delete() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        db.execSQL("DROP TABLE IF EXISTS " + NAME_TABLE);
+        onCreate(db);
+    }
     public void setPassword(String password)
     {
         SQLiteDatabase database = this.getReadableDatabase();

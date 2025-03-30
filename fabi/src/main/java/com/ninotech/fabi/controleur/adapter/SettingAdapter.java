@@ -36,6 +36,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.ninotech.fabi.controleur.activity.AccountActivity;
 import com.ninotech.fabi.controleur.activity.ChangePasswordActivity;
+import com.ninotech.fabi.controleur.activity.LoginActivity;
 import com.ninotech.fabi.controleur.dialog.EvaluezVousDialog;
 import com.ninotech.fabi.controleur.activity.FingerPrintActivity;
 import com.ninotech.fabi.controleur.activity.InfosActivity;
@@ -43,6 +44,7 @@ import com.ninotech.fabi.controleur.activity.SuggestionActivity;
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.dialog.OneEditTextDialog;
 import com.ninotech.fabi.controleur.dialog.SimpleOkDialog;
+import com.ninotech.fabi.model.data.Lock;
 import com.ninotech.fabi.model.data.PasswordUtil;
 import com.ninotech.fabi.model.data.Setting;
 import com.ninotech.fabi.model.data.Update;
@@ -427,14 +429,12 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.MyViewHo
                     Toast.makeText(itemView.getContext(), response, Toast.LENGTH_SHORT).show();
                     if(response.equals("true"))
                     {
-                        //disanbleSafe();
-                        //mSession.delete();
-                       // mUserTable.delete();
-                      //  mPhoneTable.delete();
-                       // Lock.savePass(itemView.getContext(),0);
-                      //  Intent loginIntent = new Intent(itemView.getContext(), LoginActivity.class);
-                      //  itemView.getContext().startActivity(loginIntent);
-                      //  System.exit(0);
+                        mSession.delete();
+                        mUserTable.delete();
+                        Lock.savePass(itemView.getContext(),0);
+                        Intent loginIntent = new Intent(itemView.getContext(), LoginActivity.class);
+                        itemView.getContext().startActivity(loginIntent);
+                        ((Activity)itemView.getContext()).finish();
                     }
                 }
             }

@@ -34,6 +34,11 @@ public class UserTable extends SQLiteOpenHelper {
         database.execSQL("DROP TABLE IF EXISTS " + NAME_TABLE + ";");
         onCreate(database);
     }
+    public void delete() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        db.execSQL("DROP TABLE IF EXISTS " + NAME_TABLE);
+        onCreate(db);
+    }
     public byte[] getPhoto(String number)
     {
         SQLiteDatabase db = this.getReadableDatabase();
