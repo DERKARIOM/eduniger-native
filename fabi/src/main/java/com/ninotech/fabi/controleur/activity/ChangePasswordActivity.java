@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.ninotech.fabi.controleur.dialog.SimpleOkDialog;
 import com.ninotech.fabi.model.data.Account;
+import com.ninotech.fabi.model.data.Server;
 import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.R;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -130,7 +131,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
                         mConnectionProgressBar.setVisibility(View.VISIBLE);
                         mConnectionButton.setText(R.string.register_succes_1111);
                         ChangePassword changePassword = new ChangePassword();
-                        changePassword.execute(getResources().getString(R.string.ip_server_android) + "ChangePassword.php",
+                        changePassword.execute(Server.getIpServerAndroid(getApplicationContext()) + "ChangePassword.php",
                                 mAccount.getIdNumber(),
                                 mAccount.getEmail(),
                                 mAccount.getPassword()

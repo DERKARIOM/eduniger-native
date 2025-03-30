@@ -104,7 +104,7 @@ public class LoginActivity extends AppCompatActivity {
                         mConnectionProgressBar.setVisibility(View.VISIBLE);
                         mConnectionButton.setText(R.string.register_succes_1111);
                         LoginSyn loginSyn = new LoginSyn();
-                        loginSyn.execute(getString(R.string.ip_server_android) + "Login.php",mAccount.getIdNumber(),mAccount.getPassword());
+                        loginSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "Login.php",mAccount.getIdNumber(),mAccount.getPassword());
                         break;
                 }
             }

@@ -47,6 +47,7 @@ import com.ninotech.fabi.controleur.dialog.OneEditTextDialog;
 import com.ninotech.fabi.controleur.dialog.SimpleOkDialog;
 import com.ninotech.fabi.model.data.Lock;
 import com.ninotech.fabi.model.data.PasswordUtil;
+import com.ninotech.fabi.model.data.Server;
 import com.ninotech.fabi.model.data.Setting;
 import com.ninotech.fabi.model.data.Update;
 import com.ninotech.fabi.model.table.Session;
@@ -267,7 +268,7 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.MyViewHo
                                 // Passez à l'Activity suivante après l'acceptation
                                 Log.e("Confirmation","no");
                                 DeleteAccountSyn deleteAccountSyn = new DeleteAccountSyn();
-                                deleteAccountSyn.execute(itemView.getContext().getString(R.string.ip_server_android) + "DeleteAccountSyn.php",mSession.getIdNumber());
+                                deleteAccountSyn.execute(Server.getIpServerAndroid(itemView.getContext()) + "DeleteAccountSyn.php",mSession.getIdNumber());
                             })
                             .setNegativeButton("Non", (dialog, which) -> {
                                 Log.e("Confirmation","no");
@@ -279,7 +280,7 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.MyViewHo
         private void updateDate(String idNumber , String column , String newValues)
         {
             UpdateSyn updateSyn = new UpdateSyn();
-            updateSyn.execute(itemView.getContext().getString(R.string.ip_server_android) + "UpdateSyn.php",idNumber,column,newValues);
+            updateSyn.execute(Server.getIpServerAndroid(itemView.getContext()) + "UpdateSyn.php",idNumber,column,newValues);
         }
         private void oneEditTextDialog(String label , String message,int inputType , String hint){
             mOneEditTextDialog = new OneEditTextDialog((Activity) itemView.getContext());
@@ -327,7 +328,7 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.MyViewHo
                                 break;
                             case "Evaluez-nous":
                                 GradeSyn gradeSyn = new GradeSyn();
-                                gradeSyn.execute(itemView.getContext().getString(R.string.ip_server_android) + "GradeSyn.php",mSession.getIdNumber(),editText.getText().toString());
+                                gradeSyn.execute(Server.getIpServerAndroid(itemView.getContext()) + "GradeSyn.php",mSession.getIdNumber(),editText.getText().toString());
                                 break;
                         }
                     }

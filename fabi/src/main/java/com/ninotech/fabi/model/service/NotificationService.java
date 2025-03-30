@@ -19,6 +19,7 @@ import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.activity.NotificationActivity;
 import com.ninotech.fabi.model.data.AudioDownloader;
 import com.ninotech.fabi.model.data.DownloadFile;
+import com.ninotech.fabi.model.data.Server;
 import com.ninotech.fabi.model.table.LoandTable;
 import com.ninotech.fabi.model.table.NotificationTable;
 import com.ninotech.fabi.model.table.Session;
@@ -66,10 +67,10 @@ public class NotificationService extends Service {
                 NotifService notifService = new NotifService();
                 LoandService loandService = new LoandService();
                 LoandClosingService loandClosingService = new LoandClosingService();
-                notifService.execute(getString(R.string.ip_server_android) + "NotifService.php",mIdNumber);
-                reservationService.execute(getString(R.string.ip_server_android) + "ReservationService.php",mIdNumber);
-                loandService.execute(getString(R.string.ip_server_android) + "LoandSyn.php",mIdNumber);
-                loandClosingService.execute(getString(R.string.ip_server_android) + "LoandClosing.php",mIdNumber);
+                notifService.execute(Server.getIpServerAndroid(getApplicationContext()) + "NotifService.php",mIdNumber);
+                reservationService.execute(Server.getIpServerAndroid(getApplicationContext()) + "ReservationService.php",mIdNumber);
+                loandService.execute(Server.getIpServerAndroid(getApplicationContext()) + "LoandSyn.php",mIdNumber);
+                loandClosingService.execute(Server.getIpServerAndroid(getApplicationContext()) + "LoandClosing.php",mIdNumber);
                 handler.postDelayed(this, delay);
             }
         }, delay);

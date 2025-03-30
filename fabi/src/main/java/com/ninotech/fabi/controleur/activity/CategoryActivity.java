@@ -26,6 +26,7 @@ import com.ninotech.fabi.controleur.adapter.NoConnectionAdapter;
 import com.ninotech.fabi.controleur.adapter.VoidContainerAdapter;
 import com.ninotech.fabi.model.data.OnlineBook;
 import com.ninotech.fabi.model.data.Connection;
+import com.ninotech.fabi.model.data.Server;
 import com.ninotech.fabi.model.data.VoidContainer;
 import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.R;
@@ -83,7 +84,7 @@ public class CategoryActivity extends AppCompatActivity {
                         mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                         mWaitRecyclerView.setAdapter(noConnectionAdapter);
                         CategoryInSyn categoryInSyn = new CategoryInSyn();
-                        categoryInSyn.execute(getString(R.string.ip_server_android) + "CategoryIn.php",mSession.getIdNumber(),mCategorie);
+                        categoryInSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "CategoryIn.php",mSession.getIdNumber(),mCategorie);
                     }catch (Exception e)
                     {
                         Log.e("errRankingFragment",e.getMessage());
@@ -96,7 +97,7 @@ public class CategoryActivity extends AppCompatActivity {
             registerReceiver(receiverNoConnectionAdapter, new IntentFilter("CATEGORY_ACTIVITY"),Context.RECEIVER_EXPORTED);
         }
         CategoryInSyn categoryInSyn = new CategoryInSyn();
-        categoryInSyn.execute(getString(R.string.ip_server_android) + "CategoryIn.php",mSession.getIdNumber(),mCategorie);
+        categoryInSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "CategoryIn.php",mSession.getIdNumber(),mCategorie);
     }
 
     private class CategoryInSyn extends AsyncTask<String,Void,String> {

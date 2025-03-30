@@ -169,7 +169,7 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
                                 mAdhereButton.setText("Détacher");
                                 structure.setAdhere(false);
                                 DetachStructSyn detachStructSyn = new DetachStructSyn();
-                                detachStructSyn.execute(itemView.getContext().getString(R.string.ip_server_android) + "AdhererStruct.php",mSession.getIdNumber(),structure.getId());
+                                detachStructSyn.execute(Server.getIpServerAndroid(itemView.getContext()) + "AdhererStruct.php",mSession.getIdNumber(),structure.getId());
                             }
                             break;
 
@@ -205,7 +205,7 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
                                 mAdhereButton.setBackgroundTintList(ColorStateList.valueOf(itemView.getContext().getColor(R.color.purple_200)));
                                 mAdhereButton.setText("Adhérer");
                                 DetachStructSyn detachStructSyn = new DetachStructSyn();
-                                detachStructSyn.execute(itemView.getContext().getString(R.string.ip_server_android) + "DetachStruct.php",mSession.getIdNumber(),id);
+                                detachStructSyn.execute(Server.getIpServerAndroid(itemView.getContext()) + "DetachStruct.php",mSession.getIdNumber(),id);
                             }
                         }
                     }

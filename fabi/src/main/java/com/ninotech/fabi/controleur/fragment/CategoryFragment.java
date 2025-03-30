@@ -21,6 +21,7 @@ import com.ninotech.fabi.controleur.adapter.CategoryAdapter;
 import com.ninotech.fabi.controleur.adapter.NoConnectionAdapter;
 import com.ninotech.fabi.model.data.Category;
 import com.ninotech.fabi.model.data.Connection;
+import com.ninotech.fabi.model.data.Server;
 import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.R;
 
@@ -61,7 +62,7 @@ public class CategoryFragment extends Fragment {
                         mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                         mWaitRecyclerView.setAdapter(noConnectionAdapter);
                         CategorySyn categorySyn = new CategorySyn();
-                        categorySyn.execute(getString(R.string.ip_server_android) + "Category.php", session.getIdNumber());
+                        categorySyn.execute(Server.getIpServerAndroid(getContext()) + "Category.php", session.getIdNumber());
                     }catch (Exception e)
                     {
                         Log.e("errCategoryFragment",e.getMessage());
@@ -74,7 +75,7 @@ public class CategoryFragment extends Fragment {
             getContext().registerReceiver(receiverNoConnectionAdapter, new IntentFilter("CATEGORY_FRAGMENT"),Context.RECEIVER_EXPORTED);
         }
         CategorySyn categorySyn = new CategorySyn();
-        categorySyn.execute(getString(R.string.ip_server_android) + "Category.php", session.getIdNumber());
+        categorySyn.execute(Server.getIpServerAndroid(getContext()) + "Category.php", session.getIdNumber());
         return view;
     }
 

@@ -216,14 +216,14 @@ public class BookActivity extends AppCompatActivity {
                         IsSubscribeBookSyn isSubscribeBookSyn = new IsSubscribeBookSyn();
                         InsertViewSyn insertViewSyn = new InsertViewSyn();
                         IsReservationSyn isReservationSyn = new IsReservationSyn();
-                        recoveryBook.execute(getString(R.string.ip_server_android) + "Book.php",mSession.getIdNumber(), mOnlineBook.getId());
-                        isReservationSyn.execute(getString(R.string.ip_server_android) + "IsReservation.php",mSession.getIdNumber(), mOnlineBook.getId());
-                        insertViewSyn.execute(getString(R.string.ip_server_android) + "InsertView.php",mSession.getIdNumber(), mOnlineBook.getId());
-                        isSubscribeBookSyn.execute(getString(R.string.ip_server_android) + "IsSubscribeBook.php",mSession.getIdNumber(), mOnlineBook.getId());
-                        isLikeSyn.execute(getString(R.string.ip_server_android) + "IsLike.php",mSession.getIdNumber(), mOnlineBook.getId());
-                        isNoLikeSyn.execute(getString(R.string.ip_server_android) + "IsNoLike.php",mSession.getIdNumber(), mOnlineBook.getId());
-                        receiveComments.execute(getString(R.string.ip_server_android) + "ReceiveComments.php",mSession.getIdNumber(), mOnlineBook.getId());
-                        recoveryTones.execute(getString(R.string.ip_server_android) + "Tones.php");
+                        recoveryBook.execute(Server.getIpServerAndroid(getApplicationContext()) + "Book.php",mSession.getIdNumber(), mOnlineBook.getId());
+                        isReservationSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "IsReservation.php",mSession.getIdNumber(), mOnlineBook.getId());
+                        insertViewSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "InsertView.php",mSession.getIdNumber(), mOnlineBook.getId());
+                        isSubscribeBookSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "IsSubscribeBook.php",mSession.getIdNumber(), mOnlineBook.getId());
+                        isLikeSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "IsLike.php",mSession.getIdNumber(), mOnlineBook.getId());
+                        isNoLikeSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "IsNoLike.php",mSession.getIdNumber(), mOnlineBook.getId());
+                        receiveComments.execute(Server.getIpServerAndroid(getApplicationContext()) + "ReceiveComments.php",mSession.getIdNumber(), mOnlineBook.getId());
+                        recoveryTones.execute(Server.getIpServerAndroid(getApplicationContext()) + "Tones.php");
                     }catch (Exception e)
                     {
                         Log.e("errBookActivity",e.getMessage());
@@ -264,7 +264,7 @@ public class BookActivity extends AppCompatActivity {
                     if(mReservationButton.getText().toString().equals(getString(R.string.cancel_reservation)))
                     {
                         CancelReservationSyn cancelReservationSyn = new CancelReservationSyn();
-                        cancelReservationSyn.execute(getString(R.string.ip_server_android) + "CancelReservation.php",mSession.getIdNumber(), mOnlineBook.getId());
+                        cancelReservationSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "CancelReservation.php",mSession.getIdNumber(), mOnlineBook.getId());
                     }
                 }
             }
@@ -374,7 +374,7 @@ public class BookActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 InsertLikeSyn insertLikeSyn = new InsertLikeSyn();
-                insertLikeSyn.execute(getString(R.string.ip_server_android) + "InsertLike.php",mSession.getIdNumber(), mOnlineBook.getId());
+                insertLikeSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "InsertLike.php",mSession.getIdNumber(), mOnlineBook.getId());
             }
         });
 
@@ -382,7 +382,7 @@ public class BookActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 InsertNoLikeSyn insertNoLikeSyn = new InsertNoLikeSyn();
-                insertNoLikeSyn.execute(getString(R.string.ip_server_android) + "InsertNoLike.php",mSession.getIdNumber(), mOnlineBook.getId());
+                insertNoLikeSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "InsertNoLike.php",mSession.getIdNumber(), mOnlineBook.getId());
             }
         });
 
@@ -390,7 +390,7 @@ public class BookActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 InsertSubscribeBookSyn insertSubscribeBookSyn = new InsertSubscribeBookSyn();
-                insertSubscribeBookSyn.execute(getString(R.string.ip_server_android) + "InsertSubscribeBook.php",mSession.getIdNumber(), mOnlineBook.getId());
+                insertSubscribeBookSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "InsertSubscribeBook.php",mSession.getIdNumber(), mOnlineBook.getId());
             }
         });
         RecoveryBook recoveryBook = new RecoveryBook();
@@ -401,14 +401,14 @@ public class BookActivity extends AppCompatActivity {
         IsSubscribeBookSyn isSubscribeBookSyn = new IsSubscribeBookSyn();
         InsertViewSyn insertViewSyn = new InsertViewSyn();
         IsReservationSyn isReservationSyn = new IsReservationSyn();
-        recoveryBook.execute(getString(R.string.ip_server_android) + "Book.php",mSession.getIdNumber(), mOnlineBook.getId());
-        isReservationSyn.execute(getString(R.string.ip_server_android) + "IsReservation.php",mSession.getIdNumber(), mOnlineBook.getId());
-        insertViewSyn.execute(getString(R.string.ip_server_android) + "InsertView.php",mSession.getIdNumber(), mOnlineBook.getId());
-        isSubscribeBookSyn.execute(getString(R.string.ip_server_android) + "IsSubscribeBook.php",mSession.getIdNumber(), mOnlineBook.getId());
-        isLikeSyn.execute(getString(R.string.ip_server_android) + "IsLike.php",mSession.getIdNumber(), mOnlineBook.getId());
-        isNoLikeSyn.execute(getString(R.string.ip_server_android) + "IsNoLike.php",mSession.getIdNumber(), mOnlineBook.getId());
-        receiveComments.execute(getString(R.string.ip_server_android) + "ReceiveComments.php",mSession.getIdNumber(), mOnlineBook.getId());
-        recoveryTones.execute(getString(R.string.ip_server_android) + "Tones.php");
+        recoveryBook.execute(Server.getIpServerAndroid(getApplicationContext()) + "Book.php",mSession.getIdNumber(), mOnlineBook.getId());
+        isReservationSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "IsReservation.php",mSession.getIdNumber(), mOnlineBook.getId());
+        insertViewSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "InsertView.php",mSession.getIdNumber(), mOnlineBook.getId());
+        isSubscribeBookSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "IsSubscribeBook.php",mSession.getIdNumber(), mOnlineBook.getId());
+        isLikeSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "IsLike.php",mSession.getIdNumber(), mOnlineBook.getId());
+        isNoLikeSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "IsNoLike.php",mSession.getIdNumber(), mOnlineBook.getId());
+        receiveComments.execute(Server.getIpServerAndroid(getApplicationContext()) + "ReceiveComments.php",mSession.getIdNumber(), mOnlineBook.getId());
+        recoveryTones.execute(Server.getIpServerAndroid(getApplicationContext()) + "Tones.php");
         addCommentsImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -422,7 +422,7 @@ public class BookActivity extends AppCompatActivity {
                     mCommentsRecyclerView.setAdapter(talksAdapter);
                     mCommentsRecyclerView.smoothScrollToPosition(talksAdapter.getItemCount()-1);
                     SendComments sendComments = new SendComments();
-                    sendComments.execute(getString(R.string.ip_server_android) + "SendComments.php",mSession.getIdNumber(), mOnlineBook.getId(),chat.getMessage());
+                    sendComments.execute(Server.getIpServerAndroid(getApplicationContext()) + "SendComments.php",mSession.getIdNumber(), mOnlineBook.getId(),chat.getMessage());
                 }
             }
         });
@@ -1237,7 +1237,7 @@ public class BookActivity extends AppCompatActivity {
                         else
                             mNbrJour = String.valueOf(-1);
                         Reservation reservation = new Reservation();
-                        reservation.execute(getString(R.string.ip_server_android) + "Reservation.php",mSession.getIdNumber(), mOnlineBook.getId(),mNbrJour);
+                        reservation.execute(Server.getIpServerAndroid(getApplicationContext()) + "Reservation.php",mSession.getIdNumber(), mOnlineBook.getId(),mNbrJour);
                     }
                 }
             }

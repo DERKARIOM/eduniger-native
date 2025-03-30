@@ -27,6 +27,7 @@ import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
 import com.ninotech.fabi.controleur.dialog.SimpleOkDialog;
 import com.ninotech.fabi.model.data.Book;
+import com.ninotech.fabi.model.data.Server;
 import com.ninotech.fabi.model.table.Session;
 import com.squareup.picasso.Picasso;
 
@@ -94,7 +95,7 @@ public class AddBookActivity extends AppCompatActivity {
                         mIdAuthorEditText.getText().toString(),
                         mDescriptionEditText.getText().toString());
                 AddBookSyn addBookSyn = new AddBookSyn();
-                addBookSyn.execute(getString(R.string.ip_server_android) + "AddBook.php",
+                addBookSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "AddBook.php",
                         mSession.getIdNumber(),
                         mBook.getId(),
                         mBook.getTitle(),

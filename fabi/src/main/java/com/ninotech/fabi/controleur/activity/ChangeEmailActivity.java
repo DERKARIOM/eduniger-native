@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.ninotech.fabi.controleur.dialog.SimpleOkDialog;
 import com.ninotech.fabi.model.data.Account;
+import com.ninotech.fabi.model.data.Server;
 import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.R;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -86,7 +87,7 @@ public class ChangeEmailActivity extends AppCompatActivity {
                         mConnectionProgressBar.setVisibility(View.VISIBLE);
                         mConnectionButton.setText(R.string.register_succes_1111);
                         ChangeEmailSyn changeEmailSyn = new ChangeEmailSyn();
-                        changeEmailSyn.execute(getString(R.string.ip_server_android) + "ChangeEmail.php",mAccount.getIdNumber(),mAccount.getPassword(),mAccount.getEmail());
+                        changeEmailSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "ChangeEmail.php",mAccount.getIdNumber(),mAccount.getPassword(),mAccount.getEmail());
                         break;
                 }
 

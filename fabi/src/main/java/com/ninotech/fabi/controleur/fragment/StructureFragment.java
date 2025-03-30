@@ -20,6 +20,7 @@ import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.adapter.NoConnectionAdapter;
 import com.ninotech.fabi.controleur.adapter.StructureAdapter;
 import com.ninotech.fabi.model.data.Connection;
+import com.ninotech.fabi.model.data.Server;
 import com.ninotech.fabi.model.data.Structure;
 import com.ninotech.fabi.model.table.Session;
 
@@ -62,9 +63,9 @@ public class StructureFragment extends Fragment {
                         mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                         mWaitRecyclerView.setAdapter(noConnectionAdapter);
                         StructureSyn structureSyn = new StructureSyn();
-                        structureSyn.execute(getString(R.string.ip_server_android) + "Structure.php", session.getIdNumber());
+                        structureSyn.execute(Server.getIpServerAndroid(getContext()) + "Structure.php", session.getIdNumber());
                         StructureSyn2 structureSyn2 = new StructureSyn2();
-                        structureSyn2.execute(getString(R.string.ip_server_android) + "Structure2.php", session.getIdNumber());
+                        structureSyn2.execute(Server.getIpServerAndroid(getContext()) + "Structure2.php", session.getIdNumber());
                     }catch (Exception e)
                     {
                         Log.e("errCategoryFragment",e.getMessage());
@@ -77,9 +78,9 @@ public class StructureFragment extends Fragment {
             getContext().registerReceiver(receiverNoConnectionAdapter, new IntentFilter("CATEGORY_FRAGMENT"),Context.RECEIVER_EXPORTED);
         }
         StructureSyn structureSyn = new StructureSyn();
-        structureSyn.execute(getString(R.string.ip_server_android) + "Structure.php", session.getIdNumber());
+        structureSyn.execute(Server.getIpServerAndroid(getContext()) + "Structure.php", session.getIdNumber());
         StructureSyn2 structureSyn2 = new StructureSyn2();
-        structureSyn2.execute(getString(R.string.ip_server_android) + "Structure2.php", session.getIdNumber());
+        structureSyn2.execute(Server.getIpServerAndroid(getContext()) + "Structure2.php", session.getIdNumber());
         return view;
     }
 

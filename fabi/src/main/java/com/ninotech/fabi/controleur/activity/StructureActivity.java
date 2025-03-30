@@ -113,9 +113,9 @@ public class StructureActivity extends AppCompatActivity {
                         mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                         mWaitRecyclerView.setAdapter(noConnectionAdapter);
                         StructBookSyn structBookSyn = new StructBookSyn();
-                        structBookSyn.execute(getString(R.string.ip_server_android) + "StructBook.php", mSession.getIdNumber(),mStructure.getId());
+                        structBookSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "StructBook.php", mSession.getIdNumber(),mStructure.getId());
                         AuthorSyn authorSyn = new AuthorSyn();
-                        authorSyn.execute(getString(R.string.ip_server_android) + "AuthorTop.php", mSession.getIdNumber());
+                        authorSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "AuthorTop.php", mSession.getIdNumber());
                     }catch (Exception e)
                     {
                         Log.e("errStructureActivity",e.getMessage());
@@ -202,7 +202,7 @@ public class StructureActivity extends AppCompatActivity {
                             mAdhererButton.setText("Détacher");
                             mStructure.setAdhere(false);
                             DetachStructSyn detachStructSyn = new DetachStructSyn();
-                            detachStructSyn.execute(getString(R.string.ip_server_android) + "AdhererStruct.php",mSession.getIdNumber(),mStructure.getId());
+                            detachStructSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "AdhererStruct.php",mSession.getIdNumber(),mStructure.getId());
                         }
                         break;
 
@@ -245,9 +245,9 @@ public class StructureActivity extends AppCompatActivity {
                 .resize(284,284)
                 .into(mProfileImageView);
         StructBookSyn structBookSyn = new StructBookSyn();
-        structBookSyn.execute(getString(R.string.ip_server_android) + "StructBook.php", mSession.getIdNumber(),mStructure.getId());
+        structBookSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "StructBook.php", mSession.getIdNumber(),mStructure.getId());
         AuthorSyn authorSyn = new AuthorSyn();
-        authorSyn.execute(getString(R.string.ip_server_android) + "AuthorTop.php", mSession.getIdNumber());
+        authorSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "AuthorTop.php", mSession.getIdNumber());
     }
     private class StructBookSyn extends AsyncTask<String,Void,String> {
         @Override
@@ -412,7 +412,7 @@ public class StructureActivity extends AppCompatActivity {
                             mAdhererButton.setBackgroundTintList(ColorStateList.valueOf(getApplicationContext().getColor(R.color.purple_200)));
                             mAdhererButton.setText("Adhérer");
                             DetachStructSyn detachStructSyn = new DetachStructSyn();
-                            detachStructSyn.execute(getString(R.string.ip_server_android) + "DetachStruct.php",mSession.getIdNumber(),id);
+                            detachStructSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "DetachStruct.php",mSession.getIdNumber(),id);
                         }
                     }
                 }

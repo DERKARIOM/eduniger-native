@@ -21,6 +21,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.ninotech.fabi.controleur.dialog.SimpleOkDialog;
 import com.ninotech.fabi.model.data.Phone;
+import com.ninotech.fabi.model.data.Server;
 import com.ninotech.fabi.model.data.Suggestion;
 import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.R;
@@ -70,7 +71,7 @@ public class SuggestionActivity extends AppCompatActivity {
                     mConnectionProgressBar.setVisibility(View.VISIBLE);
                     mSuggestionSendButton.setText("");
                     SuggestionSyn suggestionSyn = new SuggestionSyn();
-                    suggestionSyn.execute(getString(R.string.ip_server_android ) + "Suggestion.php",mSuggestion.getIdNumber(),mSuggestion.getObjet(),mSuggestion.getMessage(),mPhone.getModel(),mPhone.getVersion());
+                    suggestionSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "Suggestion.php",mSuggestion.getIdNumber(),mSuggestion.getObjet(),mSuggestion.getMessage(),mPhone.getModel(),mPhone.getVersion());
                 }
             }
         });

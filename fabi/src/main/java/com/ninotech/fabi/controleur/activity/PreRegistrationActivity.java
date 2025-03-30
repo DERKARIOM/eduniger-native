@@ -22,6 +22,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.dialog.SimpleOkDialog;
+import com.ninotech.fabi.model.data.Server;
 import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.model.table.StudentTable;
 
@@ -126,7 +127,7 @@ public class PreRegistrationActivity extends AppCompatActivity {
                     case "11111":
                         mProgressBar.setVisibility(View.VISIBLE);
                         mRegisterButton.setText("Enregistrement.");
-                        preRegisterSyn.execute(getString(R.string.ip_server_android) + "PreRegister.php",
+                        preRegisterSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "PreRegister.php",
                                 mIdNumberEditText.getText().toString(),
                                 mNameEditText.getText().toString(),
                                 mFirstNameEditText.getText().toString(),

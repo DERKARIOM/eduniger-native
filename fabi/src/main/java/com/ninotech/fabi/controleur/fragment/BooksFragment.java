@@ -21,6 +21,7 @@ import com.ninotech.fabi.controleur.adapter.OnlineBookAdapter;
 import com.ninotech.fabi.controleur.adapter.NoConnectionAdapter;
 import com.ninotech.fabi.model.data.OnlineBook;
 import com.ninotech.fabi.model.data.Connection;
+import com.ninotech.fabi.model.data.Server;
 import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.R;
 
@@ -61,7 +62,7 @@ public class BooksFragment extends Fragment {
                         mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                         mWaitRecyclerView.setAdapter(noConnectionAdapter);
                         RankingSyn rankingSyn = new RankingSyn();
-                        rankingSyn.execute(getString(R.string.ip_server_android) + "Ranking.php", session.getIdNumber());
+                        rankingSyn.execute(Server.getIpServerAndroid(getContext()) + "Ranking.php", session.getIdNumber());
                     }catch (Exception e)
                     {
                         Log.e("errRankingFragment",e.getMessage());
@@ -74,7 +75,7 @@ public class BooksFragment extends Fragment {
             getContext().registerReceiver(receiverNoConnectionAdapter, new IntentFilter("RANKING_FRAGMENT"),Context.RECEIVER_EXPORTED);
         }
         RankingSyn rankingSyn = new RankingSyn();
-        rankingSyn.execute(getString(R.string.ip_server_android) + "Ranking.php", session.getIdNumber());
+        rankingSyn.execute(Server.getIpServerAndroid(getContext()) + "Ranking.php", session.getIdNumber());
         return view;
     }
     private class RankingSyn extends AsyncTask<String,Void,String> {

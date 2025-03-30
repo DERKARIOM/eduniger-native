@@ -154,8 +154,6 @@ public class MainActivity extends AppCompatActivity {
             {
                 Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
             }
-            if(userTable.getIsDelegue(session.getIdNumber()).equals("0"))
-                toolbar.getMenu().getItem(2).setVisible(false);
         }catch (Exception e)
         {
             Log.e("Err",e.getMessage());

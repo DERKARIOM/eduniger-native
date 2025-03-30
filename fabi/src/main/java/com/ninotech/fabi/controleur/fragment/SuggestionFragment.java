@@ -25,6 +25,7 @@ import com.ninotech.fabi.controleur.adapter.ChatAdapter;
 import com.ninotech.fabi.model.data.Arm;
 import com.ninotech.fabi.model.data.Chat;
 import com.ninotech.fabi.R;
+import com.ninotech.fabi.model.data.Server;
 import com.ninotech.fabi.model.table.Session;
 
 import java.io.IOException;
@@ -108,7 +109,7 @@ public class SuggestionFragment extends Fragment {
                     if(mArm.getNumberOfDays() <= 5)
                     {
                         Reservation reservationSyn = new Reservation();
-                        reservationSyn.execute(getString(R.string.ip_server_android) + "Reservation.php",mSession.getIdNumber(),mArm.getId(),String.valueOf(mArm.getNumberOfDays()));
+                        reservationSyn.execute(Server.getIpServerAndroid(getContext()) + "Reservation.php",mSession.getIdNumber(),mArm.getId(),String.valueOf(mArm.getNumberOfDays()));
                     }
                     else
                     {
@@ -116,7 +117,7 @@ public class SuggestionFragment extends Fragment {
                         {
                             mArm.setNumberOfDays(1);
                             Reservation reservationSyn = new Reservation();
-                            reservationSyn.execute(getString(R.string.ip_server_android) + "Reservation.php",mSession.getIdNumber(),mArm.getId(),String.valueOf(mArm.getNumberOfDays()));
+                            reservationSyn.execute(Server.getIpServerAndroid(getContext()) + "Reservation.php",mSession.getIdNumber(),mArm.getId(),String.valueOf(mArm.getNumberOfDays()));
                         }
                         else
                         {

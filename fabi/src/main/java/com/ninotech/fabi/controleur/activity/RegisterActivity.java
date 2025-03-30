@@ -155,7 +155,7 @@ public class RegisterActivity extends AppCompatActivity {
                            mConnectionButton.setText(R.string.register_succes_1111);
                            RegisterSyn registerSyn = new RegisterSyn();
                            registerSyn.execute(
-                                   getResources().getString(R.string.ip_server_android) + "Register.php",
+                                   Server.getIpServerAndroid(getApplicationContext()) + "Register.php",
                                    mAccount.getIdNumber(),
                                    mAccount.getName(),
                                    mAccount.getFirstName(),

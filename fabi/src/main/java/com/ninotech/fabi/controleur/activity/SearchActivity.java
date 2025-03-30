@@ -51,6 +51,7 @@ import com.ninotech.fabi.model.data.LoandBook;
 import com.ninotech.fabi.model.data.LocalBooks;
 import com.ninotech.fabi.model.data.Notification;
 import com.ninotech.fabi.model.data.OnlineBook;
+import com.ninotech.fabi.model.data.Server;
 import com.ninotech.fabi.model.data.Setting;
 import com.ninotech.fabi.model.data.Structure;
 import com.ninotech.fabi.model.data.VoidContainer;
@@ -276,7 +277,7 @@ public class SearchActivity extends AppCompatActivity {
                         mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                         mRecyclerView.setAdapter(noConnectionAdapter);
                         RankingSyn rankingSyn = new RankingSyn();
-                        rankingSyn.execute(getString(R.string.ip_server_android) + "Ranking.php", mSession.getIdNumber());
+                        rankingSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "Ranking.php", mSession.getIdNumber());
                     }catch (Exception e)
                     {
                         Log.e("errRankingFragment",e.getMessage());
@@ -289,7 +290,7 @@ public class SearchActivity extends AppCompatActivity {
             registerReceiver(receiverNoConnectionAdapter, new IntentFilter("BOOKS_SEARCH"),Context.RECEIVER_EXPORTED);
         }
         RankingSyn rankingSyn = new RankingSyn();
-        rankingSyn.execute(getString(R.string.ip_server_android) + "Ranking.php", mSession.getIdNumber());
+        rankingSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "Ranking.php", mSession.getIdNumber());
     }
 
     public void searchStructBook(String idStruct)
@@ -305,7 +306,7 @@ public class SearchActivity extends AppCompatActivity {
                         mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                         mRecyclerView.setAdapter(noConnectionAdapter);
                         StructBookSyn structBookSyn = new StructBookSyn();
-                        structBookSyn.execute(getString(R.string.ip_server_android) + "StructBookMore.php", mSession.getIdNumber(),idStruct);
+                        structBookSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "StructBookMore.php", mSession.getIdNumber(),idStruct);
                     }catch (Exception e)
                     {
                         Log.e("errRankingFragment",e.getMessage());
@@ -318,7 +319,7 @@ public class SearchActivity extends AppCompatActivity {
             registerReceiver(receiverNoConnectionAdapter, new IntentFilter("STRUCT_SEARCH"),Context.RECEIVER_EXPORTED);
         }
         StructBookSyn structBookSyn = new StructBookSyn();
-        structBookSyn.execute(getString(R.string.ip_server_android) + "StructBookMore.php", mSession.getIdNumber(),idStruct);
+        structBookSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "StructBookMore.php", mSession.getIdNumber(),idStruct);
     }
 
     public void searchAuthorBook(String fileSyn , String idAuthor)
@@ -334,7 +335,7 @@ public class SearchActivity extends AppCompatActivity {
                         mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                         mRecyclerView.setAdapter(noConnectionAdapter);
                         AuthorBookSyn authorBookSyn = new AuthorBookSyn();
-                        authorBookSyn.execute(getString(R.string.ip_server_android) + fileSyn, mSession.getIdNumber(),idAuthor);
+                        authorBookSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + fileSyn, mSession.getIdNumber(),idAuthor);
                     }catch (Exception e)
                     {
                         Log.e("errRankingFragment",e.getMessage());
@@ -347,7 +348,7 @@ public class SearchActivity extends AppCompatActivity {
             registerReceiver(receiverNoConnectionAdapter, new IntentFilter("STRUCT_SEARCH"),Context.RECEIVER_EXPORTED);
         }
         AuthorBookSyn authorBookSyn = new AuthorBookSyn();
-        authorBookSyn.execute(getString(R.string.ip_server_android) + fileSyn, mSession.getIdNumber(),idAuthor);
+        authorBookSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + fileSyn, mSession.getIdNumber(),idAuthor);
     }
 
     public void searchOnLineStructure()
@@ -364,9 +365,9 @@ public class SearchActivity extends AppCompatActivity {
                         mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                         mRecyclerView.setAdapter(noConnectionAdapter);
                         StructureSyn structureSyn = new StructureSyn();
-                        structureSyn.execute(getString(R.string.ip_server_android) + "Structure.php", mSession.getIdNumber());
+                        structureSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "Structure.php", mSession.getIdNumber());
                         StructureSyn2 structureSyn2 = new StructureSyn2();
-                        structureSyn2.execute(getString(R.string.ip_server_android) + "Structure2.php", mSession.getIdNumber());
+                        structureSyn2.execute(Server.getIpServerAndroid(getApplicationContext()) + "Structure2.php", mSession.getIdNumber());
                     }catch (Exception e)
                     {
                         Log.e("errRankingFragment",e.getMessage());
@@ -379,9 +380,9 @@ public class SearchActivity extends AppCompatActivity {
             registerReceiver(receiverNoConnectionAdapter, new IntentFilter("STRUCT_SEARCH"),Context.RECEIVER_EXPORTED);
         }
         StructureSyn structureSyn = new StructureSyn();
-        structureSyn.execute(getString(R.string.ip_server_android) + "Structure.php", mSession.getIdNumber());
+        structureSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "Structure.php", mSession.getIdNumber());
         StructureSyn2 structureSyn2 = new StructureSyn2();
-        structureSyn2.execute(getString(R.string.ip_server_android) + "Structure2.php", mSession.getIdNumber());
+        structureSyn2.execute(Server.getIpServerAndroid(getApplicationContext()) + "Structure2.php", mSession.getIdNumber());
     }
     public void searchFabiolaBook()
     {
@@ -396,7 +397,7 @@ public class SearchActivity extends AppCompatActivity {
                         mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                         mRecyclerView.setAdapter(noConnectionAdapter);
                         FabiolaBookSyn fabiolaBookSyn = new FabiolaBookSyn();
-                        fabiolaBookSyn.execute(getString(R.string.ip_server_android) + "FabiolaBook.php", mSession.getIdNumber());
+                        fabiolaBookSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "FabiolaBook.php", mSession.getIdNumber());
                     }catch (Exception e)
                     {
                         Log.e("errRankingFragment",e.getMessage());
@@ -407,7 +408,7 @@ public class SearchActivity extends AppCompatActivity {
         };
         registerReceiver(receiverNoConnectionAdapter, new IntentFilter("RANKING_FRAGMENT"));
         FabiolaBookSyn fabiolaBookSyn = new FabiolaBookSyn();
-        fabiolaBookSyn.execute(getString(R.string.ip_server_android) + "FabiolaBook.php", mSession.getIdNumber());
+        fabiolaBookSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "FabiolaBook.php", mSession.getIdNumber());
     }
     public void onLineBookSwitchCategory(String category)
     {
@@ -422,7 +423,7 @@ public class SearchActivity extends AppCompatActivity {
                         mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                         mRecyclerView.setAdapter(noConnectionAdapter);
                         CategoryInSyn categoryInSyn = new CategoryInSyn();
-                        categoryInSyn.execute(getString(R.string.ip_server_android) + "CategoryIn.php",mSession.getIdNumber(),category);
+                        categoryInSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "CategoryIn.php",mSession.getIdNumber(),category);
                     }catch (Exception e)
                     {
                         Log.e("errRankingFragment",e.getMessage());
@@ -433,7 +434,7 @@ public class SearchActivity extends AppCompatActivity {
         };
         registerReceiver(receiverNoConnectionAdapter, new IntentFilter("CATEGORY_ACTIVITY"));
         CategoryInSyn categoryInSyn = new CategoryInSyn();
-        categoryInSyn.execute(getString(R.string.ip_server_android) + "CategoryIn.php",mSession.getIdNumber(),category);
+        categoryInSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "CategoryIn.php",mSession.getIdNumber(),category);
     }
 
     private class RankingSyn extends AsyncTask<String,Void,String> {
@@ -1270,7 +1271,7 @@ public class SearchActivity extends AppCompatActivity {
                         mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                         mRecyclerView.setAdapter(noConnectionAdapter);
                         AuthorSyn authorSyn = new AuthorSyn();
-                        authorSyn.execute(getString(R.string.ip_server_android) + "Author.php", mSession.getIdNumber());
+                        authorSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "Author.php", mSession.getIdNumber());
                     }catch (Exception e)
                     {
                         Log.e("errRankingFragment",e.getMessage());
@@ -1283,7 +1284,7 @@ public class SearchActivity extends AppCompatActivity {
             registerReceiver(receiverNoConnectionAdapter, new IntentFilter("AUTHOR_SEARCH"),Context.RECEIVER_EXPORTED);
         }
         AuthorSyn authorSyn = new AuthorSyn();
-        authorSyn.execute(getString(R.string.ip_server_android) + "Author.php", mSession.getIdNumber());
+        authorSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "Author.php", mSession.getIdNumber());
     }
     public boolean isExistsS(ArrayList<Structure> structures , String id)
     {

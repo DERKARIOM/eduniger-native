@@ -84,9 +84,9 @@ public class AuthorActivity extends AppCompatActivity {
                         mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                         mWaitRecyclerView.setAdapter(noConnectionAdapter);
                         AuthorBookSyn authorBookSyn = new AuthorBookSyn();
-                        authorBookSyn.execute(getString(R.string.ip_server_android) + "AuthorBook.php",mSession.getIdNumber(),mAuthor.getIdNumber());
+                        authorBookSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "AuthorBook.php",mSession.getIdNumber(),mAuthor.getIdNumber());
                         AuthorSyn authorSyn = new AuthorSyn();
-                        authorSyn.execute(getString(R.string.ip_server_android) + "AuthorSimular.php", mAuthor.getIdNumber());
+                        authorSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "AuthorSimular.php", mAuthor.getIdNumber());
                     }catch (Exception e)
                     {
                         Log.e("errRankingFragment",e.getMessage());
@@ -143,9 +143,9 @@ public class AuthorActivity extends AppCompatActivity {
         mUsernameTextView.setText(mAuthor.getFirstName() + " " + mAuthor.getName());
         mProfessionTextView.setText(mAuthor.getProfession());
         AuthorBookSyn authorBookSyn = new AuthorBookSyn();
-        authorBookSyn.execute(getString(R.string.ip_server_android) + "AuthorBook.php",mSession.getIdNumber(),mAuthor.getIdNumber());
+        authorBookSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "AuthorBook.php",mSession.getIdNumber(),mAuthor.getIdNumber());
         AuthorSyn authorSyn = new AuthorSyn();
-        authorSyn.execute(getString(R.string.ip_server_android) + "AuthorSimular.php", mAuthor.getIdNumber());
+        authorSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "AuthorSimular.php", mAuthor.getIdNumber());
     }
     private class AuthorBookSyn extends AsyncTask<String,Void,String> {
         @Override
