@@ -302,7 +302,7 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.MyViewHo
                         switch (label)
                         {
                             case "Nom":
-                                mUpdate = new Update(mSession.getIdNumber(),"nameUs",editText.getText().toString());
+                                mUpdate = new Update(mSession.getIdNumber(),"nameUser",editText.getText().toString());
                                 updateDate(mSession.getIdNumber(),"name",editText.getText().toString());
                                 break;
                             case "Prénom":
