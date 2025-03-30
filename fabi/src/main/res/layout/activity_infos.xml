@@ -15,11 +15,11 @@
 
         <ImageView
             android:id="@+id/ninotech"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
+            android:layout_width="130dp"
+            android:layout_height="130dp"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="20dp"
-            android:src="@drawable/img_default_book" />
+            android:src="@mipmap/ic_v2" />
         <ImageView
             android:layout_below="@id/ninotech"
             android:layout_width="200dp"
@@ -32,7 +32,7 @@
         android:id="@+id/annee"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="2024-2025 Fabi"
+        android:text="2024-2025 EduNiger"
         android:layout_below="@id/iconifos"
         android:layout_centerHorizontal="true"
         />
@@ -64,7 +64,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/iconifos"
         android:layout_centerHorizontal="true"
-        android:text="Version 1.0.0 Beta"
+        android:text="Version 2.0.0 Beta"
         />
     <TextView
         android:id="@+id/nameapp"
@@ -72,7 +72,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/version"
         android:textSize="40dp"
-        android:text="Fabi"
+        android:text="EduNiger"
         android:fontFamily="@font/apple1"
         android:layout_centerHorizontal="true"
         />

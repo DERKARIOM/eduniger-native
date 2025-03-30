@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +21,8 @@ import com.pspdfkit.configuration.settings.SettingsMenuItemType;
 import com.pspdfkit.configuration.sharing.ShareFeatures;
 import com.pspdfkit.ui.PdfActivity;
 
+import org.w3c.dom.Text;
+
 import java.io.File;
 import java.util.EnumSet;
 
@@ -32,7 +35,8 @@ public class InfosActivity extends AppCompatActivity {
         setContentView(R.layout.activity_infos);
         getSupportActionBar().hide();
         mButton = findViewById(R.id.licence);
-        mElectronicTable = new ElectronicTable(this);
+        TextView versionTextView = findViewById(R.id.version);
+        versionTextView.setText("Version " + getString(R.string.app_version));
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -42,5 +46,4 @@ public class InfosActivity extends AppCompatActivity {
             }
         });
     }
-    private ElectronicTable mElectronicTable;
 }
