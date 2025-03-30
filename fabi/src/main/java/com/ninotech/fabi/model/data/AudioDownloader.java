@@ -76,25 +76,25 @@ public class AudioDownloader extends AsyncTask<String, Integer, AudioBook> {
         try {
             // Télécharger les fichiers avec progression
             audioBook.setCover(downloadFile.start(
-                    mContext.getString(R.string.ip_server) + "ressources/cover/" + names[0],
+                    Server.getIpServer(mContext) + "ressources/cover/" + names[0],
                     names[0],
                     progress -> publishProgress(progress)
             ));
 
             audioBook.setCoverCategory(downloadFile.start(
-                    mContext.getString(R.string.ip_server) + "ressources/cover/" + names[2],
+                    Server.getIpServer(mContext) + "ressources/cover/" + names[2],
                     names[2],
                     progress -> publishProgress(progress)
             ));
 
             audioBook.setProfileAuthor(downloadFile.start(
-                    mContext.getString(R.string.ip_server) + "ressources/profile/" + names[3],
+                    Server.getIpServer(mContext) + "ressources/profile/" + names[3],
                     names[3],
                     progress -> publishProgress(progress)
             ));
 
             audioBook.setAudio(downloadFile.start(
-                    mContext.getString(R.string.ip_server) + "ressources/audio/" + names[4],
+                    Server.getIpServer(mContext) + "ressources/audio/" + names[4],
                     names[4],
                     progress -> publishProgress(progress)
             ));

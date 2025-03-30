@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.activity.CategoryActivity;
 import com.ninotech.fabi.model.data.Category;
+import com.ninotech.fabi.model.data.Server;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -88,7 +89,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyView
         }
         void display(Category category){
             Picasso.get()
-                    .load(itemView.getResources().getString(R.string.ip_server) + "ressources/cover/" + category.getCover())
+                    .load(Server.getIpServer(itemView.getContext()) + "ressources/cover/" + category.getCover())
                     .placeholder(R.drawable.img_default_book)
                     .error(R.drawable.img_default_book)
                     .into(mBlanketImageView);

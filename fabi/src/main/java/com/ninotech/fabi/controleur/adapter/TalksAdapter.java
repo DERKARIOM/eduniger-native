@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
+import com.ninotech.fabi.model.data.Server;
 import com.ninotech.fabi.model.data.Talks;
 import com.squareup.picasso.Picasso;
 
@@ -84,7 +85,7 @@ public class TalksAdapter extends RecyclerView.Adapter<TalksAdapter.MyViewHolder
         }
         void display(Talks talks){
             Picasso.get()
-                    .load(itemView.getResources().getString(R.string.ip_server) + "ressources/profile/" + talks.getProfil())
+                    .load(Server.getIpServer(itemView.getContext()) + "ressources/profile/" + talks.getProfil())
                     .placeholder(R.drawable.user)
                     .error(R.drawable.user)
                     .transform(new RoundedTransformation(1000,4))

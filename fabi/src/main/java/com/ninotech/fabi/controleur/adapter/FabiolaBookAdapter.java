@@ -15,6 +15,7 @@ import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.activity.BookActivity;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
 import com.ninotech.fabi.model.data.OnlineBook;
+import com.ninotech.fabi.model.data.Server;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -101,7 +102,7 @@ public class FabiolaBookAdapter extends RecyclerView.Adapter<FabiolaBookAdapter.
         }
         void display(OnlineBook onlineBook){
             Picasso.get()
-                    .load(itemView.getResources().getString(R.string.ip_server) + "ressources/cover/" + onlineBook.getCover())
+                    .load(Server.getIpServer(itemView.getContext()) + "ressources/cover/" + onlineBook.getCover())
                     .placeholder(R.drawable.img_default_book)
                     .error(R.drawable.img_default_book)
                     .transform(new RoundedTransformation(15,4))

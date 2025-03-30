@@ -37,6 +37,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.ninotech.fabi.controleur.activity.AccountActivity;
 import com.ninotech.fabi.controleur.activity.ChangePasswordActivity;
 import com.ninotech.fabi.controleur.activity.LoginActivity;
+import com.ninotech.fabi.controleur.activity.ServerActivity;
 import com.ninotech.fabi.controleur.dialog.EvaluezVousDialog;
 import com.ninotech.fabi.controleur.activity.FingerPrintActivity;
 import com.ninotech.fabi.controleur.activity.InfosActivity;
@@ -223,6 +224,10 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.MyViewHo
                             case "Empreinte digitale":
                                 Intent emreinte = new Intent(itemView.getContext(), FingerPrintActivity.class);
                                 itemView.getContext().startActivity(emreinte);
+                                break;
+                            case "Serveur connecté":
+                                Intent serverIntent = new Intent(itemView.getContext(), ServerActivity.class);
+                                itemView.getContext().startActivity(serverIntent);
                                 break;
                             case "Nom":
                                 oneEditTextDialog(setting.getTitle(),setting.getSubTitle(),InputType.TYPE_CLASS_TEXT,"Entrer votre nom");

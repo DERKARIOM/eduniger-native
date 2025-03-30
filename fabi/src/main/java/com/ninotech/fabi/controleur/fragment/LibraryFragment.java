@@ -25,6 +25,7 @@ import com.ninotech.fabi.controleur.adapter.ElectronicAdapter;
 import com.ninotech.fabi.controleur.adapter.RecentAdapter;
 import com.ninotech.fabi.model.data.Library;
 import com.ninotech.fabi.model.data.LocalBooks;
+import com.ninotech.fabi.model.data.Server;
 import com.ninotech.fabi.model.table.AudioTable;
 import com.ninotech.fabi.model.table.ElectronicTable;
 import com.ninotech.fabi.model.table.LoandTable;
@@ -191,7 +192,7 @@ public class LibraryFragment extends Fragment {
         startActivityForResult(galleryIntent, REQUEST_IMAGE_GALLERY);
     }
     private void uploadImage(File imageFile) {
-        String serverUrl = getString(R.string.ip_server) + "ressources/uploadProfile.php"; // Remplace par ton URL de serveur
+        String serverUrl = Server.getIpServer(getContext()) + "ressources/uploadProfile.php"; // Remplace par ton URL de serveur
 
         OkHttpClient client = new OkHttpClient();
 

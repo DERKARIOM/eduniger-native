@@ -24,6 +24,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.ninotech.fabi.model.data.PasswordUtil;
+import com.ninotech.fabi.model.data.Server;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -248,7 +249,7 @@ public class LoginActivity extends AppCompatActivity {
         installer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String url = getString(R.string.ip_server); // Remplacez ceci par l'URL que vous souhaitez ouvrir
+                String url = Server.getIpServer(getApplicationContext()); // Remplacez ceci par l'URL que vous souhaitez ouvrir
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                 startActivity(intent);
             }

@@ -40,6 +40,7 @@ import com.ninotech.fabi.model.data.Author;
 import com.ninotech.fabi.model.data.Connection;
 import com.ninotech.fabi.model.data.OnlineBook;
 import com.ninotech.fabi.model.data.PasswordUtil;
+import com.ninotech.fabi.model.data.Server;
 import com.ninotech.fabi.model.data.Structure;
 import com.ninotech.fabi.model.table.Session;
 import com.squareup.picasso.Picasso;
@@ -229,7 +230,7 @@ public class StructureActivity extends AppCompatActivity {
             }
         });
         Picasso.get()
-                .load(getString(R.string.ip_server) + "ressources/baniere/" + mStructure.getBanner())
+                .load(Server.getIpServer(getApplicationContext()) + "ressources/baniere/" + mStructure.getBanner())
                 .transform(new RoundedTransformation(200,10))
                 .resize(6200,2222)
                 .placeholder(R.drawable.img_wait_banner)
@@ -237,7 +238,7 @@ public class StructureActivity extends AppCompatActivity {
                 .into(mWelcomeImageView);
         mWelcomeImageView.setVisibility(View.VISIBLE);
         Picasso.get()
-                .load(getResources().getString(R.string.ip_server) + "ressources/cover/" + mStructure.getCover())
+                .load(Server.getIpServer(getApplicationContext()) + "ressources/cover/" + mStructure.getCover())
                 .placeholder(R.drawable.img_wait_struct)
                 .error(R.drawable.img_default_book)
                 .transform(new RoundedTransformation(1000,4))

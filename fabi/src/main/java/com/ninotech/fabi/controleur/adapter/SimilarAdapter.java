@@ -12,6 +12,7 @@ import com.ninotech.fabi.controleur.activity.BookActivity;
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
 import com.ninotech.fabi.model.data.LocalBooks;
+import com.ninotech.fabi.model.data.Server;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
@@ -63,7 +64,7 @@ public class SimilarAdapter extends RecyclerView.Adapter<SimilarAdapter.MyViewHo
 
         void display(LocalBooks localBooks) throws SQLException, IOException {
             Picasso.get()
-                    .load(itemView.getContext().getString(R.string.ip_server) + "ressources/cover/"  + localBooks.getCover())
+                    .load(Server.getIpServer(itemView.getContext()) + "ressources/cover/"  + localBooks.getCover())
                     .placeholder(R.drawable.img_default_book)
                     .error(R.drawable.img_default_book)
                     .transform(new RoundedTransformation(15,4))

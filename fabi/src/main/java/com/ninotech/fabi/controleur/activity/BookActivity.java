@@ -48,6 +48,7 @@ import com.ninotech.fabi.model.data.Chat;
 import com.ninotech.fabi.model.data.Connection;
 import com.ninotech.fabi.model.data.ElectronicDownloader;
 import com.ninotech.fabi.model.data.PasswordUtil;
+import com.ninotech.fabi.model.data.Server;
 import com.ninotech.fabi.model.data.Talks;
 import com.ninotech.fabi.model.table.AudioTable;
 import com.ninotech.fabi.model.table.ElectronicTable;
@@ -495,7 +496,7 @@ public class BookActivity extends AppCompatActivity {
                     mCategory = new Category(jsonObject.getString("categoryBlanket"),jsonObject.getString("categoryTitle"));
                     mAuthor = new Author(jsonObject.getString("idAuthor"),jsonObject.getString("name"),jsonObject.getString("firstName"),jsonObject.getString("profile"),jsonObject.getString("profession"));
                     Picasso.get()
-                            .load(getString(R.string.ip_server) + "ressources/cover/" + mOnlineBook.getCover())
+                            .load(Server.getIpServer(getApplicationContext()) + "ressources/cover/" + mOnlineBook.getCover())
                             .placeholder(R.drawable.img_wait_cover_book)
                             .error(R.drawable.img_wait_cover_book)
                             .transform(new RoundedTransformation(15,4))
@@ -1156,7 +1157,7 @@ public class BookActivity extends AppCompatActivity {
                         audioButton.setEnabled(false);
                         audioButton.setText("Bientôt");
                     }
-                    url = getString(R.string.ip_server) + "ressources/audio/" + mTones.getAudio();
+                    url = Server.getIpServer(getApplicationContext()) + "ressources/audio/" + mTones.getAudio();
                     try {
                         mMediaPlayer.setDataSource(url);
                         mMediaPlayer.prepare();

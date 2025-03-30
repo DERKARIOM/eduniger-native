@@ -65,25 +65,25 @@ public class ElectronicDownloader extends AsyncTask<String, Integer, ElectronicB
         try {
             // Télécharger les fichiers avec progression
             electronicBook.setCover(downloadFile.start(
-                    mContext.getString(R.string.ip_server) + "ressources/cover/" + names[0],
+                    Server.getIpServer(mContext) + "ressources/cover/" + names[0],
                     names[0],
                     progress -> publishProgress(progress)
             ));
 
             electronicBook.setPdf(downloadFile.start(
-                    mContext.getString(R.string.ip_server) + "ressources/pdf/" + names[1],
+                    Server.getIpServer(mContext) + "ressources/pdf/" + names[1],
                     names[1],
                     progress -> publishProgress(progress)
             ));
 
             electronicBook.setCoverCategory(downloadFile.start(
-                    mContext.getString(R.string.ip_server) + "ressources/cover/" + names[2],
+                    Server.getIpServer(mContext) + "ressources/cover/" + names[2],
                     names[2],
                     progress -> publishProgress(progress)
             ));
 
             electronicBook.setProfileAuthor(downloadFile.start(
-                    mContext.getString(R.string.ip_server) + "ressources/profile/" + names[3],
+                    Server.getIpServer(mContext) + "ressources/profile/" + names[3],
                     names[3],
                     progress -> publishProgress(progress)
             ));

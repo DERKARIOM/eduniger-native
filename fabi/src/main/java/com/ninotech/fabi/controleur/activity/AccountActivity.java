@@ -28,6 +28,7 @@ import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.adapter.SettingAdapter;
 import com.ninotech.fabi.controleur.adapter.StatusBarAdapter;
 import com.ninotech.fabi.model.data.Account;
+import com.ninotech.fabi.model.data.Server;
 import com.ninotech.fabi.model.data.Setting;
 import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.model.table.UserTable;
@@ -186,7 +187,7 @@ public class AccountActivity extends AppCompatActivity {
         }
     }
     private void uploadImage(File imageFile) {
-        String serverUrl = getString(R.string.ip_server) + "ressources/uploadProfile.php"; // Remplace par ton URL de serveur
+        String serverUrl = Server.getIpServer(getApplicationContext()) + "ressources/uploadProfile.php"; // Remplace par ton URL de serveur
 
         OkHttpClient client = new OkHttpClient();
 

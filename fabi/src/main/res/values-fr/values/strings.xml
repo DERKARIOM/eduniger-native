@@ -2,6 +2,7 @@
     <string name="app_name">fabi</string>
     <string name="app_version">2.0.1</string>
     <string name="ip_server_android">http://192.168.1.25:2222/fabi/android/</string>
+    -->
     <string name="ip_server">http://192.168.1.25:2222/fabi/</string>
     <string name="ip_server_android2">https://telesafe.net/fabi/android/</string>
     <string name="ip_server2">https://telesafe.net/fabi/</string>
@@ -273,6 +274,5 @@
     <string name="title_activity_test">TestActivity</string>
     <string name="tab_text_1">Tab 1</string>
     <string name="tab_text_2">Tab 2</string>
-    <string name="changer_de_serveur">Changer de serveur 1</string>
 
 </resources>

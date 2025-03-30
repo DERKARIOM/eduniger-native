@@ -32,6 +32,7 @@ import com.ninotech.fabi.model.data.Author;
 import com.ninotech.fabi.model.data.Connection;
 import com.ninotech.fabi.model.data.Library;
 import com.ninotech.fabi.model.data.OnlineBook;
+import com.ninotech.fabi.model.data.Server;
 import com.ninotech.fabi.model.data.VoidContainer;
 import com.ninotech.fabi.model.table.Session;
 import com.squareup.picasso.Picasso;
@@ -133,7 +134,7 @@ public class AuthorActivity extends AppCompatActivity {
             }
         });
         Picasso.get()
-                .load(getString(R.string.ip_server) + "ressources/profile/" + mAuthor.getProfile())
+                .load(Server.getIpServer(getApplicationContext()) + "ressources/profile/" + mAuthor.getProfile())
                 .placeholder(R.drawable.img_wait_profile)
                 .error(R.drawable.img_wait_profile)
                 .transform(new RoundedTransformation(1000,4))

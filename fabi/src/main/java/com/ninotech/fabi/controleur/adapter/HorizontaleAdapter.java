@@ -15,6 +15,7 @@ import com.ninotech.fabi.controleur.activity.BookActivity;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
 import com.ninotech.fabi.model.data.Book;
 import com.ninotech.fabi.model.data.OnlineBook;
+import com.ninotech.fabi.model.data.Server;
 import com.ninotech.fabi.model.data.Structure;
 import com.squareup.picasso.Picasso;
 
@@ -66,7 +67,7 @@ public class HorizontaleAdapter extends RecyclerView.Adapter<HorizontaleAdapter.
 
         void display(Book book) throws SQLException, IOException {
             Picasso.get()
-                    .load(itemView.getContext().getString(R.string.ip_server) + "ressources/cover/"  + book.getCover())
+                    .load(Server.getIpServer(itemView.getContext()) + "ressources/cover/"  + book.getCover())
                     .placeholder(R.drawable.img_wait_cover_book)
                     .error(R.drawable.img_wait_cover_book)
                     .transform(new RoundedTransformation(15,4))

@@ -25,6 +25,7 @@ import com.ninotech.fabi.controleur.animation.RoundedTransformation;
 import com.ninotech.fabi.controleur.dialog.SimpleOkDialog;
 import com.ninotech.fabi.controleur.dialog.StructDeleteDialog;
 import com.ninotech.fabi.model.data.PasswordUtil;
+import com.ninotech.fabi.model.data.Server;
 import com.ninotech.fabi.model.data.Structure;
 import com.ninotech.fabi.model.table.Session;
 import com.squareup.picasso.Picasso;
@@ -116,7 +117,7 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
         }
         void display(Structure structure){
             Picasso.get()
-                    .load(itemView.getResources().getString(R.string.ip_server) + "ressources/cover/" + structure.getCover())
+                    .load(Server.getIpServer(itemView.getContext()) + "ressources/cover/" + structure.getCover())
                     .placeholder(R.drawable.img_wait_struct)
                     .error(R.drawable.img_wait_struct)
                     .transform(new RoundedTransformation(1000,4))

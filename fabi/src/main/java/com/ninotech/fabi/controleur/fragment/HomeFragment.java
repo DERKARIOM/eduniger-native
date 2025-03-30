@@ -37,6 +37,7 @@ import com.ninotech.fabi.model.data.Author;
 import com.ninotech.fabi.model.data.OnlineBook;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
 import com.ninotech.fabi.model.data.Connection;
+import com.ninotech.fabi.model.data.Server;
 import com.ninotech.fabi.model.data.Structure;
 import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.R;
@@ -86,13 +87,13 @@ public class HomeFragment extends Fragment {
                         mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                         mWaitRecyclerView.setAdapter(noConnectionAdapter);
                         RecommendedSyn recommendedSyn = new RecommendedSyn();
-                        recommendedSyn.execute(getString(R.string.ip_server_android) + "Recommended.php", session.getIdNumber(),getString(R.string.app_version));
+                        recommendedSyn.execute(Server.getIpServerAndroid(context) + "Recommended.php", session.getIdNumber(),getString(R.string.app_version));
                         StructureSyn structureSyn = new StructureSyn();
-                        structureSyn.execute(getString(R.string.ip_server_android) + "Structure.php", session.getIdNumber());
+                        structureSyn.execute(Server.getIpServerAndroid(context) + "Structure.php", session.getIdNumber());
                         StructureSyn2 structureSyn2 = new StructureSyn2();
-                        structureSyn2.execute(getString(R.string.ip_server_android) + "StructureTop.php", session.getIdNumber());
+                        structureSyn2.execute(Server.getIpServerAndroid(context) + "StructureTop.php", session.getIdNumber());
                         AuthorSyn authorSyn = new AuthorSyn();
-                        authorSyn.execute(getString(R.string.ip_server_android) + "AuthorTop.php", session.getIdNumber());
+                        authorSyn.execute(Server.getIpServerAndroid(context) + "AuthorTop.php", session.getIdNumber());
                     } catch (Exception e) {
                         Log.e("errRecommendedFragment", e.getMessage());
                     }
@@ -152,13 +153,13 @@ public class HomeFragment extends Fragment {
         if (mAccount.isSession(getContext()))
         {
             RecommendedSyn recommendedSyn = new RecommendedSyn();
-            recommendedSyn.execute(getString(R.string.ip_server_android) + "Recommended.php", session.getIdNumber(),getString(R.string.app_version));
+            recommendedSyn.execute(Server.getIpServerAndroid(getContext()) + "Recommended.php", session.getIdNumber(),getString(R.string.app_version));
             StructureSyn structureSyn = new StructureSyn();
-            structureSyn.execute(getString(R.string.ip_server_android) + "Structure.php", session.getIdNumber());
+            structureSyn.execute(Server.getIpServerAndroid(getContext()) + "Structure.php", session.getIdNumber());
             StructureSyn2 structureSyn2 = new StructureSyn2();
-            structureSyn2.execute(getString(R.string.ip_server_android) + "Structure2.php", session.getIdNumber());
+            structureSyn2.execute(Server.getIpServerAndroid(getContext()) + "Structure2.php", session.getIdNumber());
             AuthorSyn authorSyn = new AuthorSyn();
-            authorSyn.execute(getString(R.string.ip_server_android) + "AuthorTop.php", session.getIdNumber());
+            authorSyn.execute(Server.getIpServerAndroid(getContext()) + "AuthorTop.php", session.getIdNumber());
         }
         return view;
     }
@@ -199,7 +200,7 @@ public class HomeFragment extends Fragment {
                 if (isAdded())
                 {
                     Picasso.get()
-                            .load(getString(R.string.ip_server) + "ressources/pub/p4.png")
+                            .load(Server.getIpServer(getContext()) + "ressources/pub/p4.png")
                             .transform(new RoundedTransformation(200,10))
                             .resize(6200,3333)
                             .placeholder(R.drawable.img_wait_pub)
@@ -266,7 +267,7 @@ public class HomeFragment extends Fragment {
             installer.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    String url = getString(R.string.ip_server); // Remplacez ceci par l'URL que vous souhaitez ouvrir
+                    String url = Server.getIpServer(getContext()); // Remplacez ceci par l'URL que vous souhaitez ouvrir
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                     startActivity(intent);
                 }
