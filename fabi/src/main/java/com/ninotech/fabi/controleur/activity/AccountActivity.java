@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.Nullable;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -14,7 +15,6 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -33,7 +33,18 @@ import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.model.table.UserTable;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+
+import okhttp3.Call;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class AccountActivity extends AppCompatActivity {
 
@@ -49,8 +60,8 @@ public class AccountActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         RecyclerView mSettingRecyclerView = findViewById(R.id.recycler_view_setting_account);
         mUserTable = new UserTable(getApplicationContext());
-        Session session = new Session(getApplicationContext());
-        Cursor userCursor = mUserTable.getData(session.getIdNumber());
+        mSession = new Session(getApplicationContext());
+        Cursor userCursor = mUserTable.getData(mSession.getIdNumber());
         userCursor.moveToFirst();
         Account account = new Account(userCursor.getString(0),userCursor.getString(1),userCursor.getString(2),userCursor.getString(3),userCursor.getString(4),userCursor.getBlob(6),1);
         ArrayList<Setting> settings = new ArrayList<>();
@@ -109,7 +120,7 @@ public class AccountActivity extends AppCompatActivity {
             try {
                 // Récupération de l'image sélectionnée depuis la galerie
                 Bitmap imageBitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
-
+                mImageFile = convertBitmapToFile(imageBitmap);
                 // Compression de l'image
                 byte[] compressedImageBytes = compressImage(imageBitmap);
                 // Affichage de l'image compressée
@@ -118,11 +129,15 @@ public class AccountActivity extends AppCompatActivity {
                         .apply(RequestOptions.circleCropTransform())
                         .into(mPhotoImageView);
                 mUserTable.setPhoto(compressedImageBytes);
+                if(mImageFile != null)
+                {
+                    uploadImage(mImageFile);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
                 Toast.makeText(getApplicationContext(), "Erreur lors du chargement de l'image." + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
-        } else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+        } else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode ==RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
 
@@ -135,6 +150,21 @@ public class AccountActivity extends AppCompatActivity {
                     .apply(RequestOptions.circleCropTransform())
                     .into(mPhotoImageView);
         }
+    }
+    private File convertBitmapToFile(Bitmap bitmap) throws IOException {
+        File file = new File(getCacheDir(),mSession.getIdNumber() + ".png");
+        file.createNewFile();
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+        byte[] bitmapData = bos.toByteArray();
+
+        FileOutputStream fos = new FileOutputStream(file);
+        fos.write(bitmapData);
+        fos.flush();
+        fos.close();
+
+        return file;
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -155,9 +185,44 @@ public class AccountActivity extends AppCompatActivity {
             return false;
         }
     }
+    private void uploadImage(File imageFile) {
+        String serverUrl = getString(R.string.ip_server) + "ressources/uploadProfile.php"; // Remplace par ton URL de serveur
+
+        OkHttpClient client = new OkHttpClient();
+
+        RequestBody requestBody = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("image", imageFile.getName(),
+                        RequestBody.create(MediaType.parse("image/jpeg"), imageFile))
+                .build();
+
+        Request request = new Request.Builder()
+                .url(serverUrl)
+                .post(requestBody)
+                .build();
+
+        client.newCall(request).enqueue(new okhttp3.Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+             runOnUiThread(() -> Toast.makeText(getApplicationContext(), "Échec de l'upload : " + e.getMessage(), Toast.LENGTH_SHORT).show());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    runOnUiThread(() -> Toast.makeText(getApplicationContext(), "Image téléversée avec succès " + response.toString(), Toast.LENGTH_SHORT).show());
+                } else {
+                    runOnUiThread(() -> Toast.makeText(getApplicationContext(), "Erreur lors de l'upload " + response.toString(), Toast.LENGTH_SHORT).show());
+                }
+            }
+        });
+    }
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_IMAGE_GALLERY = 2;
     private RelativeLayout mPhotoRelativeLayout;
     private ImageView mPhotoImageView;
     private UserTable mUserTable;
+    private File mImageFile;
+    private Session mSession;
 }
