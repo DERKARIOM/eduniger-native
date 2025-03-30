@@ -43,6 +43,7 @@ import com.ninotech.fabi.controleur.activity.SuggestionActivity;
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.dialog.OneEditTextDialog;
 import com.ninotech.fabi.controleur.dialog.SimpleOkDialog;
+import com.ninotech.fabi.model.data.PasswordUtil;
 import com.ninotech.fabi.model.data.Setting;
 import com.ninotech.fabi.model.data.Update;
 import com.ninotech.fabi.model.table.Session;
@@ -309,13 +310,9 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.MyViewHo
                                 mUpdate = new Update(mSession.getIdNumber(),"firstNameUser",editText.getText().toString());
                                 updateDate(mSession.getIdNumber(),"firstName",editText.getText().toString());
                                 break;
-                            case "Numéro de confiance":
-                                mUpdate = new Update(mSession.getIdNumber(),"trustNumberUs",editText.getText().toString());
-                                updateDate(mSession.getIdNumber(),"trustNumber",editText.getText().toString());
-                                break;
                             case "Modifier le mot de passe":
-                                mUpdate = new Update(mSession.getIdNumber(),"passwordUs",editText.getText().toString());
-                                updateDate(mSession.getIdNumber(),"password",editText.getText().toString());
+                                mUpdate = new Update(mSession.getIdNumber(),"password", PasswordUtil.hashPassword(editText.getText().toString()));
+                                updateDate(mSession.getIdNumber(),"password",PasswordUtil.hashPassword(editText.getText().toString()));
                                 break;
                             case "Email":
                                 mUpdate = new Update(mSession.getIdNumber(),"emailUs",editText.getText().toString());

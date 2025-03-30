@@ -183,8 +183,8 @@ public class LoginActivity extends AppCompatActivity {
                             R.drawable.forme_white_radius_100dp_border_rouge,
                             R.string.incorrect_password
                     );
-                    mHelperTextView.setText(R.string.forgot_password);
-                    mHelperTextView.setTextColor(Color.parseColor("#E6FD1010"));
+                  //  mHelperTextView.setText(R.string.forgot_password);
+//                    mHelperTextView.setTextColor(Color.parseColor("#E6FD1010"));
                     mConnectionProgressBar.setVisibility(View.INVISIBLE);
                     break;
                 case "update":
