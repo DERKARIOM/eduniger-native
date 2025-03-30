@@ -24,6 +24,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import com.ninotech.fabi.controleur.adapter.StatusBarAdapter;
 import com.ninotech.fabi.controleur.dialog.DigitalPrintConfirmDialog;
 import com.ninotech.fabi.model.table.DigitalPrintTable;
 import com.ninotech.fabi.controleur.dialog.SucceSuggesionDialog;
@@ -47,8 +48,8 @@ public class FingerPrintActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_finger_print);
-        Objects.requireNonNull(getSupportActionBar()).hide();
-        //StatusBarCusto statusBarCusto = new StatusBarCusto(this,getWindow());
+        StatusBarAdapter statusBarAdapter = new StatusBarAdapter(this,getWindow());
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         mDb = openOrCreateDatabase("data.db",MODE_PRIVATE,null);
         mDigitalPrintTable = new DigitalPrintTable(this);
         mSwitch = findViewById(R.id.switch1);

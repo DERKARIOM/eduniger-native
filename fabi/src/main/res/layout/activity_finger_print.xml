@@ -6,21 +6,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="com.ninotech.fabi.controleur.activity.FingerPrintActivity">
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbarEmprint"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        app:logo="@drawable/vector_back"
-        app:title="Verrouillage par empreinte digitale"
-        android:layout_centerVertical="true"
-        app:titleMarginStart="15dp"
-        android:paddingStart="20dp"
-        app:titleTextColor="@color/black3"
-        android:layout_alignParentTop="true"
-        app:titleTextAppearance="@style/toolbar"
-        />
-
     <Switch
         android:id="@+id/switch1"
         android:layout_width="match_parent"
@@ -32,7 +17,6 @@
         android:layout_marginTop="15dp"
         android:text="Déverrouiller avec l'empreinte"
         android:layout_marginBottom="5dp"
-        android:layout_below="@+id/toolbarEmprint"
         android:textSize="20dp" />
 
     <TextView
