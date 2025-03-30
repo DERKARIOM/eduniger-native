@@ -1,25 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:gravity="center"
-    android:padding="16dp"
-    tools:context=".controleur.activity.ServerActivity">
+    tools:context="com.ninotech.fabi.controleur.activity.ServerActivity">
+    <Switch
+        android:id="@+id/switch_activity_server"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/linux2"
+        android:showText="false"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginTop="15dp"
+        android:text="Mode multi serveurs"
+        android:layout_marginBottom="5dp"
+        android:textSize="20dp" />
 
     <TextView
-        android:id="@+id/tv_language"
+        android:id="@+id/text_view_activity_server_desc_muti_server"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/changer_de_serveur"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:paddingBottom="10dp"/>
+        android:text="Lorsque cette option sera activée, vous pouvez sybchroniser les données de plusieurs serveurs."
+        android:layout_marginStart="12dp"
+        android:fontFamily="@font/linux2"
+        android:textSize="15dp"
+        android:layout_marginEnd="10dp"
+        android:layout_below="@+id/switch_activity_server"
+        />
 
-    <Spinner
-        android:id="@+id/spinner_language"
+    <RadioGroup
+        android:id="@+id/radio_group_activity_server"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_below="@+id/text_view_activity_server_desc_muti_server"
+        android:layout_marginStart="8dp">
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/text_view_activity_server_select"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Choisir un serveur de synchronisation"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginStart="10dp"
+            android:textSize="20dp"
+            android:fontFamily="@font/linux"
+            android:textColor="@color/black"
+            />
+
+        <RadioButton
+            android:id="@+id/radio_button_activity_server_inetrnet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:checked="true"
+            android:text="BlueHost (Internet)" />
+
+        <RadioButton
+            android:layout_marginStart="10dp"
+            android:id="@+id/radio_button_activity_server_extranet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="DevHost (Extranet)" />
+
+        <RadioButton
+            android:id="@+id/radioButton3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="Autre" />
+    </RadioGroup>
+
+</RelativeLayout>
