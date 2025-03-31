@@ -36,6 +36,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.ninotech.fabi.controleur.activity.AccountActivity;
 import com.ninotech.fabi.controleur.activity.ChangePasswordActivity;
+import com.ninotech.fabi.controleur.activity.ContactActivity;
 import com.ninotech.fabi.controleur.activity.LoginActivity;
 import com.ninotech.fabi.controleur.activity.ServerActivity;
 import com.ninotech.fabi.controleur.dialog.EvaluezVousDialog;
@@ -251,6 +252,15 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.MyViewHo
                                 break;
                             case "Supprimer le compte":
                                 Toast.makeText(itemView.getContext(), "Supprimer le compte", Toast.LENGTH_SHORT).show();
+                                break;
+                            case "Contactez-nous":
+                                Intent contactIntent = new Intent(itemView.getContext(), ContactActivity.class);
+                                itemView.getContext().startActivity(contactIntent);
+                                break;
+                            case "Suivez-nous":
+                                Toast.makeText(itemView.getContext(), "OK", Toast.LENGTH_SHORT).show();
+                                break;
+                            case "L'équipe NinoTech":
                                 break;
                             default:
                                 oneEditTextDialog("Email",setting.getTitle(),InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS,itemView.getContext().getString(R.string.edit_text_hint_email));

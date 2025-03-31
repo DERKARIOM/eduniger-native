@@ -26,10 +26,15 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".controleur.activity.ServerActivity"
-            android:label="Serveur connecté"
+            android:name=".controleur.activity.ContactActivity"
+            android:label="Contactez-nous"
             android:parentActivityName=".controleur.activity.SettingV2Activity"
             android:exported="false" />
+        <activity
+            android:name=".controleur.activity.ServerActivity"
+            android:exported="false"
+            android:label="Serveur connecté"
+            android:parentActivityName=".controleur.activity.SettingV2Activity" />
         <activity
             android:name=".controleur.activity.AccountActivity"
             android:exported="false"
