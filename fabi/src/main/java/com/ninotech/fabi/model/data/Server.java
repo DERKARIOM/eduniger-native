@@ -8,6 +8,7 @@ public class Server {
     private static final String PREFS_NAME = "server_prefs";
     private static final String IP_SERVER = "http://192.168.1.25:2222/fabi/";
     private static final String IP_SERVER_ANDROID = "http://192.168.1.25:2222/fabi/android/";
+    private static final String IS_ACTIVATE = "pass";
     public Server()
     {
 
@@ -33,6 +34,16 @@ public class Server {
         editor.apply();
     }
 
+    public static void saveActivate(Context context, int pass) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt(IS_ACTIVATE, pass);
+        editor.apply();
+    }
+    public static int getPass(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getInt(IS_ACTIVATE, 0);
+    }
     public static String getIpServer(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getString(IP_SERVER, context.getString(R.string.ip_server));
