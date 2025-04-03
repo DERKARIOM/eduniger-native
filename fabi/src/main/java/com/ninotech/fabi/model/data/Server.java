@@ -6,8 +6,8 @@ import com.ninotech.fabi.R;
 
 public class Server {
     private static final String PREFS_NAME = "server_prefs";
-    private static final String IP_SERVER = "http://192.168.1.25:2222/fabi/";
-    private static final String IP_SERVER_ANDROID = "http://192.168.1.25:2222/fabi/android/";
+    private static final String IP_SERVER = "https://telesafe.net/fabi/";
+    private static final String IP_SERVER_ANDROID = "https://telesafe.net/fabi/android/";
     private static final String IS_ACTIVATE = "pass";
     public Server()
     {

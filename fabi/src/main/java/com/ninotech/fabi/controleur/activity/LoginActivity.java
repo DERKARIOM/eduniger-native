@@ -6,10 +6,12 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -54,6 +56,7 @@ public class LoginActivity extends AppCompatActivity {
         mConnectionButton = findViewById(R.id.button_login_connection);
         mErrorTextView = findViewById(R.id.text_view_login_error);
         mConnectionProgressBar = findViewById(R.id.progress_bar_register_connection);
+        mGoogleLinearLayout = findViewById(R.id.linear_layout_activity_login_google);
         mJeton="null";
 
         /* Generation de jeton FireBase */
@@ -116,6 +119,16 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent inscription = new Intent(LoginActivity.this , RegisterActivity.class);
                 startActivity(inscription);
+            }
+        });
+
+        mGoogleLinearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intentYoutube = new Intent(Settings.ACTION_SYNC_SETTINGS);
+                if (intentYoutube.resolveActivity(getPackageManager()) != null) {
+                   startActivity(intentYoutube);
+                }
             }
         });
 
@@ -267,4 +280,5 @@ public class LoginActivity extends AppCompatActivity {
     private String mJeton;
     private ProgressBar mConnectionProgressBar;
     private Account mAccount;
+    private LinearLayout mGoogleLinearLayout;
 }
