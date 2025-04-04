@@ -557,7 +557,7 @@ public class SearchActivity extends AppCompatActivity {
             else
             {
                 ArrayList<Connection> list = new ArrayList<>();
-                list.add(new Connection(getString(R.string.no_connection_available),"RANKING_FRAGMENT",false));
+                list.add(new Connection(getString(R.string.no_connection_available),"STRUCT_SEARCH",false));
                 NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                 mRecyclerView.setAdapter(noConnectionAdapter);

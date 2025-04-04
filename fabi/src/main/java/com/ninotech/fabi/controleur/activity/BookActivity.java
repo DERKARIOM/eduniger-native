@@ -1190,6 +1190,9 @@ public class BookActivity extends AppCompatActivity {
                         }).start();
                     } catch (IOException e) {
                         throw new RuntimeException(e);
+                    } catch (Exception e)
+                    {
+                        Log.e("ErrBookActivity",e.getMessage());
                     }
                 }
             }
