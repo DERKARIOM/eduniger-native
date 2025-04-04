@@ -373,6 +373,26 @@ public class BookActivity extends AppCompatActivity {
         likeLinearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(isLike)
+                {
+                    mOnlineBook.disLike();
+                    mLikeImageView.setImageResource(R.drawable.vector_black3_off_like);
+                    isLike=false;
+                }
+                else
+                {
+                    mOnlineBook.like();
+                    mLikeImageView.setImageResource(R.drawable.vector_purple2_200_on_like);
+                    if (isNoLike)
+                    {
+                        mOnlineBook.disNoLike();
+                        mNoLikeImageView.setImageResource(R.drawable.vector_black3_off_no_like);
+                        isNoLike=false;
+                        mNumberNoLikeTextView.setText(String.valueOf(mOnlineBook.getNumberNoLikes()));
+                    }
+                    isLike=true;
+                }
+                mNumberLikeTextView.setText(String.valueOf(mOnlineBook.getNumberLikes()));
                 InsertLikeSyn insertLikeSyn = new InsertLikeSyn();
                 insertLikeSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "InsertLike.php",mSession.getIdNumber(), mOnlineBook.getId());
             }
@@ -381,6 +401,26 @@ public class BookActivity extends AppCompatActivity {
         noLikeLinearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(isNoLike)
+                {
+                    mOnlineBook.disNoLike();
+                    mNoLikeImageView.setImageResource(R.drawable.vector_black3_off_no_like);
+                    isNoLike=false;
+                }
+                else
+                {
+                    mOnlineBook.noLike();
+                    mNoLikeImageView.setImageResource(R.drawable.vector_rouge_on_nolike);
+                    if (isLike)
+                    {
+                        mOnlineBook.disLike();
+                        mLikeImageView.setImageResource(R.drawable.vector_black3_off_like);
+                        isLike=false;
+                        mNumberLikeTextView.setText(String.valueOf(mOnlineBook.getNumberLikes()));
+                    }
+                    isNoLike=true;
+                }
+                mNumberNoLikeTextView.setText(String.valueOf(mOnlineBook.getNumberNoLikes()));
                 InsertNoLikeSyn insertNoLikeSyn = new InsertNoLikeSyn();
                 insertNoLikeSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "InsertNoLike.php",mSession.getIdNumber(), mOnlineBook.getId());
             }
@@ -673,16 +713,8 @@ public class BookActivity extends AppCompatActivity {
                 {
                     if(jsonData.equals("true"))
                     {
-                        mOnlineBook.like();
-                        mLikeImageView.setImageResource(R.drawable.vector_purple2_200_on_like);
-                        mNoLikeImageView.setImageResource(R.drawable.vector_black3_off_no_like);
+                        Log.e("BookActivity","OKLike");
                     }
-                    else
-                    {
-                        mOnlineBook.disLike();
-                        mLikeImageView.setImageResource(R.drawable.vector_black3_off_like);
-                    }
-                    mNumberLikeTextView.setText(String.valueOf(mOnlineBook.getNumberLikes()));
                 }
             }
         }
@@ -727,16 +759,8 @@ public class BookActivity extends AppCompatActivity {
                 {
                     if(jsonData.equals("true"))
                     {
-                        mOnlineBook.noLike();
-                        mNoLikeImageView.setImageResource(R.drawable.vector_rouge_on_nolike);
-                        mLikeImageView.setImageResource(R.drawable.vector_black3_off_like);
+                        Log.e("BookActivity","OKNOLIKE");
                     }
-                    else
-                    {
-                        mOnlineBook.disNoLike();
-                        mNoLikeImageView.setImageResource(R.drawable.vector_black3_off_no_like);
-                    }
-                    mNumberNoLikeTextView.setText(String.valueOf(mOnlineBook.getNumberNoLikes()));
                 }
             }
         }
@@ -1514,4 +1538,6 @@ public class BookActivity extends AppCompatActivity {
     private TextView mPdfSizeTextView;
     private LinearLayout mNbrPageLinearLayout;
     private TextView mNbrPageTextView;
+    private boolean isLike=false;
+    private boolean isNoLike=false;
 }
