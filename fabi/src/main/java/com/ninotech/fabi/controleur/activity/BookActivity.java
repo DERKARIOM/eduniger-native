@@ -429,6 +429,19 @@ public class BookActivity extends AppCompatActivity {
         subscribeLinearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(isSubscribe)
+                {
+                    mOnlineBook.desSubscribe();
+                    mSubscribeImageView.setImageResource(R.drawable.vector_black3_off_subscribe);
+                    isSubscribe=false;
+                }
+                else
+                {
+                    mOnlineBook.subscribe();
+                    mSubscribeImageView.setImageResource(R.drawable.vector_purple2_200_suscribe);
+                    isSubscribe=true;
+                }
+                mNumberSubscribeTextView.setText(String.valueOf(mOnlineBook.getNumberSubscribe()));
                 InsertSubscribeBookSyn insertSubscribeBookSyn = new InsertSubscribeBookSyn();
                 insertSubscribeBookSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "InsertSubscribeBook.php",mSession.getIdNumber(), mOnlineBook.getId());
             }
@@ -804,15 +817,8 @@ public class BookActivity extends AppCompatActivity {
                 {
                     if(jsonData.equals("true"))
                     {
-                        mOnlineBook.subscribe();
-                        mSubscribeImageView.setImageResource(R.drawable.vector_purple2_200_suscribe);
+                        Log.e("BookActivity","OKSubscribe");
                     }
-                    else
-                    {
-                        mOnlineBook.desSubscribe();
-                        mSubscribeImageView.setImageResource(R.drawable.vector_black3_off_subscribe);
-                    }
-                    mNumberSubscribeTextView.setText(String.valueOf(mOnlineBook.getNumberSubscribe()));
                 }
             }
         }
@@ -1540,4 +1546,5 @@ public class BookActivity extends AppCompatActivity {
     private TextView mNbrPageTextView;
     private boolean isLike=false;
     private boolean isNoLike=false;
+    private boolean isSubscribe=false;
 }
