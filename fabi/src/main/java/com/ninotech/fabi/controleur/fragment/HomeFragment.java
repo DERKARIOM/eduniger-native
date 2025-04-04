@@ -195,9 +195,9 @@ public class HomeFragment extends Fragment {
         }
         @Override
         protected void onPostExecute(String jsonData){
-            if(jsonData != null)
+            if (isAdded())
             {
-                if (isAdded())
+                if(jsonData != null)
                 {
                     Picasso.get()
                             .load(Server.getIpServer(getContext()) + "ressources/pub/p4.png")
@@ -207,41 +207,41 @@ public class HomeFragment extends Fragment {
                             .into(mWelcomeImageView);
                     mWaitRecyclerView.setVisibility(View.GONE);
                     mNestedScrollView.setVisibility(View.VISIBLE);
-                }
-                if(!jsonData.equals("expiresVersion"))
-                {
-                    if(!jsonData.equals("RAS"))
+                    if(!jsonData.equals("expiresVersion"))
                     {
-                        JSONArray jsonArray = null;
-                        try {
-                            jsonArray = new JSONArray(jsonData);
-                        } catch (JSONException e) {
-                            throw new RuntimeException(e);
-                        }
-                        for (int i=0;i<jsonArray.length();i++) {
+                        if(!jsonData.equals("RAS"))
+                        {
+                            JSONArray jsonArray = null;
                             try {
-                                mOnlineBookList.add(new OnlineBook(jsonArray.getJSONObject(i).getString("idBook"),jsonArray.getJSONObject(i).getString("blanket"),jsonArray.getJSONObject(i).getString("bookTitle"),jsonArray.getJSONObject(i).getString("categoryTitle"),jsonArray.getJSONObject(i).getString("isPhysic"),jsonArray.getJSONObject(i).getString("electronic"),jsonArray.getJSONObject(i).getString("isAudio"),Integer.parseInt(jsonArray.getJSONObject(i).getString("numberLike")),Integer.parseInt(jsonArray.getJSONObject(i).getString("numberLike"))));
+                                jsonArray = new JSONArray(jsonData);
                             } catch (JSONException e) {
                                 throw new RuntimeException(e);
                             }
-                        }
-                        HorizontaleAdapter horizontaleAdapter = new HorizontaleAdapter(mOnlineBookList);
-                        mBookRecommendedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
-                        mBookRecommendedRecyclerView.setAdapter(horizontaleAdapter);
+                            for (int i=0;i<jsonArray.length();i++) {
+                                try {
+                                    mOnlineBookList.add(new OnlineBook(jsonArray.getJSONObject(i).getString("idBook"),jsonArray.getJSONObject(i).getString("blanket"),jsonArray.getJSONObject(i).getString("bookTitle"),jsonArray.getJSONObject(i).getString("categoryTitle"),jsonArray.getJSONObject(i).getString("isPhysic"),jsonArray.getJSONObject(i).getString("electronic"),jsonArray.getJSONObject(i).getString("isAudio"),Integer.parseInt(jsonArray.getJSONObject(i).getString("numberLike")),Integer.parseInt(jsonArray.getJSONObject(i).getString("numberLike"))));
+                                } catch (JSONException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            }
+                            HorizontaleAdapter horizontaleAdapter = new HorizontaleAdapter(mOnlineBookList);
+                            mBookRecommendedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
+                            mBookRecommendedRecyclerView.setAdapter(horizontaleAdapter);
 
-                        mStructureRecyclerView.setVisibility(View.VISIBLE);
+                            mStructureRecyclerView.setVisibility(View.VISIBLE);
+                        }
                     }
+                    else
+                        update();
                 }
                 else
-                    update();
-            }
-            else
-            {
-                ArrayList<Connection> list = new ArrayList<>();
-                list.add(new Connection(getString(R.string.no_connection_available),"HOME_FRAGMENT",false));
-                NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
-                mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                mWaitRecyclerView.setAdapter(noConnectionAdapter);
+                {
+                    ArrayList<Connection> list = new ArrayList<>();
+                    list.add(new Connection(getString(R.string.no_connection_available),"HOME_FRAGMENT",false));
+                    NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
+                    mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                    mWaitRecyclerView.setAdapter(noConnectionAdapter);
+                }
             }
         }
         private void update(){
@@ -318,48 +318,51 @@ public class HomeFragment extends Fragment {
         }
         @Override
         protected void onPostExecute(String jsonData){
-            if(jsonData != null)
+            if (isAdded())
             {
-                if (!jsonData.equals("RAS"))
+                if(jsonData != null)
                 {
-                    JSONArray jsonArray = null;
-                    try {
-                        jsonArray = new JSONArray(jsonData);
-                    } catch (JSONException e) {
-                        throw new RuntimeException(e);
-                    }
-                    for (int i=0;i<jsonArray.length();i++) {
+                    if (!jsonData.equals("RAS"))
+                    {
+                        JSONArray jsonArray = null;
                         try {
-                            if(!isExistsS(mStructures,jsonArray.getJSONObject(i).getString("id")))
-                            {
-                                mStructures.add(new Structure(
-                                        jsonArray.getJSONObject(i).getString("id"),
-                                        jsonArray.getJSONObject(i).getString("logo"),
-                                        jsonArray.getJSONObject(i).getString("nameStruct"),
-                                        jsonArray.getJSONObject(i).getString("description"),true,
-                                        jsonArray.getJSONObject(i).getString("banner"),
-                                        jsonArray.getJSONObject(i).getString("author"),
-                                        jsonArray.getJSONObject(i).getString("adhererNumber"),
-                                        jsonArray.getJSONObject(i).getString("bookNumber"),
-                                        jsonArray.getJSONObject(i).getString("isAdmin")));
-                            }
+                            jsonArray = new JSONArray(jsonData);
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
-                    }
-                    mStructureRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                    mStructureRecyclerView.setAdapter(StructAdapter);
+                        for (int i=0;i<jsonArray.length();i++) {
+                            try {
+                                if(!isExistsS(mStructures,jsonArray.getJSONObject(i).getString("id")))
+                                {
+                                    mStructures.add(new Structure(
+                                            jsonArray.getJSONObject(i).getString("id"),
+                                            jsonArray.getJSONObject(i).getString("logo"),
+                                            jsonArray.getJSONObject(i).getString("nameStruct"),
+                                            jsonArray.getJSONObject(i).getString("description"),true,
+                                            jsonArray.getJSONObject(i).getString("banner"),
+                                            jsonArray.getJSONObject(i).getString("author"),
+                                            jsonArray.getJSONObject(i).getString("adhererNumber"),
+                                            jsonArray.getJSONObject(i).getString("bookNumber"),
+                                            jsonArray.getJSONObject(i).getString("isAdmin")));
+                                }
+                            } catch (JSONException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                        mStructureRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                        mStructureRecyclerView.setAdapter(StructAdapter);
 
-                    mMoreStructRelativeLayout.setVisibility(View.VISIBLE);
-                    mAuthorRecyclerView.setVisibility(View.VISIBLE);
+                        mMoreStructRelativeLayout.setVisibility(View.VISIBLE);
+                        mAuthorRecyclerView.setVisibility(View.VISIBLE);
+                    }
                 }
-            }
-            else {
-                ArrayList<Connection> list = new ArrayList<>();
-                list.add(new Connection(getString(R.string.no_connection_available),"HOME_FRAGMENT",false));
-                SemiNoConnectionAdapter semiNoConnectionAdapter = new SemiNoConnectionAdapter(list);
-                mStructureRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                mStructureRecyclerView.setAdapter(semiNoConnectionAdapter);
+                else {
+                    ArrayList<Connection> list = new ArrayList<>();
+                    list.add(new Connection(getString(R.string.no_connection_available),"HOME_FRAGMENT",false));
+                    SemiNoConnectionAdapter semiNoConnectionAdapter = new SemiNoConnectionAdapter(list);
+                    mStructureRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                    mStructureRecyclerView.setAdapter(semiNoConnectionAdapter);
+                }
             }
         }
     }
@@ -394,39 +397,42 @@ public class HomeFragment extends Fragment {
         }
         @Override
         protected void onPostExecute(String jsonData){
-            if(jsonData != null)
+            if (isAdded())
             {
-                JSONArray jsonArray = null;
-                try {
-                    jsonArray = new JSONArray(jsonData);
-                } catch (JSONException e) {
-                    throw new RuntimeException(e);
-                }
-                for (int i=0;i<jsonArray.length();i++) {
+                if(jsonData != null)
+                {
+                    JSONArray jsonArray = null;
                     try {
-                        if(!isExistsS(mStructures,jsonArray.getJSONObject(i).getString("id")))
-                            mStructures.add(new Structure(
-                                    jsonArray.getJSONObject(i).getString("id"),
-                                    jsonArray.getJSONObject(i).getString("logo"),
-                                    jsonArray.getJSONObject(i).getString("nameStruct"),
-                                    jsonArray.getJSONObject(i).getString("description"),false,
-                                    jsonArray.getJSONObject(i).getString("banner"),
-                                    jsonArray.getJSONObject(i).getString("author"),
-                                    jsonArray.getJSONObject(i).getString("adhererNumber"),
-                                    jsonArray.getJSONObject(i).getString("bookNumber"),"0"));
+                        jsonArray = new JSONArray(jsonData);
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
+                    for (int i=0;i<jsonArray.length();i++) {
+                        try {
+                            if(!isExistsS(mStructures,jsonArray.getJSONObject(i).getString("id")))
+                                mStructures.add(new Structure(
+                                        jsonArray.getJSONObject(i).getString("id"),
+                                        jsonArray.getJSONObject(i).getString("logo"),
+                                        jsonArray.getJSONObject(i).getString("nameStruct"),
+                                        jsonArray.getJSONObject(i).getString("description"),false,
+                                        jsonArray.getJSONObject(i).getString("banner"),
+                                        jsonArray.getJSONObject(i).getString("author"),
+                                        jsonArray.getJSONObject(i).getString("adhererNumber"),
+                                        jsonArray.getJSONObject(i).getString("bookNumber"),"0"));
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    mStructureRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                    mStructureRecyclerView.setAdapter(StructAdapter);
                 }
-                mStructureRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                mStructureRecyclerView.setAdapter(StructAdapter);
-            }
-            else {
-                ArrayList<Connection> list = new ArrayList<>();
-                list.add(new Connection(getString(R.string.no_connection_available),"HOME_FRAGMENT",false));
-                SemiNoConnectionAdapter semiNoConnectionAdapter = new SemiNoConnectionAdapter(list);
-                mStructureRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                mStructureRecyclerView.setAdapter(semiNoConnectionAdapter);
+                else {
+                    ArrayList<Connection> list = new ArrayList<>();
+                    list.add(new Connection(getString(R.string.no_connection_available),"HOME_FRAGMENT",false));
+                    SemiNoConnectionAdapter semiNoConnectionAdapter = new SemiNoConnectionAdapter(list);
+                    mStructureRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                    mStructureRecyclerView.setAdapter(semiNoConnectionAdapter);
+                }
             }
         }
     }
@@ -461,32 +467,35 @@ public class HomeFragment extends Fragment {
         }
         @Override
         protected void onPostExecute(String jsonData){
-            if(jsonData != null)
+            if (isAdded())
             {
-                JSONArray jsonArray = null;
-                try {
-                    jsonArray = new JSONArray(jsonData);
-                } catch (JSONException e) {
-                    throw new RuntimeException(e);
-                }
-                for (int i=0;i<jsonArray.length();i++) {
+                if(jsonData != null)
+                {
+                    JSONArray jsonArray = null;
                     try {
-                        mAuthorArrayList.add(new Author(jsonArray.getJSONObject(i).getString("idAuthor"),jsonArray.getJSONObject(i).getString("name"),jsonArray.getJSONObject(i).getString("firstName"),jsonArray.getJSONObject(i).getString("profile"),jsonArray.getJSONObject(i).getString("profession")));
+                        jsonArray = new JSONArray(jsonData);
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
+                    for (int i=0;i<jsonArray.length();i++) {
+                        try {
+                            mAuthorArrayList.add(new Author(jsonArray.getJSONObject(i).getString("idAuthor"),jsonArray.getJSONObject(i).getString("name"),jsonArray.getJSONObject(i).getString("firstName"),jsonArray.getJSONObject(i).getString("profile"),jsonArray.getJSONObject(i).getString("profession")));
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    AuthorHorizontaleAdapter authorHorizontaleAdapter = new AuthorHorizontaleAdapter(mAuthorArrayList);
+                    mAuthorRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
+                    mAuthorRecyclerView.setAdapter(authorHorizontaleAdapter);
+                    mMoreAuthorRelativeLayout.setVisibility(View.VISIBLE);
                 }
-                AuthorHorizontaleAdapter authorHorizontaleAdapter = new AuthorHorizontaleAdapter(mAuthorArrayList);
-                mAuthorRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
-                mAuthorRecyclerView.setAdapter(authorHorizontaleAdapter);
-                mMoreAuthorRelativeLayout.setVisibility(View.VISIBLE);
-            }
-            else {
-                ArrayList<Connection> list = new ArrayList<>();
-                list.add(new Connection(getString(R.string.no_connection_available),"HOME_FRAGMENT",false));
-               SemiNoConnectionAdapter semiNoConnectionAdapter = new SemiNoConnectionAdapter(list);
-                mAuthorRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
-                mAuthorRecyclerView.setAdapter(semiNoConnectionAdapter);
+                else {
+                    ArrayList<Connection> list = new ArrayList<>();
+                    list.add(new Connection(getString(R.string.no_connection_available),"HOME_FRAGMENT",false));
+                    SemiNoConnectionAdapter semiNoConnectionAdapter = new SemiNoConnectionAdapter(list);
+                    mAuthorRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
+                    mAuthorRecyclerView.setAdapter(semiNoConnectionAdapter);
+                }
             }
         }
     }

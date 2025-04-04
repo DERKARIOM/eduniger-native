@@ -41,6 +41,7 @@ import com.ninotech.fabi.model.table.UserTable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
+import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
@@ -211,7 +212,12 @@ public class MainActivity extends AppCompatActivity {
         if (getIntent().getStringExtra("HORS_LINE") != null)
         {
             if (getIntent().getStringExtra("HORS_LINE").equals("ON"))
-                navController.navigate(R.id.navigation_library);
+            {
+                navController.navigate(R.id.navigation_library, null, new NavOptions.Builder()
+                        .setPopUpTo(navController.getGraph().getStartDestinationId(), true)
+                        .build());
+            }
+               // navController.navigate(R.id.navigation_library);
         }
 
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
