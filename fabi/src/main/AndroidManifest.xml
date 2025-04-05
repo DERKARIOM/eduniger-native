@@ -200,6 +200,11 @@
         <receiver android:name=".model.service.NotificationActionService" />
 
         <service android:name=".model.service.OnClearFromRecentService" />
+        <service
+            android:name=".model.service.AudioDownloadService"
+            android:foregroundServiceType="dataSync"
+            android:exported="false"
+            tools:ignore="ForegroundServicePermission" />
     </application>
 
 </manifest>

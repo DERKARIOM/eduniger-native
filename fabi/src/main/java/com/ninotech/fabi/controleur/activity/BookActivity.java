@@ -50,6 +50,7 @@ import com.ninotech.fabi.model.data.ElectronicDownloader;
 import com.ninotech.fabi.model.data.PasswordUtil;
 import com.ninotech.fabi.model.data.Server;
 import com.ninotech.fabi.model.data.Talks;
+import com.ninotech.fabi.model.service.AudioDownloadService;
 import com.ninotech.fabi.model.table.AudioTable;
 import com.ninotech.fabi.model.table.ElectronicTable;
 import com.ninotech.fabi.model.data.LocalBooks;
@@ -329,8 +330,13 @@ public class BookActivity extends AppCompatActivity {
                     case "Format Audio":
                         audioButton.setText("En Cours...");
                         downloadAudioProgressBar.setVisibility(View.GONE);
-                        AudioDownloader audioDownloader = new AudioDownloader(getApplicationContext(),mSession.getIdNumber(), mOnlineBook,mTones);
-                        audioDownloader.execute(mOnlineBook.getCover(), mOnlineBook.getElectronic(),mCategory.getCover(),mAuthor.getProfile(),mTones.getAudio());
+                        Intent intent = new Intent(BookActivity.this, AudioDownloadService.class);
+                        intent.putExtra("fileNames", new String[]{mOnlineBook.getCover(), mOnlineBook.getElectronic(),mCategory.getCover(),mAuthor.getProfile(),mTones.getAudio(),mSession.getIdNumber(),mOnlineBook.getId(),mOnlineBook.getDescription(),mOnlineBook.getAuthor(),mOnlineBook.getCategory(),mOnlineBook.getTitle(),mTones.getDuration()});
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            startForegroundService(intent);
+                        }
+                        //AudioDownloader audioDownloader = new AudioDownloader(getApplicationContext(),mSession.getIdNumber(), mOnlineBook,mTones);
+                        //audioDownloader.execute(mOnlineBook.getCover(), mOnlineBook.getElectronic(),mCategory.getCover(),mAuthor.getProfile(),mTones.getAudio());
                         break;
                     case "Lire":
                         Intent audioPayerIntent = new Intent(BookActivity.this, AudioPlayerActivity.class);
