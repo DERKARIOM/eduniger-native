@@ -207,6 +207,11 @@
             android:foregroundServiceType="dataSync"
             android:exported="false"
             tools:ignore="ForegroundServicePermission" />
+        <service
+            android:name=".model.service.PdfDownloadService"
+            android:foregroundServiceType="dataSync"
+            android:exported="false"
+            tools:ignore="ForegroundServicePermission" />
     </application>
 
 </manifest>

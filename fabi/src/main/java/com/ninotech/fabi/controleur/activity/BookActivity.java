@@ -51,6 +51,7 @@ import com.ninotech.fabi.model.data.PasswordUtil;
 import com.ninotech.fabi.model.data.Server;
 import com.ninotech.fabi.model.data.Talks;
 import com.ninotech.fabi.model.service.AudioDownloadService;
+import com.ninotech.fabi.model.service.PdfDownloadService;
 import com.ninotech.fabi.model.table.AudioTable;
 import com.ninotech.fabi.model.table.ElectronicTable;
 import com.ninotech.fabi.model.data.LocalBooks;
@@ -283,12 +284,16 @@ public class BookActivity extends AppCompatActivity {
                 {
                     case "Format PDF":
                         Toast.makeText(BookActivity.this, "Téléchargement démarrer", Toast.LENGTH_SHORT).show();
-                        //showProgressNotification(mTitleTextView.getText().toString() + " Format PDF");
-                        downloadPDFButton.setText("En Cours...");
-                        downloadPdfProgressBar.setVisibility(View.GONE);
-                        ElectronicDownloader electronicDownloader = new ElectronicDownloader(getApplicationContext(),mSession.getIdNumber(), mOnlineBook);
+                        Intent intent = new Intent(BookActivity.this, PdfDownloadService.class);
+                        intent.putExtra("fileNames", new String[]{mOnlineBook.getCover(), mOnlineBook.getElectronic(),mCategory.getCover(),mAuthor.getProfile(),mSession.getIdNumber(),mOnlineBook.getId(),mOnlineBook.getDescription(),mOnlineBook.getAuthor(),mOnlineBook.getCategory(),mOnlineBook.getTitle()});
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            startForegroundService(intent);
+                        }
+                        //downloadPDFButton.setText("En Cours...");
+                        //downloadPdfProgressBar.setVisibility(View.GONE);
+                        //ElectronicDownloader electronicDownloader = new ElectronicDownloader(getApplicationContext(),mSession.getIdNumber(), mOnlineBook);
                         // Toast.makeText(BookActivity.this, mOnlineBook.getAuthor(), Toast.LENGTH_SHORT).show();
-                        electronicDownloader.execute(mOnlineBook.getCover(), mOnlineBook.getElectronic(),mCategory.getCover(),mAuthor.getProfile());
+                        //electronicDownloader.execute(mOnlineBook.getCover(), mOnlineBook.getElectronic(),mCategory.getCover(),mAuthor.getProfile());
                         break;
                     case "Ouvrir":
                         File file = new File(mSourcePdf);
