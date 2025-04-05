@@ -184,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
                 != PackageManager.PERMISSION_GRANTED) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 ActivityCompat.requestPermissions(MainActivity.this,
-                        new String[]{Manifest.permission.POST_NOTIFICATIONS}, 101);
+                        new String[]{Manifest.permission.POST_NOTIFICATIONS,android.Manifest.permission.FOREGROUND_SERVICE_DATA_SYNC}, 101);
             }
         }
 
