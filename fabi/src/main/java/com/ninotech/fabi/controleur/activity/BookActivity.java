@@ -898,7 +898,10 @@ public class BookActivity extends AppCompatActivity {
                 if(!jsonData.equals("RAS"))
                 {
                     if(jsonData.equals(mSession.getIdNumber()))
+                    {
+                        isNoLike=true;
                         mNoLikeImageView.setImageResource(R.drawable.vector_rouge_on_nolike);
+                    }
                     else
                         mNoLikeImageView.setImageResource(R.drawable.vector_black3_off_no_like);
                 }
@@ -944,7 +947,10 @@ public class BookActivity extends AppCompatActivity {
                 if(!jsonData.equals("RAS"))
                 {
                     if(jsonData.equals(mSession.getIdNumber()))
+                    {
+                        isLike=true;
                         mLikeImageView.setImageResource(R.drawable.vector_purple2_200_on_like);
+                    }
                     else
                         mLikeImageView.setImageResource(R.drawable.vector_black3_off_like);
                 }
@@ -1060,7 +1066,10 @@ public class BookActivity extends AppCompatActivity {
                 if(!jsonData.equals("RAS"))
                 {
                     if(jsonData.equals(mSession.getIdNumber()))
+                    {
+                        isSubscribe=true;
                         mSubscribeImageView.setImageResource(R.drawable.vector_purple2_200_suscribe);
+                    }
                     else
                         mSubscribeImageView.setImageResource(R.drawable.vector_black3_off_subscribe);
                 }
