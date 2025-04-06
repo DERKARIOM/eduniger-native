@@ -130,8 +130,10 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
                 finish();
             }
         };
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            registerReceiver(receiverNoConnectionAdapter, new IntentFilter("SELECT_LIST_PLAYER"),Context.RECEIVER_EXPORTED);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(receiverNoConnectionAdapter, new IntentFilter("SELECT_LIST_PLAYER"), Context.RECEIVER_EXPORTED);
+        } else {
+            registerReceiver(receiverNoConnectionAdapter, new IntentFilter("SELECT_LIST_PLAYER"));
         }
 
         String idBook = audioBookIntent.getStringExtra("key_adapter_audio_book_id");
