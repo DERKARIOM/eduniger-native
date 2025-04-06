@@ -123,11 +123,14 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
         BroadcastReceiver receiverNoConnectionAdapter = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                Intent audioPayerIntent = new Intent(getApplicationContext(), AudioPlayerActivity.class);
-                audioPayerIntent.putExtra("key_adapter_audio_book_id",mTracks.get(position).getIdBook());
-                audioPayerIntent.putExtra("list_audio_source",mListSource);
-                startActivity(audioPayerIntent);
-                finish();
+                if ("SELECT_LIST_PLAYER".equals(intent.getAction())) {
+                    Intent audioPayerIntent = new Intent(getApplicationContext(), AudioPlayerActivity.class);
+                    int posi = intent.getIntExtra("position",0);
+                    audioPayerIntent.putExtra("key_adapter_audio_book_id",mTracks.get(posi).getIdBook());
+                    audioPayerIntent.putExtra("list_audio_source",mListSource);
+                    startActivity(audioPayerIntent);
+                    finish();
+                }
             }
         };
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -276,7 +279,6 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
         mPlayListImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(AudioPlayerActivity.this, "Player Liste", Toast.LENGTH_SHORT).show();
                 Intent local = new Intent(AudioPlayerActivity.this, ListPlayerActivity.class);
                 local.putExtra("id",6);
                 local.putExtra("audio",mTracks.get(position).getAudio());

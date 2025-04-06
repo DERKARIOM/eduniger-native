@@ -103,8 +103,8 @@ public class AudioBookAdapter extends RecyclerView.Adapter<AudioBookAdapter.MyVi
         void display(AudioBook audioBook){
             File file = new File(audioBook.getCover());
             Picasso.get().load(file)
-                    .placeholder(R.drawable.img_default_book)
-                    .error(R.drawable.img_default_book)
+                    .placeholder(R.drawable.img_wait_cover_book)
+                    .error(R.drawable.img_wait_cover_book)
                     .transform(new RoundedTransformation(15,4))
                     .resize(210,304)
                     .into(mCoverImageView);
