@@ -299,7 +299,7 @@ public class RegisterActivity extends AppCompatActivity {
         installer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String url = Server.getIpServer(getApplicationContext()); // Remplacez ceci par l'URL que vous souhaitez ouvrir
+                String url = "http://eduniger.com"; // Remplacez ceci par l'URL que vous souhaitez ouvrir
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                 startActivity(intent);
             }

@@ -62,7 +62,7 @@ public class PdfDownloadService extends Service {
 
             // Envoyer une notification de fin de téléchargement
             Intent finishIntent = new Intent("ACTION_FINISH_DOWNLOAD");
-            finishIntent.putExtra("format", "audio");
+            finishIntent.putExtra("format", "pdf");
             sendBroadcast(finishIntent);
         } catch (Exception e) {
             e.printStackTrace();

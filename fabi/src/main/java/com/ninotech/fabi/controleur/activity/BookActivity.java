@@ -166,7 +166,6 @@ public class BookActivity extends AppCompatActivity {
                             audioButton.setText("Lire");
                             downloadAudioProgressBar.setVisibility(View.GONE);
                            // succeDowloadAudioDialog("Le livre " + mTitleTextView.getText().toString() + " format audio a été téléchargé avec succès. N'hésitez pas à explorer son contenu dans l'application et contactez-nous en cas de besoin.");
-
                             break;
                         case "pdf":
                             mSourcePdf = mElectronicTable.getPdf(mOnlineBook.getId());
@@ -283,13 +282,13 @@ public class BookActivity extends AppCompatActivity {
                 switch (downloadPDFButton.getText().toString())
                 {
                     case "Format PDF":
+                        downloadPDFButton.setText("En Cours...");
                         Toast.makeText(BookActivity.this, "Téléchargement démarrer", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(BookActivity.this, PdfDownloadService.class);
                         intent.putExtra("fileNames", new String[]{mOnlineBook.getCover(), mOnlineBook.getElectronic(),mCategory.getCover(),mAuthor.getProfile(),mSession.getIdNumber(),mOnlineBook.getId(),mOnlineBook.getDescription(),mOnlineBook.getAuthor(),mOnlineBook.getCategory(),mOnlineBook.getTitle()});
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                             startForegroundService(intent);
                         }
-                        //downloadPDFButton.setText("En Cours...");
                         //downloadPdfProgressBar.setVisibility(View.GONE);
                         //ElectronicDownloader electronicDownloader = new ElectronicDownloader(getApplicationContext(),mSession.getIdNumber(), mOnlineBook);
                         // Toast.makeText(BookActivity.this, mOnlineBook.getAuthor(), Toast.LENGTH_SHORT).show();

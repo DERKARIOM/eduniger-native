@@ -27,7 +27,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Une nouvelle version de fabi est désormais disponible , mettez à jour l' application pour profiter de nouvelles fonctionnalités et améliorations."
+        android:text="Une nouvelle version de EduNiger est désormais disponible , mettez à jour l' application pour profiter de nouvelles fonctionnalités et améliorations."
         android:layout_margin="10dp"
         android:gravity="center"
         android:layout_gravity="center"

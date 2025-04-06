@@ -16,28 +16,29 @@
             android:layout_margin="10dp"
             android:textSize="20dp"
             android:paddingBottom="20dp"
-            android:text="Licence d'Utilisation Gratuite (Freeware) pour fabi - Réservée aux Étudiants de la Faculté de Science et Technique (FAST) de l'Université Abdou Moumouni de Niamey (UAM)\n\n
+            android:text="Conditions d’Utilisation de l’Application EduNiger\n\nDernière mise à jour : 6/04/2025\n\nBienvenue sur EduNiger ! En utilisant notre application, vous acceptez les présentes Conditions d’Utilisation. Nous vous encourageons à les lire attentivement.\n\n1. Acceptation des Conditions\n\n
+L’utilisation de l’application EduNiger implique votre acceptation pleine et entière des présentes conditions. Si vous ne les acceptez pas, veuillez ne pas utiliser l’application.\n\n2. Objectif de l’Application\n\n
+EduNiger est une plateforme dédiée à l’apprentissage et à l’accès aux ressources éducatives sous divers formats (livres électroniques, audio, Physique, etc.). Son but est de faciliter l’accès au savoir à tous.\n\n3. Utilisation Responsable\n\n
+Vous vous engagez à utiliser l’application de manière légale et conforme aux règles de bonne conduite. Il est interdit de publier, partager ou télécharger du contenu inapproprié, offensant ou violant les droits d’autrui.L’utilisation de l’application à des fins frauduleuses, commerciales non autorisées ou pour toute activité illicite est strictement interdite.\n\n
+4. Comptes Utilisateurs\n\nL'utilisation de l'application  nécessitent la création d’un compte utilisateur. Vous êtes responsable de la confidentialité de vos identifiants.
 
-\n1. Acceptation des Termes\n
-En installant, copiant ou utilisant fabi, vous acceptez les termes de cette licence. Si vous n'êtes pas un étudiant inscrit à la FAST, veuillez ne pas installer ou utiliser l'application.
+En cas d’utilisation non autorisée de votre compte, veuillez nous en informer immédiatement.\n\n
+5. Protection des Données et Confidentialité
+EduNiger respecte votre vie privée et protège vos données personnelles conformément à notre Politique de Confidentialité.
 
-\n\n2. Utilisation Gratuite pour les Étudiants\n
-L'application fastpv est gratuite à utiliser exclusivement pour les étudiants inscrits à la FAST. Cette utilisation est réservée aux fins éducatives et académiques.
+Vos informations ne seront ni vendues ni partagées avec des tiers sans votre consentement.\n\n
+6. Propriété Intellectuelle\n\n
+Tout le contenu disponible sur EduNiger (livres, articles, Blog, etc.) est protégé par les droits d’auteur.
+Toute reproduction, modification ou distribution sans autorisation est interdite.\n\n
+7. Limitation de Responsabilité\n\n
+Nous nous efforçons de garantir la disponibilité et la fiabilité de l’application, mais nous ne pouvons garantir l’absence d’erreurs ou d’interruptions.
 
-\n\n3. Restrictions\n
-   \na. Les étudiants de la faculté de science et technique sont autorisés à utiliser l'application uniquement dans le cadre de leurs études et projets académiques.\n
+EduNiger ne saurait être tenu responsable en cas de perte de données ou de tout dommage résultant de l’utilisation de l’application.\n\n
+8. Modifications des Conditions\n\n
+Nous nous réservons le droit de modifier ces conditions à tout moment. Les utilisateurs seront informés des mises à jour importantes.\n\n
+9. Contact\n\n
+Pour toute question ou suggestion, contactez-nous à contact@eduniger.com
 
-   \nb. Vous n'êtes pas autorisé à redistribuer ou partager l'application en dehors de la faculté sans une autorisation écrite expresse de l'auteur.\n
-
-   \nc. Vous ne pouvez pas modifier, décompiler, désassembler ou tenter de récupérer le code source de l'application.\n
-
-\n\n4. Avertissement sur la Garantie\n
-L'application est fournie telle quelle sans garantie de quelque nature que ce soit. L'auteur ne peut être tenu responsable des dommages résultant de l'utilisation ou de l'incapacité d'utilisation de l'application.
-
-\n\n5. Contact\n
-Pour toute demande d'autorisation spéciale ou des questions liées à l'utilisation de l'application par les étudiants de la faculté de science et technique, veuillez contacter visionnairexcode@gmail.com .
-
-\n\n6. Droits d'Auteur\n
-L'application fabi est protégée par le droit d'auteur © 2024-2025. Tous les droits sont réservés à l'auteur."/>
+En utilisant EduNiger, vous acceptez ces conditions. Merci de faire partie de notre communauté d’apprentissage ! 🚀📚\n\n"/>
     </ScrollView>
 </RelativeLayout>

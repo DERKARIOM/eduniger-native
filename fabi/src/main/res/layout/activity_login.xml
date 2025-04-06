@@ -91,11 +91,16 @@
                android:layout_gravity="center"/>
        </LinearLayout>
         <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
             android:id="@+id/text_view_login_pass_register"
             android:layout_below="@id/linear_layout_activity_login_google"
             android:layout_marginBottom="10dp"
+            android:padding="10dp"
+            android:textSize="@dimen/size_title"
+            android:text="Céer un compte"
             android:layout_centerHorizontal="true"
             android:layout_gravity="center_horizontal"
-            style="@style/text_view_pass_login_register" />
+             />
     </RelativeLayout>
 </androidx.core.widget.NestedScrollView>

@@ -208,7 +208,7 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.MyViewHo
 //                            EvaluezDialog();
                                 break;
                             case "Quoi de neuf ?":
-                                String newUrl = "https://telesafe.net";
+                                String newUrl = "https://whatsapp.com/channel/0029VaopZJPIXnlxl8DBga2F";
                                 Intent intent = new Intent(Intent.ACTION_VIEW);
                                 intent.setData(Uri.parse(newUrl));
                                 if (intent.resolveActivity(itemView.getContext().getPackageManager()) != null) {
@@ -254,13 +254,7 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.MyViewHo
                                 Toast.makeText(itemView.getContext(), "Supprimer le compte", Toast.LENGTH_SHORT).show();
                                 break;
                             case "Contactez-nous":
-                                Intent contactIntent = new Intent(itemView.getContext(), ContactActivity.class);
-                                itemView.getContext().startActivity(contactIntent);
-                                break;
-                            case "Suivez-nous":
-                                Toast.makeText(itemView.getContext(), "OK", Toast.LENGTH_SHORT).show();
-                                break;
-                            case "L'équipe NinoTech":
+                                showOptionsDialog("+22794961793");
                                 break;
                             default:
                                 oneEditTextDialog("Email",setting.getTitle(),InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS,itemView.getContext().getString(R.string.edit_text_hint_email));
@@ -532,6 +526,38 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.MyViewHo
             });
             simpleOkDialog.build();
         }
+        private void showOptionsDialog(String phoneNumber) {
+            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(itemView.getContext());
+            builder.setTitle("Choisir une action");
+            builder.setItems(new CharSequence[]{"Appeler", "WhatsApp ou SMS"},
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            switch (which) {
+                                case 0:
+                                    if (ContextCompat.checkSelfPermission(itemView.getContext(), Manifest.permission.CALL_PHONE)
+                                            != PackageManager.PERMISSION_GRANTED) {
+                                        ActivityCompat.requestPermissions((Activity) itemView.getContext(),
+                                                new String[]{Manifest.permission.CALL_PHONE},
+                                                1);
+                                    } else {
+                                        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phoneNumber));
+                                        itemView.getContext().startActivity(intent);
+                                    }
+                                    break;
+                                case 1:
+                                    // Envoyer via SMS
+                                    Intent smsIntent = new Intent(Intent.ACTION_VIEW);
+                                    smsIntent.setData(Uri.parse("sms:" + phoneNumber));
+                                    smsIntent.putExtra("sms_body", "Votre message ici");
+                                    itemView.getContext().startActivity(smsIntent);
+                                    break;
+                            }
+                        }
+                    });
+            builder.show();
+        }
     }
+
 
 }

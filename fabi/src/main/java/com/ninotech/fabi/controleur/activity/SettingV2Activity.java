@@ -36,7 +36,7 @@ public class SettingV2Activity extends AppCompatActivity {
         settings.add(new Setting(R.drawable.vector_black3_phone_connected,"Serveur connecté",null));
         settings.add(new Setting(R.drawable.vector_black3_message,getString(R.string.send_suggestion),null));
         settings.add(new Setting(R.drawable.vector_black3_grade,getString(R.string.evaluate_us),null));
-        //settings.add(new Setting(R.drawable.vector_purple_200_phone,"Contactez-nous",null));
+        settings.add(new Setting(R.drawable.vector_purple_200_phone,"Contactez-nous",null));
         //settings.add(new Setting(R.drawable.vector_black3_off_subscribe,"Suivez-nous",null));
         settings.add(new Setting(R.drawable.vector_black3_video,getString(R.string.how_it_works),null));
         settings.add(new Setting(R.drawable.vector_black3_help,getString(R.string.app_information),null));

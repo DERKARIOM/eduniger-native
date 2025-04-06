@@ -57,7 +57,7 @@
         android:layout_marginBottom="20dp"
         android:textAllCaps="false"
         android:background="@drawable/form_purple_200_radius_10dp"
-        android:text="Licence" />
+        android:text="Conditions d’Utilisation" />
     <TextView
         android:id="@+id/version"
         android:layout_width="wrap_content"
