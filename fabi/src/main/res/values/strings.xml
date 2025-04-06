@@ -11,7 +11,7 @@
     <string name="edit_text_hint_password">  Votre mot de passe ?</string>
     <string name="edit_text_hint_password_confirm">  Confirmer votre mot de passe</string>
     <string name="button_text_connection">Connexion</string>
-    <string name="button_text_adhere">Adhére</string>
+    <string name="button_text_adhere">S\'adhérer</string>
     <string name="text_view_pass_register_login">Avez-Vous un compte ?</string>
     <string name="register_error_0000">Veuillez remplir ces champs svp</string>
     <string name="register_error_0111">Votre muméro svp</string>

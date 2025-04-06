@@ -203,7 +203,7 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                                 structDeleteDialog.cancel();
                                 mAdhereButton.setBackgroundTintList(ColorStateList.valueOf(itemView.getContext().getColor(R.color.purple_200)));
-                                mAdhereButton.setText("Adhérer");
+                                mAdhereButton.setText("S'adhérer");
                                 DetachStructSyn detachStructSyn = new DetachStructSyn();
                                 detachStructSyn.execute(Server.getIpServerAndroid(itemView.getContext()) + "DetachStruct.php",mSession.getIdNumber(),id);
                             }

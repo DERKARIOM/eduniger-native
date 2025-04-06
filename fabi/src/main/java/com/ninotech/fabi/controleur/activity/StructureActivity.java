@@ -159,10 +159,10 @@ public class StructureActivity extends AppCompatActivity {
         mNameTextView.setText(mStructure.getName());
         mAuthorTextView.setText("@" + mStructure.getAuthor());
         mNumberTextView.setText(mStructure.getAdhererNumber() + " Adhérents ° " + mStructure.getBookNumber() + " Livres");
-        mDescriptionTextView.setText("Bienvenue sur la struture " + mStructure.getName() + "!");
+        mDescriptionTextView.setText("Bienvenue sur la strcuture " + mStructure.getName() + "!");
         if(mStructure.isAdhere())
         {
-            mAdhererButton.setText("Détacher");
+            mAdhererButton.setText("Se détacher");
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 mAdhererButton.setBackgroundTintList(ColorStateList.valueOf(getApplicationContext().getColor(R.color.black3)));
             }
@@ -192,14 +192,14 @@ public class StructureActivity extends AppCompatActivity {
                         simpleOkDialog(R.drawable.vector_purple_200_desole,"Structure Exclusive","Cette structure est exclusivement réservée aux étudiants de la FAST UAM. Veuillez vérifier que vous remplissez les critères d'adhésion puis contacter les numéro suivante :\n+22796627534 / +22794961793.");
                         break;
                     default:
-                        if (mAdhererButton.getText().toString().equals("Détacher"))
+                        if (mAdhererButton.getText().toString().equals("Se détacher"))
                             structDelete(mStructure.getId());
                         else
                         {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                                 mAdhererButton.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.black3)));
                             }
-                            mAdhererButton.setText("Détacher");
+                            mAdhererButton.setText("Se détacher");
                             mStructure.setAdhere(false);
                             DetachStructSyn detachStructSyn = new DetachStructSyn();
                             detachStructSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "AdhererStruct.php",mSession.getIdNumber(),mStructure.getId());
@@ -410,7 +410,7 @@ public class StructureActivity extends AppCompatActivity {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                             structDeleteDialog.cancel();
                             mAdhererButton.setBackgroundTintList(ColorStateList.valueOf(getApplicationContext().getColor(R.color.purple_200)));
-                            mAdhererButton.setText("Adhérer");
+                            mAdhererButton.setText("S'adhérer");
                             DetachStructSyn detachStructSyn = new DetachStructSyn();
                             detachStructSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "DetachStruct.php",mSession.getIdNumber(),id);
                         }
