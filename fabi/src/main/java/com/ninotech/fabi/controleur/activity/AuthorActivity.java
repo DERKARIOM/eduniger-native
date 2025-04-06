@@ -213,9 +213,9 @@ public class AuthorActivity extends AppCompatActivity {
                 }
                 List<Library> libraryList = new ArrayList<>();
                 AuthorFormatBookAdapter authorFormatBookAdapter = new AuthorFormatBookAdapter(libraryList);
-                libraryList.add(new Library(1,R.drawable.img_electronic_book,"Mes livres électronique", nbrElectronic,mAuthor.getIdNumber()));
-                libraryList.add(new Library(2,R.drawable.img_audio_book,"Mes livres audio",nbrAudio,mAuthor.getIdNumber()));
-                libraryList.add(new Library(3,R.drawable.img_loand_book,"Mes livres physique",nbrPhysique,mAuthor.getIdNumber()));
+                libraryList.add(new Library(1,R.drawable.img_electronic_book,"Mes livres électroniques", nbrElectronic,mAuthor.getIdNumber()));
+                libraryList.add(new Library(2,R.drawable.img_audio_book,"Mes livres audios",nbrAudio,mAuthor.getIdNumber()));
+                libraryList.add(new Library(3,R.drawable.img_loand_book,"Mes livres physiques",nbrPhysique,mAuthor.getIdNumber()));
                 mAuthorFormatBookRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                 mAuthorFormatBookRecyclerView.setAdapter(authorFormatBookAdapter);
             } else {
