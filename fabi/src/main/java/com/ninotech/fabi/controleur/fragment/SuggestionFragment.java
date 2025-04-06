@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
@@ -27,6 +28,7 @@ import com.ninotech.fabi.model.data.Chat;
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.model.data.Server;
 import com.ninotech.fabi.model.table.Session;
+import com.ninotech.fabi.model.table.UserTable;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -97,9 +99,12 @@ public class SuggestionFragment extends Fragment {
         mEnvoie.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                UserTable userTable = new UserTable(getContext());
+                Cursor userCursor = userTable.getData(mSession.getIdNumber());
+                userCursor.moveToFirst();
                 mRequete = mEditText.getText().toString();
                 mEditText.setText("");
-                mList.add(new Chat("moi.png","Derkariom",mRequete,false));
+                mList.add(new Chat("moi.png",userCursor.getString(1),mRequete,false));
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                 mRecyclerView.setAdapter(mChatAdapter);
                 mRecyclerView.smoothScrollToPosition(mChatAdapter.getItemCount()-1);
@@ -121,12 +126,19 @@ public class SuggestionFragment extends Fragment {
                         }
                         else
                         {
-                            mList.add(new Chat("fabiola.png","abiola","je suis désolé la politique de la bibliothèque permet aux utilisateurs d'emprunter un livre pour une durée maximale de 5 jours. Merci pour votre compréhension.",true));
+                            mList.add(new Chat("fabiola.png","duna","je suis désolé la politique de la bibliothèque permet aux utilisateurs d'emprunter un livre pour une durée maximale de 5 jours. Merci pour votre compréhension.",true));
                             mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                             mRecyclerView.setAdapter(mChatAdapter);
                             mRecyclerView.smoothScrollToPosition(mChatAdapter.getItemCount()-1);
                         }
                     }
+                }
+                else
+                {
+                    mList.add(new Chat("fabiola.png","duna","Salut "+userCursor.getString(1) +" ! Pour le moment, notre chatbot utilise un système de reconnaissance de mots-clés pour répondre à vos questions. Nous travaillons activement à intégrer une intelligence artificielle plus avancée (IAG) qui rendra les échanges encore plus naturels et fluides. Merci de votre compréhension et de votre patience !",true));
+                    mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                    mRecyclerView.setAdapter(mChatAdapter);
+                    mRecyclerView.smoothScrollToPosition(mChatAdapter.getItemCount()-1);
                 }
 //                CallOpenAi callOpenAi = new CallOpenAi();
 //                callOpenAi.execute("http://192.168.43.1:2222/fabi/android/callOpenAi.php");

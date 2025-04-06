@@ -96,7 +96,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
             else
             {
                 Picasso.get()
-                        .load(R.drawable.img_moi)
+                        .load(R.drawable.img_wait_profile)
                         .placeholder(R.drawable.img_wait_profile)
                         .error(R.drawable.img_wait_profile)
                         .into(mProfile);
