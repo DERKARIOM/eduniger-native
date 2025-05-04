@@ -65,6 +65,10 @@ public class AddBookActivity extends AppCompatActivity {
         mAddButton = findViewById(R.id.button_activity_add_book);
         mSettingPdfLinearLayout = findViewById(R.id.linear_layout_activity_add_book_setting_pdf);
         mSettingAudioLinearLayout = findViewById(R.id.linear_layout_activity_add_book_setting_audio);
+        mPdfSizeEditText = findViewById(R.id.edit_text_activity_add_book_pdf_size);
+        mAudioSizeEditText = findViewById(R.id.edit_text_activity_add_book_audio_size);
+        mNbrPageEditText = findViewById(R.id.edit_text_activity_add_book_pdf_nbr_page);
+        mTimeMaxEditText = findViewById(R.id.edit_text_activity_add_book_audio_max_time);
         mSession = new Session(getApplicationContext());
         Picasso.get()
                 .load(R.drawable.img_add_cover)
@@ -112,6 +116,8 @@ public class AddBookActivity extends AppCompatActivity {
         mAddButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mAddButton.setText("");
+                mWaitProgressBar.setVisibility(View.VISIBLE);
                 mBook = new Book(mIdBookEditText.getText().toString(),
                         mTitleEditText.getText().toString(),
                         String.valueOf(mCategorySpinner.getSelectedItemPosition()),
@@ -128,7 +134,11 @@ public class AddBookActivity extends AppCompatActivity {
                         boolToString(mIsPdfCheckBox.isChecked()),
                         boolToString(mIsAudioCheckBox.isChecked()),
                         String.valueOf(mCategorySpinner.getSelectedItemPosition()),
-                        String.valueOf(mStructureSpinner.getSelectedItemPosition()));
+                        String.valueOf(mStructureSpinner.getSelectedItemPosition()),
+                        mPdfSizeEditText.getText().toString(),
+                        mNbrPageEditText.getText().toString(),
+                        mAudioSizeEditText.getText().toString(),
+                        mTimeMaxEditText.getText().toString());
             }
         });
     }
@@ -181,6 +191,10 @@ public class AddBookActivity extends AppCompatActivity {
                         .addFormDataPart("isAudio",params[8])
                         .addFormDataPart("idCategory",params[9])
                         .addFormDataPart("idStruct",params[10])
+                        .addFormDataPart("pdfSize",params[11])
+                        .addFormDataPart("nbrPage",params[12])
+                        .addFormDataPart("audioSize",params[13])
+                        .addFormDataPart("timeMax",params[14])
                         .build();
                 Request request = new Request.Builder()
                         .url(params[0])
@@ -204,7 +218,7 @@ public class AddBookActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String response){
             //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
-            Toast.makeText(AddBookActivity.this, response, Toast.LENGTH_SHORT).show();
+           // Toast.makeText(AddBookActivity.this, response, Toast.LENGTH_SHORT).show();
             if(response != null)
             {
                 if(response.equals("true"))
@@ -265,4 +279,8 @@ public class AddBookActivity extends AppCompatActivity {
     private Session mSession;
     private LinearLayout mSettingPdfLinearLayout;
     private LinearLayout mSettingAudioLinearLayout;
+    private EditText mPdfSizeEditText;
+    private EditText mNbrPageEditText;
+    private EditText mAudioSizeEditText;
+    private EditText mTimeMaxEditText;
 }

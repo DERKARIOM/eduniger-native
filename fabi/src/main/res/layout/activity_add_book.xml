@@ -183,7 +183,7 @@
                     android:layout_marginBottom="20dp"
                     android:fontFamily="@font/apple1"
                     android:hint="x Mo"
-                    android:inputType="numberDecimal"
+                    android:inputType="text"
                     android:paddingBottom="15dp"
                     android:paddingTop="15dp"
                     android:scrollbars="vertical"
@@ -245,7 +245,7 @@
                     android:scrollbars="vertical"
                     android:autofillHints="" />
                 <EditText
-                    android:id="@+id/edit_text_activity_add_book_audio_max_hime"
+                    android:id="@+id/edit_text_activity_add_book_audio_max_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="25dp"
