@@ -168,6 +168,43 @@
                     android:layout_marginStart="10dp"/>
             </LinearLayout>
             <LinearLayout
+                android:id="@+id/linear_layout_activity_add_book_setting_pdf"
+                android:layout_width="wrap_content"
+                android:visibility="gone"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <EditText
+                    android:id="@+id/edit_text_activity_add_book_pdf_size"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="25dp"
+                    android:backgroundTint="@color/purple_200"
+                    android:layout_marginEnd="25dp"
+                    android:layout_marginBottom="20dp"
+                    android:fontFamily="@font/apple1"
+                    android:hint="x Mo"
+                    android:inputType="numberDecimal"
+                    android:paddingBottom="15dp"
+                    android:paddingTop="15dp"
+                    android:scrollbars="vertical"
+                    android:autofillHints="" />
+                <EditText
+                    android:id="@+id/edit_text_activity_add_book_pdf_nbr_page"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="25dp"
+                    android:backgroundTint="@color/purple_200"
+                    android:layout_marginEnd="25dp"
+                    android:layout_marginBottom="20dp"
+                    android:fontFamily="@font/apple1"
+                    android:hint="x page"
+                    android:inputType="number"
+                    android:paddingBottom="15dp"
+                    android:paddingTop="15dp"
+                    android:scrollbars="vertical"
+                    android:autofillHints="" />
+            </LinearLayout>
+            <LinearLayout
                 style="@style/match_wrap"
                 android:layout_marginEnd="5dp"
                 android:layout_marginTop="10dp"
@@ -185,6 +222,43 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"/>
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/linear_layout_activity_add_book_setting_audio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:orientation="horizontal">
+                <EditText
+                    android:id="@+id/edit_text_activity_add_book_audio_size"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="25dp"
+                    android:backgroundTint="@color/purple_200"
+                    android:layout_marginEnd="25dp"
+                    android:layout_marginBottom="20dp"
+                    android:fontFamily="@font/apple1"
+                    android:hint="x Mo"
+                    android:inputType="numberDecimal"
+                    android:paddingBottom="15dp"
+                    android:paddingTop="15dp"
+                    android:scrollbars="vertical"
+                    android:autofillHints="" />
+                <EditText
+                    android:id="@+id/edit_text_activity_add_book_audio_max_hime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="25dp"
+                    android:backgroundTint="@color/purple_200"
+                    android:layout_marginEnd="25dp"
+                    android:layout_marginBottom="20dp"
+                    android:fontFamily="@font/apple1"
+                    android:hint="x : y"
+                    android:inputType="textMultiLine"
+                    android:paddingBottom="15dp"
+                    android:paddingTop="15dp"
+                    android:scrollbars="vertical"
+                    android:autofillHints="" />
             </LinearLayout>
             <Spinner
                 android:id="@+id/spinner_activity_add_book_cotegory"

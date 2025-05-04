@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -62,6 +63,8 @@ public class AddBookActivity extends AppCompatActivity {
         mErrorTextView = findViewById(R.id.text_view_activity_add_book_error);
         mWaitProgressBar = findViewById(R.id.progress_bar_activity_add_book_whait);
         mAddButton = findViewById(R.id.button_activity_add_book);
+        mSettingPdfLinearLayout = findViewById(R.id.linear_layout_activity_add_book_setting_pdf);
+        mSettingAudioLinearLayout = findViewById(R.id.linear_layout_activity_add_book_setting_audio);
         mSession = new Session(getApplicationContext());
         Picasso.get()
                 .load(R.drawable.img_add_cover)
@@ -83,6 +86,26 @@ public class AddBookActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 openGallery();
+            }
+        });
+
+        mIsPdfCheckBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mIsPdfCheckBox.isChecked())
+                    mSettingPdfLinearLayout.setVisibility(View.VISIBLE);
+                else
+                    mSettingPdfLinearLayout.setVisibility(View.GONE);
+            }
+        });
+
+        mIsAudioCheckBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mIsAudioCheckBox.isChecked())
+                    mSettingAudioLinearLayout.setVisibility(View.VISIBLE);
+                else
+                    mSettingAudioLinearLayout.setVisibility(View.GONE);
             }
         });
 
@@ -240,4 +263,6 @@ public class AddBookActivity extends AppCompatActivity {
     private Button mAddButton;
     private Book mBook;
     private Session mSession;
+    private LinearLayout mSettingPdfLinearLayout;
+    private LinearLayout mSettingAudioLinearLayout;
 }
