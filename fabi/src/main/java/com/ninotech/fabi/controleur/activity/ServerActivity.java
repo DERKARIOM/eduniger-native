@@ -65,7 +65,7 @@ public class ServerActivity extends AppCompatActivity {
                 RadioButton radioButton1 = (RadioButton) mRadioGroup.getChildAt(1);
                 radioButton1.setChecked(true);
                 break;
-            case "http://192.168.1.25:2222/fabi/":
+            case "http://192.168.49.1:2222/fabi/":
                 mUrlEditText.setVisibility(View.GONE);
                 RadioButton radioButton2 = (RadioButton) mRadioGroup.getChildAt(2);
                 radioButton2.setChecked(true);
@@ -90,7 +90,7 @@ public class ServerActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                Server.saveServer(getApplicationContext(),mUrlEditText.getText().toString(),mUrlEditText.getText().toString() + "android");
+                Server.saveServer(getApplicationContext(),mUrlEditText.getText().toString(),mUrlEditText.getText().toString() + "android/");
             }
         });
         mSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -130,7 +130,7 @@ public class ServerActivity extends AppCompatActivity {
                     break;
                     case 2:
                         mUrlEditText.setVisibility(View.GONE);
-                        Server.saveServer(getApplicationContext(),"http://192.168.1.25:2222/fabi/","http://192.168.1.25:2222/fabi/android/");
+                        Server.saveServer(getApplicationContext(),"http://192.168.49.1:2222/fabi/","http://192.168.49.1:2222/fabi/android/");
                         break;
                     case 3:
                         mUrlEditText.setVisibility(View.VISIBLE);
