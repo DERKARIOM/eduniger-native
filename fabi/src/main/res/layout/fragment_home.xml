@@ -14,7 +14,7 @@
     <androidx.core.widget.NestedScrollView
         android:id="@+id/nested_scroll_view_fragment_home"
         android:layout_width="match_parent"
-        android:visibility="gone"
+       android:visibility="gone"
         android:layout_height="match_parent">
         <RelativeLayout
             android:id="@+id/relative_layout_fragment_home"
@@ -27,13 +27,45 @@
                 android:layout_marginTop="20dp"
                 android:layout_marginStart="15dp"
                 android:layout_marginEnd="15dp"
-                android:layout_marginBottom="20dp"
+                android:layout_marginBottom="15dp"
                 android:elevation="6dp"
-
                 android:contentDescription="@string/todo" />
             <RelativeLayout
-                android:id="@+id/relative_layout_fragment_home_more_book"
+                android:id="@+id/relative_layout_fragment_home_more_server"
                 android:layout_below="@id/image_view_fragment_recommended_welcome"
+                android:visibility="gone"
+                style="@style/match_wrap">
+
+                <TextView
+                    style="@style/wrap_content_all"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="Recommandé"
+                    android:textStyle="bold"
+                    android:textSize="14sp" />
+                <TextView
+                    android:id="@+id/text_view_server_more"
+                    style="@style/wrap_content_all"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="25dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="Voir plus"
+                    android:layout_alignParentEnd="true"
+                    android:textColor="@color/purple_200"
+                    android:textStyle="bold"
+                    android:textSize="14sp" />
+            </RelativeLayout>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view_fragment_home_server"
+                android:nestedScrollingEnabled="false"
+                android:layout_below="@id/relative_layout_fragment_home_more_server"
+                style="@style/match_parent_all"
+                />
+            <RelativeLayout
+                android:id="@+id/relative_layout_fragment_home_more_book"
+                android:layout_below="@id/recycler_view_fragment_home_server"
                 style="@style/match_wrap">
 
                 <TextView

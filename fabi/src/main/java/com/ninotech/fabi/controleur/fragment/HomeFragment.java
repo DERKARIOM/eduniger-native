@@ -66,14 +66,17 @@ public class HomeFragment extends Fragment {
         mStructureRecyclerView = view.findViewById(R.id.recycler_view_fragment_recommended_structure);
         mAuthorRecyclerView = view.findViewById(R.id.recycler_view_author);
         mWaitRecyclerView = view.findViewById(R.id.recycler_view_fragment_recommended_wait);
+        mServerdRecyclerView = view.findViewById(R.id.recycler_view_fragment_home_server);
         mNestedScrollView = view.findViewById(R.id.nested_scroll_view_fragment_home);
         mMoreStructRelativeLayout = view.findViewById(R.id.relative_layout_fragment_home_more_structure);
         mMoreAuthorRelativeLayout = view.findViewById(R.id.relative_layout_fragment_home_more_author);
         mOnlineBookList = new ArrayList<>();
         mStructures = new ArrayList<>();
+        mServers = new ArrayList<>();
         mAuthorArrayList = new ArrayList<>();
         mAccount = new Account();
         StructAdapter = new StructureAdapter(mStructures);
+        ServerAdapter = new StructureAdapter(mServers);
         BroadcastReceiver receiverNoConnectionAdapter = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -224,6 +227,37 @@ public class HomeFragment extends Fragment {
                                     throw new RuntimeException(e);
                                 }
                             }
+                            switch (Server.getIpServer(getContext()))
+                            {
+                                case "http://192.168.49.2:2222/fabi/":
+                                    mServers.add(new Structure(
+                                            "101",
+                                            "cati.png",
+                                            "Portail Cati",
+                                            "Description",false,
+                                            "-1",
+                                            "Cati",
+                                            "cati",
+                                            "4K+","4"));
+                                    break;
+                                case "http://192.168.49.1:2222/fabi/":
+                                    mServers.add(new Structure(
+                                            "100",
+                                            "eduniger.png",
+                                            "Portail EduNiger",
+                                            "Description",false,
+                                            "-1",
+                                            "ninotech",
+                                            "cati",
+                                            "332","0"));
+                                    break;
+                                default:
+                                    mServerdRecyclerView.setVisibility(View.GONE);
+                                    break;
+                            }
+                            mServerdRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                            mServerdRecyclerView.setAdapter(ServerAdapter);
+
                             HorizontaleAdapter horizontaleAdapter = new HorizontaleAdapter(mOnlineBookList);
                             mBookRecommendedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
                             mBookRecommendedRecyclerView.setAdapter(horizontaleAdapter);
@@ -509,6 +543,8 @@ public class HomeFragment extends Fragment {
         return false;
     }
     private RecyclerView mBookRecommendedRecyclerView;
+    private RecyclerView mServerdRecyclerView;
+    private ArrayList<Structure> mServers;
     private ArrayList<OnlineBook> mOnlineBookList;
     private ArrayList<Author> mAuthorArrayList;
     private RecyclerView mStructureRecyclerView;
@@ -522,6 +558,7 @@ public class HomeFragment extends Fragment {
     private TextView mAuthorMoreTextView;
     private Account mAccount;
     private StructureAdapter StructAdapter;
+    private StructureAdapter ServerAdapter;
     private RecyclerView mWaitRecyclerView;
     private NestedScrollView mNestedScrollView;
     private RelativeLayout mMoreStructRelativeLayout;

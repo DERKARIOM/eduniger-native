@@ -116,13 +116,26 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
         public void onCreateContextMenu(ContextMenu menu , View v , ContextMenu.ContextMenuInfo menuInfo){
         }
         void display(Structure structure){
-            Picasso.get()
-                    .load(Server.getIpServer(itemView.getContext()) + "ressources/cover/" + structure.getCover())
-                    .placeholder(R.drawable.img_wait_struct)
-                    .error(R.drawable.img_wait_struct)
-                    .transform(new RoundedTransformation(1000,4))
-                    .resize(284,284)
-                    .into(mBlanketImageView);
+            switch (structure.getId())
+            {
+                case "101":
+                    mAdhereButton.setText("Basculer");
+                    mBlanketImageView.setImageResource(R.drawable.cati);
+                    break;
+                case "100":
+                    mAdhereButton.setText("Basculer");
+                    mBlanketImageView.setImageResource(R.mipmap.ic_v2_round);
+                    break;
+                default:
+                    Picasso.get()
+                            .load(Server.getIpServer(itemView.getContext()) + "ressources/cover/" + structure.getCover())
+                            .placeholder(R.drawable.img_wait_struct)
+                            .error(R.drawable.img_wait_struct)
+                            .transform(new RoundedTransformation(1000,4))
+                            .resize(284,284)
+                            .into(mBlanketImageView);
+                    break;
+            }
             if(structure.isAdhere())
             {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.R;
+import com.ninotech.fabi.controleur.activity.AddBookActivity;
 import com.ninotech.fabi.controleur.activity.ContainerActivity;
 import com.ninotech.fabi.model.data.Library;
 
@@ -72,13 +73,25 @@ public class ElectronicAdapter extends RecyclerView.Adapter<ElectronicAdapter.My
         void display(Library library){
             mIcoImageView.setImageResource(library.getIcon());
             mLabel.setText(library.getLabel());
-            mNbrLivre.setText(String.valueOf(library.getNumber()));
+            if (library.getNumber() == -1)
+               mNbrLivre.setText("Admine");
+            else
+                mNbrLivre.setText(String.valueOf(library.getNumber()));
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent local = new Intent(itemView.getContext(), ContainerActivity.class);
-                    local.putExtra("id",library.getId());
-                    itemView.getContext().startActivity(local);
+                    if (library.getId() != 6)
+                    {
+                        Intent local = new Intent(itemView.getContext(), ContainerActivity.class);
+                        local.putExtra("id",library.getId());
+                        itemView.getContext().startActivity(local);
+                    }
+                    else
+                    {
+                        Intent addBook = new Intent(itemView.getContext(), AddBookActivity.class);
+                        itemView.getContext().startActivity(addBook);
+                    }
+
                 }
             });
         }
