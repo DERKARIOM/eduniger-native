@@ -14,8 +14,8 @@
         tools:ignore="UseCompoundDrawables">
         <ImageView
             android:id="@+id/image_view_dialog_simple_ok_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:src="@drawable/vector_emoji_success"
             android:contentDescription="@string/todo" />
         <TextView

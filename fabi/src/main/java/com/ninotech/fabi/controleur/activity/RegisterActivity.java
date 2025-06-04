@@ -29,9 +29,6 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.ninotech.fabi.model.data.PasswordUtil;
 import com.ninotech.fabi.model.data.Server;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
 import java.util.Objects;
 
@@ -54,14 +51,14 @@ public class RegisterActivity extends AppCompatActivity {
         /* Initialisation des attributs membre(propiete) */
         mNameEditText = findViewById(R.id.edit_text_activity_register_name);
         mFirstNameEditText = findViewById(R.id.edit_text_activity_register_first_name);
-        mProfessionSpinner = findViewById(R.id.spinner_activity_register_profesion);
+        mProfessionSpinner = findViewById(R.id.spinner_activity_register_profession);
        mIdNumberEditText = findViewById(R.id.edit_text_activity_register_id_number);
-       mEmailEditText = findViewById(R.id.edit_text_register_email);
-       mPasswordEditText = findViewById(R.id.edit_text_register_password_confirm);
-       mPasswordConfirmEditText = findViewById(R.id.edit_text_register_password_confirm);
-       mConnectionButton = findViewById(R.id.button_register_connection);
-       mLoginTextView = findViewById(R.id.text_view_register_login);
-       mErrorTextView = findViewById(R.id.text_view_register_error);
+       mEmailEditText = findViewById(R.id.edit_text_activity_register_email);
+       mPasswordEditText = findViewById(R.id.edit_text_activity_register_password);
+       mPasswordConfirmEditText = findViewById(R.id.edit_text_activity_register_password);
+       mConnectionButton = findViewById(R.id.button_activity_register_connection);
+       mLoginTextView = findViewById(R.id.text_view_activity_register_login);
+       mErrorTextView = findViewById(R.id.text_view_activity_register_error);
        mConnectionProgressBar = findViewById(R.id.progress_bar_activity_register_connection);
        mJeton = "null";
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.profesion_array, android.R.layout.simple_spinner_item);

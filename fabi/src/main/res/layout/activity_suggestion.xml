@@ -33,7 +33,7 @@
                 android:layout_marginBottom="40dp"
                 android:orientation="vertical">
                 <Spinner
-                    android:id="@+id/spinner_activity_register_profesion"
+                    android:id="@+id/spinner_activity_register_profession"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"

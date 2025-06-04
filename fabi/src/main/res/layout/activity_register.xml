@@ -20,7 +20,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="250dp"
-                android:src="@drawable/img_login2"
+                android:src="@drawable/img_register"
                 android:contentDescription="@string/todo" />
         </RelativeLayout>
         <EditText
@@ -33,7 +33,7 @@
             android:autofillHints="" />
         <EditText
             android:id="@+id/edit_text_activity_register_first_name"
-            android:hint="Entrer votre prénom"
+            android:hint=" Entrer votre prénom"
             android:layout_below="@id/edit_text_activity_register_name"
             android:drawableStart="@drawable/vector_family"
             android:inputType="text"
@@ -49,7 +49,7 @@
             style="@style/edit_text_register"
             android:autofillHints="" />
         <EditText
-            android:id="@+id/edit_text_register_email"
+            android:id="@+id/edit_text_activity_register_email"
             android:hint=" exemple@gmail.com"
             android:layout_below="@id/edit_text_activity_register_id_number"
             android:drawableStart="@drawable/vector_black3_email"
@@ -57,9 +57,9 @@
             style="@style/edit_text_register"
             android:autofillHints="" />
         <EditText
-            android:id="@+id/edit_text_register_password_confirm"
+            android:id="@+id/edit_text_activity_register_password"
             android:hint="@string/edit_text_hint_password"
-            android:layout_below="@id/edit_text_register_email"
+            android:layout_below="@id/edit_text_activity_register_email"
             android:drawableStart="@drawable/vector_black3_password"
             android:inputType="textPassword"
             style="@style/edit_text_register"
@@ -67,18 +67,17 @@
         <EditText
             android:id="@+id/edit_text_activity_register_password_confirm"
             android:hint="@string/edit_text_hint_password_confirm"
-            android:layout_below="@id/edit_text_register_password_confirm"
+            android:layout_below="@id/edit_text_activity_register_password"
             android:drawableStart="@drawable/vector_black3_lock"
             android:inputType="textPassword"
             style="@style/edit_text_register"
             android:autofillHints="" />
         <Spinner
-            android:id="@+id/spinner_activity_register_profesion"
+            android:id="@+id/spinner_activity_register_profession"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_below="@id/edit_text_activity_register_password_confirm"
-            android:autofillHints="rasdkdkdkdkdkd"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="25dp"
             android:layout_marginEnd="20dp"
@@ -87,16 +86,16 @@
             android:backgroundTint="@color/purple_200"
             android:padding="10dp"/>
         <TextView
-            android:id="@+id/text_view_register_error"
+            android:id="@+id/text_view_activity_register_error"
             style="@style/text_view_error_register"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/spinner_activity_register_profesion"
+            android:layout_below="@id/spinner_activity_register_profession"
             android:layout_marginBottom="31dp" />
         <RelativeLayout
             android:id="@+id/relative_layout_activity_register_connection"
             style="@style/wrap_content_all"
-            android:layout_below="@+id/text_view_register_error"
+            android:layout_below="@+id/text_view_activity_register_error"
             android:layout_marginStart="28dp"
             android:layout_marginEnd="28dp"
             android:layout_marginBottom="20dp"
@@ -104,15 +103,15 @@
 
             <ProgressBar
                 android:id="@+id/progress_bar_activity_register_connection"
-                android:layout_alignStart="@id/button_register_connection"
+                android:layout_alignStart="@id/button_activity_register_connection"
                 style="@style/progress_bar_connection"/>
 
             <Button
-                android:id="@+id/button_register_connection"
+                android:id="@+id/button_activity_register_connection"
                 style="@style/button_connexion" />
         </RelativeLayout>
         <TextView
-            android:id="@+id/text_view_register_login"
+            android:id="@+id/text_view_activity_register_login"
             android:layout_below="@id/relative_layout_activity_register_connection"
             android:layout_marginBottom="10dp"
             android:layout_centerHorizontal="true"

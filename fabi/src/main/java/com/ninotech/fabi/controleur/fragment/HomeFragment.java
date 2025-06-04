@@ -231,7 +231,7 @@ public class HomeFragment extends Fragment {
                             {
                                 case "http://192.168.49.2:2222/fabi/":
                                     mServers.add(new Structure(
-                                            "101",
+                                            "http://192.168.49.2:2222/fabi/",
                                             "cati.png",
                                             "Portail Cati",
                                             "Description",false,
@@ -242,7 +242,7 @@ public class HomeFragment extends Fragment {
                                     break;
                                 case "http://192.168.49.1:2222/fabi/":
                                     mServers.add(new Structure(
-                                            "100",
+                                            "http://192.168.49.1:2222/fabi/",
                                             "eduniger.png",
                                             "Portail EduNiger",
                                             "Description",false,

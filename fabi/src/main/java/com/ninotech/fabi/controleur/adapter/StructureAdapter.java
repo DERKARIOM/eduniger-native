@@ -11,6 +11,8 @@ import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -20,6 +22,7 @@ import android.widget.Toast;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.R;
+import com.ninotech.fabi.controleur.activity.MainActivity;
 import com.ninotech.fabi.controleur.activity.StructureActivity;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
 import com.ninotech.fabi.controleur.dialog.SimpleOkDialog;
@@ -118,13 +121,31 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
         void display(Structure structure){
             switch (structure.getId())
             {
-                case "101":
+                case "http://192.168.49.2:2222/fabi/":
+                    Animation pulseAnim = AnimationUtils.loadAnimation(itemView.getContext(), R.anim.pulse);
+
+                    // Lancer l'animation automatiquement
+                    mAdhereButton.startAnimation(pulseAnim);
+
+                    Animation pulseAnimImg = AnimationUtils.loadAnimation(itemView.getContext(), R.anim.slide_down_up);
+
+                    // Lancer l'animation automatiquement
+                    mBlanketImageView.startAnimation(pulseAnimImg);
                     mAdhereButton.setText("Basculer");
                     mBlanketImageView.setImageResource(R.drawable.cati);
                     break;
-                case "100":
+                case "http://192.168.49.1:2222/fabi/":
+                    Animation pulseAnim2 = AnimationUtils.loadAnimation(itemView.getContext(), R.anim.pulse);
+
+                    // Lancer l'animation automatiquement
+                    mAdhereButton.startAnimation(pulseAnim2);
+
+                    Animation pulseAnimImg2 = AnimationUtils.loadAnimation(itemView.getContext(), R.anim.slide_down_up);
+
+                    // Lancer l'animation automatiquement
+                    mBlanketImageView.startAnimation(pulseAnimImg2);
                     mAdhereButton.setText("Basculer");
-                    mBlanketImageView.setImageResource(R.mipmap.ic_v2_round);
+                    mBlanketImageView.setImageResource(R.drawable.eduniger);
                     break;
                 default:
                     Picasso.get()
@@ -147,19 +168,29 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent structureIntent = new Intent(itemView.getContext(), StructureActivity.class);
-                    structureIntent.putExtra("intent_structure_adapter_id", structure.getId());
-                    structureIntent.putExtra("intent_structure_adapter_logo", structure.getCover());
-                    structureIntent.putExtra("intent_structure_adapter_name", structure.getName());
-                    structureIntent.putExtra("intent_structure_adapter_description", structure.getDescription());
-                    structureIntent.putExtra("intent_structure_adapter_is_adhere", structure.isAdhere());
-                    structureIntent.putExtra("intent_structure_adapter_banner", structure.getBanner());
-                    structureIntent.putExtra("intent_structure_adapter_author", structure.getAuthor());
-                    structureIntent.putExtra("intent_structure_adapter_adherer_number", structure.getAdhererNumber());
-                    structureIntent.putExtra("intent_structure_adapter_book_number", structure.getBookNumber());
-                    structureIntent.putExtra("intent_structure_adapter_admin", structure.getAdmin());
-
-                    itemView.getContext().startActivity(structureIntent);
+                    switch (structure.getId())
+                    {
+                        case "http://192.168.49.2:2222/fabi/":
+                            simpleOkDialog(R.drawable.cati,"Portail académique de la CATI\nUniversité Abdou Moumouni" , "Le portail numérique de la Cellule d’Appui à la Technologie et à l’Innovation (CATI) est une plateforme dédiée à la consultation et au téléchargement des mémoires, thèses et travaux de recherche des différentes facultés de l’Université Abdou Moumouni.");
+                            break;
+                        case "http://192.168.49.1:2222/fabi/":
+                            simpleOkDialog(R.drawable.eduniger,"Portail EduNiger" , "EduNiger est une bibliothèque numérique qui permet aux élèves, étudiants et enseignants d’accéder facilement à des cours, livres, exercices et ressources en ligne ou sans connexion, selon leur niveau ou leur filière.");
+                            break;
+                        default:
+                            Intent structureIntent = new Intent(itemView.getContext(), StructureActivity.class);
+                            structureIntent.putExtra("intent_structure_adapter_id", structure.getId());
+                            structureIntent.putExtra("intent_structure_adapter_logo", structure.getCover());
+                            structureIntent.putExtra("intent_structure_adapter_name", structure.getName());
+                            structureIntent.putExtra("intent_structure_adapter_description", structure.getDescription());
+                            structureIntent.putExtra("intent_structure_adapter_is_adhere", structure.isAdhere());
+                            structureIntent.putExtra("intent_structure_adapter_banner", structure.getBanner());
+                            structureIntent.putExtra("intent_structure_adapter_author", structure.getAuthor());
+                            structureIntent.putExtra("intent_structure_adapter_adherer_number", structure.getAdhererNumber());
+                            structureIntent.putExtra("intent_structure_adapter_book_number", structure.getBookNumber());
+                            structureIntent.putExtra("intent_structure_adapter_admin", structure.getAdmin());
+                            itemView.getContext().startActivity(structureIntent);
+                            break;
+                    }
                 }
             });
             mTitleTextView.setText(structure.getName());
@@ -183,6 +214,32 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
                                 structure.setAdhere(false);
                                 DetachStructSyn detachStructSyn = new DetachStructSyn();
                                 detachStructSyn.execute(Server.getIpServerAndroid(itemView.getContext()) + "AdhererStruct.php",mSession.getIdNumber(),structure.getId());
+                            }
+                            break;
+                        case "http://192.168.49.2:2222/fabi/":
+                            Server.saveServer(itemView.getContext(), "http://192.168.49.1:2222/fabi/","http://192.168.49.1:2222/fabi/android/");
+                            Intent intent = new Intent(itemView.getContext(), MainActivity.class);
+                            itemView.getContext().startActivity(intent);
+                            ((Activity) itemView.getContext()).overridePendingTransition(R.anim.zoom_in, R.anim.zoom_out);
+                            try {
+                                ((Activity)itemView.getContext()).finish();
+                            }
+                            catch (Exception e)
+                            {
+                                Toast.makeText(itemView.getContext(),e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                            break;
+                        case "http://192.168.49.1:2222/fabi/":
+                            Server.saveServer(itemView.getContext(), "http://192.168.49.2:2222/fabi/","http://192.168.49.2:2222/fabi/android/");
+                            Intent intent2 = new Intent(itemView.getContext(), MainActivity.class);
+                            itemView.getContext().startActivity(intent2);
+                            ((Activity) itemView.getContext()).overridePendingTransition(R.anim.agrandir_dilog, R.anim.agrandir_dilog_out);
+                            try {
+                                ((Activity)itemView.getContext()).finish();
+                            }
+                            catch (Exception e)
+                            {
+                                Toast.makeText(itemView.getContext(),e.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                             break;
 
