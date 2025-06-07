@@ -367,7 +367,7 @@ public class SearchActivity extends AppCompatActivity {
                         StructureSyn structureSyn = new StructureSyn();
                         structureSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "Structure.php", mSession.getIdNumber());
                         StructureSyn2 structureSyn2 = new StructureSyn2();
-                        structureSyn2.execute(Server.getIpServerAndroid(getApplicationContext()) + "Structure2.php", mSession.getIdNumber());
+                        structureSyn2.execute(Server.getIpServerAndroid(getApplicationContext()) + "StructureMore.php", mSession.getIdNumber());
                     }catch (Exception e)
                     {
                         Log.e("errRankingFragment",e.getMessage());

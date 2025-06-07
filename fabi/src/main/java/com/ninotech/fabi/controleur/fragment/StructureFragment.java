@@ -65,7 +65,7 @@ public class StructureFragment extends Fragment {
                         StructureSyn structureSyn = new StructureSyn();
                         structureSyn.execute(Server.getIpServerAndroid(getContext()) + "Structure.php", session.getIdNumber());
                         StructureSyn2 structureSyn2 = new StructureSyn2();
-                        structureSyn2.execute(Server.getIpServerAndroid(getContext()) + "Structure2.php", session.getIdNumber());
+                        structureSyn2.execute(Server.getIpServerAndroid(getContext()) + "StructureMore.php", session.getIdNumber());
                     }catch (Exception e)
                     {
                         Log.e("errCategoryFragment",e.getMessage());
@@ -80,7 +80,7 @@ public class StructureFragment extends Fragment {
         StructureSyn structureSyn = new StructureSyn();
         structureSyn.execute(Server.getIpServerAndroid(getContext()) + "Structure.php", session.getIdNumber());
         StructureSyn2 structureSyn2 = new StructureSyn2();
-        structureSyn2.execute(Server.getIpServerAndroid(getContext()) + "Structure2.php", session.getIdNumber());
+        structureSyn2.execute(Server.getIpServerAndroid(getContext()) + "StructureMore.php", session.getIdNumber());
         return view;
     }
 
