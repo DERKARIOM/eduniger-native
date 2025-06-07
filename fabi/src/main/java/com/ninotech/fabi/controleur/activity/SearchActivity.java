@@ -211,6 +211,7 @@ public class SearchActivity extends AppCompatActivity {
                 mFilterStructures = new ArrayList<>();
                 StructAdapter = new StructureAdapter(mStructures);
                 mSearchEditText.setHint(R.string.search_structure);
+                waitConnection();
                 searchOnLineStructure();
                 break;
             case "ELECTRONIC_BOOK":
@@ -234,6 +235,7 @@ public class SearchActivity extends AppCompatActivity {
                 mAuthors = new ArrayList<>();
                 mFilteredAuthors = new ArrayList<>();
                 mSearchEditText.setHint(R.string.search_author);
+                waitConnection();
                 searchAuthorOnline();
                 break;
             case "AUTHOR":
