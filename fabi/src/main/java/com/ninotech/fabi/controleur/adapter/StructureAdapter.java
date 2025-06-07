@@ -122,26 +122,14 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
             switch (structure.getId())
             {
                 case "http://192.168.49.2:2222/fabi/":
-                    Animation pulseAnim = AnimationUtils.loadAnimation(itemView.getContext(), R.anim.pulse);
-
-                    // Lancer l'animation automatiquement
-                    mAdhereButton.startAnimation(pulseAnim);
-
                     Animation pulseAnimImg = AnimationUtils.loadAnimation(itemView.getContext(), R.anim.slide_down_up);
-
                     // Lancer l'animation automatiquement
                     mBlanketImageView.startAnimation(pulseAnimImg);
                     mAdhereButton.setText("Basculer");
                     mBlanketImageView.setImageResource(R.drawable.cati);
                     break;
                 case "http://192.168.49.1:2222/fabi/":
-                    Animation pulseAnim2 = AnimationUtils.loadAnimation(itemView.getContext(), R.anim.pulse);
-
-                    // Lancer l'animation automatiquement
-                    mAdhereButton.startAnimation(pulseAnim2);
-
                     Animation pulseAnimImg2 = AnimationUtils.loadAnimation(itemView.getContext(), R.anim.slide_down_up);
-
                     // Lancer l'animation automatiquement
                     mBlanketImageView.startAnimation(pulseAnimImg2);
                     mAdhereButton.setText("Basculer");
