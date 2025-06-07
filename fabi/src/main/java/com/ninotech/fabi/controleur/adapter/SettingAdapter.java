@@ -1,10 +1,7 @@
 package com.ninotech.fabi.controleur.adapter;
 
-import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
-
 import android.Manifest;
 import android.app.Activity;
-import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
@@ -20,7 +17,6 @@ import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -35,11 +31,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.ninotech.fabi.controleur.activity.AccountActivity;
-import com.ninotech.fabi.controleur.activity.ChangePasswordActivity;
-import com.ninotech.fabi.controleur.activity.ContactActivity;
 import com.ninotech.fabi.controleur.activity.LoginActivity;
 import com.ninotech.fabi.controleur.activity.ServerActivity;
-import com.ninotech.fabi.controleur.dialog.EvaluezVousDialog;
+import com.ninotech.fabi.controleur.activity.ThemeActivity;
 import com.ninotech.fabi.controleur.activity.FingerPrintActivity;
 import com.ninotech.fabi.controleur.activity.InfosActivity;
 import com.ninotech.fabi.controleur.activity.SuggestionActivity;
@@ -52,7 +46,6 @@ import com.ninotech.fabi.model.data.Server;
 import com.ninotech.fabi.model.data.Setting;
 import com.ninotech.fabi.model.data.Update;
 import com.ninotech.fabi.model.table.Session;
-import com.ninotech.fabi.controleur.dialog.SucceSuggesionDialog;
 import com.ninotech.fabi.model.table.UserTable;
 
 import java.io.IOException;
@@ -192,6 +185,10 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.MyViewHo
                             case "Compte":
                                 Intent accountIntent = new Intent(itemView.getContext(), AccountActivity.class);
                                itemView.getContext().startActivity(accountIntent);
+                                break;
+                            case "Thème appliquée":
+                               Intent themeIntent = new Intent(itemView.getContext(), ThemeActivity.class);
+                                itemView.getContext().startActivity(themeIntent);
                                 break;
                             case "Envoyer une suggestion":
                                 Intent suggestion = new Intent(itemView.getContext(), SuggestionActivity.class);
@@ -526,6 +523,7 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.MyViewHo
             });
             simpleOkDialog.build();
         }
+
         private void showOptionsDialog(String phoneNumber) {
             android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(itemView.getContext());
             builder.setTitle("Choisir une action");
