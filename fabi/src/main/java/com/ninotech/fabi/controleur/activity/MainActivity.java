@@ -67,8 +67,8 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar_search);
         mEditText = findViewById(R.id.edit_text_toolbar_search);
         mProfileImageView = findViewById(R.id.image_view_toolbar_main_profile);
-        SharedPreferences sharedPreferences = getSharedPreferences("MODE", Context.MODE_PRIVATE);
-        boolean nightMODE = sharedPreferences.getBoolean("night", false);
+//        SharedPreferences sharedPreferences = getSharedPreferences("MODE", Context.MODE_PRIVATE);
+//        boolean nightMODE = sharedPreferences.getBoolean("night", false);
         mBookStoreFragment = new BookStoreFragment();
         mSuggestionFragment = new SuggestionFragment();
         LibraryFragment libraryFragment = new LibraryFragment();
@@ -76,6 +76,11 @@ public class MainActivity extends AppCompatActivity {
         mDigitalPrintTable = new DigitalPrintTable(this);
         Intent reservationService = new Intent(this, NotificationService.class);
         mAccount = new Account();
+        /* Activation du mode nuit et changement de couleur a la bar de navigation si le mode jour n' est pas activer */
+//        if(nightMODE)
+//        {nightMODE
+           // AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+//        }
         mEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -186,13 +191,6 @@ public class MainActivity extends AppCompatActivity {
                 ActivityCompat.requestPermissions(MainActivity.this,
                         new String[]{Manifest.permission.POST_NOTIFICATIONS,android.Manifest.permission.FOREGROUND_SERVICE_DATA_SYNC}, 101);
             }
-        }
-
-        /* Activation du mode nuit et changement de couleur a la bar de navigation si le mode jour n' est pas activer */
-        if(nightMODE)
-        {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-            getWindow().setNavigationBarColor(getResources().getColor(R.color.black2));
         }
 
         /* La mise en place du Fragment par defeaut */
