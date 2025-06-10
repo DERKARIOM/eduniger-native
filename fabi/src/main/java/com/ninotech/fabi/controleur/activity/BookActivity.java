@@ -95,7 +95,6 @@ public class BookActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book);
         Objects.requireNonNull(getSupportActionBar()).hide();
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         Intent intentBook = getIntent();
         mSession = new Session(this);
         mOnlineBook = new OnlineBook(intentBook.getStringExtra("intent_adapter_book_id"));

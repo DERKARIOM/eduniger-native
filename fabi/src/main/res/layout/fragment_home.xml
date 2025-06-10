@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/match_parent_all"
-    android:background="@color/whiteVert"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    style="@style/background"
     tools:context="com.ninotech.fabi.controleur.fragment.HomeFragment">
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_fragment_recommended_wait"
