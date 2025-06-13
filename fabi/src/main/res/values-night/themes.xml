@@ -25,6 +25,9 @@
     <style name="activity_main_ico_notification">
         <item name="android:icon">@drawable/vector_white_off_subscribe</item>
     </style>
+    <style name="adapter_struture_btt">
+        <item name="android:textColor">@color/white</item>
+    </style>
     <style name="ColorMatier">
         <item name="android:textColor">@color/white2</item>
     </style>

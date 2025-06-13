@@ -46,6 +46,7 @@
         android:layout_height="33dp"
         android:text="S'adhérer"
         android:textAllCaps="false"
+        style="@style/adapter_struture_btt"
         android:layout_margin="10dp"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
