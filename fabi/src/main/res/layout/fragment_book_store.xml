@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/match_parent_all"
-    android:background="@color/whiteVert"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    style="@style/background"
     tools:context="com.ninotech.fabi.controleur.fragment.BookStoreFragment">
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab_layout_accuiel"
-        android:background="@color/whiteVert"
-        style="@style/match_wrap">
+        style="@style/background"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
         <com.google.android.material.tabs.TabItem
             style="@style/wrap_content_all"
             android:text="@string/books_title"/>
