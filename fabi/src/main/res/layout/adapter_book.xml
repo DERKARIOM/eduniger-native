@@ -49,8 +49,11 @@
                 android:contentDescription="@string/todo" />
             <ImageView
                 android:id="@+id/image_view_adapter_book_electronic"
-                style="@style/icon_format"
-                android:src="@drawable/vector_black3_pdf"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_margin="5dp"
+                android:visibility="gone"
+                style="@style/adapter_book_pdf"
                 android:contentDescription="@string/todo" />
             <ImageView
                 android:id="@+id/image_view_adapter_book_audio"
@@ -65,8 +68,9 @@
                 tools:ignore="UseCompoundDrawables">
                 <ImageView
                     android:id="@+id/image_view_activity_book_like"
-                    style="@style/icon_subcribe"
-                    android:src="@drawable/vector_black3_off_like"
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    style="@style/adapter_book_like"
                     android:contentDescription="@string/todo" />
                 <TextView
                     android:id="@+id/text_view_activity_book_number_like"
@@ -80,8 +84,9 @@
                 tools:ignore="UseCompoundDrawables">
                 <ImageView
                     android:id="@+id/image_view_activity_book_no_like"
-                    style="@style/icon_subcribe"
-                    android:src="@drawable/vector_black3_vue"
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    style="@style/adapter_book_view"
                     android:contentDescription="@string/todo" />
                 <TextView
                     android:id="@+id/text_view_adapter_book_number_view"

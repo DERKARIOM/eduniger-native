@@ -28,6 +28,15 @@
     <style name="adapter_struture_btt">
         <item name="android:textColor">@color/white</item>
     </style>
+    <style name="adapter_book_like">
+        <item name="android:src">@drawable/vector_white_off_like</item>
+    </style>
+    <style name="adapter_book_view">
+        <item name="android:src">@drawable/vector_white_vue</item>
+    </style>
+    <style name="adapter_book_pdf">
+        <item name="android:src">@drawable/vector_while_pdf</item>
+    </style>
     <style name="ColorMatier">
         <item name="android:textColor">@color/white2</item>
     </style>
