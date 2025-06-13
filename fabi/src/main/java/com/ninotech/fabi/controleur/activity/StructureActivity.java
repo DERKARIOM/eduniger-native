@@ -28,6 +28,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.adapter.AuthorHorizontaleAdapter;
+import com.ninotech.fabi.controleur.adapter.CategoryAdapter;
 import com.ninotech.fabi.controleur.adapter.HorizontaleAdapter;
 import com.ninotech.fabi.controleur.adapter.NoConnectionAdapter;
 import com.ninotech.fabi.controleur.adapter.SemiNoConnectionAdapter;
@@ -36,7 +37,9 @@ import com.ninotech.fabi.controleur.animation.RoundedTransformation;
 import com.ninotech.fabi.controleur.dialog.SimpleOkDialog;
 import com.ninotech.fabi.controleur.dialog.StructDeleteDialog;
 import com.ninotech.fabi.controleur.fragment.BooksFragment;
+import com.ninotech.fabi.controleur.fragment.CategoryFragment;
 import com.ninotech.fabi.model.data.Author;
+import com.ninotech.fabi.model.data.Category;
 import com.ninotech.fabi.model.data.Connection;
 import com.ninotech.fabi.model.data.OnlineBook;
 import com.ninotech.fabi.model.data.PasswordUtil;
@@ -85,6 +88,8 @@ public class StructureActivity extends AppCompatActivity {
         mAdhererButton = findViewById(R.id.button_activity_structure_adherer);
         mBookRecommendedRecyclerView = findViewById(R.id.recycler_view_activity_structure_books);
         mMoreAuthorRelativeLayout = findViewById(R.id.relative_layout_activity_structure_author);
+        mCategoryRecyclerView = findViewById(R.id.recycler_view_activity_structure_category);
+        mCategoryList = new ArrayList<>();
         mSession = new Session(getApplicationContext());
         mOnlineBookList = new ArrayList<>();
         mAuthorArrayList = new ArrayList<>();
@@ -114,6 +119,8 @@ public class StructureActivity extends AppCompatActivity {
                         mWaitRecyclerView.setAdapter(noConnectionAdapter);
                         StructBookSyn structBookSyn = new StructBookSyn();
                         structBookSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "StructBook.php", mSession.getIdNumber(),mStructure.getId());
+                        CategorySyn categorySyn = new CategorySyn();
+                        categorySyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "Category.php", mSession.getIdNumber());
                         AuthorSyn authorSyn = new AuthorSyn();
                         authorSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "AuthorTop.php", mSession.getIdNumber());
                     }catch (Exception e)
@@ -246,6 +253,8 @@ public class StructureActivity extends AppCompatActivity {
                 .into(mProfileImageView);
         StructBookSyn structBookSyn = new StructBookSyn();
         structBookSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "StructBook.php", mSession.getIdNumber(),mStructure.getId());
+        CategorySyn categorySyn = new CategorySyn();
+        categorySyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "Category.php", mSession.getIdNumber());
         AuthorSyn authorSyn = new AuthorSyn();
         authorSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "AuthorTop.php", mSession.getIdNumber());
     }
@@ -532,6 +541,66 @@ public class StructureActivity extends AppCompatActivity {
         });
         simpleOkDialog.build();
     }
+    private class CategorySyn extends AsyncTask<String,Void,String> {
+        @Override
+        protected String doInBackground(String... params) {
+
+            try {
+                OkHttpClient client = new OkHttpClient();
+                RequestBody requestBody = new MultipartBody.Builder()
+                        .setType(MultipartBody.FORM)
+                        .addFormDataPart("idNumber", params[1])
+                        .build();
+                Request request = new Request.Builder()
+                        .url(params[0])
+                        .post(requestBody)
+                        .build();
+                try {
+                    Response response = client.newCall(request).execute();
+                    assert response.body() != null;
+                    return response.body().string();
+                } catch (IOException e) {
+                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+
+            } catch (Exception e) {
+                return null;
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String jsonData) {
+            if (jsonData != null) {
+                mWaitRecyclerView.setVisibility(View.GONE);
+                mCategoryRecyclerView.setVisibility(View.VISIBLE);
+                if (!jsonData.equals("RAS")) {
+                    JSONArray jsonArray = null;
+                    try {
+                        jsonArray = new JSONArray(jsonData);
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        try {
+                            mCategoryList.add(new Category(jsonArray.getJSONObject(i).getString("blanket"), jsonArray.getJSONObject(i).getString("title")));
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    CategoryAdapter categoryAdapter = new CategoryAdapter(mCategoryList);
+                    mCategoryRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                    mCategoryRecyclerView.setAdapter(categoryAdapter);
+                }
+            } else {
+                ArrayList<Connection> list = new ArrayList<>();
+                list.add(new Connection(getString(R.string.no_connection_available), "CATEGORY_FRAGMENT", false));
+                NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
+                mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                mWaitRecyclerView.setAdapter(noConnectionAdapter);
+            }
+        }
+    }
     private ImageView mWelcomeImageView;
     private ImageView mProfileImageView;
     private TextView mNameTextView;
@@ -555,4 +624,8 @@ public class StructureActivity extends AppCompatActivity {
     private NestedScrollView mNestedScrollView;
     private SemiNoConnectionAdapter mSemiNoConnectionAdapter;
     private RelativeLayout mMoreAuthorRelativeLayout;
+
+    private RecyclerView mCategoryRecyclerView;
+    private ArrayList<Category> mCategoryList;
+    
 }
