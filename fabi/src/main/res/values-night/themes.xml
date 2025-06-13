@@ -17,6 +17,14 @@
     <style name="background">
         <item name="background">@color/black</item>
     </style>
+
+    <style name="activity_main_research">
+        <item name="android:background">@drawable/forme_black3_radius_10dp</item>
+        <item name="android:drawableEnd">@drawable/vector_white_micro</item>
+    </style>
+    <style name="activity_main_ico_notification">
+        <item name="android:icon">@drawable/vector_white_off_subscribe</item>
+    </style>
     <style name="ColorMatier">
         <item name="android:textColor">@color/white2</item>
     </style>

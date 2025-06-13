@@ -17,6 +17,13 @@
     <style name="background">
         <item name="background">@color/whiteVert</item>
     </style>
+    <style name="activity_main_research">
+        <item name="android:background">@drawable/forme_white_radius_10dp</item>
+        <item name="android:drawableEnd">@drawable/vector_black3_micro</item>
+    </style>
+    <style name="activity_main_ico_notification">
+        <item name="android:icon">@drawable/vector_black3_off_subscribe</item>
+    </style>
     <style name="progress_bar_wait" parent="@android:style/Widget.Holo.ProgressBar.Small">
         <item name="android:layout_width">50dp</item>
         <item name="android:layout_height">50dp</item>
