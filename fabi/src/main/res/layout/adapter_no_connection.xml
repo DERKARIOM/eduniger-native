@@ -75,6 +75,7 @@
             android:layout_margin="10dp"
             android:paddingTop="-1dp"
             android:gravity="center"
+            style="@style/adapter_struture_btt"
             android:background="@drawable/forme_white_100dp"
             android:text="Réessayer"
             />
