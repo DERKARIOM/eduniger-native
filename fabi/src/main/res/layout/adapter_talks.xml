@@ -21,7 +21,7 @@
             android:layout_toEndOf="@+id/image_view_adapter_talks_profile"
             android:text="@string/user_name"
             android:textSize="15sp"
-            android:textColor="@color/black"
+            android:textStyle="bold"
             android:layout_centerVertical="true"/>
     </RelativeLayout>
     <RelativeLayout
@@ -33,7 +33,6 @@
             style="@style/wrap_content_all"
             android:layout_marginStart="10dp"
             android:layout_marginTop="8dp"
-            android:textColor="@color/black2"
             android:textSize="17sp"
             android:text="@string/message_default"/>
     </RelativeLayout>
