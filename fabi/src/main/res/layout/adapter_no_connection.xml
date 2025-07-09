@@ -67,7 +67,7 @@
             android:gravity="center"
             android:layout_margin="10dp"
             android:textSize="14sp"
-            android:background="@drawable/forme_white_radius_1000dp_border_black3"/>
+            style="@style/adapter_no_connection_btt_offline"/>
         <Button
             android:id="@+id/button_adapter_no_connection_re_load"
             android:layout_width="120dp"

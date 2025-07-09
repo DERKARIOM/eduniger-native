@@ -224,4 +224,7 @@
         <item name="android:layout_centerInParent">true</item>
         <item name="android:background">@color/white3</item>
     </style>
+    <style name="adapter_no_connection_btt_offline">
+        <item name="android:background">@drawable/forme_white_radius_1000dp_border_black3</item>
+    </style>
 </resources>

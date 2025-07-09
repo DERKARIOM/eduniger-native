@@ -49,4 +49,7 @@
     <style name="Block_notif1">
         <item name="android:background">@drawable/forme_sombre_radius_10dp</item>
     </style>
+    <style name="adapter_no_connection_btt_offline">
+        <item name="android:background">@drawable/forme_black3_radius_1000dp_border_white</item>
+    </style>
 </resources>
