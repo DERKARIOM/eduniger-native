@@ -7,7 +7,7 @@
     <include layout="@layout/toolbar_book"/>
     <androidx.core.widget.NestedScrollView
         android:id="@+id/nested_scroll_view_activity_book"
-        android:visibility="gone"
+
         style="@style/match_parent_all"
         android:layout_below="@id/relative_layout_toolbar_book">
         <RelativeLayout
@@ -42,7 +42,6 @@
                         android:layout_margin="5dp"
                         android:text="@string/book_title"
                         android:textStyle="bold"
-                        android:textColor="@color/black2"
                         android:textSize="@dimen/size_title" />
                     <TextView
                         android:id="@+id/text_view_adapter_book_simple_author_name"
@@ -79,7 +78,7 @@
                                 android:layout_width="22dp"
                                 android:layout_height="22dp"
                                 android:elevation="10dp"
-                                android:src="@drawable/vector_black3_off_like"
+                                style="@style/activity_book_img_like"
                                 android:contentDescription="@string/todo" />
                             <TextView
                                 android:id="@+id/text_view_activity_book_number_like"
@@ -331,7 +330,7 @@
             </LinearLayout>
             <LinearLayout
                 android:id="@+id/linear_layout_activity_book_electronic"
-                android:visibility="gone"
+
                 style="@style/match_wrap"
                 android:layout_below="@id/linear_layout_activity_book_audio"
                 android:orientation="vertical">
@@ -390,6 +389,7 @@
                             android:textAllCaps="false"
                             android:layout_marginTop="5dp"
                             android:layout_marginBottom="5dp"
+                            android:textColor="@color/white"
                             app:icon="@drawable/vector_white_download"
                             android:textSize="@dimen/size_button"
                             android:backgroundTint="@color/purple_200"/>
@@ -405,7 +405,7 @@
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:elevation="10dp"
-                            android:src="@drawable/vector_black3_pdf"
+                            style="@style/activity_book_img_pdf"
                             android:contentDescription="@string/todo" />
                         <TextView
                             android:id="@+id/text_view_activity_book_pdf_size"
@@ -430,7 +430,7 @@
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:elevation="10dp"
-                            android:src="@drawable/vector_black3_physical"
+                           style="@style/activity_book_img_physique"
                             android:contentDescription="@string/todo" />
                         <TextView
                             android:id="@+id/text_view_activity_book_pdf_max_page"

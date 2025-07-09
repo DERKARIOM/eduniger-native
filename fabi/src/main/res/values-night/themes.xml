@@ -52,4 +52,13 @@
     <style name="adapter_no_connection_btt_offline">
         <item name="android:background">@drawable/forme_black3_radius_1000dp_border_white</item>
     </style>
+    <style name="activity_book_img_like">
+        <item name="android:src">@drawable/vector_white_sombre_off_like</item>
+    </style>
+    <style name="activity_book_img_pdf">
+        <item name="android:src">@drawable/vector_white_sombre_pdf</item>
+    </style>
+    <style name="activity_book_img_physique">
+        <item name="android:src">@drawable/vector_white_sombre_physical</item>
+    </style>
 </resources>
