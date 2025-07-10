@@ -68,7 +68,7 @@ public class StructureActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_structure);
         Objects.requireNonNull(getSupportActionBar()).hide();
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+       // AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         Intent intentStructure = getIntent();
         mWaitRecyclerView = findViewById(R.id.recycler_view_activity_structure_wait);
         mNestedScrollView = findViewById(R.id.nested_scroll_view_activity_structure);

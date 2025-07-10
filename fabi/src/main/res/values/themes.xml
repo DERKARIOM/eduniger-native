@@ -242,4 +242,7 @@
     <style name="toolbar_book_btt_back">
         <item name="android:src">@drawable/vector_back</item>
     </style>
+    <style name="activity_structure_toolbar_edit_text_ico_micro">
+        <item name="android:drawableEnd">@drawable/vector_black3_micro</item>
+    </style>
 </resources>
