@@ -8,6 +8,7 @@ import android.widget.TextView;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -27,21 +28,40 @@ public class SettingV2Activity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting_v2);
-        StatusBarAdapter statusBarAdapter = new StatusBarAdapter(this,getWindow());
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_NO)
+        {
+            StatusBarAdapter statusBarAdapter = new StatusBarAdapter(this,getWindow());
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
         RecyclerView mSettingRecyclerView = findViewById(R.id.recycler_view_activity_setting2);
         ArrayList<Setting> settings = new ArrayList<>();
-        settings.add(new Setting(R.drawable.user,getString(R.string.account),null));
-        settings.add(new Setting(R.drawable.vector_black3_print_digital,getString(R.string.digital_print),null));
-        settings.add(new Setting(R.drawable.vector_black3_phone_connected,"Serveur connecté",null));
-        settings.add(new Setting(com.pspdfkit.R.drawable.pspdf__ic_settings_default_theme,"Thème appliquée","Mode Clair"));
-        settings.add(new Setting(R.drawable.vector_black3_message,getString(R.string.send_suggestion),null));
-        settings.add(new Setting(R.drawable.vector_black3_grade,getString(R.string.evaluate_us),null));
-        settings.add(new Setting(R.drawable.vector_purple_200_phone,"Contactez-nous",null));
-        //settings.add(new Setting(R.drawable.vector_black3_off_subscribe,"Suivez-nous",null));
-        settings.add(new Setting(R.drawable.vector_black3_video,getString(R.string.how_it_works),null));
-        settings.add(new Setting(R.drawable.vector_black3_help,getString(R.string.app_information),null));
-        settings.add(new Setting(R.drawable.vector_new,"Quoi de neuf ?",null));
+        if(AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_NO)
+        {
+            settings.add(new Setting(R.drawable.user,getString(R.string.account),null));
+            settings.add(new Setting(R.drawable.vector_black3_print_digital,getString(R.string.digital_print),null));
+            settings.add(new Setting(R.drawable.vector_black3_phone_connected,"Serveur connecté",null));
+            settings.add(new Setting(com.pspdfkit.R.drawable.pspdf__ic_settings_default_theme,"Thème appliquée","Mode Clair"));
+            settings.add(new Setting(R.drawable.vector_black3_message,getString(R.string.send_suggestion),null));
+            settings.add(new Setting(R.drawable.vector_black3_grade,getString(R.string.evaluate_us),null));
+            settings.add(new Setting(R.drawable.vector_purple_200_phone,"Contactez-nous",null));
+            //settings.add(new Setting(R.drawable.vector_black3_off_subscribe,"Suivez-nous",null));
+            settings.add(new Setting(R.drawable.vector_black3_video,getString(R.string.how_it_works),null));
+            settings.add(new Setting(R.drawable.vector_black3_help,getString(R.string.app_information),null));
+            settings.add(new Setting(R.drawable.vector_new,"Quoi de neuf ?",null));
+        }else
+        {
+            settings.add(new Setting(R.drawable.user,getString(R.string.account),null));
+            settings.add(new Setting(R.drawable.vector_white_sombre_print_digital,getString(R.string.digital_print),null));
+            settings.add(new Setting(R.drawable.vector_white_sombre_phone_connected,"Serveur connecté",null));
+            settings.add(new Setting(com.pspdfkit.R.drawable.pspdf__ic_settings_default_theme,"Thème appliquée","Mode Clair"));
+            settings.add(new Setting(R.drawable.vector_white_sombre_message,getString(R.string.send_suggestion),null));
+            settings.add(new Setting(R.drawable.vector_white_sombre_grade,getString(R.string.evaluate_us),null));
+            settings.add(new Setting(R.drawable.vector_white_sombre_phone,"Contactez-nous",null));
+            //settings.add(new Setting(R.drawable.vector_black3_off_subscribe,"Suivez-nous",null));
+            settings.add(new Setting(R.drawable.vector_white_sombre_video,getString(R.string.how_it_works),null));
+            settings.add(new Setting(R.drawable.vector_white_sombre_help,getString(R.string.app_information),null));
+            settings.add(new Setting(R.drawable.vector_white_sombre_new,"Quoi de neuf ?",null));
+        }
         SettingAdapter mSettingAdapter = new SettingAdapter(settings);
         mSettingRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         mSettingRecyclerView.setAdapter(mSettingAdapter);

@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:text="Photo"
-            android:textColor="@color/black"
+            android:textStyle="bold"
             android:textSize="16sp"/>
         <TextView
             android:id="@+id/text_view_adapter_setting_sub_title"
@@ -32,7 +32,6 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:text="Abdoul Kader"
-            android:textColor="@color/black2"
             android:textSize="14sp"/>
     </LinearLayout>
 </RelativeLayout>
