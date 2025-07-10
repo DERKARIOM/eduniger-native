@@ -58,7 +58,7 @@ public class AuthorActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_author);
         Objects.requireNonNull(getSupportActionBar()).hide();
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        //AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         mWaitRecyclerView = findViewById(R.id.recycler_view_activity_author_wait);
         mNestedScrollView = findViewById(R.id.nested_scroll_view_activity_author);
         mProfileImageView = findViewById(R.id.image_view_author_activity_profile);
