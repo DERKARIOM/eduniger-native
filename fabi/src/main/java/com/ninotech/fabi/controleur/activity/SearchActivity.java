@@ -85,7 +85,7 @@ public class SearchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
         Objects.requireNonNull(getSupportActionBar()).hide();
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        //AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         mRecyclerView = findViewById(R.id.recycler_view_activity_search);
         mSearchEditText = findViewById(R.id.edit_text_toolbar_search);
         mBackImageView = findViewById(R.id.image_view_toolbar_search);
