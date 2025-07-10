@@ -516,11 +516,12 @@
                     >
                     <EditText
                         android:id="@+id/text_view_activity_book_message"
-                        style="@style/match_wrap"
-                        android:background="@drawable/forme_white_radius_10dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        style="@style/activity_main_research"
                         android:hint="@string/add_comments"
                         android:layout_centerVertical="true"
-                        android:padding="5dp"
+                        android:padding="8dp"
                         android:layout_marginEnd="50dp"
                         android:importantForAutofill="no"
                         tools:ignore="TextFields" />
@@ -528,7 +529,7 @@
                         android:id="@+id/image_view_activity_book_add_comments"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
-                        android:src="@drawable/vector_black3_add"
+                        style="@style/activity_book_img_add_comment"
                         android:layout_centerVertical="true"
                         android:layout_alignParentEnd="true"
                         android:contentDescription="@string/todo" />

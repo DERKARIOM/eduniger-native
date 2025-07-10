@@ -13,7 +13,7 @@
         android:layout_marginStart="10dp"
         android:padding="15dp"
         android:layout_centerVertical="true"
-        android:src="@drawable/vector_back"
+        style="@style/toolbar_book_btt_back"
         android:contentDescription="@string/todo" />
 
 </RelativeLayout>

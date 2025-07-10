@@ -236,4 +236,10 @@
     <style name="activity_book_img_physique">
         <item name="android:src">@drawable/vector_black3_physical</item>
     </style>
+    <style name="activity_book_img_add_comment">
+        <item name="android:src">@drawable/vector_black3_add</item>
+    </style>
+    <style name="toolbar_book_btt_back">
+        <item name="android:src">@drawable/vector_back</item>
+    </style>
 </resources>
