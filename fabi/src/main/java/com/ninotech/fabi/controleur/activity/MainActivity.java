@@ -31,6 +31,7 @@ import com.ninotech.fabi.controleur.fragment.SuggestionFragment;
 import com.ninotech.fabi.model.data.Account;
 import com.ninotech.fabi.model.data.Initialization;
 import com.ninotech.fabi.R;
+import com.ninotech.fabi.model.data.Themes;
 import com.ninotech.fabi.model.service.NotificationService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.ninotech.fabi.model.table.DigitalPrintTable;
@@ -63,6 +64,10 @@ public class MainActivity extends AppCompatActivity {
         };
         Initialization initialization = new Initialization(getApplicationContext());
         initialization.onCreate(getApplicationContext());
+        if(Themes.getName(getApplicationContext()).equals("notNight"))
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        else if (Themes.getName(getApplicationContext()).equals("night"))
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         mBottomNavigationView = findViewById(R.id.bottom_navigation_main);
         Toolbar toolbar = findViewById(R.id.toolbar_search);
         mEditText = findViewById(R.id.edit_text_toolbar_search);
