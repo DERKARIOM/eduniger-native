@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    android:background="@color/whiteVert"
     tools:context="com.ninotech.fabi.controleur.activity.LoginActivity">
     <RelativeLayout
         android:layout_width="match_parent"
@@ -27,50 +26,44 @@
             android:id="@+id/edit_text_activity_register_name"
             android:hint=" Entrer votre nom"
             android:layout_below="@id/relative_layout_activity_register_img"
-            android:drawableStart="@drawable/vector_black3_identify"
             android:inputType="text"
-            style="@style/edit_text_register"
+            style="@style/activity_login_edit_text_number"
             android:autofillHints="" />
         <EditText
             android:id="@+id/edit_text_activity_register_first_name"
             android:hint=" Entrer votre prénom"
             android:layout_below="@id/edit_text_activity_register_name"
-            android:drawableStart="@drawable/vector_family"
             android:inputType="text"
-            style="@style/edit_text_register"
+            style="@style/activity_register_edit_text_firstname"
             android:autofillHints="" />
         <EditText
             android:id="@+id/edit_text_activity_register_id_number"
             android:hint=" Entrer votre numéro"
             android:layout_below="@id/edit_text_activity_register_first_name"
-            android:drawableStart="@drawable/vector_phone_locked"
             android:inputType="number"
             android:importantForAutofill="no"
-            style="@style/edit_text_register"
+            style="@style/activity_register_edit_text_number"
             android:autofillHints="" />
         <EditText
             android:id="@+id/edit_text_activity_register_email"
             android:hint=" exemple@gmail.com"
             android:layout_below="@id/edit_text_activity_register_id_number"
-            android:drawableStart="@drawable/vector_black3_email"
             android:inputType="textEmailAddress"
-            style="@style/edit_text_register"
+            style="@style/activity_register_edit_text_email"
             android:autofillHints="" />
         <EditText
             android:id="@+id/edit_text_activity_register_password"
             android:hint="@string/edit_text_hint_password"
             android:layout_below="@id/edit_text_activity_register_email"
-            android:drawableStart="@drawable/vector_black3_password"
             android:inputType="textPassword"
-            style="@style/edit_text_register"
+            style="@style/activity_login_edit_text_password"
             android:autofillHints="" />
         <EditText
             android:id="@+id/edit_text_activity_register_password_confirm"
             android:hint="@string/edit_text_hint_password_confirm"
             android:layout_below="@id/edit_text_activity_register_password"
-            android:drawableStart="@drawable/vector_black3_lock"
             android:inputType="textPassword"
-            style="@style/edit_text_register"
+            style="@style/activity_register_edit_text_password_confirm"
             android:autofillHints="" />
         <Spinner
             android:id="@+id/spinner_activity_register_profession"

@@ -268,4 +268,16 @@
     <style name="activity_login_pass_google">
         <item name="android:background">@drawable/forme_white_radius_10dp</item>
     </style>
+    <style name="activity_register_edit_text_firstname" parent="edit_text_register">
+        <item name="android:drawableStart">@drawable/vector_family</item>
+    </style>
+    <style name="activity_register_edit_text_number" parent="edit_text_register">
+        <item name="android:drawableStart">@drawable/vector_phone_locked</item>
+    </style>
+    <style name="activity_register_edit_text_email" parent="edit_text_register">
+        <item name="android:drawableStart">@drawable/vector_black3_email</item>
+    </style>
+    <style name="activity_register_edit_text_password_confirm" parent="edit_text_register">
+        <item name="android:drawableStart">@drawable/vector_black3_lock</item>
+    </style>
 </resources>
