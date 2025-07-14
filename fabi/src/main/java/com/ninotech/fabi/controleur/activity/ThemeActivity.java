@@ -16,6 +16,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.adapter.StatusBarAdapter;
 import com.ninotech.fabi.model.data.Server;
+import com.ninotech.fabi.model.data.Themes;
 
 import java.util.Objects;
 
@@ -29,15 +30,19 @@ public class ThemeActivity extends AppCompatActivity {
         StatusBarAdapter statusBarAdapter = new StatusBarAdapter(this,getWindow());
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         mRadioGroup = findViewById(R.id.radio_group_activity_theme);
-        switch (AppCompatDelegate.getDefaultNightMode())
+        switch (Themes.getName(getApplicationContext()))
         {
-            case 1:
+            case "notNight":
                 RadioButton radioButton1 = (RadioButton) mRadioGroup.getChildAt(1);
                 radioButton1.setChecked(true);
                 break;
-            case 2:
+            case "night":
                 RadioButton radioButton2 = (RadioButton) mRadioGroup.getChildAt(2);
                 radioButton2.setChecked(true);
+                break;
+            case "system":
+                RadioButton radioButton3 = (RadioButton) mRadioGroup.getChildAt(3);
+                radioButton3.setChecked(true);
                 break;
         }
         mRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -48,10 +53,16 @@ public class ThemeActivity extends AppCompatActivity {
                 switch (position)
                 {
                     case 1:
+                        Themes.saveTheme(getApplicationContext(),"notNight");
                         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
                         break;
                     case 2:
+                        Themes.saveTheme(getApplicationContext(),"night");
                         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                        break;
+                    case 3:
+                        Themes.saveTheme(getApplicationContext(),"system");
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.getDefaultNightMode());
                         break;
 
                 }
