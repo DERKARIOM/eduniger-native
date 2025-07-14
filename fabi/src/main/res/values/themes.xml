@@ -65,6 +65,7 @@
         <item name="android:padding">10dp</item>
     </style>
 
+
 <!-- Le themes de message d' erreur du type register et login -->
     <style name="text_view_error_register">
         <item name="android:layout_width">wrap_content</item>
@@ -105,6 +106,7 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_centerInParent">true</item>
+        <item name="android:textColor">@color/white</item>
         <item name="android:background">@drawable/form_purple_200_radius_10dp</item>
         <item name="android:text">@string/button_text_connection</item>
     </style>
@@ -244,5 +246,26 @@
     </style>
     <style name="activity_structure_toolbar_edit_text_ico_micro">
         <item name="android:drawableEnd">@drawable/vector_black3_micro</item>
+    </style>
+    <style name="fragment_chat_ia_edit_text_message">
+        <item name="android:background">@drawable/forme_white_sombre_radius_100dp</item>
+    </style>
+    <style name="fragment_chat_ia_btt_micro">
+        <item name="android:drawableEnd">@drawable/vector_black3_micro</item>
+    </style>
+    <style name="fragment_chat_ia_btt_join">
+        <item name="android:drawableEnd">@drawable/vector_black3_importe</item>
+    </style>
+    <style name="fragment_chat_ia_btt_scan">
+        <item name="android:drawableEnd">@drawable/vector_black3_scanner</item>
+    </style>
+    <style name="activity_login_edit_text_number" parent="edit_text_register">
+        <item name="android:drawableStart">@drawable/vector_black3_identify</item>
+    </style>
+    <style name="activity_login_edit_text_password" parent="edit_text_register">
+        <item name="android:drawableStart">@drawable/vector_black3_password</item>
+    </style>
+    <style name="activity_login_pass_google">
+        <item name="android:background">@drawable/forme_white_radius_10dp</item>
     </style>
 </resources>

@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    android:background="@color/whiteVert"
     tools:context="com.ninotech.fabi.controleur.activity.LoginActivity">
     <RelativeLayout
         android:layout_width="match_parent"
@@ -29,17 +28,15 @@
             android:id="@+id/edit_text_login_id_number"
             android:hint=" Entrer votre numéro"
             android:layout_below="@id/relative_layout_activity_register_img"
-            android:drawableStart="@drawable/vector_black3_identify"
             android:inputType="text"
-            style="@style/edit_text_register"
+            style="@style/activity_login_edit_text_number"
             android:autofillHints="" />
         <EditText
             android:id="@+id/edit_text_login_password"
             android:hint=" Votre mot de passe ?"
             android:layout_below="@id/edit_text_login_id_number"
-            android:drawableStart="@drawable/vector_black3_password"
             android:inputType="textPassword"
-            style="@style/edit_text_register"
+            style="@style/activity_login_edit_text_password"
             android:autofillHints="" />
         <TextView
             android:id="@+id/text_view_login_error"
@@ -67,7 +64,7 @@
            android:id="@+id/linear_layout_activity_login_google"
            android:layout_width="match_parent"
            android:layout_height="45dp"
-           android:background="@drawable/forme_white_radius_10dp"
+           style="@style/activity_login_pass_google"
            android:layout_marginStart="28dp"
            android:layout_marginEnd="28dp"
            android:elevation="1dp"

@@ -77,4 +77,35 @@
         <item name="android:textColor">@color/white</item>
         <item name="android:text">@string/button_text_adhere</item>
     </style>
+    <style name="fragment_chat_ia_edit_text_message">
+        <item name="android:background">@drawable/forme_black3_radius_100dp</item>
+    </style>
+    <style name="fragment_chat_ia_btt_micro">
+        <item name="android:drawableEnd">@drawable/vector_white_sombre_micro</item>
+    </style>
+    <style name="fragment_chat_ia_btt_join">
+        <item name="android:drawableEnd">@drawable/vector_white_sombre_importe</item>
+    </style>
+    <style name="fragment_chat_ia_btt_scan">
+        <item name="android:drawableEnd">@drawable/vector_white_sombre_scanner</item>
+    </style>
+    <style name="edit_text_register">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">28dp</item>
+        <item name="android:layout_marginEnd">28dp</item>
+        <item name="android:layout_marginBottom">30dp</item>
+        <item name="android:background">@drawable/forme_black3_radius_10dp</item>
+        <item name="android:elevation">10dp</item>
+        <item name="android:padding">10dp</item>
+    </style>
+    <style name="activity_login_edit_text_number" parent="edit_text_register">
+        <item name="android:drawableStart">@drawable/vector_white_sombre_identify</item>
+    </style>
+    <style name="activity_login_edit_text_password" parent="edit_text_register">
+        <item name="android:drawableStart">@drawable/vector_white_sombre_password</item>
+    </style>
+    <style name="activity_login_pass_google">
+        <item name="android:background">@drawable/forme_black3_radius_10dp</item>
+    </style>
 </resources>

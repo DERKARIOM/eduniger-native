@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.ninotech.fabi.controleur.fragment.FabiolaChatFragment">
+    tools:context="com.ninotech.fabi.controleur.fragment.SuggestionFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <androidx.recyclerview.widget.RecyclerView
@@ -33,7 +33,7 @@
             android:background="@android:color/transparent"
             android:layout_alignEnd="@id/messageNotif"
             android:layout_alignBottom="@id/messageNotif"
-            android:drawableEnd="@drawable/vector_black3_scanner"/>
+            style="@style/fragment_chat_ia_btt_scan"/>
 
         <Button
             android:id="@+id/importerMedia"
@@ -43,7 +43,7 @@
             android:layout_alignBottom="@id/messageNotif"
             android:layout_marginStart="-33dp"
             android:background="@android:color/transparent"
-            android:drawableEnd="@drawable/vector_black3_importe" />
+           style="@style/fragment_chat_ia_btt_join" />
 
         <Button
             android:id="@+id/emoji"
@@ -53,19 +53,19 @@
             android:layout_alignBottom="@id/messageNotif"
             android:background="@android:color/transparent"
             android:inputType=""
-            android:drawableEnd="@drawable/vector_black3_micro" />
+           style="@style/fragment_chat_ia_btt_micro" />
 
 
         <EditText
             android:id="@+id/messageNotif"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/forme_white_sombre_radius_100dp"
+            style="@style/fragment_chat_ia_edit_text_message"
             android:hint="Message"
             android:paddingStart="50dp"
             android:paddingEnd="65dp"
             android:padding="10dp"
-            android:textColorHint="@color/dark" />
+             />
 
     </RelativeLayout>
 

@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -62,7 +63,7 @@ public class SuggestionFragment extends Fragment {
                 }
             }
         };
-        getContext().registerReceiver(receiverFabiolaBookAdapter, new IntentFilter("ACTION_RECOVER_BOOK"));
+        ContextCompat.registerReceiver(getContext(), receiverFabiolaBookAdapter, new IntentFilter("ACTION_RECOVER_BOOK"), ContextCompat.RECEIVER_NOT_EXPORTED);
         mList.add(new Chat("fabiola.png","duna","Salut que puis-je faire pour vous ?",true));
         mChatAdapter = new ChatAdapter(mList);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
