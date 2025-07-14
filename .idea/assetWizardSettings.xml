@@ -307,7 +307,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="file:$USER_HOME$/Android/Sdk/icons/material/materialicons/maps_home_work/baseline_maps_home_work_24.xml" />
+                                      <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material/icons/materialicons/mode_night/baseline_mode_night_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -317,7 +317,8 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="vector_structure" />
+                            <entry key="outputName" value="vector_white_sombre_mode_night" />
+                            <entry key="sourceFile" value="C:\Users\DERKARIOM\projets\mfabi" />
                           </map>
                         </option>
                       </PersistentState>

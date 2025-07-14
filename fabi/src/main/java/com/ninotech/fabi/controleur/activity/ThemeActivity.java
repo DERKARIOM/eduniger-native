@@ -62,7 +62,7 @@ public class ThemeActivity extends AppCompatActivity {
                         break;
                     case 3:
                         Themes.saveTheme(getApplicationContext(),"system");
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.getDefaultNightMode());
+                       // AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.getDefaultNightMode());
                         break;
 
                 }
