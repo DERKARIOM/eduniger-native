@@ -17,10 +17,9 @@
         android:layout_below="@id/image_view_adapter_void_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="@dimen/size_title"
+        android:textSize="18sp"
         android:text="@string/no_book_loand"
        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
-        android:textColor="@color/purple2_200"/>
+        android:layout_marginTop="20dp" />
 
 </RelativeLayout>
