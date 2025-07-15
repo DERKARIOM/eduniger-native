@@ -120,4 +120,7 @@
     <style name="activity_register_edit_text_password_confirm" parent="edit_text_register">
         <item name="android:drawableStart">@drawable/vector_white_sombre_lock</item>
     </style>
+    <style name="menu_search">
+        <item name="android:icon">@drawable/vector_white_sombre_search</item>
+    </style>
 </resources>

@@ -5,9 +5,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.UiModeManager;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -34,6 +38,7 @@ import com.ninotech.fabi.model.data.ElectronicBook;
 import com.ninotech.fabi.model.data.LoandBook;
 import com.ninotech.fabi.model.data.LocalBooks;
 import com.ninotech.fabi.model.data.Structure;
+import com.ninotech.fabi.model.data.Themes;
 import com.ninotech.fabi.model.data.VoidContainer;
 import com.ninotech.fabi.model.table.AudioTable;
 import com.ninotech.fabi.model.table.ElectronicTable;
@@ -55,8 +60,6 @@ public class ContainerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_container);
         ActionBar ab = getSupportActionBar();
         assert ab != null;
-        ab.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.white)));
-        ab.setHomeAsUpIndicator(R.drawable.vector_back);
         ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         ab.setCustomView(R.layout.custom_action_bar);
         ab.setDisplayHomeAsUpEnabled(true);
@@ -67,6 +70,36 @@ public class ContainerActivity extends AppCompatActivity {
         mAudioTable = new AudioTable(this);
         Intent libraryIntent = getIntent();
         mId = libraryIntent.getIntExtra("id",0);
+        UiModeManager uiModeManager = null;
+        switch (Themes.getName(getApplicationContext()))
+        {
+            case "system":
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    uiModeManager = (UiModeManager) getSystemService(Context.UI_MODE_SERVICE);
+                }
+                int currentMode = uiModeManager.getNightMode();
+                if (currentMode == UiModeManager.MODE_NIGHT_YES) {
+                    // mode sombre
+                    ab.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.black)));
+                    actionBarTitle.setTextColor(Color.parseColor("#B4EFEFEF"));
+                } else {
+                    // mode jours
+                    ab.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.white)));
+                    ab.setHomeAsUpIndicator(R.drawable.vector_back);
+                }
+                break;
+            case "notNight":
+                // mode jours
+                ab.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.white)));
+                ab.setHomeAsUpIndicator(R.drawable.vector_back);
+                break;
+            case "night":
+                // mode nuit
+                ab.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.black)));
+                ab.setHomeAsUpIndicator(R.drawable.vector_white_sombre_back);
+                actionBarTitle.setTextColor(Color.parseColor("#B4EFEFEF"));
+                break;
+        }
         switch (mId)
         {
             case 1: // Electronic Book

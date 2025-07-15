@@ -3,6 +3,6 @@
     <item
         android:id="@+id/item_menu_search"
         android:title="@string/search"
-        android:icon="@drawable/vector_black_search"
+        style="@style/menu_search"
         app:showAsAction="ifRoom"/>
 </menu>
