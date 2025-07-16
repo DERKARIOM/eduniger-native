@@ -123,4 +123,16 @@
     <style name="menu_search">
         <item name="android:icon">@drawable/vector_white_sombre_search</item>
     </style>
+    <style name="activity_book_btt_play">
+        <item name="android:src">@drawable/vector_white_sombre_pause</item>
+    </style>
+    <style name="activity_book_btt_stop">
+        <item name="android:src">@drawable/vector_white_sombre_stop</item>
+    </style>
+    <style name="activity_book_img_time_max">
+        <item name="android:src">@drawable/vector_white_sombre_time</item>
+    </style>
+    <style name="activity_book_img_audio_size">
+        <item name="android:src">@drawable/vector_white_sombre_audio</item>
+    </style>
 </resources>

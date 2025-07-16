@@ -283,4 +283,16 @@
     <style name="menu_search">
         <item name="android:icon">@drawable/vector_black_search</item>
     </style>
+    <style name="activity_book_btt_play">
+        <item name="android:src">@drawable/vector_black3_pause</item>
+    </style>
+    <style name="activity_book_btt_stop">
+        <item name="android:src">@drawable/vector_black3_stop</item>
+    </style>
+    <style name="activity_book_img_time_max">
+        <item name="android:src">@drawable/vector_black3_time</item>
+    </style>
+    <style name="activity_book_img_audio_size">
+        <item name="android:src">@drawable/vector_audio</item>
+    </style>
 </resources>
