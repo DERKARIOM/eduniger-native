@@ -5,9 +5,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.UiModeManager;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -22,6 +26,7 @@ import com.ninotech.fabi.controleur.adapter.VoidContainerAdapter;
 import com.ninotech.fabi.model.data.Notification;
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.adapter.NotificationAdapter;
+import com.ninotech.fabi.model.data.Themes;
 import com.ninotech.fabi.model.data.VoidContainer;
 import com.ninotech.fabi.model.table.NotificationTable;
 import com.ninotech.fabi.model.table.Session;
@@ -49,6 +54,36 @@ public class NotificationActivity extends AppCompatActivity {
         mNotificationTable = new NotificationTable(this);
         mNotifications = new ArrayList<Notification>();
         Cursor cursor = mNotificationTable.getData(mSession.getIdNumber());
+        UiModeManager uiModeManager = null;
+        switch (Themes.getName(getApplicationContext()))
+        {
+            case "system":
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    uiModeManager = (UiModeManager) getSystemService(Context.UI_MODE_SERVICE);
+                }
+                int currentMode = uiModeManager.getNightMode();
+                if (currentMode == UiModeManager.MODE_NIGHT_YES) {
+                    // mode sombre
+                    ab.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.black)));
+                    actionBarTitle.setTextColor(Color.parseColor("#B4EFEFEF"));
+                } else {
+                    // mode jours
+                    ab.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.white)));
+                    ab.setHomeAsUpIndicator(R.drawable.vector_back);
+                }
+                break;
+            case "notNight":
+                // mode jours
+                ab.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.white)));
+                ab.setHomeAsUpIndicator(R.drawable.vector_back);
+                break;
+            case "night":
+                // mode nuit
+                ab.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.black)));
+                ab.setHomeAsUpIndicator(R.drawable.vector_white_sombre_back);
+                actionBarTitle.setTextColor(Color.parseColor("#B4EFEFEF"));
+                break;
+        }
         cursor.moveToFirst();
         try {
             do {

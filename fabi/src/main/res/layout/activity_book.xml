@@ -7,7 +7,7 @@
     <include layout="@layout/toolbar_book"/>
     <androidx.core.widget.NestedScrollView
         android:id="@+id/nested_scroll_view_activity_book"
-
+        android:visibility="gone"
         style="@style/match_parent_all"
         android:layout_below="@id/relative_layout_toolbar_book">
         <RelativeLayout
@@ -138,7 +138,7 @@
             </RelativeLayout>
             <LinearLayout
                 android:id="@+id/linear_layout_activity_book_reservation"
-                android:visibility="gone"
+
                 style="@style/match_wrap"
                 android:layout_below="@id/relative_layout_activity_book"
                 android:orientation="vertical">
@@ -166,6 +166,7 @@
                     style="@style/wrap_content_all"
                     android:text="@string/reservation_book"
                     android:textAllCaps="false"
+                    android:textColor="@color/white"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="5dp"
                     android:layout_marginBottom="5dp"
@@ -175,7 +176,7 @@
             </LinearLayout>
             <LinearLayout
                 android:id="@+id/linear_layout_activity_book_audio"
-
+                android:visibility="gone"
                 style="@style/match_wrap"
                 android:layout_below="@id/linear_layout_activity_book_reservation"
                 android:orientation="vertical">
