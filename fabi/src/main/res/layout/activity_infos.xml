@@ -55,6 +55,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
+        android:textColor="@color/white"
         android:textAllCaps="false"
         android:background="@drawable/form_purple_200_radius_10dp"
         android:text="Conditions d’Utilisation" />

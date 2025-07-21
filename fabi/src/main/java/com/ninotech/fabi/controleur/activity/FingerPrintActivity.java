@@ -1,6 +1,8 @@
 package com.ninotech.fabi.controleur.activity;
 
 import android.Manifest;
+import android.app.UiModeManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
@@ -26,6 +28,8 @@ import androidx.core.app.ActivityCompat;
 
 import com.ninotech.fabi.controleur.adapter.StatusBarAdapter;
 import com.ninotech.fabi.controleur.dialog.DigitalPrintConfirmDialog;
+import com.ninotech.fabi.model.data.Setting;
+import com.ninotech.fabi.model.data.Themes;
 import com.ninotech.fabi.model.table.DigitalPrintTable;
 import com.ninotech.fabi.controleur.dialog.SucceSuggesionDialog;
 import com.ninotech.fabi.R;
@@ -48,7 +52,23 @@ public class FingerPrintActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_finger_print);
-        StatusBarAdapter statusBarAdapter = new StatusBarAdapter(this,getWindow());
+       // StatusBarAdapter statusBarAdapter = new StatusBarAdapter(this,getWindow());
+        UiModeManager uiModeManager = null;
+        switch (Themes.getName(getApplicationContext()))
+        {
+            case "system":
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    uiModeManager = (UiModeManager) getSystemService(Context.UI_MODE_SERVICE);
+                }
+                int currentMode = uiModeManager.getNightMode();
+                if (currentMode == UiModeManager.MODE_NIGHT_NO) {
+                    StatusBarAdapter statusBarAdapter = new StatusBarAdapter(this,getWindow());
+                }
+                break;
+            case "notNight":
+                StatusBarAdapter statusBarAdapter = new StatusBarAdapter(this,getWindow());
+                break;
+        }
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         mDb = openOrCreateDatabase("data.db",MODE_PRIVATE,null);
         mDigitalPrintTable = new DigitalPrintTable(this);

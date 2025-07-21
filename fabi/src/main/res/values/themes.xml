@@ -295,4 +295,10 @@
     <style name="activity_book_img_audio_size">
         <item name="android:src">@drawable/vector_audio</item>
     </style>
+    <style name="activity_account_img_photo">
+        <item name="android:src">@drawable/vector_black3_photo</item>
+    </style>
+    <style name="activity_suggestion_back">
+        <item name="android:src">@drawable/vector_back</item>
+    </style>
 </resources>

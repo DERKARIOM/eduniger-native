@@ -1,10 +1,13 @@
 package com.ninotech.fabi.controleur.activity;
 
+import android.app.UiModeManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
@@ -30,6 +33,7 @@ import com.ninotech.fabi.controleur.adapter.StatusBarAdapter;
 import com.ninotech.fabi.model.data.Account;
 import com.ninotech.fabi.model.data.Server;
 import com.ninotech.fabi.model.data.Setting;
+import com.ninotech.fabi.model.data.Themes;
 import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.model.table.UserTable;
 
@@ -54,7 +58,6 @@ public class AccountActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_account);
-        StatusBarAdapter statusBarAdapter = new StatusBarAdapter(this,getWindow());
         mPhotoImageView = findViewById(R.id.image_view_setting_account_photo);
         mPhotoRelativeLayout = findViewById(R.id.relative_layout_activity_setting_account);
         // Activer le bouton de retour de l'action barre
@@ -82,12 +85,49 @@ public class AccountActivity extends AppCompatActivity {
         {
             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
         }
-        settings.add(new Setting(R.drawable.vector_black3_identify,"Nom",account.getName()));
-        settings.add(new Setting(R.drawable.vector_family,"Prénom",account.getFirstName()));
-        settings.add(new Setting(R.drawable.vector_black3_lock,"Modifier le mot de passe",null));
-        settings.add(new Setting(R.drawable.img_google,"Identifiant de réseau social","Se connecter avec google"));
-        settings.add(new Setting(R.drawable.vector_black3_email,account.getEmail(),null));
-        settings.add(new Setting(R.drawable.vector_warning,"Supprimer le compte","La suppression de votre compte est permante et immédiate. Une fois votre compte supprimé, vous perdrez l'accès à vos service TeleSafe"));
+        UiModeManager uiModeManager = null;
+        switch (Themes.getName(getApplicationContext()))
+        {
+            case "system":
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    uiModeManager = (UiModeManager) getSystemService(Context.UI_MODE_SERVICE);
+                }
+                int currentMode = uiModeManager.getNightMode();
+                if (currentMode == UiModeManager.MODE_NIGHT_YES) {
+                    settings.add(new Setting(R.drawable.vector_white_sombre_identify,"Nom",account.getName()));
+                    settings.add(new Setting(R.drawable.vector_white_sombre_family,"Prénom",account.getFirstName()));
+                    settings.add(new Setting(R.drawable.vector_white_sombre_lock,"Modifier le mot de passe",null));
+                    settings.add(new Setting(R.drawable.img_google,"Identifiant de réseau social","Se connecter avec google"));
+                    settings.add(new Setting(R.drawable.vector_white_sombre_email,account.getEmail(),null));
+                    settings.add(new Setting(R.drawable.vector_warning,"Supprimer le compte","La suppression de votre compte est permante et immédiate. Une fois votre compte supprimé, vous perdrez l'accès à vos service EduNiger"));
+                } else {
+                    StatusBarAdapter statusBarAdapter = new StatusBarAdapter(this,getWindow());
+                    settings.add(new Setting(R.drawable.vector_black3_identify,"Nom",account.getName()));
+                    settings.add(new Setting(R.drawable.vector_family,"Prénom",account.getFirstName()));
+                    settings.add(new Setting(R.drawable.vector_black3_lock,"Modifier le mot de passe",null));
+                    settings.add(new Setting(R.drawable.img_google,"Identifiant de réseau social","Se connecter avec google"));
+                    settings.add(new Setting(R.drawable.vector_black3_email,account.getEmail(),null));
+                    settings.add(new Setting(R.drawable.vector_warning,"Supprimer le compte","La suppression de votre compte est permante et immédiate. Une fois votre compte supprimé, vous perdrez l'accès à vos service EduNiger"));
+                }
+                break;
+            case "notNight":
+                StatusBarAdapter statusBarAdapter = new StatusBarAdapter(this,getWindow());
+                settings.add(new Setting(R.drawable.vector_black3_identify,"Nom",account.getName()));
+                settings.add(new Setting(R.drawable.vector_family,"Prénom",account.getFirstName()));
+                settings.add(new Setting(R.drawable.vector_black3_lock,"Modifier le mot de passe",null));
+                settings.add(new Setting(R.drawable.img_google,"Identifiant de réseau social","Se connecter avec google"));
+                settings.add(new Setting(R.drawable.vector_black3_email,account.getEmail(),null));
+                settings.add(new Setting(R.drawable.vector_warning,"Supprimer le compte","La suppression de votre compte est permante et immédiate. Une fois votre compte supprimé, vous perdrez l'accès à vos service EduNiger"));
+                break;
+            case "night":
+                settings.add(new Setting(R.drawable.vector_white_sombre_identify,"Nom",account.getName()));
+                settings.add(new Setting(R.drawable.vector_white_sombre_family,"Prénom",account.getFirstName()));
+                settings.add(new Setting(R.drawable.vector_white_sombre_lock,"Modifier le mot de passe",null));
+                settings.add(new Setting(R.drawable.img_google,"Identifiant de réseau social","Se connecter avec google"));
+                settings.add(new Setting(R.drawable.vector_white_sombre_email,account.getEmail(),null));
+                settings.add(new Setting(R.drawable.vector_warning,"Supprimer le compte","La suppression de votre compte est permante et immédiate. Une fois votre compte supprimé, vous perdrez l'accès à vos service EduNiger"));
+                break;
+        }
         SettingAdapter mSettingAdapter = new SettingAdapter(settings);
         mSettingRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         mSettingRecyclerView.setAdapter(mSettingAdapter);

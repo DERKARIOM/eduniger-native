@@ -1,5 +1,7 @@
 package com.ninotech.fabi.controleur.activity;
 
+import android.app.UiModeManager;
+import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.Build;
@@ -8,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.adapter.StatusBarAdapter;
 import com.ninotech.fabi.model.data.Server;
+import com.ninotech.fabi.model.data.Themes;
 import com.ninotech.fabi.model.table.DigitalPrintTable;
 
 import android.content.Intent;
@@ -40,7 +43,22 @@ public class ServerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
        // loadLocale();
         setContentView(R.layout.activity_server);
-        StatusBarAdapter statusBarAdapter = new StatusBarAdapter(this,getWindow());
+        UiModeManager uiModeManager = null;
+        switch (Themes.getName(getApplicationContext()))
+        {
+            case "system":
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    uiModeManager = (UiModeManager) getSystemService(Context.UI_MODE_SERVICE);
+                }
+                int currentMode = uiModeManager.getNightMode();
+                if (currentMode == UiModeManager.MODE_NIGHT_NO) {
+                    StatusBarAdapter statusBarAdapter = new StatusBarAdapter(this,getWindow());
+                }
+                break;
+            case "notNight":
+                StatusBarAdapter statusBarAdapter = new StatusBarAdapter(this,getWindow());
+                break;
+        }
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         mSwitch = findViewById(R.id.switch_activity_server);
         mRadioGroup = findViewById(R.id.radio_group_activity_server);

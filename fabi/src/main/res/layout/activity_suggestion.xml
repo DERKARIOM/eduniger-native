@@ -74,7 +74,6 @@
                     <TextView
                         style="@style/wrap_content_all"
                         android:fontFamily="@font/apple1"
-                        android:textColor="@color/black"
                         android:text="@string/information_phone"
                         />
                     <CheckBox
@@ -127,6 +126,7 @@
                         android:id="@+id/button_activity_suggestion_send"
                         style="@style/match_wrap"
                         android:layout_centerInParent="true"
+                        android:textColor="@color/white"
                         android:background="@drawable/form_purple_200_radius_10dp"
                         android:textAllCaps="false"
                         android:text="@string/send" />

@@ -1,6 +1,9 @@
 package com.ninotech.fabi.controleur.activity;
 
 import android.annotation.SuppressLint;
+import android.app.UiModeManager;
+import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.RadioButton;
@@ -27,7 +30,22 @@ public class ThemeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_theme);
-        StatusBarAdapter statusBarAdapter = new StatusBarAdapter(this,getWindow());
+        UiModeManager uiModeManager = null;
+        switch (Themes.getName(getApplicationContext()))
+        {
+            case "system":
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    uiModeManager = (UiModeManager) getSystemService(Context.UI_MODE_SERVICE);
+                }
+                int currentMode = uiModeManager.getNightMode();
+                if (currentMode == UiModeManager.MODE_NIGHT_NO) {
+                    StatusBarAdapter statusBarAdapter = new StatusBarAdapter(this,getWindow());
+                }
+                break;
+            case "notNight":
+                StatusBarAdapter statusBarAdapter = new StatusBarAdapter(this,getWindow());
+                break;
+        }
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         mRadioGroup = findViewById(R.id.radio_group_activity_theme);
         switch (Themes.getName(getApplicationContext()))
