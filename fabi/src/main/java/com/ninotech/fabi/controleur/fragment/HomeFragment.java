@@ -229,25 +229,25 @@ public class HomeFragment extends Fragment {
                             }
                             switch (Server.getIpServer(getContext()))
                             {
-                                case "http://192.168.49.2:2222/fabi/":
-                                    mServers.add(new Structure(
-                                            "http://192.168.49.2:2222/fabi/",
-                                            "cati.png",
-                                            "Portail Cati",
-                                            "Description",false,
-                                            "-1",
-                                            "Cati",
-                                            "cati",
-                                            "4K+","4"));
-                                    break;
                                 case "http://192.168.49.1:2222/fabi/":
                                     mServers.add(new Structure(
                                             "http://192.168.49.1:2222/fabi/",
+                                            "uam.png",
+                                            "Portail UAM",
+                                            "Description",false,
+                                            "-1",
+                                            "@eduniger",
+                                            "cati",
+                                            "4K+","4"));
+                                    break;
+                                case "http://192.168.49.1:2222/uamlib/":
+                                    mServers.add(new Structure(
+                                            "http://192.168.49.1:2222/uamlib/",
                                             "eduniger.png",
                                             "Portail EduNiger",
                                             "Description",false,
                                             "-1",
-                                            "ninotech",
+                                            "@ninotech",
                                             "cati",
                                             "332","0"));
                                     break;

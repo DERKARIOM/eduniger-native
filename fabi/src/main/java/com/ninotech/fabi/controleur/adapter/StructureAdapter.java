@@ -121,19 +121,19 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
         void display(Structure structure){
             switch (structure.getId())
             {
-                case "http://192.168.49.2:2222/fabi/":
+                case "http://192.168.49.1:2222/uamlib/":
                     Animation pulseAnimImg = AnimationUtils.loadAnimation(itemView.getContext(), R.anim.slide_down_up);
                     // Lancer l'animation automatiquement
                     mBlanketImageView.startAnimation(pulseAnimImg);
                     mAdhereButton.setText("Basculer");
-                    mBlanketImageView.setImageResource(R.drawable.cati);
+                    mBlanketImageView.setImageResource(R.drawable.eduniger);
                     break;
                 case "http://192.168.49.1:2222/fabi/":
                     Animation pulseAnimImg2 = AnimationUtils.loadAnimation(itemView.getContext(), R.anim.slide_down_up);
                     // Lancer l'animation automatiquement
                     mBlanketImageView.startAnimation(pulseAnimImg2);
                     mAdhereButton.setText("Basculer");
-                    mBlanketImageView.setImageResource(R.drawable.eduniger);
+                    mBlanketImageView.setImageResource(R.drawable.uam);
                     break;
                 default:
                     Picasso.get()
@@ -158,10 +158,10 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
                 public void onClick(View v) {
                     switch (structure.getId())
                     {
-                        case "http://192.168.49.2:2222/fabi/":
-                            simpleOkDialog(R.drawable.cati,"Portail académique de la CATI\nUniversité Abdou Moumouni" , "Le portail numérique de la Cellule d’Appui à la Technologie et à l’Innovation (CATI) est une plateforme dédiée à la consultation et au téléchargement des mémoires, thèses et travaux de recherche des différentes facultés de l’Université Abdou Moumouni.");
-                            break;
                         case "http://192.168.49.1:2222/fabi/":
+                            simpleOkDialog(R.drawable.cati,"Portail académique\nUniversité Abdou Moumouni" , "Le portail numérique de la Cellule d’Appui à la Technologie et à l’Innovation (CATI) est une plateforme dédiée à la consultation et au téléchargement des mémoires, thèses et travaux de recherche des différentes facultés de l’Université Abdou Moumouni.");
+                            break;
+                        case "http://192.168.49.1:2222/uamlib/":
                             simpleOkDialog(R.drawable.eduniger,"Portail EduNiger" , "EduNiger est une bibliothèque numérique qui permet aux élèves, étudiants et enseignants d’accéder facilement à des cours, livres, exercices et ressources en ligne ou sans connexion, selon leur niveau ou leur filière.");
                             break;
                         default:
@@ -204,8 +204,8 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
                                 detachStructSyn.execute(Server.getIpServerAndroid(itemView.getContext()) + "AdhererStruct.php",mSession.getIdNumber(),structure.getId());
                             }
                             break;
-                        case "http://192.168.49.2:2222/fabi/":
-                            Server.saveServer(itemView.getContext(), "http://192.168.49.1:2222/fabi/","http://192.168.49.1:2222/fabi/android/");
+                        case "http://192.168.49.1:2222/fabi/":
+                            Server.saveServer(itemView.getContext(), "http://192.168.49.1:2222/uamlib/","http://192.168.49.1:2222/uamlib/android/");
                             Intent intent = new Intent(itemView.getContext(), MainActivity.class);
                             itemView.getContext().startActivity(intent);
                             ((Activity) itemView.getContext()).overridePendingTransition(R.anim.zoom_in, R.anim.zoom_out);
@@ -217,8 +217,8 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
                                 Toast.makeText(itemView.getContext(),e.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                             break;
-                        case "http://192.168.49.1:2222/fabi/":
-                            Server.saveServer(itemView.getContext(), "http://192.168.49.2:2222/fabi/","http://192.168.49.2:2222/fabi/android/");
+                        case "http://192.168.49.1:2222/uamlib/":
+                            Server.saveServer(itemView.getContext(), "http://192.168.49.1:2222/fabi/","http://192.168.49.1:2222/fabi/android/");
                             Intent intent2 = new Intent(itemView.getContext(), MainActivity.class);
                             itemView.getContext().startActivity(intent2);
                             ((Activity) itemView.getContext()).overridePendingTransition(R.anim.agrandir_dilog, R.anim.agrandir_dilog_out);
