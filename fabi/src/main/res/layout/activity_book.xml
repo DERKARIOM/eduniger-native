@@ -138,7 +138,7 @@
             </RelativeLayout>
             <LinearLayout
                 android:id="@+id/linear_layout_activity_book_reservation"
-
+                android:visibility="gone"
                 style="@style/match_wrap"
                 android:layout_below="@id/relative_layout_activity_book"
                 android:orientation="vertical">
