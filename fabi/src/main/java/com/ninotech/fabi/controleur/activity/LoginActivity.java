@@ -9,8 +9,11 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -57,8 +60,10 @@ public class LoginActivity extends AppCompatActivity {
         mErrorTextView = findViewById(R.id.text_view_login_error);
         mConnectionProgressBar = findViewById(R.id.progress_bar_register_connection);
         mGoogleLinearLayout = findViewById(R.id.linear_layout_activity_login_google);
+        mLoginImageView = findViewById(R.id.activity_login_image_view);
         mJeton="null";
-
+        Animation pulseAnimImg = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_down_up);
+        mLoginImageView.startAnimation(pulseAnimImg);
         /* Generation de jeton FireBase */
         FirebaseMessaging.getInstance().getToken()
                 .addOnCompleteListener(new OnCompleteListener<String>() {
@@ -281,4 +286,5 @@ public class LoginActivity extends AppCompatActivity {
     private ProgressBar mConnectionProgressBar;
     private Account mAccount;
     private LinearLayout mGoogleLinearLayout;
+    private ImageView mLoginImageView;
 }

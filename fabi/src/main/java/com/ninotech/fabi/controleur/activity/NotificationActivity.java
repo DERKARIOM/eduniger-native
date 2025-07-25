@@ -1,5 +1,4 @@
 package com.ninotech.fabi.controleur.activity;
-
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -35,7 +34,6 @@ import java.io.File;
 import java.util.ArrayList;
 
 public class NotificationActivity extends AppCompatActivity {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
