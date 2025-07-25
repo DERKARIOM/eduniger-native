@@ -32,9 +32,13 @@ import com.ninotech.fabi.model.data.Server;
 import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.model.table.UserTable;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.ArrayList;
 
+import kotlinx.serialization.json.JsonObject;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -140,10 +144,8 @@ public class ChatBotFragment extends Fragment {
                 }
                 else
                 {
-                    mList.add(new Chat("fabiola.png","duna","Salut "+userCursor.getString(1) +" ! Pour le moment, notre chatbot utilise un système de reconnaissance de mots-clés pour répondre à vos questions. Nous travaillons activement à intégrer une intelligence artificielle plus avancée (IAG) qui rendra les échanges encore plus naturels et fluides. Merci de votre compréhension et de votre patience !",true));
-                    mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                    mRecyclerView.setAdapter(mChatAdapter);
-                    mRecyclerView.smoothScrollToPosition(mChatAdapter.getItemCount()-1);
+                    EdunaSyn edunaSyn = new EdunaSyn();
+                    edunaSyn.execute("http://192.168.1.157:2222/fabi/api/ask_eduna.php",mSession.getIdNumber(),mRequete);
                 }
 //                CallOpenAi callOpenAi = new CallOpenAi();
 //                callOpenAi.execute("http://192.168.43.1:2222/fabi/android/callOpenAi.php");
@@ -151,45 +153,7 @@ public class ChatBotFragment extends Fragment {
         });
         return view;
     }
-    private class CallOpenAi extends AsyncTask<String,Void,String> {
-        @Override
-        protected String doInBackground(String... params) {
-            OkHttpClient client = new OkHttpClient();
-            RequestBody requestBody = new MultipartBody.Builder()
-                    .setType(MultipartBody.FORM)
-                    .addFormDataPart("matricule",mSession.getIdNumber())
-                    .addFormDataPart("message",mRequete)
-                    .build();
-            Request request = new Request.Builder()
-                    .url(params[0])
-                    .post(requestBody)
-                    .build();
-            try {
-                Response response = client.newCall(request).execute();
-                return response.body().string();
-            }catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-            return null;
-        }
-        @Override
-        protected void onPostExecute(String response){
-            Toast.makeText(getContext(), response, Toast.LENGTH_SHORT).show();
-            if(response != null)
-            {
-                Log.e("resChat",response);
-                mList.add(new Chat("fabiola.png","abila",response,true));
-            }
-            else
-            {
-                mList.add(new Chat("fabiola.png","abila","Aucune connexion",true));
-            }
-            mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-            mRecyclerView.setAdapter(mChatAdapter);
-            mRecyclerView.smoothScrollToPosition(mChatAdapter.getItemCount()-1);
-        }
-    }
+
     private class Reservation extends AsyncTask<String,Void,String> {
         @Override
         protected String doInBackground(String... params) {
@@ -245,6 +209,57 @@ public class ChatBotFragment extends Fragment {
                 mRecyclerView.setAdapter(mChatAdapter);
                 mRecyclerView.smoothScrollToPosition(mChatAdapter.getItemCount()-1);
             }
+
+        }
+    }
+
+    private class EdunaSyn extends AsyncTask<String,Void,String> {
+        @Override
+        protected String doInBackground(String... params) {
+
+            try {
+                OkHttpClient client = new OkHttpClient();
+                RequestBody requestBody = new MultipartBody.Builder()
+                        .setType(MultipartBody.FORM)
+                        .addFormDataPart("idNumber",params[1])
+                        .addFormDataPart("request",params[2])
+                        .build();
+                Request request = new Request.Builder()
+                        .url(params[0])
+                        .post(requestBody)
+                        .build();
+                try {
+                    Response response = client.newCall(request).execute();
+                    assert response.body() != null;
+                    return response.body().string();
+                }catch (IOException e)
+                {
+                    Log.e("ReservationFabiola",e.getMessage());
+                    Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+
+            }catch (Exception e)
+            {
+                return null;
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(String jsonData){
+            if(jsonData != null)
+            {
+                try {
+                    JSONObject jsonObject = new JSONObject(jsonData);
+                    mList.add(new Chat("fabiola.png","duna",jsonObject.getString("response"),true));
+                    mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                    mRecyclerView.setAdapter(mChatAdapter);
+                    mRecyclerView.smoothScrollToPosition(mChatAdapter.getItemCount()-1);
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            else
+                Toast.makeText(getContext(), "Null", Toast.LENGTH_SHORT).show();
 
         }
     }
