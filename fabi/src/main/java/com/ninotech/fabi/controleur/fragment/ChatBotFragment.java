@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -40,12 +41,12 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class SuggestionFragment extends Fragment {
+public class ChatBotFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_fabiola_chat, container, false);
+        View view = inflater.inflate(R.layout.fragment_chat_bot, container, false);
         mRecyclerView = view.findViewById(R.id.recylerDisscution);
         mEnvoie = view.findViewById(R.id.envoyer);
         mEditText = view.findViewById(R.id.messageNotif);
@@ -63,7 +64,10 @@ public class SuggestionFragment extends Fragment {
                 }
             }
         };
-        ContextCompat.registerReceiver(getContext(), receiverFabiolaBookAdapter, new IntentFilter("ACTION_RECOVER_BOOK"), ContextCompat.RECEIVER_NOT_EXPORTED);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            getContext().registerReceiver(receiverFabiolaBookAdapter, new IntentFilter("ACTION_RECOVER_BOOK"),Context.RECEIVER_EXPORTED);
+        }
+
         mList.add(new Chat("fabiola.png","duna","Salut que puis-je faire pour vous ?",true));
         mChatAdapter = new ChatAdapter(mList);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

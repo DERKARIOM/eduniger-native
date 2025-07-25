@@ -2,7 +2,6 @@ package com.ninotech.fabi.controleur.activity;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -27,7 +26,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.ninotech.fabi.controleur.fragment.BookStoreFragment;
 import com.ninotech.fabi.controleur.fragment.LibraryFragment;
-import com.ninotech.fabi.controleur.fragment.SuggestionFragment;
+import com.ninotech.fabi.controleur.fragment.ChatBotFragment;
 import com.ninotech.fabi.model.data.Account;
 import com.ninotech.fabi.model.data.Initialization;
 import com.ninotech.fabi.R;
@@ -36,7 +35,6 @@ import com.ninotech.fabi.model.service.NotificationService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.ninotech.fabi.model.table.DigitalPrintTable;
 import com.ninotech.fabi.model.table.Session;
-import com.ninotech.fabi.model.table.StudentTable;
 import com.ninotech.fabi.model.table.UserTable;
 
 import androidx.core.app.ActivityCompat;
@@ -75,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
 //        SharedPreferences sharedPreferences = getSharedPreferences("MODE", Context.MODE_PRIVATE);
 //        boolean nightMODE = sharedPreferences.getBoolean("night", false);
         mBookStoreFragment = new BookStoreFragment();
-        mSuggestionFragment = new SuggestionFragment();
+        mChatBotFragment = new ChatBotFragment();
         LibraryFragment libraryFragment = new LibraryFragment();
         MenuItem menuItem = toolbar.getMenu().findItem(R.id.menuHomeNotification);
         mDigitalPrintTable = new DigitalPrintTable(this);
@@ -282,7 +280,7 @@ public class MainActivity extends AppCompatActivity {
     private SQLiteDatabase mDatabase;
     private BottomNavigationView mBottomNavigationView;
     private BookStoreFragment mBookStoreFragment = new BookStoreFragment();
-    private SuggestionFragment mSuggestionFragment = new SuggestionFragment();
+    private ChatBotFragment mChatBotFragment = new ChatBotFragment();
     private Account mAccount;
     private DigitalPrintTable mDigitalPrintTable;
 

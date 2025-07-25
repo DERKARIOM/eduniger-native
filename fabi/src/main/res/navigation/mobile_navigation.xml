@@ -19,7 +19,7 @@
 
     <fragment
         android:id="@+id/navigation_suggestion"
-        android:name="com.ninotech.fabi.controleur.fragment.SuggestionFragment"
+        android:name="com.ninotech.fabi.controleur.fragment.ChatBotFragment"
         android:label="Suggestion"
         tools:layout="@layout/fragment_suggestion" />
 
