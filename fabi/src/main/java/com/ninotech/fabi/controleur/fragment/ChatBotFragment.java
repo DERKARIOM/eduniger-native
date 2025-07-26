@@ -145,7 +145,7 @@ public class ChatBotFragment extends Fragment {
                 else
                 {
                     EdunaSyn edunaSyn = new EdunaSyn();
-                    edunaSyn.execute("http://192.168.1.157:2222/fabi/api/ask_eduna.php",mSession.getIdNumber(),mRequete);
+                    edunaSyn.execute("http://172.20.10.8:2222/fabi/api/ask_eduna.php",mSession.getIdNumber(),mRequete);
                 }
 //                CallOpenAi callOpenAi = new CallOpenAi();
 //                callOpenAi.execute("http://192.168.43.1:2222/fabi/android/callOpenAi.php");
