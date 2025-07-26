@@ -1,5 +1,7 @@
 package com.ninotech.fabi.controleur.fragment;
 
+import static android.view.View.GONE;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -37,6 +39,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import kotlinx.serialization.json.JsonObject;
 import okhttp3.MultipartBody;
@@ -71,7 +74,17 @@ public class ChatBotFragment extends Fragment {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             getContext().registerReceiver(receiverFabiolaBookAdapter, new IntentFilter("ACTION_RECOVER_BOOK"),Context.RECEIVER_EXPORTED);
         }
-
+        BroadcastReceiver receiverGoToEndChat = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if ("GO_TO_END_CHAT".equals(intent.getAction())) {
+                    mRecyclerView.smoothScrollToPosition(mChatAdapter.getItemCount()-1);
+                }
+            }
+        };
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            getContext().registerReceiver(receiverGoToEndChat, new IntentFilter("GO_TO_END_CHAT"),Context.RECEIVER_EXPORTED);
+        }
         mList.add(new Chat("fabiola.png","duna","Salut que puis-je faire pour vous ?",true));
         mChatAdapter = new ChatAdapter(mList);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -249,13 +262,13 @@ public class ChatBotFragment extends Fragment {
             if(jsonData != null)
             {
                 try {
-                    
+                    Intent intent = new Intent("RESPONSE_CHAT_OK");
+                    requireContext().sendBroadcast(intent);
 
                     JSONObject jsonObject = new JSONObject(jsonData);
                     mList.add(new Chat("fabiola.png","duna",jsonObject.getString("response"),true));
-                    mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                    mRecyclerView.setAdapter(mChatAdapter);
-                    mRecyclerView.smoothScrollToPosition(mChatAdapter.getItemCount()-1);
+     //               mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+//                    mRecyclerView.setAdapter(mChatAdapter);
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }

@@ -3,6 +3,12 @@ package com.ninotech.fabi.controleur.adapter;
 import static android.view.View.GONE;
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Build;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,13 +18,19 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.R;
+import com.ninotech.fabi.controleur.fragment.BooksFragment;
 import com.ninotech.fabi.model.data.Chat;
+import com.ninotech.fabi.model.data.Connection;
+import com.ninotech.fabi.model.data.Server;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> {
@@ -95,6 +107,22 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
 //            menu.add(Menu.NONE,R.id.inportanteNotif,Menu.NONE,"Message importants");
         }
         void display(Chat chat){
+            BroadcastReceiver receiverResponseChat = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    if ("RESPONSE_CHAT_OK".equals(intent.getAction())) {
+                        Animation pulseAnimImg = AnimationUtils.loadAnimation(itemView.getContext(), R.anim.pulse);
+                        // Lancer l'animation automatiquement
+                        mWaitChatImageView.startAnimation(pulseAnimImg);
+                        mWaitChatImageView.setVisibility(GONE);
+                        Intent intentEndLine = new Intent("GO_TO_END_CHAT");
+                        itemView.getContext().sendBroadcast(intentEndLine);
+                    }
+                }
+            };
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                itemView.getContext().registerReceiver(receiverResponseChat, new IntentFilter("RESPONSE_CHAT_OK"),Context.RECEIVER_EXPORTED);
+            }
             Animation pulseAnimImg = AnimationUtils.loadAnimation(itemView.getContext(), R.anim.pulse);
             // Lancer l'animation automatiquement
             mWaitChatImageView.startAnimation(pulseAnimImg);
@@ -109,6 +137,8 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
             }
             else
             {
+                mProfile.setVisibility(GONE);
+                mNom.setVisibility(GONE);
                 mWaitChatImageView.setVisibility(View.VISIBLE);
                 RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mRelativeLayout.getLayoutParams();
                 params.addRule(RelativeLayout.ALIGN_PARENT_END);
