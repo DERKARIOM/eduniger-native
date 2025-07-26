@@ -249,6 +249,8 @@ public class ChatBotFragment extends Fragment {
             if(jsonData != null)
             {
                 try {
+                    
+
                     JSONObject jsonObject = new JSONObject(jsonData);
                     mList.add(new Chat("fabiola.png","duna",jsonObject.getString("response"),true));
                     mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
