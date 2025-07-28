@@ -275,5 +275,5 @@
     <string name="tab_text_1">Tab 1</string>
     <string name="tab_text_2">Tab 2</string>
     <string name="changer_de_serveur">Changer de serveur 1</string>
-
+    <string name="ip_eduna">http://192.168.18.25</string>
 </resources>

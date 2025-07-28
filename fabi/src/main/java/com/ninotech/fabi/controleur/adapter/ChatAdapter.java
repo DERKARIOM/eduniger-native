@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.os.Build;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -140,6 +141,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
                 mProfile.setVisibility(GONE);
                 mNom.setVisibility(GONE);
                 mWaitChatImageView.setVisibility(View.VISIBLE);
+                mMessage.setTextColor(Color.parseColor("#FFFFFFFF"));
                 RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mRelativeLayout.getLayoutParams();
                 params.addRule(RelativeLayout.ALIGN_PARENT_END);
                 mRelativeLayout.setLayoutParams(params);
