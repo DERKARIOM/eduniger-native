@@ -274,8 +274,11 @@ public class ChatBotFragment extends Fragment {
                 }
             }
             else
-                Toast.makeText(getContext(), "Null", Toast.LENGTH_SHORT).show();
-
+            {
+                Intent intent = new Intent("RESPONSE_CHAT_OK");
+                requireContext().sendBroadcast(intent);
+                mList.add(new Chat("fabiola.png","duna","❌ Connexion perdue\n",true));
+            }
         }
     }
     private RecyclerView mRecyclerView;
