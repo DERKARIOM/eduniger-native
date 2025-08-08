@@ -254,7 +254,7 @@ public class StructureActivity extends AppCompatActivity {
         StructBookSyn structBookSyn = new StructBookSyn();
         structBookSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "StructBook.php", mSession.getIdNumber(),mStructure.getId());
         CategorySyn categorySyn = new CategorySyn();
-        categorySyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "Category.php", mSession.getIdNumber());
+        categorySyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "CategoryStrut.php", mSession.getIdNumber());
         AuthorSyn authorSyn = new AuthorSyn();
         authorSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "AuthorTop.php", mSession.getIdNumber());
     }
