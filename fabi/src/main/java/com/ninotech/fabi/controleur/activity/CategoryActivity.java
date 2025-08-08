@@ -64,8 +64,12 @@ public class CategoryActivity extends AppCompatActivity {
         ab.setDisplayHomeAsUpEnabled(true);
         TextView actionBarTitle = ab.getCustomView().findViewById(R.id.action_bar_title);
         mCategorie=null;
+        mNameStruct=null;
         if (intent != null && intent.hasExtra("intent_adapter_category_title")) {
             mCategorie = intent.getStringExtra("intent_adapter_category_title");
+            if (intent.hasExtra("intent_adapter_category_name_struct")) {
+                mNameStruct = intent.getStringExtra("intent_adapter_category_name_struct");
+            }
         }
         actionBarTitle.setText(mCategorie);
         ArrayList<Connection> list = new ArrayList<>();
@@ -96,8 +100,16 @@ public class CategoryActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             registerReceiver(receiverNoConnectionAdapter, new IntentFilter("CATEGORY_ACTIVITY"),Context.RECEIVER_EXPORTED);
         }
-        CategoryInSyn categoryInSyn = new CategoryInSyn();
-        categoryInSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "CategoryIn.php",mSession.getIdNumber(),mCategorie);
+        if (mNameStruct == null)
+        {
+            CategoryInSyn categoryInSyn = new CategoryInSyn();
+            categoryInSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "CategoryIn.php",mSession.getIdNumber(),mCategorie);
+        }
+        else
+        {
+            StructCategoryInSyn structCategoryInSyn = new StructCategoryInSyn();
+            structCategoryInSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "StructCategoryIn.php",mSession.getIdNumber(),mCategorie,mNameStruct);
+        }
     }
 
     private class CategoryInSyn extends AsyncTask<String,Void,String> {
@@ -110,6 +122,80 @@ public class CategoryActivity extends AppCompatActivity {
                         .setType(MultipartBody.FORM)
                         .addFormDataPart("idNumber",params[1])
                         .addFormDataPart("categoryTitle",params[2])
+                        .build();
+                Request request = new Request.Builder()
+                        .url(params[0])
+                        .post(requestBody)
+                        .build();
+                try {
+                    Response response = client.newCall(request).execute();
+                    return response.body().string();
+                }catch (IOException e)
+                {
+                    Toast.makeText(CategoryActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+
+            }catch (Exception e)
+            {
+                return null;
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(String jsonData){
+            //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
+            if(jsonData != null)
+            {
+                mWaitRecyclerView.setVisibility(View.GONE);
+                mRecyclerView.setVisibility(View.VISIBLE);
+                if(!jsonData.equals("RAS"))
+                {
+                    JSONArray jsonArray = null;
+                    try {
+                        jsonArray = new JSONArray(jsonData);
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                    for (int i=0;i<jsonArray.length();i++) {
+                        try {
+                            mList.add(new OnlineBook(jsonArray.getJSONObject(i).getString("idBook"),jsonArray.getJSONObject(i).getString("blanket"),jsonArray.getJSONObject(i).getString("bookTitle"),jsonArray.getJSONObject(i).getString("nameStruct") + " : " + jsonArray.getJSONObject(i).getString("categoryTitle"),jsonArray.getJSONObject(i).getString("isPhysic"),jsonArray.getJSONObject(i).getString("electronic"),jsonArray.getJSONObject(i).getString("isAudio"),Integer.parseInt(jsonArray.getJSONObject(i).getString("numberLike")),Integer.parseInt(jsonArray.getJSONObject(i).getString("numberView"))));
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    mOnlineBookAdapter = new OnlineBookAdapter(mList);
+                    mRecyclerView.setLayoutManager(new LinearLayoutManager(CategoryActivity.this));
+                    mRecyclerView.setAdapter(mOnlineBookAdapter);
+                }
+                else
+                {
+                    voidContainer(R.drawable.img_telecharge_local,"Aucun livre de categorie " + mCategorie);
+                }
+                //Toast.makeText(getContext(), jsonData, Toast.LENGTH_SHORT).show();
+            }
+            else
+            {
+                ArrayList<Connection> list = new ArrayList<>();
+                list.add(new Connection(getString(R.string.no_connection_available),"CATEGORY_ACTIVITY",false));
+                NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
+                mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                mRecyclerView.setAdapter(noConnectionAdapter);
+            }
+
+        }
+    }
+
+    private class StructCategoryInSyn extends AsyncTask<String,Void,String> {
+        @Override
+        protected String doInBackground(String... params) {
+
+            try {
+                OkHttpClient client = new OkHttpClient();
+                RequestBody requestBody = new MultipartBody.Builder()
+                        .setType(MultipartBody.FORM)
+                        .addFormDataPart("idNumber",params[1])
+                        .addFormDataPart("categoryTitle",params[2])
+                        .addFormDataPart("structName",params[3])
                         .build();
                 Request request = new Request.Builder()
                         .url(params[0])
@@ -210,4 +296,5 @@ public class CategoryActivity extends AppCompatActivity {
     private String mCategorie;
     private NoConnectionAdapter mNoConnectionAdapter;
     private RecyclerView mWaitRecyclerView;
+    private String mNameStruct;
 }

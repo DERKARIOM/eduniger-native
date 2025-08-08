@@ -583,7 +583,7 @@ public class StructureActivity extends AppCompatActivity {
                     }
                     for (int i = 0; i < jsonArray.length(); i++) {
                         try {
-                            mCategoryList.add(new Category(jsonArray.getJSONObject(i).getString("blanket"), jsonArray.getJSONObject(i).getString("title")));
+                            mCategoryList.add(new Category(jsonArray.getJSONObject(i).getString("blanket"), jsonArray.getJSONObject(i).getString("title"),mStructure.getName()));
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }

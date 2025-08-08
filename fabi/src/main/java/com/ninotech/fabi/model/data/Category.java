@@ -1,15 +1,17 @@
 package com.ninotech.fabi.model.data;
 
 public class Category {
-    public Category(String id, String title, String cover) {
-        mId = id;
-        mTitle = title;
-        mCover = cover;
-    }
     public Category(String cover, String title)
     {
         mCover = cover;
         mTitle = title;
+        mNameStruct = null;
+    }
+    public Category(String cover, String title , String nameStruct)
+    {
+        mCover = cover;
+        mTitle = title;
+        mNameStruct = nameStruct;
     }
     public String getId() {
         return mId;
@@ -34,8 +36,16 @@ public class Category {
     public void setCover(String cover) {
         mCover = cover;
     }
+    public String getNameStruct() {
+        return mNameStruct;
+    }
+
+    public void setNameStruct(String mNameStruct) {
+        this.mNameStruct = mNameStruct;
+    }
 
     private String mId;
     private String mTitle;
     private String mCover;
+    private String mNameStruct;
 }

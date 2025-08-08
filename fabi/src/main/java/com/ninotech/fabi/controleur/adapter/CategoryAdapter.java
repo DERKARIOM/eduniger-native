@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -97,9 +98,11 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyView
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent category = new Intent(itemView.getContext(), CategoryActivity.class);
-                    category.putExtra("intent_adapter_category_title", mTitleTextView.getText().toString());
-                    itemView.getContext().startActivity(category);
+                    Intent categoryIntent = new Intent(itemView.getContext(), CategoryActivity.class);
+                    categoryIntent.putExtra("intent_adapter_category_title", mTitleTextView.getText().toString());
+                    if (category.getNameStruct() != null)
+                        categoryIntent.putExtra("intent_adapter_category_name_struct", category.getNameStruct());
+                    itemView.getContext().startActivity(categoryIntent);
                 }
             });
         }
