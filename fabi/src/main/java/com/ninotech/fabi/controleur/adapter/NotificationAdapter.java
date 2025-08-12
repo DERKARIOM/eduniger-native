@@ -3,6 +3,7 @@ import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -70,11 +71,13 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         private TextView mTitre;
         private TextView mMessage;
         private TextView mDate;
+        private ImageView mImageView;
         MyViewHolder(View itemView){
             super(itemView);
             mTitre = itemView.findViewById(R.id.notifTitre);
             mMessage = itemView.findViewById(R.id.notifMessage);
             mDate = itemView.findViewById(R.id.notifDate);
+            mImageView = itemView.findViewById(R.id.image_view_adapter_notification);
             itemView.setOnCreateContextMenuListener(this);
         }
         @Override
@@ -87,6 +90,8 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             mTitre.setText(notification.getTitre());
             mMessage.setText(notification.getMessage());
             mDate.setText(notification.getDate());
+            if (notification.getId().equals("2"))
+                mImageView.setVisibility(View.GONE);
         }
 
     }

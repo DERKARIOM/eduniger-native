@@ -82,21 +82,36 @@ public class NotificationActivity extends AppCompatActivity {
                 actionBarTitle.setTextColor(Color.parseColor("#B4EFEFEF"));
                 break;
         }
-        cursor.moveToFirst();
-        try {
-            do {
-                mNotifications.add(new Notification(cursor.getString(0),cursor.getString(2),cursor.getString(3),cursor.getString(4)));
-            }while(cursor.moveToNext());
+//        cursor.moveToFirst();
+//        try {
+//            do {
+//                mNotifications.add(new Notification(cursor.getString(0),cursor.getString(2),cursor.getString(3),cursor.getString(4)));
+//            }while(cursor.moveToNext());
+            mNotifications.add(new Notification("1","Nouveauté sur EduNiger !","Le livre le tambour sacré de Zama est désormais disponible sur notre plateforme.","08/08/2025"));
+            mNotifications.add(new Notification("2","Nouveauté sur EduNiger !","Réunion de samedi\n" +
+                    "\n" +
+                    " Thème : autour des travaux NINOTECH \n" +
+                    "1. Rapport des directeurs et orientation des dire tions\n" +
+                    "2. Analyse de la modélisation de logiciel anti plagiat\n" +
+                    "3. Stratégie d'expansion d'EduNiger \n" +
+                    "4.  Prise de décision sur la proposition des pourcentages pour le projet Gida Jari\n" +
+                    "\n" +
+                    " Lieu : siège NINOTECH\n" +
+                    " Date  : 09/08/25\n" +
+                    " Heure  : 09h00\n" +
+                    "\n" +
+                    "Ci-joint le fichier portant la proposition de de la modélisation de logiciel anti-plagiat \uD83D\uDC47\uD83D\uDC47\uD83D\uDC47\n","09/08/2025"));
+
             mNotificationAdapter = new NotificationAdapter(mNotifications);
             mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getApplicationContext()));
             registerForContextMenu(mRecyclerView);
             mRecyclerView.setAdapter(mNotificationAdapter);
             mRecyclerView.smoothScrollToPosition(mNotificationAdapter.getItemCount()-1);
-        }catch (Exception e)
-        {
-            Log.e("ErrGetDataNotification",e.getMessage());
-            voidContainer(R.drawable.img_message_suggestion,getString(R.string.no_notification));
-        }
+//        }catch (Exception e)
+//        {
+//            Log.e("ErrGetDataNotification",e.getMessage());
+//            voidContainer(R.drawable.img_message_suggestion,getString(R.string.no_notification));
+//        }
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

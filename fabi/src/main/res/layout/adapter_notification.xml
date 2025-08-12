@@ -12,24 +12,31 @@
         android:layout_height="wrap_content"
        android:background="@drawable/forme_white2_radius_10dp"
         android:elevation="2dp"
-        android:layout_margin="20dp"
+        android:layout_margin="10dp"
         android:padding="8dp"
         android:orientation="vertical">
         <TextView
             android:id="@+id/notifTitre"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:fontFamily="sans-serif-smallcaps"
             android:text="Vous"
             android:textSize="12dp"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             />
+        <ImageView
+            android:id="@+id/image_view_adapter_notification"
+            android:layout_width="match_parent"
+            android:layout_height="550dp"
+            android:layout_marginTop="-25dp"
+            android:src="@drawable/open"/>
         <TextView
             android:id="@+id/notifMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="l' exament de syteme"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="-5dp"
             android:layout_marginBottom="10dp"
             android:textColor="@color/black2"
             android:textSize="17dp" />
@@ -42,7 +49,7 @@
                 android:id="@+id/notifDate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/black2"
+                android:textColor="@color/white"
                 android:text="10:50"
                 android:textSize="8dp"
                 android:gravity="end"/>
