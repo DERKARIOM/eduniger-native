@@ -31,7 +31,6 @@ import com.ninotech.fabi.model.data.Account;
 import com.ninotech.fabi.model.data.Initialization;
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.model.data.Themes;
-import com.ninotech.fabi.model.service.NotificationService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.ninotech.fabi.model.table.DigitalPrintTable;
 import com.ninotech.fabi.model.table.Session;
@@ -77,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         LibraryFragment libraryFragment = new LibraryFragment();
         MenuItem menuItem = toolbar.getMenu().findItem(R.id.menuHomeNotification);
         mDigitalPrintTable = new DigitalPrintTable(this);
-        Intent reservationService = new Intent(this, NotificationService.class);
+        //Intent reservationService = new Intent(this, NotificationService.class);
         mAccount = new Account();
         /* Activation du mode nuit et changement de couleur a la bar de navigation si le mode jour n' est pas activer */
 //        if(nightMODE)

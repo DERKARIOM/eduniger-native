@@ -15,31 +15,34 @@ public class NotificationTable extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE IF NOT EXISTS Notification\n" +
+        db.execSQL("CREATE TABLE IF NOT EXISTS " + NAME_TABLE +"\n" +
                 "(\n" +
                 "    idNotification INTEGER PRIMARY KEY AUTOINCREMENT,\n" +
-                "    notifMatriculeUt VARCHAR(100) NOT NULL,\n" +
-                "    notifTitre VARCHAR(100) NOT NULL,\n" +
-                "    notifMessage VARCHAR(100) NOT NULL,\n" +
-                "    notifDate VARCHAR(100) NOT NULL\n" +
+                "    idNumberNotif VARCHAR(100) NOT NULL,\n" +
+                "    titleNotif VARCHAR(100) NOT NULL,\n" +
+                "    messageNotif VARCHAR(1000) NOT NULL,\n" +
+                "    dateNotif VARCHAR(1000) NOT NULL," +
+                "    latitudeNotif VARCHAR(1000) DEFAULT NULL," +
+                "    longitudeNotif VARCHAR(1000) DEFAULT NULL," +
+                "    typeNotif VARCHAR(1000) NOT NULL\n" +
                 ");");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int i, int i1) {
-        db.execSQL("DROP TABLE IF EXISTS Notification;");
+        db.execSQL("DROP TABLE IF EXISTS " + NAME_TABLE);
         onCreate(db);
     }
     public Cursor getData()
     {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("SELECT * FROM Notification;",null);
+        Cursor res = db.rawQuery("SELECT * FROM " + NAME_TABLE,null);
         return res;
     }
-    public Cursor getData(String matricule)
+    public Cursor getData(String idNumber)
     {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("SELECT * FROM Notification WHERE notifMatriculeUt='" + matricule + "';",null);
+        Cursor res = db.rawQuery("SELECT * FROM " + NAME_TABLE + " WHERE idNumberNotif='" + idNumber + "';",null);
         return res;
     }
     public boolean remove(String id)
@@ -48,16 +51,32 @@ public class NotificationTable extends SQLiteOpenHelper {
         db.execSQL("DELETE FROM " + NAME_TABLE + " WHERE idNotification=" + id);
         return true;
     }
-    public boolean insert (String matricule , String titre , String message , String date)
+    public boolean insert (String idNumber , String title , String date , String message , String type)
     {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put("NotifMatriculeUt",matricule);
-        contentValues.put("notifTitre",titre);
-        contentValues.put("notifMessage",message);
-        contentValues.put("notifDate",date);
-        db.insert("Notification",null,contentValues);
+        contentValues.put("idNumberNotif",idNumber);
+        contentValues.put("titleNotif",title);
+        contentValues.put("dateNotif",date);
+        contentValues.put("messageNotif",message);
+        contentValues.put("typeNotif",type);
+        db.insert(NAME_TABLE,null,contentValues);
+        return  true;
+    }
+    public boolean insert (String idNumber , String title , String date , String message , String type , String latitude , String longitude)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("idNumberNotif",idNumber);
+        contentValues.put("titleNotif",title);
+        contentValues.put("dateNotif",date);
+        contentValues.put("messageNotif",message);
+        contentValues.put("latitudeNotif",latitude);
+        contentValues.put("longitudeNotif",longitude);
+        contentValues.put("typeNotif",type);
+        db.insert(NAME_TABLE,null,contentValues);
         return  true;
     }
 }
+
 

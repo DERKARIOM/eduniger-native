@@ -1,58 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relative_layout_activity_notification"
+    android:background="@drawable/forme_white2_radius_10dp"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center">
-    <LinearLayout
-        android:id="@+id/bNotification"
+    android:elevation="5dp"
+    android:padding="15dp"
+    android:layout_marginStart="15dp"
+    android:layout_marginEnd="15dp"
+    android:layout_marginTop="10dp"
+    android:layout_marginBottom="10dp"
+    android:layout_height="wrap_content">
+    <RelativeLayout
+        android:id="@+id/head"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-       android:background="@drawable/forme_white2_radius_10dp"
-        android:elevation="2dp"
-        android:layout_margin="10dp"
-        android:padding="8dp"
-        android:orientation="vertical">
-        <TextView
-            android:id="@+id/notifTitre"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:fontFamily="sans-serif-smallcaps"
-            android:text="Vous"
-            android:textSize="12dp"
-            android:textColor="@color/white"
-            />
+        android:orientation="horizontal">
         <ImageView
-            android:id="@+id/image_view_adapter_notification"
-            android:layout_width="match_parent"
-            android:layout_height="550dp"
-            android:layout_marginTop="-25dp"
-            android:src="@drawable/open"/>
+            android:id="@+id/image_view_adapter_notification_icon"
+            android:layout_margin="5dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center"
+            android:src="@drawable/eduniger"
+            android:contentDescription="@string/todo" />
         <TextView
-            android:id="@+id/notifMessage"
+            android:id="@+id/text_view_adapter_notification_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="l' exament de syteme"
-            android:layout_marginTop="-5dp"
-            android:layout_marginBottom="10dp"
-            android:textColor="@color/black2"
-            android:textSize="17dp" />
-        <LinearLayout
+            android:layout_centerVertical="true"
+            android:text="Alerte TELESAFE "
+            android:textStyle="bold"
+            android:layout_toRightOf="@id/image_view_adapter_notification_icon"
+            android:textSize="@dimen/size_title"/>
+        <TextView
+            android:id="@+id/text_view_adapter_notification_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:orientation="horizontal">
-            <TextView
-                android:id="@+id/notifDate"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:text="10:50"
-                android:textSize="8dp"
-                android:gravity="end"/>
-        </LinearLayout>
-    </LinearLayout>
-</LinearLayout>
+            android:text="il y'a 2 min"
+            android:layout_centerVertical="true"
+            android:textStyle="bold"
+            android:layout_alignParentEnd="true"
+            android:gravity="end"
+            android:layout_toRightOf="@id/text_view_adapter_notification_title"
+            android:textSize="@dimen/size_sub_title"/>
+    </RelativeLayout>
+    <TextView
+        android:id="@+id/text_view_adapter_notification_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/head"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="7dp"
+        android:layout_marginEnd="7dp"
+        android:text="La SIM de votre téléphone Samsung Galaxy Note8 a été changée."/>
+</RelativeLayout>
