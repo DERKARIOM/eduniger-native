@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="fabi">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-07-25T07:28:22.423510400Z">
+        <DropdownSelection timestamp="2025-08-15T22:33:04.757958716Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\DERKARIOM\.android\avd\Pixel_8_Pro.avd" />
+              <DeviceId pluginId="Default" identifier="serial=192.168.43.2:5555;connection=9d1b37d8" />
             </handle>
           </Target>
         </DropdownSelection>

@@ -35,6 +35,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.ninotech.fabi.model.table.DigitalPrintTable;
 import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.model.table.UserTable;
+import com.ninotech.fabi.model.worker.NetworkCheckWorker;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -43,6 +44,9 @@ import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
+
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
@@ -106,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(login);
             finish();
         }
-
+        networkCheckWorker(getApplicationContext());
         //startService(reservationService);
         try {
             if(mDigitalPrintTable.getPass().equals("0"))
@@ -298,7 +302,11 @@ public class MainActivity extends AppCompatActivity {
         }
         return false;
     }
-
+    public void networkCheckWorker(Context context)
+    {
+        OneTimeWorkRequest networkCheckRequest = new OneTimeWorkRequest.Builder(NetworkCheckWorker.class).build();
+        WorkManager.getInstance(this).enqueue(networkCheckRequest);
+    }
     private EditText mEditText;
     private ImageView mProfileImageView;
 }

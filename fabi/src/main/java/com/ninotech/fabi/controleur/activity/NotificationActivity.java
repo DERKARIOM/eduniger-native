@@ -4,9 +4,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -44,30 +46,21 @@ public class NotificationActivity extends AppCompatActivity {
         mNotificationTable = new NotificationTable(this);
         mNotifications = new ArrayList<Notification>();
         NotifNumber.saveLocation(getApplicationContext(),0);
-//        Cursor cursor = mNotificationTable.getData(mSession.getIdNumber());
-//        cursor.moveToFirst();
-//        try {
-//            do {
-//                switch (cursor.getString(7))
-//                {
-//                    case "0":
-//                        mNotifications.add(new Notification(cursor.getString(0),cursor.getString(7),cursor.getString(2),cursor.getString(4),cursor.getString(3)));
-//                        break;
-//                    case "1":
-//                        mNotifications.add(new Notification(cursor.getString(0),cursor.getString(7),cursor.getString(2),cursor.getString(4),cursor.getString(3),cursor.getString(5),cursor.getString(6)));
-//                        break;
-//                }
-//            }while(cursor.moveToNext());
-            mNotifications.add(new Notification("1","2","Mise a jour disponible","13/08/2025 09:30:01","Félicitation ! vous etes maintenant officiellement un client de telesafe. Merci pour votre achat"));
+        Cursor cursor = mNotificationTable.getData(mSession.getIdNumber());
+        cursor.moveToFirst();
+        try {
+            do {
+                mNotifications.add(new Notification(cursor.getString(0),cursor.getString(7),cursor.getString(2),cursor.getString(4),cursor.getString(3)));
+            }while(cursor.moveToNext());
             mNotificationAdapter = new NotificationAdapter(mNotifications);
             mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getApplicationContext()));
             registerForContextMenu(mRecyclerView);
             mRecyclerView.setAdapter(mNotificationAdapter);
-//        }catch (Exception e)
-//        {
-//            Log.e("ErrGetDataNotification",e.getMessage());
-//            voidContainer(R.drawable.img_message_suggestion,getString(R.string.no_notification));
-//        }
+        }catch (Exception e)
+        {
+            Log.e("ErrGetDataNotification",e.getMessage());
+            voidContainer(R.drawable.img_message_suggestion,getString(R.string.no_notification));
+        }
     }
     public void voidContainer(int image , String message)
     {
