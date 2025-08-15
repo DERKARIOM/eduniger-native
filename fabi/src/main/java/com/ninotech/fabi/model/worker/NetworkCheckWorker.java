@@ -153,51 +153,51 @@ public class NetworkCheckWorker extends Worker {
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
-//                    int numberNotification = NotifNumber.getLastKnownLocation(getApplicationContext())+1;
-//                    NotifNumber.saveLocation(getApplicationContext(),numberNotification);
-//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//                        NotificationChannel channel = new NotificationChannel(
-//                                "channel_id",
-//                                "Nom du canal",
-//                                NotificationManager.IMPORTANCE_DEFAULT
-//                        );
-//                        NotificationManager notificationManager = getSystemService(NotificationManager.class);
-//                        notificationManager.createNotificationChannel(channel);
-//                    }
-//
-//// Demande de permission pour Android 13 et plus
-//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-//                        if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-//                            ActivityCompat.requestPermissions((Activity) getApplicationContext(), new String[]{Manifest.permission.POST_NOTIFICATIONS}, 1);
-//                            return;
-//                        }
-//                    }
-//
-//                    Intent intent = new Intent(getApplicationContext(), NotificationActivity.class);
-//                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//                    PendingIntent pendingIntent = PendingIntent.getActivity(
-//                            getApplicationContext(),
-//                            0,
-//                            intent,
-//                            PendingIntent.FLAG_IMMUTABLE
-//                    );
-//
-//                    NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "channel_id")
-//                            .setSmallIcon(R.mipmap.ic_launcher_round)
-//                            .setContentTitle(notification.getTitle())
-//                            .setContentText(notification.getMessage())
-//                            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-//                            .setContentIntent(pendingIntent)
-//                            .setAutoCancel(true);
-//
-//                    NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
-//
-//// Afficher la notification
-//                    notificationManager.notify(numberNotification, builder.build());
-//
-//                    Intent updateBadgeIntent = new Intent("ACTION_UPDATE_NOTIFICATION_BADGE");
-//                    updateBadgeIntent.putExtra("number",numberNotification);
-//                    getApplicationContext().sendBroadcast(updateBadgeIntent);
+                    int numberNotification = NotifNumber.getLastKnownLocation(getApplicationContext())+1;
+                    NotifNumber.saveLocation(getApplicationContext(),numberNotification);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        NotificationChannel channel = new NotificationChannel(
+                                "channel_id",
+                                "Nom du canal",
+                                NotificationManager.IMPORTANCE_DEFAULT
+                        );
+                        NotificationManager notificationManager = getApplicationContext().getSystemService(NotificationManager.class);
+                        notificationManager.createNotificationChannel(channel);
+                    }
+
+// Demande de permission pour Android 13 et plus
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                            ActivityCompat.requestPermissions((Activity) getApplicationContext(), new String[]{Manifest.permission.POST_NOTIFICATIONS}, 1);
+                            return;
+                        }
+                    }
+
+                    Intent intent = new Intent(getApplicationContext(), NotificationActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    PendingIntent pendingIntent = PendingIntent.getActivity(
+                            getApplicationContext(),
+                            0,
+                            intent,
+                            PendingIntent.FLAG_IMMUTABLE
+                    );
+
+                    NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "channel_id")
+                            .setSmallIcon(R.mipmap.ic_v2)
+                            .setContentTitle(notification.getTitle())
+                            .setContentText(notification.getMessage())
+                            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                            .setContentIntent(pendingIntent)
+                            .setAutoCancel(true);
+
+                    NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
+
+// Afficher la notification
+                    notificationManager.notify(numberNotification, builder.build());
+
+                    Intent updateBadgeIntent = new Intent("ACTION_UPDATE_NOTIFICATION_BADGE");
+                    updateBadgeIntent.putExtra("number",numberNotification);
+                    getApplicationContext().sendBroadcast(updateBadgeIntent);
                 }
             }
         }

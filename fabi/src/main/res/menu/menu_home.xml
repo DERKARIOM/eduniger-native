@@ -10,7 +10,8 @@
         android:id="@+id/menuHomeNotification"
         style="@style/activity_main_ico_notification"
         android:title="notification"
-        app:showAsAction="always|never|collapseActionView|withText" />
+        app:actionLayout="@layout/menu_item_badge"
+        app:showAsAction="always"/>
     <item
         android:id="@+id/setting"
         android:title="Paramètres" />

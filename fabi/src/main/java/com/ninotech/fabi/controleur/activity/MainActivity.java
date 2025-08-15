@@ -1,7 +1,9 @@
 package com.ninotech.fabi.controleur.activity;
 import android.Manifest;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -12,10 +14,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,6 +34,7 @@ import com.ninotech.fabi.controleur.fragment.ChatBotFragment;
 import com.ninotech.fabi.model.data.Account;
 import com.ninotech.fabi.model.data.Initialization;
 import com.ninotech.fabi.R;
+import com.ninotech.fabi.model.data.NotifNumber;
 import com.ninotech.fabi.model.data.Themes;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.ninotech.fabi.model.table.DigitalPrintTable;
@@ -73,20 +78,27 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar_search);
         mEditText = findViewById(R.id.edit_text_toolbar_search);
         mProfileImageView = findViewById(R.id.image_view_toolbar_main_profile);
-//        SharedPreferences sharedPreferences = getSharedPreferences("MODE", Context.MODE_PRIVATE);
-//        boolean nightMODE = sharedPreferences.getBoolean("night", false);
         mBookStoreFragment = new BookStoreFragment();
         mChatBotFragment = new ChatBotFragment();
         LibraryFragment libraryFragment = new LibraryFragment();
         MenuItem menuItem = toolbar.getMenu().findItem(R.id.menuHomeNotification);
         mDigitalPrintTable = new DigitalPrintTable(this);
-        //Intent reservationService = new Intent(this, NotificationService.class);
         mAccount = new Account();
-        /* Activation du mode nuit et changement de couleur a la bar de navigation si le mode jour n' est pas activer */
-//        if(nightMODE)
-//        {nightMODE
-           // AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-//        }
+        BroadcastReceiver updateBadgeReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if ("ACTION_UPDATE_NOTIFICATION_BADGE".equals(intent.getAction())) {
+                    if(mBadgeTextView != null)
+                    {
+                        mBadgeTextView.setText(String.valueOf(intent.getIntExtra("number", 0)));
+                        mBadgeTextView.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+        };
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            registerReceiver(updateBadgeReceiver, new IntentFilter("ACTION_UPDATE_NOTIFICATION_BADGE"),Context.RECEIVER_EXPORTED);
+        }
         mEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -307,6 +319,29 @@ public class MainActivity extends AppCompatActivity {
         OneTimeWorkRequest networkCheckRequest = new OneTimeWorkRequest.Builder(NetworkCheckWorker.class).build();
         WorkManager.getInstance(this).enqueue(networkCheckRequest);
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_home, menu);
+
+        MenuItem menuItem = menu.findItem(R.id.menuHomeNotification);
+        View actionView = menuItem.getActionView();
+
+        mBadgeTextView = actionView.findViewById(R.id.badge);
+
+        int notifCount = (int) NotifNumber.getLastKnownLocation(getApplicationContext());
+        if (notifCount == 0) {
+            mBadgeTextView.setVisibility(View.GONE);
+        } else {
+            mBadgeTextView.setVisibility(View.VISIBLE);
+            mBadgeTextView.setText(String.valueOf(notifCount));
+        }
+
+        actionView.setOnClickListener(v -> onOptionsItemSelected(menuItem));
+
+        return true;
+    }
+
     private EditText mEditText;
     private ImageView mProfileImageView;
+    private TextView mBadgeTextView;
 }
