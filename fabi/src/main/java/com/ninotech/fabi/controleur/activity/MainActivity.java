@@ -340,6 +340,18 @@ public class MainActivity extends AppCompatActivity {
 
         return true;
     }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if(id == R.id.menuHomeNotification)
+        {
+            Intent notificationIntent = new Intent(MainActivity.this,NotificationActivity.class);
+            mBadgeTextView.setVisibility(View.GONE);
+            startActivity(notificationIntent);
+            return true;
+        }
+        return false;
+    }
 
     private EditText mEditText;
     private ImageView mProfileImageView;

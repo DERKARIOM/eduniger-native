@@ -138,7 +138,7 @@ public class NetworkCheckWorker extends Worker {
                         notification.setType(jsonArray.getJSONObject(i).getString("type"));
                         notification.setMessage(jsonArray.getJSONObject(i).getString("message"));
                         notification.setDate(jsonArray.getJSONObject(i).getString("2"));
-                        notification.setTitle("Inormation");
+                        notification.setTitle(jsonArray.getJSONObject(i).getString("title"));
 //                        if(notification.getType().equals("1"))
 //                        {
 //                            notification.setTitle("Alerte TELESAFE");
