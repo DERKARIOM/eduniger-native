@@ -20,8 +20,8 @@ public class Notification {
         mTitle = title;
         mDate = date;
         mMessage = message;
-        mLatitude = latitude;
-        mLongitude = longitude;
+        mLink = latitude;
+        mIdLink = longitude;
     }
 
     public String getType() {
@@ -56,22 +56,6 @@ public class Notification {
         mMessage = message;
     }
 
-    public String getLatitude() {
-        return mLatitude;
-    }
-
-    public void setLatitude(String latitude) {
-        mLatitude = latitude;
-    }
-
-    public String getLongitude() {
-        return mLongitude;
-    }
-
-    public void setLongitude(String longitude) {
-        mLongitude = longitude;
-    }
-
     public String getId() {
         return mId;
     }
@@ -79,12 +63,26 @@ public class Notification {
     public void setId(String id) {
         mId = id;
     }
+    public String getLink() {
+        return mLink;
+    }
+
+    public void setLink(String mLink) {
+        this.mLink = mLink;
+    }
+    public String getIdLink() {
+        return mIdLink;
+    }
+
+    public void setIdLink(String mIdLink) {
+        this.mIdLink = mIdLink;
+    }
 
     private String mId;
     private String mType;
     private String mTitle;
     private String mDate;
     private String mMessage;
-    private String mLatitude;
-    private String mLongitude;
+    private String mLink;
+    private String mIdLink;
 }

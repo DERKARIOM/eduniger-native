@@ -137,6 +137,8 @@ public class NetworkCheckWorker extends Worker {
                     try {
                         notification.setType(jsonArray.getJSONObject(i).getString("type"));
                         notification.setMessage(jsonArray.getJSONObject(i).getString("message"));
+                        notification.setLink(jsonArray.getJSONObject(i).getString("link"));
+                        notification.setIdLink(jsonArray.getJSONObject(i).getString("idBookLink"));
                         notification.setDate(jsonArray.getJSONObject(i).getString("2"));
                         notification.setTitle(jsonArray.getJSONObject(i).getString("title"));
 //                        if(notification.getType().equals("1"))
@@ -149,6 +151,8 @@ public class NetworkCheckWorker extends Worker {
                                 notification.getTitle(),
                                 notification.getDate(),
                                 notification.getMessage(),
+                                notification.getLink(),
+                                notification.getIdLink(),
                                 notification.getType());
                     } catch (JSONException e) {
                         throw new RuntimeException(e);

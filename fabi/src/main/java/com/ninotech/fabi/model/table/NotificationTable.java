@@ -22,8 +22,8 @@ public class NotificationTable extends SQLiteOpenHelper {
                 "    titleNotif VARCHAR(100) NOT NULL,\n" +
                 "    messageNotif VARCHAR(1000) NOT NULL,\n" +
                 "    dateNotif VARCHAR(1000) NOT NULL," +
-                "    latitudeNotif VARCHAR(1000) DEFAULT NULL," +
-                "    longitudeNotif VARCHAR(1000) DEFAULT NULL," +
+                "    link VARCHAR(10000) DEFAULT NULL," +
+                "    idBookLink VARCHAR(1000) DEFAULT NULL," +
                 "    typeNotif VARCHAR(1000) NOT NULL\n" +
                 ");");
     }
@@ -51,7 +51,7 @@ public class NotificationTable extends SQLiteOpenHelper {
         db.execSQL("DELETE FROM " + NAME_TABLE + " WHERE idNotification=" + id);
         return true;
     }
-    public boolean insert (String idNumber , String title , String date , String message , String type)
+    public boolean insert (String idNumber , String title , String date , String message , String link , String bookLink, String type)
     {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -59,20 +59,8 @@ public class NotificationTable extends SQLiteOpenHelper {
         contentValues.put("titleNotif",title);
         contentValues.put("dateNotif",date);
         contentValues.put("messageNotif",message);
-        contentValues.put("typeNotif",type);
-        db.insert(NAME_TABLE,null,contentValues);
-        return  true;
-    }
-    public boolean insert (String idNumber , String title , String date , String message , String type , String latitude , String longitude)
-    {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put("idNumberNotif",idNumber);
-        contentValues.put("titleNotif",title);
-        contentValues.put("dateNotif",date);
-        contentValues.put("messageNotif",message);
-        contentValues.put("latitudeNotif",latitude);
-        contentValues.put("longitudeNotif",longitude);
+        contentValues.put("link",link);
+        contentValues.put("idBookLink",bookLink);
         contentValues.put("typeNotif",type);
         db.insert(NAME_TABLE,null,contentValues);
         return  true;

@@ -112,39 +112,34 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         }
 
         void display(Notification notification) {
-//            switch (notification.getType())
-//            {
-//                case "0":
-//                    mIconImageView.setImageResource(R.drawable.img_activate_service);
-//                    break;
-//                case "1":
-//                    mIconImageView.setImageResource(R.drawable.img_carte_sim);
-//                    break;
-//            }
             mTitleTextView.setText(notification.getTitle());
             mDate.setText(notification.getDate());
             mMessage.setText(notification.getMessage());
-//            switch (notification.getType())
-//            {
-//                case "0":
-//                    mRelativeLayout.setBackgroundResource(R.drawable.forme_white2_radius_10dp);
-//                    break;
-//                case "1":
-//                    mRelativeLayout.setBackgroundResource(R.drawable.forme_white_radius_100dp_border_vert);
-//                    break;
-//            }
+            switch (notification.getType())
+            {
+                case "0":
+                    mRelativeLayout.setBackgroundResource(R.drawable.forme_white_radius_100dp_border_dark);
+                    break;
+                case "1":
+                    mRelativeLayout.setBackgroundResource(R.drawable.forme_white_radius_100dp_border_vert);
+                    break;
+                case "2":
+                    mRelativeLayout.setBackgroundResource(R.drawable.forme_white_radius_100dp_border_blue);
+                    break;
+
+            }
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    switch (notification.getType())
-//                    {
-//                        case "0":
-//                            Toast.makeText(itemView.getContext(), "Notification Simple", Toast.LENGTH_SHORT).show();
-//                            break;
-//                        case "1":
-//                            Toast.makeText(itemView.getContext(), "Notification avec lien", Toast.LENGTH_SHORT).show();
-//                            break;
-//                    }
+                    switch (notification.getType())
+                    {
+                        case "0":
+                            Toast.makeText(itemView.getContext(), "Notification Simple", Toast.LENGTH_SHORT).show();
+                            break;
+                        case "1":
+                            Toast.makeText(itemView.getContext(), "Notification avec lien", Toast.LENGTH_SHORT).show();
+                            break;
+                    }
                 }
             });
         }
