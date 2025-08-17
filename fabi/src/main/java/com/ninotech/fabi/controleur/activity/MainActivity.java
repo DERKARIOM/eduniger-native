@@ -84,14 +84,24 @@ public class MainActivity extends AppCompatActivity {
         MenuItem menuItem = toolbar.getMenu().findItem(R.id.menuHomeNotification);
         mDigitalPrintTable = new DigitalPrintTable(this);
         mAccount = new Account();
+        View actionView = toolbar.getMenu().getItem(1).getActionView();
+        mBadgeTextView = actionView.findViewById(R.id.badge);
+        int notifCount = (int) NotifNumber.getLastKnownLocation(getApplicationContext());
+        if (notifCount == 0) {
+            mBadgeTextView.setVisibility(View.GONE);
+        } else {
+            mBadgeTextView.setVisibility(View.VISIBLE);
+            mBadgeTextView.setText(String.valueOf(notifCount));
+        }
+        actionView.setOnClickListener(v -> onOptionsItemSelected(toolbar.getMenu().getItem(1)));
         BroadcastReceiver updateBadgeReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 if ("ACTION_UPDATE_NOTIFICATION_BADGE".equals(intent.getAction())) {
                     if(mBadgeTextView != null)
                     {
-                        mBadgeTextView.setText(String.valueOf(intent.getIntExtra("number", 0)));
                         mBadgeTextView.setVisibility(View.VISIBLE);
+                        mBadgeTextView.setText(String.valueOf(intent.getIntExtra("number", 0)));
                     }
                 }
             }
@@ -99,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             registerReceiver(updateBadgeReceiver, new IntentFilter("ACTION_UPDATE_NOTIFICATION_BADGE"),Context.RECEIVER_EXPORTED);
         }
+
         mEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -319,27 +330,7 @@ public class MainActivity extends AppCompatActivity {
         OneTimeWorkRequest networkCheckRequest = new OneTimeWorkRequest.Builder(NetworkCheckWorker.class).build();
         WorkManager.getInstance(this).enqueue(networkCheckRequest);
     }
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_home, menu);
 
-        MenuItem menuItem = menu.findItem(R.id.menuHomeNotification);
-        View actionView = menuItem.getActionView();
-
-        mBadgeTextView = actionView.findViewById(R.id.badge);
-
-        int notifCount = (int) NotifNumber.getLastKnownLocation(getApplicationContext());
-        if (notifCount == 0) {
-            mBadgeTextView.setVisibility(View.GONE);
-        } else {
-            mBadgeTextView.setVisibility(View.VISIBLE);
-            mBadgeTextView.setText(String.valueOf(notifCount));
-        }
-
-        actionView.setOnClickListener(v -> onOptionsItemSelected(menuItem));
-
-        return true;
-    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();

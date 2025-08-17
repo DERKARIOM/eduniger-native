@@ -120,7 +120,7 @@ public class NetworkCheckWorker extends Worker {
         @Override
         protected void onPostExecute(String response) {
            Log.e("JsonTest",response);
-            Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
+           // Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
             if(!response.equals("ras"))
             {
                 JSONArray jsonArray = null;

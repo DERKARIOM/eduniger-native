@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
@@ -15,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -86,6 +88,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
+        private RelativeLayout mRelativeLayout;
         private ImageView mIconImageView;
         private TextView mTitleTextView;
         private TextView mDate;
@@ -93,6 +96,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
         MyViewHolder(View itemView) {
             super(itemView);
+            mRelativeLayout = itemView.findViewById(R.id.relative_layout_activity_notification);
             mIconImageView = itemView.findViewById(R.id.image_view_adapter_notification_icon);
             mTitleTextView = itemView.findViewById(R.id.text_view_adapter_notification_title);
             mMessage = itemView.findViewById(R.id.text_view_adapter_notification_message);
@@ -120,21 +124,21 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             mTitleTextView.setText(notification.getTitle());
             mDate.setText(notification.getDate());
             mMessage.setText(notification.getMessage());
-//            itemView.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    switch (notification.getType())
-//                    {
-//                        case "0":
-//                            messageYesOrNo(R.mipmap.safe_round,"Installation requise","Pour utiliser pleinement toutes les fonctionnalités de TeleSafe, vous devez installer le service Safe. Veuillez installer ce service pour garantir la sécurité et le suivi de votre appareil.\n\nVoulez-vous procéder à l'installation maintenant ?");
-//                            break;
-//                        case "1":
-//                            gotoLocalisationMaps(notification.getLatitude(),notification.getLongitude());
-//                            break;
-//                    }
-//
-//                }
-//            });
+            switch (notification.getType())
+            {
+                case "0":
+                    mRelativeLayout.setBackgroundResource(R.drawable.forme_white_radius_100dp_border_vert);
+                    break;
+                case "1":
+                    mRelativeLayout.setBackgroundResource(R.drawable.forme_white2_radius_10dp);
+                    break;
+            }
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
         }
     }
 }
