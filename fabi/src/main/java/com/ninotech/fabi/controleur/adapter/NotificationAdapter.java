@@ -124,19 +124,27 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             mTitleTextView.setText(notification.getTitle());
             mDate.setText(notification.getDate());
             mMessage.setText(notification.getMessage());
-            switch (notification.getType())
-            {
-                case "0":
-                    mRelativeLayout.setBackgroundResource(R.drawable.forme_white_radius_100dp_border_vert);
-                    break;
-                case "1":
-                    mRelativeLayout.setBackgroundResource(R.drawable.forme_white2_radius_10dp);
-                    break;
-            }
+//            switch (notification.getType())
+//            {
+//                case "0":
+//                    mRelativeLayout.setBackgroundResource(R.drawable.forme_white2_radius_10dp);
+//                    break;
+//                case "1":
+//                    mRelativeLayout.setBackgroundResource(R.drawable.forme_white_radius_100dp_border_vert);
+//                    break;
+//            }
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+//                    switch (notification.getType())
+//                    {
+//                        case "0":
+//                            Toast.makeText(itemView.getContext(), "Notification Simple", Toast.LENGTH_SHORT).show();
+//                            break;
+//                        case "1":
+//                            Toast.makeText(itemView.getContext(), "Notification avec lien", Toast.LENGTH_SHORT).show();
+//                            break;
+//                    }
                 }
             });
         }

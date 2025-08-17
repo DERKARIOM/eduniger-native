@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/relative_layout_activity_notification"
-        android:background="@drawable/forme_white2_radius_10dp"
+        android:background="@drawable/forme_white_radius_100dp_border_vert"
         tools:ignore="UselessParent"
         android:elevation="5dp"
         android:padding="15dp"
