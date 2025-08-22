@@ -1,12 +1,16 @@
 package com.ninotech.fabi.controleur.activity;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -16,6 +20,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -53,6 +59,8 @@ import okhttp3.Response;
 
 public class AuthorActivity extends AppCompatActivity {
 
+    private static final int REQUEST_CALL_PERMISSION = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +76,9 @@ public class AuthorActivity extends AppCompatActivity {
         mAuthorRecyclerView = findViewById(R.id.recycler_view_activity_author);
         mBackImageView = findViewById(R.id.image_view_toolbar_search);
         mSearchEditText = findViewById(R.id.edit_text_toolbar_search);
+        mAppelImageView = findViewById(R.id.image_view_activity_author_appel);
+        mEmailImageView = findViewById(R.id.image_view_activity_author_email);
+        mWhatsAppImageView = findViewById(R.id.image_view_activity_author_whatsapp);
         mSession = new Session(getApplicationContext());
         mAuthorFormatBookRecyclerView = findViewById(R.id.recycler_view_activity_author_format_books);
         mAuthorArrayList = new ArrayList<>();
@@ -131,6 +142,36 @@ public class AuthorActivity extends AppCompatActivity {
                 searchIntent.putExtra("online_book_key", "AUTHOR_ACTIVITY");
                 searchIntent.putExtra("id_author_key",mAuthor.getIdNumber());
                 startActivity(searchIntent);
+            }
+        });
+        mAppelImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(AuthorActivity.this, "Appel Telephonique", Toast.LENGTH_SHORT).show();
+                lancerAppel("+22794961793");
+            }
+        });
+
+        mEmailImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(AuthorActivity.this, "Email", Toast.LENGTH_SHORT).show();
+                envoyerEmail("derkariom@gmail.com",
+                        "Sujet : ",
+                        "Bonjour Bachir Abdoul Kader, ",
+                        AuthorActivity.this);
+
+            }
+        });
+
+        mWhatsAppImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(AuthorActivity.this, "WhatsApp", Toast.LENGTH_SHORT).show();
+                envoyerMessageWhatsApp("+22794961793",
+                        "Bonjour Bachir Abdoul Kader,",
+                        AuthorActivity.this);
+
             }
         });
         Picasso.get()
@@ -289,6 +330,93 @@ public class AuthorActivity extends AppCompatActivity {
             }
         }
     }
+    private void lancerAppel(String numero) {
+        if (numero == null || numero.isEmpty()) {
+            Toast.makeText(this, "Numéro invalide", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Vérifier si la permission est déjà accordée
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Demander la permission
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CALL_PERMISSION);
+        } else {
+            // Lancer directement l'appel
+            String dial = "tel:" + numero;
+            startActivity(new Intent(Intent.ACTION_CALL, Uri.parse(dial)));
+        }
+    }
+
+    // Résultat de la demande de permission
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == REQUEST_CALL_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission accordée → relancer l'appel
+                lancerAppel(mNumberAuthor);
+            } else {
+                // Permission refusée
+                Toast.makeText(this, "Permission d'appel refusée", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+    private void envoyerEmail(String destinataire, String sujet, String message, Context context) {
+        // Construire l'URI avec "mailto"
+        Uri uri = Uri.parse("mailto:" + destinataire);
+
+        // Créer l'intent
+        Intent intent = new Intent(Intent.ACTION_SENDTO, uri);
+        intent.putExtra(Intent.EXTRA_SUBJECT, sujet);
+        intent.putExtra(Intent.EXTRA_TEXT, message);
+
+        try {
+            context.startActivity(Intent.createChooser(intent, "Choisir une application de messagerie"));
+        } catch (android.content.ActivityNotFoundException e) {
+            Toast.makeText(context, "Aucune application email installée", Toast.LENGTH_SHORT).show();
+        }
+    }
+    private void envoyerMessageWhatsApp(String numero, String message, Context context) {
+        try {
+            // Construire l'URL
+            String url = "https://wa.me/" + numero + "?text=" + Uri.encode(message);
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(url));
+
+            // Vérifier si WhatsApp normal est installé
+            if (isPackageInstalled("com.whatsapp", context)) {
+                intent.setPackage("com.whatsapp");
+            }
+            // Sinon vérifier WhatsApp Business
+            else if (isPackageInstalled("com.whatsapp.w4b", context)) {
+                intent.setPackage("com.whatsapp.w4b");
+            } else {
+                Toast.makeText(context, "Aucune version de WhatsApp n'est installée", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            context.startActivity(intent);
+
+        } catch (Exception e) {
+            Toast.makeText(context, "Erreur lors de l'ouverture de WhatsApp", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // Vérifie si un package est installé
+    private boolean isPackageInstalled(String packageName, Context context) {
+        try {
+            context.getPackageManager().getPackageInfo(packageName, 0);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+
     private ImageView mProfileImageView;
     private TextView mUsernameTextView;
     private Author mAuthor;
@@ -303,4 +431,8 @@ public class AuthorActivity extends AppCompatActivity {
     private TextView mProfessionTextView;
     private RecyclerView mWaitRecyclerView;
     private NestedScrollView mNestedScrollView;
+    private ImageView mAppelImageView;
+    private ImageView mEmailImageView;
+    private ImageView mWhatsAppImageView;
+    private String mNumberAuthor=null;
 }

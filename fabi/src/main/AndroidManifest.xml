@@ -131,8 +131,20 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".controleur.activity.InfosActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
+            android:exported="true"
+            android:screenOrientation="portrait" >
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <!-- Ici ton domaine réel -->
+                <data
+                    android:scheme="https"
+                    android:host="eduniger.com"
+                    android:path="/open" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".controleur.activity.ChangePasswordActivity"
             android:exported="false"
@@ -219,5 +231,4 @@
             android:foregroundServiceType="dataSync"
             tools:ignore="ForegroundServicePermission" />
     </application>
-
 </manifest>

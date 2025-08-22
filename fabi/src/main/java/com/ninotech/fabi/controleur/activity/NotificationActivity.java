@@ -50,7 +50,7 @@ public class NotificationActivity extends AppCompatActivity {
         cursor.moveToFirst();
         try {
             do {
-                mNotifications.add(new Notification(cursor.getString(0),cursor.getString(7),cursor.getString(2),cursor.getString(4),cursor.getString(3)));
+                mNotifications.add(new Notification(cursor.getString(0),cursor.getString(7),cursor.getString(2),cursor.getString(4),cursor.getString(3),cursor.getString(5),cursor.getString(6)));
             }while(cursor.moveToNext());
             mNotificationAdapter = new NotificationAdapter(mNotifications);
             mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getApplicationContext()));

@@ -1,6 +1,7 @@
 package com.ninotech.fabi.controleur.adapter;
 import android.Manifest;
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -25,6 +26,7 @@ import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.R;
+import com.ninotech.fabi.controleur.activity.BookActivity;
 import com.ninotech.fabi.model.data.Notification;
 
 import java.io.File;
@@ -121,10 +123,10 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                     mRelativeLayout.setBackgroundResource(R.drawable.forme_white_radius_100dp_border_dark);
                     break;
                 case "1":
-                    mRelativeLayout.setBackgroundResource(R.drawable.forme_white_radius_100dp_border_vert);
+                    mRelativeLayout.setBackgroundResource(R.drawable.forme_white_radius_100dp_border_blue);
                     break;
                 case "2":
-                    mRelativeLayout.setBackgroundResource(R.drawable.forme_white_radius_100dp_border_blue);
+                    mRelativeLayout.setBackgroundResource(R.drawable.forme_white_radius_100dp_border_vert);
                     break;
 
             }
@@ -137,11 +139,32 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                             Toast.makeText(itemView.getContext(), "Notification Simple", Toast.LENGTH_SHORT).show();
                             break;
                         case "1":
-                            Toast.makeText(itemView.getContext(), "Notification avec lien", Toast.LENGTH_SHORT).show();
+                            openInBrowser(notification.getLink());
+                            break;
+                        case "2":
+                            Intent intentBook = new Intent(itemView.getContext(), BookActivity.class);
+                            intentBook.putExtra("intent_adapter_book_id", notification.getIdLink());
+                            itemView.getContext().startActivity(intentBook);
                             break;
                     }
                 }
             });
+        }
+        private void openInBrowser(String url) {
+            // S'assure qu'il y a un schéma
+            if (!url.startsWith("http://") && !url.startsWith("https://")) {
+                url = "https://" + url;
+            }
+            Uri uri = Uri.parse(url);
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+
+            // Facultatif : forcer le choix du navigateur
+            Intent chooser = Intent.createChooser(intent, "Ouvrir avec…");
+            try {
+                itemView.getContext().startActivity(chooser);
+            } catch (ActivityNotFoundException e) {
+                Toast.makeText(itemView.getContext(), "Aucun navigateur trouvé.", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }

@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -70,6 +71,15 @@ public class MainActivity extends AppCompatActivity {
         };
         Initialization initialization = new Initialization(getApplicationContext());
         initialization.onCreate(getApplicationContext());
+        Intent intent = getIntent();
+        Uri data = getIntent().getData();
+        if (data != null) {
+            String id = data.getQueryParameter("id");
+            String name = data.getQueryParameter("name");
+//            textView.setText("Lien reçu : " + data.toString() +
+//                    "\nID = " + id +
+//                    "\nNom = " + name);
+        }
         if(Themes.getName(getApplicationContext()).equals("notNight"))
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         else if (Themes.getName(getApplicationContext()).equals("night"))

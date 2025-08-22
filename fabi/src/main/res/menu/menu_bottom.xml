@@ -4,18 +4,18 @@
 
     <item
         android:id="@+id/navigation_home"
-        android:icon="@drawable/vector_white_home"
+        android:icon="@drawable/home_new"
         android:title="Accueil" />
     <item
         android:id="@+id/navigation_structure"
-        android:icon="@drawable/vector_structure"
+        android:icon="@drawable/livres_new"
         android:title="Librairie" />
     <item
         android:id="@+id/navigation_suggestion"
-        android:icon="@drawable/vector_white_messagerie"
+        android:icon="@drawable/ia_new"
         android:title="Eduna" />
     <item
         android:id="@+id/navigation_library"
-        android:icon="@drawable/vector_purple_200_bibliotheque"
+        android:icon="@drawable/bibliotheque_new"
         android:title="Bibliothèque" />
 </menu>

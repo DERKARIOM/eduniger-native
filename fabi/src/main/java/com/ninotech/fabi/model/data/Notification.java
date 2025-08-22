@@ -14,14 +14,14 @@ public class Notification {
         mDate = date;
         mMessage = message;
     }
-    public Notification(String id ,String type, String title, String date, String message , String latitude , String longitude) {
+    public Notification(String id ,String type, String title, String date, String message , String link , String idLink) {
         mId = id;
         mType = type;
         mTitle = title;
         mDate = date;
         mMessage = message;
-        mLink = latitude;
-        mIdLink = longitude;
+        mLink = link;
+        mIdLink = idLink;
     }
 
     public String getType() {
