@@ -145,6 +145,7 @@ public class BookActivity extends AppCompatActivity {
         mPdfSizeTextView = findViewById(R.id.text_view_activity_book_pdf_size);
         mNbrPageLinearLayout = findViewById(R.id.linear_layout_activity_book_nbr_page);
         mNbrPageTextView = findViewById(R.id.text_view_activity_book_pdf_max_page);
+        mNbrView = findViewById(R.id.text_view_activity_book_view);
         mReservationDialog = new ReservationDialog(this);
         mElectronicTable = new ElectronicTable(this);
         mAudioTable = new AudioTable(this);
@@ -554,6 +555,7 @@ public class BookActivity extends AppCompatActivity {
                     mOnlineBook.setNumberLikes(Integer.parseInt(jsonObject.getString("numberLike")));
                     mOnlineBook.setNumberNoLikes(Integer.parseInt(jsonObject.getString("numberNoLike")));
                     mOnlineBook.setNumberSubscribe(Integer.parseInt(jsonObject.getString("numberSubscribe")));
+                    mOnlineBook.setNumberView(Integer.parseInt(jsonObject.getString("numberView")));
                     mOnlineBook.setAuthor(jsonObject.getString("firstName") + " " + jsonObject.getString("name"));
                     mCategory = new Category(jsonObject.getString("categoryBlanket"),jsonObject.getString("categoryTitle"));
                     mAuthor = new Author(jsonObject.getString("idAuthor"),jsonObject.getString("name"),jsonObject.getString("firstName"),jsonObject.getString("profile"),jsonObject.getString("profession"),jsonObject.getString("call"),jsonObject.getString("email"),jsonObject.getString("whatsapp"));
@@ -567,6 +569,7 @@ public class BookActivity extends AppCompatActivity {
                     mNumberLikeTextView.setText(String.valueOf(mOnlineBook.getNumberLikes()));
                     mNumberNoLikeTextView.setText(String.valueOf(mOnlineBook.getNumberNoLikes()));
                     mNumberSubscribeTextView.setText(String.valueOf(mOnlineBook.getNumberSubscribe()));
+                    mNbrView.setText(String.valueOf(mOnlineBook.getNumberView()));
                     if(mOnlineBook.getIsPhysic().equals("1"))
                     {
                         mReservationLinearLayout.setVisibility(View.VISIBLE);
@@ -1565,4 +1568,5 @@ public class BookActivity extends AppCompatActivity {
     private boolean isLike=false;
     private boolean isNoLike=false;
     private boolean isSubscribe=false;
+    private TextView mNbrView;
 }
