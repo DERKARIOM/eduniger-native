@@ -147,7 +147,6 @@ public class AuthorActivity extends AppCompatActivity {
         mAppelImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(AuthorActivity.this, "Appel Telephonique", Toast.LENGTH_SHORT).show();
                 lancerAppel("+22794961793");
             }
         });
@@ -155,7 +154,6 @@ public class AuthorActivity extends AppCompatActivity {
         mEmailImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(AuthorActivity.this, "Email", Toast.LENGTH_SHORT).show();
                 envoyerEmail("derkariom@gmail.com",
                         "Sujet : ",
                         "Bonjour Bachir Abdoul Kader, ",
@@ -167,7 +165,6 @@ public class AuthorActivity extends AppCompatActivity {
         mWhatsAppImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(AuthorActivity.this, "WhatsApp", Toast.LENGTH_SHORT).show();
                 envoyerMessageWhatsApp("+22794961793",
                         "Bonjour Bachir Abdoul Kader,",
                         AuthorActivity.this);

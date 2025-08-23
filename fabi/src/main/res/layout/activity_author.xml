@@ -19,7 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/include2"
-
+        android:visibility="gone"
         >
         <RelativeLayout
             android:layout_margin="10dp"
