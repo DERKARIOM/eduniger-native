@@ -89,7 +89,7 @@ public class AuthorHorizontaleAdapter extends RecyclerView.Adapter<AuthorHorizon
                     authorIntent.putExtra("intent_author_adapter_profession",author.getProfession());
                     authorIntent.putExtra("intent_author_adapter_call",author.getCall());
                     authorIntent.putExtra("intent_author_adapter_email",author.getEmail());
-                    authorIntent.putExtra("intent_author_adapter_profession",author.getWhatsapp());
+                    authorIntent.putExtra("intent_author_adapter_whatsapp",author.getWhatsapp());
                     itemView.getContext().startActivity(authorIntent);
                 }
             });

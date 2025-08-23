@@ -87,6 +87,9 @@ public class AuthorVerticaleAdapter extends RecyclerView.Adapter<AuthorVerticale
                     authorIntent.putExtra("intent_author_adapter_first_name",author.getFirstName());
                     authorIntent.putExtra("intent_author_adapter_profile",author.getProfile());
                     authorIntent.putExtra("intent_author_adapter_profession",author.getProfession());
+                    authorIntent.putExtra("intent_author_adapter_call",author.getCall());
+                    authorIntent.putExtra("intent_author_adapter_email",author.getEmail());
+                    authorIntent.putExtra("intent_author_adapter_whatsapp",author.getWhatsapp());
                     itemView.getContext().startActivity(authorIntent);
                 }
             });

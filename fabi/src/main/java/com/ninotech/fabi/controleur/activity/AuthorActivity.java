@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -76,6 +77,7 @@ public class AuthorActivity extends AppCompatActivity {
         mAuthorRecyclerView = findViewById(R.id.recycler_view_activity_author);
         mBackImageView = findViewById(R.id.image_view_toolbar_search);
         mSearchEditText = findViewById(R.id.edit_text_toolbar_search);
+        mContactsLinearLayout = findViewById(R.id.linear_layout_activity_author_contacts);
         mAppelImageView = findViewById(R.id.image_view_activity_author_appel);
         mEmailImageView = findViewById(R.id.image_view_activity_author_email);
         mWhatsAppImageView = findViewById(R.id.image_view_activity_author_whatsapp);
@@ -128,6 +130,26 @@ public class AuthorActivity extends AppCompatActivity {
                 authorIntent.getStringExtra("intent_author_adapter_email"),
                 authorIntent.getStringExtra("intent_author_adapter_whatsapp")
         );
+        int i=0;
+        if (mAuthor.getCall().equals("null"))
+        {
+            mAppelImageView.setVisibility(View.GONE);
+            i++;
+        }
+        if (mAuthor.getEmail().equals("null"))
+        {
+            mEmailImageView.setVisibility(View.GONE);
+            i++;
+
+        }
+        if (mAuthor.getWhatsapp().equals("null"))
+        {
+            mWhatsAppImageView.setVisibility(View.GONE);
+            i++;
+
+        }
+        if (i==3)
+            mContactsLinearLayout.setVisibility(View.GONE);
         mBackImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -150,16 +172,16 @@ public class AuthorActivity extends AppCompatActivity {
         mAppelImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                lancerAppel("+22794961793");
+                lancerAppel(mAuthor.getCall());
             }
         });
 
         mEmailImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                envoyerEmail("derkariom@gmail.com",
+                envoyerEmail(mAuthor.getEmail(),
                         "Sujet : ",
-                        "Bonjour Bachir Abdoul Kader, ",
+                        "Bonjour " + mAuthor.getName() + " Abdoul Kader, ",
                         AuthorActivity.this);
 
             }
@@ -168,8 +190,8 @@ public class AuthorActivity extends AppCompatActivity {
         mWhatsAppImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                envoyerMessageWhatsApp("+22794961793",
-                        "Bonjour Bachir Abdoul Kader,",
+                envoyerMessageWhatsApp(mAuthor.getWhatsapp(),
+                        "Bonjour " + mAuthor.getName() + ",",
                         AuthorActivity.this);
 
             }
@@ -434,5 +456,6 @@ public class AuthorActivity extends AppCompatActivity {
     private ImageView mAppelImageView;
     private ImageView mEmailImageView;
     private ImageView mWhatsAppImageView;
+    private LinearLayout mContactsLinearLayout;
     private String mNumberAuthor=null;
 }
