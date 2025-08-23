@@ -556,7 +556,7 @@ public class BookActivity extends AppCompatActivity {
                     mOnlineBook.setNumberSubscribe(Integer.parseInt(jsonObject.getString("numberSubscribe")));
                     mOnlineBook.setAuthor(jsonObject.getString("firstName") + " " + jsonObject.getString("name"));
                     mCategory = new Category(jsonObject.getString("categoryBlanket"),jsonObject.getString("categoryTitle"));
-                    mAuthor = new Author(jsonObject.getString("idAuthor"),jsonObject.getString("name"),jsonObject.getString("firstName"),jsonObject.getString("profile"),jsonObject.getString("profession"));
+                    mAuthor = new Author(jsonObject.getString("idAuthor"),jsonObject.getString("name"),jsonObject.getString("firstName"),jsonObject.getString("profile"),jsonObject.getString("profession"),jsonObject.getString("call"),jsonObject.getString("email"),jsonObject.getString("whatsapp"));
                     Picasso.get()
                             .load(Server.getIpServer(getApplicationContext()) + "ressources/cover/" + mOnlineBook.getCover())
                             .placeholder(R.drawable.img_wait_cover_book)

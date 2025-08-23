@@ -123,7 +123,10 @@ public class AuthorActivity extends AppCompatActivity {
                 authorIntent.getStringExtra("intent_author_adapter_name"),
                 authorIntent.getStringExtra("intent_author_adapter_first_name"),
                 authorIntent.getStringExtra("intent_author_adapter_profile"),
-                authorIntent.getStringExtra("intent_author_adapter_profession")
+                authorIntent.getStringExtra("intent_author_adapter_profession"),
+                authorIntent.getStringExtra("intent_author_adapter_call"),
+                authorIntent.getStringExtra("intent_author_adapter_email"),
+                authorIntent.getStringExtra("intent_author_adapter_whatsapp")
         );
         mBackImageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -308,7 +311,7 @@ public class AuthorActivity extends AppCompatActivity {
                     }
                     for (int i=0;i<jsonArray.length();i++) {
                         try {
-                            mAuthorArrayList.add(new Author(jsonArray.getJSONObject(i).getString("idAuthor"),jsonArray.getJSONObject(i).getString("name"),jsonArray.getJSONObject(i).getString("firstName"),jsonArray.getJSONObject(i).getString("profile"),jsonArray.getJSONObject(i).getString("profession")));
+                            mAuthorArrayList.add(new Author(jsonArray.getJSONObject(i).getString("idAuthor"),jsonArray.getJSONObject(i).getString("name"),jsonArray.getJSONObject(i).getString("firstName"),jsonArray.getJSONObject(i).getString("profile"),jsonArray.getJSONObject(i).getString("profession"),jsonArray.getJSONObject(i).getString("call"),jsonArray.getJSONObject(i).getString("email"),jsonArray.getJSONObject(i).getString("whatsapp")));
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
                         }
