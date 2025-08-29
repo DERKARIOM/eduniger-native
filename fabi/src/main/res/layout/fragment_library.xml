@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.ninotech.fabi.controleur.fragment.LibraryFragment">
 
     <RelativeLayout
@@ -12,19 +13,46 @@
         android:layout_centerHorizontal="true"
         android:layout_height="wrap_content"
         >
-        <ImageView
-            android:id="@+id/image_view_structure_activity_profile"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+        <FrameLayout
+            android:id="@+id/frame_layout_structure_activity_profile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             android:layout_centerHorizontal="true"
-            android:src="@drawable/user"
-            />
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <!-- Avatar rond avec ImageView -->
+            <ImageView
+                android:id="@+id/image_view_structure_activity_profile"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/user"
+                />
+
+            <!-- Bouton caméra -->
+            <ImageView
+                android:id="@+id/fabChangePhoto"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_gravity="bottom|end"
+                android:layout_marginTop="70dp"
+                android:layout_marginStart="50dp"
+                android:contentDescription="photo"
+                android:padding="5dp"
+                android:background="@drawable/forme_white_radius_1000dp"
+                app:srcCompat="@drawable/vector_black3_photo" />
+
+        </FrameLayout>
+
         <LinearLayout
             android:id="@+id/linear_layout_fragment_library_profile"
             android:layout_margin="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/image_view_structure_activity_profile"
+            android:layout_below="@id/frame_layout_structure_activity_profile"
             android:layout_centerHorizontal="true"
             android:orientation="vertical"
             >
