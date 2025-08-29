@@ -196,7 +196,7 @@ public class LibraryFragment extends Fragment {
         startActivityForResult(galleryIntent, REQUEST_IMAGE_GALLERY);
     }
     private void uploadImage(File imageFile) {
-        String serverUrl = Server.getIpServer(getContext()) + "ressources/uploadProfile.php"; // Remplace par ton URL de serveur
+        String serverUrl = Server.getIpServerAndroid(getContext()) + "uploadImg.php"; // Remplace par ton URL de serveur
 
         OkHttpClient client = new OkHttpClient();
 
