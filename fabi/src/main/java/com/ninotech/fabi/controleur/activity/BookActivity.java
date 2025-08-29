@@ -16,6 +16,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -683,8 +686,9 @@ public class BookActivity extends AppCompatActivity {
                         }
                     }
                 }
-                TalksAdapter talksAdapter = new TalksAdapter(mTalksList);
+                talksAdapter = new TalksAdapter(mTalksList);
                 mCommentsRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                registerForContextMenu(mCommentsRecyclerView);
                 mCommentsRecyclerView.setAdapter(talksAdapter);
                 mCommentRelativeLayout.setVisibility(View.VISIBLE);
             }
@@ -1497,6 +1501,27 @@ public class BookActivity extends AppCompatActivity {
         protected void onPostExecute(String jsonData){
         }
     }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_item,menu);
+        mTalksSelect = talksAdapter.getItem(talksAdapter.getPosition());
+    }
+    @Override
+    public boolean onContextItemSelected(MenuItem item){
+        switch (item.getItemId())
+        {
+            case R.id.menu_item_delete:
+               // mTalksList.remove(mTalksSelect.getId());
+                talksAdapter.remove(talksAdapter.getPosition());
+                break;
+            default:
+                return super.onContextItemSelected(item);
+        }
+        return false;
+    }
     private LinearLayout mReservationLinearLayout;
     private LinearLayout mAudioLinearLayout;
     private LinearLayout mElectronicLinearLayout;
@@ -1569,4 +1594,6 @@ public class BookActivity extends AppCompatActivity {
     private boolean isNoLike=false;
     private boolean isSubscribe=false;
     private TextView mNbrView;
+    private TalksAdapter talksAdapter;
+    private Talks mTalksSelect;
 }

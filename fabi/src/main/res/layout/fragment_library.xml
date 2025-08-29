@@ -17,17 +17,14 @@
             android:id="@+id/frame_layout_structure_activity_profile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             android:layout_centerHorizontal="true"
-            app:layout_constraintEnd_toEndOf="parent">
+            android:padding="10dp">
 
             <!-- Avatar rond avec ImageView -->
             <ImageView
                 android:id="@+id/image_view_structure_activity_profile"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="110dp"
+                android:layout_height="110dp"
                 android:layout_centerHorizontal="true"
                 android:src="@drawable/user"
                 />
@@ -38,7 +35,9 @@
                 android:layout_width="35dp"
                 android:layout_height="35dp"
                 android:layout_gravity="bottom|end"
-                android:layout_marginTop="70dp"
+                android:elevation="1dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="80dp"
                 android:layout_marginStart="50dp"
                 android:contentDescription="photo"
                 android:padding="5dp"

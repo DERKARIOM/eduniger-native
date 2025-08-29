@@ -63,12 +63,11 @@ public class TalksAdapter extends RecyclerView.Adapter<TalksAdapter.MyViewHolder
         return mListTalks.get(position);
     }
 
-    public void Remove(int position){
+
+    public void remove(int position){
         mListTalks.remove(position);
         notifyItemRemoved(position);
     }
-
-
     public static class MyViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener{
         private final ImageView mPhotoProfilImageView;
         private final TextView mUsernameTextView;
