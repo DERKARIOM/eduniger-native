@@ -2,6 +2,7 @@ package com.ninotech.fabi.controleur.activity;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -56,6 +57,7 @@ public class LoginActivity extends AppCompatActivity {
         mIdNumberEditText = findViewById(R.id.edit_text_login_id_number);
         mPassewordEditText = findViewById(R.id.edit_text_login_password);
         TextView registerTextView = findViewById(R.id.text_view_login_pass_register);
+        TextView forgetPasswordTextView = findViewById(R.id.text_view_activity_login_forget_password);
         mConnectionButton = findViewById(R.id.button_login_connection);
         mErrorTextView = findViewById(R.id.text_view_login_error);
         mConnectionProgressBar = findViewById(R.id.progress_bar_register_connection);
@@ -64,6 +66,15 @@ public class LoginActivity extends AppCompatActivity {
         mJeton="null";
         Animation pulseAnimImg = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_down_up);
         mLoginImageView.startAnimation(pulseAnimImg);
+        registerTextView.setPaintFlags(registerTextView.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        forgetPasswordTextView.setPaintFlags(forgetPasswordTextView.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        forgetPasswordTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent forgetPassword = new Intent(LoginActivity.this, ChangePasswordActivity.class);
+                startActivity(forgetPassword);
+            }
+        });
         /* Generation de jeton FireBase */
         FirebaseMessaging.getInstance().getToken()
                 .addOnCompleteListener(new OnCompleteListener<String>() {

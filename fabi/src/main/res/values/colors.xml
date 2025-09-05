@@ -15,6 +15,7 @@
     <color name="dark">#2B3940</color>
     <color name="black2">#E6252525</color>
     <color name="black3">#DF444444</color>
+    <color name="hint">#3D444444</color>
     <color name="rouge">#E6FD1010</color>
     <color name="vert">#005B4A</color>
     <color name="separator">#6DAAAAAA</color>

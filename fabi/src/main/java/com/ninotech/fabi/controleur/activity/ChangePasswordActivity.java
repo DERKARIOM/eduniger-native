@@ -46,7 +46,6 @@ public class ChangePasswordActivity extends AppCompatActivity {
         mPasswordEditText = findViewById(R.id.edit_text_activity_change_password_password);
         mConfirmPassword = findViewById(R.id.edit_text_activity_change_password_confirm_password);
         mConnectionButton = findViewById(R.id.button_activity_change_password_connection);
-        mChangeMailTextView = findViewById(R.id.text_view_activity_change_password_change_mail);
         mErrorTextView = findViewById(R.id.text_view_activity_change_password_error);
         mConnectionProgressBar = findViewById(R.id.progress_bar_change_password_connection);
         mSession = new Session(this);
@@ -142,13 +141,6 @@ public class ChangePasswordActivity extends AppCompatActivity {
         });
 
         /* En cliquant sur le TextView ce connecter */
-        mChangeMailTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent email = new Intent(ChangePasswordActivity.this, ChangeEmailActivity.class);
-                startActivity(email);
-            }
-        });
     }
 
     public void inputControl(int idNumberForm , int emailForm , int passwordForm , int passwordConfirmForm , int message)
