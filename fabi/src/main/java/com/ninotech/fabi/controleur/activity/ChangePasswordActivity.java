@@ -12,12 +12,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.ninotech.fabi.controleur.dialog.SimpleOkDialog;
 import com.ninotech.fabi.model.data.Account;
+import com.ninotech.fabi.model.data.PasswordUtil;
 import com.ninotech.fabi.model.data.Server;
 import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.R;
@@ -69,8 +71,11 @@ public class ChangePasswordActivity extends AppCompatActivity {
         mConnectionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               // mAccount = new Account(mIdNumberEditText.getText().toString(),mMailEditText.getText().toString(),mPasswordEditText.getText().toString(),null);
-                switch (mAccount.inputControl(mConfirmPassword.getText().toString()))
+                mAccount = new Account(
+                        mIdNumberEditText.getText().toString(),
+                        mMailEditText.getText().toString(),
+                        PasswordUtil.hashPassword(mPasswordEditText.getText().toString()));
+                switch (mAccount.inputControl(PasswordUtil.hashPassword(mConfirmPassword.getText().toString())))
                 {
                     case "0000":
                         inputControl(

@@ -35,6 +35,12 @@ public class Account {
         mEmail = null;
         mProfile = null;
     }
+    public  Account(String idNumber, String email, String password)
+    {
+        mIdNumber = idNumber;
+        mEmail = email;
+        mPassword = password;
+    }
     public String inputControl(String confirPassword)
     {
         if(mIdNumber.equals("") && mEmail.equals("") && mPassword.equals("") && confirPassword.equals(""))
