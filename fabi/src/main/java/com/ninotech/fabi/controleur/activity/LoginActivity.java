@@ -3,9 +3,12 @@ package com.ninotech.fabi.controleur.activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.RenderEffect;
+import android.graphics.Shader;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -52,6 +55,19 @@ public class LoginActivity extends AppCompatActivity {
 
         /* Masquer le action bar */
         getSupportActionBar().hide();
+        View backgroundView = findViewById(R.id.backgroundView);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) { // Android 12+
+            RenderEffect blurEffect = RenderEffect.createBlurEffect(2000f, 2000f, Shader.TileMode.CLAMP);
+            backgroundView.setRenderEffect(blurEffect);
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(Color.TRANSPARENT); // rendre la status bar transparente
+        }
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        );
 
         /* Initialisation des attributs menbre */
         mIdNumberEditText = findViewById(R.id.edit_text_login_id_number);
