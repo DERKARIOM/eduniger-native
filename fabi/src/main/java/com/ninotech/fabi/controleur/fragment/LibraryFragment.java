@@ -96,15 +96,11 @@ public class LibraryFragment extends Fragment {
         });
         ElectronicAdapter electronicAdapter = new ElectronicAdapter(libraryList);
         RecentAdapter recentAdapter = new RecentAdapter(localBooksList);
-        libraryList.add(new Library(1,R.drawable.img_electronic_book,getString(R.string.your_electronic_books), electronicTable.getNbrElectronic(session.getIdNumber())));
-        libraryList.add(new Library(2,R.drawable.img_audio_book,getString(R.string.your_audio_books),audioTable.getNbrAudio(session.getIdNumber())));
-        libraryList.add(new Library(3,R.drawable.img_loand_book,getString(R.string.your_loand_books),loandTable.getNbrLoand(session.getIdNumber())));
-        libraryList.add(new Library(4,R.drawable.img_category,getString(R.string.cetegory), electronicTable.getNbrCategory(session.getIdNumber())));
-        libraryList.add(new Library(5,R.drawable.img_author,getString(R.string.author), electronicTable.getNbrAuthor(session.getIdNumber())));
-        if(userCursor.getString(7).equals("1"))
-        {
-            libraryList.add(new Library(6,R.drawable.ico_add_book,"Ajouter un livre", -1));
-        }
+        libraryList.add(new Library(1,R.drawable.fichier_pdf,getString(R.string.your_electronic_books), electronicTable.getNbrElectronic(session.getIdNumber())));
+        libraryList.add(new Library(2,R.drawable.audio,getString(R.string.your_audio_books),audioTable.getNbrAudio(session.getIdNumber())));
+        libraryList.add(new Library(3,R.drawable.books_emp,getString(R.string.your_loand_books),loandTable.getNbrLoand(session.getIdNumber())));
+        libraryList.add(new Library(4,R.drawable.categorie,getString(R.string.cetegory), electronicTable.getNbrCategory(session.getIdNumber())));
+        libraryList.add(new Library(5,R.drawable.auteurs,getString(R.string.author), electronicTable.getNbrAuthor(session.getIdNumber())));
         try {
             int i=0;
             Cursor cursorPdf = electronicTable.getData(session.getIdNumber());

@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:fitsSystemWindows="false"
     tools:context="com.ninotech.fabi.controleur.activity.LoginActivity">
 
@@ -37,17 +38,43 @@
                     android:src="@drawable/img_login_edu_niger"
                     android:contentDescription="@string/todo" />
             </RelativeLayout>
-            <EditText
-                android:id="@+id/edit_text_login_id_number"
-                android:hint=" Entrer votre numéro"
+            <LinearLayout
+                android:id="@+id/activity_login_linear_layout_number"
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
                 android:layout_below="@id/relative_layout_activity_register_img"
-                android:inputType="number"
                 style="@style/activity_login_edit_text_number"
-                android:autofillHints="" />
+                android:padding="8dp">
+
+                <!-- Sélecteur de code pays -->
+                <com.hbb20.CountryCodePicker
+                    android:id="@+id/countryCodePicker"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:ccp_showFlag="true"
+                    app:ccp_showFullName="false"
+                    app:ccp_showNameCode="false"
+                    app:ccp_defaultNameCode="NE" /> <!-- NE = Niger -->
+
+                <!-- Zone de saisie numéro -->
+                <EditText
+                    android:id="@+id/edit_text_login_id_number"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="phone"
+                    android:textColorHint="@color/hint"
+                    android:hint="Entrer votre numéro"
+                    android:padding="8dp"
+                    android:background="@null"/>
+            </LinearLayout>
             <EditText
                 android:id="@+id/edit_text_login_password"
                 android:hint=" Votre mot de passe ?"
-                android:layout_below="@id/edit_text_login_id_number"
+                android:layout_below="@id/activity_login_linear_layout_number"
                 android:inputType="textPassword"
                 style="@style/activity_login_edit_text_password"
                 android:autofillHints="" />
