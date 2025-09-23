@@ -233,7 +233,7 @@ public class HomeFragment extends Fragment {
                                     mServers.add(new Structure(
                                             "http://192.168.49.1:2222/fabi/",
                                             "uam.png",
-                                            "Portail UAM",
+                                            "Devenir Auteur",
                                             "Description",false,
                                             "-1",
                                             "@eduniger",

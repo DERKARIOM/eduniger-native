@@ -132,8 +132,8 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
                     Animation pulseAnimImg2 = AnimationUtils.loadAnimation(itemView.getContext(), R.anim.slide_down_up);
                     // Lancer l'animation automatiquement
                     mBlanketImageView.startAnimation(pulseAnimImg2);
-                    mAdhereButton.setText("Basculer");
-                    mBlanketImageView.setImageResource(R.drawable.uam);
+                    mAdhereButton.setText("Register");
+                    mBlanketImageView.setImageResource(R.drawable.add_auteurs);
                     break;
                 default:
                     Picasso.get()
@@ -159,10 +159,10 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
                     switch (structure.getId())
                     {
                         case "http://192.168.49.1:2222/fabi/":
-                            simpleOkDialog(R.drawable.cati,"Portail académique\nUniversité Abdou Moumouni" , "Le portail numérique de la Cellule d’Appui à la Technologie et à l’Innovation (CATI) est une plateforme dédiée à la consultation et au téléchargement des mémoires, thèses et travaux de recherche des différentes facultés de l’Université Abdou Moumouni.");
+                            simpleOkDialog(R.drawable.add_auteurs,"Portail académique\nUniversité Abdou Moumouni" , "Le portail numérique de la Cellule d’Appui à la Technologie et à l’Innovation (CATI) est une plateforme dédiée à la consultation et au téléchargement des mémoires, thèses et travaux de recherche des différentes facultés de l’Université Abdou Moumouni.");
                             break;
                         case "http://192.168.49.1:2222/uamlib/":
-                            simpleOkDialog(R.drawable.eduniger,"Portail EduNiger" , "EduNiger est une bibliothèque numérique qui permet aux élèves, étudiants et enseignants d’accéder facilement à des cours, livres, exercices et ressources en ligne ou sans connexion, selon leur niveau ou leur filière.");
+                            simpleOkDialog(R.drawable.add_auteurs,"Portail EduNiger" , "EduNiger est une bibliothèque numérique qui permet aux élèves, étudiants et enseignants d’accéder facilement à des cours, livres, exercices et ressources en ligne ou sans connexion, selon leur niveau ou leur filière.");
                             break;
                         default:
                             Intent structureIntent = new Intent(itemView.getContext(), StructureActivity.class);
