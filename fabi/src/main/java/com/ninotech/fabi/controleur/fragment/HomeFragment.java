@@ -41,6 +41,7 @@ import com.ninotech.fabi.model.data.Server;
 import com.ninotech.fabi.model.data.Structure;
 import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.R;
+import com.ninotech.fabi.model.table.UserTable;
 import com.squareup.picasso.Picasso;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -57,7 +58,8 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-        Session session = new Session(getContext());
+        session = new Session(getContext());
+        userTable = new UserTable(getContext());
         mBookRecommendedRecyclerView = view.findViewById(R.id.recycler_view_ranking);
         mWelcomeImageView = view.findViewById(R.id.image_view_fragment_recommended_welcome);
         mBookMoreTextView = view.findViewById(R.id.text_view_recommended_more);
@@ -227,29 +229,29 @@ public class HomeFragment extends Fragment {
                                     throw new RuntimeException(e);
                                 }
                             }
-                            switch (Server.getIpServer(getContext()))
+                            switch (userTable.getIsAuthor(session.getIdNumber()))
                             {
-                                case "http://192.168.49.1:2222/fabi/":
+                                case "0":
                                     mServers.add(new Structure(
-                                            "http://192.168.49.1:2222/fabi/",
+                                            "RegisterAuthor",
                                             "uam.png",
                                             "Devenir Auteur",
                                             "Description",false,
                                             "-1",
                                             "@eduniger",
                                             "cati",
-                                            "4K+","4"));
+                                            "Rejoinez-nous","4"));
                                     break;
-                                case "http://192.168.49.1:2222/uamlib/":
+                                case "1":
                                     mServers.add(new Structure(
-                                            "http://192.168.49.1:2222/uamlib/",
+                                            "AddBook",
                                             "eduniger.png",
-                                            "Portail EduNiger",
+                                            "Ajouter un contenue",
                                             "Description",false,
                                             "-1",
                                             "@ninotech",
                                             "cati",
-                                            "332","0"));
+                                            "Créez librement","0"));
                                     break;
                                 default:
                                     mServerdRecyclerView.setVisibility(View.GONE);
@@ -563,4 +565,6 @@ public class HomeFragment extends Fragment {
     private NestedScrollView mNestedScrollView;
     private RelativeLayout mMoreStructRelativeLayout;
     private RelativeLayout mMoreAuthorRelativeLayout;
+    private UserTable userTable;
+    private Session session;
 }

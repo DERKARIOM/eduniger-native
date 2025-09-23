@@ -78,7 +78,7 @@ public class UserTable extends SQLiteOpenHelper {
         cursor.moveToFirst();
         return cursor.getString(0);
     }
-    public String getIsDelegue(String idUser)
+    public String getIsAuthor(String idUser)
     {
         SQLiteDatabase database = this.getReadableDatabase();
         Cursor cursor = database.rawQuery("SELECT isAdminUser FROM " + NAME_TABLE + " WHERE idUser='" + idUser + "'",null);

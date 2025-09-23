@@ -143,6 +143,7 @@ public class Account {
             return false;
         }
     }
+
     public String getIdNumber() {
         return mIdNumber;
     }

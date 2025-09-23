@@ -121,21 +121,24 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
         void display(Structure structure){
             switch (structure.getId())
             {
-                case "http://192.168.49.1:2222/uamlib/":
+                case "AddBook":
+                    mBookNumberTextView.setText(structure.getBookNumber());
                     Animation pulseAnimImg = AnimationUtils.loadAnimation(itemView.getContext(), R.anim.slide_down_up);
                     // Lancer l'animation automatiquement
                     mBlanketImageView.startAnimation(pulseAnimImg);
-                    mAdhereButton.setText("Basculer");
-                    mBlanketImageView.setImageResource(R.drawable.eduniger);
+                    mAdhereButton.setText("Ajouter");
+                    mBlanketImageView.setImageResource(R.drawable.add_auteurs);
                     break;
-                case "http://192.168.49.1:2222/fabi/":
+                case "RegisterAuthor":
+                    mBookNumberTextView.setText(structure.getBookNumber());
                     Animation pulseAnimImg2 = AnimationUtils.loadAnimation(itemView.getContext(), R.anim.slide_down_up);
                     // Lancer l'animation automatiquement
                     mBlanketImageView.startAnimation(pulseAnimImg2);
-                    mAdhereButton.setText("Register");
+                    mAdhereButton.setText("S'inscrire");
                     mBlanketImageView.setImageResource(R.drawable.add_auteurs);
                     break;
                 default:
+                    mBookNumberTextView.setText(structure.getBookNumber() + " Livres");
                     Picasso.get()
                             .load(Server.getIpServer(itemView.getContext()) + "ressources/cover/" + structure.getCover())
                             .placeholder(R.drawable.img_wait_struct)
@@ -152,17 +155,18 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
                     mAdhereButton.setText("Détacher");
                 }
             }
-            mBookNumberTextView.setText(structure.getBookNumber() + " Livres");
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     switch (structure.getId())
                     {
-                        case "http://192.168.49.1:2222/fabi/":
-                            simpleOkDialog(R.drawable.add_auteurs,"Portail académique\nUniversité Abdou Moumouni" , "Le portail numérique de la Cellule d’Appui à la Technologie et à l’Innovation (CATI) est une plateforme dédiée à la consultation et au téléchargement des mémoires, thèses et travaux de recherche des différentes facultés de l’Université Abdou Moumouni.");
+                        case "AddBook":
+                            simpleOkDialog(R.drawable.add_auteurs,"Ajouter un contenue dans EduNiger" , "Le portail numérique de la Cellule d’Appui à la Technologie et à l’Innovation (CATI) est une plateforme dédiée à la consultation et au téléchargement des mémoires, thèses et travaux de recherche des différentes facultés de l’Université Abdou Moumouni.");
                             break;
-                        case "http://192.168.49.1:2222/uamlib/":
-                            simpleOkDialog(R.drawable.add_auteurs,"Portail EduNiger" , "EduNiger est une bibliothèque numérique qui permet aux élèves, étudiants et enseignants d’accéder facilement à des cours, livres, exercices et ressources en ligne ou sans connexion, selon leur niveau ou leur filière.");
+                        case "RegisterAuthor":
+                            simpleOkDialog(R.drawable.add_auteurs,"Devenir Auteur Sur EduNiger" , "Vous avez un livre, un manuscrit ou une idée à partager ?\n\n" +
+                                    "Cette section est faite pour vous ! Elle vous permet d’ajouter vos ouvrages à notre bibliothèque, de les rendre accessibles aux lecteurs et de partager vos connaissances, vos histoires ou vos créations avec la communauté.\n\n" +
+                                    "En rejoignant les auteurs, vous contribuez à enrichir la plateforme et à inspirer des milliers de personnes.");
                             break;
                         default:
                             Intent structureIntent = new Intent(itemView.getContext(), StructureActivity.class);
@@ -204,31 +208,11 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
                                 detachStructSyn.execute(Server.getIpServerAndroid(itemView.getContext()) + "AdhererStruct.php",mSession.getIdNumber(),structure.getId());
                             }
                             break;
-                        case "http://192.168.49.1:2222/fabi/":
-                            Server.saveServer(itemView.getContext(), "http://192.168.49.1:2222/uamlib/","http://192.168.49.1:2222/uamlib/android/");
-                            Intent intent = new Intent(itemView.getContext(), MainActivity.class);
-                            itemView.getContext().startActivity(intent);
-                            ((Activity) itemView.getContext()).overridePendingTransition(R.anim.zoom_in, R.anim.zoom_out);
-                            try {
-                                ((Activity)itemView.getContext()).finish();
-                            }
-                            catch (Exception e)
-                            {
-                                Toast.makeText(itemView.getContext(),e.getMessage(), Toast.LENGTH_SHORT).show();
-                            }
+                        case "AddBook":
+                            Toast.makeText(itemView.getContext(), "Page se connecter auteur", Toast.LENGTH_SHORT).show();
                             break;
-                        case "http://192.168.49.1:2222/uamlib/":
-                            Server.saveServer(itemView.getContext(), "http://192.168.49.1:2222/fabi/","http://192.168.49.1:2222/fabi/android/");
-                            Intent intent2 = new Intent(itemView.getContext(), MainActivity.class);
-                            itemView.getContext().startActivity(intent2);
-                            ((Activity) itemView.getContext()).overridePendingTransition(R.anim.agrandir_dilog, R.anim.agrandir_dilog_out);
-                            try {
-                                ((Activity)itemView.getContext()).finish();
-                            }
-                            catch (Exception e)
-                            {
-                                Toast.makeText(itemView.getContext(),e.getMessage(), Toast.LENGTH_SHORT).show();
-                            }
+                        case "RegisterAuthor":
+                            Toast.makeText(itemView.getContext(), "Page s'inscrire auteur", Toast.LENGTH_SHORT).show();
                             break;
 
                     }
