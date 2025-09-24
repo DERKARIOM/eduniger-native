@@ -308,4 +308,10 @@
     <style name="notification_adapter_item">
         <item name="android:background">@drawable/forme_white_radius_100dp_border_vert</item>
     </style>
+    <style name="activity_login_background">
+        <item name="android:background">@drawable/bg_gradient</item>
+    </style>
+    <style name="activity_login_color_hint">
+        <item name="android:textColorHint">@color/hint</item>
+    </style>
 </resources>

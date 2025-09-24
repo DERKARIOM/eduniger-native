@@ -12,7 +12,7 @@
         android:id="@+id/backgroundView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/bg_gradient"/>
+        style="@style/activity_login_background"/>
 
     <!-- Ici tu mets tes autres éléments d'UI (EditText, Button, etc.) -->
     <androidx.core.widget.NestedScrollView
@@ -47,7 +47,7 @@
                 android:gravity="center_vertical"
                 android:layout_below="@id/relative_layout_activity_register_img"
                 style="@style/activity_login_edit_text_number"
-                android:padding="8dp">
+                android:padding="6dp">
 
                 <!-- Sélecteur de code pays -->
                 <com.hbb20.CountryCodePicker
@@ -66,7 +66,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:inputType="phone"
-                    android:textColorHint="@color/hint"
+                    style="@style/activity_login_color_hint"
                     android:hint="Entrer votre numéro"
                     android:padding="8dp"
                     android:background="@null"/>
