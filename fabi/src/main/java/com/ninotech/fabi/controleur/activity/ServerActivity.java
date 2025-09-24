@@ -78,7 +78,7 @@ public class ServerActivity extends AppCompatActivity {
         mSwitch.setChecked(Server.getPass(getApplicationContext()) == 1);
         switch (Server.getIpServer(getApplicationContext()))
         {
-            case "https://telesafe.net/fabi/":
+            case "http://78.46.46.154/fabi/":
                 mUrlEditText.setVisibility(View.GONE);
                 RadioButton radioButton1 = (RadioButton) mRadioGroup.getChildAt(1);
                 radioButton1.setChecked(true);
@@ -144,7 +144,7 @@ public class ServerActivity extends AppCompatActivity {
                 {
                     case 1:
                         mUrlEditText.setVisibility(View.GONE);
-                        Server.saveServer(getApplicationContext(),"https://telesafe.net/fabi/","https://telesafe.net/fabi/android/");
+                        Server.saveServer(getApplicationContext(),"http://78.46.46.154/fabi/","http://78.46.46.154/fabi/android/");
                     break;
                     case 2:
                         mUrlEditText.setVisibility(View.GONE);

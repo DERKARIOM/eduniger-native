@@ -7,6 +7,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class ElectronicTable extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "data.db";
     public static final String NAME_TABLE = "Electronic";
@@ -28,7 +32,8 @@ public class ElectronicTable extends SQLiteOpenHelper {
                 "    categoryElectronic VARCHAR(100),\n" +
                 "    titleElectronic VARCHAR(100),\n" +
                 "    coverCategoryElectronic VARCHAR(100) NOT NULL,\n" +
-                "    profileAuthorElectronic VARCHAR(100),\n" +
+                "    profileAuthorElectronic VARCHAR(100)," +
+                "    dateDownload DATE NOT NULL,\n" +
                 "    UNIQUE(idNumberElectronic,idBookElectronic)\n" +
                 ");");
     }
@@ -46,7 +51,12 @@ public class ElectronicTable extends SQLiteOpenHelper {
     public Cursor getData(String idNumber)
     {
         SQLiteDatabase db = this.getReadableDatabase();
-        return db.rawQuery("SELECT * FROM " + NAME_TABLE + " WHERE idNumberElectronic='" + idNumber + "';",null);
+        return db.query(NAME_TABLE,
+                null, // toutes les colonnes
+                "idNumberElectronic = ?",
+                new String[]{idNumber},
+                null, null,
+                "dateDownload DESC"); // ORDER BY
     }
 
     public Cursor getDataC(String idNumber , String category)
@@ -120,6 +130,12 @@ public class ElectronicTable extends SQLiteOpenHelper {
     {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
+        // Pour insérer la date actuelle
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        String currentDate = sdf.format(new Date());
+
+        ContentValues values = new ContentValues();
+        values.put("dateDownload", currentDate);
         try {
             contentValues.put("idNumberElectronic",idNumber);
             contentValues.put("idBookElectronic",idBook);
@@ -131,6 +147,7 @@ public class ElectronicTable extends SQLiteOpenHelper {
             contentValues.put("titleElectronic",title);
             contentValues.put("coverCategoryElectronic",coverCategory);
             contentValues.put("profileAuthorElectronic",profileAuthor);
+            contentValues.put("dateDownload",currentDate);
             db.insert(NAME_TABLE,null,contentValues);
             return  true;
         }
