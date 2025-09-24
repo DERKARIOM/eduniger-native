@@ -144,4 +144,7 @@
     <style name="menu_item_badge">
         <item name="android:src">@drawable/vector_white_off_subscribe</item>
     </style>
+    <style name="notification_adapter_item">
+        <item name="android:background">@drawable/forme_black3_radius_100dp_border_vert</item>
+    </style>
 </resources>

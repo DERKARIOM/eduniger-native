@@ -302,8 +302,10 @@
     <style name="activity_suggestion_back">
         <item name="android:src">@drawable/vector_back</item>
     </style>
-
     <style name="menu_item_badge">
         <item name="android:src">@drawable/vector_black3_off_subscribe</item>
+    </style>
+    <style name="notification_adapter_item">
+        <item name="android:background">@drawable/forme_white_radius_100dp_border_vert</item>
     </style>
 </resources>
