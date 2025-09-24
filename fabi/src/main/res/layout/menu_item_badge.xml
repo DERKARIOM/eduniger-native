@@ -6,7 +6,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="10dp"
-        android:src="@drawable/vector_black3_off_subscribe"/>
+        style="@style/menu_item_badge"/>
 
     <TextView
         android:id="@+id/badge"
