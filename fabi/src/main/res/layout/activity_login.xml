@@ -54,6 +54,7 @@
                     android:id="@+id/countryCodePicker"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    style="@style/activity_login_code_payer_text_color"
                     app:ccp_showFlag="true"
                     app:ccp_showFullName="false"
                     app:ccp_showNameCode="false"

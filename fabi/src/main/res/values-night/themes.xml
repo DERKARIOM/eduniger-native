@@ -154,4 +154,7 @@
     <style name="activity_login_color_hint">
         <item name="android:textColorHint">@color/hint_sombre</item>
     </style>
+    <style name="activity_login_code_payer_text_color">
+        <item name="ccp_contentColor">@color/whiteSombre</item>
+    </style>
 </resources>
