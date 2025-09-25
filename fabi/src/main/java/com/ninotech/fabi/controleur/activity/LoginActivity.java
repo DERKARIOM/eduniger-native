@@ -83,6 +83,7 @@ public class LoginActivity extends AppCompatActivity {
         mConnectionProgressBar = findViewById(R.id.progress_bar_register_connection);
         mGoogleLinearLayout = findViewById(R.id.linear_layout_activity_login_google);
         mLoginImageView = findViewById(R.id.activity_login_image_view);
+        mIdNumberLinearLayout = findViewById(R.id.activity_login_linear_layout_number);
         mJeton="null";
         Animation pulseAnimImg = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_down_up);
         mLoginImageView.startAnimation(pulseAnimImg);
@@ -235,7 +236,7 @@ public class LoginActivity extends AppCompatActivity {
     }
     public void inputData(int idNumberForm , int passwordForm , int message)
     {
-        mIdNumberEditText.setBackground(getDrawable(idNumberForm));
+        mIdNumberLinearLayout.setBackground(getDrawable(idNumberForm));
         mPassewordEditText.setBackground(getDrawable(passwordForm));
         mErrorTextView.setText(message);
     }
@@ -448,4 +449,5 @@ public class LoginActivity extends AppCompatActivity {
     private Account mAccount;
     private LinearLayout mGoogleLinearLayout;
     private ImageView mLoginImageView;
+    private LinearLayout mIdNumberLinearLayout;
 }
