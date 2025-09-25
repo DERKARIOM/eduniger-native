@@ -1,11 +1,14 @@
 package com.ninotech.fabi.controleur.activity;
 
 import android.annotation.SuppressLint;
+import android.app.UiModeManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -28,6 +31,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.ninotech.fabi.model.data.PasswordUtil;
 import com.ninotech.fabi.model.data.Server;
+import com.ninotech.fabi.model.data.Themes;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -52,15 +56,15 @@ public class RegisterActivity extends AppCompatActivity {
         mNameEditText = findViewById(R.id.edit_text_activity_register_name);
         mFirstNameEditText = findViewById(R.id.edit_text_activity_register_first_name);
         mProfessionSpinner = findViewById(R.id.spinner_activity_register_profession);
-       mIdNumberEditText = findViewById(R.id.edit_text_activity_register_id_number);
-       mEmailEditText = findViewById(R.id.edit_text_activity_register_email);
-       mPasswordEditText = findViewById(R.id.edit_text_activity_register_password);
-       mPasswordConfirmEditText = findViewById(R.id.edit_text_activity_register_password);
-       mConnectionButton = findViewById(R.id.button_activity_register_connection);
-       mLoginTextView = findViewById(R.id.text_view_activity_register_login);
-       mErrorTextView = findViewById(R.id.text_view_activity_register_error);
-       mConnectionProgressBar = findViewById(R.id.progress_bar_activity_register_connection);
-       mJeton = "null";
+        mIdNumberEditText = findViewById(R.id.edit_text_activity_register_id_number);
+        mEmailEditText = findViewById(R.id.edit_text_activity_register_email);
+        mPasswordEditText = findViewById(R.id.edit_text_activity_register_password);
+        mPasswordConfirmEditText = findViewById(R.id.edit_text_activity_register_password_confirm);
+        mConnectionButton = findViewById(R.id.button_activity_register_connection);
+        mLoginTextView = findViewById(R.id.text_view_activity_register_login);
+        mErrorTextView = findViewById(R.id.text_view_activity_register_error);
+        mConnectionProgressBar = findViewById(R.id.progress_bar_activity_register_connection);
+        mJeton = "null";
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.profesion_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mProfessionSpinner.setAdapter(adapter);
@@ -89,80 +93,30 @@ public class RegisterActivity extends AppCompatActivity {
                        mEmailEditText.getText().toString(),
                        PasswordUtil.hashPassword(mPasswordEditText.getText().toString()), null,
                        mProfessionSpinner.getSelectedItemId());
-               switch (mAccount.inputControl(PasswordUtil.hashPassword(mPasswordConfirmEditText.getText().toString())))
+               UiModeManager uiModeManager = null;
+               switch (Themes.getName(getApplicationContext()))
                {
-                   case "0000":
-                       inputControl(
-                               R.drawable.forme_white_radius_100dp_border_rouge,
-                               R.drawable.forme_white_radius_100dp_border_rouge,
-                               R.drawable.forme_white_radius_100dp_border_rouge,
-                               R.drawable.forme_white_radius_100dp_border_rouge,
-                               R.string.register_error_0000
-                       );
-                       break;
-                   case "0111":
-                       inputControl(
-                               R.drawable.forme_white_radius_100dp_border_rouge,
-                               R.drawable.forme_white_radius_10dp,
-                               R.drawable.forme_white_radius_10dp,
-                               R.drawable.forme_white_radius_10dp,
-                               R.string.register_error_0111
-                       );
-                       break;
-                   case "1011":
-                       inputControl(
-                               R.drawable.forme_white_radius_10dp,
-                               R.drawable.forme_white_radius_100dp_border_rouge,
-                               R.drawable.forme_white_radius_10dp,
-                               R.drawable.forme_white_radius_10dp,
-                               R.string.register_error_1011
-                       );
-                       break;
-                   case "1101":
-                       inputControl(
-                               R.drawable.forme_white_radius_10dp,
-                               R.drawable.forme_white_radius_10dp,
-                               R.drawable.forme_white_radius_100dp_border_rouge,
-                               R.drawable.forme_white_radius_10dp,
-                               R.string.register_error_1101
-                       );
-                       break;
-                   case "1110":
-                       inputControl(
-                               R.drawable.forme_white_radius_10dp,
-                               R.drawable.forme_white_radius_10dp,
-                               R.drawable.forme_white_radius_10dp,
-                               R.drawable.forme_white_radius_100dp_border_rouge,
-                               R.string.register_error_1110
-                       );
-                       break;
-                   case "1100":
-                       inputControl(
-                               R.drawable.forme_white_radius_10dp,
-                               R.drawable.forme_white_radius_10dp,
-                               R.drawable.forme_white_radius_100dp_border_rouge,
-                               R.drawable.forme_white_radius_100dp_border_rouge,
-                               R.string.register_error_1100
-                       );
-                       break;
-                   case "1111":
-                       if(mProfessionSpinner.getSelectedItemPosition() != 0)
-                       {
-                           mConnectionProgressBar.setVisibility(View.VISIBLE);
-                           mConnectionButton.setText(R.string.register_succes_1111);
-                           RegisterSyn registerSyn = new RegisterSyn();
-                           registerSyn.execute(
-                                   Server.getIpServerAndroid(getApplicationContext()) + "Register.php",
-                                   mAccount.getIdNumber(),
-                                   mAccount.getName(),
-                                   mAccount.getFirstName(),
-                                   mAccount.getEmail(),
-                                   mAccount.getPassword(),
-                                   String.valueOf(mAccount.getProfession())
-                           );
+                   case "system":
+                       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                           uiModeManager = (UiModeManager) getSystemService(Context.UI_MODE_SERVICE);
+                       }
+                       int currentMode = uiModeManager.getNightMode();
+                       if (currentMode == UiModeManager.MODE_NIGHT_NO) {
+                           // code mode jour
+                           inputNoNight();
                        }
                        else
-                           mErrorTextView.setText("Votre profession svp ?");
+                       {
+                           // code mode nuit
+                           inputNight();
+                       }
+                       break;
+                   case "notNight":
+                       // code mode jour
+                       inputNoNight();
+                       break;
+                   case "night":
+                       inputNight();
                        break;
                }
            }
@@ -176,6 +130,178 @@ public class RegisterActivity extends AppCompatActivity {
                startActivity(login);
            }
        });
+    }
+
+    private void inputNight() {
+        switch (mAccount.inputControl(PasswordUtil.hashPassword(mPasswordConfirmEditText.getText().toString())))
+        {
+            case "0000":
+                inputControl(
+                        R.drawable.forme_black3_radius_100dp_border_rouge,
+                        R.drawable.forme_black3_radius_100dp_border_rouge,
+                        R.drawable.forme_black3_radius_100dp_border_rouge,
+                        R.drawable.forme_black3_radius_100dp_border_rouge,
+                        R.string.register_error_0000
+                );
+                break;
+            case "0111":
+                inputControl(
+                        R.drawable.forme_black3_radius_100dp_border_rouge,
+                        R.drawable.forme_black3_radius_10dp,
+                        R.drawable.forme_black3_radius_10dp,
+                        R.drawable.forme_black3_radius_10dp,
+                        R.string.register_error_0111
+                );
+                break;
+            case "1011":
+                inputControl(
+                        R.drawable.forme_black3_radius_10dp,
+                        R.drawable.forme_black3_radius_100dp_border_rouge,
+                        R.drawable.forme_black3_radius_10dp,
+                        R.drawable.forme_black3_radius_10dp,
+                        R.string.register_error_1011
+                );
+                break;
+            case "1101":
+                inputControl(
+                        R.drawable.forme_black3_radius_10dp,
+                        R.drawable.forme_black3_radius_10dp,
+                        R.drawable.forme_black3_radius_100dp_border_rouge,
+                        R.drawable.forme_black3_radius_10dp,
+                        R.string.register_error_1101
+                );
+                break;
+            case "1110":
+                inputControl(
+                        R.drawable.forme_black3_radius_10dp,
+                        R.drawable.forme_black3_radius_10dp,
+                        R.drawable.forme_black3_radius_10dp,
+                        R.drawable.forme_black3_radius_100dp_border_rouge,
+                        R.string.register_error_1110
+                );
+                break;
+            case "1100":
+                inputControl(
+                        R.drawable.forme_black3_radius_10dp,
+                        R.drawable.forme_black3_radius_10dp,
+                        R.drawable.forme_black3_radius_100dp_border_rouge,
+                        R.drawable.forme_black3_radius_100dp_border_rouge,
+                        R.string.register_error_1100
+                );
+                break;
+            case "1111":
+                if(mProfessionSpinner.getSelectedItemPosition() != 0)
+                {
+                    mConnectionProgressBar.setVisibility(View.VISIBLE);
+                    mConnectionButton.setText(R.string.register_succes_1111);
+                    RegisterSyn registerSyn = new RegisterSyn();
+                    registerSyn.execute(
+                            Server.getIpServerAndroid(getApplicationContext()) + "Register.php",
+                            mAccount.getIdNumber(),
+                            mAccount.getName(),
+                            mAccount.getFirstName(),
+                            mAccount.getEmail(),
+                            mAccount.getPassword(),
+                            String.valueOf(mAccount.getProfession())
+                    );
+                }
+                else
+                    inputControl(
+                            R.drawable.forme_black3_radius_10dp,
+                            R.drawable.forme_black3_radius_10dp,
+                            R.drawable.forme_black3_radius_10dp,
+                            R.drawable.forme_black3_radius_10dp,
+                            R.string.register_error_1100
+                    );
+                    mErrorTextView.setText("Votre profession svp ?");
+                break;
+        }
+    }
+
+    private void inputNoNight() {
+        switch (mAccount.inputControl(PasswordUtil.hashPassword(mPasswordConfirmEditText.getText().toString())))
+        {
+            case "0000":
+                inputControl(
+                        R.drawable.forme_white_radius_100dp_border_rouge,
+                        R.drawable.forme_white_radius_100dp_border_rouge,
+                        R.drawable.forme_white_radius_100dp_border_rouge,
+                        R.drawable.forme_white_radius_100dp_border_rouge,
+                        R.string.register_error_0000
+                );
+                break;
+            case "0111":
+                inputControl(
+                        R.drawable.forme_white_radius_100dp_border_rouge,
+                        R.drawable.forme_white_radius_10dp,
+                        R.drawable.forme_white_radius_10dp,
+                        R.drawable.forme_white_radius_10dp,
+                        R.string.register_error_0111
+                );
+                break;
+            case "1011":
+                inputControl(
+                        R.drawable.forme_white_radius_10dp,
+                        R.drawable.forme_white_radius_100dp_border_rouge,
+                        R.drawable.forme_white_radius_10dp,
+                        R.drawable.forme_white_radius_10dp,
+                        R.string.register_error_1011
+                );
+                break;
+            case "1101":
+                inputControl(
+                        R.drawable.forme_white_radius_10dp,
+                        R.drawable.forme_white_radius_10dp,
+                        R.drawable.forme_white_radius_100dp_border_rouge,
+                        R.drawable.forme_white_radius_10dp,
+                        R.string.register_error_1101
+                );
+                break;
+            case "1110":
+                inputControl(
+                        R.drawable.forme_white_radius_10dp,
+                        R.drawable.forme_white_radius_10dp,
+                        R.drawable.forme_white_radius_10dp,
+                        R.drawable.forme_white_radius_100dp_border_rouge,
+                        R.string.register_error_1110
+                );
+                break;
+            case "1100":
+                inputControl(
+                        R.drawable.forme_white_radius_10dp,
+                        R.drawable.forme_white_radius_10dp,
+                        R.drawable.forme_white_radius_100dp_border_rouge,
+                        R.drawable.forme_white_radius_100dp_border_rouge,
+                        R.string.register_error_1100
+                );
+                break;
+            case "1111":
+                if(mProfessionSpinner.getSelectedItemPosition() != 0)
+                {
+                    mConnectionProgressBar.setVisibility(View.VISIBLE);
+                    mConnectionButton.setText(R.string.register_succes_1111);
+                    RegisterSyn registerSyn = new RegisterSyn();
+                    registerSyn.execute(
+                            Server.getIpServerAndroid(getApplicationContext()) + "Register.php",
+                            mAccount.getIdNumber(),
+                            mAccount.getName(),
+                            mAccount.getFirstName(),
+                            mAccount.getEmail(),
+                            mAccount.getPassword(),
+                            String.valueOf(mAccount.getProfession())
+                    );
+                }
+                else
+                    inputControl(
+                            R.drawable.forme_white_radius_10dp,
+                            R.drawable.forme_white_radius_10dp,
+                            R.drawable.forme_white_radius_10dp,
+                            R.drawable.forme_white_radius_10dp,
+                            R.string.register_error_1100
+                    );
+                    mErrorTextView.setText("Votre profession svp ?");
+                break;
+        }
     }
 
     public void inputControl(int idNumberForm , int emailForm , int passwordForm , int passwordConfirmForm , int message)
@@ -197,7 +323,6 @@ public class RegisterActivity extends AppCompatActivity {
     private class RegisterSyn extends AsyncTask<String,Void,String> {
         @Override
         protected String doInBackground(String... params) {
-
             try {
                 OkHttpClient client = new OkHttpClient();
                 RequestBody requestBody = new MultipartBody.Builder()
@@ -230,25 +355,110 @@ public class RegisterActivity extends AppCompatActivity {
         }
         @Override
         protected void onPostExecute(String jsonData){
+            UiModeManager uiModeManager = null;
             switch (mAccount.dataControl(jsonData))
             {
                 case "0111_1":
-                        dataControl(
-                                R.drawable.forme_white_radius_100dp_border_rouge,
-                                R.drawable.forme_white_radius_10dp,
-                                R.drawable.forme_white_radius_10dp,
-                                R.drawable.forme_white_radius_10dp,
-                                R.string.register_error_0111_1_data
-                        );
+                    switch (Themes.getName(getApplicationContext()))
+                    {
+                        case "system":
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                uiModeManager = (UiModeManager) getSystemService(Context.UI_MODE_SERVICE);
+                            }
+                            int currentMode = uiModeManager.getNightMode();
+                            if (currentMode == UiModeManager.MODE_NIGHT_NO) {
+                                // code mode jour
+                                dataControl(
+                                        R.drawable.forme_white_radius_100dp_border_rouge,
+                                        R.drawable.forme_white_radius_10dp,
+                                        R.drawable.forme_white_radius_10dp,
+                                        R.drawable.forme_white_radius_10dp,
+                                        R.string.register_error_0111_1_data
+                                );
+                            }
+                            else
+                            {
+                                // code mode nuit
+                                dataControl(
+                                        R.drawable.forme_black3_radius_100dp_border_rouge,
+                                        R.drawable.forme_black3_radius_10dp,
+                                        R.drawable.forme_black3_radius_10dp,
+                                        R.drawable.forme_black3_radius_10dp,
+                                        R.string.register_error_0111_1_data
+                                );
+                            }
+                            break;
+                        case "notNight":
+                            // code mode jour
+                            dataControl(
+                                    R.drawable.forme_white_radius_100dp_border_rouge,
+                                    R.drawable.forme_white_radius_10dp,
+                                    R.drawable.forme_white_radius_10dp,
+                                    R.drawable.forme_white_radius_10dp,
+                                    R.string.register_error_0111_1_data
+                            );
+                            break;
+                        case "night":
+                            dataControl(
+                                    R.drawable.forme_black3_radius_100dp_border_rouge,
+                                    R.drawable.forme_black3_radius_10dp,
+                                    R.drawable.forme_black3_radius_10dp,
+                                    R.drawable.forme_black3_radius_10dp,
+                                    R.string.register_error_0111_1_data
+                            );
+                            break;
+                    }
                     break;
                 case "1011":
-                    dataControl(
-                            R.drawable.forme_white_radius_10dp,
-                            R.drawable.forme_white_radius_100dp_border_rouge,
-                            R.drawable.forme_white_radius_10dp,
-                            R.drawable.forme_white_radius_10dp,
-                            R.string.register_error_1011_data
-                    );
+                    switch (Themes.getName(getApplicationContext()))
+                    {
+                        case "system":
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                uiModeManager = (UiModeManager) getSystemService(Context.UI_MODE_SERVICE);
+                            }
+                            int currentMode = uiModeManager.getNightMode();
+                            if (currentMode == UiModeManager.MODE_NIGHT_NO) {
+                                // code mode jour
+                                dataControl(
+                                        R.drawable.forme_white_radius_10dp,
+                                        R.drawable.forme_white_radius_100dp_border_rouge,
+                                        R.drawable.forme_white_radius_10dp,
+                                        R.drawable.forme_white_radius_10dp,
+                                        R.string.register_error_1011_data
+                                );
+                            }
+                            else
+                            {
+                                // code mode nuit
+                                dataControl(
+                                        R.drawable.forme_black3_radius_10dp,
+                                        R.drawable.forme_black3_radius_100dp_border_rouge,
+                                        R.drawable.forme_black3_radius_10dp,
+                                        R.drawable.forme_black3_radius_10dp,
+                                        R.string.register_error_1011_data
+                                );
+                            }
+                            break;
+                        case "notNight":
+                            // code mode jour
+                            dataControl(
+                                    R.drawable.forme_white_radius_10dp,
+                                    R.drawable.forme_white_radius_100dp_border_rouge,
+                                    R.drawable.forme_white_radius_10dp,
+                                    R.drawable.forme_white_radius_10dp,
+                                    R.string.register_error_1011_data
+                            );
+                            break;
+                        case "night":
+                            dataControl(
+                                    R.drawable.forme_black3_radius_10dp,
+                                    R.drawable.forme_black3_radius_100dp_border_rouge,
+                                    R.drawable.forme_black3_radius_10dp,
+                                    R.drawable.forme_black3_radius_10dp,
+                                    R.string.register_error_1011_data
+                            );
+                            break;
+                    }
                     break;
                 case "update":
                     Update();

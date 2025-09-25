@@ -51,7 +51,7 @@ public class Account {
                 return "0111"; // Votre matricule svp
             if(mEmail.equals(""))
                 return "1011"; // Votre email svp
-            if(mPassword.equals(""))
+            if(mPassword.equals("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"))
                 return "1101";
             if(confirPassword.equals(""))
                 return "1110";
@@ -67,7 +67,7 @@ public class Account {
             return "00"; // Votre matricule et mot de passe svp
         if(mIdNumber.equals(""))
             return "01"; // Votre matricule svp
-        if(mPassword.equals(""))
+        if(mPassword.equals("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"))
             return "10"; // Votre mot de passe svp
         return "11"; // Connection
     }
