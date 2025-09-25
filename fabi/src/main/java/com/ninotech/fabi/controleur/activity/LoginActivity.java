@@ -1,5 +1,7 @@
 package com.ninotech.fabi.controleur.activity;
 
+import android.app.UiModeManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -26,6 +28,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.ninotech.fabi.controleur.adapter.StatusBarAdapter;
 import com.ninotech.fabi.model.data.Account;
 import com.ninotech.fabi.controleur.dialog.UpdateDialog;
 import com.ninotech.fabi.R;
@@ -34,6 +37,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.ninotech.fabi.model.data.PasswordUtil;
 import com.ninotech.fabi.model.data.Server;
+import com.ninotech.fabi.model.data.Themes;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -112,34 +116,30 @@ public class LoginActivity extends AppCompatActivity {
                 mAccount = new Account(
                         mIdNumberEditText.getText().toString(),
                         PasswordUtil.hashPassword(mPassewordEditText.getText().toString()));
-                switch (mAccount.inputControl())
+                UiModeManager uiModeManager = null;
+                switch (Themes.getName(getApplicationContext()))
                 {
-                    case "00":
-                        inputData(
-                                R.drawable.forme_white_radius_100dp_border_rouge,
-                                R.drawable.forme_white_radius_100dp_border_rouge,
-                                R.string.login_error_00
-                        );
+                    case "system":
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            uiModeManager = (UiModeManager) getSystemService(Context.UI_MODE_SERVICE);
+                        }
+                        int currentMode = uiModeManager.getNightMode();
+                        if (currentMode == UiModeManager.MODE_NIGHT_NO) {
+                            // code mode jour
+                            inputNoNight();
+                        }
+                        else
+                        {
+                            // code mode nuit
+                            inputNight();
+                        }
                         break;
-                    case "01":
-                        inputData(
-                                R.drawable.forme_white_radius_100dp_border_rouge,
-                                R.drawable.forme_white_radius_10dp,
-                                R.string.register_error_0111
-                        );
+                    case "notNight":
+                        // code mode jour
+                        inputNoNight();
                         break;
-                    case "10":
-                        inputData(
-                                R.drawable.forme_white_radius_10dp,
-                                R.drawable.forme_white_radius_100dp_border_rouge,
-                                R.string.register_error_1101
-                        );
-                        break;
-                    case "11":
-                        mConnectionProgressBar.setVisibility(View.VISIBLE);
-                        mConnectionButton.setText(R.string.register_succes_1111);
-                        LoginSyn loginSyn = new LoginSyn();
-                        loginSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "Login.php",mAccount.getIdNumber(),mAccount.getPassword());
+                    case "night":
+                        inputNight();
                         break;
                 }
             }
@@ -166,6 +166,72 @@ public class LoginActivity extends AppCompatActivity {
 
         /* En Cliquant sur le TextView d' aide */
 
+    }
+    public void inputNoNight()
+    {
+        switch (mAccount.inputControl())
+        {
+            case "00":
+                inputData(
+                        R.drawable.forme_white_radius_100dp_border_rouge,
+                        R.drawable.forme_white_radius_100dp_border_rouge,
+                        R.string.login_error_00
+                );
+                break;
+            case "01":
+                inputData(
+                        R.drawable.forme_white_radius_100dp_border_rouge,
+                        R.drawable.forme_white_radius_10dp,
+                        R.string.register_error_0111
+                );
+                break;
+            case "10":
+                inputData(
+                        R.drawable.forme_white_radius_10dp,
+                        R.drawable.forme_white_radius_100dp_border_rouge,
+                        R.string.register_error_1101
+                );
+                break;
+            case "11":
+                mConnectionProgressBar.setVisibility(View.VISIBLE);
+                mConnectionButton.setText(R.string.register_succes_1111);
+                LoginSyn loginSyn = new LoginSyn();
+                loginSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "Login.php",mAccount.getIdNumber(),mAccount.getPassword());
+                break;
+        }
+    }
+    public void inputNight()
+    {
+        switch (mAccount.inputControl())
+        {
+            case "00":
+                inputData(
+                        R.drawable.forme_black3_radius_100dp_border_rouge,
+                        R.drawable.forme_black3_radius_100dp_border_rouge,
+                        R.string.login_error_00
+                );
+                break;
+            case "01":
+                inputData(
+                        R.drawable.forme_black3_radius_100dp_border_rouge,
+                        R.drawable.forme_black3_radius_10dp,
+                        R.string.register_error_0111
+                );
+                break;
+            case "10":
+                inputData(
+                        R.drawable.forme_black3_radius_10dp,
+                        R.drawable.forme_black3_radius_100dp_border_rouge,
+                        R.string.register_error_1101
+                );
+                break;
+            case "11":
+                mConnectionProgressBar.setVisibility(View.VISIBLE);
+                mConnectionButton.setText(R.string.register_succes_1111);
+                LoginSyn loginSyn = new LoginSyn();
+                loginSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "Login.php",mAccount.getIdNumber(),mAccount.getPassword());
+                break;
+        }
     }
     public void inputData(int idNumberForm , int passwordForm , int message)
     {
@@ -214,26 +280,94 @@ public class LoginActivity extends AppCompatActivity {
         }
         @Override
         protected void onPostExecute(String jsonData){
+            UiModeManager uiModeManager = null;
             switch (mAccount.dataControl(jsonData))
             {
                 case "00":
-                    dataControl(
-                            R.drawable.forme_white_radius_100dp_border_rouge,
-                            R.drawable.forme_white_radius_100dp_border_rouge,
-                            R.string.account_not_exist
-                    );
+                    switch (Themes.getName(getApplicationContext()))
+                    {
+                        case "system":
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                uiModeManager = (UiModeManager) getSystemService(Context.UI_MODE_SERVICE);
+                            }
+                            int currentMode = uiModeManager.getNightMode();
+                            if (currentMode == UiModeManager.MODE_NIGHT_NO) {
+                                // code mode jour
+                                dataControl(
+                                        R.drawable.forme_white_radius_100dp_border_rouge,
+                                        R.drawable.forme_white_radius_100dp_border_rouge,
+                                        R.string.account_not_exist
+                                );
+                            }
+                            else
+                            {
+                                // code mode nuit
+                                dataControl(
+                                        R.drawable.forme_black3_radius_100dp_border_rouge,
+                                        R.drawable.forme_black3_radius_100dp_border_rouge,
+                                        R.string.account_not_exist
+                                );
+                            }
+                            break;
+                        case "notNight":
+                            // code mode jour
+                            dataControl(
+                                    R.drawable.forme_white_radius_100dp_border_rouge,
+                                    R.drawable.forme_white_radius_100dp_border_rouge,
+                                    R.string.account_not_exist
+                            );
+                            break;
+                        case "night":
+                            dataControl(
+                                    R.drawable.forme_black3_radius_100dp_border_rouge,
+                                    R.drawable.forme_black3_radius_100dp_border_rouge,
+                                    R.string.account_not_exist
+                            );
+                            break;
+                    }
                     break;
                 case "10":
-                    dataControl(
-                            R.drawable.forme_white_radius_10dp,
-                            R.drawable.forme_white_radius_100dp_border_rouge,
-                            R.string.incorrect_password
-                    );
-                  //  mHelperTextView.setText(R.string.forgot_password);
-//                    mHelperTextView.setTextColor(Color.parseColor("#E6FD1010"));
-                    mConnectionProgressBar.setVisibility(View.INVISIBLE);
-                    break;
-                case "update":
+                    switch (Themes.getName(getApplicationContext())) {
+                        case "system":
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                uiModeManager = (UiModeManager) getSystemService(Context.UI_MODE_SERVICE);
+                            }
+                            int currentMode = uiModeManager.getNightMode();
+                            if (currentMode == UiModeManager.MODE_NIGHT_NO) {
+                                // code mode jour
+                                dataControl(
+                                        R.drawable.forme_white_radius_10dp,
+                                        R.drawable.forme_white_radius_100dp_border_rouge,
+                                        R.string.incorrect_password
+                                );
+                            } else {
+                                        // code mode nuit
+                                dataControl(
+                                        R.drawable.forme_black3_radius_10dp,
+                                        R.drawable.forme_black3_radius_100dp_border_rouge,
+                                        R.string.incorrect_password
+                                );
+                            }
+                            break;
+                            case "notNight":
+                                // code mode jour
+                                dataControl(
+                                        R.drawable.forme_white_radius_10dp,
+                                        R.drawable.forme_white_radius_100dp_border_rouge,
+                                        R.string.incorrect_password
+                                );
+                                break;
+                        case "night":
+                            dataControl(
+                                    R.drawable.forme_black3_radius_10dp,
+                                    R.drawable.forme_black3_radius_100dp_border_rouge,
+                                    R.string.incorrect_password
+                            );
+                            break;
+                    }
+                mConnectionProgressBar.setVisibility(View.INVISIBLE);
+            break;
+            case "update":
                     Update();
                     mConnectionProgressBar.setVisibility(View.INVISIBLE);
                     mConnectionButton.setText(R.string.button_text_connection);
