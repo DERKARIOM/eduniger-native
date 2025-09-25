@@ -1,6 +1,7 @@
 package com.ninotech.fabi.controleur.adapter;
 import android.Manifest;
 import android.app.Activity;
+import android.app.UiModeManager;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +30,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.activity.BookActivity;
 import com.ninotech.fabi.model.data.Notification;
+import com.ninotech.fabi.model.data.Themes;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -117,18 +120,31 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             mTitleTextView.setText(notification.getTitle());
             mDate.setText(notification.getDate());
             mMessage.setText(notification.getMessage());
-            switch (notification.getType())
+            UiModeManager uiModeManager = null;
+            switch (Themes.getName(itemView.getContext()))
             {
-                case "0":
-                    mRelativeLayout.setBackgroundResource(R.drawable.forme_white_radius_100dp_border_dark);
+                case "system":
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        uiModeManager = (UiModeManager) itemView.getContext().getSystemService(Context.UI_MODE_SERVICE);
+                    }
+                    int currentMode = uiModeManager.getNightMode();
+                    if (currentMode == UiModeManager.MODE_NIGHT_NO) {
+                        // code mode jour
+                        themeNoNight(notification.getType());
+                    }
+                    else
+                    {
+                        // code mode nuit
+                        themeNight(notification.getType());
+                    }
                     break;
-                case "1":
-                    mRelativeLayout.setBackgroundResource(R.drawable.forme_white_radius_100dp_border_blue);
+                case "notNight":
+                    // code mode jour
+                    themeNoNight(notification.getType());
                     break;
-                case "2":
-                    mRelativeLayout.setBackgroundResource(R.drawable.forme_white_radius_100dp_border_vert);
+                case "night":
+                    themeNight(notification.getType());
                     break;
-
             }
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -149,6 +165,38 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                     }
                 }
             });
+        }
+        private void themeNoNight(String type)
+        {
+            switch (type)
+            {
+                case "0":
+                    mRelativeLayout.setBackgroundResource(R.drawable.forme_white_radius_100dp_border_dark);
+                    break;
+                case "1":
+                    mRelativeLayout.setBackgroundResource(R.drawable.forme_white_radius_100dp_border_blue);
+                    break;
+                case "2":
+                    mRelativeLayout.setBackgroundResource(R.drawable.forme_white_radius_100dp_border_vert);
+                    break;
+
+            }
+        }
+        private void themeNight(String type)
+        {
+            switch (type)
+            {
+                case "0":
+                    mRelativeLayout.setBackgroundResource(R.drawable.forme_black3_radius_100dp_border_dark);
+                    break;
+                case "1":
+                    mRelativeLayout.setBackgroundResource(R.drawable.forme_black3_radius_100dp_border_blue);
+                    break;
+                case "2":
+                    mRelativeLayout.setBackgroundResource(R.drawable.forme_black3_radius_100dp_border_vert);
+                    break;
+
+            }
         }
         private void openInBrowser(String url) {
             // S'assure qu'il y a un schéma
