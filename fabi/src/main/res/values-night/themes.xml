@@ -157,4 +157,8 @@
     <style name="activity_login_code_payer_text_color">
         <item name="ccp_contentColor">@color/whiteSombre</item>
     </style>
+    <style name="activity_url_server" parent="edit_text_register">
+        <item name="android:background">@drawable/forme_black3_radius_100dp_border_vert</item>
+        <item name="android:drawableStart">@drawable/vector_white_sombre_phone_connected</item>
+    </style>
 </resources>

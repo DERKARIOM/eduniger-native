@@ -78,13 +78,10 @@
         android:id="@+id/edit_text_activity_server_ip"
         android:hint=" https://exemple.com"
         android:layout_below="@id/radio_group_activity_server"
-        android:drawableStart="@drawable/vector_black3_phone_connected"
+        style="@style/activity_url_server"
         android:inputType="text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/forme_white_radius_100dp_border_vert"
-        android:padding="10dp"
-        android:layout_margin="10dp"
         android:autofillHints="" />
 
 </RelativeLayout>
