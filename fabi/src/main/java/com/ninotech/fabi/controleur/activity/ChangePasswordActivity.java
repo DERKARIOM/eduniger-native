@@ -1,10 +1,13 @@
 package com.ninotech.fabi.controleur.activity;
 
+import android.app.UiModeManager;
+import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -21,6 +24,7 @@ import com.ninotech.fabi.controleur.dialog.SimpleOkDialog;
 import com.ninotech.fabi.model.data.Account;
 import com.ninotech.fabi.model.data.PasswordUtil;
 import com.ninotech.fabi.model.data.Server;
+import com.ninotech.fabi.model.data.Themes;
 import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.R;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -75,77 +79,176 @@ public class ChangePasswordActivity extends AppCompatActivity {
                         mIdNumberEditText.getText().toString(),
                         mMailEditText.getText().toString(),
                         PasswordUtil.hashPassword(mPasswordEditText.getText().toString()));
-                switch (mAccount.inputControl(PasswordUtil.hashPassword(mConfirmPassword.getText().toString())))
+                UiModeManager uiModeManager = null;
+                switch (Themes.getName(getApplicationContext()))
                 {
-                    case "0000":
-                        inputControl(
-                                R.drawable.forme_white_radius_100dp_border_rouge,
-                                R.drawable.forme_white_radius_100dp_border_rouge,
-                                R.drawable.forme_white_radius_100dp_border_rouge,
-                                R.drawable.forme_white_radius_100dp_border_rouge,
-                                R.string.register_error_0000
-                        );
+                    case "system":
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            uiModeManager = (UiModeManager) getSystemService(Context.UI_MODE_SERVICE);
+                        }
+                        int currentMode = uiModeManager.getNightMode();
+                        if (currentMode == UiModeManager.MODE_NIGHT_NO) {
+                            // code mode jour
+                            inputNoNight();
+                        }
+                        else
+                        {
+                            // code mode nuit
+                            inputNight();
+                        }
                         break;
-                    case "0111":
-                        inputControl(
-                                R.drawable.forme_white_radius_100dp_border_rouge,
-                                R.drawable.forme_white_radius_10dp,
-                                R.drawable.forme_white_radius_10dp,
-                                R.drawable.forme_white_radius_10dp,
-                                R.string.register_error_0111
-                        );
+                    case "notNight":
+                        // code mode jour
+                        inputNoNight();
                         break;
-                    case "1011":
-                        inputControl(
-                                R.drawable.forme_white_radius_10dp,
-                                R.drawable.forme_white_radius_100dp_border_rouge,
-                                R.drawable.forme_white_radius_10dp,
-                                R.drawable.forme_white_radius_10dp,
-                                R.string.register_error_1011
-                        );
-                        break;
-                    case "1101":
-                        inputControl(
-                                R.drawable.forme_white_radius_10dp,
-                                R.drawable.forme_white_radius_10dp,
-                                R.drawable.forme_white_radius_100dp_border_rouge,
-                                R.drawable.forme_white_radius_10dp,
-                                R.string.register_error_1101
-                        );
-                        break;
-                    case "1110":
-                        inputControl(
-                                R.drawable.forme_white_radius_10dp,
-                                R.drawable.forme_white_radius_10dp,
-                                R.drawable.forme_white_radius_10dp,
-                                R.drawable.forme_white_radius_100dp_border_rouge,
-                                R.string.register_error_1110
-                        );
-                        break;
-                    case "1100":
-                        inputControl(
-                                R.drawable.forme_white_radius_10dp,
-                                R.drawable.forme_white_radius_10dp,
-                                R.drawable.forme_white_radius_100dp_border_rouge,
-                                R.drawable.forme_white_radius_100dp_border_rouge,
-                                R.string.register_error_1100
-                        );
-                        break;
-                    case "1111":
-                        mConnectionProgressBar.setVisibility(View.VISIBLE);
-                        mConnectionButton.setText(R.string.register_succes_1111);
-                        ChangePassword changePassword = new ChangePassword();
-                        changePassword.execute(Server.getIpServerAndroid(getApplicationContext()) + "ChangePassword.php",
-                                mAccount.getIdNumber(),
-                                mAccount.getEmail(),
-                                mAccount.getPassword()
-                        );
+                    case "night":
+                        inputNight();
                         break;
                 }
             }
         });
 
         /* En cliquant sur le TextView ce connecter */
+    }
+
+    private void inputNoNight() {
+        switch (mAccount.inputControl(PasswordUtil.hashPassword(mConfirmPassword.getText().toString())))
+        {
+            case "0000":
+                inputControl(
+                        R.drawable.forme_white_radius_100dp_border_rouge,
+                        R.drawable.forme_white_radius_100dp_border_rouge,
+                        R.drawable.forme_white_radius_100dp_border_rouge,
+                        R.drawable.forme_white_radius_100dp_border_rouge,
+                        R.string.register_error_0000
+                );
+                break;
+            case "0111":
+                inputControl(
+                        R.drawable.forme_white_radius_100dp_border_rouge,
+                        R.drawable.forme_white_radius_10dp,
+                        R.drawable.forme_white_radius_10dp,
+                        R.drawable.forme_white_radius_10dp,
+                        R.string.register_error_0111
+                );
+                break;
+            case "1011":
+                inputControl(
+                        R.drawable.forme_white_radius_10dp,
+                        R.drawable.forme_white_radius_100dp_border_rouge,
+                        R.drawable.forme_white_radius_10dp,
+                        R.drawable.forme_white_radius_10dp,
+                        R.string.register_error_1011
+                );
+                break;
+            case "1101":
+                inputControl(
+                        R.drawable.forme_white_radius_10dp,
+                        R.drawable.forme_white_radius_10dp,
+                        R.drawable.forme_white_radius_100dp_border_rouge,
+                        R.drawable.forme_white_radius_10dp,
+                        R.string.register_error_1101
+                );
+                break;
+            case "1110":
+                inputControl(
+                        R.drawable.forme_white_radius_10dp,
+                        R.drawable.forme_white_radius_10dp,
+                        R.drawable.forme_white_radius_10dp,
+                        R.drawable.forme_white_radius_100dp_border_rouge,
+                        R.string.register_error_1110
+                );
+                break;
+            case "1100":
+                inputControl(
+                        R.drawable.forme_white_radius_10dp,
+                        R.drawable.forme_white_radius_10dp,
+                        R.drawable.forme_white_radius_100dp_border_rouge,
+                        R.drawable.forme_white_radius_100dp_border_rouge,
+                        R.string.register_error_1100
+                );
+                break;
+            case "1111":
+                mConnectionProgressBar.setVisibility(View.VISIBLE);
+                mConnectionButton.setText(R.string.register_succes_1111);
+                ChangePassword changePassword = new ChangePassword();
+                changePassword.execute(Server.getIpServerAndroid(getApplicationContext()) + "ChangePassword.php",
+                        mAccount.getIdNumber(),
+                        mAccount.getEmail(),
+                        mAccount.getPassword()
+                );
+                break;
+        }
+    }
+
+    private void inputNight() {
+        switch (mAccount.inputControl(PasswordUtil.hashPassword(mConfirmPassword.getText().toString())))
+        {
+            case "0000":
+                inputControl(
+                        R.drawable.forme_black3_radius_100dp_border_rouge,
+                        R.drawable.forme_black3_radius_100dp_border_rouge,
+                        R.drawable.forme_black3_radius_100dp_border_rouge,
+                        R.drawable.forme_black3_radius_100dp_border_rouge,
+                        R.string.register_error_0000
+                );
+                break;
+            case "0111":
+                inputControl(
+                        R.drawable.forme_black3_radius_100dp_border_rouge,
+                        R.drawable.forme_black3_radius_10dp,
+                        R.drawable.forme_black3_radius_10dp,
+                        R.drawable.forme_black3_radius_10dp,
+                        R.string.register_error_0111
+                );
+                break;
+            case "1011":
+                inputControl(
+                        R.drawable.forme_black3_radius_10dp,
+                        R.drawable.forme_black3_radius_100dp_border_rouge,
+                        R.drawable.forme_black3_radius_10dp,
+                        R.drawable.forme_black3_radius_10dp,
+                        R.string.register_error_1011
+                );
+                break;
+            case "1101":
+                inputControl(
+                        R.drawable.forme_black3_radius_10dp,
+                        R.drawable.forme_black3_radius_10dp,
+                        R.drawable.forme_black3_radius_100dp_border_rouge,
+                        R.drawable.forme_black3_radius_10dp,
+                        R.string.register_error_1101
+                );
+                break;
+            case "1110":
+                inputControl(
+                        R.drawable.forme_black3_radius_10dp,
+                        R.drawable.forme_black3_radius_10dp,
+                        R.drawable.forme_black3_radius_10dp,
+                        R.drawable.forme_black3_radius_100dp_border_rouge,
+                        R.string.register_error_1110
+                );
+                break;
+            case "1100":
+                inputControl(
+                        R.drawable.forme_black3_radius_10dp,
+                        R.drawable.forme_black3_radius_10dp,
+                        R.drawable.forme_black3_radius_100dp_border_rouge,
+                        R.drawable.forme_black3_radius_100dp_border_rouge,
+                        R.string.register_error_1100
+                );
+                break;
+            case "1111":
+                mConnectionProgressBar.setVisibility(View.VISIBLE);
+                mConnectionButton.setText(R.string.register_succes_1111);
+                ChangePassword changePassword = new ChangePassword();
+                changePassword.execute(Server.getIpServerAndroid(getApplicationContext()) + "ChangePassword.php",
+                        mAccount.getIdNumber(),
+                        mAccount.getEmail(),
+                        mAccount.getPassword()
+                );
+                break;
+        }
     }
 
     public void inputControl(int idNumberForm , int emailForm , int passwordForm , int passwordConfirmForm , int message)
@@ -204,13 +307,56 @@ public class ChangePasswordActivity extends AppCompatActivity {
             switch (mAccount.dataControl(jsonData))
             {
                 case "0011":
-                    dataControl(
-                            R.drawable.forme_white_radius_100dp_border_rouge,
-                            R.drawable.forme_white_radius_100dp_border_rouge,
-                            R.drawable.forme_white_radius_10dp,
-                            R.drawable.forme_white_radius_10dp,
-                            R.string.no_found_id_number_or_email
-                    );
+                    UiModeManager uiModeManager = null;
+                    switch (Themes.getName(getApplicationContext()))
+                    {
+                        case "system":
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                uiModeManager = (UiModeManager) getSystemService(Context.UI_MODE_SERVICE);
+                            }
+                            int currentMode = uiModeManager.getNightMode();
+                            if (currentMode == UiModeManager.MODE_NIGHT_NO) {
+                                // code mode jour
+                                dataControl(
+                                        R.drawable.forme_white_radius_100dp_border_rouge,
+                                        R.drawable.forme_white_radius_100dp_border_rouge,
+                                        R.drawable.forme_white_radius_10dp,
+                                        R.drawable.forme_white_radius_10dp,
+                                        R.string.no_found_id_number_or_email
+                                );
+                            }
+                            else
+                            {
+                                // code mode nuit
+                                dataControl(
+                                        R.drawable.forme_black3_radius_100dp_border_rouge,
+                                        R.drawable.forme_black3_radius_100dp_border_rouge,
+                                        R.drawable.forme_black3_radius_10dp,
+                                        R.drawable.forme_black3_radius_10dp,
+                                        R.string.no_found_id_number_or_email
+                                );
+                            }
+                            break;
+                        case "notNight":
+                            // code mode jour
+                            dataControl(
+                                    R.drawable.forme_white_radius_100dp_border_rouge,
+                                    R.drawable.forme_white_radius_100dp_border_rouge,
+                                    R.drawable.forme_white_radius_10dp,
+                                    R.drawable.forme_white_radius_10dp,
+                                    R.string.no_found_id_number_or_email
+                            );
+                            break;
+                        case "night":
+                            dataControl(
+                                    R.drawable.forme_black3_radius_100dp_border_rouge,
+                                    R.drawable.forme_black3_radius_100dp_border_rouge,
+                                    R.drawable.forme_black3_radius_10dp,
+                                    R.drawable.forme_black3_radius_10dp,
+                                    R.string.no_found_id_number_or_email
+                            );
+                            break;
+                    }
                     break;
                 case "1111":
                     inputClean();
