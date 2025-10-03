@@ -23,7 +23,7 @@
         android:id="@+id/text_view_activity_server_desc_muti_server"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Lorsque cette option sera activée, vous pouvez sybchroniser les données de plusieurs serveurs."
+        android:text="Lorsque cette option sera activée, vous pouvez synchroniser les données de plusieurs serveurs."
         android:layout_marginStart="12dp"
         android:fontFamily="@font/linux2"
         android:textSize="15dp"
