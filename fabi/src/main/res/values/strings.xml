@@ -257,7 +257,7 @@
     <string name="no_connection_available">Aucun reseau disponible</string>
     <string name="wait">Veuillez patienter</string>
     <string name="download_book">Téléchargement récent</string>
-    <string name="recent_read">Téléchargement récentes</string>
+    <string name="recent_read">Téléchargements récents</string>
     <string name="no_loand_book">Aucun livre Emprunté</string>
     <string name="no_audio_book">Aucun livre audio</string>
     <string name="no_electronic_book">Aucun livre électronique</string>
