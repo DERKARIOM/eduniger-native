@@ -47,7 +47,7 @@ public class SettingV2Activity extends AppCompatActivity {
                     settings.add(new Setting(R.drawable.user,getString(R.string.account),null));
                     settings.add(new Setting(R.drawable.vector_white_sombre_print_digital,getString(R.string.digital_print),null));
                     settings.add(new Setting(R.drawable.vector_white_sombre_phone_connected,"Serveur connecté",null));
-                    settings.add(new Setting(R.drawable.vector_white_sombre_mode_night,"Thème appliquée","Mode Systémes"));
+                    settings.add(new Setting(R.drawable.vector_white_sombre_mode_night,"Thème appliqué","Mode Systémes"));
                     settings.add(new Setting(R.drawable.vector_white_sombre_message,getString(R.string.send_suggestion),null));
                     settings.add(new Setting(R.drawable.vector_white_sombre_grade,getString(R.string.evaluate_us),null));
                     settings.add(new Setting(R.drawable.vector_white_sombre_phone,"Contactez-nous",null));

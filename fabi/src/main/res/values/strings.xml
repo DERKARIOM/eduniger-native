@@ -35,7 +35,7 @@
     <string name="account_not_exist">Ce compte n\' existe pas</string>
     <string name="incorrect_password">Mot de passe incorrect</string>
     <string name="forgot_password">j\'ai oublié mon mot de passe</string>
-    <string name="find_book">  Recherche des livres</string>
+    <string name="find_book">  Rechercher un livre</string>
     <string name="books_title">Livres</string>
     <string name="category_title">Catégories</string>
     <string name="structure">Structures</string>
