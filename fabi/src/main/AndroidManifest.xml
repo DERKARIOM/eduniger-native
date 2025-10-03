@@ -158,7 +158,7 @@
         <activity
             android:name=".controleur.activity.NotificationActivity"
             android:exported="false"
-            android:label="Notification"
+            android:label="Notifications"
             android:parentActivityName=".controleur.activity.MainActivity"
             android:screenOrientation="portrait" />
         <activity
