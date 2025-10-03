@@ -227,6 +227,7 @@ public class StructureActivity extends AppCompatActivity {
                 startActivity(searchIntent);
             }
         });
+
         mMoreAuthorTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
