@@ -152,7 +152,7 @@
 
                 android:layout_marginEnd="20dp"
                 android:layout_marginBottom="20dp"
-                android:text="Les auteurs similaire"
+                android:text="Les auteurs similaires"
                 android:textStyle="bold"
                 android:textSize="@dimen/size_title" />
             <androidx.recyclerview.widget.RecyclerView
