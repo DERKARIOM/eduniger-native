@@ -121,47 +121,50 @@ public class ChatBotFragment extends Fragment {
         mEnvoie.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                UserTable userTable = new UserTable(getContext());
-                Cursor userCursor = userTable.getData(mSession.getIdNumber());
-                userCursor.moveToFirst();
-                mRequete = mEditText.getText().toString();
-                mEditText.setText("");
-                mList.add(new Chat("moi.png",userCursor.getString(1),mRequete,false));
-                mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                mRecyclerView.setAdapter(mChatAdapter);
-                mRecyclerView.smoothScrollToPosition(mChatAdapter.getItemCount()-1);
-                if(mArm.containsReservation(mRequete))
+                if(!mEditText.getText().toString().equals(""))
                 {
-                    mArm.setNumberOfDays(mArm.extractDuration(mRequete));
-                    if(mArm.getNumberOfDays() <= 5)
+                    UserTable userTable = new UserTable(getContext());
+                    Cursor userCursor = userTable.getData(mSession.getIdNumber());
+                    userCursor.moveToFirst();
+                    mRequete = mEditText.getText().toString();
+                    mEditText.setText("");
+                    mList.add(new Chat("moi.png",userCursor.getString(1),mRequete,false));
+                    mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                    mRecyclerView.setAdapter(mChatAdapter);
+                    mRecyclerView.smoothScrollToPosition(mChatAdapter.getItemCount()-1);
+                    if(mArm.containsReservation(mRequete))
                     {
-                        Reservation reservationSyn = new Reservation();
-                        reservationSyn.execute(Server.getIpServerAndroid(getContext()) + "Reservation.php",mSession.getIdNumber(),mArm.getId(),String.valueOf(mArm.getNumberOfDays()));
-                    }
-                    else
-                    {
-                        if(mArm.containsJournee(mRequete))
+                        mArm.setNumberOfDays(mArm.extractDuration(mRequete));
+                        if(mArm.getNumberOfDays() <= 5)
                         {
-                            mArm.setNumberOfDays(1);
                             Reservation reservationSyn = new Reservation();
                             reservationSyn.execute(Server.getIpServerAndroid(getContext()) + "Reservation.php",mSession.getIdNumber(),mArm.getId(),String.valueOf(mArm.getNumberOfDays()));
                         }
                         else
                         {
-                            mList.add(new Chat("fabiola.png","duna","je suis désolé la politique de la bibliothèque permet aux utilisateurs d'emprunter un livre pour une durée maximale de 5 jours. Merci pour votre compréhension.",true));
-                            mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                            mRecyclerView.setAdapter(mChatAdapter);
-                            mRecyclerView.smoothScrollToPosition(mChatAdapter.getItemCount()-1);
+                            if(mArm.containsJournee(mRequete))
+                            {
+                                mArm.setNumberOfDays(1);
+                                Reservation reservationSyn = new Reservation();
+                                reservationSyn.execute(Server.getIpServerAndroid(getContext()) + "Reservation.php",mSession.getIdNumber(),mArm.getId(),String.valueOf(mArm.getNumberOfDays()));
+                            }
+                            else
+                            {
+                                mList.add(new Chat("fabiola.png","duna","je suis désolé la politique de la bibliothèque permet aux utilisateurs d'emprunter un livre pour une durée maximale de 5 jours. Merci pour votre compréhension.",true));
+                                mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                                mRecyclerView.setAdapter(mChatAdapter);
+                                mRecyclerView.smoothScrollToPosition(mChatAdapter.getItemCount()-1);
+                            }
                         }
                     }
-                }
-                else
-                {
-                    EdunaSyn edunaSyn = new EdunaSyn();
-                    edunaSyn.execute(getString(R.string.ip_eduna) + "/fabi/api/ask_eduna.php",mSession.getIdNumber(),mRequete);
-                }
+                    else
+                    {
+                        EdunaSyn edunaSyn = new EdunaSyn();
+                        edunaSyn.execute(getString(R.string.ip_eduna) + "/fabi/api/ask_eduna.php",mSession.getIdNumber(),mRequete);
+                    }
 //                CallOpenAi callOpenAi = new CallOpenAi();
 //                callOpenAi.execute("http://192.168.43.1:2222/fabi/android/callOpenAi.php");
+                }
             }
         });
         return view;
