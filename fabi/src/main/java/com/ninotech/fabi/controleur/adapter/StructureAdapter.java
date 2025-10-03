@@ -161,7 +161,7 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
                     switch (structure.getId())
                     {
                         case "AddBook":
-                            simpleOkDialog(R.drawable.add_auteurs,"Ajouter un contenue dans EduNiger" , "Le portail numérique de la Cellule d’Appui à la Technologie et à l’Innovation (CATI) est une plateforme dédiée à la consultation et au téléchargement des mémoires, thèses et travaux de recherche des différentes facultés de l’Université Abdou Moumouni.");
+                            simpleOkDialog(R.drawable.add_auteurs,"Ajouter un contenu dans EduNiger" , "Partagez vos savoirs avec la communauté ! En devenant auteur, vous pouvez publier vos livres et documents. Chaque ajout est vérifié avant d’être validé et mis en ligne, puis vous recevez une notification de confirmation.");
                             break;
                         case "RegisterAuthor":
                             simpleOkDialog(R.drawable.add_auteurs,"Devenir Auteur Sur EduNiger" , "Vous avez un livre, un manuscrit ou une idée à partager ?\n\n" +
@@ -209,10 +209,10 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
                             }
                             break;
                         case "AddBook":
-                            Toast.makeText(itemView.getContext(), "Page se connecter auteur", Toast.LENGTH_SHORT).show();
+                            simpleOkDialog(R.drawable.add_auteurs,"Ajouter un contenue dans EduNiger" , "La fonctionnalité Devenir Auteur est actuellement en cours de développement. Elle sera disponible dans la version officielle à venir, inchaAllah.");
                             break;
                         case "RegisterAuthor":
-                            Toast.makeText(itemView.getContext(), "Page s'inscrire auteur", Toast.LENGTH_SHORT).show();
+                            simpleOkDialog(R.drawable.add_auteurs,"Ajouter un contenue dans EduNiger" , "La fonctionnalité Devenir Auteur est actuellement en cours de développement. Elle sera disponible dans la version officielle à venir, inchaAllah.");
                             break;
 
                     }

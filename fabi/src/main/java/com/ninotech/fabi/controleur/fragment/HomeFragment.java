@@ -79,6 +79,7 @@ public class HomeFragment extends Fragment {
         mAccount = new Account();
         StructAdapter = new StructureAdapter(mStructures);
         ServerAdapter = new StructureAdapter(mServers);
+        mPub = null;
         BroadcastReceiver receiverNoConnectionAdapter = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -91,6 +92,8 @@ public class HomeFragment extends Fragment {
                         NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
                         mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                         mWaitRecyclerView.setAdapter(noConnectionAdapter);
+                        PubSyn pubSyn = new PubSyn();
+                        pubSyn.execute(Server.getIpServerAndroid(context) + "Pub.php", session.getIdNumber(),getString(R.string.app_version));
                         RecommendedSyn recommendedSyn = new RecommendedSyn();
                         recommendedSyn.execute(Server.getIpServerAndroid(context) + "Recommended.php", session.getIdNumber(),getString(R.string.app_version));
                         StructureSyn structureSyn = new StructureSyn();
@@ -157,6 +160,8 @@ public class HomeFragment extends Fragment {
         mAuthorRecyclerView.setAdapter(mNoConnectionAdapter);
         if (mAccount.isSession(getContext()))
         {
+            PubSyn pubSyn = new PubSyn();
+            pubSyn.execute(Server.getIpServerAndroid(getContext()) + "Pub.php", session.getIdNumber(),getString(R.string.app_version));
             RecommendedSyn recommendedSyn = new RecommendedSyn();
             recommendedSyn.execute(Server.getIpServerAndroid(getContext()) + "Recommended.php", session.getIdNumber(),getString(R.string.app_version));
             StructureSyn structureSyn = new StructureSyn();
@@ -167,6 +172,42 @@ public class HomeFragment extends Fragment {
             authorSyn.execute(Server.getIpServerAndroid(getContext()) + "AuthorTop.php", session.getIdNumber());
         }
         return view;
+    }
+    private class PubSyn extends AsyncTask<String,Void,String> {
+        @Override
+        protected String doInBackground(String... params) {
+
+            try {
+                OkHttpClient client = new OkHttpClient();
+                RequestBody requestBody = new MultipartBody.Builder()
+                        .setType(MultipartBody.FORM)
+                        .addFormDataPart("idNumber",params[1])
+                        .addFormDataPart("version",params[2])
+                        .build();
+                Request request = new Request.Builder()
+                        .url(params[0])
+                        .post(requestBody)
+                        .build();
+                try {
+                    Response response = client.newCall(request).execute();
+                    assert response.body() != null;
+                    return response.body().string();
+                }catch (IOException e)
+                {
+                    Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+
+            }catch (Exception e)
+            {
+                return null;
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(String jsonData){
+            Log.e("Pub",jsonData);
+            mPub = jsonData;
+        }
     }
     private class RecommendedSyn extends AsyncTask<String,Void,String> {
         @Override
@@ -205,7 +246,7 @@ public class HomeFragment extends Fragment {
                 if(jsonData != null)
                 {
                     Picasso.get()
-                            .load(Server.getIpServer(getContext()) + "ressources/pub/p4.png")
+                            .load(Server.getIpServer(getContext()) + "ressources/pub/" + mPub)
                             .transform(new RoundedTransformation(200,10))
                             .resize(6200,3333)
                             .placeholder(R.drawable.img_wait_pub)
@@ -246,7 +287,7 @@ public class HomeFragment extends Fragment {
                                     mServers.add(new Structure(
                                             "AddBook",
                                             "eduniger.png",
-                                            "Ajouter un contenue",
+                                            "Ajouter un contenu",
                                             "Description",false,
                                             "-1",
                                             "@ninotech",
@@ -567,4 +608,5 @@ public class HomeFragment extends Fragment {
     private RelativeLayout mMoreAuthorRelativeLayout;
     private UserTable userTable;
     private Session session;
+    private String mPub;
 }

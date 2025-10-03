@@ -1,5 +1,6 @@
 package com.ninotech.fabi.controleur.activity;
 
+import android.app.UiModeManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -27,6 +28,7 @@ import com.ninotech.fabi.controleur.adapter.VoidContainerAdapter;
 import com.ninotech.fabi.model.data.OnlineBook;
 import com.ninotech.fabi.model.data.Connection;
 import com.ninotech.fabi.model.data.Server;
+import com.ninotech.fabi.model.data.Themes;
 import com.ninotech.fabi.model.data.VoidContainer;
 import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.R;
@@ -49,7 +51,6 @@ public class CategoryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category);
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         mSession = new Session(this);
         mRecyclerView = findViewById(R.id.recylerCategorie2);
         mWaitRecyclerView = findViewById(R.id.recycler_view_activity_category_wait);
@@ -57,12 +58,43 @@ public class CategoryActivity extends AppCompatActivity {
         Intent intent = getIntent();
         ActionBar ab = getSupportActionBar();
         assert ab != null;
-        ab.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.white)));
-        ab.setHomeAsUpIndicator(R.drawable.vector_back);
         ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         ab.setCustomView(R.layout.custom_action_bar);
         ab.setDisplayHomeAsUpEnabled(true);
         TextView actionBarTitle = ab.getCustomView().findViewById(R.id.action_bar_title);
+
+        UiModeManager uiModeManager = null;
+        switch (Themes.getName(getApplicationContext()))
+        {
+            case "system":
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    uiModeManager = (UiModeManager) getSystemService(Context.UI_MODE_SERVICE);
+                }
+                int currentMode = uiModeManager.getNightMode();
+                if (currentMode == UiModeManager.MODE_NIGHT_NO) {
+                    // code mode jour
+                    ab.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.white)));
+                    ab.setHomeAsUpIndicator(R.drawable.vector_back);
+                }
+                else
+                {
+                    // code mode nuit
+                    ab.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.black)));
+                    ab.setHomeAsUpIndicator(R.drawable.vector_white_sombre_back);
+                    actionBarTitle.setTextColor(getResources().getColor(R.color.whiteSombre));
+                }
+                break;
+            case "notNight":
+                // code mode jour
+                ab.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.white)));
+                ab.setHomeAsUpIndicator(R.drawable.vector_back);
+                break;
+            case "night":
+                ab.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.black)));
+                ab.setHomeAsUpIndicator(R.drawable.vector_white_sombre_back);
+                actionBarTitle.setTextColor(getResources().getColor(R.color.whiteSombre));
+                break;
+        }
         mCategorie=null;
         mNameStruct=null;
         if (intent != null && intent.hasExtra("intent_adapter_category_title")) {

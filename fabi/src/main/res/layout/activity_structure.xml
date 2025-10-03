@@ -19,7 +19,7 @@
         />
     <androidx.core.widget.NestedScrollView
         android:id="@+id/nested_scroll_view_activity_structure"
-
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_below="@+id/include2"
         android:layout_height="match_parent">
