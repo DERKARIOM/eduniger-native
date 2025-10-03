@@ -24,15 +24,6 @@ public class SettingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
-        ActionBar ab = getSupportActionBar();
-        assert ab != null;
-        ab.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.white)));
-        ab.setHomeAsUpIndicator(R.drawable.vector_back);
-        ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        ab.setCustomView(R.layout.custom_action_bar);
-        ab.setDisplayHomeAsUpEnabled(true);
-        TextView actionBarTitle = ab.getCustomView().findViewById(R.id.action_bar_title);
-        actionBarTitle.setText(getString(R.string.setting));
         RecyclerView mSettingRecyclerView = findViewById(R.id.recycler_view_activity_setting);
         ArrayList<Setting> mList = new ArrayList<>();
         mList.add(new Setting(R.drawable.vector_purple_200_compte,getString(R.string.account),getString(R.string.change_password)));

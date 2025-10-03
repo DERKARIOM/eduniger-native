@@ -56,12 +56,9 @@ public class AccountActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_account);
         mPhotoImageView = findViewById(R.id.image_view_setting_account_photo);
         mPhotoRelativeLayout = findViewById(R.id.relative_layout_activity_setting_account);
-        // Activer le bouton de retour de l'action barre
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         RecyclerView mSettingRecyclerView = findViewById(R.id.recycler_view_setting_account);
         mUserTable = new UserTable(getApplicationContext());
         mSession = new Session(getApplicationContext());
