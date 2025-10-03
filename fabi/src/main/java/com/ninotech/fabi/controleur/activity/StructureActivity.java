@@ -166,7 +166,7 @@ public class StructureActivity extends AppCompatActivity {
         mNameTextView.setText(mStructure.getName());
         mAuthorTextView.setText("@" + mStructure.getAuthor());
         mNumberTextView.setText(mStructure.getAdhererNumber() + " Adhérents ° " + mStructure.getBookNumber() + " Livres");
-        mDescriptionTextView.setText("Bienvenue sur la strcuture " + mStructure.getName() + "!");
+        mDescriptionTextView.setText("Bienvenue sur la structure " + mStructure.getName() + "!");
         if(mStructure.isAdhere())
         {
             mAdhererButton.setText("Se détacher");
