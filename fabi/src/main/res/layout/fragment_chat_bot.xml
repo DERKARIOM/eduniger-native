@@ -68,8 +68,7 @@
              />
 
     </RelativeLayout>
-
-    <Button
+    <ImageButton
         android:id="@+id/envoyer"
         android:layout_width="50dp"
         android:layout_height="50dp"
@@ -77,7 +76,8 @@
         android:layout_alignParentEnd="true"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
-        android:background="@drawable/forme_white_circulaire"
-        app:icon="@drawable/vector_white_send" />
+        android:background="@drawable/forme_circulaire"
+        android:src="@drawable/vector_white_send"
+         />
 
 </RelativeLayout>

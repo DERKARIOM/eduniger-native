@@ -131,9 +131,9 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
             {
                 mWaitChatImageView.setVisibility(GONE);
                 Picasso.get()
-                        .load(R.mipmap.ic_v2)
-                        .placeholder(R.mipmap.ic_v2)
-                        .error(R.mipmap.ic_v2)
+                        .load(R.drawable.ia_new)
+                        .placeholder(R.drawable.ia_new)
+                        .error(R.drawable.ia_new)
                         .into(mProfile);
             }
             else

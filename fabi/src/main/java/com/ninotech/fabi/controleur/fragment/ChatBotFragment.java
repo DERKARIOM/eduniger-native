@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
@@ -85,7 +86,7 @@ public class ChatBotFragment extends Fragment {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             getContext().registerReceiver(receiverGoToEndChat, new IntentFilter("GO_TO_END_CHAT"),Context.RECEIVER_EXPORTED);
         }
-        mList.add(new Chat("fabiola.png","duna","Salut que puis-je faire pour vous ?",true));
+        mList.add(new Chat("eduna.png","Eduna","Salut que puis-je faire pour vous ?",true));
         mChatAdapter = new ChatAdapter(mList);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setAdapter(mChatAdapter);
@@ -287,7 +288,7 @@ public class ChatBotFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private ChatAdapter mChatAdapter;
     private ArrayList<Chat> mList;
-    private Button mEnvoie;
+    private ImageButton mEnvoie;
     private EditText mEditText;
     private Button mMemorisation;
     private Session mSession;
