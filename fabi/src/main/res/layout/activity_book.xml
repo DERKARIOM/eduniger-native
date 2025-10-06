@@ -482,12 +482,11 @@
                     style="@style/match_wrap">
                     <TextView
                         style="@style/wrap_content_all"
-                        android:layout_marginStart="14dp"
+                        android:layout_marginStart="12dp"
                         android:layout_marginTop="10dp"
-                        android:layout_marginEnd="14dp"
+                        android:layout_marginEnd="12dp"
                         android:layout_marginBottom="10dp"
                         android:text="@string/to_book_about"
-                        android:textColor="@color/black"
                         android:textStyle="bold"
                         android:textSize="14sp" />
                     <Spinner
@@ -500,8 +499,9 @@
                     android:id="@+id/text_view_activity_book_description"
                     style="@style/wrap_content_all"
                     android:justificationMode="inter_word"
-                    android:layout_marginStart="12dp"
+                    android:layout_marginStart="12sp"
                     android:layout_marginEnd="12dp"
+                    android:textSize="14dp"
                     tools:targetApi="o" />
             </LinearLayout>
 
@@ -521,7 +521,6 @@
                         android:layout_marginEnd="12dp"
                         android:layout_marginBottom="10dp"
                         android:text="@string/comments"
-                        android:textColor="@color/black"
                         android:textStyle="bold"
                         android:textSize="@dimen/size_title" />
                     <Spinner
