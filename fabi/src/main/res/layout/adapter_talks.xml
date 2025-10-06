@@ -20,7 +20,7 @@
             style="@style/wrap_content_all"
             android:layout_toEndOf="@+id/image_view_adapter_talks_profile"
             android:text="@string/user_name"
-            android:textSize="15sp"
+            android:textSize="12sp"
             android:textStyle="bold"
             android:layout_centerVertical="true"/>
     </RelativeLayout>
@@ -31,9 +31,10 @@
         <TextView
             android:id="@+id/text_view_adapter_talks_message"
             style="@style/wrap_content_all"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="47dp"
+            android:layout_marginEnd="14dp"
             android:layout_marginTop="8dp"
-            android:textSize="17sp"
+            android:textSize="14sp"
             android:text="@string/message_default"/>
     </RelativeLayout>
 </RelativeLayout>
