@@ -10,9 +10,9 @@ import androidx.core.content.ContextCompat;
 import com.ninotech.fabi.R;
 
 public class StatusBarCusto {
-    public StatusBarCusto(Context context,Window window) {
+    public StatusBarCusto(Context context,Window window, int color) {
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(ContextCompat.getColor(context, R.color.white3));
+        window.setStatusBarColor(ContextCompat.getColor(context, color));
         window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
     }
 }

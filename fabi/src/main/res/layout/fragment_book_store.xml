@@ -7,7 +7,7 @@
     tools:context="com.ninotech.fabi.controleur.fragment.BookStoreFragment">
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab_layout_accuiel"
-        style="@style/background"
+        android:background="@color/transparent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <com.google.android.material.tabs.TabItem
