@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:fitsSystemWindows="true"
     tools:context="com.ninotech.fabi.controleur.activity.ServerActivity">
     <Switch
         android:id="@+id/switch_activity_server"
