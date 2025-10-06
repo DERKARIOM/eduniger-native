@@ -205,7 +205,6 @@ public class HomeFragment extends Fragment {
         }
         @Override
         protected void onPostExecute(String jsonData){
-            Log.e("Pub",jsonData);
             mPub = jsonData;
         }
     }

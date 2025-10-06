@@ -84,6 +84,7 @@ public class StructureActivity extends AppCompatActivity {
         mMoreDescTextView = findViewById(R.id.text_view_activity_structure_more_desc);
         mReduceTextView = findViewById(R.id.text_view_activity_structure_reduce_desc);
         mMoreBookTextView = findViewById(R.id.text_view_activity_structure_more_books);
+        mMoreCategorie = findViewById(R.id.text_view_activity_structure_more_category);
         mMoreAuthorTextView = findViewById(R.id.text_view_activity_structure_more_author);
         mAdhererButton = findViewById(R.id.button_activity_structure_adherer);
         mBookRecommendedRecyclerView = findViewById(R.id.recycler_view_activity_structure_books);
@@ -228,6 +229,15 @@ public class StructureActivity extends AppCompatActivity {
             }
         });
 
+        mMoreCategorie.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent searchIntent = new Intent(getApplicationContext(), SearchActivity.class);
+                searchIntent.putExtra("search_key", "STRUCT_CATEGORY");
+                searchIntent.putExtra("online_book_key", "STRUCTURE_CATEGORIE");
+                startActivity(searchIntent);
+            }
+        });
         mMoreAuthorTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -617,6 +627,7 @@ public class StructureActivity extends AppCompatActivity {
     private TextView mMoreDescTextView;
     private TextView mReduceTextView;
     private TextView mMoreBookTextView;
+    private TextView mMoreCategorie;
     private TextView mMoreAuthorTextView;
     private Button mAdhererButton;
     private ImageView mBackImageView;

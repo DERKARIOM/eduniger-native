@@ -1,5 +1,6 @@
 package com.ninotech.fabi.controleur.activity;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -27,6 +28,7 @@ import com.ninotech.fabi.controleur.adapter.AuthorFormatBookAdapter;
 import com.ninotech.fabi.controleur.adapter.AuthorHorizontaleAdapter;
 import com.ninotech.fabi.controleur.adapter.AuthorLocalAdapter;
 import com.ninotech.fabi.controleur.adapter.AuthorVerticaleAdapter;
+import com.ninotech.fabi.controleur.adapter.CategoryAdapter;
 import com.ninotech.fabi.controleur.adapter.FabiolaBookAdapter;
 import com.ninotech.fabi.controleur.adapter.HorizontaleAdapter;
 import com.ninotech.fabi.controleur.adapter.LocalBookAdapter;
@@ -92,6 +94,7 @@ public class SearchActivity extends AppCompatActivity {
         mSession = new Session(this);
         mSearchEditText.requestFocus();
         Intent searchIntent = getIntent();
+        mCategoryList = new ArrayList<>();
         BroadcastReceiver receiverFabiolaBookAdapter = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -147,6 +150,10 @@ public class SearchActivity extends AppCompatActivity {
                         if(!mCategorys.isEmpty())
                             filterCategory(s.toString());
                         break;
+                    case "STRUCT_CATEGORY":
+                        if(!mCategoryList.isEmpty())
+                            filterCategory(s.toString());
+                        break;
                     case "STRUCTURE":
                         if(!mStructures.isEmpty())
                             filterOnlineStructure(s.toString());
@@ -170,7 +177,6 @@ public class SearchActivity extends AppCompatActivity {
                         if(!mLocalBooks.isEmpty())
                             filterBookInCategory(s.toString());
                         break;
-
                 }
             }
         });
@@ -202,6 +208,9 @@ public class SearchActivity extends AppCompatActivity {
                         break;
                     case "AUTHOR_FORMAT_BOOK_PHYSIC_ADAPTER":
                         searchAuthorBook("AuthorPhysicBook.php",searchIntent.getStringExtra("id_author_key"));
+                        break;
+                    case "STRUCTURE_CATEGORIE":
+                        searchStructCategorie("Category.php",mSession.getIdNumber());
                         break;
 
                 }
@@ -353,6 +362,98 @@ public class SearchActivity extends AppCompatActivity {
         authorBookSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + fileSyn, mSession.getIdNumber(),idAuthor);
     }
 
+    public void searchStructCategorie(String fileSyn , String idAuthor)
+    {
+        BroadcastReceiver receiverNoConnectionAdapter = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if ("AUTHOR_SEARCH".equals(intent.getAction())) {
+                    try {
+                        ArrayList<Connection> list = new ArrayList<>();
+                        list.add(new Connection(getString(R.string.wait),"STRUCT_CATEGORIE_SEARCH",true));
+                        NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
+                        mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                        mRecyclerView.setAdapter(noConnectionAdapter);
+                        AuthorBookSyn authorBookSyn = new AuthorBookSyn();
+                        authorBookSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + fileSyn, mSession.getIdNumber(),idAuthor);
+                    }catch (Exception e)
+                    {
+                        Log.e("errRankingFragment",e.getMessage());
+                    }
+
+                }
+            }
+        };
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            registerReceiver(receiverNoConnectionAdapter, new IntentFilter("STRUCT_CATEGORIE"),Context.RECEIVER_EXPORTED);
+        }
+        AuthorBookSyn authorBookSyn = new AuthorBookSyn();
+        authorBookSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + fileSyn, mSession.getIdNumber(),idAuthor);
+    }
+
+    private class CategorySyn extends AsyncTask<String,Void,String> {
+        @Override
+        protected String doInBackground(String... params) {
+
+            try {
+                OkHttpClient client = new OkHttpClient();
+                RequestBody requestBody = new MultipartBody.Builder()
+                        .setType(MultipartBody.FORM)
+                        .addFormDataPart("idNumber",params[1])
+                        .build();
+                Request request = new Request.Builder()
+                        .url(params[0])
+                        .post(requestBody)
+                        .build();
+                try {
+                    Response response = client.newCall(request).execute();
+                    assert response.body() != null;
+                    return response.body().string();
+                }catch (IOException e)
+                {
+                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+
+            }catch (Exception e)
+            {
+                return null;
+            }
+            return null;
+        }
+        @Override
+        protected void onPostExecute(String jsonData){
+            if(jsonData != null)
+            {
+                if (!jsonData.equals("RAS"))
+                {
+                    JSONArray jsonArray = null;
+                    try {
+                        jsonArray = new JSONArray(jsonData);
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                    for (int i=0;i<jsonArray.length();i++) {
+                        try {
+                            mCategoryList.add(new Category(jsonArray.getJSONObject(i).getString("blanket"),jsonArray.getJSONObject(i).getString("title")));
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    CategoryAdapter categoryAdapter = new CategoryAdapter(mCategoryList);
+                    mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                    mRecyclerView.setAdapter(categoryAdapter);
+                }
+            }
+            else {
+                ArrayList<Connection> list = new ArrayList<>();
+                list.add(new Connection(getString(R.string.no_connection_available),"STRUCT_CATEGORIE_SEARCH",false));
+                NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
+                mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                mRecyclerView.setAdapter(noConnectionAdapter);
+            }
+        }
+    }
+
     public void searchOnLineStructure()
     {
 
@@ -386,6 +487,7 @@ public class SearchActivity extends AppCompatActivity {
         StructureSyn2 structureSyn2 = new StructureSyn2();
         structureSyn2.execute(Server.getIpServerAndroid(getApplicationContext()) + "StructureMore.php", mSession.getIdNumber());
     }
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
     public void searchFabiolaBook()
     {
         BroadcastReceiver receiverNoConnectionAdapter = new BroadcastReceiver() {
@@ -412,6 +514,7 @@ public class SearchActivity extends AppCompatActivity {
         FabiolaBookSyn fabiolaBookSyn = new FabiolaBookSyn();
         fabiolaBookSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "FabiolaBook.php", mSession.getIdNumber());
     }
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
     public void onLineBookSwitchCategory(String category)
     {
         BroadcastReceiver receiverNoConnectionAdapter = new BroadcastReceiver() {
@@ -917,6 +1020,16 @@ public class SearchActivity extends AppCompatActivity {
         }
         mCategoryLocalAdapter.filterList(mFilteredCategorys);
     }
+
+    private void filterStructCategory(String text) {
+        mFilteredCategorys.clear();
+        for (Category item : mCategoryList) {
+            if (item.getTitle().toLowerCase().contains(text.toLowerCase())) {
+                mFilteredCategorys.add(item);
+            }
+        }
+        mCategoryLocalAdapter.filterList(mFilteredCategorys);
+    }
     private void filterAuthor(String text) {
         mFilteredAuthors.clear();
         for (Author item : mAuthors) {
@@ -1395,4 +1508,5 @@ public class SearchActivity extends AppCompatActivity {
     private List<LocalBooks> mLocalBooks;
     private ArrayList<LocalBooks> mFilterLocalBooks;
     private LocalBookAdapter mLocalBookAdapter;
+    private ArrayList<Category> mCategoryList;
 }
