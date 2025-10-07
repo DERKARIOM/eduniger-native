@@ -193,7 +193,7 @@
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="5dp"
                     android:layout_marginBottom="5dp"
-                    app:icon="@drawable/vector_black3_physical"
+                    android:drawableLeft="@drawable/vector_black3_physical"
                     android:textSize="@dimen/size_button"
                     android:backgroundTint="@color/purple_200"/>
             </LinearLayout>
@@ -299,7 +299,7 @@
                             android:layout_marginTop="5dp"
                             android:textColor="@color/white"
                             android:layout_marginBottom="5dp"
-                            app:icon="@drawable/vector_white_download"
+                            android:drawableLeft="@drawable/vector_white_download"
                             android:textSize="@dimen/size_button"
                             android:backgroundTint="@color/purple_200"/>
                     </RelativeLayout>
@@ -387,7 +387,7 @@
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="5dp"
                     android:layout_marginBottom="5dp"
-                    app:icon="@drawable/vector_black3_pdf"
+                    android:drawableStart="@drawable/vector_black3_pdf"
                     android:textSize="@dimen/size_button"
                     android:backgroundTint="@color/purple_200"/>
                 <LinearLayout
@@ -417,7 +417,7 @@
                             android:layout_marginTop="5dp"
                             android:layout_marginBottom="5dp"
                             android:textColor="@color/white"
-                            app:icon="@drawable/vector_white_download"
+                            android:drawableLeft="@drawable/vector_white_download"
                             android:textSize="@dimen/size_button"
                             android:backgroundTint="@color/purple_200"/>
                     </RelativeLayout>
