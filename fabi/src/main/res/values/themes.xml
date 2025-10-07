@@ -321,4 +321,7 @@
         <item name="android:background">@drawable/forme_white_radius_100dp_border_vert</item>
         <item name="android:drawableStart">@drawable/vector_black3_phone_connected</item>
     </style>
+    <style name="icone_whatsapp">
+        <item name="android:src">@drawable/whaptsapp_black3</item>
+    </style>
 </resources>

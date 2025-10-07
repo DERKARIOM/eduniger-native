@@ -139,7 +139,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
             else
             {
                 mProfile.setVisibility(GONE);
-                mNom.setVisibility(GONE);
+                mNom.setText("Vous");
                 mWaitChatImageView.setVisibility(View.VISIBLE);
                 mMessage.setTextColor(Color.parseColor("#FFFFFFFF"));
                 RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mRelativeLayout.getLayoutParams();

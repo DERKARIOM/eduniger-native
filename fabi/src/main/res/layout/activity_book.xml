@@ -504,7 +504,6 @@
                     android:textSize="14dp"
                     tools:targetApi="o" />
             </LinearLayout>
-
             <LinearLayout
                 android:id="@+id/linear_layout_activity_book_comments"
                 style="@style/match_wrap"

@@ -172,4 +172,7 @@
     <style name="botton_navigation">
         <item name="android:background">@color/black</item>
     </style>
+    <style name="icone_whatsapp">
+        <item name="android:src">@drawable/whatsapp_white</item>
+    </style>
 </resources>

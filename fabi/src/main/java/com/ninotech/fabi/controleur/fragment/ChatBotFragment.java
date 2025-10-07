@@ -129,7 +129,7 @@ public class ChatBotFragment extends Fragment {
                     userCursor.moveToFirst();
                     mRequete = mEditText.getText().toString();
                     mEditText.setText("");
-                    mList.add(new Chat("moi.png",userCursor.getString(1),mRequete,false));
+                    mList.add(new Chat("moi.png","Vous",mRequete,false));
                     mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                     mRecyclerView.setAdapter(mChatAdapter);
                     mRecyclerView.smoothScrollToPosition(mChatAdapter.getItemCount()-1);
@@ -151,7 +151,7 @@ public class ChatBotFragment extends Fragment {
                             }
                             else
                             {
-                                mList.add(new Chat("fabiola.png","duna","je suis désolé la politique de la bibliothèque permet aux utilisateurs d'emprunter un livre pour une durée maximale de 5 jours. Merci pour votre compréhension.",true));
+                                mList.add(new Chat("fabiola.png","Eduna","je suis désolé la politique de la bibliothèque permet aux utilisateurs d'emprunter un livre pour une durée maximale de 5 jours. Merci pour votre compréhension.",true));
                                 mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                                 mRecyclerView.setAdapter(mChatAdapter);
                                 mRecyclerView.smoothScrollToPosition(mChatAdapter.getItemCount()-1);
@@ -209,18 +209,18 @@ public class ChatBotFragment extends Fragment {
             {
                 if(jsonData.equals("true")) {
                     if (mArm.getNumberOfDays() != -1)
-                        mList.add(new Chat("fabiola.png", "duna", "Votre réservation du livre \"" + mArm.getTitle() + "\" pour une durée de " + String.valueOf(mArm.getNumberOfDays()) + " jours a été enregistrée avec succès. Merci pour votre demande !", true));
+                        mList.add(new Chat("fabiola.png", "Eduna", "Votre réservation du livre \"" + mArm.getTitle() + "\" pour une durée de " + String.valueOf(mArm.getNumberOfDays()) + " jours a été enregistrée avec succès. Merci pour votre demande !", true));
                     else
                     {
                         if(mArm.getNumberOfDays() == 0)
-                            mList.add(new Chat("fabiola.png", "duna", "Votre réservation sur place du livre \"" + mArm.getTitle() + "\" a été enregistrée avec succès. Merci pour votre demande !", true));
+                            mList.add(new Chat("fabiola.png", "Eduna", "Votre réservation sur place du livre \"" + mArm.getTitle() + "\" a été enregistrée avec succès. Merci pour votre demande !", true));
                         else
-                            mList.add(new Chat("fabiola.png", "duna", "Votre réservation du livre \"" + mArm.getTitle() + "\"  pour une journée  a été enregistrée avec succès. Merci pour votre demande !", true));
+                            mList.add(new Chat("fabiola.png", "Eduna", "Votre réservation du livre \"" + mArm.getTitle() + "\"  pour une journée  a été enregistrée avec succès. Merci pour votre demande !", true));
                     }
                 }
                 else
                 {
-                    mList.add(new Chat("fabiola.png","duna","je suis désolé vous avez déjà effectué une réservation sur le livre \"" + mArm.getTitle() + "\". Merci pour votre demande !",true));
+                    mList.add(new Chat("fabiola.png","Eduna","je suis désolé vous avez déjà effectué une réservation sur le livre \"" + mArm.getTitle() + "\". Merci pour votre demande !",true));
                 }
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                 mRecyclerView.setAdapter(mChatAdapter);
@@ -270,7 +270,7 @@ public class ChatBotFragment extends Fragment {
                     requireContext().sendBroadcast(intent);
 
                     JSONObject jsonObject = new JSONObject(jsonData);
-                    mList.add(new Chat("fabiola.png","duna",jsonObject.getString("response"),true));
+                    mList.add(new Chat("fabiola.png","Eduna",jsonObject.getString("response"),true));
      //               mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 //                    mRecyclerView.setAdapter(mChatAdapter);
                 } catch (JSONException e) {
