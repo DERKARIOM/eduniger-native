@@ -281,7 +281,7 @@ public class ChatBotFragment extends Fragment {
             {
                 Intent intent = new Intent("RESPONSE_CHAT_OK");
                 requireContext().sendBroadcast(intent);
-                mList.add(new Chat("fabiola.png","duna","❌ Connexion perdue\n",true));
+                mList.add(new Chat("fabiola.png","Eduna","❌ Connexion perdue\n",true));
             }
         }
     }

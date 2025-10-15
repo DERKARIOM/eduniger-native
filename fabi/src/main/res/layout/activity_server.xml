@@ -58,14 +58,14 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:checked="true"
-            android:text="BlueHost (Internet)" />
+            android:text="Internet" />
 
         <RadioButton
             android:layout_marginStart="10dp"
             android:id="@+id/radio_button_activity_server_extranet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="DevHost (Extranet)" />
+            android:text="DevHub" />
 
         <RadioButton
             android:id="@+id/radioButton3"

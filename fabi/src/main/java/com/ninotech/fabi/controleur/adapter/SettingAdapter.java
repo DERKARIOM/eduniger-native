@@ -186,7 +186,7 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.MyViewHo
                                 Intent accountIntent = new Intent(itemView.getContext(), AccountActivity.class);
                                itemView.getContext().startActivity(accountIntent);
                                 break;
-                            case "Thème appliquée":
+                            case "Thème appliqué":
                                Intent themeIntent = new Intent(itemView.getContext(), ThemeActivity.class);
                                 itemView.getContext().startActivity(themeIntent);
                                 break;
