@@ -169,6 +169,10 @@
         <item name="android:background">@drawable/forme_black3_radius_100dp_border_vert</item>
         <item name="android:drawableStart">@drawable/vector_white_sombre_phone_connected</item>
     </style>
+    <style name="activity_register_author_spiner">
+        <item name="android:background">@drawable/forme_white_radius_100dp_border_vert</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
     <style name="botton_navigation">
         <item name="android:background">@color/black</item>
     </style>

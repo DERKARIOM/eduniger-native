@@ -56,7 +56,6 @@ public class RegisterAuthorActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_author);
         Objects.requireNonNull(getSupportActionBar()).hide();
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         mStructureSpinner = findViewById(R.id.spinner_activity_add_book_structure);
         mCategorySpinner = findViewById(R.id.spinner_activity_add_book_cotegory);
         mCoverImageView = findViewById(R.id.image_view_activity_add_book_cover);
@@ -77,7 +76,7 @@ public class RegisterAuthorActivity extends AppCompatActivity {
         mSession = new Session(getApplicationContext());
         Picasso.get()
                 .load(R.drawable.img_add_cover)
-                .placeholder(R.drawable.img_default_book)
+                .placeholder(R.drawable.img_wait_cover_book)
                 .error(R.drawable.img_add_cover)
                 .transform(new RoundedTransformation(15, 4))
                 .resize(360, 494)

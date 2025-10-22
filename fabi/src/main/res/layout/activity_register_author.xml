@@ -42,7 +42,7 @@
                 android:textStyle="bold"
                 android:layout_marginTop="10dp"
                 android:layout_marginStart="30dp"
-                android:textColor="@color/black"/>
+                />
             <EditText
                 android:id="@+id/edit_text_activity_register_author_title"
                 android:layout_width="match_parent"
@@ -66,7 +66,7 @@
                 android:textSize="@dimen/size_title"
                 android:textStyle="bold"
                 android:layout_marginStart="30dp"
-                android:textColor="@color/black"/>
+                />
             <EditText
                 android:id="@+id/edit_text_activity_register_author_description"
                 android:layout_width="match_parent"
@@ -91,7 +91,6 @@
                 <TextView
                     style="@style/wrap_content_all"
                     android:fontFamily="@font/apple1"
-                    android:textColor="@color/black"
                     android:textSize="15sp"
                     android:text="Cochez cette case si vous avez le format Physique."
                     />
@@ -110,7 +109,6 @@
                 <TextView
                     style="@style/wrap_content_all"
                     android:fontFamily="@font/apple1"
-                    android:textColor="@color/black"
                     android:textSize="15sp"
                     android:text="Le format électronique."
                     />
@@ -130,8 +128,13 @@
                     android:id="@+id/btnSelectPdf"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
                     android:text="Sélectionner un PDF"
+                    android:drawableLeft="@drawable/vector_white_download"
+                    android:textSize="@dimen/size_button"
                     android:layout_marginStart="20dp"
+                    android:backgroundTint="@color/purple_200"
                     android:layout_marginTop="20dp"/>
 
                 <TextView
@@ -152,7 +155,6 @@
                 <TextView
                     style="@style/wrap_content_all"
                     android:fontFamily="@font/apple1"
-                    android:textColor="@color/black"
                     android:textSize="15sp"
                     android:text="Le format audio."
                     />
@@ -173,6 +175,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Sélectionner un Audio"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:drawableLeft="@drawable/vector_white_download"
+                    android:textSize="@dimen/size_button"
+                    android:backgroundTint="@color/purple_200"
                     android:layout_marginStart="20dp"
                     android:layout_marginTop="20dp"/>
 
@@ -194,9 +201,8 @@
                 android:layout_marginTop="20dp"
                 android:layout_marginEnd="20dp"
                 android:layout_marginBottom="25dp"
-                android:background="@drawable/forme_white_radius_100dp_border_vert"
+                android:backgroundTint="@color/purple_200"
                 android:fontFamily="sans-serif-smallcaps"
-
                 android:gravity="center"
                 android:paddingTop="15dp"
                 android:paddingBottom="15dp" />
@@ -211,7 +217,7 @@
                 android:layout_marginEnd="20dp"
                 android:fontFamily="sans-serif-smallcaps"
                 android:gravity="center"
-               android:background="@drawable/forme_white_radius_100dp_border_vert"
+                android:backgroundTint="@color/purple_200"
                 android:paddingTop="15dp"
                 android:paddingBottom="15dp"/>
             <LinearLayout
@@ -227,7 +233,6 @@
                 <TextView
                     style="@style/wrap_content_all"
                     android:fontFamily="@font/apple1"
-                    android:textColor="@color/black"
                     android:textSize="15sp"
                     android:padding="10dp"
                     android:text="Je certifie que je suis l’auteur ou que je détiens les droits de publication de ce livre."
@@ -278,8 +283,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:background="@drawable/forme_purple2_200_radius_10dp"
                     android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:padding="10dp"
+                    style="@style/button_connexion"
                     android:text="Demander à publier"/>
             </RelativeLayout>
         </LinearLayout>

@@ -50,8 +50,6 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         Objects.requireNonNull(getSupportActionBar()).hide();
-
-
         /* Initialisation des attributs membre(propiete) */
         mNameEditText = findViewById(R.id.edit_text_activity_register_name);
         mFirstNameEditText = findViewById(R.id.edit_text_activity_register_first_name);
