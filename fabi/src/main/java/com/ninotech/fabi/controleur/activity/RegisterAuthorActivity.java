@@ -36,6 +36,7 @@ import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
 import com.ninotech.fabi.controleur.dialog.SimpleOkDialog;
 import com.ninotech.fabi.model.data.Book;
+import com.ninotech.fabi.model.data.Server;
 import com.ninotech.fabi.model.table.Session;
 import com.squareup.picasso.Picasso;
 
@@ -59,6 +60,7 @@ public class RegisterAuthorActivity extends AppCompatActivity {
         mCoverImageView = findViewById(R.id.image_view_activity_add_book_cover);
         mTitleEditText = findViewById(R.id.edit_text_activity_register_author_title);
         mDescriptionEditText = findViewById(R.id.edit_text_activity_register_author_description);
+        mCategorieEditText = findViewById(R.id.edit_text_activity_register_author_categorie);
         mIsPhysiqueCheckBox = findViewById(R.id.check_box_activity_register_author_is_physique);
         mIsPdfCheckBox = findViewById(R.id.check_box_activity_register_author_is_pdf);
         mIsAudioCheckBox = findViewById(R.id.check_box_activity_add_book_is_audio);
@@ -114,34 +116,33 @@ public class RegisterAuthorActivity extends AppCompatActivity {
         });
         btnSelectPdf.setOnClickListener(v -> checkPermissionAndOpenPicker());
         btnSelectAudio.setOnClickListener(v -> checkPermissionAndOpenPickerAudio());
-//        mAddButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                mAddButton.setText("");
-//                mWaitProgressBar.setVisibility(View.VISIBLE);
-//                mBook = new Book(mIdBookEditText.getText().toString(),
-//                        mTitleEditText.getText().toString(),
-//                        String.valueOf(mCategorySpinner.getSelectedItemPosition()),
-//                        mIdAuthorEditText.getText().toString(),
-//                        mDescriptionEditText.getText().toString());
-//                AddBookSyn addBookSyn = new AddBookSyn();
-//                addBookSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "AddBook.php",
+        mAddButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mAddButton.setText("");
+                mWaitProgressBar.setVisibility(View.VISIBLE);
+                mBook = new Book(null, mTitleEditText.getText().toString(),
+                        mCategorieEditText.getText().toString(), null,
+                        mDescriptionEditText.getText().toString());
+                AddBookSyn addBookSyn = new AddBookSyn();
+//                addBookSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "RegisterAuthor.php",
 //                        mSession.getIdNumber(),
-//                        mBook.getId(),
 //                        mBook.getTitle(),
 //                        mBook.getDescription(),
-//                        mBook.getAuthor(),
+//                        mBook.getCategory(),
 //                        boolToString(mIsPhysiqueCheckBox.isChecked()),
-//                        boolToString(mIsPdfCheckBox.isChecked()),
-//                        boolToString(mIsAudioCheckBox.isChecked()),
-//                        String.valueOf(mCategorySpinner.getSelectedItemPosition()),
-//                        String.valueOf(mStructureSpinner.getSelectedItemPosition()),
-//                        mPdfSizeEditText.getText().toString(),
-//                        mNbrPageEditText.getText().toString(),
-//                        mAudioSizeEditText.getText().toString(),
-//                        mTimeMaxEditText.getText().toString());
-//            }
-//        });
+//                        tvFileName.getText().toString(),
+//                        tvFileAudioName.getText().toString());
+                addBookSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "RegisterAuthor.php",
+                        mSession.getIdNumber(),
+                        mBook.getTitle(),
+                        mBook.getDescription(),
+                        mBook.getCategory(),
+                        boolToString(mIsPhysiqueCheckBox.isChecked()),
+                        tvFileName.getText().toString(),
+                        tvFileAudioName.getText().toString());
+            }
+        });
     }
 
     private void openGallery() {
@@ -187,19 +188,12 @@ public class RegisterAuthorActivity extends AppCompatActivity {
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
                         .addFormDataPart("idNumber", params[1])
-                        .addFormDataPart("idBook", params[2])
-                        .addFormDataPart("title", params[3])
-                        .addFormDataPart("description", params[4])
-                        .addFormDataPart("idAuthor", params[5])
-                        .addFormDataPart("isPhysique", params[6])
-                        .addFormDataPart("isPdf", params[7])
-                        .addFormDataPart("isAudio", params[8])
-                        .addFormDataPart("idCategory", params[9])
-                        .addFormDataPart("idStruct", params[10])
-                        .addFormDataPart("pdfSize", params[11])
-                        .addFormDataPart("nbrPage", params[12])
-                        .addFormDataPart("audioSize", params[13])
-                        .addFormDataPart("timeMax", params[14])
+                        .addFormDataPart("title", params[2])
+                        .addFormDataPart("description", params[3])
+                        .addFormDataPart("category", params[4])
+                        .addFormDataPart("isPhisic", params[5])
+                        .addFormDataPart("pdf", params[6])
+                        .addFormDataPart("audio", params[7])
                         .build();
                 Request request = new Request.Builder()
                         .url(params[0])
@@ -222,17 +216,17 @@ public class RegisterAuthorActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String response) {
             //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
-            // Toast.makeText(AddBookActivity.this, response, Toast.LENGTH_SHORT).show();
+            Toast.makeText(RegisterAuthorActivity.this, response, Toast.LENGTH_SHORT).show();
             if (response != null) {
                 if (response.equals("true")) {
                     SuccessSuggestionDialog();
                     mWaitProgressBar.setVisibility(View.INVISIBLE);
-                    mAddButton.setText("Ajouter");
+                    mAddButton.setText("Demander à publier");
                 }
             } else {
                 mErrorTextView.setText(R.string.no_connection);
                 mWaitProgressBar.setVisibility(View.INVISIBLE);
-                mAddButton.setText("Ajouter");
+                mAddButton.setText("Demander à publier");
             }
 
         }
@@ -486,6 +480,7 @@ public class RegisterAuthorActivity extends AppCompatActivity {
     private EditText mTitleEditText;
     private EditText mDescriptionEditText;
     private CheckBox mIsPhysiqueCheckBox;
+    private EditText mCategorieEditText;
     private CheckBox mIsPdfCheckBox;
     private CheckBox mIsAudioCheckBox;
     private TextView mErrorTextView;
