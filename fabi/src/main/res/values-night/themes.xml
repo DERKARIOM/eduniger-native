@@ -179,4 +179,7 @@
     <style name="icone_whatsapp">
         <item name="android:src">@drawable/whatsapp_white</item>
     </style>
+    <style name="background_dialog" parent="Theme.AppCompat.DayNight">
+        <item name="background">@drawable/forme_black3_radius_10dp</item>
+    </style>
 </resources>

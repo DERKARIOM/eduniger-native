@@ -216,7 +216,7 @@ public class RegisterAuthorActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String response) {
             //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
-            Toast.makeText(RegisterAuthorActivity.this, response, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(RegisterAuthorActivity.this, response, Toast.LENGTH_SHORT).show();
             if (response != null) {
                 if (response.equals("true")) {
                     SuccessSuggestionDialog();
@@ -238,7 +238,7 @@ public class RegisterAuthorActivity extends AppCompatActivity {
         simpleOkDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
         TextView okTextView = simpleOkDialog.findViewById(R.id.text_view_dialog_simple_ok);
         TextView messageTextView = simpleOkDialog.findViewById(R.id.text_view_dialog_simple_ok_message);
-        messageTextView.setText(R.string.suggestion_message_dialog);
+        messageTextView.setText("Votre livre sera vérifié dans les plus brefs délais. Vous recevrez une notification dès sa validation.");
         okTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
