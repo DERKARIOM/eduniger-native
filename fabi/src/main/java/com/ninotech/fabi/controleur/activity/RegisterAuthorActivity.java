@@ -56,8 +56,6 @@ public class RegisterAuthorActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_author);
         Objects.requireNonNull(getSupportActionBar()).hide();
-        mStructureSpinner = findViewById(R.id.spinner_activity_add_book_structure);
-        mCategorySpinner = findViewById(R.id.spinner_activity_add_book_cotegory);
         mCoverImageView = findViewById(R.id.image_view_activity_add_book_cover);
         mTitleEditText = findViewById(R.id.edit_text_activity_register_author_title);
         mDescriptionEditText = findViewById(R.id.edit_text_activity_register_author_description);
@@ -84,11 +82,9 @@ public class RegisterAuthorActivity extends AppCompatActivity {
 
         ArrayAdapter<CharSequence> categotyAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.array_categoty, android.R.layout.simple_spinner_item);
         categotyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mCategorySpinner.setAdapter(categotyAdapter);
 
         ArrayAdapter<CharSequence> structureAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.array_structure, android.R.layout.simple_spinner_item);
         structureAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mStructureSpinner.setAdapter(structureAdapter);
 
         mCoverImageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -487,8 +483,6 @@ public class RegisterAuthorActivity extends AppCompatActivity {
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_IMAGE_GALLERY = 2;
     private ImageView mCoverImageView;
-    private Spinner mStructureSpinner;
-    private Spinner mCategorySpinner;
     private EditText mTitleEditText;
     private EditText mDescriptionEditText;
     private CheckBox mIsPhysiqueCheckBox;
