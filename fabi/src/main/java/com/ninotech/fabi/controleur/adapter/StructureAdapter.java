@@ -212,15 +212,11 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
                                 detachStructSyn.execute(Server.getIpServerAndroid(itemView.getContext()) + "AdhererStruct.php",mSession.getIdNumber(),structure.getId());
                             }
                             break;
-                        case "AddBook":
-                            simpleOkDialog(R.drawable.add_auteurs,"Ajouter un contenue dans EduNiger" , "La fonctionnalité Devenir Auteur est actuellement en cours de développement. Elle sera disponible dans la version officielle à venir, inchaAllah.");
-                            break;
-                        case "RegisterAuthor":
+                        case "AddBook","RegisterAuthor":
                             Intent registerAuthorIntent = new Intent(itemView.getContext(), RegisterAuthorActivity.class);
                             itemView.getContext().startActivity(registerAuthorIntent);
                             //simpleOkDialog(R.drawable.add_auteurs,"Ajouter un contenue dans EduNiger" , "La fonctionnalité Devenir Auteur est actuellement en cours de développement. Elle sera disponible dans la version officielle à venir, inchaAllah.");
                             break;
-
                     }
 
                 }

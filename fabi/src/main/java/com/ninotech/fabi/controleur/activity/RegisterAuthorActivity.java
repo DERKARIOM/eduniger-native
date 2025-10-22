@@ -64,6 +64,7 @@ public class RegisterAuthorActivity extends AppCompatActivity {
         mIsPhysiqueCheckBox = findViewById(R.id.check_box_activity_register_author_is_physique);
         mIsPdfCheckBox = findViewById(R.id.check_box_activity_register_author_is_pdf);
         mIsAudioCheckBox = findViewById(R.id.check_box_activity_add_book_is_audio);
+        mCertificatCheckBox = findViewById(R.id.check_box_activity_add_book_engagement);
         mErrorTextView = findViewById(R.id.text_view_activity_add_book_error);
         mWaitProgressBar = findViewById(R.id.progress_bar_activity_add_book_whait);
         mAddButton = findViewById(R.id.button_activity_add_book);
@@ -74,6 +75,7 @@ public class RegisterAuthorActivity extends AppCompatActivity {
         btnSelectAudio = findViewById(R.id.btnSelectAudio);
         tvFileAudioName = findViewById(R.id.tvAudioFileName);
         mSession = new Session(getApplicationContext());
+        mAddButton.setEnabled(false);
         Picasso.get()
                 .load(R.drawable.img_add_cover)
                 .placeholder(R.drawable.img_wait_cover_book)
@@ -102,6 +104,16 @@ public class RegisterAuthorActivity extends AppCompatActivity {
                     mSettingPdfLinearLayout.setVisibility(View.VISIBLE);
                 else
                     mSettingPdfLinearLayout.setVisibility(View.GONE);
+            }
+        });
+
+        mCertificatCheckBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mCertificatCheckBox.isChecked())
+                    mAddButton.setEnabled(true);
+                else
+                    mAddButton.setEnabled(false);
             }
         });
 
@@ -480,6 +492,7 @@ public class RegisterAuthorActivity extends AppCompatActivity {
     private EditText mTitleEditText;
     private EditText mDescriptionEditText;
     private CheckBox mIsPhysiqueCheckBox;
+    private CheckBox mCertificatCheckBox;
     private EditText mCategorieEditText;
     private CheckBox mIsPdfCheckBox;
     private CheckBox mIsAudioCheckBox;
