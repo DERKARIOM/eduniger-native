@@ -72,6 +72,8 @@ public class RegisterAuthorActivity extends AppCompatActivity {
         mSettingAudioLinearLayout = findViewById(R.id.linear_layout_activity_add_book_setting_audio);
         btnSelectPdf = findViewById(R.id.btnSelectPdf);
         tvFileName = findViewById(R.id.tvFileName);
+        btnSelectAudio = findViewById(R.id.btnSelectAudio);
+        tvFileAudioName = findViewById(R.id.tvAudioFileName);
         mSession = new Session(getApplicationContext());
         Picasso.get()
                 .load(R.drawable.img_add_cover)
@@ -116,7 +118,7 @@ public class RegisterAuthorActivity extends AppCompatActivity {
             }
         });
         btnSelectPdf.setOnClickListener(v -> checkPermissionAndOpenPicker());
-
+        btnSelectAudio.setOnClickListener(v -> checkPermissionAndOpenPickerAudio());
 //        mAddButton.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
@@ -328,6 +330,15 @@ public class RegisterAuthorActivity extends AppCompatActivity {
         Toast.makeText(this, "PDF sélectionné avec succès", Toast.LENGTH_SHORT).show();
         Log.d(TAG, "PDF sélectionné: " + fileName + " | URI: " + uri.toString());
     }
+
+    private void displayAudioInfo(Uri uri) {
+        String fileName = getFileName(uri);
+        if (tvFileName != null) {
+            tvFileAudioName.setText("Fichier sélectionné: " + fileName);
+        }
+        Toast.makeText(this, "PDF sélectionné avec succès", Toast.LENGTH_SHORT).show();
+        Log.d(TAG, "PDF sélectionné: " + fileName + " | URI: " + uri.toString());
+    }
     private Uri selectedPdfUri;
     private final ActivityResultLauncher<Intent> pdfPickerLauncher =
             registerForActivityResult(
@@ -344,6 +355,21 @@ public class RegisterAuthorActivity extends AppCompatActivity {
                         }
                     }
             );
+    private final ActivityResultLauncher<Intent> audioPickerLauncher =
+            registerForActivityResult(
+                    new ActivityResultContracts.StartActivityForResult(),
+                    result -> {
+                        if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                            selectedPdfUri = result.getData().getData();
+                            if (selectedPdfUri != null) {
+                                displayAudioInfo(selectedPdfUri);
+                            } else {
+                                Toast.makeText(this, "Erreur lors de la sélection du fichier",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+            );
     private void openFilePicker() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("application/pdf");
@@ -352,6 +378,30 @@ public class RegisterAuthorActivity extends AppCompatActivity {
         try {
             pdfPickerLauncher.launch(
                     Intent.createChooser(intent, "Sélectionner un PDF")
+            );
+        } catch (android.content.ActivityNotFoundException ex) {
+            Toast.makeText(this,
+                    "Veuillez installer un gestionnaire de fichiers",
+                    Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "Aucun gestionnaire de fichiers trouvé", ex);
+        }
+    }
+    private void openAudioPicker() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+
+        // Option 1: Accepter tous les types audio
+        intent.setType("audio/*");
+
+        // Option 2: Si vous voulez être plus spécifique (décommentez si besoin)
+        // String[] mimeTypes = {"audio/mpeg", "audio/mp3", "audio/wav", "audio/ogg", "audio/aac", "audio/m4a"};
+        // intent.setType("audio/*");
+        // intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+        try {
+            audioPickerLauncher.launch(
+                    Intent.createChooser(intent, "Sélectionner un fichier audio")
             );
         } catch (android.content.ActivityNotFoundException ex) {
             Toast.makeText(this,
@@ -413,6 +463,28 @@ public class RegisterAuthorActivity extends AppCompatActivity {
             openFilePicker();
         }
     }
+    private void checkPermissionAndOpenPickerAudio() {
+        // Pour Android 13+ (API 33+), les permissions de stockage ont changé
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            // Pas besoin de permission pour ACTION_GET_CONTENT sur Android 13+
+            openAudioPicker();
+        } else if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            // Pour Android 6 à 12, vérifier la permission
+            if (ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.READ_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                // Demander la permission
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                        PERMISSION_REQUEST_CODE);
+            } else {
+                openAudioPicker();
+            }
+        } else {
+            // Pour Android 5 et inférieur, pas de permission runtime nécessaire
+            openFilePicker();
+        }
+    }
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_IMAGE_GALLERY = 2;
     private ImageView mCoverImageView;
@@ -432,6 +504,8 @@ public class RegisterAuthorActivity extends AppCompatActivity {
     private LinearLayout mSettingAudioLinearLayout;
     private Button btnSelectPdf;
     private TextView tvFileName;
+    private Button btnSelectAudio;
+    private TextView tvFileAudioName;
     private static final int PERMISSION_REQUEST_CODE = 100;
     private static final String TAG = "RegisterAuthorActivity";
 }
