@@ -324,4 +324,14 @@
     <style name="icone_whatsapp">
         <item name="android:src">@drawable/whaptsapp_black3</item>
     </style>
+
+    <style name="progress_bar_web" parent="@android:style/Widget.Holo.ProgressBar.Small">
+        <item name="android:layout_width">80dp</item>
+        <item name="android:layout_height">80dp</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:elevation">5dp</item>
+        <item name="android:padding">20dp</item>
+        <item name="android:progressDrawable">@drawable/form_circular_bar_connexion</item>
+    </style>
+
 </resources>

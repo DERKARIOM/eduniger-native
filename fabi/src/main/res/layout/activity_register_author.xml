@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <LinearLayout
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="50dp"
             android:id="@+id/relative_layout_activity_declaration_img"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -34,29 +34,6 @@
 
             android:layout_marginBottom="40dp"
             android:orientation="vertical">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="ID"
-                android:textSize="@dimen/size_title"
-                android:textStyle="bold"
-                android:layout_marginStart="30dp"
-                android:textColor="@color/black"/>
-            <EditText
-                android:id="@+id/edit_text_activity_add_book_id_book"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="25dp"
-                android:backgroundTint="@color/purple_200"
-                android:layout_marginEnd="25dp"
-                android:layout_marginBottom="20dp"
-                android:fontFamily="@font/apple1"
-                android:hint="Saisir le ID du livre"
-                android:inputType="textMultiLine"
-                android:paddingBottom="15dp"
-                android:paddingTop="15dp"
-                android:scrollbars="vertical"
-                android:autofillHints="" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -105,30 +82,6 @@
                 android:paddingTop="15dp"
                 android:scrollbars="vertical"
                 android:autofillHints="" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="ID Author"
-                android:textSize="@dimen/size_title"
-                android:layout_marginTop="10dp"
-                android:textStyle="bold"
-                android:layout_marginStart="30dp"
-                android:textColor="@color/black"/>
-            <EditText
-                android:id="@+id/edit_text_activity_add_book_id_author"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="25dp"
-                android:backgroundTint="@color/purple_200"
-                android:layout_marginEnd="25dp"
-                android:layout_marginBottom="20dp"
-                android:fontFamily="@font/apple1"
-                android:hint="Saisir le ID de l'auteur"
-                android:inputType="number"
-                android:paddingBottom="15dp"
-                android:paddingTop="15dp"
-                android:scrollbars="vertical"
-                android:autofillHints="" />
             <LinearLayout
                 style="@style/match_wrap"
                 android:layout_marginEnd="5dp"
@@ -172,37 +125,23 @@
                 android:layout_width="wrap_content"
                 android:visibility="gone"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <EditText
-                    android:id="@+id/edit_text_activity_register_author_pdf_size"
+                android:orientation="vertical">
+                <Button
+                    android:id="@+id/btnSelectPdf"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="25dp"
-                    android:backgroundTint="@color/purple_200"
-                    android:layout_marginEnd="25dp"
-                    android:layout_marginBottom="20dp"
-                    android:fontFamily="@font/apple1"
-                    android:hint="x Mo"
-                    android:inputType="text"
-                    android:paddingBottom="15dp"
-                    android:paddingTop="15dp"
-                    android:scrollbars="vertical"
-                    android:autofillHints="" />
-                <EditText
-                    android:id="@+id/edit_text_activity_add_book_pdf_nbr_page"
-                    android:layout_width="wrap_content"
+                    android:text="Sélectionner un PDF"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="20dp"/>
+
+                <TextView
+                    android:id="@+id/tvFileName"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="25dp"
-                    android:backgroundTint="@color/purple_200"
-                    android:layout_marginEnd="25dp"
-                    android:layout_marginBottom="20dp"
-                    android:fontFamily="@font/apple1"
-                    android:hint="x page"
-                    android:inputType="number"
-                    android:paddingBottom="15dp"
-                    android:paddingTop="15dp"
-                    android:scrollbars="vertical"
-                    android:autofillHints="" />
+                    android:text="Aucun fichier sélectionné"
+                    android:textSize="14sp"
+                    android:textAlignment="center"
+                    android:padding="16dp"/>
             </LinearLayout>
             <LinearLayout
                 style="@style/match_wrap"
@@ -225,55 +164,43 @@
             </LinearLayout>
             <LinearLayout
                 android:id="@+id/linear_layout_activity_add_book_setting_audio"
+                android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
-                android:orientation="horizontal">
-                <EditText
-                    android:id="@+id/edit_text_activity_add_book_audio_size"
+                android:orientation="vertical">
+                <Button
+                    android:id="@+id/btnSelectAudio"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="25dp"
-                    android:backgroundTint="@color/purple_200"
-                    android:layout_marginEnd="25dp"
-                    android:layout_marginBottom="20dp"
-                    android:fontFamily="@font/apple1"
-                    android:hint="x Mo"
-                    android:inputType="text"
-                    android:paddingBottom="15dp"
-                    android:paddingTop="15dp"
-                    android:scrollbars="vertical"
-                    android:autofillHints="" />
-                <EditText
-                    android:id="@+id/edit_text_activity_add_book_audio_max_time"
-                    android:layout_width="wrap_content"
+                    android:text="Sélectionner un Audio"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="20dp"/>
+
+                <TextView
+                    android:id="@+id/tvAudioFileName"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="25dp"
-                    android:backgroundTint="@color/purple_200"
-                    android:layout_marginEnd="25dp"
-                    android:layout_marginBottom="20dp"
-                    android:fontFamily="@font/apple1"
-                    android:hint="x : y"
-                    android:inputType="textMultiLine"
-                    android:paddingBottom="15dp"
-                    android:paddingTop="15dp"
-                    android:scrollbars="vertical"
-                    android:autofillHints="" />
+                    android:text="Aucun fichier sélectionné"
+                    android:textSize="14sp"
+                    android:textAlignment="center"
+                    android:padding="16dp"/>
             </LinearLayout>
+
             <Spinner
                 android:id="@+id/spinner_activity_add_book_cotegory"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="20dp"
-                android:layout_marginBottom="25dp"
                 android:layout_marginEnd="20dp"
-                android:fontFamily="sans-serif-smallcaps"
-                android:gravity="center"
-
+                android:layout_marginBottom="25dp"
                 android:background="@drawable/forme_white_radius_100dp_border_vert"
+                android:fontFamily="sans-serif-smallcaps"
+
+                android:gravity="center"
                 android:paddingTop="15dp"
-                android:paddingBottom="15dp"/>
+                android:paddingBottom="15dp" />
+
             <Spinner
                 android:id="@+id/spinner_activity_add_book_structure"
                 android:layout_width="match_parent"
@@ -287,11 +214,31 @@
                android:background="@drawable/forme_white_radius_100dp_border_vert"
                 android:paddingTop="15dp"
                 android:paddingBottom="15dp"/>
+            <LinearLayout
+                style="@style/match_wrap"
+                android:layout_marginEnd="5dp"
+                android:layout_marginTop="10dp"
+                >
+                <CheckBox
+                    android:id="@+id/check_box_activity_add_book_engagement"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"/>
+                <TextView
+                    style="@style/wrap_content_all"
+                    android:fontFamily="@font/apple1"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    android:padding="10dp"
+                    android:text="Je certifie que je suis l’auteur ou que je détiens les droits de publication de ce livre."
+                    />
+            </LinearLayout>
             <TextView
                 android:id="@+id/text_view_activity_add_book_error"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
+                android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
                 android:text=""
                 android:textColor="@color/rouge"
@@ -333,7 +280,7 @@
                     android:layout_centerInParent="true"
                     android:background="@drawable/forme_purple2_200_radius_10dp"
                     android:textAllCaps="false"
-                    android:text="@string/add" />
+                    android:text="Demander à publier" />
             </RelativeLayout>
         </LinearLayout>
     </RelativeLayout>

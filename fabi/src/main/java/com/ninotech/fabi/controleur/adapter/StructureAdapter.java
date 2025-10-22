@@ -22,8 +22,12 @@ import android.widget.Toast;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.R;
+import com.ninotech.fabi.controleur.activity.AddBookActivity;
 import com.ninotech.fabi.controleur.activity.MainActivity;
+import com.ninotech.fabi.controleur.activity.RegisterAuthorActivity;
 import com.ninotech.fabi.controleur.activity.StructureActivity;
+import com.ninotech.fabi.controleur.activity.TmpActivity;
+import com.ninotech.fabi.controleur.activity.WebActivity;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
 import com.ninotech.fabi.controleur.dialog.SimpleOkDialog;
 import com.ninotech.fabi.controleur.dialog.StructDeleteDialog;
@@ -212,7 +216,9 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
                             simpleOkDialog(R.drawable.add_auteurs,"Ajouter un contenue dans EduNiger" , "La fonctionnalité Devenir Auteur est actuellement en cours de développement. Elle sera disponible dans la version officielle à venir, inchaAllah.");
                             break;
                         case "RegisterAuthor":
-                            simpleOkDialog(R.drawable.add_auteurs,"Ajouter un contenue dans EduNiger" , "La fonctionnalité Devenir Auteur est actuellement en cours de développement. Elle sera disponible dans la version officielle à venir, inchaAllah.");
+                            Intent registerAuthorIntent = new Intent(itemView.getContext(), RegisterAuthorActivity.class);
+                            itemView.getContext().startActivity(registerAuthorIntent);
+                            //simpleOkDialog(R.drawable.add_auteurs,"Ajouter un contenue dans EduNiger" , "La fonctionnalité Devenir Auteur est actuellement en cours de développement. Elle sera disponible dans la version officielle à venir, inchaAllah.");
                             break;
 
                     }

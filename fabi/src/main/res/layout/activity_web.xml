@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".controleur.activity.WebActivity">
+    <RelativeLayout
+        android:id="@+id/relative_layout_activity_web_ok"
+        android:layout_width="match_parent"
+        android:visibility="visible"
+        android:layout_height="match_parent">
+        <ProgressBar
+            android:id="@+id/progress_bar_activity_find_my_phone"
+            android:layout_centerInParent="true"
+            style="@style/progress_bar_web" />
+        <WebView
+            android:id="@+id/web_view_activity_find_my_phone"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </RelativeLayout>
+    <RelativeLayout
+        android:visibility="invisible"
+        android:id="@+id/relative_layout_activity_web_error"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+        <ImageView
+            android:id="@+id/image_view_activity_web_404"
+            android:layout_width="wrap_content"
+            android:layout_height="300dp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/img_404"/>
+
+        <Button
+            android:id="@+id/button_activity_web"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:theme="@style/web"
+            android:layout_below="@id/image_view_activity_web_404"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/forme_purple_500_radius_25dp"
+            android:text="Réessayer"/>
+        <ProgressBar
+            android:visibility="invisible"
+            android:id="@+id/progress_bar_activity_web_reload"
+            android:layout_centerHorizontal="true"
+            android:layout_marginStart="6dp"
+            android:layout_marginTop="20dp"
+            android:layout_below="@id/image_view_activity_web_404"
+            style="@style/progress_bar_wait" />
+    </RelativeLayout>
+</RelativeLayout>
+
