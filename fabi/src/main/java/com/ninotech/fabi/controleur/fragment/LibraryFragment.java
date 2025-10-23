@@ -217,7 +217,7 @@ public class LibraryFragment extends Fragment {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
-                    requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Image téléversée avec succès " + response.toString(), Toast.LENGTH_SHORT).show());
+                    requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Image téléversée avec succès ", Toast.LENGTH_SHORT).show());
                 } else {
                     requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Erreur lors de l'upload " + response.toString(), Toast.LENGTH_SHORT).show());
                 }
