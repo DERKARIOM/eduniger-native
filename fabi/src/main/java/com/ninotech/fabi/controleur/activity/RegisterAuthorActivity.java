@@ -1,4 +1,6 @@
 package com.ninotech.fabi.controleur.activity;
+import static kotlin.io.ByteStreamsKt.readBytes;
+
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -40,10 +42,24 @@ import com.ninotech.fabi.model.data.Server;
 import com.ninotech.fabi.model.table.Session;
 import com.squareup.picasso.Picasso;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.Objects;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.Call;
+import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -330,7 +346,36 @@ public class RegisterAuthorActivity extends AppCompatActivity {
         }
         Toast.makeText(this, "PDF sélectionné avec succès", Toast.LENGTH_SHORT).show();
         Log.d(TAG, "PDF sélectionné: " + fileName + " | URI: " + uri.toString());
+        uploadPdf(uri);
     }
+
+    private File getFileFromUri(Uri uri) {
+        try {
+            // Créer un fichier temporaire
+            String fileName = getFileName(uri);
+            File tempFile = new File(getCacheDir(), fileName);
+
+            // Copier le contenu de l'URI vers le fichier
+            InputStream inputStream = getContentResolver().openInputStream(uri);
+            FileOutputStream outputStream = new FileOutputStream(tempFile);
+
+            byte[] buffer = new byte[4096];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+
+            outputStream.close();
+            inputStream.close();
+
+            return tempFile;
+
+        } catch (IOException e) {
+            Log.e(TAG, "Erreur conversion Uri vers File", e);
+            return null;
+        }
+    }
+
 
     private void displayAudioInfo(Uri uri) {
         String fileName = getFileName(uri);
@@ -485,6 +530,134 @@ public class RegisterAuthorActivity extends AppCompatActivity {
             // Pour Android 5 et inférieur, pas de permission runtime nécessaire
             openFilePicker();
         }
+    }
+
+
+
+
+    private void uploadPdf(File pdfFile) {
+        String serverUrl = Server.getIpServerAndroid(this) + "upload.php"; // Remplace par ton URL de serveur
+
+        OkHttpClient client = new OkHttpClient();
+
+        RequestBody requestBody = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("pdf", pdfFile.getName(),
+                        RequestBody.create(MediaType.parse("application/pdf"), pdfFile))
+                .build();
+
+        Request request = new Request.Builder()
+                .url(serverUrl)
+                .post(requestBody)
+                .build();
+
+        client.newCall(request).enqueue(new okhttp3.Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+                runOnUiThread(() -> Toast.makeText(RegisterAuthorActivity.this, "Échec de l'upload : " + e.getMessage(), Toast.LENGTH_SHORT).show());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    runOnUiThread(() -> Toast.makeText(RegisterAuthorActivity.this, "PDF téléversé avec succès " + response.toString(), Toast.LENGTH_SHORT).show());
+                } else {
+                    runOnUiThread(() -> Toast.makeText(RegisterAuthorActivity.this, "Erreur lors de l'upload " + response.toString(), Toast.LENGTH_SHORT).show());
+                }
+            }
+        });
+    }
+
+    private void uploadPdf(Uri pdfUri) {
+        String serverUrl = Server.getIpServer(this) + "upload.php";
+
+        OkHttpClient client = new OkHttpClient();
+
+        try {
+            InputStream inputStream = getContentResolver().openInputStream(pdfUri);
+            String fileName = getFileName(pdfUri);
+
+            RequestBody requestBody = new MultipartBody.Builder()
+                    .setType(MultipartBody.FORM)
+                    .addFormDataPart("pdf", fileName,
+                            RequestBody.create(MediaType.parse("application/pdf"),
+                                    readBytes(inputStream)))
+                    .build();
+
+            Request request = new Request.Builder()
+                    .url(serverUrl)
+                    .post(requestBody)
+                    .build();
+
+            client.newCall(request).enqueue(new okhttp3.Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    e.printStackTrace();
+                    runOnUiThread(() -> Toast.makeText(RegisterAuthorActivity.this, "Échec de l'upload : " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    if (!response.isSuccessful()) {
+                        runOnUiThread(() -> Toast.makeText(RegisterAuthorActivity.this,
+                                "Erreur HTTP: " + response.code(), Toast.LENGTH_SHORT).show());
+                        return;
+                    }
+
+                    String responseBody = response.body().string();
+                    Log.d("UPLOAD_DEBUG", "Raw response: " + responseBody);
+
+                    try {
+                        JSONObject json = new JSONObject(responseBody);
+
+                        if (json.has("success") && json.has("message")) {
+                            boolean success = json.getBoolean("success");
+                            String message = json.getString("message");
+
+                            runOnUiThread(() -> {
+                                if (success) {
+                                    Toast.makeText(RegisterAuthorActivity.this, "✅ " + message, Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(RegisterAuthorActivity.this, "❌ " + message, Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        } else {
+                            throw new JSONException("Champs manquants dans la réponse JSON");
+                        }
+
+                    } catch (JSONException e) {
+                        Log.e("UPLOAD_DEBUG", "JSON Error: " + e.getMessage());
+                        Log.e("UPLOAD_DEBUG", "Response was: " + responseBody);
+
+                        runOnUiThread(() -> {
+                            // Vérifier si c'est un message d'erreur PHP
+                            if (responseBody.contains("error") || responseBody.contains("Warning") || responseBody.contains("Notice")) {
+                                Toast.makeText(RegisterAuthorActivity.this, "Erreur PHP détectée", Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(RegisterAuthorActivity.this,
+                                        "Réponse serveur invalide: " + responseBody.substring(0, Math.min(50, responseBody.length())),
+                                        Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    }
+                }
+            });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Erreur avec le fichier: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private byte[] readBytes(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        int len;
+        while ((len = inputStream.read(buffer)) != -1) {
+            byteBuffer.write(buffer, 0, len);
+        }
+        return byteBuffer.toByteArray();
     }
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_IMAGE_GALLERY = 2;
