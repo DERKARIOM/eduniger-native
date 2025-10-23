@@ -96,9 +96,7 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_audio_player);
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         Objects.requireNonNull(getSupportActionBar()).hide();
-        StatusBarCusto statusBarCusto = new StatusBarCusto(this,getWindow(),R.color.white3);
         audioBookIntent = getIntent();
         mSession = new Session(this);
         mTitleTextView = findViewById(R.id.text_view_activity_audio_player_title);

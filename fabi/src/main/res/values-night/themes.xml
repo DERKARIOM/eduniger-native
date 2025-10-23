@@ -182,4 +182,7 @@
     <style name="background_dialog" parent="Theme.AppCompat.DayNight">
         <item name="background">@drawable/forme_black3_radius_10dp</item>
     </style>
+    <style name="audio_player_activity_btt_back">
+        <item name="background">@drawable/vector_white_back_player</item>
+    </style>
 </resources>

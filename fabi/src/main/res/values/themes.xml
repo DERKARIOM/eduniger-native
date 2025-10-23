@@ -340,4 +340,7 @@
     <style name="background_dialog">
         <item name="background">@drawable/forme_white_vert_radius_10dp</item>
     </style>
+    <style name="audio_player_activity_btt_back">
+        <item name="background">@drawable/vector_black2_back_player</item>
+    </style>
 </resources>

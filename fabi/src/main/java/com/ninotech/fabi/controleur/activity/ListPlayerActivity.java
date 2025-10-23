@@ -52,7 +52,6 @@ public class ListPlayerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_container);
         ActionBar ab = getSupportActionBar();
         assert ab != null;
-        ab.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.white)));
         ab.setHomeAsUpIndicator(R.drawable.vector_back);
         ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         ab.setCustomView(R.layout.custom_action_bar);
