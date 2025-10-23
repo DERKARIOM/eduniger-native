@@ -265,12 +265,12 @@
     <string name="no_category">"Aucune catégorie "</string>
     <string name="year">2023-2024</string>
     <string name="notification">Notification</string>
-    <string name="search_category">Recherche des categories</string>
-    <string name="search_author">Recherche des auteurs</string>
-    <string name="search_structure">Recherche des structures</string>
+    <string name="search_category">Recherche une categorie</string>
+    <string name="search_author">Recherche un auteur</string>
+    <string name="search_structure">Recherche une structure</string>
     <string name="no_notification">Auccune Notification</string>
     <string name="search_notification">Recherche des notifications</string>
-    <string name="search_setting">Recherche des paramètres</string>
+    <string name="search_setting">Recherche un paramètre</string>
     <string name="title_activity_test">TestActivity</string>
     <string name="tab_text_1">Tab 1</string>
     <string name="tab_text_2">Tab 2</string>
