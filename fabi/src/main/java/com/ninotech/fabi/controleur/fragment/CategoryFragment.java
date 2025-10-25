@@ -11,25 +11,28 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.adapter.CategoryAdapter;
 import com.ninotech.fabi.controleur.adapter.NoConnectionAdapter;
 import com.ninotech.fabi.model.data.Category;
 import com.ninotech.fabi.model.data.Connection;
 import com.ninotech.fabi.model.data.Server;
 import com.ninotech.fabi.model.table.Session;
-import com.ninotech.fabi.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -38,113 +41,200 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class CategoryFragment extends Fragment {
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_category, container, false);
-        mCategoryRecyclerView = view.findViewById(R.id.recycler_view_fragment_category);
-        mWaitRecyclerView = view.findViewById(R.id.recycler_view_fragment_category_wait);
-        Session session = new Session(getContext());
-        mCategoryList = new ArrayList<>();
-        ArrayList<Connection> list = new ArrayList<>();
-        list.add(new Connection(getString(R.string.wait),null,true));
-        mNoConnectionAdapter = new NoConnectionAdapter(list);
-        mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mWaitRecyclerView.setAdapter(mNoConnectionAdapter);
-        BroadcastReceiver receiverNoConnectionAdapter = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if ("CATEGORY_FRAGMENT".equals(intent.getAction())) {
-                    try {
-                        ArrayList<Connection> list = new ArrayList<>();
-                        list.add(new Connection(getString(R.string.wait),"CATEGORY_FRAGMENT",true));
-                        NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
-                        mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                        mWaitRecyclerView.setAdapter(noConnectionAdapter);
-                        CategorySyn categorySyn = new CategorySyn();
-                        categorySyn.execute(Server.getIpServerAndroid(getContext()) + "Category.php", session.getIdNumber());
-                    }catch (Exception e)
-                    {
-                        Log.e("errCategoryFragment",e.getMessage());
-                    }
 
-                }
-            }
-        };
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            getContext().registerReceiver(receiverNoConnectionAdapter, new IntentFilter("CATEGORY_FRAGMENT"),Context.RECEIVER_EXPORTED);
-        }
-        CategorySyn categorySyn = new CategorySyn();
-        categorySyn.execute(Server.getIpServerAndroid(getContext()) + "Category.php", session.getIdNumber());
+    private static final String TAG = "CategoryFragment";
+    private static final String ACTION_CATEGORY = "CATEGORY_FRAGMENT";
+    private static final String RESPONSE_RAS = "RAS";
+
+    // Views
+    private RecyclerView mCategoryRecyclerView;
+    private RecyclerView mWaitRecyclerView;
+
+    // Data
+    private final List<Category> mCategoryList = new ArrayList<>();
+    private Session mSession;
+
+    // Utils
+    private OkHttpClient mHttpClient;
+    private BroadcastReceiver mNoConnectionReceiver;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mHttpClient = new OkHttpClient();
+        mSession = new Session(requireContext());
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_category, container, false);
+
+        initializeViews(view);
+        setupRecyclerView();
+        registerBroadcastReceiver();
+        loadCategoryData();
+
         return view;
     }
 
-    private class CategorySyn extends AsyncTask<String,Void,String> {
+    private void initializeViews(View view) {
+        mCategoryRecyclerView = view.findViewById(R.id.recycler_view_fragment_category);
+        mWaitRecyclerView = view.findViewById(R.id.recycler_view_fragment_category_wait);
+    }
+
+    private void setupRecyclerView() {
+        List<Connection> waitList = new ArrayList<>();
+        waitList.add(new Connection(getString(R.string.wait), null, true));
+
+        NoConnectionAdapter adapter = new NoConnectionAdapter(waitList);
+        mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        mWaitRecyclerView.setAdapter(adapter);
+    }
+
+    private void registerBroadcastReceiver() {
+        mNoConnectionReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (ACTION_CATEGORY.equals(intent.getAction())) {
+                    handleBroadcastReceived();
+                }
+            }
+        };
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            requireContext().registerReceiver(mNoConnectionReceiver,
+                    new IntentFilter(ACTION_CATEGORY),
+                    Context.RECEIVER_EXPORTED);
+        }
+    }
+
+    private void handleBroadcastReceived() {
+        try {
+            showLoadingState();
+            loadCategoryData();
+        } catch (Exception e) {
+            Log.e(TAG, "Error handling broadcast", e);
+        }
+    }
+
+    private void showLoadingState() {
+        List<Connection> list = new ArrayList<>();
+        list.add(new Connection(getString(R.string.wait), ACTION_CATEGORY, true));
+
+        NoConnectionAdapter adapter = new NoConnectionAdapter(list);
+        mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        mWaitRecyclerView.setAdapter(adapter);
+    }
+
+    private void loadCategoryData() {
+        new CategorySyn().execute(
+                Server.getIpServerAndroid(requireContext()) + "Category.php",
+                mSession.getIdNumber()
+        );
+    }
+
+    // ==================== AsyncTask ====================
+
+    private class CategorySyn extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-
-            try {
-                OkHttpClient client = new OkHttpClient();
-                RequestBody requestBody = new MultipartBody.Builder()
-                        .setType(MultipartBody.FORM)
-                        .addFormDataPart("idNumber",params[1])
-                        .build();
-                Request request = new Request.Builder()
-                        .url(params[0])
-                        .post(requestBody)
-                        .build();
-                try {
-                    Response response = client.newCall(request).execute();
-                    assert response.body() != null;
-                    return response.body().string();
-                }catch (IOException e)
-                {
-                    Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-
-            }catch (Exception e)
-            {
-                return null;
-            }
-            return null;
+            return executePostRequest(params[0], params[1]);
         }
+
         @Override
-        protected void onPostExecute(String jsonData){
-            if(jsonData != null)
-            {
-                mWaitRecyclerView.setVisibility(View.GONE);
-                mCategoryRecyclerView.setVisibility(View.VISIBLE);
-                if (!jsonData.equals("RAS"))
-                {
-                    JSONArray jsonArray = null;
-                    try {
-                        jsonArray = new JSONArray(jsonData);
-                    } catch (JSONException e) {
-                        throw new RuntimeException(e);
+        protected void onPostExecute(String jsonData) {
+            if (!isAdded()) return;
+
+            if (jsonData != null) {
+                processCategoryData(jsonData);
+            } else {
+                showNoConnectionError();
+            }
+        }
+
+        private void processCategoryData(String jsonData) {
+            mWaitRecyclerView.setVisibility(View.GONE);
+            mCategoryRecyclerView.setVisibility(View.VISIBLE);
+
+            if (!RESPONSE_RAS.equals(jsonData)) {
+                try {
+                    JSONArray jsonArray = new JSONArray(jsonData);
+                    mCategoryList.clear();
+
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject obj = jsonArray.getJSONObject(i);
+                        mCategoryList.add(new Category(
+                                obj.getString("blanket"),
+                                obj.getString("title")
+                        ));
                     }
-                    for (int i=0;i<jsonArray.length();i++) {
-                        try {
-                            mCategoryList.add(new Category(jsonArray.getJSONObject(i).getString("blanket"),jsonArray.getJSONObject(i).getString("title")));
-                        } catch (JSONException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                    CategoryAdapter categoryAdapter = new CategoryAdapter(mCategoryList);
-                    mCategoryRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                    mCategoryRecyclerView.setAdapter(categoryAdapter);
+
+                    updateRecyclerView();
+
+                } catch (JSONException e) {
+                    Log.e(TAG, "Error parsing category data", e);
                 }
             }
-            else {
-                ArrayList<Connection> list = new ArrayList<>();
-                list.add(new Connection(getString(R.string.no_connection_available),"CATEGORY_FRAGMENT",false));
-                NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
-                mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                mWaitRecyclerView.setAdapter(noConnectionAdapter);
+        }
+
+        private void updateRecyclerView() {
+            CategoryAdapter adapter = new CategoryAdapter(mCategoryList);
+            mCategoryRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+            mCategoryRecyclerView.setAdapter(adapter);
+        }
+    }
+
+    // ==================== Helper Methods ====================
+
+    private String executePostRequest(String url, String idNumber) {
+        try {
+            RequestBody requestBody = new MultipartBody.Builder()
+                    .setType(MultipartBody.FORM)
+                    .addFormDataPart("idNumber", idNumber)
+                    .build();
+
+            Request request = new Request.Builder()
+                    .url(url)
+                    .post(requestBody)
+                    .build();
+
+            try (Response response = mHttpClient.newCall(request).execute()) {
+                if (response.body() != null) {
+                    return response.body().string();
+                }
+            }
+        } catch (IOException e) {
+            Log.e(TAG, "Network error: " + e.getMessage(), e);
+        } catch (Exception e) {
+            Log.e(TAG, "Unexpected error: " + e.getMessage(), e);
+        }
+        return null;
+    }
+
+    private void showNoConnectionError() {
+        List<Connection> list = new ArrayList<>();
+        list.add(new Connection(
+                getString(R.string.no_connection_available),
+                ACTION_CATEGORY,
+                false
+        ));
+
+        NoConnectionAdapter adapter = new NoConnectionAdapter(list);
+        mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        mWaitRecyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (mNoConnectionReceiver != null) {
+            try {
+                requireContext().unregisterReceiver(mNoConnectionReceiver);
+            } catch (Exception e) {
+                Log.e(TAG, "Error unregistering receiver", e);
             }
         }
     }
-    private RecyclerView mCategoryRecyclerView;
-    private RecyclerView mWaitRecyclerView;
-    private ArrayList<Category> mCategoryList;
-    private NoConnectionAdapter mNoConnectionAdapter;
 }
