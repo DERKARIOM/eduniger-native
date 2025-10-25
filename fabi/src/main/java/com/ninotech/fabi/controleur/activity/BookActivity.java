@@ -1,6 +1,5 @@
 package com.ninotech.fabi.controleur.activity;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -33,37 +32,34 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.adapter.NoConnectionAdapter;
 import com.ninotech.fabi.controleur.adapter.SemiNoConnectionAdapter;
 import com.ninotech.fabi.controleur.adapter.TalksAdapter;
+import com.ninotech.fabi.controleur.animation.RoundedTransformation;
 import com.ninotech.fabi.controleur.dialog.ReservationDialog;
-import com.ninotech.fabi.model.data.AudioDownloader;
+import com.ninotech.fabi.controleur.dialog.SimpleOkDialog;
 import com.ninotech.fabi.model.data.Author;
-import com.ninotech.fabi.model.data.OnlineBook;
 import com.ninotech.fabi.model.data.Category;
 import com.ninotech.fabi.model.data.Chat;
 import com.ninotech.fabi.model.data.Connection;
-import com.ninotech.fabi.model.data.ElectronicDownloader;
+import com.ninotech.fabi.model.data.OnlineBook;
 import com.ninotech.fabi.model.data.PasswordUtil;
 import com.ninotech.fabi.model.data.Server;
 import com.ninotech.fabi.model.data.Talks;
+import com.ninotech.fabi.model.data.Tones;
 import com.ninotech.fabi.model.service.AudioDownloadService;
 import com.ninotech.fabi.model.service.PdfDownloadService;
 import com.ninotech.fabi.model.table.AudioTable;
 import com.ninotech.fabi.model.table.ElectronicTable;
-import com.ninotech.fabi.model.data.LocalBooks;
-import com.ninotech.fabi.controleur.animation.RoundedTransformation;
 import com.ninotech.fabi.model.table.Session;
-import com.ninotech.fabi.model.data.Tones;
-import com.ninotech.fabi.controleur.adapter.TonesAdapter;
-import com.ninotech.fabi.R;
-import com.ninotech.fabi.controleur.dialog.SimpleOkDialog;
 import com.pspdfkit.configuration.activity.PdfActivityConfiguration;
 import com.pspdfkit.configuration.page.PageScrollDirection;
 import com.pspdfkit.configuration.page.PageScrollMode;
@@ -82,7 +78,6 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Timer;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.MultipartBody;
@@ -90,20 +85,111 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+
 public class BookActivity extends AppCompatActivity {
-    private static final int STORAGE_PERMISSION_REQUEST_CODE = 1;
+
+    private static final String TAG = "BookActivity";
+    private static final String ACTION_BOOK = "BOOK_ACTIVITY";
+    private static final String ACTION_FINISH_DOWNLOAD = "ACTION_FINISH_DOWNLOAD";
+    private static final String RESPONSE_RAS = "RAS";
+
+    // Views
+    private NestedScrollView mNestedScrollView;
+    private RecyclerView mCommentsRecyclerView;
+    private RecyclerView mNoConnectionRecyclerView;
+    private RelativeLayout mCommentRelativeLayout;
+    private ImageView mBlanketImageView;
+    private ImageView mLikeImageView;
+    private ImageView mNoLikeImageView;
+    private ImageView mSubscribeImageView;
+    private ImageView mPlayerImageView;
+    private ImageView mBackImageView;
+    private TextView mTitleTextView;
+    private TextView mCategoryTextView;
+    private TextView mDescriptionTextView;
+    private TextView mTimeNowTextView;
+    private TextView mNumberLikeTextView;
+    private TextView mNumberNoLikeTextView;
+    private TextView mNumberSubscribeTextView;
+    private TextView mCote;
+    private TextView mNameAuthor;
+    private TextView mNbrView;
+    private TextView mAudioSizeTextView;
+    private TextView mMaxTimeTextView;
+    private TextView mPdfSizeTextView;
+    private TextView mNbrPageTextView;
+    private EditText mMessageTextView;
+    private Button mReservationButton;
+    private Button audioButton;
+    private Button downloadPDFButton;
+    private SeekBar mSeekBar;
+    private LinearLayout mReservationLinearLayout;
+    private LinearLayout mAudioLinearLayout;
+    private LinearLayout mElectronicLinearLayout;
+    private LinearLayout mAudioSizeLinearLayout;
+    private LinearLayout mMaxTimeLinearLayout;
+    private LinearLayout mPdfSizeLinearLayout;
+    private LinearLayout mNbrPageLinearLayout;
+    private ProgressBar downloadAudioProgressBar;
+    private ProgressBar downloadPdfProgressBar;
+    private ProgressBar mWaitPlayerProgressBar;
+
+    // Data
+    private final List<Talks> mTalksList = new ArrayList<>();
+    private final List<Tones> mListTones = new ArrayList<>();
+    private OnlineBook mOnlineBook;
+    private Category mCategory;
+    private Author mAuthor;
+    private Tones mTones;
+    private Session mSession;
+    private String mSourcePdf;
+    private String mNbrJour;
+
+    // Utils
+    private MediaPlayer mMediaPlayer;
+    private Handler mHandler;
+    private ElectronicTable mElectronicTable;
+    private AudioTable mAudioTable;
+    private ReservationDialog mReservationDialog;
+    private TalksAdapter talksAdapter;
+    private Talks mTalksSelect;
+    private OkHttpClient mHttpClient;
+    private BroadcastReceiver mFinishDownloadReceiver;
+    private BroadcastReceiver mNoConnectionReceiver;
+
+    // State
+    private boolean isLike = false;
+    private boolean isNoLike = false;
+    private boolean isSubscribe = false;
+    private Thread mMediaPlayerThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book);
         Objects.requireNonNull(getSupportActionBar()).hide();
-        Intent intentBook = getIntent();
+
+        initializeComponents();
+        initializeViews();
+        setupRecyclerViews();
+        setupClickListeners();
+        registerBroadcastReceivers();
+        loadBookData();
+    }
+
+    private void initializeComponents() {
         mSession = new Session(this);
-        mOnlineBook = new OnlineBook(intentBook.getStringExtra("intent_adapter_book_id"));
-        mTalksList = new ArrayList<>();
-        mListSimilar = new ArrayList<>();
-        mListTones = new ArrayList<>();
+        String bookId = getIntent().getStringExtra("intent_adapter_book_id");
+        mOnlineBook = new OnlineBook(bookId);
+        mElectronicTable = new ElectronicTable(this);
+        mAudioTable = new AudioTable(this);
+        mReservationDialog = new ReservationDialog(this);
+        mHandler = new Handler();
+        mMediaPlayer = new MediaPlayer();
+        mHttpClient = new OkHttpClient();
+    }
+
+    private void initializeViews() {
         mNestedScrollView = findViewById(R.id.nested_scroll_view_activity_book);
         mCommentsRecyclerView = findViewById(R.id.recycler_view_activity_book_Comments);
         mNoConnectionRecyclerView = findViewById(R.id.recycler_view_activity_book_wait);
@@ -115,18 +201,12 @@ public class BookActivity extends AppCompatActivity {
         mTimeNowTextView = findViewById(R.id.text_view_activity_book_time_now);
         mReservationButton = findViewById(R.id.button_activity_book_reservation);
         audioButton = findViewById(R.id.button_activity_book_audio);
-        Button openPDFButton = findViewById(R.id.button_activity_book_open_pdf);
         downloadPDFButton = findViewById(R.id.button_activity_book_download_pdf);
         mMessageTextView = findViewById(R.id.text_view_activity_book_message);
         mNumberLikeTextView = findViewById(R.id.text_view_activity_book_number_like);
         mNumberNoLikeTextView = findViewById(R.id.text_view_activity_book_number_no_like);
         mNumberSubscribeTextView = findViewById(R.id.text_view_activity_book_number_subscribe);
         mCote = findViewById(R.id.text_view_adapter_book_simple_id_book);
-        ImageView addCommentsImageView = findViewById(R.id.image_view_activity_book_add_comments);
-        ImageView stopImageView = findViewById(R.id.image_view_activity_book_stop);
-        LinearLayout likeLinearLayout = findViewById(R.id.linear_layout_activity_book_like);
-        LinearLayout noLikeLinearLayout = findViewById(R.id.linear_layout_activiry_book_nolike);
-        LinearLayout subscribeLinearLayout = findViewById(R.id.linear_layout_activity_book_subscribe);
         mLikeImageView = findViewById(R.id.image_view_activity_book_like);
         mNoLikeImageView = findViewById(R.id.image_view_activity_book_no_like);
         mPlayerImageView = findViewById(R.id.image_view_activity_book_player);
@@ -149,1451 +229,1045 @@ public class BookActivity extends AppCompatActivity {
         mNbrPageLinearLayout = findViewById(R.id.linear_layout_activity_book_nbr_page);
         mNbrPageTextView = findViewById(R.id.text_view_activity_book_pdf_max_page);
         mNbrView = findViewById(R.id.text_view_activity_book_view);
-        mReservationDialog = new ReservationDialog(this);
-        mElectronicTable = new ElectronicTable(this);
-        mAudioTable = new AudioTable(this);
-        mHandler = new Handler();
-        mMediaPlayer = new MediaPlayer();
-        mTimer = new Timer();
+
         mPlayerImageView.setVisibility(View.GONE);
         audioButton.setEnabled(false);
+    }
 
-        BroadcastReceiver finishDownloadReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if ("ACTION_FINISH_DOWNLOAD".equals(intent.getAction())) {
-                    String formatString = intent.getStringExtra("format");
-                    switch (formatString)
-                    {
-                        case "audio":
-                            audioButton.setText("Lire");
-                            downloadAudioProgressBar.setVisibility(View.GONE);
-                           // succeDowloadAudioDialog("Le livre " + mTitleTextView.getText().toString() + " format audio a été téléchargé avec succès. N'hésitez pas à explorer son contenu dans l'application et contactez-nous en cas de besoin.");
-                            break;
-                        case "pdf":
-                            mSourcePdf = mElectronicTable.getPdf(mOnlineBook.getId());
-                            downloadPDFButton.setText("Ouvrir");
-                            downloadPdfProgressBar.setVisibility(View.GONE);
-                            //succeDowloadPDFDialog("Le livre " + mTitleTextView.getText().toString() + " format PDF a été téléchargé avec succès. N'hésitez pas à explorer son contenu dans l'application et contactez-nous en cas de besoin.");
-                            break;
-                    }
-                    Toast.makeText(context, mOnlineBook.getTitle() + " Télécharger avec succès", Toast.LENGTH_SHORT).show();
-                }
-            }
-        };
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            registerReceiver(finishDownloadReceiver, new IntentFilter("ACTION_FINISH_DOWNLOAD"),Context.RECEIVER_EXPORTED);
-        }
-        mBackImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
-       // createNotificationChannel();
-        ArrayList<Connection> list = new ArrayList<>();
-        list.add(new Connection(getString(R.string.wait),null,true));
-        mNoConnectionAdapter = new NoConnectionAdapter(list);
-        mNoConnectionRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        mNoConnectionRecyclerView.setAdapter(mNoConnectionAdapter);
+    private void setupRecyclerViews() {
+        List<Connection> waitList = new ArrayList<>();
+        waitList.add(new Connection(getString(R.string.wait), null, true));
 
-        mSemiNoConnectionAdapter = new SemiNoConnectionAdapter(list);
-        mCommentsRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        mCommentsRecyclerView.setAdapter(mSemiNoConnectionAdapter);
-        BroadcastReceiver receiverNoConnectionAdapter = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if ("BOOK_ACTIVITY".equals(intent.getAction())) {
-                    try {
-                        mNestedScrollView.setVisibility(View.GONE);
-                        mNoConnectionRecyclerView.setVisibility(View.VISIBLE);
-                        ArrayList<Connection> list = new ArrayList<>();
-                        list.add(new Connection(getString(R.string.wait),null,true));
-                        mNoConnectionAdapter = new NoConnectionAdapter(list);
-                        mNoConnectionRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                        mNoConnectionRecyclerView.setAdapter(mNoConnectionAdapter);
-                        RecoveryBook recoveryBook = new RecoveryBook();
-                        ReceiveComments receiveComments = new ReceiveComments();
-                        RecoveryTones recoveryTones = new RecoveryTones();
-                        IsLikeSyn isLikeSyn = new IsLikeSyn();
-                        IsNoLikeSyn isNoLikeSyn = new IsNoLikeSyn();
-                        IsSubscribeBookSyn isSubscribeBookSyn = new IsSubscribeBookSyn();
-                        InsertViewSyn insertViewSyn = new InsertViewSyn();
-                        IsReservationSyn isReservationSyn = new IsReservationSyn();
-                        recoveryBook.execute(Server.getIpServerAndroid(getApplicationContext()) + "Book.php",mSession.getIdNumber(), mOnlineBook.getId());
-                        isReservationSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "IsReservation.php",mSession.getIdNumber(), mOnlineBook.getId());
-                        insertViewSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "InsertView.php",mSession.getIdNumber(), mOnlineBook.getId());
-                        isSubscribeBookSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "IsSubscribeBook.php",mSession.getIdNumber(), mOnlineBook.getId());
-                        isLikeSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "IsLike.php",mSession.getIdNumber(), mOnlineBook.getId());
-                        isNoLikeSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "IsNoLike.php",mSession.getIdNumber(), mOnlineBook.getId());
-                        receiveComments.execute(Server.getIpServerAndroid(getApplicationContext()) + "ReceiveComments.php",mSession.getIdNumber(), mOnlineBook.getId());
-                        recoveryTones.execute(Server.getIpServerAndroid(getApplicationContext()) + "Tones.php");
-                    }catch (Exception e)
-                    {
-                        Log.e("errBookActivity",e.getMessage());
-                    }
-                }
-            }
-        };
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            registerReceiver(receiverNoConnectionAdapter, new IntentFilter("BOOK_ACTIVITY"),Context.RECEIVER_EXPORTED);
-        }
+        NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(waitList);
+        mNoConnectionRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mNoConnectionRecyclerView.setAdapter(noConnectionAdapter);
+
+        SemiNoConnectionAdapter semiNoConnectionAdapter = new SemiNoConnectionAdapter(waitList);
+        mCommentsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mCommentsRecyclerView.setAdapter(semiNoConnectionAdapter);
+    }
+
+    private void setupClickListeners() {
+        mBackImageView.setOnClickListener(v -> onBackPressed());
+
         mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                if (b) {
-                    mMediaPlayer.seekTo(i);
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (fromUser && mMediaPlayer != null) {
+                    mMediaPlayer.seekTo(progress);
                 }
             }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
+            @Override public void onStartTrackingTouch(SeekBar seekBar) {}
+            @Override public void onStopTrackingTouch(SeekBar seekBar) {}
         });
 
-        mReservationButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view)
-            {
-                if(mReservationButton.getText().toString().equals(getString(R.string.reservation_book)))
-                    ReservationDialog();
-                else
-                {
-                    if(mReservationButton.getText().toString().equals(getString(R.string.cancel_reservation)))
-                    {
-                        CancelReservationSyn cancelReservationSyn = new CancelReservationSyn();
-                        cancelReservationSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "CancelReservation.php",mSession.getIdNumber(), mOnlineBook.getId());
-                    }
-                }
-            }
-        });
-        openPDFButton.setVisibility(View.GONE);
-//        openPDFButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//            }
-//        });
-        downloadPDFButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                switch (downloadPDFButton.getText().toString())
-                {
-                    case "Format PDF":
-                        downloadPDFButton.setText("En Cours...");
-                        Toast.makeText(BookActivity.this, "Téléchargement démarrer", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(BookActivity.this, PdfDownloadService.class);
-                        intent.putExtra("fileNames", new String[]{mOnlineBook.getCover(), mOnlineBook.getElectronic(),mCategory.getCover(),mAuthor.getProfile(),mSession.getIdNumber(),mOnlineBook.getId(),mOnlineBook.getDescription(),mOnlineBook.getAuthor(),mOnlineBook.getCategory(),mOnlineBook.getTitle()});
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            startForegroundService(intent);
-                        }
-                        //downloadPdfProgressBar.setVisibility(View.GONE);
-                        //ElectronicDownloader electronicDownloader = new ElectronicDownloader(getApplicationContext(),mSession.getIdNumber(), mOnlineBook);
-                        // Toast.makeText(BookActivity.this, mOnlineBook.getAuthor(), Toast.LENGTH_SHORT).show();
-                        //electronicDownloader.execute(mOnlineBook.getCover(), mOnlineBook.getElectronic(),mCategory.getCover(),mAuthor.getProfile());
-                        break;
-                    case "Ouvrir":
-                        File file = new File(mSourcePdf);
-                        Uri uri = Uri.parse(Uri.fromFile(file).toString());
-                        PdfActivityConfiguration config = new PdfActivityConfiguration.Builder(BookActivity.this)
-                                .hideThumbnailGrid().setEnabledShareFeatures(ShareFeatures.none())
-                                .disablePrinting()
-                                .disablePrinting()
-                                .disableAnnotationEditing()
-                                .disableBookmarkEditing()
-                                .disableDocumentEditor()
-                                .disableAnnotationList()
-                                .scrollDirection(PageScrollDirection.VERTICAL)
-                                .scrollMode(PageScrollMode.CONTINUOUS)
-                                .disableAnnotationLimitedToPageBounds()
-                                .disableCopyPaste()
-                                .disableFormEditing()
-                                .disableContentEditing()
-                                .textSelectionEnabled(false)
-                                .enableDocumentInfoView()
-                                .setSettingsMenuItems(EnumSet.of(
-                                        SettingsMenuItemType.THEME,
-                                        SettingsMenuItemType.PAGE_LAYOUT,
-                                        SettingsMenuItemType.PAGE_TRANSITION,
-                                        SettingsMenuItemType.PRESETS
-                                ))
-                                .build();
-                        PdfActivity.showDocument(BookActivity.this,uri,config);
-                        break;
-                }
+        mReservationButton.setOnClickListener(v -> handleReservationClick());
+        downloadPDFButton.setOnClickListener(v -> handlePdfDownload());
+        audioButton.setOnClickListener(v -> handleAudioClick());
 
-            }
-        });
-        audioButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switch (audioButton.getText().toString())
-                {
-                    case "Format Audio":
-                        audioButton.setText("En Cours...");
-                        downloadAudioProgressBar.setVisibility(View.GONE);
-                        Intent intent = new Intent(BookActivity.this, AudioDownloadService.class);
-                        intent.putExtra("fileNames", new String[]{mOnlineBook.getCover(), mOnlineBook.getElectronic(),mCategory.getCover(),mAuthor.getProfile(),mTones.getAudio(),mSession.getIdNumber(),mOnlineBook.getId(),mOnlineBook.getDescription(),mOnlineBook.getAuthor(),mOnlineBook.getCategory(),mOnlineBook.getTitle(),mTones.getDuration()});
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            startForegroundService(intent);
-                        }
-                        //AudioDownloader audioDownloader = new AudioDownloader(getApplicationContext(),mSession.getIdNumber(), mOnlineBook,mTones);
-                        //audioDownloader.execute(mOnlineBook.getCover(), mOnlineBook.getElectronic(),mCategory.getCover(),mAuthor.getProfile(),mTones.getAudio());
-                        break;
-                    case "Lire":
-                        Intent audioPayerIntent = new Intent(BookActivity.this, AudioPlayerActivity.class);
-                        audioPayerIntent.putExtra("key_adapter_audio_book_id",mOnlineBook.getId());
-                        audioPayerIntent.putExtra("list_audio_source","all");
-                        startActivity(audioPayerIntent);
-                        break;
+        mPlayerImageView.setOnClickListener(v -> toggleMediaPlayer());
+        findViewById(R.id.image_view_activity_book_stop).setOnClickListener(v -> stopMediaPlayer());
 
-                }
-            }
-        });
-        mPlayerImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(mMediaPlayer.isPlaying())
-                {
-                    mPlayerImageView.setImageResource(R.drawable.vector_black3_pause);
-                    mMediaPlayer.pause();
-                }
-                else
-                {
-                    mPlayerImageView.setImageResource(R.drawable.vector_black3_play);
-                    mMediaPlayer.start();
-                }
-            }
-        });
+        findViewById(R.id.linear_layout_activity_book_like).setOnClickListener(v -> handleLike());
+        findViewById(R.id.linear_layout_activiry_book_nolike).setOnClickListener(v -> handleNoLike());
+        findViewById(R.id.linear_layout_activity_book_subscribe).setOnClickListener(v -> handleSubscribe());
+        findViewById(R.id.image_view_activity_book_add_comments).setOnClickListener(v -> sendComment());
+    }
 
-        stopImageView.setOnClickListener(new View.OnClickListener() {
+    private void registerBroadcastReceivers() {
+        mFinishDownloadReceiver = new BroadcastReceiver() {
             @Override
-            public void onClick(View view) {
-                if(mMediaPlayer != null)
-                {
-                    mPlayerImageView.setImageResource(R.drawable.vector_black3_pause);
-                    mSeekBar.setProgress(0);
-                    mMediaPlayer.pause();
-                    mTimeNowTextView.setText(R.string.default_time);
+            public void onReceive(Context context, Intent intent) {
+                if (ACTION_FINISH_DOWNLOAD.equals(intent.getAction())) {
+                    handleDownloadFinished(intent);
                 }
             }
-        });
-        likeLinearLayout.setOnClickListener(new View.OnClickListener() {
+        };
+
+        mNoConnectionReceiver = new BroadcastReceiver() {
             @Override
-            public void onClick(View view) {
-                if(isLike)
-                {
-                    mOnlineBook.disLike();
-                    mLikeImageView.setImageResource(R.drawable.vector_black3_off_like);
-                    isLike=false;
+            public void onReceive(Context context, Intent intent) {
+                if (ACTION_BOOK.equals(intent.getAction())) {
+                    showLoadingState();
+                    loadBookData();
                 }
-                else
-                {
-                    mOnlineBook.like();
-                    mLikeImageView.setImageResource(R.drawable.vector_purple2_200_on_like);
-                    if (isNoLike)
-                    {
-                        mOnlineBook.disNoLike();
-                        mNoLikeImageView.setImageResource(R.drawable.vector_black3_off_no_like);
-                        isNoLike=false;
-                        mNumberNoLikeTextView.setText(String.valueOf(mOnlineBook.getNumberNoLikes()));
-                    }
-                    isLike=true;
-                }
-                mNumberLikeTextView.setText(String.valueOf(mOnlineBook.getNumberLikes()));
-                InsertLikeSyn insertLikeSyn = new InsertLikeSyn();
-                insertLikeSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "InsertLike.php",mSession.getIdNumber(), mOnlineBook.getId());
             }
+        };
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            registerReceiver(mFinishDownloadReceiver,
+                    new IntentFilter(ACTION_FINISH_DOWNLOAD), Context.RECEIVER_EXPORTED);
+            registerReceiver(mNoConnectionReceiver,
+                    new IntentFilter(ACTION_BOOK), Context.RECEIVER_EXPORTED);
+        }
+    }
+
+    private void handleDownloadFinished(Intent intent) {
+        String format = intent.getStringExtra("format");
+        if ("audio".equals(format)) {
+            audioButton.setText("Lire");
+            downloadAudioProgressBar.setVisibility(View.GONE);
+        } else if ("pdf".equals(format)) {
+            mSourcePdf = mElectronicTable.getPdf(mOnlineBook.getId());
+            downloadPDFButton.setText("Ouvrir");
+            downloadPdfProgressBar.setVisibility(View.GONE);
+        }
+        Toast.makeText(this, mOnlineBook.getTitle() + " Téléchargé avec succès", Toast.LENGTH_SHORT).show();
+    }
+
+    private void showLoadingState() {
+        mNestedScrollView.setVisibility(View.GONE);
+        mNoConnectionRecyclerView.setVisibility(View.VISIBLE);
+
+        List<Connection> list = new ArrayList<>();
+        list.add(new Connection(getString(R.string.wait), null, true));
+        NoConnectionAdapter adapter = new NoConnectionAdapter(list);
+        mNoConnectionRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mNoConnectionRecyclerView.setAdapter(adapter);
+    }
+
+    private void loadBookData() {
+        String baseUrl = Server.getIpServerAndroid(this);
+        String idNumber = mSession.getIdNumber();
+        String bookId = mOnlineBook.getId();
+
+        new RecoveryBook().execute(baseUrl + "Book.php", idNumber, bookId);
+        new IsReservationSyn().execute(baseUrl + "IsReservation.php", idNumber, bookId);
+        new InsertViewSyn().execute(baseUrl + "InsertView.php", idNumber, bookId);
+        new IsSubscribeBookSyn().execute(baseUrl + "IsSubscribeBook.php", idNumber, bookId);
+        new IsLikeSyn().execute(baseUrl + "IsLike.php", idNumber, bookId);
+        new IsNoLikeSyn().execute(baseUrl + "IsNoLike.php", idNumber, bookId);
+        new ReceiveComments().execute(baseUrl + "ReceiveComments.php", idNumber, bookId);
+        new RecoveryTones().execute(baseUrl + "Tones.php");
+    }
+
+    // ==================== Click Handlers ====================
+
+    private void handleReservationClick() {
+        String buttonText = mReservationButton.getText().toString();
+        if (buttonText.equals(getString(R.string.reservation_book))) {
+            showReservationDialog();
+        } else if (buttonText.equals(getString(R.string.cancel_reservation))) {
+            new CancelReservationSyn().execute(
+                    Server.getIpServerAndroid(this) + "CancelReservation.php",
+                    mSession.getIdNumber(),
+                    mOnlineBook.getId()
+            );
+        }
+    }
+
+    private void handlePdfDownload() {
+        String buttonText = downloadPDFButton.getText().toString();
+
+        if ("Format PDF".equals(buttonText)) {
+            downloadPDFButton.setText("En Cours...");
+            Toast.makeText(this, "Téléchargement démarré", Toast.LENGTH_SHORT).show();
+            startPdfDownloadService();
+        } else if ("Ouvrir".equals(buttonText)) {
+            openPdfDocument();
+        }
+    }
+
+    private void startPdfDownloadService() {
+        Intent intent = new Intent(this, PdfDownloadService.class);
+        intent.putExtra("fileNames", new String[]{
+                mOnlineBook.getCover(),
+                mOnlineBook.getElectronic(),
+                mCategory.getCover(),
+                mAuthor.getProfile(),
+                mSession.getIdNumber(),
+                mOnlineBook.getId(),
+                mOnlineBook.getDescription(),
+                mOnlineBook.getAuthor(),
+                mOnlineBook.getCategory(),
+                mOnlineBook.getTitle()
         });
 
-        noLikeLinearLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(isNoLike)
-                {
-                    mOnlineBook.disNoLike();
-                    mNoLikeImageView.setImageResource(R.drawable.vector_black3_off_no_like);
-                    isNoLike=false;
-                }
-                else
-                {
-                    mOnlineBook.noLike();
-                    mNoLikeImageView.setImageResource(R.drawable.vector_rouge_on_nolike);
-                    if (isLike)
-                    {
-                        mOnlineBook.disLike();
-                        mLikeImageView.setImageResource(R.drawable.vector_black3_off_like);
-                        isLike=false;
-                        mNumberLikeTextView.setText(String.valueOf(mOnlineBook.getNumberLikes()));
-                    }
-                    isNoLike=true;
-                }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(intent);
+        }
+    }
+
+    private void openPdfDocument() {
+        File file = new File(mSourcePdf);
+        Uri uri = Uri.fromFile(file);
+
+        PdfActivityConfiguration config = new PdfActivityConfiguration.Builder(this)
+                .hideThumbnailGrid()
+                .setEnabledShareFeatures(ShareFeatures.none())
+                .disablePrinting()
+                .disableAnnotationEditing()
+                .disableBookmarkEditing()
+                .disableDocumentEditor()
+                .disableAnnotationList()
+                .scrollDirection(PageScrollDirection.VERTICAL)
+                .scrollMode(PageScrollMode.CONTINUOUS)
+                .disableAnnotationLimitedToPageBounds()
+                .disableCopyPaste()
+                .disableFormEditing()
+                .disableContentEditing()
+                .textSelectionEnabled(false)
+                .enableDocumentInfoView()
+                .setSettingsMenuItems(EnumSet.of(
+                        SettingsMenuItemType.THEME,
+                        SettingsMenuItemType.PAGE_LAYOUT,
+                        SettingsMenuItemType.PAGE_TRANSITION,
+                        SettingsMenuItemType.PRESETS
+                ))
+                .build();
+
+        PdfActivity.showDocument(this, uri, config);
+    }
+
+    private void handleAudioClick() {
+        String buttonText = audioButton.getText().toString();
+
+        if ("Format Audio".equals(buttonText)) {
+            audioButton.setText("En Cours...");
+            downloadAudioProgressBar.setVisibility(View.GONE);
+            startAudioDownloadService();
+        } else if ("Lire".equals(buttonText)) {
+            navigateToAudioPlayer();
+        }
+    }
+
+    private void startAudioDownloadService() {
+        Intent intent = new Intent(this, AudioDownloadService.class);
+        intent.putExtra("fileNames", new String[]{
+                mOnlineBook.getCover(),
+                mOnlineBook.getElectronic(),
+                mCategory.getCover(),
+                mAuthor.getProfile(),
+                mTones.getAudio(),
+                mSession.getIdNumber(),
+                mOnlineBook.getId(),
+                mOnlineBook.getDescription(),
+                mOnlineBook.getAuthor(),
+                mOnlineBook.getCategory(),
+                mOnlineBook.getTitle(),
+                mTones.getDuration()
+        });
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(intent);
+        }
+    }
+
+    private void navigateToAudioPlayer() {
+        Intent intent = new Intent(this, AudioPlayerActivity.class);
+        intent.putExtra("key_adapter_audio_book_id", mOnlineBook.getId());
+        intent.putExtra("list_audio_source", "all");
+        startActivity(intent);
+    }
+
+    private void toggleMediaPlayer() {
+        if (mMediaPlayer != null) {
+            if (mMediaPlayer.isPlaying()) {
+                mPlayerImageView.setImageResource(R.drawable.vector_black3_pause);
+                mMediaPlayer.pause();
+            } else {
+                mPlayerImageView.setImageResource(R.drawable.vector_black3_play);
+                mMediaPlayer.start();
+            }
+        }
+    }
+
+    private void stopMediaPlayer() {
+        if (mMediaPlayer != null) {
+            mPlayerImageView.setImageResource(R.drawable.vector_black3_pause);
+            mSeekBar.setProgress(0);
+            mMediaPlayer.pause();
+            mTimeNowTextView.setText(R.string.default_time);
+        }
+    }
+
+    private void handleLike() {
+        if (isLike) {
+            mOnlineBook.disLike();
+            mLikeImageView.setImageResource(R.drawable.vector_black3_off_like);
+            isLike = false;
+        } else {
+            mOnlineBook.like();
+            mLikeImageView.setImageResource(R.drawable.vector_purple2_200_on_like);
+
+            if (isNoLike) {
+                mOnlineBook.disNoLike();
+                mNoLikeImageView.setImageResource(R.drawable.vector_black3_off_no_like);
+                isNoLike = false;
                 mNumberNoLikeTextView.setText(String.valueOf(mOnlineBook.getNumberNoLikes()));
-                InsertNoLikeSyn insertNoLikeSyn = new InsertNoLikeSyn();
-                insertNoLikeSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "InsertNoLike.php",mSession.getIdNumber(), mOnlineBook.getId());
             }
-        });
+            isLike = true;
+        }
 
-        subscribeLinearLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(isSubscribe)
-                {
-                    mOnlineBook.desSubscribe();
-                    mSubscribeImageView.setImageResource(R.drawable.vector_black3_off_subscribe);
-                    isSubscribe=false;
+        mNumberLikeTextView.setText(String.valueOf(mOnlineBook.getNumberLikes()));
+        new InsertLikeSyn().execute(
+                Server.getIpServerAndroid(this) + "InsertLike.php",
+                mSession.getIdNumber(),
+                mOnlineBook.getId()
+        );
+    }
+
+    private void handleNoLike() {
+        if (isNoLike) {
+            mOnlineBook.disNoLike();
+            mNoLikeImageView.setImageResource(R.drawable.vector_black3_off_no_like);
+            isNoLike = false;
+        } else {
+            mOnlineBook.noLike();
+            mNoLikeImageView.setImageResource(R.drawable.vector_rouge_on_nolike);
+
+            if (isLike) {
+                mOnlineBook.disLike();
+                mLikeImageView.setImageResource(R.drawable.vector_black3_off_like);
+                isLike = false;
+                mNumberLikeTextView.setText(String.valueOf(mOnlineBook.getNumberLikes()));
+            }
+            isNoLike = true;
+        }
+
+        mNumberNoLikeTextView.setText(String.valueOf(mOnlineBook.getNumberNoLikes()));
+        new InsertNoLikeSyn().execute(
+                Server.getIpServerAndroid(this) + "InsertNoLike.php",
+                mSession.getIdNumber(),
+                mOnlineBook.getId()
+        );
+    }
+
+    private void handleSubscribe() {
+        if (isSubscribe) {
+            mOnlineBook.desSubscribe();
+            mSubscribeImageView.setImageResource(R.drawable.vector_black3_off_subscribe);
+            isSubscribe = false;
+        } else {
+            mOnlineBook.subscribe();
+            mSubscribeImageView.setImageResource(R.drawable.vector_purple2_200_suscribe);
+            isSubscribe = true;
+        }
+
+        mNumberSubscribeTextView.setText(String.valueOf(mOnlineBook.getNumberSubscribe()));
+        new InsertSubscribeBookSyn().execute(
+                Server.getIpServerAndroid(this) + "InsertSubscribeBook.php",
+                mSession.getIdNumber(),
+                mOnlineBook.getId()
+        );
+    }
+
+    private void sendComment() {
+        String message = mMessageTextView.getText().toString();
+        if (!"null".equals(message) && !message.isEmpty()) {
+            Chat chat = new Chat(mSession.getIdNumber(), this, message);
+            mMessageTextView.setText("");
+
+            mTalksList.add(new Talks(
+                    mSession.getIdNumber() + ".png",
+                    chat.getUserName(),
+                    chat.getMessage()
+            ));
+
+            talksAdapter = new TalksAdapter(mTalksList);
+            mCommentsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+            mCommentsRecyclerView.setAdapter(talksAdapter);
+            mCommentsRecyclerView.smoothScrollToPosition(talksAdapter.getItemCount() - 1);
+
+            new SendComments().execute(
+                    Server.getIpServerAndroid(this) + "SendComments.php",
+                    mSession.getIdNumber(),
+                    mOnlineBook.getId(),
+                    chat.getMessage()
+            );
+        }
+    }
+
+    // ==================== AsyncTask Classes ====================
+
+    private class RecoveryBook extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            return executePostRequest(params[0],
+                    new MultipartBody.Builder()
+                            .setType(MultipartBody.FORM)
+                            .addFormDataPart("idNumber", params[1])
+                            .addFormDataPart("idBook", params[2])
+                            .build());
+        }
+
+        @Override
+        protected void onPostExecute(String jsonData) {
+            if (jsonData != null) {
+                processBookData(jsonData);
+            } else {
+                showNoConnectionError();
+            }
+        }
+
+        private void processBookData(String jsonData) {
+            mNoConnectionRecyclerView.setVisibility(View.GONE);
+            mNestedScrollView.setVisibility(View.VISIBLE);
+
+            try {
+                JSONObject obj = new JSONObject(jsonData);
+                updateBookDetails(obj);
+                loadBookCoverImage();
+                updateStatistics();
+                configureBookFormats();
+            } catch (JSONException e) {
+                Log.e(TAG, "Error parsing book data", e);
+            }
+        }
+
+        private void updateBookDetails(JSONObject obj) throws JSONException {
+            mOnlineBook.setCover(obj.getString("bookBlanket"));
+            mOnlineBook.setTitle(obj.getString("bookTitle"));
+            mOnlineBook.setIsPhysic(obj.getString("isPhysic"));
+            mOnlineBook.setIsAudio(obj.getString("isAudio"));
+            mOnlineBook.setElectronic(obj.getString("electronic"));
+            mOnlineBook.setDescription(obj.getString("description"));
+            mOnlineBook.setCategory(obj.getString("categoryTitle"));
+            mOnlineBook.setIsAvailable(obj.getString("available"));
+            mOnlineBook.setSize(obj.getString("size"));
+            mOnlineBook.setNbrPage(obj.getString("nbrPage"));
+            mOnlineBook.setNumberLikes(Integer.parseInt(obj.getString("numberLike")));
+            mOnlineBook.setNumberNoLikes(Integer.parseInt(obj.getString("numberNoLike")));
+            mOnlineBook.setNumberSubscribe(Integer.parseInt(obj.getString("numberSubscribe")));
+            mOnlineBook.setNumberView(Integer.parseInt(obj.getString("numberView")));
+            mOnlineBook.setAuthor(obj.getString("firstName") + " " + obj.getString("name"));
+
+            mCategory = new Category(
+                    obj.getString("categoryBlanket"),
+                    obj.getString("categoryTitle")
+            );
+
+            mAuthor = new Author(
+                    obj.getString("idAuthor"),
+                    obj.getString("name"),
+                    obj.getString("firstName"),
+                    obj.getString("profile"),
+                    obj.getString("profession"),
+                    obj.getString("call"),
+                    obj.getString("email"),
+                    obj.getString("whatsapp")
+            );
+
+            mTitleTextView.setText(mOnlineBook.getTitle());
+            mNameAuthor.setText("De " + obj.getString("name") + " " + obj.getString("firstName"));
+            mCote.setText("Cote : " + mOnlineBook.getId());
+            mCategoryTextView.setText("Catégorie : " + mOnlineBook.getCategory());
+            mDescriptionTextView.setText(mOnlineBook.getDescription());
+        }
+
+        private void loadBookCoverImage() {
+            Picasso.get()
+                    .load(Server.getIpServer(BookActivity.this) +
+                            "ressources/cover/" + mOnlineBook.getCover())
+                    .placeholder(R.drawable.img_wait_cover_book)
+                    .error(R.drawable.img_wait_cover_book)
+                    .transform(new RoundedTransformation(15, 4))
+                    .resize(270, 404)
+                    .into(mBlanketImageView);
+        }
+
+        private void updateStatistics() {
+            mNumberLikeTextView.setText(String.valueOf(mOnlineBook.getNumberLikes()));
+            mNumberNoLikeTextView.setText(String.valueOf(mOnlineBook.getNumberNoLikes()));
+            mNumberSubscribeTextView.setText(String.valueOf(mOnlineBook.getNumberSubscribe()));
+            mNbrView.setText(String.valueOf(mOnlineBook.getNumberView()));
+        }
+
+        private void configureBookFormats() {
+            configurePhysicalFormat();
+            configureAudioFormat();
+            configureElectronicFormat();
+        }
+
+        private void configurePhysicalFormat() {
+            if ("1".equals(mOnlineBook.getIsPhysic())) {
+                mReservationLinearLayout.setVisibility(View.VISIBLE);
+                if ("0".equals(mOnlineBook.getIsAvailable())) {
+                    mReservationButton.setText("En cours de consultation");
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        mReservationButton.setBackgroundTintList(
+                                ColorStateList.valueOf(ContextCompat.getColor(BookActivity.this, R.color.whiteSombre)));
+                        mReservationButton.setEnabled(false);
+                    }
                 }
-                else
-                {
-                    mOnlineBook.subscribe();
+            }
+        }
+
+        private void configureAudioFormat() {
+            if ("1".equals(mOnlineBook.getIsAudio())) {
+                mAudioLinearLayout.setVisibility(View.VISIBLE);
+                if (mAudioTable.isExist(mSession.getIdNumber(), mOnlineBook.getId())) {
+                    audioButton.setText("Lire");
+                }
+            }
+        }
+
+        private void configureElectronicFormat() {
+            if (!"null".equals(mOnlineBook.getElectronic())) {
+                mElectronicLinearLayout.setVisibility(View.VISIBLE);
+                mSourcePdf = mElectronicTable.isExist(mSession.getIdNumber(), mOnlineBook.getId());
+
+                if (!"false".equals(mSourcePdf)) {
+                    downloadPDFButton.setText("Ouvrir");
+                }
+
+                if (!"null".equals(mOnlineBook.getSize())) {
+                    mPdfSizeTextView.setText(mOnlineBook.getSize());
+                    mPdfSizeLinearLayout.setVisibility(View.VISIBLE);
+                } else {
+                    downloadPDFButton.setEnabled(false);
+                    downloadPDFButton.setText("Bientôt");
+                }
+
+                if (!"null".equals(mOnlineBook.getNbrPage())) {
+                    mNbrPageTextView.setText(mOnlineBook.getNbrPage());
+                    mNbrPageLinearLayout.setVisibility(View.VISIBLE);
+                }
+            }
+        }
+    }
+
+    private class ReceiveComments extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            return executePostRequest(params[0],
+                    new MultipartBody.Builder()
+                            .setType(MultipartBody.FORM)
+                            .addFormDataPart("idNumber", params[1])
+                            .addFormDataPart("idBook", params[2])
+                            .build());
+        }
+
+        @Override
+        protected void onPostExecute(String jsonData) {
+            if (jsonData != null) {
+                processComments(jsonData);
+            } else {
+                showCommentLoadError();
+            }
+        }
+
+        private void processComments(String jsonData) {
+            if (!RESPONSE_RAS.equals(jsonData)) {
+                try {
+                    JSONArray jsonArray = new JSONArray(jsonData);
+                    mTalksList.clear();
+
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject obj = jsonArray.getJSONObject(i);
+                        String fullName = obj.getString("name") + " " + obj.getString("firstName");
+                        mTalksList.add(new Talks(
+                                obj.getString("idUser") + ".png",
+                                fullName,
+                                obj.getString("message")
+                        ));
+                    }
+                } catch (JSONException e) {
+                    Log.e(TAG, "Error parsing comments", e);
+                }
+            }
+
+            talksAdapter = new TalksAdapter(mTalksList);
+            mCommentsRecyclerView.setLayoutManager(new LinearLayoutManager(BookActivity.this));
+            registerForContextMenu(mCommentsRecyclerView);
+            mCommentsRecyclerView.setAdapter(talksAdapter);
+            mCommentRelativeLayout.setVisibility(View.VISIBLE);
+        }
+
+        private void showCommentLoadError() {
+            List<Connection> list = new ArrayList<>();
+            list.add(new Connection(getString(R.string.no_connection_available), ACTION_BOOK, false));
+            SemiNoConnectionAdapter adapter = new SemiNoConnectionAdapter(list);
+            mCommentsRecyclerView.setLayoutManager(new LinearLayoutManager(BookActivity.this));
+            mCommentsRecyclerView.setAdapter(adapter);
+        }
+    }
+
+    private class RecoveryTones extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            return executePostRequest(params[0],
+                    new MultipartBody.Builder()
+                            .setType(MultipartBody.FORM)
+                            .addFormDataPart("idNumber", mSession.getIdNumber())
+                            .addFormDataPart("idBook", mOnlineBook.getId())
+                            .build());
+        }
+
+        @Override
+        protected void onPostExecute(String jsonData) {
+            if (jsonData != null && !RESPONSE_RAS.equals(jsonData)) {
+                processTones(jsonData);
+                setupMediaPlayer();
+            }
+        }
+
+        private void processTones(String jsonData) {
+            try {
+                JSONArray jsonArray = new JSONArray(jsonData);
+                mListTones.clear();
+
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject obj = jsonArray.getJSONObject(i);
+                    mListTones.add(new Tones(
+                            i + 1,
+                            obj.getString("audio"),
+                            obj.getString("title"),
+                            0,
+                            false
+                    ));
+
+                    if (i == 0) {
+                        mTones = new Tones(
+                                0,
+                                obj.getString("audio"),
+                                obj.getString("size"),
+                                obj.getString("maxTime")
+                        );
+                    }
+                }
+
+                displayAudioInfo();
+            } catch (JSONException e) {
+                Log.e(TAG, "Error parsing tones", e);
+            }
+        }
+
+        private void displayAudioInfo() {
+            if (!"null".equals(mTones.getSize())) {
+                mAudioSizeTextView.setText(mTones.getSize());
+                mAudioSizeLinearLayout.setVisibility(View.VISIBLE);
+            }
+
+            if (!"null".equals(mTones.getDuration())) {
+                audioButton.setEnabled(true);
+                mMaxTimeTextView.setText(mTones.getDuration());
+                mMaxTimeLinearLayout.setVisibility(View.VISIBLE);
+            } else {
+                audioButton.setEnabled(false);
+                audioButton.setText("Bientôt");
+            }
+        }
+
+        private void setupMediaPlayer() {
+            String url = Server.getIpServer(BookActivity.this) +
+                    "ressources/audio/" + mTones.getAudio();
+
+            try {
+                mMediaPlayer.setDataSource(url);
+                mMediaPlayer.prepare();
+                mSeekBar.setMax(mMediaPlayer.getDuration());
+                mTones.setDuration(convertDurationToString(mMediaPlayer.getDuration()));
+                mWaitPlayerProgressBar.setVisibility(View.GONE);
+                mPlayerImageView.setVisibility(View.VISIBLE);
+
+                startMediaPlayerThread();
+            } catch (IOException e) {
+                Log.e(TAG, "Error setting up media player", e);
+            } catch (Exception e) {
+                Log.e(TAG, "Unexpected error in media player setup", e);
+            }
+        }
+
+        private void startMediaPlayerThread() {
+            mMediaPlayerThread = new Thread(() -> {
+                while (mMediaPlayer != null && !Thread.currentThread().isInterrupted()) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        break;
+                    }
+
+                    mHandler.post(() -> {
+                        if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
+                            int currentTime = mMediaPlayer.getCurrentPosition();
+                            mSeekBar.setProgress(currentTime);
+                            mTimeNowTextView.setText(convertDurationToString(currentTime));
+                        }
+                    });
+                }
+            });
+            mMediaPlayerThread.start();
+        }
+    }
+
+    // ==================== Simple AsyncTasks ====================
+
+    private class InsertLikeSyn extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            return executePostRequest(params[0], createIdBookRequestBody(params[1], params[2]));
+        }
+
+        @Override
+        protected void onPostExecute(String jsonData) {
+            if (jsonData != null && "true".equals(jsonData)) {
+                Log.d(TAG, "Like inserted successfully");
+            }
+        }
+    }
+
+    private class InsertNoLikeSyn extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            return executePostRequest(params[0], createIdBookRequestBody(params[1], params[2]));
+        }
+
+        @Override
+        protected void onPostExecute(String jsonData) {
+            if (jsonData != null && "true".equals(jsonData)) {
+                Log.d(TAG, "NoLike inserted successfully");
+            }
+        }
+    }
+
+    private class InsertSubscribeBookSyn extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            return executePostRequest(params[0], createIdBookRequestBody(params[1], params[2]));
+        }
+
+        @Override
+        protected void onPostExecute(String jsonData) {
+            if (jsonData != null && "true".equals(jsonData)) {
+                Log.d(TAG, "Subscribe inserted successfully");
+            }
+        }
+    }
+
+    private class InsertViewSyn extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            return executePostRequest(params[0], createIdBookRequestBody(params[1], params[2]));
+        }
+
+        @Override
+        protected void onPostExecute(String jsonData) {
+            // View count updated
+        }
+    }
+
+    private class IsLikeSyn extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            return executePostRequest(params[0], createIdBookRequestBody(params[1], params[2]));
+        }
+
+        @Override
+        protected void onPostExecute(String jsonData) {
+            if (jsonData != null && !RESPONSE_RAS.equals(jsonData)) {
+                if (jsonData.equals(mSession.getIdNumber())) {
+                    isLike = true;
+                    mLikeImageView.setImageResource(R.drawable.vector_purple2_200_on_like);
+                } else {
+                    mLikeImageView.setImageResource(R.drawable.vector_black3_off_like);
+                }
+            }
+        }
+    }
+
+    private class IsNoLikeSyn extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            return executePostRequest(params[0], createIdBookRequestBody(params[1], params[2]));
+        }
+
+        @Override
+        protected void onPostExecute(String jsonData) {
+            if (jsonData != null && !RESPONSE_RAS.equals(jsonData)) {
+                if (jsonData.equals(mSession.getIdNumber())) {
+                    isNoLike = true;
+                    mNoLikeImageView.setImageResource(R.drawable.vector_rouge_on_nolike);
+                } else {
+                    mNoLikeImageView.setImageResource(R.drawable.vector_black3_off_no_like);
+                }
+            }
+        }
+    }
+
+    private class IsSubscribeBookSyn extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            return executePostRequest(params[0], createIdBookRequestBody(params[1], params[2]));
+        }
+
+        @Override
+        protected void onPostExecute(String jsonData) {
+            if (jsonData != null && !RESPONSE_RAS.equals(jsonData)) {
+                if (jsonData.equals(mSession.getIdNumber())) {
+                    isSubscribe = true;
                     mSubscribeImageView.setImageResource(R.drawable.vector_purple2_200_suscribe);
-                    isSubscribe=true;
-                }
-                mNumberSubscribeTextView.setText(String.valueOf(mOnlineBook.getNumberSubscribe()));
-                InsertSubscribeBookSyn insertSubscribeBookSyn = new InsertSubscribeBookSyn();
-                insertSubscribeBookSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "InsertSubscribeBook.php",mSession.getIdNumber(), mOnlineBook.getId());
-            }
-        });
-        RecoveryBook recoveryBook = new RecoveryBook();
-        ReceiveComments receiveComments = new ReceiveComments();
-        RecoveryTones recoveryTones = new RecoveryTones();
-        IsLikeSyn isLikeSyn = new IsLikeSyn();
-        IsNoLikeSyn isNoLikeSyn = new IsNoLikeSyn();
-        IsSubscribeBookSyn isSubscribeBookSyn = new IsSubscribeBookSyn();
-        InsertViewSyn insertViewSyn = new InsertViewSyn();
-        IsReservationSyn isReservationSyn = new IsReservationSyn();
-        recoveryBook.execute(Server.getIpServerAndroid(getApplicationContext()) + "Book.php",mSession.getIdNumber(), mOnlineBook.getId());
-        isReservationSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "IsReservation.php",mSession.getIdNumber(), mOnlineBook.getId());
-        insertViewSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "InsertView.php",mSession.getIdNumber(), mOnlineBook.getId());
-        isSubscribeBookSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "IsSubscribeBook.php",mSession.getIdNumber(), mOnlineBook.getId());
-        isLikeSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "IsLike.php",mSession.getIdNumber(), mOnlineBook.getId());
-        isNoLikeSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "IsNoLike.php",mSession.getIdNumber(), mOnlineBook.getId());
-        receiveComments.execute(Server.getIpServerAndroid(getApplicationContext()) + "ReceiveComments.php",mSession.getIdNumber(), mOnlineBook.getId());
-        recoveryTones.execute(Server.getIpServerAndroid(getApplicationContext()) + "Tones.php");
-        addCommentsImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(!mMessageTextView.getText().toString().equals("null"))
-                {
-                    Chat chat = new Chat(mSession.getIdNumber(),getApplicationContext(),mMessageTextView.getText().toString());
-                    mMessageTextView.setText("");
-                    mTalksList.add(new Talks(mSession.getIdNumber() + ".png",chat.getUserName(),chat.getMessage()));
-                    TalksAdapter talksAdapter = new TalksAdapter(mTalksList);
-                    mCommentsRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                    mCommentsRecyclerView.setAdapter(talksAdapter);
-                    mCommentsRecyclerView.smoothScrollToPosition(talksAdapter.getItemCount()-1);
-                    SendComments sendComments = new SendComments();
-                    sendComments.execute(Server.getIpServerAndroid(getApplicationContext()) + "SendComments.php",mSession.getIdNumber(), mOnlineBook.getId(),chat.getMessage());
+                } else {
+                    mSubscribeImageView.setImageResource(R.drawable.vector_black3_off_subscribe);
                 }
             }
-        });
-
-    }
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mMediaPlayer.release();
-        mTimer.cancel();
-        mMediaPlayer = null;
+        }
     }
 
-    private class RecoveryBook extends AsyncTask<String,Void,String> {
+    private class IsReservationSyn extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-
-            try {
-                OkHttpClient client = new OkHttpClient();
-                RequestBody requestBody = new MultipartBody.Builder()
-                        .setType(MultipartBody.FORM)
-                        .addFormDataPart("idNumber",params[1])
-                        .addFormDataPart("idBook",params[2])
-                        .build();
-                Request request = new Request.Builder()
-                        .url(params[0])
-                        .post(requestBody)
-                        .build();
-                try {
-                    Response response = client.newCall(request).execute();
-                    assert response.body() != null;
-                    return response.body().string();
-                }catch (IOException e)
-                {
-                    Toast.makeText(BookActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-
-            }catch (Exception e)
-            {
-                return null;
-            }
-            return null;
+            return executePostRequest(params[0], createIdBookRequestBody(params[1], params[2]));
         }
-        @Override
-        protected void onPostExecute(String jsonData){
-            if(jsonData != null)
-            {
-                mNoConnectionRecyclerView.setVisibility(View.GONE);
-                mNestedScrollView.setVisibility(View.VISIBLE);
-                JSONObject jsonObject = null;
-                try {
-                    jsonObject = new JSONObject(jsonData);
-                } catch (JSONException e) {
-                    throw new RuntimeException(e);
-                }
-                try {
-                    mOnlineBook.setCover(jsonObject.getString("bookBlanket"));
-                    mOnlineBook.setTitle(jsonObject.getString("bookTitle"));
-                    mOnlineBook.setIsPhysic(jsonObject.getString("isPhysic"));
-                    mOnlineBook.setIsAudio(jsonObject.getString("isAudio"));
-                    mOnlineBook.setElectronic(jsonObject.getString("electronic"));
-                    mOnlineBook.setDescription(jsonObject.getString("description"));
-                    mOnlineBook.setCategory(jsonObject.getString("categoryTitle"));
-                    mOnlineBook.setIsAvailable(jsonObject.getString("available"));
-                    mOnlineBook.setSize(jsonObject.getString("size"));
-                    mOnlineBook.setNbrPage(jsonObject.getString("nbrPage"));
-                    mOnlineBook.setNumberLikes(Integer.parseInt(jsonObject.getString("numberLike")));
-                    mOnlineBook.setNumberNoLikes(Integer.parseInt(jsonObject.getString("numberNoLike")));
-                    mOnlineBook.setNumberSubscribe(Integer.parseInt(jsonObject.getString("numberSubscribe")));
-                    mOnlineBook.setNumberView(Integer.parseInt(jsonObject.getString("numberView")));
-                    mOnlineBook.setAuthor(jsonObject.getString("firstName") + " " + jsonObject.getString("name"));
-                    mCategory = new Category(jsonObject.getString("categoryBlanket"),jsonObject.getString("categoryTitle"));
-                    mAuthor = new Author(jsonObject.getString("idAuthor"),jsonObject.getString("name"),jsonObject.getString("firstName"),jsonObject.getString("profile"),jsonObject.getString("profession"),jsonObject.getString("call"),jsonObject.getString("email"),jsonObject.getString("whatsapp"));
-                    Picasso.get()
-                            .load(Server.getIpServer(getApplicationContext()) + "ressources/cover/" + mOnlineBook.getCover())
-                            .placeholder(R.drawable.img_wait_cover_book)
-                            .error(R.drawable.img_wait_cover_book)
-                            .transform(new RoundedTransformation(15,4))
-                            .resize(270,404)
-                            .into(mBlanketImageView);
-                    mNumberLikeTextView.setText(String.valueOf(mOnlineBook.getNumberLikes()));
-                    mNumberNoLikeTextView.setText(String.valueOf(mOnlineBook.getNumberNoLikes()));
-                    mNumberSubscribeTextView.setText(String.valueOf(mOnlineBook.getNumberSubscribe()));
-                    mNbrView.setText(String.valueOf(mOnlineBook.getNumberView()));
-                    if(mOnlineBook.getIsPhysic().equals("1"))
-                    {
-                        mReservationLinearLayout.setVisibility(View.VISIBLE);
-                        if(mOnlineBook.getIsAvailable().equals("0"))
-                        {
-                            mReservationButton.setText("En cours de consultation");
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                mReservationButton.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.whiteSombre)));
-                                mReservationButton.setEnabled(false);
-                            }
-                        }
-                    }
-                    if(mOnlineBook.getIsAudio().equals("1"))
-                    {
-                        mAudioLinearLayout.setVisibility(View.VISIBLE);
-                        if (mAudioTable.isExist(mSession.getIdNumber(),mOnlineBook.getId()))
-                            audioButton.setText("Lire");
-                    }
 
-                    if(!mOnlineBook.getElectronic().equals("null"))
-                    {
-                        mElectronicLinearLayout.setVisibility(View.VISIBLE);
-                        mSourcePdf=mElectronicTable.isExist(mSession.getIdNumber(),mOnlineBook.getId());
-                        if (!mSourcePdf.equals("false"))
-                            downloadPDFButton.setText("Ouvrir");
-                        if (!mOnlineBook.getSize().equals("null"))
-                        {
-                            mPdfSizeTextView.setText(mOnlineBook.getSize());
-                            mPdfSizeLinearLayout.setVisibility(View.VISIBLE);
-                        }
-                        else
-                        {
-                            downloadPDFButton.setEnabled(false);
-                            downloadPDFButton.setText("Bientôt");
-                        }
-                        if (!mOnlineBook.getNbrPage().equals("null"))
-                        {
-                            mNbrPageTextView.setText(mOnlineBook.getNbrPage());
-                            mNbrPageLinearLayout.setVisibility(View.VISIBLE);
-                        }
-                    }
-                    mTitleTextView.setText(mOnlineBook.getTitle());
-                    mNameAuthor.setText("De " + jsonObject.getString("name") + " " + jsonObject.getString("firstName"));
-                    mCote.setText("Cote : " + mOnlineBook.getId());
-                    mCategoryTextView.setText("Catégorie : " + mOnlineBook.getCategory());
-                    mDescriptionTextView.setText(mOnlineBook.getDescription());
-                } catch (JSONException e) {
-                    throw new RuntimeException(e);
-                }
+        @Override
+        protected void onPostExecute(String jsonData) {
+            if (jsonData != null && !"ras".equals(jsonData)) {
+                processReservationStatus(jsonData);
             }
-            else
-            {
-                mNestedScrollView.setVisibility(View.GONE);
-                mNoConnectionRecyclerView.setVisibility(View.VISIBLE);
-                ArrayList<Connection> list = new ArrayList<>();
-                list.add(new Connection(getString(R.string.no_connection_available),"BOOK_ACTIVITY",false));
-                NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
-                mNoConnectionRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                mNoConnectionRecyclerView.setAdapter(noConnectionAdapter);
+        }
+
+        private void processReservationStatus(String jsonData) {
+            try {
+                JSONObject obj = new JSONObject(jsonData);
+                String state = obj.getString("state");
+                String treat = obj.getString("treat");
+
+                if ("1".equals(state) && "1".equals(treat)) {
+                    mReservationButton.setText(R.string.cancel_reservation);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        mReservationButton.setBackgroundTintList(
+                                ColorStateList.valueOf(ContextCompat.getColor(BookActivity.this, R.color.rouge)));
+                    }
+                } else if ("2".equals(state) && "1".equals(treat)) {
+                    mReservationButton.setText("En cours de consultation");
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        mReservationButton.setBackgroundTintList(
+                                ColorStateList.valueOf(ContextCompat.getColor(BookActivity.this, R.color.whiteSombre)));
+                        mReservationButton.setEnabled(false);
+                    }
+                }
+            } catch (JSONException e) {
+                Log.e(TAG, "Error parsing reservation status", e);
             }
         }
     }
 
-    private class ReceiveComments extends AsyncTask<String,Void,String> {
+    private class CancelReservationSyn extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-
-            try {
-                OkHttpClient client = new OkHttpClient();
-                RequestBody requestBody = new MultipartBody.Builder()
-                        .setType(MultipartBody.FORM)
-                        .addFormDataPart("idNumber",params[1])
-                        .addFormDataPart("idBook",params[2])
-                        .build();
-                Request request = new Request.Builder()
-                        .url(params[0])
-                        .post(requestBody)
-                        .build();
-                try {
-                    Response response = client.newCall(request).execute();
-                    assert response.body() != null;
-                    return response.body().string();
-                }catch (IOException e)
-                {
-                    Toast.makeText(BookActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-
-            }catch (Exception e)
-            {
-                return null;
-            }
-            return null;
+            return executePostRequest(params[0], createIdBookRequestBody(params[1], params[2]));
         }
+
         @Override
-        protected void onPostExecute(String jsonData){
-            if(jsonData != null)
-            {
-                if(!jsonData.equals("RAS"))
-                {
-                    JSONArray jsonArray = null;
-                    try {
-                        jsonArray = new JSONArray(jsonData);
-                    } catch (JSONException e) {
-                        throw new RuntimeException(e);
-                    }
-                    for (int i=0;i<jsonArray.length();i++) {
-                        try {
-                            mTalksList.add(new Talks(jsonArray.getJSONObject(i).getString("idUser") + ".png",jsonArray.getJSONObject(i).getString("name") + " " + jsonArray.getJSONObject(i).getString("firstName"),jsonArray.getJSONObject(i).getString("message")));
-                        } catch (JSONException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
+        protected void onPostExecute(String jsonData) {
+            if (jsonData != null && !RESPONSE_RAS.equals(jsonData) && "true".equals(jsonData)) {
+                mReservationButton.setText(R.string.reservation_book);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    mReservationButton.setBackgroundTintList(
+                            ContextCompat.getColorStateList(BookActivity.this, R.color.black3));
                 }
-                talksAdapter = new TalksAdapter(mTalksList);
-                mCommentsRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                registerForContextMenu(mCommentsRecyclerView);
-                mCommentsRecyclerView.setAdapter(talksAdapter);
-                mCommentRelativeLayout.setVisibility(View.VISIBLE);
-            }
-            else
-            {
-                ArrayList<Connection> list = new ArrayList<>();
-                list.add(new Connection(getString(R.string.no_connection_available), "BOOK_ACTIVITY", false));
-                SemiNoConnectionAdapter semiNoConnectionAdapter = new SemiNoConnectionAdapter(list);
-                mCommentsRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                mCommentsRecyclerView.setAdapter(semiNoConnectionAdapter);
             }
         }
     }
 
-    private class InsertLikeSyn extends AsyncTask<String,Void,String> {
+    private class Reservation extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-
-            try {
-                OkHttpClient client = new OkHttpClient();
-                RequestBody requestBody = new MultipartBody.Builder()
-                        .setType(MultipartBody.FORM)
-                        .addFormDataPart("idNumber",params[1])
-                        .addFormDataPart("idBook",params[2])
-                        .build();
-                Request request = new Request.Builder()
-                        .url(params[0])
-                        .post(requestBody)
-                        .build();
-                try {
-                    Response response = client.newCall(request).execute();
-                    assert response.body() != null;
-                    return response.body().string();
-                }catch (IOException e)
-                {
-                    Toast.makeText(BookActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-
-            }catch (Exception e)
-            {
-                return null;
-            }
-            return null;
+            return executePostRequest(params[0],
+                    new MultipartBody.Builder()
+                            .setType(MultipartBody.FORM)
+                            .addFormDataPart("idNumber", params[1])
+                            .addFormDataPart("idBook", params[2])
+                            .addFormDataPart("numberOfDay", params[3])
+                            .build());
         }
+
         @Override
-        protected void onPostExecute(String jsonData){
-            //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
-            if(jsonData != null)
-            {
-                if(!jsonData.equals("RAS"))
-                {
-                    if(jsonData.equals("true"))
-                    {
-                        Log.e("BookActivity","OKLike");
-                    }
+        protected void onPostExecute(String jsonData) {
+            if (jsonData != null && "true".equals(jsonData)) {
+                mReservationDialog.cancel();
+                showSuccessReservationDialog(
+                        "Merci d'avoir réservé \"" + mTitleTextView.getText().toString() +
+                                "\" sur fabi; nous traitons votre demande et vous confirmerons la disponibilité bientôt."
+                );
+                mReservationButton.setText(R.string.cancel_reservation);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    mReservationButton.setBackgroundTintList(
+                            ContextCompat.getColorStateList(BookActivity.this, R.color.rouge));
                 }
             }
         }
     }
 
-    private class InsertNoLikeSyn extends AsyncTask<String,Void,String> {
+    private class SendComments extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-
-            try {
-                OkHttpClient client = new OkHttpClient();
-                RequestBody requestBody = new MultipartBody.Builder()
-                        .setType(MultipartBody.FORM)
-                        .addFormDataPart("idNumber",params[1])
-                        .addFormDataPart("idBook",params[2])
-                        .build();
-                Request request = new Request.Builder()
-                        .url(params[0])
-                        .post(requestBody)
-                        .build();
-                try {
-                    Response response = client.newCall(request).execute();
-                    assert response.body() != null;
-                    return response.body().string();
-                }catch (IOException e)
-                {
-                    Toast.makeText(BookActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-
-            }catch (Exception e)
-            {
-                return null;
-            }
-            return null;
+            return executePostRequest(params[0],
+                    new MultipartBody.Builder()
+                            .setType(MultipartBody.FORM)
+                            .addFormDataPart("idNumber", params[1])
+                            .addFormDataPart("idBook", params[2])
+                            .addFormDataPart("message", params[3])
+                            .build());
         }
+
         @Override
-        protected void onPostExecute(String jsonData){
-            //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
-            if(jsonData != null)
-            {
-                if(!jsonData.equals("RAS"))
-                {
-                    if(jsonData.equals("true"))
-                    {
-                        Log.e("BookActivity","OKNOLIKE");
-                    }
-                }
-            }
+        protected void onPostExecute(String jsonData) {
+            // Comment sent
         }
     }
 
-    private class InsertSubscribeBookSyn extends AsyncTask<String,Void,String> {
-        @Override
-        protected String doInBackground(String... params) {
+    // ==================== Dialogs ====================
 
-            try {
-                OkHttpClient client = new OkHttpClient();
-                RequestBody requestBody = new MultipartBody.Builder()
-                        .setType(MultipartBody.FORM)
-                        .addFormDataPart("idNumber",params[1])
-                        .addFormDataPart("idBook",params[2])
-                        .build();
-                Request request = new Request.Builder()
-                        .url(params[0])
-                        .post(requestBody)
-                        .build();
-                try {
-                    Response response = client.newCall(request).execute();
-                    assert response.body() != null;
-                    return response.body().string();
-                }catch (IOException e)
-                {
-                    Toast.makeText(BookActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-
-            }catch (Exception e)
-            {
-                return null;
-            }
-            return null;
-        }
-        @Override
-        protected void onPostExecute(String jsonData){
-            if(jsonData != null)
-            {
-                if(!jsonData.equals("RAS"))
-                {
-                    if(jsonData.equals("true"))
-                    {
-                        Log.e("BookActivity","OKSubscribe");
-                    }
-                }
-            }
-        }
-    }
-
-    private class InsertViewSyn extends AsyncTask<String,Void,String> {
-        @Override
-        protected String doInBackground(String... params) {
-
-            try {
-                OkHttpClient client = new OkHttpClient();
-                RequestBody requestBody = new MultipartBody.Builder()
-                        .setType(MultipartBody.FORM)
-                        .addFormDataPart("idNumber",params[1])
-                        .addFormDataPart("idBook",params[2])
-                        .build();
-                Request request = new Request.Builder()
-                        .url(params[0])
-                        .post(requestBody)
-                        .build();
-                try {
-                    Response response = client.newCall(request).execute();
-                    assert response.body() != null;
-                    return response.body().string();
-                }catch (IOException e)
-                {
-                    Toast.makeText(BookActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-
-            }catch (Exception e)
-            {
-                return null;
-            }
-            return null;
-        }
-        @Override
-        protected void onPostExecute(String jsonData){
-
-        }
-    }
-
-    private class IsNoLikeSyn extends AsyncTask<String,Void,String> {
-        @Override
-        protected String doInBackground(String... params) {
-
-            try {
-                OkHttpClient client = new OkHttpClient();
-                RequestBody requestBody = new MultipartBody.Builder()
-                        .setType(MultipartBody.FORM)
-                        .addFormDataPart("idNumber",params[1])
-                        .addFormDataPart("idBook",params[2])
-                        .build();
-                Request request = new Request.Builder()
-                        .url(params[0])
-                        .post(requestBody)
-                        .build();
-                try {
-                    Response response = client.newCall(request).execute();
-                    assert response.body() != null;
-                    return response.body().string();
-                }catch (IOException e)
-                {
-                    Toast.makeText(BookActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-
-            }catch (Exception e)
-            {
-                return null;
-            }
-            return null;
-        }
-        @Override
-        protected void onPostExecute(String jsonData){
-            //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
-            if(jsonData != null)
-            {
-                if(!jsonData.equals("RAS"))
-                {
-                    if(jsonData.equals(mSession.getIdNumber()))
-                    {
-                        isNoLike=true;
-                        mNoLikeImageView.setImageResource(R.drawable.vector_rouge_on_nolike);
-                    }
-                    else
-                        mNoLikeImageView.setImageResource(R.drawable.vector_black3_off_no_like);
-                }
-            }
-        }
-    }
-
-    private class IsLikeSyn extends AsyncTask<String,Void,String> {
-        @Override
-        protected String doInBackground(String... params) {
-
-            try {
-                OkHttpClient client = new OkHttpClient();
-                RequestBody requestBody = new MultipartBody.Builder()
-                        .setType(MultipartBody.FORM)
-                        .addFormDataPart("idNumber",params[1])
-                        .addFormDataPart("idBook",params[2])
-                        .build();
-                Request request = new Request.Builder()
-                        .url(params[0])
-                        .post(requestBody)
-                        .build();
-                try {
-                    Response response = client.newCall(request).execute();
-                    assert response.body() != null;
-                    return response.body().string();
-                }catch (IOException e)
-                {
-                    Toast.makeText(BookActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-
-            }catch (Exception e)
-            {
-                return null;
-            }
-            return null;
-        }
-        @Override
-        protected void onPostExecute(String jsonData){
-            //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
-            if(jsonData != null)
-            {
-                if(!jsonData.equals("RAS"))
-                {
-                    if(jsonData.equals(mSession.getIdNumber()))
-                    {
-                        isLike=true;
-                        mLikeImageView.setImageResource(R.drawable.vector_purple2_200_on_like);
-                    }
-                    else
-                        mLikeImageView.setImageResource(R.drawable.vector_black3_off_like);
-                }
-            }
-        }
-    }
-
-    private class IsReservationSyn extends AsyncTask<String,Void,String> {
-        @Override
-        protected String doInBackground(String... params) {
-
-            try {
-                OkHttpClient client = new OkHttpClient();
-                RequestBody requestBody = new MultipartBody.Builder()
-                        .setType(MultipartBody.FORM)
-                        .addFormDataPart("idNumber",params[1])
-                        .addFormDataPart("idBook",params[2])
-                        .build();
-                Request request = new Request.Builder()
-                        .url(params[0])
-                        .post(requestBody)
-                        .build();
-                try {
-                    Response response = client.newCall(request).execute();
-                    assert response.body() != null;
-                    return response.body().string();
-                }catch (IOException e)
-                {
-                    Toast.makeText(BookActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-
-            }catch (Exception e)
-            {
-                return null;
-            }
-            return null;
-        }
-        @Override
-        protected void onPostExecute(String jsonData){
-            //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
-            if(jsonData != null)
-            {
-                if(!jsonData.equals("ras"))
-                {
-                    JSONObject jsonObject = null;
-                    try {
-                        jsonObject = new JSONObject(jsonData);
-                    } catch (JSONException e) {
-                        throw new RuntimeException(e);
-                    }
-                    try {
-                        if(jsonObject.getString("state").equals("1") && jsonObject.getString("treat").equals("1"))
-                        {
-                            mReservationButton.setText(R.string.cancel_reservation);
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                mReservationButton.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.rouge)));
-                            }
-                        }
-                        else
-                        {
-                            if(jsonObject.getString("state").equals("2") && jsonObject.getString("treat").equals("1"))
-                            {
-                                mReservationButton.setText("En cours de consultation");
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                    mReservationButton.setBackgroundTintList(ColorStateList.valueOf(getColor(R.color.whiteSombre)));
-                                    mReservationButton.setEnabled(false);
-                                }
-                            }
-                        }
-                    } catch (JSONException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            }
-        }
-    }
-
-    private class IsSubscribeBookSyn extends AsyncTask<String,Void,String> {
-        @Override
-        protected String doInBackground(String... params) {
-
-            try {
-                OkHttpClient client = new OkHttpClient();
-                RequestBody requestBody = new MultipartBody.Builder()
-                        .setType(MultipartBody.FORM)
-                        .addFormDataPart("idNumber",params[1])
-                        .addFormDataPart("idBook",params[2])
-                        .build();
-                Request request = new Request.Builder()
-                        .url(params[0])
-                        .post(requestBody)
-                        .build();
-                try {
-                    Response response = client.newCall(request).execute();
-                    assert response.body() != null;
-                    return response.body().string();
-                }catch (IOException e)
-                {
-                    Toast.makeText(BookActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-
-            }catch (Exception e)
-            {
-                return null;
-            }
-            return null;
-        }
-        @Override
-        protected void onPostExecute(String jsonData){
-            //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
-            if(jsonData != null)
-            {
-                if(!jsonData.equals("RAS"))
-                {
-                    if(jsonData.equals(mSession.getIdNumber()))
-                    {
-                        isSubscribe=true;
-                        mSubscribeImageView.setImageResource(R.drawable.vector_purple2_200_suscribe);
-                    }
-                    else
-                        mSubscribeImageView.setImageResource(R.drawable.vector_black3_off_subscribe);
-                }
-            }
-        }
-    }
-
-    private class CancelReservationSyn extends AsyncTask<String,Void,String> {
-        @Override
-        protected String doInBackground(String... params) {
-
-            try {
-                OkHttpClient client = new OkHttpClient();
-                RequestBody requestBody = new MultipartBody.Builder()
-                        .setType(MultipartBody.FORM)
-                        .addFormDataPart("idNumber",params[1])
-                        .addFormDataPart("idBook",params[2])
-                        .build();
-                Request request = new Request.Builder()
-                        .url(params[0])
-                        .post(requestBody)
-                        .build();
-                try {
-                    Response response = client.newCall(request).execute();
-                    assert response.body() != null;
-                    return response.body().string();
-                }catch (IOException e)
-                {
-                    Toast.makeText(BookActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-
-            }catch (Exception e)
-            {
-                return null;
-            }
-            return null;
-        }
-        @Override
-        protected void onPostExecute(String jsonData){
-            //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
-            if(jsonData != null)
-            {
-                if(!jsonData.equals("RAS"))
-                {
-                    if(jsonData.equals("true"))
-                    {
-                        mReservationButton.setText(R.string.reservation_book);
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            mReservationButton.setBackgroundTintList(getColorStateList(R.color.black3));
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private class RecoveryTones extends AsyncTask<String,Void,String> {
-        @Override
-        protected String doInBackground(String... params) {
-
-            try {
-                OkHttpClient client = new OkHttpClient();
-                RequestBody requestBody = new MultipartBody.Builder()
-                        .setType(MultipartBody.FORM)
-                        .addFormDataPart("idNumber",mSession.getIdNumber())
-                        .addFormDataPart("idBook", mOnlineBook.getId())
-                        .build();
-                Request request = new Request.Builder()
-                        .url(params[0])
-                        .post(requestBody)
-                        .build();
-                try {
-                    Response response = client.newCall(request).execute();
-                    assert response.body() != null;
-                    return response.body().string();
-                }catch (IOException e)
-                {
-                    Toast.makeText(BookActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-
-            }catch (Exception e)
-            {
-                return null;
-            }
-            return null;
-        }
-        @Override
-        protected void onPostExecute(String jsonData){
-            //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
-            if(jsonData != null)
-            {
-                if(!jsonData.equals("RAS"))
-                {
-                    JSONArray jsonArray = null;
-                    try {
-                        jsonArray = new JSONArray(jsonData);
-                    } catch (JSONException e) {
-                        throw new RuntimeException(e);
-                    }
-                    for (int i=0;i<jsonArray.length();i++) {
-                        try {
-                            mListTones.add(new Tones(i+1,jsonArray.getJSONObject(i).getString("audio"),jsonArray.getJSONObject(i).getString("title"),0,false));
-                            if(i==0)
-                            {
-                                mTones = new Tones(0,jsonArray.getJSONObject(i).getString("audio"),jsonArray.getJSONObject(i).getString("size"),jsonArray.getJSONObject(i).getString("maxTime"));
-                            }
-                        } catch (JSONException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                    if (!mTones.getSize().equals("null"))
-                    {
-                        mAudioSizeTextView.setText(mTones.getSize());
-                        mAudioSizeLinearLayout.setVisibility(View.VISIBLE);
-                    }
-                    if (!mTones.getDuration().equals("null"))
-                    {
-                        audioButton.setEnabled(true);
-                        mMaxTimeTextView.setText(mTones.getDuration());
-                        mMaxTimeLinearLayout.setVisibility(View.VISIBLE);
-                    }
-                    else
-                    {
-                        audioButton.setEnabled(false);
-                        audioButton.setText("Bientôt");
-                    }
-                    url = Server.getIpServer(getApplicationContext()) + "ressources/audio/" + mTones.getAudio();
-                    try {
-                        mMediaPlayer.setDataSource(url);
-                        mMediaPlayer.prepare();
-                        mSeekBar.setMax(mMediaPlayer.getDuration());
-                        mTones.setDuration(convertedDurationToString(mMediaPlayer.getDuration()));
-                        mWaitPlayerProgressBar.setVisibility(View.GONE);
-                        mPlayerImageView.setVisibility(View.VISIBLE);
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                while (mMediaPlayer != null) {
-                                    try {
-                                        Thread.sleep(1000);
-                                    } catch (InterruptedException e) {
-                                        e.printStackTrace();
-                                    }
-                                    mHandler.post(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            if (mMediaPlayer != null && mMediaPlayer.isPlaying())
-                                            {
-                                                int currentTime = mMediaPlayer.getCurrentPosition();
-                                                mSeekBar.setProgress(currentTime);
-                                                mTimeNowTextView.setText(convertedDurationToString(currentTime));
-                                            }
-                                        }
-                                    });
-                                }
-                            }
-                        }).start();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    } catch (Exception e)
-                    {
-                        Log.e("ErrBookActivity",e.getMessage());
-                    }
-                }
-            }
-        }
-    }
-
-    public void ReservationDialog() {
+    private void showReservationDialog() {
         Spinner timeLimitSpinner = mReservationDialog.findViewById(R.id.spinner_dialog_reservation_time_limit);
-        CheckBox LocalConsultationCheckBox = mReservationDialog.findViewById(R.id.check_box_dialog_reservation_local_consultation);
+        CheckBox localConsultationCheckBox = mReservationDialog.findViewById(R.id.check_box_dialog_reservation_local_consultation);
         Button sendButton = mReservationDialog.findViewById(R.id.button_dialog_reservation_send);
         EditText passwordEditText = mReservationDialog.findViewById(R.id.edit_text_dialog_reservation_password);
         TextView errorTextView = mReservationDialog.findViewById(R.id.text_view_dialog_reservation_error);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.delait_reservation, android.R.layout.simple_spinner_item);
-        ArrayAdapter<CharSequence> adapterConsult = ArrayAdapter.createFromResource(this, R.array.delait_cosultation, android.R.layout.simple_spinner_item);
-        sendButton.setBackgroundColor(Color.parseColor("#42B998"));
-        sendButton.setBackground(getDrawable(R.drawable.form_purple_200_radius_10dp));
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                this, R.array.delait_reservation, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        adapterConsult.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         timeLimitSpinner.setAdapter(adapter);
-        LocalConsultationCheckBox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                timeLimitSpinner.setEnabled(!LocalConsultationCheckBox.isChecked());
-            }
-        });
-        sendButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(passwordEditText.getText().toString().equals(""))
-                {
-                    errorTextView.setText(R.string.edit_text_hint_password);
-                    passwordEditText.setBackground(getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
-                }
-                else
-                {
-                    if(!PasswordUtil.hashPassword(passwordEditText.getText().toString()).equals(mSession.getPassword()))
-                    {
-                        errorTextView.setText(R.string.incorrect_password);
-                        passwordEditText.setBackground(getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
-                    }
-                    else
-                    {
-                        if(timeLimitSpinner.isEnabled())
-                            mNbrJour = String.valueOf(timeLimitSpinner.getSelectedItemPosition() + 1);
-                        else
-                            mNbrJour = String.valueOf(-1);
-                        Reservation reservation = new Reservation();
-                        reservation.execute(Server.getIpServerAndroid(getApplicationContext()) + "Reservation.php",mSession.getIdNumber(), mOnlineBook.getId(),mNbrJour);
-                    }
-                }
-            }
-        });
+
+        sendButton.setBackground(getDrawable(R.drawable.form_purple_200_radius_10dp));
+
+        localConsultationCheckBox.setOnClickListener(v ->
+                timeLimitSpinner.setEnabled(!localConsultationCheckBox.isChecked()));
+
+        sendButton.setOnClickListener(v ->
+                handleReservationSubmit(passwordEditText, errorTextView, timeLimitSpinner));
+
         mReservationDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         mReservationDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
         mReservationDialog.build();
     }
-    private void simpleDialogOk(int ico , String title , String message){
-        SimpleOkDialog simpleOkDialog = new SimpleOkDialog(this);
-        Objects.requireNonNull(simpleOkDialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        simpleOkDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
-        ImageView icoImageView = simpleOkDialog.findViewById(R.id.image_view_dialog_simple_ok_icon);
-        TextView titleTextView = simpleOkDialog.findViewById(R.id.text_view_dialog_simple_ok_title);
-        TextView messageTextView = simpleOkDialog.findViewById(R.id.text_view_dialog_simple_ok_message);
-        TextView okTextView = simpleOkDialog.findViewById(R.id.text_view_dialog_simple_ok);
-        icoImageView.setImageResource(ico);
-        titleTextView.setText(title);
-        messageTextView.setText(message);
-        okTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                simpleOkDialog.cancel();
-            }
-        });
-        simpleOkDialog.build();
-    }
-    private class Reservation extends AsyncTask<String,Void,String> {
-        @Override
-        protected String doInBackground(String... params) {
 
-            try {
-                OkHttpClient client = new OkHttpClient();
-                RequestBody requestBody = new MultipartBody.Builder()
-                        .setType(MultipartBody.FORM)
-                        .addFormDataPart("idNumber",params[1])
-                        .addFormDataPart("idBook",params[2])
-                        .addFormDataPart("numberOfDay",params[3])
-                        .build();
-                Request request = new Request.Builder()
-                        .url(params[0])
-                        .post(requestBody)
-                        .build();
-                try {
-                    Response response = client.newCall(request).execute();
-                    assert response.body() != null;
+    private void handleReservationSubmit(EditText passwordEditText, TextView errorTextView, Spinner timeLimitSpinner) {
+        String password = passwordEditText.getText().toString();
+
+        if (password.isEmpty()) {
+            errorTextView.setText(R.string.edit_text_hint_password);
+            passwordEditText.setBackground(getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
+        } else if (!PasswordUtil.hashPassword(password).equals(mSession.getPassword())) {
+            errorTextView.setText(R.string.incorrect_password);
+            passwordEditText.setBackground(getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
+        } else {
+            mNbrJour = timeLimitSpinner.isEnabled()
+                    ? String.valueOf(timeLimitSpinner.getSelectedItemPosition() + 1)
+                    : String.valueOf(-1);
+
+            new Reservation().execute(
+                    Server.getIpServerAndroid(this) + "Reservation.php",
+                    mSession.getIdNumber(),
+                    mOnlineBook.getId(),
+                    mNbrJour
+            );
+        }
+    }
+
+    private void showSuccessReservationDialog(String message) {
+        SimpleOkDialog dialog = new SimpleOkDialog(this);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+
+        TextView messageTextView = dialog.findViewById(R.id.text_view_dialog_simple_ok_message);
+        TextView okTextView = dialog.findViewById(R.id.text_view_dialog_simple_ok);
+
+        messageTextView.setText(message);
+        okTextView.setOnClickListener(v -> dialog.cancel());
+
+        dialog.build();
+    }
+
+    // ==================== Context Menu ====================
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_item, menu);
+        mTalksSelect = talksAdapter.getItem(talksAdapter.getPosition());
+    }
+
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.menu_item_delete) {
+            talksAdapter.remove(talksAdapter.getPosition());
+            return true;
+        }
+        return super.onContextItemSelected(item);
+    }
+
+    // ==================== Helper Methods ====================
+
+    private String executePostRequest(String url, RequestBody requestBody) {
+        try {
+            Request request = new Request.Builder()
+                    .url(url)
+                    .post(requestBody)
+                    .build();
+
+            try (Response response = mHttpClient.newCall(request).execute()) {
+                if (response.body() != null) {
                     return response.body().string();
-                }catch (IOException e)
-                {
-                    Toast.makeText(BookActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-
-            }catch (Exception e)
-            {
-                return null;
-            }
-            return null;
-        }
-        @Override
-        protected void onPostExecute(String jsonData){
-            Toast.makeText(BookActivity.this, jsonData, Toast.LENGTH_SHORT).show();
-            if(jsonData != null)
-            {
-                if(jsonData.equals("true"))
-                {
-                    mReservationDialog.cancel();
-                    successReservationDialog("Merci d'avoir réservé \"" + mTitleTextView.getText().toString() + "\" sur fabi; nous traitons votre demande et vous confirmerons la disponibilité bientôt.");
-                    mReservationButton.setText(R.string.cancel_reservation);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        mReservationButton.setBackgroundTintList(getColorStateList(R.color.rouge));
-                    }
                 }
             }
-
+        } catch (IOException e) {
+            Log.e(TAG, "Network error: " + e.getMessage(), e);
+        } catch (Exception e) {
+            Log.e(TAG, "Unexpected error: " + e.getMessage(), e);
         }
+        return null;
     }
 
-    private void successReservationDialog(String message){
-        SimpleOkDialog simpleOkDialog = new SimpleOkDialog(this);
-        simpleOkDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        simpleOkDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
-        TextView messageTextView = simpleOkDialog.findViewById(R.id.text_view_dialog_simple_ok_message);
-        TextView okTextView = simpleOkDialog.findViewById(R.id.text_view_dialog_simple_ok);
-        messageTextView.setText(message);
-        okTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//                mSuggestion.setText("");
-                simpleOkDialog.cancel();
-            }
-        });
-        simpleOkDialog.build();
+    private RequestBody createIdBookRequestBody(String idNumber, String idBook) {
+        return new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("idNumber", idNumber)
+                .addFormDataPart("idBook", idBook)
+                .build();
     }
 
-    private void succeDowloadPDFDialog(String message){
-        SimpleOkDialog simpleOkDialog = new SimpleOkDialog(this);
-        simpleOkDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        simpleOkDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
-        TextView messageTextView = simpleOkDialog.findViewById(R.id.text_view_dialog_simple_ok_message);
-        TextView ok = simpleOkDialog.findViewById(R.id.text_view_dialog_simple_ok);
-        messageTextView.setText(message);
-        ok.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                downloadPDFButton.setText("Format PDF");
-                downloadPdfProgressBar.setVisibility(View.INVISIBLE);
-                simpleOkDialog.cancel();
-            }
-        });
-        simpleOkDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-            @Override
-            public void onCancel(DialogInterface dialog) {
-                downloadPDFButton.setText("Format PDF");
-                downloadPdfProgressBar.setVisibility(View.INVISIBLE);
-                simpleOkDialog.cancel();
-            }
-        });
-        simpleOkDialog.build();
+    private void showNoConnectionError() {
+        mNestedScrollView.setVisibility(View.GONE);
+        mNoConnectionRecyclerView.setVisibility(View.VISIBLE);
+
+        List<Connection> list = new ArrayList<>();
+        list.add(new Connection(getString(R.string.no_connection_available), ACTION_BOOK, false));
+        NoConnectionAdapter adapter = new NoConnectionAdapter(list);
+        mNoConnectionRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mNoConnectionRecyclerView.setAdapter(adapter);
     }
-    private void succeDowloadAudioDialog(String message){
-        SimpleOkDialog simpleOkDialog = new SimpleOkDialog(this);
-        simpleOkDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        simpleOkDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
-        TextView messageTextView = simpleOkDialog.findViewById(R.id.text_view_dialog_simple_ok_message);
-        TextView ok = simpleOkDialog.findViewById(R.id.text_view_dialog_simple_ok);
-        messageTextView.setText(message);
-        ok.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                audioButton.setText("Format Audio");
-                downloadAudioProgressBar.setVisibility(View.INVISIBLE);
-                simpleOkDialog.cancel();
-            }
-        });
-        simpleOkDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-            @Override
-            public void onCancel(DialogInterface dialog) {
-                audioButton.setText("Format Audio");
-                downloadAudioProgressBar.setVisibility(View.INVISIBLE);
-                simpleOkDialog.cancel();
-            }
-        });
-        simpleOkDialog.build();
-    }
-    public String convertedDurationToString(int duration)
-    {
+
+    private String convertDurationToString(int duration) {
         return String.format("%02d:%02d",
                 TimeUnit.MILLISECONDS.toMinutes(duration),
                 TimeUnit.MILLISECONDS.toSeconds(duration) -
                         TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(duration)));
     }
 
-
-
-    private void createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "Channel Progress";
-            String description = "Channel for progress notification";
-            int importance = NotificationManager.IMPORTANCE_LOW;
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
-            channel.setDescription(description);
-
-            notificationManager = getSystemService(NotificationManager.class);
-            if (notificationManager != null) {
-                notificationManager.createNotificationChannel(channel);
-            }
-        } else {
-            notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        }
-    }
-
-    public class SendComments extends AsyncTask<String,Void,String> {
-        @Override
-        protected String doInBackground(String... params) {
-            try {
-                OkHttpClient client = new OkHttpClient();
-                RequestBody requestBody = new MultipartBody.Builder()
-                        .setType(MultipartBody.FORM)
-                        .addFormDataPart("idNumber",params[1])
-                        .addFormDataPart("idBook",params[2])
-                        .addFormDataPart("message",params[3])
-                        .build();
-                Request request = new Request.Builder()
-                        .url(params[0])
-                        .post(requestBody)
-                        .build();
-                try {
-                    Response response = client.newCall(request).execute();
-                    assert response.body() != null;
-                    return response.body().string();
-                }catch (IOException e)
-                {
-                    Log.e("errSendComments",e.getMessage());
-                }
-
-            }catch (Exception e)
-            {
-                return null;
-            }
-            return null;
-        }
-        @Override
-        protected void onPostExecute(String jsonData){
-        }
-    }
-
     @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_item,menu);
-        mTalksSelect = talksAdapter.getItem(talksAdapter.getPosition());
-    }
-    @Override
-    public boolean onContextItemSelected(MenuItem item){
-        switch (item.getItemId())
-        {
-            case R.id.menu_item_delete:
-               // mTalksList.remove(mTalksSelect.getId());
-                talksAdapter.remove(talksAdapter.getPosition());
-                break;
-            default:
-                return super.onContextItemSelected(item);
+    protected void onDestroy() {
+        super.onDestroy();
+
+        // Clean up media player
+        if (mMediaPlayer != null) {
+            if (mMediaPlayer.isPlaying()) {
+                mMediaPlayer.stop();
+            }
+            mMediaPlayer.release();
+            mMediaPlayer = null;
         }
-        return false;
+
+        // Stop media player thread
+        if (mMediaPlayerThread != null && mMediaPlayerThread.isAlive()) {
+            mMediaPlayerThread.interrupt();
+        }
+
+        // Unregister receivers
+        try {
+            if (mFinishDownloadReceiver != null) {
+                unregisterReceiver(mFinishDownloadReceiver);
+            }
+            if (mNoConnectionReceiver != null) {
+                unregisterReceiver(mNoConnectionReceiver);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error unregistering receivers", e);
+        }
     }
-    private LinearLayout mReservationLinearLayout;
-    private LinearLayout mAudioLinearLayout;
-    private LinearLayout mElectronicLinearLayout;
-    private RecyclerView mCommentsRecyclerView;
-    private ArrayList<Talks> mTalksList;
-
-    private RecyclerView mSimilarRecyclerView;
-    private RecyclerView mTonesRecyclerView;
-    private RecyclerView mNoConnectionRecyclerView;
-    private TonesAdapter mTonesAdapter;
-    private List<Tones> mListTones;
-    private Tones mTones;
-    private List<LocalBooks> mListSimilar;
-    private Session mSession;
-    private ImageView mBlanketImageView;
-    private TextView mTitleTextView;
-    private TextView mCategoryTextView;
-    private TextView mDescriptionTextView;
-    private TextView mNumberLikeTextView;
-    private TextView mNumberNoLikeTextView;
-    private TextView mNumberSubscribeTextView;
-    private TextView mTimeNowTextView;
-    private TextView mNameAuthor;
-    private TextView mCote;
-    private EditText mMessageTextView;
-    private ImageView mLikeImageView;
-    private ImageView mNoLikeImageView;
-    private ImageView mSubscribeImageView;
-    private Button mReservationButton;
-    private ImageView mPlayerImageView;
-    private MediaPlayer mMediaPlayer;
-    private SeekBar mSeekBar;
-    private Timer mTimer;
-    private RelativeLayout mRelativeLayout;
-    private String url;
-    private String mAudio;
-    private ReservationDialog mReservationDialog;
-    private ElectronicTable mElectronicTable;
-    private AudioTable mAudioTable;
-    private String mNbrJour;
-    private OnlineBook mOnlineBook;
-    private Category mCategory;
-    private Handler mHandler;
-    private NestedScrollView mNestedScrollView;
-    private NoConnectionAdapter mNoConnectionAdapter;
-    private Author mAuthor;
-    private ImageView mBackImageView;
-    private ProgressBar downloadAudioProgressBar;
-    private ProgressBar downloadPdfProgressBar;
-    private Button downloadPDFButton;
-    private Button audioButton;
-    private RelativeLayout mCommentRelativeLayout;
-
-    private static final String CHANNEL_ID = "progress_channel";
-    private NotificationManager notificationManager;
-    private String mSourcePdf;
-    private SemiNoConnectionAdapter mSemiNoConnectionAdapter;
-    private int notificationId = 1;
-    private boolean isDownloading = true;
-    private ProgressBar mWaitPlayerProgressBar;
-    private LinearLayout mAudioSizeLinearLayout;
-    private TextView mAudioSizeTextView;
-    private LinearLayout mMaxTimeLinearLayout;
-    private TextView mMaxTimeTextView;
-    private LinearLayout mPdfSizeLinearLayout;
-    private TextView mPdfSizeTextView;
-    private LinearLayout mNbrPageLinearLayout;
-    private TextView mNbrPageTextView;
-    private boolean isLike=false;
-    private boolean isNoLike=false;
-    private boolean isSubscribe=false;
-    private TextView mNbrView;
-    private TalksAdapter talksAdapter;
-    private Talks mTalksSelect;
 }
