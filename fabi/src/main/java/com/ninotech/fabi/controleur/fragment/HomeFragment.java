@@ -119,7 +119,6 @@ public class HomeFragment extends Fragment {
 
         initializeComponents();
         initializeViews(view);
-
         setupRecyclerViews();
         setupClickListeners();
         registerBroadcastReceiver();
@@ -145,7 +144,7 @@ public class HomeFragment extends Fragment {
         mAuthorMoreTextView = view.findViewById(R.id.text_view_recommended_more_author);
         mStructureRecyclerView = view.findViewById(R.id.recycler_view_fragment_recommended_structure);
         mAuthorRecyclerView = view.findViewById(R.id.recycler_view_author);
-        mWaitRecyclerView = view.findViewById(R.id.recycler_view_fragment_home_server);
+        mWaitRecyclerView = view.findViewById(R.id.recycler_view_fragment_recommended_wait);
         mServerdRecyclerView = view.findViewById(R.id.recycler_view_fragment_home_server);
         mNestedScrollView = view.findViewById(R.id.nested_scroll_view_fragment_home);
         mMoreStructRelativeLayout = view.findViewById(R.id.relative_layout_fragment_home_more_structure);
