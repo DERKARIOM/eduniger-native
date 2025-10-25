@@ -379,17 +379,6 @@
                         android:layout_centerVertical="true"
                         />
                 </RelativeLayout>
-                <Button
-                    android:id="@+id/button_activity_book_open_pdf"
-                    style="@style/wrap_content_all"
-                    android:text="@string/open"
-                    android:textAllCaps="false"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:drawableStart="@drawable/vector_black3_pdf"
-                    android:textSize="@dimen/size_button"
-                    android:backgroundTint="@color/purple_200"/>
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
