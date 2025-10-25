@@ -77,9 +77,6 @@ public class MainActivity extends AppCompatActivity {
         if (data != null) {
             String id = data.getQueryParameter("id");
             String name = data.getQueryParameter("name");
-//            textView.setText("Lien reçu : " + data.toString() +
-//                    "\nID = " + id +
-//                    "\nNom = " + name);
         }
         if(Themes.getName(getApplicationContext()).equals("notNight"))
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
@@ -144,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(login);
             finish();
         }
-        networkCheckWorker(getApplicationContext());
+        //networkCheckWorker(getApplicationContext());
         //startService(reservationService);
         try {
             if(mDigitalPrintTable.getPass().equals("0"))
