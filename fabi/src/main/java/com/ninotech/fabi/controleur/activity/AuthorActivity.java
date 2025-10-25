@@ -10,7 +10,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -19,8 +18,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
@@ -30,22 +29,20 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.adapter.AuthorFormatBookAdapter;
 import com.ninotech.fabi.controleur.adapter.AuthorHorizontaleAdapter;
-import com.ninotech.fabi.controleur.adapter.ElectronicAdapter;
 import com.ninotech.fabi.controleur.adapter.HorizontaleAdapter;
 import com.ninotech.fabi.controleur.adapter.NoConnectionAdapter;
-import com.ninotech.fabi.controleur.adapter.VoidContainerAdapter;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
 import com.ninotech.fabi.model.data.Author;
 import com.ninotech.fabi.model.data.Connection;
 import com.ninotech.fabi.model.data.Library;
 import com.ninotech.fabi.model.data.OnlineBook;
 import com.ninotech.fabi.model.data.Server;
-import com.ninotech.fabi.model.data.VoidContainer;
 import com.ninotech.fabi.model.table.Session;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -59,13 +56,78 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class AuthorActivity extends AppCompatActivity {
+
+    private static final String TAG = "AuthorActivity";
+    private static final String ACTION_AUTHOR = "AUTHOR_ACTIVITY";
+    private static final String RESPONSE_RAS = "RAS";
     private static final int REQUEST_CALL_PERMISSION = 1;
+    private static final String WHATSAPP_PACKAGE = "com.whatsapp";
+    private static final String WHATSAPP_BUSINESS_PACKAGE = "com.whatsapp.w4b";
+
+    // Views
+    private NestedScrollView mNestedScrollView;
+    private RecyclerView mWaitRecyclerView;
+    private RecyclerView mBooksRecyclerView;
+    private RecyclerView mAuthorRecyclerView;
+    private RecyclerView mAuthorFormatBookRecyclerView;
+    private ImageView mProfileImageView;
+    private ImageView mBackImageView;
+    private ImageView mAppelImageView;
+    private ImageView mEmailImageView;
+    private ImageView mWhatsAppImageView;
+    private TextView mUsernameTextView;
+    private TextView mProfessionTextView;
+    private EditText mSearchEditText;
+    private LinearLayout mContactsLinearLayout;
+
+    // Data
+    private final List<OnlineBook> mOnlineBookList = new ArrayList<>();
+    private final List<Author> mAuthorArrayList = new ArrayList<>();
+    private Author mAuthor;
+    private Session mSession;
+    private String mNumberAuthor;
+
+    // Utils
+    private OkHttpClient mHttpClient;
+    private BroadcastReceiver mNoConnectionReceiver;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_author);
         Objects.requireNonNull(getSupportActionBar()).hide();
-        //AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+
+        initializeComponents();
+        initializeViews();
+        setupRecyclerViews();
+        configureContactVisibility();
+        setupClickListeners();
+        loadAuthorImage();
+        registerBroadcastReceiver();
+        loadAuthorData();
+    }
+
+    private void initializeComponents() {
+        mSession = new Session(this);
+        mHttpClient = new OkHttpClient();
+        mAuthor = extractAuthorFromIntent();
+    }
+
+    private Author extractAuthorFromIntent() {
+        Intent intent = getIntent();
+        return new Author(
+                intent.getStringExtra("intent_author_adapter_id"),
+                intent.getStringExtra("intent_author_adapter_name"),
+                intent.getStringExtra("intent_author_adapter_first_name"),
+                intent.getStringExtra("intent_author_adapter_profile"),
+                intent.getStringExtra("intent_author_adapter_profession"),
+                intent.getStringExtra("intent_author_adapter_call"),
+                intent.getStringExtra("intent_author_adapter_email"),
+                intent.getStringExtra("intent_author_adapter_whatsapp")
+        );
+    }
+
+    private void initializeViews() {
         mWaitRecyclerView = findViewById(R.id.recycler_view_activity_author_wait);
         mNestedScrollView = findViewById(R.id.nested_scroll_view_activity_author);
         mProfileImageView = findViewById(R.id.image_view_author_activity_profile);
@@ -79,297 +141,332 @@ public class AuthorActivity extends AppCompatActivity {
         mAppelImageView = findViewById(R.id.image_view_activity_author_appel);
         mEmailImageView = findViewById(R.id.image_view_activity_author_email);
         mWhatsAppImageView = findViewById(R.id.image_view_activity_author_whatsapp);
-        mSession = new Session(getApplicationContext());
         mAuthorFormatBookRecyclerView = findViewById(R.id.recycler_view_activity_author_format_books);
-        mAuthorArrayList = new ArrayList<>();
-        mOnlineBookList = new ArrayList<>();
-        Intent authorIntent = getIntent();
-        BroadcastReceiver receiverNoConnectionAdapter = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if ("AUTHOR_ACTIVITY".equals(intent.getAction())) {
-                    try {
-                        ArrayList<Connection> list = new ArrayList<>();
-                        list.add(new Connection(getString(R.string.wait),"STRUCTURE_ACTIVITY",true));
-                        NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
-                        mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                        mWaitRecyclerView.setAdapter(noConnectionAdapter);
-                        AuthorBookSyn authorBookSyn = new AuthorBookSyn();
-                        authorBookSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "AuthorBook.php",mSession.getIdNumber(),mAuthor.getIdNumber());
-                        AuthorSyn authorSyn = new AuthorSyn();
-                        authorSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "AuthorSimular.php", mAuthor.getIdNumber());
-                    }catch (Exception e)
-                    {
-                        Log.e("errRankingFragment",e.getMessage());
-                    }
 
-                }
-            }
-        };
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            registerReceiver(receiverNoConnectionAdapter, new IntentFilter("AUTHOR_ACTIVITY"),Context.RECEIVER_EXPORTED);
-        }
-        ArrayList<Connection> list = new ArrayList<>();
+        configureSearchField();
+        updateAuthorInfo();
+    }
+
+    private void configureSearchField() {
         mSearchEditText.setVisibility(View.GONE);
-        list.add(new Connection(getString(R.string.wait),null,true));
-        NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
-        mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        mWaitRecyclerView.setAdapter(noConnectionAdapter);
-
-        mAuthorRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        mAuthorRecyclerView.setAdapter(noConnectionAdapter);
-        mAuthor = new Author(
-                authorIntent.getStringExtra("intent_author_adapter_id"),
-                authorIntent.getStringExtra("intent_author_adapter_name"),
-                authorIntent.getStringExtra("intent_author_adapter_first_name"),
-                authorIntent.getStringExtra("intent_author_adapter_profile"),
-                authorIntent.getStringExtra("intent_author_adapter_profession"),
-                authorIntent.getStringExtra("intent_author_adapter_call"),
-                authorIntent.getStringExtra("intent_author_adapter_email"),
-                authorIntent.getStringExtra("intent_author_adapter_whatsapp")
-        );
-        int i=0;
-        if (mAuthor.getCall().equals("null"))
-        {
-            mAppelImageView.setVisibility(View.GONE);
-            i++;
-        }
-        if (mAuthor.getEmail().equals("null"))
-        {
-            mEmailImageView.setVisibility(View.GONE);
-            i++;
-
-        }
-        if (mAuthor.getWhatsapp().equals("null"))
-        {
-            mWhatsAppImageView.setVisibility(View.GONE);
-            i++;
-
-        }
-        if (i==3)
-            mContactsLinearLayout.setVisibility(View.GONE);
-        mBackImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
         mSearchEditText.setSelectAllOnFocus(false);
         mSearchEditText.setFocusable(false);
         mSearchEditText.setHint("  Recherche mes livres");
-        mSearchEditText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent searchIntent = new Intent(getApplicationContext(), SearchActivity.class);
-                searchIntent.putExtra("search_key", "ONLINE_BOOK");
-                searchIntent.putExtra("online_book_key", "AUTHOR_ACTIVITY");
-                searchIntent.putExtra("id_author_key",mAuthor.getIdNumber());
-                startActivity(searchIntent);
-            }
-        });
-        mAppelImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                lancerAppel(mAuthor.getCall());
-            }
-        });
+    }
 
-        mEmailImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                envoyerEmail(mAuthor.getEmail(),
-                        "Sujet : ",
-                        "Bonjour " + mAuthor.getName() + " Abdoul Kader, ",
-                        AuthorActivity.this);
-
-            }
-        });
-
-        mWhatsAppImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                envoyerMessageWhatsApp(mAuthor.getWhatsapp(),
-                        "Bonjour " + mAuthor.getName() + ",",
-                        AuthorActivity.this);
-
-            }
-        });
-        Picasso.get()
-                .load(Server.getIpServer(getApplicationContext()) + "ressources/profile/" + mAuthor.getProfile())
-                .placeholder(R.drawable.img_wait_profile)
-                .error(R.drawable.img_wait_profile)
-                .transform(new RoundedTransformation(1000,4))
-                .resize(384,384)
-                .into(mProfileImageView);
+    private void updateAuthorInfo() {
         mUsernameTextView.setText(mAuthor.getFirstName() + " " + mAuthor.getName());
         mProfessionTextView.setText(mAuthor.getProfession());
-        AuthorBookSyn authorBookSyn = new AuthorBookSyn();
-        authorBookSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "AuthorBook.php",mSession.getIdNumber(),mAuthor.getIdNumber());
-        AuthorSyn authorSyn = new AuthorSyn();
-        authorSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "AuthorSimular.php", mAuthor.getIdNumber());
     }
-    private class AuthorBookSyn extends AsyncTask<String,Void,String> {
+
+    private void setupRecyclerViews() {
+        List<Connection> waitList = new ArrayList<>();
+        waitList.add(new Connection(getString(R.string.wait), null, true));
+
+        NoConnectionAdapter adapter = new NoConnectionAdapter(waitList);
+        mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mWaitRecyclerView.setAdapter(adapter);
+
+        mAuthorRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mAuthorRecyclerView.setAdapter(adapter);
+    }
+
+    private void configureContactVisibility() {
+        int hiddenCount = 0;
+
+        if ("null".equals(mAuthor.getCall())) {
+            mAppelImageView.setVisibility(View.GONE);
+            hiddenCount++;
+        }
+
+        if ("null".equals(mAuthor.getEmail())) {
+            mEmailImageView.setVisibility(View.GONE);
+            hiddenCount++;
+        }
+
+        if ("null".equals(mAuthor.getWhatsapp())) {
+            mWhatsAppImageView.setVisibility(View.GONE);
+            hiddenCount++;
+        }
+
+        if (hiddenCount == 3) {
+            mContactsLinearLayout.setVisibility(View.GONE);
+        }
+    }
+
+    private void setupClickListeners() {
+        mBackImageView.setOnClickListener(v -> onBackPressed());
+
+        mSearchEditText.setOnClickListener(v -> navigateToSearch());
+
+        mAppelImageView.setOnClickListener(v -> {
+            mNumberAuthor = mAuthor.getCall();
+            initiateCall(mNumberAuthor);
+        });
+
+        mEmailImageView.setOnClickListener(v -> sendEmail(
+                mAuthor.getEmail(),
+                "Sujet : ",
+                "Bonjour " + mAuthor.getName() + " " + mAuthor.getFirstName() + ","
+        ));
+
+        mWhatsAppImageView.setOnClickListener(v -> sendWhatsAppMessage(
+                mAuthor.getWhatsapp(),
+                "Bonjour " + mAuthor.getName() + ","
+        ));
+    }
+
+    private void navigateToSearch() {
+        Intent intent = new Intent(this, SearchActivity.class);
+        intent.putExtra("search_key", "ONLINE_BOOK");
+        intent.putExtra("online_book_key", "AUTHOR_ACTIVITY");
+        intent.putExtra("id_author_key", mAuthor.getIdNumber());
+        startActivity(intent);
+    }
+
+    private void loadAuthorImage() {
+        Picasso.get()
+                .load(Server.getIpServer(this) + "ressources/profile/" + mAuthor.getProfile())
+                .placeholder(R.drawable.img_wait_profile)
+                .error(R.drawable.img_wait_profile)
+                .transform(new RoundedTransformation(1000, 4))
+                .resize(384, 384)
+                .into(mProfileImageView);
+    }
+
+    private void registerBroadcastReceiver() {
+        mNoConnectionReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (ACTION_AUTHOR.equals(intent.getAction())) {
+                    handleBroadcastReceived();
+                }
+            }
+        };
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            registerReceiver(mNoConnectionReceiver,
+                    new IntentFilter(ACTION_AUTHOR),
+                    Context.RECEIVER_EXPORTED);
+        }
+    }
+
+    private void handleBroadcastReceived() {
+        try {
+            showLoadingState();
+            loadAuthorData();
+        } catch (Exception e) {
+            Log.e(TAG, "Error handling broadcast", e);
+        }
+    }
+
+    private void showLoadingState() {
+        List<Connection> list = new ArrayList<>();
+        list.add(new Connection(getString(R.string.wait), ACTION_AUTHOR, true));
+
+        NoConnectionAdapter adapter = new NoConnectionAdapter(list);
+        mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mWaitRecyclerView.setAdapter(adapter);
+    }
+
+    private void loadAuthorData() {
+        String baseUrl = Server.getIpServerAndroid(this);
+        String idNumber = mSession.getIdNumber();
+        String authorId = mAuthor.getIdNumber();
+
+        new AuthorBookSyn().execute(baseUrl + "AuthorBook.php", idNumber, authorId);
+        new AuthorSyn().execute(baseUrl + "AuthorSimular.php", authorId);
+    }
+
+    // ==================== AsyncTask Classes ====================
+
+    private class AuthorBookSyn extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-
-            try {
-                OkHttpClient client = new OkHttpClient();
-                RequestBody requestBody = new MultipartBody.Builder()
-                        .setType(MultipartBody.FORM)
-                        .addFormDataPart("idNumber", params[1])
-                        .addFormDataPart("idAuthor", params[2])
-                        .build();
-                Request request = new Request.Builder()
-                        .url(params[0])
-                        .post(requestBody)
-                        .build();
-                try {
-                    Response response = client.newCall(request).execute();
-                    assert response.body() != null;
-                    return response.body().string();
-                } catch (IOException e) {
-                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-
-            } catch (Exception e) {
-                return null;
-            }
-            return null;
+            return executePostRequest(params[0],
+                    new MultipartBody.Builder()
+                            .setType(MultipartBody.FORM)
+                            .addFormDataPart("idNumber", params[1])
+                            .addFormDataPart("idAuthor", params[2])
+                            .build());
         }
 
         @Override
         protected void onPostExecute(String jsonData) {
             if (jsonData != null) {
-                int nbrElectronic=0,nbrAudio=0,nbrPhysique=0;
-                if (!jsonData.equals("RAS"))
-                {
-                    mWaitRecyclerView.setVisibility(View.GONE);
-                    mNestedScrollView.setVisibility(View.VISIBLE);
-                    mSearchEditText.setVisibility(View.VISIBLE);
-                    if(!jsonData.equals("RAS"))
-                    {
-                        JSONArray jsonArray = null;
-                        try {
-                            jsonArray = new JSONArray(jsonData);
-                        } catch (JSONException e) {
-                            throw new RuntimeException(e);
-                        }
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            try {
-                                mOnlineBookList.add(new OnlineBook(jsonArray.getJSONObject(i).getString("idBook"), jsonArray.getJSONObject(i).getString("blanket"), jsonArray.getJSONObject(i).getString("bookTitle"), jsonArray.getJSONObject(i).getString("categoryTitle"), jsonArray.getJSONObject(i).getString("isPhysic"), jsonArray.getJSONObject(i).getString("electronic"), jsonArray.getJSONObject(i).getString("isAudio"), Integer.parseInt(jsonArray.getJSONObject(i).getString("numberLike")), Integer.parseInt(jsonArray.getJSONObject(i).getString("numberNoLike"))));
-                                if(!mOnlineBookList.get(i).getElectronic().equals("null"))
-                                    nbrElectronic++;
-                                if (mOnlineBookList.get(i).getIsAudio().equals("1"))
-                                    nbrAudio++;
-                                if (mOnlineBookList.get(i).getIsPhysic().equals("1"))
-                                    nbrPhysique++;
-                            } catch (JSONException e) {
-                                throw new RuntimeException(e);
-                            }
-                        }
-                        HorizontaleAdapter horizontaleAdapter = new HorizontaleAdapter(mOnlineBookList);
-                        mBooksRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false));
-                        mBooksRecyclerView.setAdapter(horizontaleAdapter);
-                    }
-                }
-                List<Library> libraryList = new ArrayList<>();
-                AuthorFormatBookAdapter authorFormatBookAdapter = new AuthorFormatBookAdapter(libraryList);
-                libraryList.add(new Library(1,R.drawable.fichier_pdf,"Mes livres électroniques", nbrElectronic,mAuthor.getIdNumber()));
-                libraryList.add(new Library(2,R.drawable.audio,"Mes livres audios",nbrAudio,mAuthor.getIdNumber()));
-                libraryList.add(new Library(3,R.drawable.books_emp,"Mes livres physiques",nbrPhysique,mAuthor.getIdNumber()));
-                mAuthorFormatBookRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                mAuthorFormatBookRecyclerView.setAdapter(authorFormatBookAdapter);
+                processAuthorBooks(jsonData);
             } else {
-                ArrayList<Connection> list = new ArrayList<>();
-                list.add(new Connection(getString(R.string.no_connection_available), "AUTHOR_ACTIVITY", false));
-                NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
-                mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                mWaitRecyclerView.setAdapter(noConnectionAdapter);
+                showNoConnectionError();
             }
         }
+
+        private void processAuthorBooks(String jsonData) {
+            BookStats stats = new BookStats();
+
+            if (!RESPONSE_RAS.equals(jsonData)) {
+                mWaitRecyclerView.setVisibility(View.GONE);
+                mNestedScrollView.setVisibility(View.VISIBLE);
+                mSearchEditText.setVisibility(View.VISIBLE);
+
+                try {
+                    JSONArray jsonArray = new JSONArray(jsonData);
+                    mOnlineBookList.clear();
+
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject obj = jsonArray.getJSONObject(i);
+
+                        OnlineBook book = new OnlineBook(
+                                obj.getString("idBook"),
+                                obj.getString("blanket"),
+                                obj.getString("bookTitle"),
+                                obj.getString("categoryTitle"),
+                                obj.getString("isPhysic"),
+                                obj.getString("electronic"),
+                                obj.getString("isAudio"),
+                                Integer.parseInt(obj.getString("numberLike")),
+                                Integer.parseInt(obj.getString("numberNoLike"))
+                        );
+
+                        mOnlineBookList.add(book);
+                        stats.updateStats(book);
+                    }
+
+                    updateBooksRecyclerView();
+
+                } catch (JSONException e) {
+                    Log.e(TAG, "Error parsing author books", e);
+                }
+            }
+
+            updateFormatBooksRecyclerView(stats);
+        }
+
+        private void updateBooksRecyclerView() {
+            HorizontaleAdapter adapter = new HorizontaleAdapter(mOnlineBookList);
+            mBooksRecyclerView.setLayoutManager(
+                    new LinearLayoutManager(AuthorActivity.this,
+                            LinearLayoutManager.HORIZONTAL, false));
+            mBooksRecyclerView.setAdapter(adapter);
+        }
+
+        private void updateFormatBooksRecyclerView(BookStats stats) {
+            List<Library> libraryList = new ArrayList<>();
+            libraryList.add(new Library(
+                    1,
+                    R.drawable.fichier_pdf,
+                    "Mes livres électroniques",
+                    stats.electronic,
+                    mAuthor.getIdNumber()
+            ));
+            libraryList.add(new Library(
+                    2,
+                    R.drawable.audio,
+                    "Mes livres audios",
+                    stats.audio,
+                    mAuthor.getIdNumber()
+            ));
+            libraryList.add(new Library(
+                    3,
+                    R.drawable.books_emp,
+                    "Mes livres physiques",
+                    stats.physical,
+                    mAuthor.getIdNumber()
+            ));
+
+            AuthorFormatBookAdapter adapter = new AuthorFormatBookAdapter(libraryList);
+            mAuthorFormatBookRecyclerView.setLayoutManager(new LinearLayoutManager(AuthorActivity.this));
+            mAuthorFormatBookRecyclerView.setAdapter(adapter);
+        }
     }
-    private class AuthorSyn extends AsyncTask<String,Void,String> {
+
+    private class AuthorSyn extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-
-            try {
-                OkHttpClient client = new OkHttpClient();
-                RequestBody requestBody = new MultipartBody.Builder()
-                        .setType(MultipartBody.FORM)
-                        .addFormDataPart("idUser",params[1])
-                        .build();
-                Request request = new Request.Builder()
-                        .url(params[0])
-                        .post(requestBody)
-                        .build();
-                try {
-                    Response response = client.newCall(request).execute();
-                    assert response.body() != null;
-                    return response.body().string();
-                }catch (IOException e)
-                {
-                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-
-            }catch (Exception e)
-            {
-                return null;
-            }
-            return null;
+            return executePostRequest(params[0],
+                    new MultipartBody.Builder()
+                            .setType(MultipartBody.FORM)
+                            .addFormDataPart("idUser", params[1])
+                            .build());
         }
+
         @Override
-        protected void onPostExecute(String jsonData){
-            if(jsonData != null)
-            {
-                if (!jsonData.equals("RAS"))
-                {
-                    JSONArray jsonArray = null;
-                    try {
-                        jsonArray = new JSONArray(jsonData);
-                    } catch (JSONException e) {
-                        throw new RuntimeException(e);
+        protected void onPostExecute(String jsonData) {
+            if (jsonData != null) {
+                processSimilarAuthors(jsonData);
+            } else {
+                showAuthorLoadError();
+            }
+        }
+
+        private void processSimilarAuthors(String jsonData) {
+            if (!RESPONSE_RAS.equals(jsonData)) {
+                try {
+                    JSONArray jsonArray = new JSONArray(jsonData);
+                    mAuthorArrayList.clear();
+
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject obj = jsonArray.getJSONObject(i);
+                        mAuthorArrayList.add(new Author(
+                                obj.getString("idAuthor"),
+                                obj.getString("name"),
+                                obj.getString("firstName"),
+                                obj.getString("profile"),
+                                obj.getString("profession"),
+                                obj.getString("call"),
+                                obj.getString("email"),
+                                obj.getString("whatsapp")
+                        ));
                     }
-                    for (int i=0;i<jsonArray.length();i++) {
-                        try {
-                            mAuthorArrayList.add(new Author(jsonArray.getJSONObject(i).getString("idAuthor"),jsonArray.getJSONObject(i).getString("name"),jsonArray.getJSONObject(i).getString("firstName"),jsonArray.getJSONObject(i).getString("profile"),jsonArray.getJSONObject(i).getString("profession"),jsonArray.getJSONObject(i).getString("call"),jsonArray.getJSONObject(i).getString("email"),jsonArray.getJSONObject(i).getString("whatsapp")));
-                        } catch (JSONException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
+                } catch (JSONException e) {
+                    Log.e(TAG, "Error parsing similar authors", e);
                 }
-                AuthorHorizontaleAdapter authorHorizontaleAdapter = new AuthorHorizontaleAdapter(mAuthorArrayList);
-                mAuthorRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(),LinearLayoutManager.HORIZONTAL,false));
-                mAuthorRecyclerView.setAdapter(authorHorizontaleAdapter);
             }
-            else {
-                ArrayList<Connection> list = new ArrayList<>();
-                list.add(new Connection(getString(R.string.no_connection_available),"CATEGORY_FRAGMENT",false));
-                NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
-                mAuthorRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(),LinearLayoutManager.HORIZONTAL,false));
-                mAuthorRecyclerView.setAdapter(noConnectionAdapter);
-            }
+
+            updateAuthorsRecyclerView();
+        }
+
+        private void updateAuthorsRecyclerView() {
+            AuthorHorizontaleAdapter adapter = new AuthorHorizontaleAdapter(mAuthorArrayList);
+            mAuthorRecyclerView.setLayoutManager(
+                    new LinearLayoutManager(AuthorActivity.this,
+                            LinearLayoutManager.HORIZONTAL, false));
+            mAuthorRecyclerView.setAdapter(adapter);
+        }
+
+        private void showAuthorLoadError() {
+            List<Connection> list = new ArrayList<>();
+            list.add(new Connection(getString(R.string.no_connection_available),
+                    ACTION_AUTHOR, false));
+            NoConnectionAdapter adapter = new NoConnectionAdapter(list);
+            mAuthorRecyclerView.setLayoutManager(
+                    new LinearLayoutManager(AuthorActivity.this,
+                            LinearLayoutManager.HORIZONTAL, false));
+            mAuthorRecyclerView.setAdapter(adapter);
         }
     }
-    private void lancerAppel(String numero) {
-        if (numero == null || numero.isEmpty()) {
+
+    // ==================== Contact Methods ====================
+
+    private void initiateCall(String phoneNumber) {
+        if (phoneNumber == null || phoneNumber.isEmpty()) {
             Toast.makeText(this, "Numéro invalide", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Vérifier si la permission est déjà accordée
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE)
                 != PackageManager.PERMISSION_GRANTED) {
-            // Demander la permission
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CALL_PERMISSION);
         } else {
-            // Lancer directement l'appel
-            String dial = "tel:" + numero;
-            startActivity(new Intent(Intent.ACTION_CALL, Uri.parse(dial)));
+            makeCall(phoneNumber);
         }
     }
 
-    // Résultat de la demande de permission
+    private void makeCall(String phoneNumber) {
+        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phoneNumber));
+        startActivity(intent);
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
@@ -377,83 +474,120 @@ public class AuthorActivity extends AppCompatActivity {
 
         if (requestCode == REQUEST_CALL_PERMISSION) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission accordée → relancer l'appel
-                lancerAppel(mNumberAuthor);
+                if (mNumberAuthor != null) {
+                    makeCall(mNumberAuthor);
+                }
             } else {
-                // Permission refusée
                 Toast.makeText(this, "Permission d'appel refusée", Toast.LENGTH_SHORT).show();
             }
         }
     }
-    private void envoyerEmail(String destinataire, String sujet, String message, Context context) {
-        // Construire l'URI avec "mailto"
-        Uri uri = Uri.parse("mailto:" + destinataire);
 
-        // Créer l'intent
+    private void sendEmail(String recipient, String subject, String message) {
+        Uri uri = Uri.parse("mailto:" + recipient);
         Intent intent = new Intent(Intent.ACTION_SENDTO, uri);
-        intent.putExtra(Intent.EXTRA_SUBJECT, sujet);
+        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
         intent.putExtra(Intent.EXTRA_TEXT, message);
 
         try {
-            context.startActivity(Intent.createChooser(intent, "Choisir une application de messagerie"));
+            startActivity(Intent.createChooser(intent, "Choisir une application de messagerie"));
         } catch (android.content.ActivityNotFoundException e) {
-            Toast.makeText(context, "Aucune application email installée", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Aucune application email installée", Toast.LENGTH_SHORT).show();
         }
     }
-    private void envoyerMessageWhatsApp(String numero, String message, Context context) {
-        try {
-            // Construire l'URL
-            String url = "https://wa.me/" + numero + "?text=" + Uri.encode(message);
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse(url));
 
-            // Vérifier si WhatsApp normal est installé
-            if (isPackageInstalled("com.whatsapp", context)) {
-                intent.setPackage("com.whatsapp");
-            }
-            // Sinon vérifier WhatsApp Business
-            else if (isPackageInstalled("com.whatsapp.w4b", context)) {
-                intent.setPackage("com.whatsapp.w4b");
+    private void sendWhatsAppMessage(String phoneNumber, String message) {
+        try {
+            String url = "https://wa.me/" + phoneNumber + "?text=" + Uri.encode(message);
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+
+            if (isPackageInstalled(WHATSAPP_PACKAGE)) {
+                intent.setPackage(WHATSAPP_PACKAGE);
+            } else if (isPackageInstalled(WHATSAPP_BUSINESS_PACKAGE)) {
+                intent.setPackage(WHATSAPP_BUSINESS_PACKAGE);
             } else {
-                Toast.makeText(context, "Aucune version de WhatsApp n'est installée", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Aucune version de WhatsApp n'est installée",
+                        Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            context.startActivity(intent);
+            startActivity(intent);
 
         } catch (Exception e) {
-            Toast.makeText(context, "Erreur lors de l'ouverture de WhatsApp", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Erreur lors de l'ouverture de WhatsApp",
+                    Toast.LENGTH_SHORT).show();
         }
     }
 
-    // Vérifie si un package est installé
-    private boolean isPackageInstalled(String packageName, Context context) {
+    private boolean isPackageInstalled(String packageName) {
         try {
-            context.getPackageManager().getPackageInfo(packageName, 0);
+            getPackageManager().getPackageInfo(packageName, 0);
             return true;
         } catch (Exception e) {
             return false;
         }
     }
 
+    // ==================== Helper Methods ====================
 
-    private ImageView mProfileImageView;
-    private TextView mUsernameTextView;
-    private Author mAuthor;
-    private RecyclerView mBooksRecyclerView;
-    private ArrayList<OnlineBook> mOnlineBookList;
-    private ArrayList<Author> mAuthorArrayList;
-    private RecyclerView mAuthorRecyclerView;
-    private Session mSession;
-    private RecyclerView mAuthorFormatBookRecyclerView;
-    private ImageView mBackImageView;
-    private EditText mSearchEditText;
-    private TextView mProfessionTextView;
-    private RecyclerView mWaitRecyclerView;
-    private NestedScrollView mNestedScrollView;
-    private ImageView mAppelImageView;
-    private ImageView mEmailImageView;
-    private ImageView mWhatsAppImageView;
-    private LinearLayout mContactsLinearLayout;
-    private String mNumberAuthor=null;
+    private String executePostRequest(String url, RequestBody requestBody) {
+        try {
+            Request request = new Request.Builder()
+                    .url(url)
+                    .post(requestBody)
+                    .build();
+
+            try (Response response = mHttpClient.newCall(request).execute()) {
+                if (response.body() != null) {
+                    return response.body().string();
+                }
+            }
+        } catch (IOException e) {
+            Log.e(TAG, "Network error: " + e.getMessage(), e);
+        } catch (Exception e) {
+            Log.e(TAG, "Unexpected error: " + e.getMessage(), e);
+        }
+        return null;
+    }
+
+    private void showNoConnectionError() {
+        List<Connection> list = new ArrayList<>();
+        list.add(new Connection(getString(R.string.no_connection_available),
+                ACTION_AUTHOR, false));
+        NoConnectionAdapter adapter = new NoConnectionAdapter(list);
+        mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mWaitRecyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mNoConnectionReceiver != null) {
+            try {
+                unregisterReceiver(mNoConnectionReceiver);
+            } catch (Exception e) {
+                Log.e(TAG, "Error unregistering receiver", e);
+            }
+        }
+    }
+
+    // ==================== Helper Classes ====================
+
+    private static class BookStats {
+        int electronic = 0;
+        int audio = 0;
+        int physical = 0;
+
+        void updateStats(OnlineBook book) {
+            if (!"null".equals(book.getElectronic())) {
+                electronic++;
+            }
+            if ("1".equals(book.getIsAudio())) {
+                audio++;
+            }
+            if ("1".equals(book.getIsPhysic())) {
+                physical++;
+            }
+        }
+    }
 }
