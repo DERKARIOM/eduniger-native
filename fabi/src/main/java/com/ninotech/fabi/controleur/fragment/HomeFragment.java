@@ -119,6 +119,7 @@ public class HomeFragment extends Fragment {
 
         initializeComponents();
         initializeViews(view);
+
         setupRecyclerViews();
         setupClickListeners();
         registerBroadcastReceiver();
@@ -301,6 +302,7 @@ public class HomeFragment extends Fragment {
                 } else if (!RESPONSE_RAS.equals(jsonData)) {
                     processRecommendedBooks(jsonData);
                     setupServerRecyclerView();
+                    mServerdRecyclerView.setVisibility(View.VISIBLE);
                     mStructureRecyclerView.setVisibility(View.VISIBLE);
                 }
             } else {
@@ -345,12 +347,10 @@ public class HomeFragment extends Fragment {
                             numberLike
                     ));
                 }
-
                 HorizontaleAdapter adapter = new HorizontaleAdapter(mOnlineBookList);
                 mBookRecommendedRecyclerView.setLayoutManager(
                         new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
                 mBookRecommendedRecyclerView.setAdapter(adapter);
-
             } catch (JSONException e) {
                 Log.e(TAG, "Error parsing recommended books", e);
             }
@@ -359,18 +359,8 @@ public class HomeFragment extends Fragment {
         private void setupServerRecyclerView() {
             String isAuthor = mUserTable.getIsAuthor(mSession.getIdNumber());
             mServers.clear();
-
-            if ("0".equals(isAuthor)) {
-                mServers.add(createStructure("RegisterAuthor", "uam.png",
-                        "Devenir Auteur", "@eduniger", "Rejoinez-nous", "4"));
-            } else if ("1".equals(isAuthor)) {
-                mServers.add(createStructure("AddBook", "eduniger.png",
-                        "Ajouter un contenu", "@ninotech", "Créez librement", "0"));
-            } else {
-                mServerdRecyclerView.setVisibility(View.GONE);
-                return;
-            }
-
+            mServers.add(createStructure("AddBook", "eduniger.png",
+                    "Ajouter un contenu", "@ninotech", "Créez librement", "0"));
             mServerdRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
             mServerdRecyclerView.setAdapter(mServerAdapter);
         }
