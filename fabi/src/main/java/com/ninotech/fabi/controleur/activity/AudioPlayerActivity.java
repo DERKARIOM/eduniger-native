@@ -1,7 +1,6 @@
 package com.ninotech.fabi.controleur.activity;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
@@ -10,15 +9,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.audiofx.Equalizer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -26,21 +22,15 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.ninotech.fabi.Playable;
 import com.ninotech.fabi.R;
-import com.ninotech.fabi.controleur.adapter.NoConnectionAdapter;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
-import com.ninotech.fabi.controleur.custo.StatusBarCusto;
-import com.ninotech.fabi.controleur.fragment.HomeFragment;
-import com.ninotech.fabi.model.data.Connection;
 import com.ninotech.fabi.model.data.CreateNotification;
 import com.ninotech.fabi.model.data.Track;
 import com.ninotech.fabi.model.service.OnClearFromRecentService;
@@ -49,7 +39,6 @@ import com.ninotech.fabi.model.table.Session;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,21 +47,22 @@ import java.util.concurrent.TimeUnit;
 
 public class AudioPlayerActivity extends AppCompatActivity implements Playable {
 
-    private static final String CHANNEL_ID = "AUDIO_PLAYER_CHANNEL";
-    private static final int NOTIFICATION_ID = 1;
-    private static final int REQUEST_CODE_PASS = 1 ;
+    private static final String TAG = "AudioPlayerActivity";
+    private static final String ACTION_SELECT_PLAYER = "SELECT_LIST_PLAYER";
+    private static final String ACTION_TRACKS = "TRACKS_TRACKS";
+    private static final String LIST_SOURCE_ALL = "all";
+    private static final String LIST_SOURCE_CATEGORY = "category";
+    private static final String LIST_SOURCE_AUTHOR = "author";
+    private static final int PERMISSION_REQUEST_CODE = 101;
+    private static final int AUTO_NEXT_THRESHOLD_MS = 3000;
 
-    private NotificationManager notificationManager;
-    private Session mSession;
+    // Views
     private TextView mTitleTextView;
     private TextView mAuthorTextView;
-    private ImageView mCoverImageView;
     private TextView mDurationTotalTextView;
     private TextView mDurationCurrentTextView;
-    private MediaPlayer mMediaPlayer;
+    private ImageView mCoverImageView;
     private ImageView mPlayImageView;
-    private SeekBar mSeekBar;
-    private Handler mHandler;
     private ImageView mBackImageView;
     private ImageView mReplayImageView;
     private ImageView mVolumeImageView;
@@ -84,12 +74,24 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
     private ImageView mBackPlayImageView;
     private ImageView mNextPlayImageView;
     private ImageView mAutoPlayImageView;
-    private String audioPath;
+    private SeekBar mSeekBar;
+
+    // Media
+    private MediaPlayer mMediaPlayer;
+    private Handler mHandler;
+    private Thread mUpdateThread;
+
+    // Data
     private List<Track> mTracks;
-    private int position=0;
-    private boolean isPlaying = false;
-    private Intent audioBookIntent;
+    private Session mSession;
+    private int mPosition = 0;
+    private boolean mIsPlaying = false;
     private String mListSource;
+
+    // Notification
+    private NotificationManager mNotificationManager;
+    private BroadcastReceiver mPlaybackReceiver;
+    private BroadcastReceiver mPlaylistReceiver;
 
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @Override
@@ -97,8 +99,31 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_audio_player);
         Objects.requireNonNull(getSupportActionBar()).hide();
-        audioBookIntent = getIntent();
+
+        initializeComponents();
+        initializeViews();
+        setupSeekBar();
+        setupClickListeners();
+        loadTracks();
+        setupMediaPlayer();
+        requestPermissions();
+        setupNotifications();
+        startPlaybackThread();
+    }
+
+    private void initializeComponents() {
         mSession = new Session(this);
+        mHandler = new Handler();
+        mTracks = new ArrayList<>();
+
+        Intent intent = getIntent();
+        String idBook = intent.getStringExtra("key_adapter_audio_book_id");
+        mListSource = intent.getStringExtra("list_audio_source");
+
+        populateTracks(idBook, mListSource);
+    }
+
+    private void initializeViews() {
         mTitleTextView = findViewById(R.id.text_view_activity_audio_player_title);
         mAuthorTextView = findViewById(R.id.text_view_activity_audio_player_author);
         mDurationTotalTextView = findViewById(R.id.text_view_activity_audio_player_duration_total);
@@ -117,383 +142,427 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
         mBackPlayImageView = findViewById(R.id.image_view_activity_audio_player_back_player);
         mNextPlayImageView = findViewById(R.id.image_view_activity_audio_player_next_play);
         mAutoPlayImageView = findViewById(R.id.image_view_activity_audio_player_auto_play);
-        mHandler = new Handler();
-        BroadcastReceiver receiverNoConnectionAdapter = new BroadcastReceiver() {
+
+        updateTrackInfo();
+    }
+
+    private void setupSeekBar() {
+        mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (fromUser && mMediaPlayer != null) {
+                    mMediaPlayer.seekTo(progress);
+                }
+            }
+            @Override public void onStartTrackingTouch(SeekBar seekBar) {}
+            @Override public void onStopTrackingTouch(SeekBar seekBar) {}
+        });
+    }
+
+    private void setupClickListeners() {
+        mBackImageView.setOnClickListener(v -> onBackPressed());
+        mPlayImageView.setOnClickListener(v -> togglePlayPause());
+        mBackPlayImageView.setOnClickListener(v -> onTrackPrevious());
+        mNextPlayImageView.setOnClickListener(v -> onTrackNext());
+        mReplayImageView.setOnClickListener(v -> replayTrack());
+        mVolumeImageView.setOnClickListener(v -> showVolumeControl());
+        mTonesImageView.setOnClickListener(v -> openEqualizer());
+        mPlayListImageView.setOnClickListener(v -> openPlaylist());
+        mLoveImageView.setOnClickListener(v -> toggleFavorite());
+        mAddImageView.setOnClickListener(v -> addToPlaylist());
+        mRandomImageView.setOnClickListener(v -> toggleRandom());
+        mAutoPlayImageView.setOnClickListener(v -> toggleAutoPlay());
+    }
+
+    private void togglePlayPause() {
+        if (mIsPlaying) {
+            onTrackPause();
+        } else {
+            onTrackPlay();
+        }
+    }
+
+    private void replayTrack() {
+        if (mMediaPlayer != null) {
+            mMediaPlayer.seekTo(0);
+        }
+    }
+
+    private void showVolumeControl() {
+        AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        if (audioManager != null) {
+            audioManager.adjustVolume(AudioManager.ADJUST_SAME, AudioManager.FLAG_SHOW_UI);
+        }
+    }
+
+    private void openEqualizer() {
+        try {
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.setClassName("com.android.settings", "com.android.settings.SoundSettings");
+            startActivity(intent);
+        } catch (Exception e) {
+            try {
+                Intent intent = new Intent(Equalizer.ACTION_OPEN_AUDIO_EFFECT_CONTROL_SESSION);
+                intent.putExtra(Equalizer.EXTRA_AUDIO_SESSION, 0);
+                intent.putExtra(Equalizer.EXTRA_PACKAGE_NAME, getPackageName());
+                startActivity(intent);
+            } catch (Exception ex) {
+                Toast.makeText(this, "Égaliseur non disponible", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void openPlaylist() {
+        Intent intent = new Intent(this, ListPlayerActivity.class);
+        intent.putExtra("id", 6);
+        intent.putExtra("audio", mTracks.get(mPosition).getAudio());
+        intent.putExtra("list_audio_source", mListSource);
+        intent.putExtra("type", getIntent().getStringExtra("type"));
+        startActivity(intent);
+    }
+
+    private void toggleFavorite() {
+        Toast.makeText(this, "Ajouté aux favoris", Toast.LENGTH_SHORT).show();
+    }
+
+    private void addToPlaylist() {
+        Toast.makeText(this, "Ajouté à la playlist", Toast.LENGTH_SHORT).show();
+    }
+
+    private void toggleRandom() {
+        Toast.makeText(this, "Mode aléatoire", Toast.LENGTH_SHORT).show();
+    }
+
+    private void toggleAutoPlay() {
+        Toast.makeText(this, "Lecture automatique", Toast.LENGTH_SHORT).show();
+    }
+
+    private void loadTracks() {
+        registerPlaylistReceiver();
+    }
+
+    private void registerPlaylistReceiver() {
+        mPlaylistReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if ("SELECT_LIST_PLAYER".equals(intent.getAction())) {
-                    Intent audioPayerIntent = new Intent(getApplicationContext(), AudioPlayerActivity.class);
-                    int posi = intent.getIntExtra("position",0);
-                    audioPayerIntent.putExtra("key_adapter_audio_book_id",mTracks.get(posi).getIdBook());
-                    audioPayerIntent.putExtra("list_audio_source",mListSource);
-                    startActivity(audioPayerIntent);
-                    finish();
+                if (ACTION_SELECT_PLAYER.equals(intent.getAction())) {
+                    handlePlaylistSelection(intent);
                 }
             }
         };
+
+        IntentFilter filter = new IntentFilter(ACTION_SELECT_PLAYER);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            registerReceiver(receiverNoConnectionAdapter, new IntentFilter("SELECT_LIST_PLAYER"), Context.RECEIVER_EXPORTED);
+            registerReceiver(mPlaylistReceiver, filter, Context.RECEIVER_EXPORTED);
         } else {
-            registerReceiver(receiverNoConnectionAdapter, new IntentFilter("SELECT_LIST_PLAYER"), Context.RECEIVER_NOT_EXPORTED);
+            registerReceiver(mPlaylistReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
         }
-
-        String idBook = audioBookIntent.getStringExtra("key_adapter_audio_book_id");
-        mListSource = audioBookIntent.getStringExtra("list_audio_source");
-        assert mListSource != null;
-        popluateTracks(idBook, mListSource);
-        mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                if (b) {
-                    mMediaPlayer.seekTo(i);
-                }
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-        mBackImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
-        setRessourceBook();
-        mMediaPlayer = new MediaPlayer();
-        try {
-            mMediaPlayer.setDataSource(mTracks.get(position).getAudio());
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }
-        try {
-            mMediaPlayer.prepare();
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }
-        mSeekBar.setMax(mMediaPlayer.getDuration());
-        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_PHONE_STATE)
-                != PackageManager.PERMISSION_GRANTED) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                ActivityCompat.requestPermissions(AudioPlayerActivity.this,
-                        new String[]{Manifest.permission.POST_NOTIFICATIONS}, 101);
-            }
-        }
-        onTrackPlay();
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    while (mMediaPlayer != null) {
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        mHandler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (mMediaPlayer != null && mMediaPlayer.isPlaying())
-                                {
-                                    int currentTime = mMediaPlayer.getCurrentPosition();
-                                    mSeekBar.setProgress(currentTime);
-                                    mDurationCurrentTextView.setText(convertedDurationToString(currentTime));
-                                    mDurationTotalTextView.setText(convertedDurationToString(mMediaPlayer.getDuration()-currentTime));
-                                    if ((mMediaPlayer.getDuration()-3000) <= currentTime)
-                                        onTrackNext();
-                                }
-                            }
-                        });
-                    }
-                }
-            }).start();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            createChanel();
-            registerReceiver(broadcastReceiver,new IntentFilter("TRACKS_TRACKS"));
-            startService(new Intent(getBaseContext(), OnClearFromRecentService.class));
-        }
-        mPlayImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isPlaying)
-                {
-                    onTrackPause();
-                }else
-                    onTrackPlay();
-            }
-        });
-        mBackPlayImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onTrackPrevious();
-            }
-        });
-        mNextPlayImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onTrackNext();
-            }
-        });
-        mReplayImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mMediaPlayer.seekTo(0);
-            }
-        });
-
-        mVolumeImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-                if (audioManager != null) {
-                    // Afficher la barre de volume
-                    audioManager.adjustVolume(AudioManager.ADJUST_SAME, AudioManager.FLAG_SHOW_UI);
-                }
-            }
-        });
-
-        mTonesImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    Intent intent = new Intent(Intent.ACTION_MAIN);
-                    intent.setClassName("com.android.settings", "com.android.settings.SoundSettings");
-                    startActivity(intent);
-                } catch (Exception e) {
-                    // Si l'application native d'égaliseur n'est pas disponible, on peut lancer un intent standard
-                    Intent intent = new Intent(Equalizer.ACTION_OPEN_AUDIO_EFFECT_CONTROL_SESSION);
-                    intent.putExtra(Equalizer.EXTRA_AUDIO_SESSION, 0);
-                    intent.putExtra(Equalizer.EXTRA_PACKAGE_NAME, getPackageName());
-                    startActivity(intent);
-                }
-            }
-        });
-
-        mPlayListImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent local = new Intent(AudioPlayerActivity.this, ListPlayerActivity.class);
-                local.putExtra("id",6);
-                local.putExtra("audio",mTracks.get(position).getAudio());
-                local.putExtra("list_audio_source",mListSource);
-                local.putExtra("type",audioBookIntent.getStringExtra("type"));
-                startActivity(local);
-            }
-        });
-
-        mLoveImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(AudioPlayerActivity.this, "Favori", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        mAddImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(AudioPlayerActivity.this, "ADD", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        mRandomImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(AudioPlayerActivity.this, "Random", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        mAutoPlayImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(AudioPlayerActivity.this, "Auto", Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
-    public void setRessourceBook() {
-        mTitleTextView.setText(mTracks.get(position).getTitle());
-        mAuthorTextView.setText(mTracks.get(position).getArtist());
-        mDurationTotalTextView.setText(mTracks.get(position).getTime());
-        File file = new File(mTracks.get(position).getCover());
-        Picasso.get().load(file)
+    private void handlePlaylistSelection(Intent intent) {
+        int position = intent.getIntExtra("position", 0);
+        Intent audioIntent = new Intent(this, AudioPlayerActivity.class);
+        audioIntent.putExtra("key_adapter_audio_book_id", mTracks.get(position).getIdBook());
+        audioIntent.putExtra("list_audio_source", mListSource);
+        startActivity(audioIntent);
+        finish();
+    }
+
+    private void setupMediaPlayer() {
+        try {
+            mMediaPlayer = new MediaPlayer();
+            mMediaPlayer.setDataSource(mTracks.get(mPosition).getAudio());
+            mMediaPlayer.prepare();
+            mSeekBar.setMax(mMediaPlayer.getDuration());
+            onTrackPlay();
+        } catch (IOException e) {
+            Log.e(TAG, "Error setting up MediaPlayer", e);
+            Toast.makeText(this, "Erreur lors du chargement de l'audio", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void requestPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                        PERMISSION_REQUEST_CODE);
+            }
+        }
+    }
+
+    private void setupNotifications() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            createNotificationChannel();
+            registerPlaybackReceiver();
+            startService(new Intent(this, OnClearFromRecentService.class));
+        }
+    }
+
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(
+                    CreateNotification.CHANNEL_ID,
+                    "Lecteur Audio Fabi",
+                    NotificationManager.IMPORTANCE_LOW
+            );
+            mNotificationManager = getSystemService(NotificationManager.class);
+            if (mNotificationManager != null) {
+                mNotificationManager.createNotificationChannel(channel);
+            }
+        }
+    }
+
+    private void registerPlaybackReceiver() {
+        mPlaybackReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getExtras().getString("actionname");
+                handlePlaybackAction(action);
+            }
+        };
+
+        registerReceiver(mPlaybackReceiver, new IntentFilter(ACTION_TRACKS));
+    }
+
+    private void handlePlaybackAction(String action) {
+        if (action == null) return;
+
+        switch (action) {
+            case CreateNotification.ACTION_PREVIOUS:
+                onTrackPrevious();
+                break;
+            case CreateNotification.ACTION_NEXT:
+                onTrackNext();
+                break;
+            case CreateNotification.ACTION_PLAY:
+                togglePlayPause();
+                break;
+        }
+    }
+
+    private void startPlaybackThread() {
+        mUpdateThread = new Thread(() -> {
+            while (mMediaPlayer != null && !Thread.currentThread().isInterrupted()) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+
+                mHandler.post(() -> updatePlaybackInfo());
+            }
+        });
+        mUpdateThread.start();
+    }
+
+    private void updatePlaybackInfo() {
+        if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
+            int currentTime = mMediaPlayer.getCurrentPosition();
+            int duration = mMediaPlayer.getDuration();
+
+            mSeekBar.setProgress(currentTime);
+            mDurationCurrentTextView.setText(formatDuration(currentTime));
+            mDurationTotalTextView.setText(formatDuration(duration - currentTime));
+
+            // Auto-next when track is almost finished
+            if (duration - currentTime <= AUTO_NEXT_THRESHOLD_MS) {
+                onTrackNext();
+            }
+        }
+    }
+
+    // ==================== Playable Interface Implementation ====================
+
+    @Override
+    public void onTrackPlay() {
+        if (mMediaPlayer != null) {
+            mMediaPlayer.start();
+            mIsPlaying = true;
+            mPlayImageView.setImageResource(R.drawable.vector_black3_play);
+            updateNotification(R.drawable.vector_black3_play);
+        }
+    }
+
+    @Override
+    public void onTrackPause() {
+        if (mMediaPlayer != null) {
+            mMediaPlayer.pause();
+            mIsPlaying = false;
+            mPlayImageView.setImageResource(R.drawable.vector_black3_pause);
+            updateNotification(R.drawable.vector_black3_pause);
+        }
+    }
+
+    @Override
+    public void onTrackPrevious() {
+        if (mTracks.isEmpty()) return;
+
+        releaseMediaPlayer();
+
+        mPosition = (mPosition == 0) ? mTracks.size() - 1 : mPosition - 1;
+
+        prepareAndPlayTrack();
+    }
+
+    @Override
+    public void onTrackNext() {
+        if (mTracks.isEmpty()) return;
+
+        releaseMediaPlayer();
+
+        mPosition = (mPosition == mTracks.size() - 1) ? 0 : mPosition + 1;
+
+        prepareAndPlayTrack();
+    }
+
+    private void prepareAndPlayTrack() {
+        updateTrackInfo();
+
+        try {
+            mMediaPlayer = new MediaPlayer();
+            mMediaPlayer.setDataSource(mTracks.get(mPosition).getAudio());
+            mMediaPlayer.prepare();
+            mSeekBar.setMax(mMediaPlayer.getDuration());
+            onTrackPlay();
+        } catch (IOException e) {
+            Log.e(TAG, "Error preparing track", e);
+            Toast.makeText(this, "Erreur lors du chargement de la piste", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void releaseMediaPlayer() {
+        if (mMediaPlayer != null) {
+            if (mMediaPlayer.isPlaying()) {
+                mMediaPlayer.stop();
+            }
+            mMediaPlayer.reset();
+            mMediaPlayer.release();
+            mMediaPlayer = null;
+        }
+    }
+
+    public void onTrackPlayPosition(int position) {
+        releaseMediaPlayer();
+        mPosition = position;
+        prepareAndPlayTrack();
+    }
+
+    // ==================== Helper Methods ====================
+
+    private void updateTrackInfo() {
+        if (mTracks.isEmpty() || mPosition >= mTracks.size()) return;
+
+        Track track = mTracks.get(mPosition);
+        mTitleTextView.setText(track.getTitle());
+        mAuthorTextView.setText(track.getArtist());
+        mDurationTotalTextView.setText(track.getTime());
+
+        loadTrackCover(track.getCover());
+    }
+
+    private void loadTrackCover(String coverPath) {
+        File file = new File(coverPath);
+        Picasso.get()
+                .load(file)
                 .placeholder(R.drawable.img_wait_cover_book)
                 .error(R.drawable.img_wait_cover_book)
-                .transform(new RoundedTransformation(15,4))
-                .resize(356,568)
+                .transform(new RoundedTransformation(15, 4))
+                .resize(356, 568)
                 .into(mCoverImageView);
     }
 
-    private String convertedDurationToString(int duration) {
+    private void updateNotification(int playPauseIcon) {
+        CreateNotification.createNotification(
+                this,
+                mTracks.get(mPosition),
+                playPauseIcon,
+                mPosition,
+                mTracks.size() - 1
+        );
+    }
+
+    private String formatDuration(int durationMs) {
         return String.format("%02d:%02d",
-                TimeUnit.MILLISECONDS.toMinutes(duration),
-                TimeUnit.MILLISECONDS.toSeconds(duration) -
-                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(duration)));
+                TimeUnit.MILLISECONDS.toMinutes(durationMs),
+                TimeUnit.MILLISECONDS.toSeconds(durationMs) -
+                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(durationMs)));
+    }
+
+    private void populateTracks(String idBook, String listSource) {
+        AudioTable audioTable = new AudioTable(this);
+        Cursor cursor = null;
+
+        switch (listSource) {
+            case LIST_SOURCE_ALL:
+                cursor = audioTable.getData(mSession.getIdNumber());
+                break;
+            case LIST_SOURCE_CATEGORY:
+                cursor = audioTable.getDataC(
+                        mSession.getIdNumber(),
+                        getIntent().getStringExtra("type")
+                );
+                break;
+            case LIST_SOURCE_AUTHOR:
+                cursor = audioTable.getDataA(
+                        mSession.getIdNumber(),
+                        getIntent().getStringExtra("type")
+                );
+                break;
+        }
+
+        if (cursor != null && cursor.moveToFirst()) {
+            int index = 0;
+            do {
+                mTracks.add(new Track(
+                        cursor.getString(2),  // idBook
+                        cursor.getString(5),  // audio path
+                        cursor.getString(8),  // title
+                        cursor.getString(4),  // artist
+                        cursor.getString(6),  // cover
+                        cursor.getString(11), // time
+                        R.id.relative_layout_activity_declaration_img
+                ));
+
+                if (cursor.getString(2).equals(idBook)) {
+                    mPosition = index;
+                }
+                index++;
+            } while (cursor.moveToNext());
+
+            cursor.close();
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-            notificationManager.cancelAll();
+
+        // Stop and clear notification
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && mNotificationManager != null) {
+            mNotificationManager.cancelAll();
         }
-        unregisterReceiver(broadcastReceiver);
-        if (mMediaPlayer != null) {
-            mMediaPlayer.release();
-            mMediaPlayer = null;
-        }
-    }
-    private void popluateTracks(String idBook , String listSource){
-        AudioTable audioTable = new AudioTable(this);
-        mTracks = new ArrayList<>();
-        Cursor audioCursor = null;
-        switch (listSource)
-        {
-            case "all":
-                audioCursor = audioTable.getData(mSession.getIdNumber());
-                break;
-            case "category":
-                audioCursor = audioTable.getDataC(mSession.getIdNumber(),audioBookIntent.getStringExtra("type"));
-                break;
-            case "author":
-                audioCursor = audioTable.getDataA(mSession.getIdNumber(),audioBookIntent.getStringExtra("type"));
-                break;
-        }
-        assert audioCursor != null;
-        audioCursor.moveToFirst();
-        do {
-            mTracks.add(new Track(audioCursor.getString(2),audioCursor.getString(5),audioCursor.getString(8),audioCursor.getString(4),audioCursor.getString(6),audioCursor.getString(11),R.id.relative_layout_activity_declaration_img));
-            if (audioCursor.getString(2).equals(idBook))
-                position = mTracks.size()-1;
-        }while (audioCursor.moveToNext());
-    }
-    private void createChanel(){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(CreateNotification.CHANNEL_ID,
-                    "Kod Dev",NotificationManager.IMPORTANCE_LOW);
-            notificationManager = getSystemService(NotificationManager.class);
-            if(notificationManager != null) {
-                notificationManager.createNotificationChannel(channel);
+
+        // Unregister receivers
+        try {
+            if (mPlaybackReceiver != null) {
+                unregisterReceiver(mPlaybackReceiver);
             }
-        }
-    }
-
-
-    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getExtras().getString("actionname");
-            switch (action)
-            {
-                case CreateNotification.ACTION_PREVIOUS:
-                    onTrackPrevious();
-                    break;
-                case CreateNotification.ACTION_NEXT:
-                    onTrackNext();
-                    break;
-                case CreateNotification.ACTION_PLAY:
-                    if (isPlaying)
-                        onTrackPause();
-                    else
-                        onTrackPlay();
-                    break;
+            if (mPlaylistReceiver != null) {
+                unregisterReceiver(mPlaylistReceiver);
             }
-        }
-    };
-    @Override
-    public void onTrackPrevious() {
-        mMediaPlayer.reset();
-        if(!(position == 0))
-            position--;
-        else
-            position=(mTracks.size() - 1);
-        setRessourceBook();
-        try {
-            mMediaPlayer = new MediaPlayer();
-            mMediaPlayer.setDataSource(mTracks.get(position).getAudio());
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }
-        try {
-            mMediaPlayer.prepare();
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }
-        mSeekBar.setMax(mMediaPlayer.getDuration());
-        onTrackPlay();
-        CreateNotification.createNotification(AudioPlayerActivity.this,mTracks.get(position),
-                R.drawable.vector_black3_play,position,mTracks.size()-1);
-    }
-
-    @Override
-    public void onTrackPlay() {
-        CreateNotification.createNotification(AudioPlayerActivity.this,mTracks.get(position),
-                R.drawable.vector_black3_play,position,mTracks.size()-1);
-        mPlayImageView.setImageResource(R.drawable.vector_black3_play);
-        mMediaPlayer.start();
-        isPlaying = true;
-    }
-
-    @Override
-    public void onTrackPause() {
-        CreateNotification.createNotification(AudioPlayerActivity.this,mTracks.get(position),
-                R.drawable.vector_black3_pause,position,mTracks.size()-1);
-        mPlayImageView.setImageResource(R.drawable.vector_black3_pause);
-        mMediaPlayer.pause();
-        isPlaying = false;
-    }
-
-    @Override
-    public void onTrackNext() {
-        mMediaPlayer.reset();
-        if(!(position == mTracks.size() - 1))
-            position++;
-        else
-            position=0;
-        setRessourceBook();
-        try {
-            mMediaPlayer = new MediaPlayer();
-            mMediaPlayer.setDataSource(mTracks.get(position).getAudio());
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }
-        try {
-            mMediaPlayer.prepare();
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }
-        mSeekBar.setMax(mMediaPlayer.getDuration());
-        onTrackPlay();
-        CreateNotification.createNotification(AudioPlayerActivity.this,mTracks.get(position),
-                R.drawable.vector_black3_play,position,mTracks.size()-1);
-    }
-    public void onTrackPlayPosition(int posi) {
-        if (mMediaPlayer != null) {
-            mMediaPlayer.stop();  // Arrêter la lecture actuelle
-            mMediaPlayer.reset();
-            mMediaPlayer.release();  // Libérer les ressources
-            mMediaPlayer = null;
+        } catch (Exception e) {
+            Log.e(TAG, "Error unregistering receivers", e);
         }
 
-        mMediaPlayer = new MediaPlayer(); // Nouvelle instance propre
-
-        position = posi;
-        setRessourceBook();
-
-        try {
-            mMediaPlayer.setDataSource(mTracks.get(position).getAudio());
-            mMediaPlayer.prepare();
-            mMediaPlayer.start(); // Démarrer la lecture
-            mSeekBar.setMax(mMediaPlayer.getDuration());
-            onTrackPlay();
-            CreateNotification.createNotification(AudioPlayerActivity.this, mTracks.get(position),
-                    R.drawable.vector_black3_play, position, mTracks.size() - 1);
-        } catch (IOException ex) {
-            ex.printStackTrace();
+        // Stop update thread
+        if (mUpdateThread != null && mUpdateThread.isAlive()) {
+            mUpdateThread.interrupt();
         }
+
+        // Release media player
+        releaseMediaPlayer();
     }
 }
