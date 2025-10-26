@@ -1,9 +1,6 @@
 package com.ninotech.fabi.model.worker;
 
-import static androidx.core.content.ContextCompat.getSystemService;
-
 import android.Manifest;
-import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -17,7 +14,6 @@ import android.net.NetworkRequest;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -36,9 +32,9 @@ import com.ninotech.fabi.model.table.Session;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.Objects;
 
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -48,8 +44,19 @@ import okhttp3.Response;
 
 public class NetworkCheckWorker extends Worker {
 
+    private static final String TAG = "NetworkCheckWorker";
+    private static final String CHANNEL_ID = "fabi_notification_channel";
+    private static final String CHANNEL_NAME = "Notifications Fabi";
+    private static final String RESPONSE_RAS = "ras";
+    private static final String ACTION_UPDATE_BADGE = "ACTION_UPDATE_NOTIFICATION_BADGE";
+
+    private Session mSession;
+    private OkHttpClient mHttpClient;
+
     public NetworkCheckWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
+        mHttpClient = new OkHttpClient();
+        mSession = new Session(context);
     }
 
     @NonNull
@@ -57,6 +64,11 @@ public class NetworkCheckWorker extends Worker {
     public Result doWork() {
         ConnectivityManager connectivityManager =
                 (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        if (connectivityManager == null) {
+            Log.e(TAG, "ConnectivityManager is null");
+            return Result.failure();
+        }
 
         NetworkRequest networkRequest = new NetworkRequest.Builder()
                 .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
@@ -66,145 +78,208 @@ public class NetworkCheckWorker extends Worker {
             @Override
             public void onAvailable(@NonNull Network network) {
                 super.onAvailable(network);
-                mSession = new Session(getApplicationContext());
-                try {
-                    Log.e("OK WORKER",mSession.getIdNumber());
-                   // Toast.makeText(getApplicationContext(), "OK WORKER", Toast.LENGTH_SHORT).show();
-                    NotificationSyn notificationSyn = new NotificationSyn();
-                    notificationSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "NotificationSyn.php",mSession.getIdNumber());
-//                    Intent telesafeServiceIntent = new Intent(getApplicationContext(), TeleSafeService.class);
-//                    getApplicationContext().startService(telesafeServiceIntent);
-                }catch (Exception e)
-                {
-                    Log.e("err", Objects.requireNonNull(e.getMessage()));
-                }
+                handleNetworkAvailable();
             }
 
             @Override
             public void onLost(@NonNull Network network) {
                 super.onLost(network);
-                // Optionnel : Affiche un message lorsque la connexion est perdue
+                Log.d(TAG, "Network connection lost");
             }
         });
 
         return Result.success();
     }
+
+    private void handleNetworkAvailable() {
+        try {
+            Log.d(TAG, "Network available, checking notifications for user: " + mSession.getIdNumber());
+            new NotificationSyn().execute(
+                    Server.getIpServerAndroid(getApplicationContext()) + "NotificationSyn.php",
+                    mSession.getIdNumber()
+            );
+        } catch (Exception e) {
+            Log.e(TAG, "Error handling network availability", e);
+        }
+    }
+
+    // ==================== AsyncTask ====================
+
     private class NotificationSyn extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-
-            try {
-                OkHttpClient client = new OkHttpClient();
-                RequestBody requestBody = new MultipartBody.Builder()
-                        .setType(MultipartBody.FORM)
-                        .addFormDataPart("idNumber", params[1])
-                        .build();
-                Request request = new Request.Builder()
-                        .url(params[0])
-                        .post(requestBody)
-                        .build();
-                try {
-                    Response response = client.newCall(request).execute();
-                    assert response.body() != null;
-                    return response.body().string();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-            } catch (Exception e) {
-                Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-            return null;
+            return executePostRequest(params[0], params[1]);
         }
 
         @Override
         protected void onPostExecute(String response) {
-           Log.e("JsonTest",response);
-           // Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
-            if(!response.equals("ras"))
-            {
-                JSONArray jsonArray = null;
-                try {
-                    jsonArray = new JSONArray(response);
-                } catch (JSONException e) {
-                    throw new RuntimeException(e);
+            if (response != null && !RESPONSE_RAS.equals(response)) {
+                processNotifications(response);
+            } else {
+                Log.d(TAG, "No new notifications");
+            }
+        }
+
+        private void processNotifications(String response) {
+            try {
+                JSONArray jsonArray = new JSONArray(response);
+
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    processNotification(jsonArray.getJSONObject(i));
                 }
-                int i2=0;
-                for(int i=0 ; i<jsonArray.length() ; i++)
-                {
-                    Notification notification = new Notification();
-                    NotificationTable notificationTable = new NotificationTable(getApplicationContext());
-                    try {
-                        notification.setType(jsonArray.getJSONObject(i).getString("type"));
-                        notification.setMessage(jsonArray.getJSONObject(i).getString("message"));
-                        notification.setLink(jsonArray.getJSONObject(i).getString("link"));
-                        notification.setIdLink(jsonArray.getJSONObject(i).getString("idBookLink"));
-                        notification.setDate(jsonArray.getJSONObject(i).getString("2"));
-                        notification.setTitle(jsonArray.getJSONObject(i).getString("title"));
-//                        if(notification.getType().equals("1"))
-//                        {
-//                            notification.setTitle("Alerte TELESAFE");
-//                            notification.setLatitude(jsonArray.getJSONObject(i).getString("latitude"));
-//                            notification.setLongitude(jsonArray.getJSONObject(i).getString("longitude"));
-//                        }
-                        notificationTable.insert(mSession.getIdNumber(),
-                                notification.getTitle(),
-                                notification.getDate(),
-                                notification.getMessage(),
-                                notification.getLink(),
-                                notification.getIdLink(),
-                                notification.getType());
-                    } catch (JSONException e) {
-                        throw new RuntimeException(e);
-                    }
-                    int numberNotification = NotifNumber.getLastKnownLocation(getApplicationContext())+1;
-                    NotifNumber.saveLocation(getApplicationContext(),numberNotification);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        NotificationChannel channel = new NotificationChannel(
-                                "channel_id",
-                                "Nom du canal",
-                                NotificationManager.IMPORTANCE_DEFAULT
-                        );
-                        NotificationManager notificationManager = getApplicationContext().getSystemService(NotificationManager.class);
-                        notificationManager.createNotificationChannel(channel);
-                    }
+            } catch (JSONException e) {
+                Log.e(TAG, "Error parsing notifications", e);
+            }
+        }
 
-// Demande de permission pour Android 13 et plus
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                            ActivityCompat.requestPermissions((Activity) getApplicationContext(), new String[]{Manifest.permission.POST_NOTIFICATIONS}, 1);
-                            return;
-                        }
-                    }
+        private void processNotification(JSONObject jsonObject) {
+            try {
+                Notification notification = parseNotification(jsonObject);
+                saveNotification(notification);
+                showNotification(notification);
+                updateNotificationBadge();
+            } catch (JSONException e) {
+                Log.e(TAG, "Error processing notification", e);
+            }
+        }
 
-                    Intent intent = new Intent(getApplicationContext(), NotificationActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    PendingIntent pendingIntent = PendingIntent.getActivity(
-                            getApplicationContext(),
-                            0,
-                            intent,
-                            PendingIntent.FLAG_IMMUTABLE
-                    );
+        private Notification parseNotification(JSONObject jsonObject) throws JSONException {
+            Notification notification = new Notification();
+            notification.setType(jsonObject.getString("type"));
+            notification.setMessage(jsonObject.getString("message"));
+            notification.setLink(jsonObject.getString("link"));
+            notification.setIdLink(jsonObject.getString("idBookLink"));
+            notification.setDate(jsonObject.getString("2"));
+            notification.setTitle(jsonObject.getString("title"));
+            return notification;
+        }
 
-                    NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "channel_id")
-                            .setSmallIcon(R.mipmap.ic_v2)
-                            .setContentTitle(notification.getTitle())
-                            .setContentText(notification.getMessage())
-                            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                            .setContentIntent(pendingIntent)
-                            .setAutoCancel(true);
+        private void saveNotification(Notification notification) {
+            NotificationTable notificationTable = new NotificationTable(getApplicationContext());
+            notificationTable.insert(
+                    mSession.getIdNumber(),
+                    notification.getTitle(),
+                    notification.getDate(),
+                    notification.getMessage(),
+                    notification.getLink(),
+                    notification.getIdLink(),
+                    notification.getType()
+            );
+        }
 
-                    NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
+        private void showNotification(Notification notification) {
+            createNotificationChannel();
 
-// Afficher la notification
-                    notificationManager.notify(numberNotification, builder.build());
+            if (!hasNotificationPermission()) {
+                Log.w(TAG, "Notification permission not granted");
+                return;
+            }
 
-                    Intent updateBadgeIntent = new Intent("ACTION_UPDATE_NOTIFICATION_BADGE");
-                    updateBadgeIntent.putExtra("number",numberNotification);
-                    getApplicationContext().sendBroadcast(updateBadgeIntent);
+            int notificationId = getNextNotificationId();
+            android.app.Notification androidNotification = buildNotification(notification);
+
+            NotificationManagerCompat notificationManager =
+                    NotificationManagerCompat.from(getApplicationContext());
+            if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
+            notificationManager.notify(notificationId, androidNotification);
+        }
+
+        private void createNotificationChannel() {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                NotificationChannel channel = new NotificationChannel(
+                        CHANNEL_ID,
+                        CHANNEL_NAME,
+                        NotificationManager.IMPORTANCE_DEFAULT
+                );
+                channel.setDescription("Notifications de l'application Fabi");
+
+                NotificationManager notificationManager =
+                        getApplicationContext().getSystemService(NotificationManager.class);
+                if (notificationManager != null) {
+                    notificationManager.createNotificationChannel(channel);
                 }
             }
         }
+
+        private boolean hasNotificationPermission() {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                return ActivityCompat.checkSelfPermission(
+                        getApplicationContext(),
+                        Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED;
+            }
+            return true;
+        }
+
+        private int getNextNotificationId() {
+            int currentCount = NotifNumber.getLastKnownLocation(getApplicationContext());
+            int nextId = currentCount + 1;
+            NotifNumber.saveLocation(getApplicationContext(), nextId);
+            return nextId;
+        }
+
+        private android.app.Notification buildNotification(Notification notification) {
+            Intent intent = new Intent(getApplicationContext(), NotificationActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+            PendingIntent pendingIntent = PendingIntent.getActivity(
+                    getApplicationContext(),
+                    0,
+                    intent,
+                    PendingIntent.FLAG_IMMUTABLE
+            );
+
+            return new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
+                    .setSmallIcon(R.mipmap.ic_v2)
+                    .setContentTitle(notification.getTitle())
+                    .setContentText(notification.getMessage())
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .setContentIntent(pendingIntent)
+                    .setAutoCancel(true)
+                    .build();
+        }
+
+        private void updateNotificationBadge() {
+            int count = NotifNumber.getLastKnownLocation(getApplicationContext());
+            Intent intent = new Intent(ACTION_UPDATE_BADGE);
+            intent.putExtra("number", count);
+            getApplicationContext().sendBroadcast(intent);
+        }
     }
-    private Session mSession;
+
+    // ==================== Helper Methods ====================
+
+    private String executePostRequest(String url, String idNumber) {
+        try {
+            RequestBody requestBody = new MultipartBody.Builder()
+                    .setType(MultipartBody.FORM)
+                    .addFormDataPart("idNumber", idNumber)
+                    .build();
+
+            Request request = new Request.Builder()
+                    .url(url)
+                    .post(requestBody)
+                    .build();
+
+            try (Response response = mHttpClient.newCall(request).execute()) {
+                if (response.body() != null) {
+                    return response.body().string();
+                }
+            }
+        } catch (IOException e) {
+            Log.e(TAG, "Network error: " + e.getMessage(), e);
+        } catch (Exception e) {
+            Log.e(TAG, "Unexpected error: " + e.getMessage(), e);
+        }
+        return null;
+    }
 }

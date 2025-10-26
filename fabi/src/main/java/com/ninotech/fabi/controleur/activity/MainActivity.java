@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(login);
             finish();
         }
-        //networkCheckWorker(getApplicationContext());
+        networkCheckWorker(getApplicationContext());
         //startService(reservationService);
         try {
             if(mDigitalPrintTable.getPass().equals("0"))
