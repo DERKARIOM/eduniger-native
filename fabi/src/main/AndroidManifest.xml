@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-
     <!-- ==================== Permissions Réseau ==================== -->
     <uses-feature
         android:name="android.hardware.telephony"
@@ -9,28 +8,18 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-
-    <!-- ==================== Permissions Services ==================== -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> <!-- ==================== Permissions Services ==================== -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
-
-    <!-- ==================== Permissions Système ==================== -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" /> <!-- ==================== Permissions Système ==================== -->
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-
-    <!-- ==================== Permissions Téléphone ==================== -->
-    <uses-permission android:name="android.permission.CALL_PHONE" />
-
-    <!-- ==================== Permissions Biométrie ==================== -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" /> <!-- ==================== Permissions Téléphone ==================== -->
+    <uses-permission android:name="android.permission.CALL_PHONE" /> <!-- ==================== Permissions Biométrie ==================== -->
     <uses-permission android:name="android.permission.USE_BIOMETRIC" />
     <uses-permission
         android:name="android.permission.USE_FINGERPRINT"
         android:maxSdkVersion="27"
-        tools:ignore="DeprecatedUsesPermission" />
-
-    <!-- ==================== Permissions Stockage ==================== -->
+        tools:ignore="DeprecatedUsesPermission" /> <!-- ==================== Permissions Stockage ==================== -->
     <!-- Pour Android 10 et inférieur -->
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
@@ -38,9 +27,7 @@
         tools:ignore="ScopedStorage" />
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32" />
-
-    <!-- Pour Android 13+ : Permissions granulaires -->
+        android:maxSdkVersion="32" /> <!-- Pour Android 13+ : Permissions granulaires -->
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
@@ -48,6 +35,7 @@
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
+        android:enableOnBackInvokedCallback="true"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_v2"
         android:label="@string/app_name"
@@ -55,71 +43,62 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
-        android:enableOnBackInvokedCallback="true"
         tools:targetApi="33">
-
+        <activity
+            android:name=".controleur.activity.PdfBoxViewerActivity"
+            android:exported="false" />
         <!-- ==================== Activité Principale ==================== -->
         <activity
             android:name=".controleur.activity.MainActivity"
             android:exported="true"
             android:icon="@mipmap/ic_v2"
             android:label="@string/app_name"
+            android:launchMode="singleTop"
             android:logo="@mipmap/ic_v2"
-            android:screenOrientation="portrait"
-            android:launchMode="singleTop">
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <!-- ==================== Activités d'Authentification ==================== -->
+        </activity> <!-- ==================== Activités d'Authentification ==================== -->
         <activity
             android:name=".controleur.activity.LoginActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
-
         <activity
             android:name=".controleur.activity.RegisterActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
-
         <activity
             android:name=".controleur.activity.PreRegistrationActivity"
             android:exported="false"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize" />
-
-        <!-- ==================== Activités de Sécurité ==================== -->
+            android:windowSoftInputMode="adjustResize" /> <!-- ==================== Activités de Sécurité ==================== -->
         <activity
             android:name=".controleur.activity.LockActivity"
+            android:excludeFromRecents="true"
             android:exported="false"
-            android:screenOrientation="portrait"
-            android:excludeFromRecents="true" />
-
+            android:screenOrientation="portrait" />
         <activity
             android:name=".controleur.activity.FingerPrintActivity"
             android:exported="false"
-            android:label="Verrouillage de l'application"
+            android:label="Verrouillage de l&apos;application"
             android:parentActivityName=".controleur.activity.SettingV2Activity"
-            android:screenOrientation="portrait" />
-
-        <!-- ==================== Activités de Paramètres ==================== -->
+            android:screenOrientation="portrait" /> <!-- ==================== Activités de Paramètres ==================== -->
         <activity
             android:name=".controleur.activity.SettingV2Activity"
             android:exported="false"
             android:parentActivityName=".controleur.activity.MainActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".controleur.activity.AccountActivity"
             android:exported="false"
             android:label="@string/account"
             android:parentActivityName=".controleur.activity.SettingV2Activity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".controleur.activity.ChangePasswordActivity"
             android:exported="false"
@@ -127,7 +106,6 @@
             android:parentActivityName=".controleur.activity.AccountActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
-
         <activity
             android:name=".controleur.activity.ChangeEmailActivity"
             android:exported="false"
@@ -135,118 +113,94 @@
             android:parentActivityName=".controleur.activity.AccountActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
-
         <activity
             android:name=".controleur.activity.ThemeActivity"
             android:exported="false"
             android:label="Théme appliquée"
             android:parentActivityName=".controleur.activity.SettingV2Activity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".controleur.activity.ServerActivity"
             android:exported="false"
             android:label="Serveur connecté"
             android:parentActivityName=".controleur.activity.SettingV2Activity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".controleur.activity.ContactActivity"
             android:exported="false"
             android:label="@string/contact_us"
             android:parentActivityName=".controleur.activity.SettingV2Activity"
-            android:screenOrientation="portrait" />
-
-        <!-- ==================== Activités de Contenu ==================== -->
+            android:screenOrientation="portrait" /> <!-- ==================== Activités de Contenu ==================== -->
         <activity
             android:name=".controleur.activity.BookActivity"
+            android:configChanges="orientation|screenSize"
             android:exported="false"
-            android:screenOrientation="portrait"
-            android:configChanges="orientation|screenSize" />
-
+            android:screenOrientation="portrait" />
         <activity
             android:name=".controleur.activity.CategoryActivity"
             android:exported="false"
             android:parentActivityName=".controleur.activity.MainActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".controleur.activity.SearchActivity"
             android:exported="false"
-            android:screenOrientation="portrait"
             android:launchMode="singleTop"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
-
         <activity
             android:name=".controleur.activity.StructureActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".controleur.activity.AuthorActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".controleur.activity.ContainerActivity"
             android:exported="false"
-            android:screenOrientation="portrait" />
-
-        <!-- ==================== Activités de Gestion de Livres ==================== -->
+            android:screenOrientation="portrait" /> <!-- ==================== Activités de Gestion de Livres ==================== -->
         <activity
             android:name=".controleur.activity.RegisterAuthorActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
-
         <activity
             android:name=".controleur.activity.AddBookActivity"
             android:exported="false"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize" />
-
-        <!-- ==================== Activités Multimédia ==================== -->
+            android:windowSoftInputMode="adjustResize" /> <!-- ==================== Activités Multimédia ==================== -->
         <activity
             android:name=".controleur.activity.AudioPlayerActivity"
+            android:configChanges="orientation|screenSize"
             android:exported="false"
-            android:screenOrientation="portrait"
             android:launchMode="singleTask"
-            android:configChanges="orientation|screenSize" />
-
+            android:screenOrientation="portrait" />
         <activity
             android:name=".controleur.activity.ListPlayerActivity"
             android:exported="false"
-            android:screenOrientation="portrait" />
-
-        <!-- ==================== Activités PDF ==================== -->
+            android:screenOrientation="portrait" /> <!-- ==================== Activités PDF ==================== -->
         <activity
             android:name=".controleur.activity.PdfNinoView"
-            android:exported="false"
-            android:configChanges="orientation|screenSize" />
-
+            android:configChanges="orientation|screenSize"
+            android:exported="false" />
         <activity
             android:name="com.pspdfkit.ui.PdfActivity"
+            android:configChanges="orientation|screenSize"
             android:theme="@style/MyApp.PSPDFKitTheme"
-            android:windowSoftInputMode="adjustNothing"
-            android:configChanges="orientation|screenSize" />
-
-        <!-- ==================== Activités de Communication ==================== -->
+            android:windowSoftInputMode="adjustNothing" /> <!-- ==================== Activités de Communication ==================== -->
         <activity
             android:name=".controleur.activity.NotificationActivity"
             android:exported="false"
             android:label="Notifications"
             android:parentActivityName=".controleur.activity.MainActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".controleur.activity.SuggestionActivity"
             android:exported="false"
             android:label="Suggestion"
             android:parentActivityName=".controleur.activity.MainActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize" />
-
-        <!-- ==================== Activités Informatives ==================== -->
+            android:windowSoftInputMode="adjustResize" /> <!-- ==================== Activités Informatives ==================== -->
         <activity
             android:name=".controleur.activity.InfosActivity"
             android:exported="true"
@@ -258,25 +212,20 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="https"
                     android:host="eduniger.com"
-                    android:path="/open" />
+                    android:path="/open"
+                    android:scheme="https" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".controleur.activity.LicenceActivity"
             android:exported="false"
-            android:screenOrientation="portrait" />
-
-        <!-- Retirer en production -->
+            android:screenOrientation="portrait" /> <!-- Retirer en production -->
         <activity
             android:name=".controleur.activity.TmpActivity"
             android:exported="false"
             tools:ignore="UnusedAttribute"
-            tools:remove="android:enabled" />
-
-        <!-- ==================== File Provider ==================== -->
+            tools:remove="android:enabled" /> <!-- ==================== File Provider ==================== -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -285,19 +234,15 @@
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
-        </provider>
-
-        <!-- ==================== Services Firebase ==================== -->
+        </provider> <!-- ==================== Services Firebase ==================== -->
         <service
             android:name=".model.service.MyFirebaseMessagingService"
-            android:exported="false"
-            android:directBootAware="true">
+            android:directBootAware="true"
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
-        </service>
-
-        <!-- ==================== Services Audio ==================== -->
+        </service> <!-- ==================== Services Audio ==================== -->
         <service
             android:name=".model.service.AudioService"
             android:exported="false"
@@ -307,30 +252,24 @@
                 <action android:name="android.media.browse.MediaBrowserService" />
             </intent-filter>
         </service>
-
         <service
             android:name=".model.service.OnClearFromRecentService"
             android:exported="false"
-            android:stopWithTask="false" />
-
-        <!-- ==================== Services de Téléchargement ==================== -->
+            android:stopWithTask="false" /> <!-- ==================== Services de Téléchargement ==================== -->
         <service
             android:name=".model.service.AudioDownloadService"
             android:exported="false"
             android:foregroundServiceType="dataSync"
             android:stopWithTask="false" />
-
         <service
             android:name=".model.service.PdfDownloadService"
             android:exported="false"
             android:foregroundServiceType="dataSync"
-            android:stopWithTask="false" />
-
-        <!-- ==================== Broadcast Receivers ==================== -->
+            android:stopWithTask="false" /> <!-- ==================== Broadcast Receivers ==================== -->
         <receiver
             android:name=".model.service.AudioReceiver"
-            android:exported="false"
-            android:enabled="true">
+            android:enabled="true"
+            android:exported="false">
             <intent-filter>
                 <action android:name="${applicationId}.PLAY" />
                 <action android:name="${applicationId}.PAUSE" />
@@ -339,12 +278,10 @@
                 <action android:name="${applicationId}.PREVIOUS" />
             </intent-filter>
         </receiver>
-
         <receiver
             android:name=".model.service.NotificationActionService"
-            android:exported="false"
-            android:enabled="true" />
-
+            android:enabled="true"
+            android:exported="false" />
     </application>
 
 </manifest>
