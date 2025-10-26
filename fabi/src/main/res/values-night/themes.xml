@@ -185,4 +185,7 @@
     <style name="audio_player_activity_btt_back">
         <item name="background">@drawable/vector_white_back_player</item>
     </style>
+    <style name="pdf_controle">
+        <item name="android:background">@color/black</item>
+    </style>
 </resources>

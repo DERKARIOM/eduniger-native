@@ -19,4 +19,7 @@
     <style name="botton_navigation">
         <item name="android:background">@color/white</item>
     </style>
+    <style name="pdf_controle">
+        <item name="android:background">@color/white</item>
+    </style>
 </resources>

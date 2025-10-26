@@ -1,12 +1,18 @@
 package com.ninotech.fabi.controleur.activity;
 
+import android.app.UiModeManager;
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.pdf.PdfRenderer;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.util.DisplayMetrics;
 import android.view.GestureDetector;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -18,9 +24,12 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.ninotech.fabi.R;
+import com.ninotech.fabi.controleur.custo.StatusBarCusto;
+import com.ninotech.fabi.model.data.Themes;
 
 import java.io.File;
 
@@ -60,14 +69,49 @@ public class PdfBoxViewerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_pdfbox_viewer);
         //getSupportActionBar().hide();
         // Mode plein écran pour format A5
+        ActionBar ab = getSupportActionBar();
+        assert ab != null;
+        ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        ab.setCustomView(R.layout.custom_action_bar);
+        ab.setDisplayHomeAsUpEnabled(true);
+        TextView actionBarTitle = ab.getCustomView().findViewById(R.id.action_bar_title);
+        UiModeManager uiModeManager = null;
+        switch (Themes.getName(getApplicationContext()))
+        {
+            case "system":
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    uiModeManager = (UiModeManager) getSystemService(Context.UI_MODE_SERVICE);
+                }
+                int currentMode = uiModeManager.getNightMode();
+                if (currentMode == UiModeManager.MODE_NIGHT_YES) {
+                    // mode sombre
+                    ab.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.black)));
+                    actionBarTitle.setTextColor(Color.parseColor("#B4EFEFEF"));
+                } else {
+                    // mode jours
+                    ab.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.white)));
+                    ab.setHomeAsUpIndicator(R.drawable.vector_back);
+                }
+                break;
+            case "notNight":
+                // mode jours
+                ab.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.white)));
+                ab.setHomeAsUpIndicator(R.drawable.vector_back);
+                break;
+            case "night":
+                // mode nuit
+                ab.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.black)));
+                ab.setHomeAsUpIndicator(R.drawable.vector_white_sombre_back);
+                actionBarTitle.setTextColor(Color.parseColor("#B4EFEFEF"));
+                break;
+        }
 //        getWindow().setFlags(
 //                WindowManager.LayoutParams.FLAG_FULLSCREEN,
 //                WindowManager.LayoutParams.FLAG_FULLSCREEN
 //        );
-
-        setContentView(R.layout.activity_pdfbox_viewer);
 
         // Récupérer les dimensions de l'écran
         DisplayMetrics displayMetrics = new DisplayMetrics();
@@ -78,6 +122,7 @@ public class PdfBoxViewerActivity extends AppCompatActivity {
         // Récupérer les données
         pdfPath = getIntent().getStringExtra("PDF_PATH");
         pdfTitle = getIntent().getStringExtra("PDF_TITLE");
+        actionBarTitle.setText(pdfTitle);
 
         // Initialiser les vues
         initViews();
@@ -384,9 +429,9 @@ public class PdfBoxViewerActivity extends AppCompatActivity {
                         }
                     }, 3000);
 
-                    Toast.makeText(PdfBoxViewerActivity.this,
-                            "Format A5 détecté - Optimisation plein écran",
-                            Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(PdfBoxViewerActivity.this,
+//                            "Format A5 détecté - Optimisation plein écran",
+//                            Toast.LENGTH_SHORT).show();
                 }
 
                 renderPage(0);
@@ -460,5 +505,16 @@ public class PdfBoxViewerActivity extends AppCompatActivity {
                         "Erreur lors du rendu de la page", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case android.R.id.home:
+                onBackPressed(); // Appel de la méthode onBackPressed() pour simuler le comportement du bouton retour
+                return true;
+
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
