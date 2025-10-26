@@ -1,4 +1,5 @@
 package com.ninotech.fabi.controleur.activity;
+
 import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -6,44 +7,23 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.StrictMode;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
-import com.ninotech.fabi.controleur.custo.StatusBarCusto;
-import com.ninotech.fabi.controleur.fragment.BookStoreFragment;
-import com.ninotech.fabi.controleur.fragment.LibraryFragment;
-import com.ninotech.fabi.controleur.fragment.ChatBotFragment;
-import com.ninotech.fabi.model.data.Account;
-import com.ninotech.fabi.model.data.Initialization;
-import com.ninotech.fabi.R;
-import com.ninotech.fabi.model.data.NotifNumber;
-import com.ninotech.fabi.model.data.Themes;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.ninotech.fabi.model.table.DigitalPrintTable;
-import com.ninotech.fabi.model.table.Session;
-import com.ninotech.fabi.model.table.UserTable;
-import com.ninotech.fabi.model.worker.NetworkCheckWorker;
-
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
@@ -54,269 +34,330 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.ninotech.fabi.R;
+import com.ninotech.fabi.model.data.Account;
+import com.ninotech.fabi.model.data.Initialization;
+import com.ninotech.fabi.model.data.NotifNumber;
+import com.ninotech.fabi.model.data.Themes;
+import com.ninotech.fabi.model.table.DigitalPrintTable;
+import com.ninotech.fabi.model.table.Session;
+import com.ninotech.fabi.model.table.UserTable;
+import com.ninotech.fabi.model.worker.NetworkCheckWorker;
+
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final String TAG = "MainActivity";
+    private static final String ACTION_UPDATE_BADGE = "ACTION_UPDATE_NOTIFICATION_BADGE";
+    private static final String THEME_NOT_NIGHT = "notNight";
+    private static final String THEME_NIGHT = "night";
+    private static final String EXTRA_HORS_LINE = "HORS_LINE";
+    private static final String HORS_LINE_ON = "ON";
+    private static final int PERMISSION_REQUEST_CODE = 101;
+
+    // Views
+    private BottomNavigationView mBottomNavigationView;
+    private EditText mEditText;
+    private ImageView mProfileImageView;
+    private TextView mBadgeTextView;
+
+    // Data
+    private Account mAccount;
+    private DigitalPrintTable mDigitalPrintTable;
+    private BroadcastReceiver mUpdateBadgeReceiver;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Objects.requireNonNull(getSupportActionBar()).hide();
-        //AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-        Handler handler = new Handler();
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                Lock();
-            }
-        };
-        Initialization initialization = new Initialization(getApplicationContext());
-        initialization.onCreate(getApplicationContext());
-        Intent intent = getIntent();
-        Uri data = getIntent().getData();
-        if (data != null) {
-            String id = data.getQueryParameter("id");
-            String name = data.getQueryParameter("name");
-        }
-        if(Themes.getName(getApplicationContext()).equals("notNight"))
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-        else if (Themes.getName(getApplicationContext()).equals("night"))
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-        mBottomNavigationView = findViewById(R.id.bottom_navigation_main);
-        Toolbar toolbar = findViewById(R.id.toolbar_search);
-        mEditText = findViewById(R.id.edit_text_toolbar_search);
-        mProfileImageView = findViewById(R.id.image_view_toolbar_main_profile);
-        mBookStoreFragment = new BookStoreFragment();
-        mChatBotFragment = new ChatBotFragment();
-        LibraryFragment libraryFragment = new LibraryFragment();
-        MenuItem menuItem = toolbar.getMenu().findItem(R.id.menuHomeNotification);
-        mDigitalPrintTable = new DigitalPrintTable(this);
-        mAccount = new Account();
-        View actionView = toolbar.getMenu().getItem(1).getActionView();
-        mBadgeTextView = actionView.findViewById(R.id.badge);
-        int notifCount = (int) NotifNumber.getLastKnownLocation(getApplicationContext());
-        if (notifCount == 0) {
-            mBadgeTextView.setVisibility(View.GONE);
-        } else {
-            mBadgeTextView.setVisibility(View.VISIBLE);
-            mBadgeTextView.setText(String.valueOf(notifCount));
-        }
-        actionView.setOnClickListener(v -> onOptionsItemSelected(toolbar.getMenu().getItem(1)));
-        BroadcastReceiver updateBadgeReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if ("ACTION_UPDATE_NOTIFICATION_BADGE".equals(intent.getAction())) {
-                    if(mBadgeTextView != null)
-                    {
-                        mBadgeTextView.setVisibility(View.VISIBLE);
-                        mBadgeTextView.setText(String.valueOf(intent.getIntExtra("number", 0)));
-                    }
-                }
-            }
-        };
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            registerReceiver(updateBadgeReceiver, new IntentFilter("ACTION_UPDATE_NOTIFICATION_BADGE"),Context.RECEIVER_EXPORTED);
+
+        initializeApp();
+
+        if (!checkSession()) {
+            navigateToLogin();
+            return;
         }
 
-        mEditText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent searchIntent = new Intent(MainActivity.this,SearchActivity.class);
-                searchIntent.putExtra("search_key","ONLINE_BOOK");
-                searchIntent.putExtra("online_book_key","MAIN_ACTIVITY");
-                startActivity(searchIntent);
-            }
-        });
-        /* Detection de reseau */
-        if(Build.VERSION.SDK_INT > 9)
-        {
-            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        initializeViews();
+        setupToolbar();
+        setupNotificationBadge();
+        setupNavigation();
+        handleDeepLink();
+        checkDigitalPrint();
+        requestPermissions();
+        startNetworkWorker();
+    }
+
+    private void initializeApp() {
+        configureStrictMode();
+        applyTheme();
+        new Initialization(this).onCreate(this);
+        mAccount = new Account();
+        mDigitalPrintTable = new DigitalPrintTable(this);
+    }
+
+    private void configureStrictMode() {
+        if (Build.VERSION.SDK_INT > 9) {
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
+                    .permitAll()
+                    .build();
             StrictMode.setThreadPolicy(policy);
         }
+    }
 
-        /* Ouverteur de la session si ca existe  si non lancement de la page login */
-        if(!mAccount.isSession(getApplicationContext()))
-        {
-            Intent login = new Intent(MainActivity.this, LoginActivity.class);
-            startActivity(login);
-            finish();
+    private void applyTheme() {
+        String themeName = Themes.getName(this);
+        if (THEME_NOT_NIGHT.equals(themeName)) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        } else if (THEME_NIGHT.equals(themeName)) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         }
-        networkCheckWorker(getApplicationContext());
-        //startService(reservationService);
-        try {
-            if(mDigitalPrintTable.getPass().equals("0"))
-            {
-                Intent emprient = new Intent(MainActivity.this, LockActivity.class);
-                startActivity(emprient);
-                finish();
-            }
-            else
-                mDigitalPrintTable.onUpdate("0");
-        }catch (Exception e){
-            Log.e("errorMainActivity",e.getMessage());
-        };
+    }
 
+    private boolean checkSession() {
+        return mAccount.isSession(this);
+    }
 
-        /* ########## Gestion du menu principale ########## */
+    private void navigateToLogin() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+        finish();
+    }
 
-        /* En cliquant sur "Actualiser" */
-        toolbar.getMenu().getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem menuItem) {
-                Intent accuiel = new Intent(MainActivity.this, MainActivity.class);
-                startActivity(accuiel);
-                finish();
-                return false;
-            }
+    private void initializeViews() {
+        mBottomNavigationView = findViewById(R.id.bottom_navigation_main);
+        mEditText = findViewById(R.id.edit_text_toolbar_search);
+        mProfileImageView = findViewById(R.id.image_view_toolbar_main_profile);
+
+        mEditText.setOnClickListener(v -> navigateToSearch());
+    }
+
+    private void navigateToSearch() {
+        Intent intent = new Intent(this, SearchActivity.class);
+        intent.putExtra("search_key", "ONLINE_BOOK");
+        intent.putExtra("online_book_key", "MAIN_ACTIVITY");
+        startActivity(intent);
+    }
+
+    private void setupToolbar() {
+        Toolbar toolbar = findViewById(R.id.toolbar_search);
+
+        // Refresh button
+        toolbar.getMenu().getItem(0).setOnMenuItemClickListener(item -> {
+            refreshActivity();
+            return true;
         });
 
-        /* En cliquant sur "Message importants" */
-        toolbar.getMenu().getItem(1).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem menuItem) {
-                Intent importants = new Intent(MainActivity.this, NotificationActivity.class);
-                startActivity(importants);
-                return false;
-            }
+        // Notifications button
+        toolbar.getMenu().getItem(1).setOnMenuItemClickListener(item -> {
+            navigateToNotifications();
+            return true;
         });
+
+        // Settings button
+        toolbar.getMenu().getItem(2).setOnMenuItemClickListener(item -> {
+            navigateToSettings();
+            return true;
+        });
+
+        // Logout button
+        toolbar.getMenu().getItem(3).setOnMenuItemClickListener(item -> {
+            logout();
+            return true;
+        });
+
+        loadUserProfile();
+    }
+
+    private void refreshActivity() {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    private void navigateToNotifications() {
+        Intent intent = new Intent(this, NotificationActivity.class);
+        startActivity(intent);
+    }
+
+    private void navigateToSettings() {
+        Intent intent = new Intent(this, SettingV2Activity.class);
+        startActivity(intent);
+    }
+
+    private void logout() {
+        if (mAccount.logout(this)) {
+            navigateToLogin();
+        }
+    }
+
+    private void loadUserProfile() {
         try {
-            Session session = new Session(getApplicationContext());
-            UserTable userTable = new UserTable(getApplicationContext());
-            Cursor userCursor = userTable.getData(session.getIdNumber());
-            userCursor.moveToFirst();
-            try {
-                byte[] photoByte = userCursor.getBlob(6);
-                if(photoByte != null)
-                {
+            Session session = new Session(this);
+            UserTable userTable = new UserTable(this);
+            Cursor cursor = userTable.getData(session.getIdNumber());
+
+            if (cursor != null && cursor.moveToFirst()) {
+                byte[] photoBytes = cursor.getBlob(6);
+                if (photoBytes != null) {
                     Glide.with(this)
-                            .load(photoByte)
+                            .load(photoBytes)
                             .apply(RequestOptions.circleCropTransform())
                             .into(mProfileImageView);
                 }
-            }catch (Exception e)
-            {
-                Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                cursor.close();
             }
-        }catch (Exception e)
-        {
-            Log.e("Err",e.getMessage());
+        } catch (Exception e) {
+            Log.e(TAG, "Error loading user profile", e);
         }
+    }
 
-        /* En cliquant sur "Paramètres" */
-        toolbar.getMenu().getItem(2).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem menuItem) {
-                Intent test = new Intent(MainActivity.this, SettingV2Activity.class);
-                startActivity(test);
-                return false;
-            }
+    private void setupNotificationBadge() {
+        Toolbar toolbar = findViewById(R.id.toolbar_search);
+        View actionView = toolbar.getMenu().getItem(1).getActionView();
+        mBadgeTextView = actionView.findViewById(R.id.badge);
+
+        updateBadgeCount(NotifNumber.getLastKnownLocation(this));
+
+        actionView.setOnClickListener(v -> {
+            mBadgeTextView.setVisibility(View.GONE);
+            navigateToNotifications();
         });
 
-        /* En cliquant sur "Déconnecter" */
-        toolbar.getMenu().getItem(3).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem menuItem) {
-                if(mAccount.logout(getApplicationContext()))
-                    reboot();
-                return false;
-            }
-        });
+        registerBadgeReceiver();
+    }
 
-        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_PHONE_STATE)
-                != PackageManager.PERMISSION_GRANTED) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                ActivityCompat.requestPermissions(MainActivity.this,
-                        new String[]{Manifest.permission.POST_NOTIFICATIONS,android.Manifest.permission.FOREGROUND_SERVICE_DATA_SYNC}, 101);
-            }
+    private void updateBadgeCount(int count) {
+        if (count == 0) {
+            mBadgeTextView.setVisibility(View.GONE);
+        } else {
+            mBadgeTextView.setVisibility(View.VISIBLE);
+            mBadgeTextView.setText(String.valueOf(count));
         }
+    }
 
-        /* La mise en place du Fragment par defeaut */
-      // getSupportFragmentManager().beginTransaction().replace(R.id.Top_comtainer, mHomeFragment).commit();
+    private void registerBadgeReceiver() {
+        mUpdateBadgeReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (ACTION_UPDATE_BADGE.equals(intent.getAction())) {
+                    int count = intent.getIntExtra("number", 0);
+                    updateBadgeCount(count);
+                }
+            }
+        };
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            registerReceiver(mUpdateBadgeReceiver,
+                    new IntentFilter(ACTION_UPDATE_BADGE),
+                    Context.RECEIVER_EXPORTED);
+        }
+    }
+
+    private void setupNavigation() {
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_home, R.id.navigation_suggestion, R.id.navigation_library)
-                .build();
+                R.id.navigation_home,
+                R.id.navigation_suggestion,
+                R.id.navigation_library
+        ).build();
 
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
+        NavController navController = Navigation.findNavController(
+                this, R.id.nav_host_fragment_activity_main);
 
-// Vérifier la connexion avant d'initialiser la navigation
-       // if (isFirstLaunch && !isConnectedToInternet()) {
-         //   navController.navigate(R.id.navigation_library);
-           // Toast.makeText(this, "Pas de connexion", Toast.LENGTH_SHORT).show();
-        //}
-
-        if (getIntent().getStringExtra("HORS_LINE") != null)
-        {
-            if (getIntent().getStringExtra("HORS_LINE").equals("ON"))
-            {
-                navController.navigate(R.id.navigation_library, null, new NavOptions.Builder()
-                        .setPopUpTo(navController.getGraph().getStartDestinationId(), true)
-                        .build());
-            }
-               // navController.navigate(R.id.navigation_library);
+        // Handle offline mode
+        String horsLine = getIntent().getStringExtra(EXTRA_HORS_LINE);
+        if (HORS_LINE_ON.equals(horsLine)) {
+            navigateToLibrary(navController);
         }
 
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(mBottomNavigationView, navController);
-       // AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-               // R.id.navigation_home, R.id.navigation_suggestion, R.id.navigation_library)
-              //  .build();
-        //NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
-        //NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-        //NavigationUI.setupWithNavController(mBottomNavigationView, navController);
-
-        /* En Clikquant sur les boutton de la barre de navigation */
-//        mBottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-//            @Override
-//            public boolean onNavigationItemSelected(MenuItem item) {
-//                switch (item.getItemId())
-//                {
-//                    case R.id.accueil:
-//                        if (mHomeFragment.isAdded()) {
-//                            getSupportFragmentManager().beginTransaction().replace(R.id.Top_comtainer, mHomeFragment).commit();
-//                        }
-//                        else
-//                        {
-//                            getSupportFragmentManager().beginTransaction().replace(R.id.Top_comtainer,new HomeFragment()).commit();
-//                        }
-//                        return true;
-//                    case R.id.assistance:
-//                        if (mSuggestionFragment.isAdded()) {
-//                            getSupportFragmentManager().beginTransaction().replace(R.id.Top_comtainer,mSuggestionFragment).commit();
-//                        }
-//                        else
-//                        {
-//                            getSupportFragmentManager().beginTransaction().replace(R.id.Top_comtainer,new SuggestionFragment()).commit();
-//                        }
-//                        return true;
-//                    case R.id.bibliotheque:
-//                        getSupportFragmentManager().beginTransaction().replace(R.id.Top_comtainer,new LibraryFragment()).commit();
-//                        return true;
-//                }
-//                return false;
-//            }
-//        });
     }
 
-    private void reboot() {
-        Intent login = new Intent(MainActivity.this, MainActivity.class);
-        startActivity(login);
-        finish();
+    private void navigateToLibrary(NavController navController) {
+        navController.navigate(R.id.navigation_library, null,
+                new NavOptions.Builder()
+                        .setPopUpTo(navController.getGraph().getStartDestinationId(), true)
+                        .build());
     }
 
-    private void Lock() {
-        //mEmpreiteTable.onUpdate("0");
+    private void handleDeepLink() {
+        Uri data = getIntent().getData();
+        if (data != null) {
+            String id = data.getQueryParameter("id");
+            String name = data.getQueryParameter("name");
+            Log.d(TAG, "Deep link received - ID: " + id + ", Name: " + name);
+            // Handle deep link data as needed
+        }
     }
+
+    private void checkDigitalPrint() {
+        try {
+            if ("0".equals(mDigitalPrintTable.getPass())) {
+                Intent intent = new Intent(this, LockActivity.class);
+                startActivity(intent);
+                finish();
+            } else {
+                mDigitalPrintTable.onUpdate("0");
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error checking digital print", e);
+        }
+    }
+
+    private void requestPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{
+                                Manifest.permission.POST_NOTIFICATIONS,
+                                Manifest.permission.FOREGROUND_SERVICE_DATA_SYNC
+                        },
+                        PERMISSION_REQUEST_CODE);
+            }
+        }
+    }
+
+    private void startNetworkWorker() {
+        OneTimeWorkRequest networkCheckRequest =
+                new OneTimeWorkRequest.Builder(NetworkCheckWorker.class).build();
+        WorkManager.getInstance(this).enqueue(networkCheckRequest);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.menuHomeNotification) {
+            mBadgeTextView.setVisibility(View.GONE);
+            navigateToNotifications();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    // ==================== Utility Methods ====================
+
+    private boolean isConnectedToInternet() {
+        ConnectivityManager connectivityManager =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        if (connectivityManager != null) {
+            NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+            return networkInfo != null && networkInfo.isConnected();
+        }
+        return false;
+    }
+
+    // ==================== Getters/Setters ====================
+
     public BottomNavigationView getBottomNavigationView() {
         return mBottomNavigationView;
     }
-
-    /* Les attributs de la Classe MainActivity */
-    private SQLiteDatabase mDatabase;
-    private BottomNavigationView mBottomNavigationView;
-    private BookStoreFragment mBookStoreFragment = new BookStoreFragment();
-    private ChatBotFragment mChatBotFragment = new ChatBotFragment();
-    private Account mAccount;
-    private DigitalPrintTable mDigitalPrintTable;
 
     public EditText getEditText() {
         return mEditText;
@@ -325,34 +366,16 @@ public class MainActivity extends AppCompatActivity {
     public void setEditText(EditText editText) {
         mEditText = editText;
     }
-    private boolean isConnectedToInternet() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (connectivityManager != null) {
-            NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-            return networkInfo != null && networkInfo.isConnected();
-        }
-        return false;
-    }
-    public void networkCheckWorker(Context context)
-    {
-        OneTimeWorkRequest networkCheckRequest = new OneTimeWorkRequest.Builder(NetworkCheckWorker.class).build();
-        WorkManager.getInstance(this).enqueue(networkCheckRequest);
-    }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if(id == R.id.menuHomeNotification)
-        {
-            Intent notificationIntent = new Intent(MainActivity.this,NotificationActivity.class);
-            mBadgeTextView.setVisibility(View.GONE);
-            startActivity(notificationIntent);
-            return true;
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mUpdateBadgeReceiver != null) {
+            try {
+                unregisterReceiver(mUpdateBadgeReceiver);
+            } catch (Exception e) {
+                Log.e(TAG, "Error unregistering receiver", e);
+            }
         }
-        return false;
     }
-
-    private EditText mEditText;
-    private ImageView mProfileImageView;
-    private TextView mBadgeTextView;
 }
