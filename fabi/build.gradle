@@ -15,6 +15,11 @@ android {
         versionName "3.0.8"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        packagingOptions {
+            jniLibs {
+                pickFirsts += ['**/libpspdfkit.so']
+            }
+        }
     }
 
     buildTypes {

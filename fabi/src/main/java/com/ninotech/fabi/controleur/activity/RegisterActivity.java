@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -33,17 +32,9 @@ import com.ninotech.fabi.model.data.PasswordUtil;
 import com.ninotech.fabi.model.data.Server;
 import com.ninotech.fabi.model.data.Themes;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
-import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -52,13 +43,43 @@ import okhttp3.Response;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    @SuppressLint({"MissingInflatedId", "CutPasteId"})
+    private static final String TAG = "RegisterActivity";
+
+    // UI Components
+    private EditText mNameEditText;
+    private EditText mFirstNameEditText;
+    private Spinner mProfessionSpinner;
+    private EditText mIdNumberEditText;
+    private EditText mPasswordEditText;
+    private EditText mPasswordConfirmEditText;
+    private EditText mEmailEditText;
+    private Button mConnectionButton;
+    private TextView mLoginTextView;
+    private TextView mErrorTextView;
+    private ProgressBar mConnectionProgressBar;
+
+    // Data
+    private Account mAccount;
+    private String mJeton = "null";
+    private OkHttpClient mHttpClient;
+
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         Objects.requireNonNull(getSupportActionBar()).hide();
-        /* Initialisation des attributs membre(propiete) */
+
+        initializeViews();
+        setupProfessionSpinner();
+        initializeFirebaseToken();
+        setupClickListeners();
+
+        // Initialiser OkHttpClient une seule fois
+        mHttpClient = new OkHttpClient();
+    }
+
+    private void initializeViews() {
         mNameEditText = findViewById(R.id.edit_text_activity_register_name);
         mFirstNameEditText = findViewById(R.id.edit_text_activity_register_first_name);
         mProfessionSpinner = findViewById(R.id.spinner_activity_register_profession);
@@ -70,467 +91,250 @@ public class RegisterActivity extends AppCompatActivity {
         mLoginTextView = findViewById(R.id.text_view_activity_register_login);
         mErrorTextView = findViewById(R.id.text_view_activity_register_error);
         mConnectionProgressBar = findViewById(R.id.progress_bar_activity_register_connection);
-        mJeton = "null";
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.profesion_array, android.R.layout.simple_spinner_item);
+    }
+
+    private void setupProfessionSpinner() {
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                this,
+                R.array.profesion_array,
+                android.R.layout.simple_spinner_item
+        );
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mProfessionSpinner.setAdapter(adapter);
-        /* Generation de jeton FireBase */
+    }
+
+    private void initializeFirebaseToken() {
         FirebaseMessaging.getInstance().getToken()
-                .addOnCompleteListener(new OnCompleteListener<String>() {
-                    @Override
-                    public void onComplete(@NonNull Task<String> task) {
-                        if (!task.isSuccessful()) {
-                            Log.w("TAG", "Erreur de generation du jeton", task.getException());
-                            return;
-                        }
-                        // Generation du nouveau jeton
-                        mJeton = task.getResult();
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        Log.w(TAG, "Erreur de generation du jeton", task.getException());
+                        return;
                     }
+                    mJeton = task.getResult();
                 });
-
-        /* En cliquant sur le boutton de connection2 */
-       mConnectionButton.setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View view) {
-               mAccount = new Account(
-                       mIdNumberEditText.getText().toString(),
-                       mNameEditText.getText().toString(),
-                       mFirstNameEditText.getText().toString(),
-                       mEmailEditText.getText().toString(),
-                       PasswordUtil.hashPassword(mPasswordEditText.getText().toString()), null,
-                       mProfessionSpinner.getSelectedItemId());
-               UiModeManager uiModeManager = null;
-               switch (Themes.getName(getApplicationContext()))
-               {
-                   case "system":
-                       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                           uiModeManager = (UiModeManager) getSystemService(Context.UI_MODE_SERVICE);
-                       }
-                       int currentMode = uiModeManager.getNightMode();
-                       if (currentMode == UiModeManager.MODE_NIGHT_NO) {
-                           // code mode jour
-                           inputNoNight();
-                       }
-                       else
-                       {
-                           // code mode nuit
-                           inputNight();
-                       }
-                       break;
-                   case "notNight":
-                       // code mode jour
-                       inputNoNight();
-                       break;
-                   case "night":
-                       inputNight();
-                       break;
-               }
-           }
-       });
-
-       /* En cliquant sur le TextView ce connecter */
-       mLoginTextView.setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View view) {
-               Intent login = new Intent(RegisterActivity.this, LoginActivity.class);
-               startActivity(login);
-           }
-       });
     }
 
-    private void inputNight() {
-        switch (mAccount.inputControl(PasswordUtil.hashPassword(mPasswordConfirmEditText.getText().toString())))
-        {
+    private void setupClickListeners() {
+        mConnectionButton.setOnClickListener(v -> handleRegistration());
+        mLoginTextView.setOnClickListener(v -> navigateToLogin());
+    }
+
+    private void handleRegistration() {
+        mAccount = new Account(
+                mIdNumberEditText.getText().toString(),
+                mNameEditText.getText().toString(),
+                mFirstNameEditText.getText().toString(),
+                mEmailEditText.getText().toString(),
+                PasswordUtil.hashPassword(mPasswordEditText.getText().toString()),
+                null,
+                mProfessionSpinner.getSelectedItemId()
+        );
+
+        String hashedPasswordConfirm = PasswordUtil.hashPassword(
+                mPasswordConfirmEditText.getText().toString()
+        );
+
+        if (isDarkMode()) {
+            inputNight(hashedPasswordConfirm);
+        } else {
+            inputNoNight(hashedPasswordConfirm);
+        }
+    }
+
+    private boolean isDarkMode() {
+        String theme = Themes.getName(getApplicationContext());
+
+        if ("night".equals(theme)) {
+            return true;
+        } else if ("notNight".equals(theme)) {
+            return false;
+        } else { // "system"
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                UiModeManager uiModeManager = (UiModeManager) getSystemService(Context.UI_MODE_SERVICE);
+                return uiModeManager.getNightMode() != UiModeManager.MODE_NIGHT_NO;
+            }
+            return false;
+        }
+    }
+
+    private void inputNight(String hashedPasswordConfirm) {
+        processInputValidation(hashedPasswordConfirm, true);
+    }
+
+    private void inputNoNight(String hashedPasswordConfirm) {
+        processInputValidation(hashedPasswordConfirm, false);
+    }
+
+    private void processInputValidation(String hashedPasswordConfirm, boolean isDarkMode) {
+        String validationResult = mAccount.inputControl(hashedPasswordConfirm);
+
+        switch (validationResult) {
             case "0000":
-                inputControl(
-                        R.drawable.forme_black3_radius_100dp_border_rouge,
-                        R.drawable.forme_black3_radius_100dp_border_rouge,
-                        R.drawable.forme_black3_radius_100dp_border_rouge,
-                        R.drawable.forme_black3_radius_100dp_border_rouge,
-                        R.string.register_error_0000
-                );
+                applyInputControl(isDarkMode, true, true, true, true, R.string.register_error_0000);
                 break;
             case "0111":
-                inputControl(
-                        R.drawable.forme_black3_radius_100dp_border_rouge,
-                        R.drawable.forme_black3_radius_10dp,
-                        R.drawable.forme_black3_radius_10dp,
-                        R.drawable.forme_black3_radius_10dp,
-                        R.string.register_error_0111
-                );
+                applyInputControl(isDarkMode, true, false, false, false, R.string.register_error_0111);
                 break;
             case "1011":
-                inputControl(
-                        R.drawable.forme_black3_radius_10dp,
-                        R.drawable.forme_black3_radius_100dp_border_rouge,
-                        R.drawable.forme_black3_radius_10dp,
-                        R.drawable.forme_black3_radius_10dp,
-                        R.string.register_error_1011
-                );
+                applyInputControl(isDarkMode, false, true, false, false, R.string.register_error_1011);
                 break;
             case "1101":
-                inputControl(
-                        R.drawable.forme_black3_radius_10dp,
-                        R.drawable.forme_black3_radius_10dp,
-                        R.drawable.forme_black3_radius_100dp_border_rouge,
-                        R.drawable.forme_black3_radius_10dp,
-                        R.string.register_error_1101
-                );
+                applyInputControl(isDarkMode, false, false, true, false, R.string.register_error_1101);
                 break;
             case "1110":
-                inputControl(
-                        R.drawable.forme_black3_radius_10dp,
-                        R.drawable.forme_black3_radius_10dp,
-                        R.drawable.forme_black3_radius_10dp,
-                        R.drawable.forme_black3_radius_100dp_border_rouge,
-                        R.string.register_error_1110
-                );
+                applyInputControl(isDarkMode, false, false, false, true, R.string.register_error_1110);
                 break;
             case "1100":
-                inputControl(
-                        R.drawable.forme_black3_radius_10dp,
-                        R.drawable.forme_black3_radius_10dp,
-                        R.drawable.forme_black3_radius_100dp_border_rouge,
-                        R.drawable.forme_black3_radius_100dp_border_rouge,
-                        R.string.register_error_1100
-                );
+                applyInputControl(isDarkMode, false, false, true, true, R.string.register_error_1100);
                 break;
             case "1111":
-                if(mProfessionSpinner.getSelectedItemPosition() != 0)
-                {
-                    mConnectionProgressBar.setVisibility(View.VISIBLE);
-                    mConnectionButton.setText(R.string.register_succes_1111);
-                    RegisterSyn registerSyn = new RegisterSyn();
-                    registerSyn.execute(
-                            Server.getIpServerAndroid(getApplicationContext()) + "Register.php",
-                            mAccount.getIdNumber(),
-                            mAccount.getName(),
-                            mAccount.getFirstName(),
-                            mAccount.getEmail(),
-                            mAccount.getPassword(),
-                            String.valueOf(mAccount.getProfession())
-                    );
-                }
-                else
-                    inputControl(
-                            R.drawable.forme_black3_radius_10dp,
-                            R.drawable.forme_black3_radius_10dp,
-                            R.drawable.forme_black3_radius_10dp,
-                            R.drawable.forme_black3_radius_10dp,
-                            R.string.register_error_1100
-                    );
-                    mErrorTextView.setText("Votre profession svp ?");
+                handleSuccessfulValidation(isDarkMode);
                 break;
         }
     }
 
-    private void inputNoNight() {
-        switch (mAccount.inputControl(PasswordUtil.hashPassword(mPasswordConfirmEditText.getText().toString())))
-        {
-            case "0000":
-                inputControl(
-                        R.drawable.forme_white_radius_100dp_border_rouge,
-                        R.drawable.forme_white_radius_100dp_border_rouge,
-                        R.drawable.forme_white_radius_100dp_border_rouge,
-                        R.drawable.forme_white_radius_100dp_border_rouge,
-                        R.string.register_error_0000
-                );
-                break;
-            case "0111":
-                inputControl(
-                        R.drawable.forme_white_radius_100dp_border_rouge,
-                        R.drawable.forme_white_radius_10dp,
-                        R.drawable.forme_white_radius_10dp,
-                        R.drawable.forme_white_radius_10dp,
-                        R.string.register_error_0111
-                );
+    private void handleSuccessfulValidation(boolean isDarkMode) {
+        if (mProfessionSpinner.getSelectedItemPosition() != 0) {
+            mConnectionProgressBar.setVisibility(View.VISIBLE);
+            mConnectionButton.setText(R.string.register_succes_1111);
+            performRegistration();
+        } else {
+            applyInputControl(isDarkMode, false, false, false, false, R.string.register_error_1100);
+            mErrorTextView.setText("Votre profession svp ?");
+        }
+    }
+
+    private void applyInputControl(boolean isDarkMode, boolean idError, boolean emailError,
+                                   boolean passError, boolean confirmError, int messageResId) {
+        int normalDrawable = isDarkMode ?
+                R.drawable.forme_black3_radius_10dp : R.drawable.forme_white_radius_10dp;
+        int errorDrawable = isDarkMode ?
+                R.drawable.forme_black3_radius_100dp_border_rouge : R.drawable.forme_white_radius_100dp_border_rouge;
+
+        mIdNumberEditText.setBackground(getResources().getDrawable(idError ? errorDrawable : normalDrawable));
+        mEmailEditText.setBackground(getResources().getDrawable(emailError ? errorDrawable : normalDrawable));
+        mPasswordEditText.setBackground(getResources().getDrawable(passError ? errorDrawable : normalDrawable));
+        mPasswordConfirmEditText.setBackground(getResources().getDrawable(confirmError ? errorDrawable : normalDrawable));
+        mErrorTextView.setText(messageResId);
+    }
+
+    private void performRegistration() {
+        new Thread(() -> {
+            try {
+                String serverUrl = Server.getIpServerAndroid(getApplicationContext()) + "Register.php";
+
+                RequestBody requestBody = new MultipartBody.Builder()
+                        .setType(MultipartBody.FORM)
+                        .addFormDataPart("idUser", mAccount.getIdNumber())
+                        .addFormDataPart("name", mAccount.getName())
+                        .addFormDataPart("firstName", mAccount.getFirstName())
+                        .addFormDataPart("email", mAccount.getEmail())
+                        .addFormDataPart("password", mAccount.getPassword())
+                        .addFormDataPart("profession", String.valueOf(mAccount.getProfession()))
+                        .addFormDataPart("version", getResources().getString(R.string.app_version))
+                        .build();
+
+                Request request = new Request.Builder()
+                        .url(serverUrl)
+                        .post(requestBody)
+                        .build();
+
+                Response response = mHttpClient.newCall(request).execute();
+                String jsonData = response.body().string();
+
+                runOnUiThread(() -> handleRegistrationResponse(jsonData));
+
+            } catch (IOException e) {
+                runOnUiThread(() -> {
+                    Toast.makeText(RegisterActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    resetConnectionButton();
+                });
+            }
+        }).start();
+    }
+
+    private void handleRegistrationResponse(String jsonData) {
+        String dataControlResult = mAccount.dataControl(jsonData);
+        boolean isDarkMode = isDarkMode();
+
+        switch (dataControlResult) {
+            case "0111_1":
+                applyDataControl(isDarkMode, true, false, false, false,
+                        R.string.register_error_0111_1_data);
                 break;
             case "1011":
-                inputControl(
-                        R.drawable.forme_white_radius_10dp,
-                        R.drawable.forme_white_radius_100dp_border_rouge,
-                        R.drawable.forme_white_radius_10dp,
-                        R.drawable.forme_white_radius_10dp,
-                        R.string.register_error_1011
-                );
+                applyDataControl(isDarkMode, false, true, false, false,
+                        R.string.register_error_1011_data);
                 break;
-            case "1101":
-                inputControl(
-                        R.drawable.forme_white_radius_10dp,
-                        R.drawable.forme_white_radius_10dp,
-                        R.drawable.forme_white_radius_100dp_border_rouge,
-                        R.drawable.forme_white_radius_10dp,
-                        R.string.register_error_1101
-                );
-                break;
-            case "1110":
-                inputControl(
-                        R.drawable.forme_white_radius_10dp,
-                        R.drawable.forme_white_radius_10dp,
-                        R.drawable.forme_white_radius_10dp,
-                        R.drawable.forme_white_radius_100dp_border_rouge,
-                        R.string.register_error_1110
-                );
-                break;
-            case "1100":
-                inputControl(
-                        R.drawable.forme_white_radius_10dp,
-                        R.drawable.forme_white_radius_10dp,
-                        R.drawable.forme_white_radius_100dp_border_rouge,
-                        R.drawable.forme_white_radius_100dp_border_rouge,
-                        R.string.register_error_1100
-                );
+            case "update":
+                showUpdateDialog();
+                resetConnectionButton();
                 break;
             case "1111":
-                if(mProfessionSpinner.getSelectedItemPosition() != 0)
-                {
-                    mConnectionProgressBar.setVisibility(View.VISIBLE);
-                    mConnectionButton.setText(R.string.register_succes_1111);
-                    RegisterSyn registerSyn = new RegisterSyn();
-                    registerSyn.execute(
-                            Server.getIpServerAndroid(getApplicationContext()) + "Register.php",
-                            mAccount.getIdNumber(),
-                            mAccount.getName(),
-                            mAccount.getFirstName(),
-                            mAccount.getEmail(),
-                            mAccount.getPassword(),
-                            String.valueOf(mAccount.getProfession())
-                    );
-                }
-                else
-                    inputControl(
-                            R.drawable.forme_white_radius_10dp,
-                            R.drawable.forme_white_radius_10dp,
-                            R.drawable.forme_white_radius_10dp,
-                            R.drawable.forme_white_radius_10dp,
-                            R.string.register_error_1100
-                    );
-                    mErrorTextView.setText("Votre profession svp ?");
+                handleSuccessfulRegistration();
+                break;
+            default:
+                showConnectionError();
                 break;
         }
     }
 
-    public void inputControl(int idNumberForm , int emailForm , int passwordForm , int passwordConfirmForm , int message)
-    {
-        mIdNumberEditText.setBackground(getResources().getDrawable(idNumberForm));
-        mEmailEditText.setBackground(getResources().getDrawable(emailForm));
-        mPasswordEditText.setBackground(getResources().getDrawable(passwordForm));
-        mPasswordConfirmEditText.setBackground(getResources().getDrawable(passwordConfirmForm));
-        mErrorTextView.setText(message);
+    private void applyDataControl(boolean isDarkMode, boolean idError, boolean emailError,
+                                  boolean passError, boolean confirmError, int messageResId) {
+        applyInputControl(isDarkMode, idError, emailError, passError, confirmError, messageResId);
+        resetConnectionButton();
     }
-    public void dataControl(int idNumberIco , int emailIco , int passwordIco , int passwordConfirmIco , int message)
-    {
-        inputControl(idNumberIco,emailIco,passwordIco,passwordConfirmIco,message);
+
+    private void handleSuccessfulRegistration() {
+        if (mAccount.register(getApplicationContext(), "no")) {
+            if (mAccount.login(getApplicationContext())) {
+                Intent home = new Intent(RegisterActivity.this, MainActivity.class);
+                startActivity(home);
+                finish();
+            }
+        } else {
+            showConnectionError();
+        }
+    }
+
+    private void showConnectionError() {
+        mErrorTextView.setText(R.string.no_connection);
+        resetConnectionButton();
+    }
+
+    private void resetConnectionButton() {
         mConnectionProgressBar.setVisibility(View.INVISIBLE);
         mConnectionButton.setText(R.string.button_text_connection);
     }
 
-    // Methode pour la requette okhttp enfin de creer un compte a un utilisateur
-    private class RegisterSyn extends AsyncTask<String,Void,String> {
-        @Override
-        protected String doInBackground(String... params) {
-            try {
-                OkHttpClient client = new OkHttpClient();
-                RequestBody requestBody = new MultipartBody.Builder()
-                        .setType(MultipartBody.FORM)
-                        .addFormDataPart("idUser",params[1])
-                        .addFormDataPart("name",params[2])
-                        .addFormDataPart("firstName",params[3])
-                        .addFormDataPart("email",params[4])
-                        .addFormDataPart("password",params[5])
-                        .addFormDataPart("profession",params[6])
-                        .addFormDataPart("version", getResources().getString(R.string.app_version))
-                        .build();
-                Request request = new Request.Builder()
-                        .url(params[0])
-                        .post(requestBody)
-                        .build();
-                try {
-                    Response response = client.newCall(request).execute();
-                    return response.body().string();
-                }catch (IOException e)
-                {
-                    Toast.makeText(RegisterActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-
-            }catch (Exception e)
-            {
-                return null;
-            }
-            return null;
-        }
-        @Override
-        protected void onPostExecute(String jsonData){
-            UiModeManager uiModeManager = null;
-            switch (mAccount.dataControl(jsonData))
-            {
-                case "0111_1":
-                    switch (Themes.getName(getApplicationContext()))
-                    {
-                        case "system":
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                uiModeManager = (UiModeManager) getSystemService(Context.UI_MODE_SERVICE);
-                            }
-                            int currentMode = uiModeManager.getNightMode();
-                            if (currentMode == UiModeManager.MODE_NIGHT_NO) {
-                                // code mode jour
-                                dataControl(
-                                        R.drawable.forme_white_radius_100dp_border_rouge,
-                                        R.drawable.forme_white_radius_10dp,
-                                        R.drawable.forme_white_radius_10dp,
-                                        R.drawable.forme_white_radius_10dp,
-                                        R.string.register_error_0111_1_data
-                                );
-                            }
-                            else
-                            {
-                                // code mode nuit
-                                dataControl(
-                                        R.drawable.forme_black3_radius_100dp_border_rouge,
-                                        R.drawable.forme_black3_radius_10dp,
-                                        R.drawable.forme_black3_radius_10dp,
-                                        R.drawable.forme_black3_radius_10dp,
-                                        R.string.register_error_0111_1_data
-                                );
-                            }
-                            break;
-                        case "notNight":
-                            // code mode jour
-                            dataControl(
-                                    R.drawable.forme_white_radius_100dp_border_rouge,
-                                    R.drawable.forme_white_radius_10dp,
-                                    R.drawable.forme_white_radius_10dp,
-                                    R.drawable.forme_white_radius_10dp,
-                                    R.string.register_error_0111_1_data
-                            );
-                            break;
-                        case "night":
-                            dataControl(
-                                    R.drawable.forme_black3_radius_100dp_border_rouge,
-                                    R.drawable.forme_black3_radius_10dp,
-                                    R.drawable.forme_black3_radius_10dp,
-                                    R.drawable.forme_black3_radius_10dp,
-                                    R.string.register_error_0111_1_data
-                            );
-                            break;
-                    }
-                    break;
-                case "1011":
-                    switch (Themes.getName(getApplicationContext()))
-                    {
-                        case "system":
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                uiModeManager = (UiModeManager) getSystemService(Context.UI_MODE_SERVICE);
-                            }
-                            int currentMode = uiModeManager.getNightMode();
-                            if (currentMode == UiModeManager.MODE_NIGHT_NO) {
-                                // code mode jour
-                                dataControl(
-                                        R.drawable.forme_white_radius_10dp,
-                                        R.drawable.forme_white_radius_100dp_border_rouge,
-                                        R.drawable.forme_white_radius_10dp,
-                                        R.drawable.forme_white_radius_10dp,
-                                        R.string.register_error_1011_data
-                                );
-                            }
-                            else
-                            {
-                                // code mode nuit
-                                dataControl(
-                                        R.drawable.forme_black3_radius_10dp,
-                                        R.drawable.forme_black3_radius_100dp_border_rouge,
-                                        R.drawable.forme_black3_radius_10dp,
-                                        R.drawable.forme_black3_radius_10dp,
-                                        R.string.register_error_1011_data
-                                );
-                            }
-                            break;
-                        case "notNight":
-                            // code mode jour
-                            dataControl(
-                                    R.drawable.forme_white_radius_10dp,
-                                    R.drawable.forme_white_radius_100dp_border_rouge,
-                                    R.drawable.forme_white_radius_10dp,
-                                    R.drawable.forme_white_radius_10dp,
-                                    R.string.register_error_1011_data
-                            );
-                            break;
-                        case "night":
-                            dataControl(
-                                    R.drawable.forme_black3_radius_10dp,
-                                    R.drawable.forme_black3_radius_100dp_border_rouge,
-                                    R.drawable.forme_black3_radius_10dp,
-                                    R.drawable.forme_black3_radius_10dp,
-                                    R.string.register_error_1011_data
-                            );
-                            break;
-                    }
-                    break;
-                case "update":
-                    Update();
-                    mConnectionProgressBar.setVisibility(View.INVISIBLE);
-                    mConnectionButton.setText(R.string.button_text_connection);
-                    break;
-                case "1111":
-                    if(mAccount.register(getApplicationContext(),"no"))
-                    {
-                        if(mAccount.login(getApplicationContext()))
-                        {
-                            Intent  home= new Intent(RegisterActivity.this , MainActivity.class);
-                            startActivity(home);
-                            finish();
-                        }
-                    }
-                    else
-                    {
-                        mErrorTextView.setText(R.string.no_connection);
-                        mConnectionProgressBar.setVisibility(View.INVISIBLE);
-                        mConnectionButton.setText(R.string.button_text_connection);
-                    }
-                    break;
-                default:
-                    mErrorTextView.setText(R.string.no_connection);
-                    mConnectionProgressBar.setVisibility(View.INVISIBLE);
-                    mConnectionButton.setText(R.string.button_text_connection);
-                    break;
-            }
-        }
+    private void navigateToLogin() {
+        Intent login = new Intent(RegisterActivity.this, LoginActivity.class);
+        startActivity(login);
     }
-    private void Update(){
+
+    private void showUpdateDialog() {
         UpdateDialog updateDialog = new UpdateDialog(this);
         updateDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         updateDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+
         TextView annuler = updateDialog.findViewById(R.id.annuler);
         TextView installer = updateDialog.findViewById(R.id.installer);
-        annuler.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                updateDialog.cancel();
-            }
-        });
 
-        installer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String url = "http://eduniger.com"; // Remplacez ceci par l'URL que vous souhaitez ouvrir
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                startActivity(intent);
-            }
+        annuler.setOnClickListener(v -> updateDialog.cancel());
+
+        installer.setOnClickListener(v -> {
+            String url = "http://eduniger.com";
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            startActivity(intent);
         });
 
         updateDialog.build();
     }
-    private EditText mNameEditText;
-    private EditText mFirstNameEditText;
-    private Spinner mProfessionSpinner;
-    private EditText mIdNumberEditText;
-    private EditText mPasswordEditText;
-    private EditText mPasswordConfirmEditText;
-    private Button mConnectionButton;
-    private TextView mLoginTextView;
-    private TextView mErrorTextView;
-    private EditText mEmailEditText;
-    private String mJeton;
-    private ProgressBar mConnectionProgressBar;
-    private Account mAccount;
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Libérer les ressources si nécessaire
+        mHttpClient = null;
+    }
 }
