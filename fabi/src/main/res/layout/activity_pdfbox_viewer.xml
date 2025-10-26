@@ -22,14 +22,16 @@
                 android:id="@+id/scrollViewVertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:fillViewport="true">
+                android:fillViewport="true"
+                android:scrollbars="none">
 
                 <!-- HorizontalScrollView pour zoom horizontal -->
                 <HorizontalScrollView
                     android:id="@+id/scrollViewHorizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fillViewport="true">
+                    android:fillViewport="true"
+                    android:scrollbars="none">
 
                     <!-- ImageView pour afficher la page PDF -->
                     <ImageView
@@ -193,7 +195,7 @@
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:src="@android:drawable/ic_menu_zoom"
                         android:contentDescription="Zoomer"
-                        />
+                       />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -219,7 +221,7 @@
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:src="@android:drawable/ic_media_next"
                         android:contentDescription="Page suivante"
-                        />
+                       />
 
                     <TextView
                         android:layout_width="wrap_content"

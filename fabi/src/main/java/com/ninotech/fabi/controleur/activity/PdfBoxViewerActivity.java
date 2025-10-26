@@ -10,9 +10,11 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,6 +37,8 @@ public class PdfBoxViewerActivity extends AppCompatActivity {
     private ImageButton btnPrevious, btnNext, btnZoomIn, btnZoomOut;
     private ProgressBar progressBar;
     private ProgressBar progressBarPage;
+    private ScrollView scrollViewVertical;
+    private HorizontalScrollView scrollViewHorizontal;
 
     private PdfRenderer pdfRenderer;
     private ParcelFileDescriptor fileDescriptor;
@@ -56,7 +60,7 @@ public class PdfBoxViewerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getSupportActionBar().hide();
+
         // Mode plein écran pour format A5
         getWindow().setFlags(
                 WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -88,11 +92,14 @@ public class PdfBoxViewerActivity extends AppCompatActivity {
     private void initViews() {
         imageViewPdf = findViewById(R.id.imageViewPdf);
         textViewPageInfo = findViewById(R.id.textViewPageInfo);
+        textViewZoomLevel = findViewById(R.id.textViewZoomLevel);
+        textViewSwipeHint = findViewById(R.id.textViewSwipeHint);
         btnPrevious = findViewById(R.id.btnPrevious);
         btnNext = findViewById(R.id.btnNext);
         btnZoomIn = findViewById(R.id.btnZoomIn);
         btnZoomOut = findViewById(R.id.btnZoomOut);
         progressBar = findViewById(R.id.progressBar);
+        progressBarPage = findViewById(R.id.progressBarPage);
 
         // Configuration de l'ImageView pour ajustement optimal
         imageViewPdf.setScaleType(ImageView.ScaleType.FIT_CENTER);
@@ -191,6 +198,20 @@ public class PdfBoxViewerActivity extends AppCompatActivity {
 
     private void updatePageInfo() {
         textViewPageInfo.setText(String.format("Page %d / %d", currentPage + 1, totalPages));
+
+        // Mettre à jour la barre de progression
+        if (totalPages > 0) {
+            int progress = (int) (((float) (currentPage + 1) / totalPages) * 100);
+            progressBarPage.setProgress(progress);
+        }
+
+        // Mettre à jour le niveau de zoom
+        updateZoomLevel();
+    }
+
+    private void updateZoomLevel() {
+        int zoomPercent = (int) (zoomLevel * 100);
+        textViewZoomLevel.setText(String.format("Zoom: %d%%", zoomPercent));
     }
 
     private void updateNavigationButtons() {
@@ -220,6 +241,9 @@ public class PdfBoxViewerActivity extends AppCompatActivity {
         if (zoomLevel < 3.0f) {
             zoomLevel += 0.25f;
             renderPage(currentPage);
+            updateZoomLevel();
+        } else {
+            Toast.makeText(this, "Zoom maximum atteint", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -227,6 +251,9 @@ public class PdfBoxViewerActivity extends AppCompatActivity {
         if (zoomLevel > 0.5f) {
             zoomLevel -= 0.25f;
             renderPage(currentPage);
+            updateZoomLevel();
+        } else {
+            Toast.makeText(this, "Zoom minimum atteint", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -348,9 +375,18 @@ public class PdfBoxViewerActivity extends AppCompatActivity {
                 imageViewPdf.setVisibility(View.VISIBLE);
 
                 if (isA5Format) {
+                    // Afficher le hint de swipe pendant 3 secondes
+                    textViewSwipeHint.setVisibility(View.VISIBLE);
+                    textViewSwipeHint.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            textViewSwipeHint.setVisibility(View.GONE);
+                        }
+                    }, 3000);
+
                     Toast.makeText(PdfBoxViewerActivity.this,
-                            "Format A5 - Swipez pour changer de page",
-                            Toast.LENGTH_LONG).show();
+                            "Format A5 détecté - Optimisation plein écran",
+                            Toast.LENGTH_SHORT).show();
                 }
 
                 renderPage(0);
