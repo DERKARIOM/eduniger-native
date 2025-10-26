@@ -60,12 +60,6 @@ import com.ninotech.fabi.model.service.PdfDownloadService;
 import com.ninotech.fabi.model.table.AudioTable;
 import com.ninotech.fabi.model.table.ElectronicTable;
 import com.ninotech.fabi.model.table.Session;
-import com.pspdfkit.configuration.activity.PdfActivityConfiguration;
-import com.pspdfkit.configuration.page.PageScrollDirection;
-import com.pspdfkit.configuration.page.PageScrollMode;
-import com.pspdfkit.configuration.settings.SettingsMenuItemType;
-import com.pspdfkit.configuration.sharing.ShareFeatures;
-import com.pspdfkit.ui.PdfActivity;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -389,34 +383,10 @@ public class BookActivity extends AppCompatActivity {
     }
 
     private void openPdfDocument() {
-        File file = new File(mSourcePdf);
-        Uri uri = Uri.fromFile(file);
-
-        PdfActivityConfiguration config = new PdfActivityConfiguration.Builder(this)
-                .hideThumbnailGrid()
-                .setEnabledShareFeatures(ShareFeatures.none())
-                .disablePrinting()
-                .disableAnnotationEditing()
-                .disableBookmarkEditing()
-                .disableDocumentEditor()
-                .disableAnnotationList()
-                .scrollDirection(PageScrollDirection.VERTICAL)
-                .scrollMode(PageScrollMode.CONTINUOUS)
-                .disableAnnotationLimitedToPageBounds()
-                .disableCopyPaste()
-                .disableFormEditing()
-                .disableContentEditing()
-                .textSelectionEnabled(false)
-                .enableDocumentInfoView()
-                .setSettingsMenuItems(EnumSet.of(
-                        SettingsMenuItemType.THEME,
-                        SettingsMenuItemType.PAGE_LAYOUT,
-                        SettingsMenuItemType.PAGE_TRANSITION,
-                        SettingsMenuItemType.PRESETS
-                ))
-                .build();
-
-        PdfActivity.showDocument(this, uri, config);
+        Intent intent = new Intent(getApplicationContext(), PdfBoxViewerActivity.class);
+        intent.putExtra("PDF_PATH", mSourcePdf);
+        intent.putExtra("PDF_TITLE", mOnlineBook.getTitle());
+        startActivity(intent);
     }
 
     private void handleAudioClick() {

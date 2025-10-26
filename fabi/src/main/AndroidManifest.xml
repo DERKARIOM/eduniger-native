@@ -184,11 +184,6 @@
             android:configChanges="orientation|screenSize"
             android:exported="false" />
         <activity
-            android:name="com.pspdfkit.ui.PdfActivity"
-            android:configChanges="orientation|screenSize"
-            android:theme="@style/MyApp.PSPDFKitTheme"
-            android:windowSoftInputMode="adjustNothing" /> <!-- ==================== Activités de Communication ==================== -->
-        <activity
             android:name=".controleur.activity.NotificationActivity"
             android:exported="false"
             android:label="Notifications"

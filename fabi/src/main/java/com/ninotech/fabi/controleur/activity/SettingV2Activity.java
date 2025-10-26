@@ -61,7 +61,7 @@ public class SettingV2Activity extends AppCompatActivity {
                     settings.add(new Setting(R.drawable.user,getString(R.string.account),null));
                     settings.add(new Setting(R.drawable.vector_black3_print_digital,getString(R.string.digital_print),null));
                     settings.add(new Setting(R.drawable.vector_black3_phone_connected,"Serveur connecté",null));
-                    settings.add(new Setting(com.pspdfkit.R.drawable.pspdf__ic_settings_default_theme,"Thème appliqué","Mode Systémes"));
+                    settings.add(new Setting(R.drawable.vector_theme_default,"Thème appliqué","Mode Systémes"));
                     settings.add(new Setting(R.drawable.vector_black3_message,getString(R.string.send_suggestion),null));
                     settings.add(new Setting(R.drawable.vector_black3_grade,getString(R.string.evaluate_us),null));
                     settings.add(new Setting(R.drawable.vector_purple_200_phone,"Contactez-nous",null));
@@ -77,7 +77,7 @@ public class SettingV2Activity extends AppCompatActivity {
                 settings.add(new Setting(R.drawable.user,getString(R.string.account),null));
                 settings.add(new Setting(R.drawable.vector_black3_print_digital,getString(R.string.digital_print),null));
                 settings.add(new Setting(R.drawable.vector_black3_phone_connected,"Serveur connecté",null));
-                settings.add(new Setting(com.pspdfkit.R.drawable.pspdf__ic_settings_default_theme,"Thème appliqué","Mode Clair"));
+                settings.add(new Setting(R.drawable.vector_theme_default,"Thème appliqué","Mode Clair"));
                 settings.add(new Setting(R.drawable.vector_black3_message,getString(R.string.send_suggestion),null));
                 settings.add(new Setting(R.drawable.vector_black3_grade,getString(R.string.evaluate_us),null));
                 settings.add(new Setting(R.drawable.vector_purple_200_phone,"Contactez-nous",null));

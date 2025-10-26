@@ -11,14 +11,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.activity.AudioPlayerActivity;
+import com.ninotech.fabi.controleur.activity.PdfBoxViewerActivity;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
 import com.ninotech.fabi.model.data.LocalBooks;
-import com.pspdfkit.configuration.activity.PdfActivityConfiguration;
-import com.pspdfkit.configuration.page.PageScrollDirection;
-import com.pspdfkit.configuration.page.PageScrollMode;
-import com.pspdfkit.configuration.settings.SettingsMenuItemType;
-import com.pspdfkit.configuration.sharing.ShareFeatures;
-import com.pspdfkit.ui.PdfActivity;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -95,32 +90,10 @@ public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.MyViewHold
                     switch (localBooks.getFormat())
                     {
                         case "pdf":
-                            File file = new File(localBooks.getRessource());
-                            Uri uri = Uri.parse(Uri.fromFile(file).toString());
-                            PdfActivityConfiguration config = new PdfActivityConfiguration.Builder(itemView.getContext())
-                                    .hideThumbnailGrid().setEnabledShareFeatures(ShareFeatures.none())
-                                    .disablePrinting()
-                                    .disablePrinting()
-                                    .disableAnnotationEditing()
-                                    .disableBookmarkEditing()
-                                    .disableDocumentEditor()
-                                    .disableAnnotationList()
-                                    .scrollDirection(PageScrollDirection.VERTICAL)
-                                    .scrollMode(PageScrollMode.CONTINUOUS)
-                                    .disableAnnotationLimitedToPageBounds()
-                                    .disableCopyPaste()
-                                    .disableFormEditing()
-                                    .disableContentEditing()
-                                    .textSelectionEnabled(false)
-                                    .enableDocumentInfoView()
-                                    .setSettingsMenuItems(EnumSet.of(
-                                            SettingsMenuItemType.THEME,
-                                            SettingsMenuItemType.PAGE_LAYOUT,
-                                            SettingsMenuItemType.PAGE_TRANSITION,
-                                            SettingsMenuItemType.PRESETS
-                                    ))
-                                    .build();
-                            PdfActivity.showDocument(itemView.getContext(),uri,config);
+                            Intent intent = new Intent(itemView.getContext(), PdfBoxViewerActivity.class);
+                            intent.putExtra("PDF_PATH", localBooks.getRessource());
+                            intent.putExtra("PDF_TITLE", localBooks.getTitle());
+                            itemView.getContext().startActivity(intent);
                             break;
                         case "audio":
                             Intent audioPayerIntent = new Intent(itemView.getContext(), AudioPlayerActivity.class);

@@ -14,12 +14,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.model.table.ElectronicTable;
-import com.pspdfkit.configuration.activity.PdfActivityConfiguration;
-import com.pspdfkit.configuration.page.PageScrollDirection;
-import com.pspdfkit.configuration.page.PageScrollMode;
-import com.pspdfkit.configuration.settings.SettingsMenuItemType;
-import com.pspdfkit.configuration.sharing.ShareFeatures;
-import com.pspdfkit.ui.PdfActivity;
 
 import org.w3c.dom.Text;
 
