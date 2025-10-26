@@ -222,7 +222,7 @@ public class PdfBoxViewerActivity extends AppCompatActivity {
     private void previousPage() {
         if (currentPage > 0) {
             renderPage(currentPage - 1);
-            Toast.makeText(this, "Page précédente", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Page précédente", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(this, "Première page", Toast.LENGTH_SHORT).show();
         }
@@ -231,7 +231,7 @@ public class PdfBoxViewerActivity extends AppCompatActivity {
     private void nextPage() {
         if (currentPage < totalPages - 1) {
             renderPage(currentPage + 1);
-            Toast.makeText(this, "Page suivante", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Page suivante", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(this, "Dernière page", Toast.LENGTH_SHORT).show();
         }
