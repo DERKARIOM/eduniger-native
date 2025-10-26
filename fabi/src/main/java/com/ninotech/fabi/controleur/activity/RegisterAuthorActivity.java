@@ -1,5 +1,4 @@
 package com.ninotech.fabi.controleur.activity;
-import static kotlin.io.ByteStreamsKt.readBytes;
 
 import android.Manifest;
 import android.content.Intent;
@@ -10,27 +9,27 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -45,20 +44,15 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.Objects;
-import java.util.concurrent.TimeUnit;
+import java.lang.ref.WeakReference;
 
 import okhttp3.Call;
+import okhttp3.Callback;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -68,11 +62,63 @@ import okhttp3.Response;
 
 public class RegisterAuthorActivity extends AppCompatActivity {
 
+    private static final String TAG = "RegisterAuthorActivity";
+    private static final int REQUEST_IMAGE_GALLERY = 2;
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
+    private static final int PERMISSION_REQUEST_CODE = 100;
+    private static final int IMAGE_COMPRESSION_QUALITY = 50;
+    private static final MediaType MEDIA_TYPE_PDF = MediaType.parse("application/pdf");
+
+    // Views
+    private ImageView mCoverImageView;
+    private EditText mTitleEditText;
+    private EditText mDescriptionEditText;
+    private EditText mCategorieEditText;
+    private CheckBox mIsPhysiqueCheckBox;
+    private CheckBox mIsPdfCheckBox;
+    private CheckBox mIsAudioCheckBox;
+    private CheckBox mCertificatCheckBox;
+    private TextView mErrorTextView;
+    private ProgressBar mWaitProgressBar;
+    private Button mAddButton;
+    private LinearLayout mSettingPdfLinearLayout;
+    private LinearLayout mSettingAudioLinearLayout;
+    private Button btnSelectPdf;
+    private TextView tvFileName;
+    private Button btnSelectAudio;
+    private TextView tvFileAudioName;
+
+    // Data
+    private Session mSession;
+    private Book mBook;
+    private Uri selectedPdfUri;
+    private Uri selectedAudioUri;
+    private OkHttpClient mHttpClient;
+
+    // Activity Result Launchers
+    private ActivityResultLauncher<Intent> pdfPickerLauncher;
+    private ActivityResultLauncher<Intent> audioPickerLauncher;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_author);
-        Objects.requireNonNull(getSupportActionBar()).hide();
+
+        hideActionBar();
+        initializeViews();
+        initializeData();
+        initializeActivityLaunchers();
+        setupViewListeners();
+        loadDefaultCoverImage();
+    }
+
+    private void hideActionBar() {
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
+    }
+
+    private void initializeViews() {
         mCoverImageView = findViewById(R.id.image_view_activity_add_book_cover);
         mTitleEditText = findViewById(R.id.edit_text_activity_register_author_title);
         mDescriptionEditText = findViewById(R.id.edit_text_activity_register_author_description);
@@ -90,8 +136,65 @@ public class RegisterAuthorActivity extends AppCompatActivity {
         tvFileName = findViewById(R.id.tvFileName);
         btnSelectAudio = findViewById(R.id.btnSelectAudio);
         tvFileAudioName = findViewById(R.id.tvAudioFileName);
+    }
+
+    private void initializeData() {
         mSession = new Session(getApplicationContext());
+        mHttpClient = new OkHttpClient();
         mAddButton.setEnabled(false);
+    }
+
+    private void initializeActivityLaunchers() {
+        pdfPickerLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                        selectedPdfUri = result.getData().getData();
+                        if (selectedPdfUri != null) {
+                            displayPdfInfo(selectedPdfUri);
+                        } else {
+                            showToast("Erreur lors de la sélection du fichier");
+                        }
+                    }
+                }
+        );
+
+        audioPickerLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                        selectedAudioUri = result.getData().getData();
+                        if (selectedAudioUri != null) {
+                            displayAudioInfo(selectedAudioUri);
+                        } else {
+                            showToast("Erreur lors de la sélection du fichier audio");
+                        }
+                    }
+                }
+        );
+    }
+
+    private void setupViewListeners() {
+        mCoverImageView.setOnClickListener(v -> openGallery());
+
+        mIsPdfCheckBox.setOnCheckedChangeListener((buttonView, isChecked) ->
+                mSettingPdfLinearLayout.setVisibility(isChecked ? View.VISIBLE : View.GONE)
+        );
+
+        mIsAudioCheckBox.setOnCheckedChangeListener((buttonView, isChecked) ->
+                mSettingAudioLinearLayout.setVisibility(isChecked ? View.VISIBLE : View.GONE)
+        );
+
+        mCertificatCheckBox.setOnCheckedChangeListener((buttonView, isChecked) ->
+                mAddButton.setEnabled(isChecked)
+        );
+
+        btnSelectPdf.setOnClickListener(v -> checkPermissionAndOpenPicker(true));
+        btnSelectAudio.setOnClickListener(v -> checkPermissionAndOpenPicker(false));
+        mAddButton.setOnClickListener(v -> handleAddBookClick());
+    }
+
+    private void loadDefaultCoverImage() {
         Picasso.get()
                 .load(R.drawable.img_add_cover)
                 .placeholder(R.drawable.img_wait_cover_book)
@@ -99,218 +202,199 @@ public class RegisterAuthorActivity extends AppCompatActivity {
                 .transform(new RoundedTransformation(15, 4))
                 .resize(360, 494)
                 .into(mCoverImageView);
-
-        ArrayAdapter<CharSequence> categotyAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.array_categoty, android.R.layout.simple_spinner_item);
-        categotyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        ArrayAdapter<CharSequence> structureAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.array_structure, android.R.layout.simple_spinner_item);
-        structureAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        mCoverImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openGallery();
-            }
-        });
-
-        mIsPdfCheckBox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mIsPdfCheckBox.isChecked())
-                    mSettingPdfLinearLayout.setVisibility(View.VISIBLE);
-                else
-                    mSettingPdfLinearLayout.setVisibility(View.GONE);
-            }
-        });
-
-        mCertificatCheckBox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mCertificatCheckBox.isChecked())
-                    mAddButton.setEnabled(true);
-                else
-                    mAddButton.setEnabled(false);
-            }
-        });
-
-        mIsAudioCheckBox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mIsAudioCheckBox.isChecked())
-                    mSettingAudioLinearLayout.setVisibility(View.VISIBLE);
-                else
-                    mSettingAudioLinearLayout.setVisibility(View.GONE);
-            }
-        });
-        btnSelectPdf.setOnClickListener(v -> checkPermissionAndOpenPicker());
-        btnSelectAudio.setOnClickListener(v -> checkPermissionAndOpenPickerAudio());
-        mAddButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mAddButton.setText("");
-                mWaitProgressBar.setVisibility(View.VISIBLE);
-                mBook = new Book(null, mTitleEditText.getText().toString(),
-                        mCategorieEditText.getText().toString(), null,
-                        mDescriptionEditText.getText().toString());
-                AddBookSyn addBookSyn = new AddBookSyn();
-//                addBookSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "RegisterAuthor.php",
-//                        mSession.getIdNumber(),
-//                        mBook.getTitle(),
-//                        mBook.getDescription(),
-//                        mBook.getCategory(),
-//                        boolToString(mIsPhysiqueCheckBox.isChecked()),
-//                        tvFileName.getText().toString(),
-//                        tvFileAudioName.getText().toString());
-                addBookSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "RegisterAuthor.php",
-                        mSession.getIdNumber(),
-                        mBook.getTitle(),
-                        mBook.getDescription(),
-                        mBook.getCategory(),
-                        boolToString(mIsPhysiqueCheckBox.isChecked()),
-                        tvFileName.getText().toString(),
-                        tvFileAudioName.getText().toString());
-            }
-        });
     }
 
+    private void handleAddBookClick() {
+        if (!validateInputs()) return;
+
+        setLoadingState(true);
+
+        mBook = new Book(
+                null,
+                mTitleEditText.getText().toString().trim(),
+                mCategorieEditText.getText().toString().trim(),
+                null,
+                mDescriptionEditText.getText().toString().trim()
+        );
+
+        new AddBookTask(this).execute(
+                Server.getIpServerAndroid(getApplicationContext()) + "RegisterAuthor.php",
+                mSession.getIdNumber(),
+                mBook.getTitle(),
+                mBook.getDescription(),
+                mBook.getCategory(),
+                boolToString(mIsPhysiqueCheckBox.isChecked()),
+                tvFileName.getText().toString(),
+                tvFileAudioName.getText().toString()
+        );
+    }
+
+    private boolean validateInputs() {
+        if (TextUtils.isEmpty(mTitleEditText.getText())) {
+            mErrorTextView.setText("Le titre est requis");
+            return false;
+        }
+        if (TextUtils.isEmpty(mDescriptionEditText.getText())) {
+            mErrorTextView.setText("La description est requise");
+            return false;
+        }
+        if (TextUtils.isEmpty(mCategorieEditText.getText())) {
+            mErrorTextView.setText("La catégorie est requise");
+            return false;
+        }
+        mErrorTextView.setText("");
+        return true;
+    }
+
+    private void setLoadingState(boolean loading) {
+        if (loading) {
+            mAddButton.setText("");
+            mWaitProgressBar.setVisibility(View.VISIBLE);
+            mAddButton.setEnabled(false);
+        } else {
+            mAddButton.setText("Demander à publier");
+            mWaitProgressBar.setVisibility(View.INVISIBLE);
+            mAddButton.setEnabled(mCertificatCheckBox.isChecked());
+        }
+    }
+
+    // ==================== Image Handling ====================
+
     private void openGallery() {
-        Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        Intent galleryIntent = new Intent(Intent.ACTION_PICK,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(galleryIntent, REQUEST_IMAGE_GALLERY);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode != RESULT_OK || data == null) return;
+
+        try {
+            if (requestCode == REQUEST_IMAGE_GALLERY) {
+                Bitmap imageBitmap = MediaStore.Images.Media.getBitmap(
+                        getContentResolver(), data.getData());
+                mCoverImageView.setImageBitmap(imageBitmap);
+            } else if (requestCode == REQUEST_IMAGE_CAPTURE) {
+                Bundle extras = data.getExtras();
+                if (extras != null) {
+                    Bitmap imageBitmap = (Bitmap) extras.get("data");
+                    mCoverImageView.setImageBitmap(imageBitmap);
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error loading image", e);
+            showToast("Erreur lors du chargement de l'image");
+        }
     }
 
     private byte[] compressImage(Bitmap imageBitmap) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        // Compression de l'image avec une qualité de 50 (modifiable)
-        imageBitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
+        imageBitmap.compress(Bitmap.CompressFormat.JPEG, IMAGE_COMPRESSION_QUALITY,
+                byteArrayOutputStream);
         return byteArrayOutputStream.toByteArray();
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_IMAGE_GALLERY && resultCode == RESULT_OK && data != null) {
-            try {
-                // Récupération de l'image sélectionnée depuis la galerie
-                Bitmap imageBitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
+    // ==================== File Picking ====================
 
-                // Compression de l'image
-                mCoverImageView.setImageBitmap(imageBitmap);
-            } catch (Exception e) {
-                e.printStackTrace();
-                Toast.makeText(getApplicationContext(), "Erreur lors du chargement de l'image." + e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        } else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-
-            // Compression de l'image
-            mCoverImageView.setImageBitmap(imageBitmap);
-        }
-    }
-
-    private class AddBookSyn extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... params) {
-            try {
-                OkHttpClient client = new OkHttpClient();
-                RequestBody requestBody = new MultipartBody.Builder()
-                        .setType(MultipartBody.FORM)
-                        .addFormDataPart("idNumber", params[1])
-                        .addFormDataPart("title", params[2])
-                        .addFormDataPart("description", params[3])
-                        .addFormDataPart("category", params[4])
-                        .addFormDataPart("isPhisic", params[5])
-                        .addFormDataPart("pdf", params[6])
-                        .addFormDataPart("audio", params[7])
-                        .build();
-                Request request = new Request.Builder()
-                        .url(params[0])
-                        .post(requestBody)
-                        .build();
-                try {
-                    Response response = client.newCall(request).execute();
-                    assert response.body() != null;
-                    return response.body().string();
-                } catch (IOException e) {
-                    Log.e("errorAddBookActivity", e.getMessage());
-                }
-
-            } catch (Exception e) {
-                Log.e("errorAddBookActivity", e.getMessage());
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String response) {
-            //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
-            //Toast.makeText(RegisterAuthorActivity.this, response, Toast.LENGTH_SHORT).show();
-            if (response != null) {
-                if (response.equals("true")) {
-                    SuccessSuggestionDialog();
-                    mWaitProgressBar.setVisibility(View.INVISIBLE);
-                    mAddButton.setText("Demander à publier");
-                }
+    private void checkPermissionAndOpenPicker(boolean isPdf) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // Android 13+: No permission needed for ACTION_GET_CONTENT
+            openFilePicker(isPdf);
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            // Android 6-12: Check permission
+            if (ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.READ_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                        PERMISSION_REQUEST_CODE);
             } else {
-                mErrorTextView.setText(R.string.no_connection);
-                mWaitProgressBar.setVisibility(View.INVISIBLE);
-                mAddButton.setText("Demander à publier");
+                openFilePicker(isPdf);
             }
-
+        } else {
+            // Android 5 and below: No runtime permission needed
+            openFilePicker(isPdf);
         }
     }
 
-    private void SuccessSuggestionDialog() {
-        SimpleOkDialog simpleOkDialog = new SimpleOkDialog(this);
-        simpleOkDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        simpleOkDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
-        TextView okTextView = simpleOkDialog.findViewById(R.id.text_view_dialog_simple_ok);
-        TextView messageTextView = simpleOkDialog.findViewById(R.id.text_view_dialog_simple_ok_message);
-        messageTextView.setText("Votre livre sera vérifié dans les plus brefs délais. Vous recevrez une notification dès sa validation.");
-        okTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mErrorTextView.setText("");
-                simpleOkDialog.cancel();
-            }
-        });
-        simpleOkDialog.build();
+    private void openFilePicker(boolean isPdf) {
+        if (isPdf) {
+            openPdfPicker();
+        } else {
+            openAudioPicker();
+        }
     }
 
-    String boolToString(boolean bool) {
-        if (bool)
-            return "1";
-        else
-            return "0";
+    private void openPdfPicker() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("application/pdf");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+        try {
+            pdfPickerLauncher.launch(Intent.createChooser(intent, "Sélectionner un PDF"));
+        } catch (android.content.ActivityNotFoundException ex) {
+            Log.e(TAG, "No file manager found", ex);
+            showToast("Veuillez installer un gestionnaire de fichiers");
+        }
+    }
+
+    private void openAudioPicker() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("audio/*");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+        try {
+            audioPickerLauncher.launch(Intent.createChooser(intent,
+                    "Sélectionner un fichier audio"));
+        } catch (android.content.ActivityNotFoundException ex) {
+            Log.e(TAG, "No file manager found", ex);
+            showToast("Veuillez installer un gestionnaire de fichiers");
+        }
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                                           int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         if (requestCode == PERMISSION_REQUEST_CODE) {
             if (grantResults.length > 0 &&
                     grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission accordée
-                Log.d(TAG, "Permission accordée");
-                openFilePicker();
+                Log.d(TAG, "Permission granted");
+                openPdfPicker();
             } else {
-                // Permission refusée
-                Toast.makeText(this,
-                        "Permission refusée. Impossible d'accéder aux fichiers.",
-                        Toast.LENGTH_SHORT).show();
-                Log.w(TAG, "Permission refusée par l'utilisateur");
+                Log.w(TAG, "Permission denied");
+                showToast("Permission refusée. Impossible d'accéder aux fichiers.");
             }
         }
     }
+
+    // ==================== File Info Display ====================
+
+    private void displayPdfInfo(Uri uri) {
+        String fileName = getFileName(uri);
+        tvFileName.setText("Fichier sélectionné: " + fileName);
+        showToast("PDF sélectionné avec succès");
+        Log.d(TAG, "PDF selected: " + fileName);
+        uploadPdf(uri);
+    }
+
+    private void displayAudioInfo(Uri uri) {
+        String fileName = getFileName(uri);
+        tvFileAudioName.setText("Fichier sélectionné: " + fileName);
+        showToast("Audio sélectionné avec succès");
+        Log.d(TAG, "Audio selected: " + fileName);
+    }
+
+    @NonNull
     private String getFileName(Uri uri) {
         String result = null;
 
-        if (uri.getScheme() != null && uri.getScheme().equals("content")) {
-            Cursor cursor = null;
-            try {
-                cursor = getContentResolver().query(uri, null, null, null, null);
+        if ("content".equals(uri.getScheme())) {
+            try (Cursor cursor = getContentResolver().query(uri, null, null, null, null)) {
                 if (cursor != null && cursor.moveToFirst()) {
                     int index = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
                     if (index != -1) {
@@ -318,15 +402,11 @@ public class RegisterAuthorActivity extends AppCompatActivity {
                     }
                 }
             } catch (Exception e) {
-                Log.e(TAG, "Erreur lors de la récupération du nom du fichier", e);
-            } finally {
-                if (cursor != null) {
-                    cursor.close();
-                }
+                Log.e(TAG, "Error getting file name", e);
             }
         }
 
-        // Si on n'a pas pu récupérer le nom via le content resolver
+        // Fallback to path
         if (result == null) {
             result = uri.getPath();
             if (result != null) {
@@ -339,250 +419,26 @@ public class RegisterAuthorActivity extends AppCompatActivity {
 
         return result != null ? result : "fichier.pdf";
     }
-    private void displayPdfInfo(Uri uri) {
-        String fileName = getFileName(uri);
-        if (tvFileName != null) {
-            tvFileName.setText("Fichier sélectionné: " + fileName);
-        }
-        Toast.makeText(this, "PDF sélectionné avec succès", Toast.LENGTH_SHORT).show();
-        Log.d(TAG, "PDF sélectionné: " + fileName + " | URI: " + uri.toString());
-        uploadPdf(uri);
-    }
 
-    private File getFileFromUri(Uri uri) {
-        try {
-            // Créer un fichier temporaire
-            String fileName = getFileName(uri);
-            File tempFile = new File(getCacheDir(), fileName);
-
-            // Copier le contenu de l'URI vers le fichier
-            InputStream inputStream = getContentResolver().openInputStream(uri);
-            FileOutputStream outputStream = new FileOutputStream(tempFile);
-
-            byte[] buffer = new byte[4096];
-            int bytesRead;
-            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, bytesRead);
-            }
-
-            outputStream.close();
-            inputStream.close();
-
-            return tempFile;
-
-        } catch (IOException e) {
-            Log.e(TAG, "Erreur conversion Uri vers File", e);
-            return null;
-        }
-    }
-
-
-    private void displayAudioInfo(Uri uri) {
-        String fileName = getFileName(uri);
-        if (tvFileName != null) {
-            tvFileAudioName.setText("Fichier sélectionné: " + fileName);
-        }
-        Toast.makeText(this, "PDF sélectionné avec succès", Toast.LENGTH_SHORT).show();
-        Log.d(TAG, "PDF sélectionné: " + fileName + " | URI: " + uri.toString());
-    }
-    private Uri selectedPdfUri;
-    private final ActivityResultLauncher<Intent> pdfPickerLauncher =
-            registerForActivityResult(
-                    new ActivityResultContracts.StartActivityForResult(),
-                    result -> {
-                        if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                            selectedPdfUri = result.getData().getData();
-                            if (selectedPdfUri != null) {
-                                displayPdfInfo(selectedPdfUri);
-                            } else {
-                                Toast.makeText(this, "Erreur lors de la sélection du fichier",
-                                        Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    }
-            );
-    private final ActivityResultLauncher<Intent> audioPickerLauncher =
-            registerForActivityResult(
-                    new ActivityResultContracts.StartActivityForResult(),
-                    result -> {
-                        if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                            selectedPdfUri = result.getData().getData();
-                            if (selectedPdfUri != null) {
-                                displayAudioInfo(selectedPdfUri);
-                            } else {
-                                Toast.makeText(this, "Erreur lors de la sélection du fichier",
-                                        Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    }
-            );
-    private void openFilePicker() {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("application/pdf");
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-
-        try {
-            pdfPickerLauncher.launch(
-                    Intent.createChooser(intent, "Sélectionner un PDF")
-            );
-        } catch (android.content.ActivityNotFoundException ex) {
-            Toast.makeText(this,
-                    "Veuillez installer un gestionnaire de fichiers",
-                    Toast.LENGTH_SHORT).show();
-            Log.e(TAG, "Aucun gestionnaire de fichiers trouvé", ex);
-        }
-    }
-    private void openAudioPicker() {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-
-        // Option 1: Accepter tous les types audio
-        intent.setType("audio/*");
-
-        // Option 2: Si vous voulez être plus spécifique (décommentez si besoin)
-        // String[] mimeTypes = {"audio/mpeg", "audio/mp3", "audio/wav", "audio/ogg", "audio/aac", "audio/m4a"};
-        // intent.setType("audio/*");
-        // intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
-
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-
-        try {
-            audioPickerLauncher.launch(
-                    Intent.createChooser(intent, "Sélectionner un fichier audio")
-            );
-        } catch (android.content.ActivityNotFoundException ex) {
-            Toast.makeText(this,
-                    "Veuillez installer un gestionnaire de fichiers",
-                    Toast.LENGTH_SHORT).show();
-            Log.e(TAG, "Aucun gestionnaire de fichiers trouvé", ex);
-        }
-    }
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_tmp);
-//
-//        // Initialisation des vues
-//        initViews();
-//
-//        // Configuration des listeners
-//        setupListeners();
-//    }
-
-    /**
-     * Initialise les vues de l'interface
-     */
-//    private void initViews() {
-//        tvFileName = findViewById(R.id.tvFileName);
-//        btnSelectPdf = findViewById(R.id.btnSelectPdf);
-//        btnUpload = findViewById(R.id.btnUpload);
-//
-//        // Vérification que toutes les vues sont présentes
-//        if (tvFileName == null) {
-//            Log.e(TAG, "tvFileName est null ! Vérifiez l'ID dans le XML");
-//        }
-//        if (btnSelectPdf == null) {
-//            Log.e(TAG, "btnSelectPdf est null ! Vérifiez l'ID dans le XML");
-//        }
-//        if (btnUpload == null) {
-//            Log.e(TAG, "btnUpload est null ! Vérifiez l'ID dans le XML");
-//        }
-//    }
-    private void checkPermissionAndOpenPicker() {
-        // Pour Android 13+ (API 33+), les permissions de stockage ont changé
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-            // Pas besoin de permission pour ACTION_GET_CONTENT sur Android 13+
-            openFilePicker();
-        } else if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            // Pour Android 6 à 12, vérifier la permission
-            if (ContextCompat.checkSelfPermission(this,
-                    Manifest.permission.READ_EXTERNAL_STORAGE)
-                    != PackageManager.PERMISSION_GRANTED) {
-                // Demander la permission
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                        PERMISSION_REQUEST_CODE);
-            } else {
-                openFilePicker();
-            }
-        } else {
-            // Pour Android 5 et inférieur, pas de permission runtime nécessaire
-            openFilePicker();
-        }
-    }
-    private void checkPermissionAndOpenPickerAudio() {
-        // Pour Android 13+ (API 33+), les permissions de stockage ont changé
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-            // Pas besoin de permission pour ACTION_GET_CONTENT sur Android 13+
-            openAudioPicker();
-        } else if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            // Pour Android 6 à 12, vérifier la permission
-            if (ContextCompat.checkSelfPermission(this,
-                    Manifest.permission.READ_EXTERNAL_STORAGE)
-                    != PackageManager.PERMISSION_GRANTED) {
-                // Demander la permission
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                        PERMISSION_REQUEST_CODE);
-            } else {
-                openAudioPicker();
-            }
-        } else {
-            // Pour Android 5 et inférieur, pas de permission runtime nécessaire
-            openFilePicker();
-        }
-    }
-
-
-
-
-    private void uploadPdf(File pdfFile) {
-        String serverUrl = Server.getIpServerAndroid(this) + "upload.php"; // Remplace par ton URL de serveur
-
-        OkHttpClient client = new OkHttpClient();
-
-        RequestBody requestBody = new MultipartBody.Builder()
-                .setType(MultipartBody.FORM)
-                .addFormDataPart("pdf", pdfFile.getName(),
-                        RequestBody.create(MediaType.parse("application/pdf"), pdfFile))
-                .build();
-
-        Request request = new Request.Builder()
-                .url(serverUrl)
-                .post(requestBody)
-                .build();
-
-        client.newCall(request).enqueue(new okhttp3.Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
-                runOnUiThread(() -> Toast.makeText(RegisterAuthorActivity.this, "Échec de l'upload : " + e.getMessage(), Toast.LENGTH_SHORT).show());
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    runOnUiThread(() -> Toast.makeText(RegisterAuthorActivity.this, "PDF téléversé avec succès " + response.toString(), Toast.LENGTH_SHORT).show());
-                } else {
-                    runOnUiThread(() -> Toast.makeText(RegisterAuthorActivity.this, "Erreur lors de l'upload " + response.toString(), Toast.LENGTH_SHORT).show());
-                }
-            }
-        });
-    }
+    // ==================== File Upload ====================
 
     private void uploadPdf(Uri pdfUri) {
         String serverUrl = Server.getIpServer(this) + "upload.php";
 
-        OkHttpClient client = new OkHttpClient();
-
         try {
             InputStream inputStream = getContentResolver().openInputStream(pdfUri);
+            if (inputStream == null) {
+                showToast("Impossible de lire le fichier");
+                return;
+            }
+
             String fileName = getFileName(pdfUri);
+            byte[] fileBytes = readBytes(inputStream);
 
             RequestBody requestBody = new MultipartBody.Builder()
                     .setType(MultipartBody.FORM)
                     .addFormDataPart("pdf", fileName,
-                            RequestBody.create(MediaType.parse("application/pdf"),
-                                    readBytes(inputStream)))
+                            RequestBody.create(MEDIA_TYPE_PDF, fileBytes))
                     .build();
 
             Request request = new Request.Builder()
@@ -590,96 +446,164 @@ public class RegisterAuthorActivity extends AppCompatActivity {
                     .post(requestBody)
                     .build();
 
-            client.newCall(request).enqueue(new okhttp3.Callback() {
+            mHttpClient.newCall(request).enqueue(new Callback() {
                 @Override
-                public void onFailure(Call call, IOException e) {
-                    e.printStackTrace();
-                    runOnUiThread(() -> Toast.makeText(RegisterAuthorActivity.this, "Échec de l'upload : " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                    Log.e(TAG, "Upload failed", e);
+                    runOnUiThread(() -> showToast("Échec de l'upload : " + e.getMessage()));
                 }
 
                 @Override
-                public void onResponse(Call call, Response response) throws IOException {
-                    if (!response.isSuccessful()) {
-                        runOnUiThread(() -> Toast.makeText(RegisterAuthorActivity.this,
-                                "Erreur HTTP: " + response.code(), Toast.LENGTH_SHORT).show());
-                        return;
-                    }
-
-                    String responseBody = response.body().string();
-                    Log.d("UPLOAD_DEBUG", "Raw response: " + responseBody);
-
-                    try {
-                        JSONObject json = new JSONObject(responseBody);
-
-                        if (json.has("success") && json.has("message")) {
-                            boolean success = json.getBoolean("success");
-                            String message = json.getString("message");
-
-                            runOnUiThread(() -> {
-                                if (success) {
-                                    Toast.makeText(RegisterAuthorActivity.this, "✅ " + message, Toast.LENGTH_SHORT).show();
-                                } else {
-                                    Toast.makeText(RegisterAuthorActivity.this, "❌ " + message, Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        } else {
-                            throw new JSONException("Champs manquants dans la réponse JSON");
-                        }
-
-                    } catch (JSONException e) {
-                        Log.e("UPLOAD_DEBUG", "JSON Error: " + e.getMessage());
-                        Log.e("UPLOAD_DEBUG", "Response was: " + responseBody);
-
-                        runOnUiThread(() -> {
-                            // Vérifier si c'est un message d'erreur PHP
-                            if (responseBody.contains("error") || responseBody.contains("Warning") || responseBody.contains("Notice")) {
-                                Toast.makeText(RegisterAuthorActivity.this, "Erreur PHP détectée", Toast.LENGTH_LONG).show();
-                            } else {
-                                Toast.makeText(RegisterAuthorActivity.this,
-                                        "Réponse serveur invalide: " + responseBody.substring(0, Math.min(50, responseBody.length())),
-                                        Toast.LENGTH_LONG).show();
-                            }
-                        });
-                    }
+                public void onResponse(@NonNull Call call, @NonNull Response response)
+                        throws IOException {
+                    handleUploadResponse(response);
                 }
             });
 
         } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(this, "Erreur avec le fichier: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "Error uploading PDF", e);
+            showToast("Erreur avec le fichier: " + e.getMessage());
+        }
+    }
+
+    private void handleUploadResponse(Response response) throws IOException {
+        if (!response.isSuccessful()) {
+            runOnUiThread(() -> showToast("Erreur HTTP: " + response.code()));
+            return;
+        }
+
+        String responseBody = response.body() != null ? response.body().string() : "";
+        Log.d(TAG, "Upload response: " + responseBody);
+
+        try {
+            JSONObject json = new JSONObject(responseBody);
+
+            if (json.has("success") && json.has("message")) {
+                boolean success = json.getBoolean("success");
+                String message = json.getString("message");
+
+                runOnUiThread(() -> {
+                    String prefix = success ? "✅ " : "❌ ";
+                    showToast(prefix + message);
+                });
+            } else {
+                throw new JSONException("Missing fields in JSON response");
+            }
+
+        } catch (JSONException e) {
+            Log.e(TAG, "JSON parsing error", e);
+            runOnUiThread(() -> handleInvalidResponse(responseBody));
+        }
+    }
+
+    private void handleInvalidResponse(String responseBody) {
+        if (responseBody.contains("error") || responseBody.contains("Warning") ||
+                responseBody.contains("Notice")) {
+            showToast("Erreur PHP détectée");
+        } else {
+            String preview = responseBody.substring(0, Math.min(50, responseBody.length()));
+            showToast("Réponse serveur invalide: " + preview);
         }
     }
 
     private byte[] readBytes(InputStream inputStream) throws IOException {
         ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
-        byte[] buffer = new byte[1024];
+        byte[] buffer = new byte[4096];
         int len;
         while ((len = inputStream.read(buffer)) != -1) {
             byteBuffer.write(buffer, 0, len);
         }
+        inputStream.close();
         return byteBuffer.toByteArray();
     }
-    private static final int REQUEST_IMAGE_CAPTURE = 1;
-    private static final int REQUEST_IMAGE_GALLERY = 2;
-    private ImageView mCoverImageView;
-    private EditText mTitleEditText;
-    private EditText mDescriptionEditText;
-    private CheckBox mIsPhysiqueCheckBox;
-    private CheckBox mCertificatCheckBox;
-    private EditText mCategorieEditText;
-    private CheckBox mIsPdfCheckBox;
-    private CheckBox mIsAudioCheckBox;
-    private TextView mErrorTextView;
-    private ProgressBar mWaitProgressBar;
-    private Button mAddButton;
-    private Book mBook;
-    private Session mSession;
-    private LinearLayout mSettingPdfLinearLayout;
-    private LinearLayout mSettingAudioLinearLayout;
-    private Button btnSelectPdf;
-    private TextView tvFileName;
-    private Button btnSelectAudio;
-    private TextView tvFileAudioName;
-    private static final int PERMISSION_REQUEST_CODE = 100;
-    private static final String TAG = "RegisterAuthorActivity";
+
+    // ==================== AsyncTask ====================
+
+    private static class AddBookTask extends AsyncTask<String, Void, String> {
+        private final WeakReference<RegisterAuthorActivity> activityRef;
+
+        AddBookTask(RegisterAuthorActivity activity) {
+            this.activityRef = new WeakReference<>(activity);
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            RegisterAuthorActivity activity = activityRef.get();
+            if (activity == null || activity.mHttpClient == null) return null;
+
+            try {
+                RequestBody requestBody = new MultipartBody.Builder()
+                        .setType(MultipartBody.FORM)
+                        .addFormDataPart("idNumber", params[1])
+                        .addFormDataPart("title", params[2])
+                        .addFormDataPart("description", params[3])
+                        .addFormDataPart("category", params[4])
+                        .addFormDataPart("isPhisic", params[5])
+                        .addFormDataPart("pdf", params[6])
+                        .addFormDataPart("audio", params[7])
+                        .build();
+
+                Request request = new Request.Builder()
+                        .url(params[0])
+                        .post(requestBody)
+                        .build();
+
+                try (Response response = activity.mHttpClient.newCall(request).execute()) {
+                    if (response.body() != null) {
+                        return response.body().string();
+                    }
+                } catch (IOException e) {
+                    Log.e(TAG, "Request failed", e);
+                }
+
+            } catch (Exception e) {
+                Log.e(TAG, "Unexpected error", e);
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String response) {
+            RegisterAuthorActivity activity = activityRef.get();
+            if (activity == null) return;
+
+            activity.setLoadingState(false);
+
+            if (response != null && "true".equals(response)) {
+                activity.showSuccessDialog();
+            } else {
+                activity.mErrorTextView.setText(R.string.no_connection);
+            }
+        }
+    }
+
+    // ==================== Dialogs ====================
+
+    private void showSuccessDialog() {
+        SimpleOkDialog dialog = new SimpleOkDialog(this);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+
+        TextView messageTextView = dialog.findViewById(R.id.text_view_dialog_simple_ok_message);
+        messageTextView.setText("Votre livre sera vérifié dans les plus brefs délais. " +
+                "Vous recevrez une notification dès sa validation.");
+
+        TextView okTextView = dialog.findViewById(R.id.text_view_dialog_simple_ok);
+        okTextView.setOnClickListener(v -> {
+            mErrorTextView.setText("");
+            dialog.dismiss();
+        });
+
+        dialog.build();
+    }
+
+    // ==================== Utilities ====================
+
+    private String boolToString(boolean bool) {
+        return bool ? "1" : "0";
+    }
+
+    private void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
 }
