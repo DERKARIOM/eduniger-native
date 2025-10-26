@@ -3,6 +3,7 @@ package com.ninotech.fabi.controleur.activity;
 import android.app.UiModeManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RenderEffect;
@@ -12,9 +13,10 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -28,21 +30,21 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.ninotech.fabi.controleur.adapter.StatusBarAdapter;
-import com.ninotech.fabi.model.data.Account;
-import com.ninotech.fabi.controleur.dialog.UpdateDialog;
 import com.ninotech.fabi.R;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.messaging.FirebaseMessaging;
+import com.ninotech.fabi.controleur.dialog.UpdateDialog;
+import com.ninotech.fabi.model.data.Account;
 import com.ninotech.fabi.model.data.PasswordUtil;
 import com.ninotech.fabi.model.data.Server;
 import com.ninotech.fabi.model.data.Themes;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -52,402 +54,413 @@ import okhttp3.Response;
 
 public class LoginActivity extends AppCompatActivity {
 
+    private static final String TAG = "LoginActivity";
+    private static final String DEFAULT_TOKEN = "null";
+    private static final String UPDATE_URL = "http://eduniger.com";
+
+    // Views
+    private EditText mIdNumberEditText;
+    private EditText mPasswordEditText;
+    private Button mConnectionButton;
+    private TextView mErrorTextView;
+    private ProgressBar mConnectionProgressBar;
+    private LinearLayout mGoogleLinearLayout;
+    private ImageView mLoginImageView;
+    private LinearLayout mIdNumberLinearLayout;
+
+    // Data
+    private Account mAccount;
+    private String mToken;
+    private OkHttpClient mHttpClient;
+    private boolean mIsNightMode;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        /* Masquer le action bar */
-        getSupportActionBar().hide();
-        View backgroundView = findViewById(R.id.backgroundView);
+        hideActionBar();
+        setupStatusBar();
+        initializeViews();
+        initializeData();
+        setupListeners();
+        setupAnimations();
+        retrieveFirebaseToken();
+    }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) { // Android 12+
-            RenderEffect blurEffect = RenderEffect.createBlurEffect(2000f, 2000f, Shader.TileMode.CLAMP);
-            backgroundView.setRenderEffect(blurEffect);
+    private void hideActionBar() {
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
+    }
+
+    private void setupStatusBar() {
+        // Blur effect for Android 12+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            View backgroundView = findViewById(R.id.backgroundView);
+            if (backgroundView != null) {
+                RenderEffect blurEffect = RenderEffect.createBlurEffect(
+                        2000f, 2000f, Shader.TileMode.CLAMP);
+                backgroundView.setRenderEffect(blurEffect);
+            }
         }
 
+        // Transparent status bar
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(Color.TRANSPARENT); // rendre la status bar transparente
+            getWindow().setStatusBarColor(Color.TRANSPARENT);
+            getWindow().setFlags(
+                    WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                    WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+            );
         }
+
         getWindow().getDecorView().setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
         );
+    }
 
-        /* Initialisation des attributs menbre */
+    private void initializeViews() {
         mIdNumberEditText = findViewById(R.id.edit_text_login_id_number);
-        mPassewordEditText = findViewById(R.id.edit_text_login_password);
-        TextView registerTextView = findViewById(R.id.text_view_login_pass_register);
-        TextView forgetPasswordTextView = findViewById(R.id.text_view_activity_login_forget_password);
+        mPasswordEditText = findViewById(R.id.edit_text_login_password);
         mConnectionButton = findViewById(R.id.button_login_connection);
         mErrorTextView = findViewById(R.id.text_view_login_error);
         mConnectionProgressBar = findViewById(R.id.progress_bar_register_connection);
         mGoogleLinearLayout = findViewById(R.id.linear_layout_activity_login_google);
         mLoginImageView = findViewById(R.id.activity_login_image_view);
         mIdNumberLinearLayout = findViewById(R.id.activity_login_linear_layout_number);
-        mJeton="null";
-        Animation pulseAnimImg = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_down_up);
-        mLoginImageView.startAnimation(pulseAnimImg);
+
+        TextView registerTextView = findViewById(R.id.text_view_login_pass_register);
+        TextView forgetPasswordTextView = findViewById(R.id.text_view_activity_login_forget_password);
+
+        // Underline text views
         registerTextView.setPaintFlags(registerTextView.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         forgetPasswordTextView.setPaintFlags(forgetPasswordTextView.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
-        forgetPasswordTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent forgetPassword = new Intent(LoginActivity.this, ChangePasswordActivity.class);
-                startActivity(forgetPassword);
+    }
+
+    private void initializeData() {
+        mToken = DEFAULT_TOKEN;
+        mHttpClient = new OkHttpClient();
+        mIsNightMode = isNightMode();
+    }
+
+    private void setupListeners() {
+        // Connection button
+        mConnectionButton.setOnClickListener(v -> handleLoginClick());
+
+        // Register text
+        TextView registerTextView = findViewById(R.id.text_view_login_pass_register);
+        registerTextView.setOnClickListener(v -> {
+            Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+            startActivity(intent);
+        });
+
+        // Forget password text
+        TextView forgetPasswordTextView = findViewById(R.id.text_view_activity_login_forget_password);
+        forgetPasswordTextView.setOnClickListener(v -> {
+            Intent intent = new Intent(LoginActivity.this, ChangePasswordActivity.class);
+            startActivity(intent);
+        });
+
+        // Google sync (placeholder)
+        mGoogleLinearLayout.setOnClickListener(v -> {
+            Intent intent = new Intent(android.provider.Settings.ACTION_SYNC_SETTINGS);
+            if (intent.resolveActivity(getPackageManager()) != null) {
+                startActivity(intent);
             }
         });
-        /* Generation de jeton FireBase */
+    }
+
+    private void setupAnimations() {
+        Animation slideAnimation = AnimationUtils.loadAnimation(
+                getApplicationContext(), R.anim.slide_down_up);
+        mLoginImageView.startAnimation(slideAnimation);
+    }
+
+    private void retrieveFirebaseToken() {
         FirebaseMessaging.getInstance().getToken()
                 .addOnCompleteListener(new OnCompleteListener<String>() {
                     @Override
                     public void onComplete(@NonNull Task<String> task) {
                         if (!task.isSuccessful()) {
-                            Log.w("TAG", "Erreur de generation", task.getException());
+                            Log.w(TAG, "Failed to get Firebase token", task.getException());
                             return;
                         }
-                        // recuperation du nouveau jeton
-                        mJeton = task.getResult();
+                        mToken = task.getResult();
+                        Log.d(TAG, "Firebase token retrieved successfully");
                     }
                 });
-
-        /* En Cliquant sur le boutton de connexion */
-        mConnectionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mAccount = new Account(
-                        mIdNumberEditText.getText().toString(),
-                        PasswordUtil.hashPassword(mPassewordEditText.getText().toString()));
-                UiModeManager uiModeManager = null;
-                switch (Themes.getName(getApplicationContext()))
-                {
-                    case "system":
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            uiModeManager = (UiModeManager) getSystemService(Context.UI_MODE_SERVICE);
-                        }
-                        int currentMode = uiModeManager.getNightMode();
-                        if (currentMode == UiModeManager.MODE_NIGHT_NO) {
-                            // code mode jour
-                            inputNoNight();
-                        }
-                        else
-                        {
-                            // code mode nuit
-                            inputNight();
-                        }
-                        break;
-                    case "notNight":
-                        // code mode jour
-                        inputNoNight();
-                        break;
-                    case "night":
-                        inputNight();
-                        break;
-                }
-            }
-        });
-
-        /* En Cliquant sur le TextView d' inscription */
-        registerTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent inscription = new Intent(LoginActivity.this , RegisterActivity.class);
-                startActivity(inscription);
-            }
-        });
-
-        mGoogleLinearLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intentYoutube = new Intent(Settings.ACTION_SYNC_SETTINGS);
-                if (intentYoutube.resolveActivity(getPackageManager()) != null) {
-                   startActivity(intentYoutube);
-                }
-            }
-        });
-
-        /* En Cliquant sur le TextView d' aide */
-
     }
-    public void inputNoNight()
-    {
-        switch (mAccount.inputControl())
-        {
+
+    // ==================== Login Logic ====================
+
+    private void handleLoginClick() {
+        String idNumber = mIdNumberEditText.getText().toString().trim();
+        String password = mPasswordEditText.getText().toString();
+
+        mAccount = new Account(idNumber, PasswordUtil.hashPassword(password));
+        mIsNightMode = isNightMode();
+
+        String validationResult = mAccount.inputControl();
+        handleValidation(validationResult);
+    }
+
+    private void handleValidation(String validationCode) {
+        switch (validationCode) {
             case "00":
-                inputData(
-                        R.drawable.forme_white_radius_100dp_border_rouge,
-                        R.drawable.forme_white_radius_100dp_border_rouge,
+                showInputError(
+                        getFormBackground(true),
+                        getFormBackground(true),
                         R.string.login_error_00
                 );
                 break;
             case "01":
-                inputData(
-                        R.drawable.forme_white_radius_100dp_border_rouge,
-                        R.drawable.forme_white_radius_10dp,
+                showInputError(
+                        getFormBackground(true),
+                        getFormBackground(false),
                         R.string.register_error_0111
                 );
                 break;
             case "10":
-                inputData(
-                        R.drawable.forme_white_radius_10dp,
-                        R.drawable.forme_white_radius_100dp_border_rouge,
+                showInputError(
+                        getFormBackground(false),
+                        getFormBackground(true),
                         R.string.register_error_1101
                 );
                 break;
             case "11":
-                mConnectionProgressBar.setVisibility(View.VISIBLE);
-                mConnectionButton.setText(R.string.register_succes_1111);
-                LoginSyn loginSyn = new LoginSyn();
-                loginSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "Login.php",mAccount.getIdNumber(),mAccount.getPassword());
+                performLogin();
                 break;
         }
     }
-    public void inputNight()
-    {
-        switch (mAccount.inputControl())
-        {
+
+    private void performLogin() {
+        setLoadingState(true);
+        new LoginTask(this).execute(
+                Server.getIpServerAndroid(getApplicationContext()) + "Login.php",
+                mAccount.getIdNumber(),
+                mAccount.getPassword()
+        );
+    }
+
+    // ==================== UI State Management ====================
+
+    private void setLoadingState(boolean loading) {
+        if (loading) {
+            mConnectionProgressBar.setVisibility(View.VISIBLE);
+            mConnectionButton.setText(R.string.register_succes_1111);
+            mConnectionButton.setEnabled(false);
+        } else {
+            mConnectionProgressBar.setVisibility(View.INVISIBLE);
+            mConnectionButton.setText(R.string.button_text_connection);
+            mConnectionButton.setEnabled(true);
+        }
+    }
+
+    private void showInputError(int idNumberBackground, int passwordBackground, int messageRes) {
+        mIdNumberLinearLayout.setBackground(getDrawable(idNumberBackground));
+        mPasswordEditText.setBackground(getDrawable(passwordBackground));
+        mErrorTextView.setText(messageRes);
+    }
+
+    private void showDataControlError(int idNumberBackground, int passwordBackground, int messageRes) {
+        showInputError(idNumberBackground, passwordBackground, messageRes);
+        setLoadingState(false);
+    }
+
+    // ==================== Theme Helpers ====================
+
+    private boolean isNightMode() {
+        String themeName = Themes.getName(getApplicationContext());
+
+        switch (themeName) {
+            case "night":
+                return true;
+            case "notNight":
+                return false;
+            case "system":
+            default:
+                return isSystemInNightMode();
+        }
+    }
+
+    private boolean isSystemInNightMode() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            UiModeManager uiModeManager = (UiModeManager) getSystemService(Context.UI_MODE_SERVICE);
+            return uiModeManager.getNightMode() == UiModeManager.MODE_NIGHT_YES;
+        }
+
+        // Fallback for older versions
+        int currentNightMode = getResources().getConfiguration().uiMode
+                & Configuration.UI_MODE_NIGHT_MASK;
+        return currentNightMode == Configuration.UI_MODE_NIGHT_YES;
+    }
+
+    private int getFormBackground(boolean isError) {
+        if (mIsNightMode) {
+            return isError
+                    ? R.drawable.forme_black3_radius_100dp_border_rouge
+                    : R.drawable.forme_black3_radius_10dp;
+        } else {
+            return isError
+                    ? R.drawable.forme_white_radius_100dp_border_rouge
+                    : R.drawable.forme_white_radius_10dp;
+        }
+    }
+
+    // ==================== Response Handling ====================
+
+    private void handleLoginResponse(String jsonData) {
+        String controlResult = mAccount.dataControl(jsonData);
+
+        switch (controlResult) {
             case "00":
-                inputData(
-                        R.drawable.forme_black3_radius_100dp_border_rouge,
-                        R.drawable.forme_black3_radius_100dp_border_rouge,
-                        R.string.login_error_00
-                );
-                break;
-            case "01":
-                inputData(
-                        R.drawable.forme_black3_radius_100dp_border_rouge,
-                        R.drawable.forme_black3_radius_10dp,
-                        R.string.register_error_0111
-                );
+                handleAccountNotExist();
                 break;
             case "10":
-                inputData(
-                        R.drawable.forme_black3_radius_10dp,
-                        R.drawable.forme_black3_radius_100dp_border_rouge,
-                        R.string.register_error_1101
-                );
+                handleIncorrectPassword();
                 break;
-            case "11":
-                mConnectionProgressBar.setVisibility(View.VISIBLE);
-                mConnectionButton.setText(R.string.register_succes_1111);
-                LoginSyn loginSyn = new LoginSyn();
-                loginSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "Login.php",mAccount.getIdNumber(),mAccount.getPassword());
+            case "update":
+                handleUpdateRequired();
+                break;
+            case "noConnection":
+                handleNoConnection();
+                break;
+            default:
+                handleSuccessfulLogin(jsonData);
                 break;
         }
     }
-    public void inputData(int idNumberForm , int passwordForm , int message)
-    {
-        mIdNumberLinearLayout.setBackground(getDrawable(idNumberForm));
-        mPassewordEditText.setBackground(getDrawable(passwordForm));
-        mErrorTextView.setText(message);
+
+    private void handleAccountNotExist() {
+        showDataControlError(
+                getFormBackground(true),
+                getFormBackground(true),
+                R.string.account_not_exist
+        );
     }
-    public void dataControl(int idNumberForm , int passwordForm , int message)
-    {
-        inputData(idNumberForm,passwordForm,message);
-        mConnectionProgressBar.setVisibility(View.INVISIBLE);
-        mConnectionButton.setText(R.string.button_text_connection);
+
+    private void handleIncorrectPassword() {
+        showDataControlError(
+                getFormBackground(false),
+                getFormBackground(true),
+                R.string.incorrect_password
+        );
     }
-    /* Les methode de la Classe LoginActivity */
-    private class LoginSyn extends AsyncTask<String,Void,String> {
+
+    private void handleUpdateRequired() {
+        setLoadingState(false);
+        showUpdateDialog();
+    }
+
+    private void handleNoConnection() {
+        mErrorTextView.setText(R.string.no_connection);
+        setLoadingState(false);
+    }
+
+    private void handleSuccessfulLogin(String jsonData) {
+        try {
+            JSONObject jsonObject = new JSONObject(jsonData);
+
+            mAccount.setName(jsonObject.getString("name"));
+            mAccount.setFirstName(jsonObject.getString("firstName"));
+            mAccount.setEmail(jsonObject.getString("email"));
+            mAccount.setPassword(jsonObject.getString("password"));
+            mAccount.setProfession(Long.parseLong(jsonObject.getString("profession")));
+
+            if (mAccount.register(getApplicationContext(), jsonObject.getString("isAdmin"))) {
+                if (mAccount.login(getApplicationContext())) {
+                    navigateToMainActivity();
+                } else {
+                    handleLoginRegistrationError();
+                }
+            } else {
+                handleLoginRegistrationError();
+            }
+        } catch (JSONException e) {
+            Log.e(TAG, "Error parsing login response", e);
+            mErrorTextView.setText(R.string.no_connection);
+            setLoadingState(false);
+        }
+    }
+
+    private void handleLoginRegistrationError() {
+        mErrorTextView.setText(R.string.no_connection);
+        setLoadingState(false);
+    }
+
+    private void navigateToMainActivity() {
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    // ==================== Update Dialog ====================
+
+    private void showUpdateDialog() {
+        UpdateDialog dialog = new UpdateDialog(this);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+
+        TextView cancelButton = dialog.findViewById(R.id.annuler);
+        TextView installButton = dialog.findViewById(R.id.installer);
+
+        cancelButton.setOnClickListener(v -> dialog.dismiss());
+        installButton.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(UPDATE_URL));
+            startActivity(intent);
+        });
+
+        dialog.build();
+    }
+
+    // ==================== AsyncTask ====================
+
+    private static class LoginTask extends AsyncTask<String, Void, String> {
+        private final WeakReference<LoginActivity> activityRef;
+
+        LoginTask(LoginActivity activity) {
+            this.activityRef = new WeakReference<>(activity);
+        }
+
         @Override
         protected String doInBackground(String... params) {
+            LoginActivity activity = activityRef.get();
+            if (activity == null || activity.mHttpClient == null) return null;
 
             try {
-                OkHttpClient client = new OkHttpClient();
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
                         .addFormDataPart("idNumber", params[1])
                         .addFormDataPart("password", params[2])
-                        .addFormDataPart("token",mJeton)
-                        .addFormDataPart("version",getResources().getString(R.string.app_version))
+                        .addFormDataPart("token", activity.mToken)
+                        .addFormDataPart("version",
+                                activity.getResources().getString(R.string.app_version))
                         .build();
+
                 Request request = new Request.Builder()
                         .url(params[0])
                         .post(requestBody)
                         .build();
-                try {
-                    Response response = client.newCall(request).execute();
-                    assert response.body() != null;
-                    return response.body().string();
-                }catch (IOException e)
-                {
-                    Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
 
-            }catch (Exception e)
-            {
-                return null;
+                try (Response response = activity.mHttpClient.newCall(request).execute()) {
+                    if (response.body() != null) {
+                        return response.body().string();
+                    }
+                } catch (IOException e) {
+                    Log.e(TAG, "Network request failed", e);
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Unexpected error in login task", e);
             }
             return null;
         }
+
         @Override
-        protected void onPostExecute(String jsonData){
-            UiModeManager uiModeManager = null;
-            switch (mAccount.dataControl(jsonData))
-            {
-                case "00":
-                    switch (Themes.getName(getApplicationContext()))
-                    {
-                        case "system":
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                uiModeManager = (UiModeManager) getSystemService(Context.UI_MODE_SERVICE);
-                            }
-                            int currentMode = uiModeManager.getNightMode();
-                            if (currentMode == UiModeManager.MODE_NIGHT_NO) {
-                                // code mode jour
-                                dataControl(
-                                        R.drawable.forme_white_radius_100dp_border_rouge,
-                                        R.drawable.forme_white_radius_100dp_border_rouge,
-                                        R.string.account_not_exist
-                                );
-                            }
-                            else
-                            {
-                                // code mode nuit
-                                dataControl(
-                                        R.drawable.forme_black3_radius_100dp_border_rouge,
-                                        R.drawable.forme_black3_radius_100dp_border_rouge,
-                                        R.string.account_not_exist
-                                );
-                            }
-                            break;
-                        case "notNight":
-                            // code mode jour
-                            dataControl(
-                                    R.drawable.forme_white_radius_100dp_border_rouge,
-                                    R.drawable.forme_white_radius_100dp_border_rouge,
-                                    R.string.account_not_exist
-                            );
-                            break;
-                        case "night":
-                            dataControl(
-                                    R.drawable.forme_black3_radius_100dp_border_rouge,
-                                    R.drawable.forme_black3_radius_100dp_border_rouge,
-                                    R.string.account_not_exist
-                            );
-                            break;
-                    }
-                    break;
-                case "10":
-                    switch (Themes.getName(getApplicationContext())) {
-                        case "system":
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                uiModeManager = (UiModeManager) getSystemService(Context.UI_MODE_SERVICE);
-                            }
-                            int currentMode = uiModeManager.getNightMode();
-                            if (currentMode == UiModeManager.MODE_NIGHT_NO) {
-                                // code mode jour
-                                dataControl(
-                                        R.drawable.forme_white_radius_10dp,
-                                        R.drawable.forme_white_radius_100dp_border_rouge,
-                                        R.string.incorrect_password
-                                );
-                            } else {
-                                        // code mode nuit
-                                dataControl(
-                                        R.drawable.forme_black3_radius_10dp,
-                                        R.drawable.forme_black3_radius_100dp_border_rouge,
-                                        R.string.incorrect_password
-                                );
-                            }
-                            break;
-                            case "notNight":
-                                // code mode jour
-                                dataControl(
-                                        R.drawable.forme_white_radius_10dp,
-                                        R.drawable.forme_white_radius_100dp_border_rouge,
-                                        R.string.incorrect_password
-                                );
-                                break;
-                        case "night":
-                            dataControl(
-                                    R.drawable.forme_black3_radius_10dp,
-                                    R.drawable.forme_black3_radius_100dp_border_rouge,
-                                    R.string.incorrect_password
-                            );
-                            break;
-                    }
-                mConnectionProgressBar.setVisibility(View.INVISIBLE);
-            break;
-            case "update":
-                    Update();
-                    mConnectionProgressBar.setVisibility(View.INVISIBLE);
-                    mConnectionButton.setText(R.string.button_text_connection);
-                    break;
-                case "noConnection":
-                    mErrorTextView.setText(R.string.no_connection);
-                    mConnectionProgressBar.setVisibility(View.INVISIBLE);
-                    mConnectionButton.setText(R.string.button_text_connection);
-                    break;
-                default:
-                    JSONObject jsonObject = null;
-                    try {
-                        jsonObject = new JSONObject(jsonData);
-                    } catch (JSONException e) {
-                        throw new RuntimeException(e);
-                    }
-                    try {
-                        mAccount.setName(jsonObject.getString("name"));
-                        mAccount.setFirstName(jsonObject.getString("firstName"));
-                        mAccount.setEmail(jsonObject.getString("email"));
-                        mAccount.setPassword(jsonObject.getString("password"));
-                        mAccount.setProfession(Long.parseLong(jsonObject.getString("profession")));
-                        if(mAccount.register(getApplicationContext(),jsonObject.getString("isAdmin")))
-                        {
-                            if(mAccount.login(getApplicationContext()))
-                            {
-                                Intent  home= new Intent(LoginActivity.this , MainActivity.class);
-                                startActivity(home);
-                                finish();
-                            }
-                        }
-                        else
-                        {
-                            mErrorTextView.setText(R.string.no_connection);
-                            mConnectionProgressBar.setVisibility(View.INVISIBLE);
-                            mConnectionButton.setText(R.string.button_text_connection);
-                        }
-                    } catch (JSONException e) {
-                        throw new RuntimeException(e);
-                    }
-                    break;
+        protected void onPostExecute(String result) {
+            LoginActivity activity = activityRef.get();
+            if (activity != null) {
+                activity.handleLoginResponse(result);
             }
         }
     }
-    private void Update(){
-        UpdateDialog updateDialog = new UpdateDialog(this);
-        updateDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        updateDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
-        TextView annuler = updateDialog.findViewById(R.id.annuler);
-        TextView installer = updateDialog.findViewById(R.id.installer);
-        annuler.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                updateDialog.cancel();
-            }
-        });
-
-        installer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String url = "http://eduniger.com"; // Remplacez ceci par l'URL que vous souhaitez ouvrir
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                startActivity(intent);
-            }
-        });
-
-        updateDialog.build();
-    }
-
-    /* Les attributs menbre */
-    private EditText mIdNumberEditText;
-    private EditText mPassewordEditText;
-    private Button mConnectionButton;
-    private TextView mErrorTextView;
-    private TextView mHelperTextView;
-    private String mJeton;
-    private ProgressBar mConnectionProgressBar;
-    private Account mAccount;
-    private LinearLayout mGoogleLinearLayout;
-    private ImageView mLoginImageView;
-    private LinearLayout mIdNumberLinearLayout;
 }
