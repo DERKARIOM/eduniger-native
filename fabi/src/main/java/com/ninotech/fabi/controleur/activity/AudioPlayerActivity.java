@@ -1,6 +1,7 @@
 package com.ninotech.fabi.controleur.activity;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
@@ -314,6 +315,7 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
         }
     }
 
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
     private void registerPlaybackReceiver() {
         mPlaybackReceiver = new BroadcastReceiver() {
             @Override
@@ -323,7 +325,12 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
             }
         };
 
-        registerReceiver(mPlaybackReceiver, new IntentFilter(ACTION_TRACKS));
+        IntentFilter filter = new IntentFilter(ACTION_TRACKS);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(mPlaybackReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
+        } else {
+            registerReceiver(mPlaybackReceiver, filter);
+        }
     }
 
     private void handlePlaybackAction(String action) {

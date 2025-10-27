@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/match_parent_all"
+    android:fitsSystemWindows="true"
     tools:context="com.ninotech.fabi.controleur.activity.ContainerActivity">
     <androidx.recyclerview.widget.RecyclerView
         android:layout_margin="5dp"

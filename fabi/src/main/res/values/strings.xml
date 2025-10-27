@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">fabi</string>
+    <string name="app_name">EduNiger</string>
     <string name="app_version">3.0.8</string>
     <string name="ip_server_android2">http://192.168.1.25:2222/fabi/android/</string>
     <string name="ip_server2">http://192.168.1.25:2222/fabi/</string>

@@ -91,6 +91,7 @@
         <activity
             android:name=".controleur.activity.SettingV2Activity"
             android:exported="false"
+            android:label="Paramètres"
             android:parentActivityName=".controleur.activity.MainActivity"
             android:screenOrientation="portrait" />
         <activity
@@ -179,10 +180,6 @@
             android:name=".controleur.activity.ListPlayerActivity"
             android:exported="false"
             android:screenOrientation="portrait" /> <!-- ==================== Activités PDF ==================== -->
-        <activity
-            android:name=".controleur.activity.PdfNinoView"
-            android:configChanges="orientation|screenSize"
-            android:exported="false" />
         <activity
             android:name=".controleur.activity.NotificationActivity"
             android:exported="false"
