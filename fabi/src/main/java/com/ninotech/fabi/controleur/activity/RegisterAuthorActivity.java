@@ -16,6 +16,8 @@ import android.provider.OpenableColumns;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -45,11 +47,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -59,6 +60,9 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okio.BufferedSink;
+import okio.Okio;
+import okio.Source;
 
 public class RegisterAuthorActivity extends AppCompatActivity {
 
@@ -68,6 +72,12 @@ public class RegisterAuthorActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_CODE = 100;
     private static final int IMAGE_COMPRESSION_QUALITY = 50;
     private static final MediaType MEDIA_TYPE_PDF = MediaType.parse("application/pdf");
+    private static final MediaType MEDIA_TYPE_AUDIO = MediaType.parse("audio/*");
+
+    // Optimisation pour grands fichiers
+    private static final int CHUNK_SIZE = 8192; // 8KB chunks pour lecture
+    private static final long MAX_FILE_SIZE = 100 * 1024 * 1024; // 100 MB
+    private static final int TIMEOUT_SECONDS = 300; // 5 minutes timeout
 
     // Views
     private ImageView mCoverImageView;
@@ -80,6 +90,9 @@ public class RegisterAuthorActivity extends AppCompatActivity {
     private CheckBox mCertificatCheckBox;
     private TextView mErrorTextView;
     private ProgressBar mWaitProgressBar;
+    private ProgressBar mUploadProgressBar;
+    private TextView mUploadProgressText;
+    private LinearLayout mUploadProgressLayout;
     private Button mAddButton;
     private LinearLayout mSettingPdfLinearLayout;
     private LinearLayout mSettingAudioLinearLayout;
@@ -94,6 +107,8 @@ public class RegisterAuthorActivity extends AppCompatActivity {
     private Uri selectedPdfUri;
     private Uri selectedAudioUri;
     private OkHttpClient mHttpClient;
+    private Animation pulseAnimImg;
+    private boolean isUploading = false;
 
     // Activity Result Launchers
     private ActivityResultLauncher<Intent> pdfPickerLauncher;
@@ -136,12 +151,26 @@ public class RegisterAuthorActivity extends AppCompatActivity {
         tvFileName = findViewById(R.id.tvFileName);
         btnSelectAudio = findViewById(R.id.btnSelectAudio);
         tvFileAudioName = findViewById(R.id.tvAudioFileName);
+
+        // Vues optionnelles pour le progrès d'upload (ajoutez-les à votre layout si nécessaire)
+        mUploadProgressBar = findViewById(R.id.progress_bar_upload);
+        mUploadProgressText = findViewById(R.id.text_view_upload_progress);
     }
 
     private void initializeData() {
         mSession = new Session(getApplicationContext());
-        mHttpClient = new OkHttpClient();
+
+        // Client HTTP optimisé pour grands fichiers
+        mHttpClient = new OkHttpClient.Builder()
+                .connectTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+                .writeTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+                .readTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+                .retryOnConnectionFailure(true)
+                .build();
+
         mAddButton.setEnabled(false);
+        pulseAnimImg = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.pulse);
+        mCoverImageView.startAnimation(pulseAnimImg);
     }
 
     private void initializeActivityLaunchers() {
@@ -151,7 +180,12 @@ public class RegisterAuthorActivity extends AppCompatActivity {
                     if (result.getResultCode() == RESULT_OK && result.getData() != null) {
                         selectedPdfUri = result.getData().getData();
                         if (selectedPdfUri != null) {
-                            displayPdfInfo(selectedPdfUri);
+                            if (validateFileSize(selectedPdfUri)) {
+                                displayPdfInfo(selectedPdfUri);
+                            } else {
+                                showToast("Fichier trop volumineux (max 100 MB)");
+                                selectedPdfUri = null;
+                            }
                         } else {
                             showToast("Erreur lors de la sélection du fichier");
                         }
@@ -165,7 +199,12 @@ public class RegisterAuthorActivity extends AppCompatActivity {
                     if (result.getResultCode() == RESULT_OK && result.getData() != null) {
                         selectedAudioUri = result.getData().getData();
                         if (selectedAudioUri != null) {
-                            displayAudioInfo(selectedAudioUri);
+                            if (validateFileSize(selectedAudioUri)) {
+                                displayAudioInfo(selectedAudioUri);
+                            } else {
+                                showToast("Fichier audio trop volumineux (max 100 MB)");
+                                selectedAudioUri = null;
+                            }
                         } else {
                             showToast("Erreur lors de la sélection du fichier audio");
                         }
@@ -186,7 +225,7 @@ public class RegisterAuthorActivity extends AppCompatActivity {
         );
 
         mCertificatCheckBox.setOnCheckedChangeListener((buttonView, isChecked) ->
-                mAddButton.setEnabled(isChecked)
+                mAddButton.setEnabled(isChecked && !isUploading)
         );
 
         btnSelectPdf.setOnClickListener(v -> checkPermissionAndOpenPicker(true));
@@ -206,6 +245,10 @@ public class RegisterAuthorActivity extends AppCompatActivity {
 
     private void handleAddBookClick() {
         if (!validateInputs()) return;
+        if (isUploading) {
+            showToast("Upload en cours, veuillez patienter...");
+            return;
+        }
 
         setLoadingState(true);
 
@@ -246,15 +289,32 @@ public class RegisterAuthorActivity extends AppCompatActivity {
         return true;
     }
 
+    private boolean validateFileSize(Uri fileUri) {
+        try {
+            InputStream inputStream = getContentResolver().openInputStream(fileUri);
+            if (inputStream == null) return false;
+
+            long fileSize = inputStream.available();
+            inputStream.close();
+
+            return fileSize <= MAX_FILE_SIZE;
+        } catch (Exception e) {
+            Log.e(TAG, "Error validating file size", e);
+            return false;
+        }
+    }
+
     private void setLoadingState(boolean loading) {
         if (loading) {
             mAddButton.setText("");
             mWaitProgressBar.setVisibility(View.VISIBLE);
             mAddButton.setEnabled(false);
+            isUploading = true;
         } else {
             mAddButton.setText("Demander à publier");
             mWaitProgressBar.setVisibility(View.INVISIBLE);
             mAddButton.setEnabled(mCertificatCheckBox.isChecked());
+            isUploading = false;
         }
     }
 
@@ -277,6 +337,10 @@ public class RegisterAuthorActivity extends AppCompatActivity {
                 Bitmap imageBitmap = MediaStore.Images.Media.getBitmap(
                         getContentResolver(), data.getData());
                 mCoverImageView.setImageBitmap(imageBitmap);
+                // Arrêter l'animation de pulse
+                if (pulseAnimImg != null) {
+                    mCoverImageView.clearAnimation();
+                }
             } else if (requestCode == REQUEST_IMAGE_CAPTURE) {
                 Bundle extras = data.getExtras();
                 if (extras != null) {
@@ -301,10 +365,8 @@ public class RegisterAuthorActivity extends AppCompatActivity {
 
     private void checkPermissionAndOpenPicker(boolean isPdf) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            // Android 13+: No permission needed for ACTION_GET_CONTENT
             openFilePicker(isPdf);
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            // Android 6-12: Check permission
             if (ContextCompat.checkSelfPermission(this,
                     Manifest.permission.READ_EXTERNAL_STORAGE)
                     != PackageManager.PERMISSION_GRANTED) {
@@ -315,7 +377,6 @@ public class RegisterAuthorActivity extends AppCompatActivity {
                 openFilePicker(isPdf);
             }
         } else {
-            // Android 5 and below: No runtime permission needed
             openFilePicker(isPdf);
         }
     }
@@ -376,17 +437,23 @@ public class RegisterAuthorActivity extends AppCompatActivity {
 
     private void displayPdfInfo(Uri uri) {
         String fileName = getFileName(uri);
-        tvFileName.setText("Fichier sélectionné: " + fileName);
-        showToast("PDF sélectionné avec succès");
-        Log.d(TAG, "PDF selected: " + fileName);
+        long fileSize = getFileSize(uri);
+        String fileSizeStr = formatFileSize(fileSize);
+
+        tvFileName.setText("Fichier: " + fileName + " (" + fileSizeStr + ")");
+        showToast("PDF sélectionné: " + fileSizeStr);
+        Log.d(TAG, "PDF selected: " + fileName + " - " + fileSizeStr);
         uploadPdf(uri);
     }
 
     private void displayAudioInfo(Uri uri) {
         String fileName = getFileName(uri);
-        tvFileAudioName.setText("Fichier sélectionné: " + fileName);
-        showToast("Audio sélectionné avec succès");
-        Log.d(TAG, "Audio selected: " + fileName);
+        long fileSize = getFileSize(uri);
+        String fileSizeStr = formatFileSize(fileSize);
+
+        tvFileAudioName.setText("Fichier: " + fileName + " (" + fileSizeStr + ")");
+        showToast("Audio sélectionné: " + fileSizeStr);
+        Log.d(TAG, "Audio selected: " + fileName + " - " + fileSizeStr);
     }
 
     @NonNull
@@ -406,7 +473,6 @@ public class RegisterAuthorActivity extends AppCompatActivity {
             }
         }
 
-        // Fallback to path
         if (result == null) {
             result = uri.getPath();
             if (result != null) {
@@ -420,49 +486,162 @@ public class RegisterAuthorActivity extends AppCompatActivity {
         return result != null ? result : "fichier.pdf";
     }
 
-    // ==================== File Upload ====================
+    private long getFileSize(Uri uri) {
+        long size = 0;
+        try (Cursor cursor = getContentResolver().query(uri, null, null, null, null)) {
+            if (cursor != null && cursor.moveToFirst()) {
+                int sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE);
+                if (sizeIndex != -1) {
+                    size = cursor.getLong(sizeIndex);
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error getting file size", e);
+        }
+        return size;
+    }
+
+    private String formatFileSize(long size) {
+        if (size < 1024) return size + " B";
+        if (size < 1024 * 1024) return String.format("%.2f KB", size / 1024.0);
+        return String.format("%.2f MB", size / (1024.0 * 1024.0));
+    }
+
+    // ==================== File Upload Optimisé ====================
 
     private void uploadPdf(Uri pdfUri) {
-        String serverUrl = Server.getIpServer(this) + "upload.php";
+        if (isUploading) {
+            showToast("Upload déjà en cours");
+            return;
+        }
 
-        try {
-            InputStream inputStream = getContentResolver().openInputStream(pdfUri);
-            if (inputStream == null) {
-                showToast("Impossible de lire le fichier");
-                return;
+        String serverUrl = Server.getIpServer(this) + "upload.php";
+        isUploading = true;
+
+        runOnUiThread(() -> {
+            if (mUploadProgressBar != null) {
+                mUploadProgressBar.setVisibility(View.VISIBLE);
+                mUploadProgressBar.setProgress(0);
+            }
+            if (mUploadProgressText != null) {
+                mUploadProgressText.setVisibility(View.VISIBLE);
+                mUploadProgressText.setText("Préparation...");
+            }
+        });
+
+        new Thread(() -> {
+            try {
+                String fileName = getFileName(pdfUri);
+                long fileSize = getFileSize(pdfUri);
+
+                // Créer un RequestBody optimisé pour streaming
+                RequestBody fileBody = createStreamingRequestBody(pdfUri, MEDIA_TYPE_PDF, fileSize);
+
+                RequestBody requestBody = new MultipartBody.Builder()
+                        .setType(MultipartBody.FORM)
+                        .addFormDataPart("pdf", fileName, fileBody)
+                        .build();
+
+                Request request = new Request.Builder()
+                        .url(serverUrl)
+                        .post(requestBody)
+                        .build();
+
+                mHttpClient.newCall(request).enqueue(new Callback() {
+                    @Override
+                    public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                        Log.e(TAG, "Upload failed", e);
+                        isUploading = false;
+                        runOnUiThread(() -> {
+                            hideUploadProgress();
+                            showToast("Échec de l'upload : " + e.getMessage());
+                        });
+                    }
+
+                    @Override
+                    public void onResponse(@NonNull Call call, @NonNull Response response)
+                            throws IOException {
+                        isUploading = false;
+                        runOnUiThread(() -> hideUploadProgress());
+                        handleUploadResponse(response);
+                    }
+                });
+
+            } catch (Exception e) {
+                Log.e(TAG, "Error uploading PDF", e);
+                isUploading = false;
+                runOnUiThread(() -> {
+                    hideUploadProgress();
+                    showToast("Erreur: " + e.getMessage());
+                });
+            }
+        }).start();
+    }
+
+    // RequestBody optimisé avec streaming pour éviter OutOfMemory
+    private RequestBody createStreamingRequestBody(Uri uri, MediaType mediaType, long fileSize) {
+        return new RequestBody() {
+            @Override
+            public MediaType contentType() {
+                return mediaType;
             }
 
-            String fileName = getFileName(pdfUri);
-            byte[] fileBytes = readBytes(inputStream);
+            @Override
+            public long contentLength() {
+                return fileSize;
+            }
 
-            RequestBody requestBody = new MultipartBody.Builder()
-                    .setType(MultipartBody.FORM)
-                    .addFormDataPart("pdf", fileName,
-                            RequestBody.create(MEDIA_TYPE_PDF, fileBytes))
-                    .build();
+            @Override
+            public void writeTo(@NonNull BufferedSink sink) throws IOException {
+                InputStream inputStream = null;
+                try {
+                    inputStream = getContentResolver().openInputStream(uri);
+                    if (inputStream == null) {
+                        throw new IOException("Cannot open input stream");
+                    }
 
-            Request request = new Request.Builder()
-                    .url(serverUrl)
-                    .post(requestBody)
-                    .build();
+                    byte[] buffer = new byte[CHUNK_SIZE];
+                    long totalBytesRead = 0;
+                    int bytesRead;
 
-            mHttpClient.newCall(request).enqueue(new Callback() {
-                @Override
-                public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                    Log.e(TAG, "Upload failed", e);
-                    runOnUiThread(() -> showToast("Échec de l'upload : " + e.getMessage()));
+                    while ((bytesRead = inputStream.read(buffer)) != -1) {
+                        sink.write(buffer, 0, bytesRead);
+                        totalBytesRead += bytesRead;
+                        final long finalTotalBytesRead = totalBytesRead;
+
+                        // Mise à jour du progrès
+                        runOnUiThread(() -> updateUploadProgress(finalTotalBytesRead, fileSize));
+
+                        sink.flush();
+                    }
+
+                } finally {
+                    if (inputStream != null) {
+                        try {
+                            inputStream.close();
+                        } catch (IOException e) {
+                            Log.e(TAG, "Error closing input stream", e);
+                        }
+                    }
                 }
+            }
+        };
+    }
 
-                @Override
-                public void onResponse(@NonNull Call call, @NonNull Response response)
-                        throws IOException {
-                    handleUploadResponse(response);
-                }
-            });
+    private void updateUploadProgress(long uploaded, long total) {
+        if (mUploadProgressBar != null && mUploadProgressText != null) {
+            int progress = (int) ((uploaded * 100) / total);
+            mUploadProgressBar.setProgress(progress);
+            mUploadProgressText.setText(String.format("Upload: %d%%", progress));
+        }
+    }
 
-        } catch (Exception e) {
-            Log.e(TAG, "Error uploading PDF", e);
-            showToast("Erreur avec le fichier: " + e.getMessage());
+    private void hideUploadProgress() {
+        if (mUploadProgressBar != null) {
+            mUploadProgressBar.setVisibility(View.GONE);
+        }
+        if (mUploadProgressText != null) {
+            mUploadProgressText.setVisibility(View.GONE);
         }
     }
 
@@ -504,17 +683,6 @@ public class RegisterAuthorActivity extends AppCompatActivity {
             String preview = responseBody.substring(0, Math.min(50, responseBody.length()));
             showToast("Réponse serveur invalide: " + preview);
         }
-    }
-
-    private byte[] readBytes(InputStream inputStream) throws IOException {
-        ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
-        byte[] buffer = new byte[4096];
-        int len;
-        while ((len = inputStream.read(buffer)) != -1) {
-            byteBuffer.write(buffer, 0, len);
-        }
-        inputStream.close();
-        return byteBuffer.toByteArray();
     }
 
     // ==================== AsyncTask ====================
@@ -605,5 +773,14 @@ public class RegisterAuthorActivity extends AppCompatActivity {
 
     private void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Arrêter les animations
+        if (mCoverImageView != null) {
+            mCoverImageView.clearAnimation();
+        }
     }
 }

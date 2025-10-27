@@ -22,6 +22,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
                 android:src="@drawable/img_add_cover"
                 android:contentDescription="@string/todo" />
         </LinearLayout>
@@ -115,25 +117,7 @@
                     style="@style/wrap_content_all"
                     android:fontFamily="@font/apple1"
                     android:textSize="15sp"
-                    android:text="Cochez cette case si vous avez le format Physique."
-                    />
-                <CheckBox
-                    android:id="@+id/check_box_activity_register_author_is_physique"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"/>
-            </LinearLayout>
-            <LinearLayout
-                style="@style/match_wrap"
-                android:layout_marginEnd="5dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginStart="25dp"
-                >
-                <TextView
-                    style="@style/wrap_content_all"
-                    android:fontFamily="@font/apple1"
-                    android:textSize="15sp"
-                    android:text="Le format électronique."
+                    android:text="Cochez cette case si vous avez le format PDF."
                     />
                 <CheckBox
                     android:id="@+id/check_box_activity_register_author_is_pdf"
@@ -168,6 +152,36 @@
                     android:textSize="14sp"
                     android:layout_marginStart="10dp"
                     android:padding="16dp"/>
+
+                <!-- NOUVEAU : Barre de progression pour l'upload PDF -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginTop="10dp"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/text_view_upload_progress"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Upload: 0%"
+                        android:textSize="14sp"
+                        android:textColor="@color/purple_200"
+                        android:layout_marginBottom="8dp"/>
+
+                    <ProgressBar
+                        android:id="@+id/progress_bar_upload"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="8dp"
+                        android:max="100"
+                        android:progress="0"
+                        android:progressTint="@color/purple_200"
+                        android:layout_marginBottom="10dp"/>
+                </LinearLayout>
             </LinearLayout>
             <LinearLayout
                 style="@style/match_wrap"
@@ -215,7 +229,24 @@
                     android:layout_marginStart="10dp"
                     android:padding="16dp"/>
             </LinearLayout>
-
+            <LinearLayout
+                style="@style/match_wrap"
+                android:layout_marginEnd="5dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="25dp"
+                >
+                <TextView
+                    style="@style/wrap_content_all"
+                    android:fontFamily="@font/apple1"
+                    android:textSize="15sp"
+                    android:text="Le format Papier."
+                    />
+                <CheckBox
+                    android:id="@+id/check_box_activity_register_author_is_physique"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"/>
+            </LinearLayout>
             <LinearLayout
                 style="@style/match_wrap"
                 android:layout_marginEnd="5dp"
@@ -231,7 +262,7 @@
                     android:fontFamily="@font/apple1"
                     android:textSize="15sp"
                     android:padding="10dp"
-                    android:text="Je certifie que je suis l’auteur ou que je détiens les droits de publication de ce livre."
+                    android:text="Je certifie que je suis l'auteur ou que je détiens les droits de publication de ce livre."
                     />
             </LinearLayout>
             <TextView
