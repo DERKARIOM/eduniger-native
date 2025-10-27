@@ -323,7 +323,7 @@ public class RegisterActivity extends AppCompatActivity {
         annuler.setOnClickListener(v -> updateDialog.cancel());
 
         installer.setOnClickListener(v -> {
-            String url = "http://eduniger.com";
+            String url = "https://play.google.com/store/apps/details?id=com.ninotech.fabi&pcampaignid=web_share";
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
             startActivity(intent);
         });

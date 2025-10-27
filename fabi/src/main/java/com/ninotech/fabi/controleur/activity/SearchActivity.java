@@ -143,6 +143,7 @@ public class SearchActivity extends AppCompatActivity {
         mHttpClient = new OkHttpClient();
         mLayoutManager = new LinearLayoutManager(this);
         mCategoryList = new ArrayList<>();
+        mSearchEditText.clearFocus();
     }
 
     private void setupListeners() {
