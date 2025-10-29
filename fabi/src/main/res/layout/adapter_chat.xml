@@ -30,6 +30,7 @@
                 android:layout_toRightOf="@+id/chatProfile"
                 android:text="FASTIA"
                 android:textSize="13dp"
+                android:textColor="@color/white"
                 android:textStyle="bold"
                 android:layout_centerVertical="true"/>
         </RelativeLayout>

@@ -1,8 +1,6 @@
 package com.ninotech.fabi.controleur.activity;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -32,8 +30,6 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
@@ -61,15 +57,10 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okio.BufferedSink;
-import okio.Okio;
-import okio.Source;
 
 public class RegisterAuthorActivity extends AppCompatActivity {
 
     private static final String TAG = "RegisterAuthorActivity";
-    private static final int REQUEST_IMAGE_GALLERY = 2;
-    private static final int REQUEST_IMAGE_CAPTURE = 1;
-    private static final int PERMISSION_REQUEST_CODE = 100;
     private static final int IMAGE_COMPRESSION_QUALITY = 50;
     private static final MediaType MEDIA_TYPE_PDF = MediaType.parse("application/pdf");
     private static final MediaType MEDIA_TYPE_AUDIO = MediaType.parse("audio/*");
@@ -92,7 +83,6 @@ public class RegisterAuthorActivity extends AppCompatActivity {
     private ProgressBar mWaitProgressBar;
     private ProgressBar mUploadProgressBar;
     private TextView mUploadProgressText;
-    private LinearLayout mUploadProgressLayout;
     private Button mAddButton;
     private LinearLayout mSettingPdfLinearLayout;
     private LinearLayout mSettingAudioLinearLayout;
@@ -110,7 +100,8 @@ public class RegisterAuthorActivity extends AppCompatActivity {
     private Animation pulseAnimImg;
     private boolean isUploading = false;
 
-    // Activity Result Launchers
+    // Activity Result Launchers - Utilisation des APIs modernes
+    private ActivityResultLauncher<Intent> imagePickerLauncher;
     private ActivityResultLauncher<Intent> pdfPickerLauncher;
     private ActivityResultLauncher<Intent> audioPickerLauncher;
 
@@ -151,8 +142,6 @@ public class RegisterAuthorActivity extends AppCompatActivity {
         tvFileName = findViewById(R.id.tvFileName);
         btnSelectAudio = findViewById(R.id.btnSelectAudio);
         tvFileAudioName = findViewById(R.id.tvAudioFileName);
-
-        // Vues optionnelles pour le progrès d'upload (ajoutez-les à votre layout si nécessaire)
         mUploadProgressBar = findViewById(R.id.progress_bar_upload);
         mUploadProgressText = findViewById(R.id.text_view_upload_progress);
     }
@@ -174,12 +163,30 @@ public class RegisterAuthorActivity extends AppCompatActivity {
     }
 
     private void initializeActivityLaunchers() {
+        // Launcher pour la sélection d'image - Utilise ACTION_OPEN_DOCUMENT au lieu de ACTION_PICK
+        imagePickerLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                        Uri imageUri = result.getData().getData();
+                        if (imageUri != null) {
+                            handleImageSelection(imageUri);
+                        } else {
+                            showToast("Erreur lors de la sélection de l'image");
+                        }
+                    }
+                }
+        );
+
+        // Launcher pour PDF - Utilise ACTION_OPEN_DOCUMENT
         pdfPickerLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() == RESULT_OK && result.getData() != null) {
                         selectedPdfUri = result.getData().getData();
                         if (selectedPdfUri != null) {
+                            // Persister l'accès au fichier
+                            persistUriPermission(selectedPdfUri);
                             if (validateFileSize(selectedPdfUri)) {
                                 displayPdfInfo(selectedPdfUri);
                             } else {
@@ -193,12 +200,15 @@ public class RegisterAuthorActivity extends AppCompatActivity {
                 }
         );
 
+        // Launcher pour Audio - Utilise ACTION_OPEN_DOCUMENT
         audioPickerLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() == RESULT_OK && result.getData() != null) {
                         selectedAudioUri = result.getData().getData();
                         if (selectedAudioUri != null) {
+                            // Persister l'accès au fichier
+                            persistUriPermission(selectedAudioUri);
                             if (validateFileSize(selectedAudioUri)) {
                                 displayAudioInfo(selectedAudioUri);
                             } else {
@@ -213,8 +223,22 @@ public class RegisterAuthorActivity extends AppCompatActivity {
         );
     }
 
+    /**
+     * Persiste les permissions d'accès à l'URI
+     * Important pour Android 10+ (Scoped Storage)
+     */
+    private void persistUriPermission(Uri uri) {
+        try {
+            final int takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION;
+            getContentResolver().takePersistableUriPermission(uri, takeFlags);
+        } catch (SecurityException e) {
+            // Permission déjà accordée ou non nécessaire
+            Log.d(TAG, "URI permission already granted or not needed");
+        }
+    }
+
     private void setupViewListeners() {
-        mCoverImageView.setOnClickListener(v -> openGallery());
+        mCoverImageView.setOnClickListener(v -> openImagePicker());
 
         mIsPdfCheckBox.setOnCheckedChangeListener((buttonView, isChecked) ->
                 mSettingPdfLinearLayout.setVisibility(isChecked ? View.VISIBLE : View.GONE)
@@ -228,8 +252,8 @@ public class RegisterAuthorActivity extends AppCompatActivity {
                 mAddButton.setEnabled(isChecked && !isUploading)
         );
 
-        btnSelectPdf.setOnClickListener(v -> checkPermissionAndOpenPicker(true));
-        btnSelectAudio.setOnClickListener(v -> checkPermissionAndOpenPicker(false));
+        btnSelectPdf.setOnClickListener(v -> openPdfPicker());
+        btnSelectAudio.setOnClickListener(v -> openAudioPicker());
         mAddButton.setOnClickListener(v -> handleAddBookClick());
     }
 
@@ -318,35 +342,46 @@ public class RegisterAuthorActivity extends AppCompatActivity {
         }
     }
 
-    // ==================== Image Handling ====================
+    // ==================== Image Handling (Sans permissions) ====================
 
-    private void openGallery() {
-        Intent galleryIntent = new Intent(Intent.ACTION_PICK,
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(galleryIntent, REQUEST_IMAGE_GALLERY);
-    }
+    /**
+     * Ouvre le sélecteur d'image moderne avec ACTION_OPEN_DOCUMENT
+     * Ne nécessite AUCUNE permission pour Android 10+
+     */
+    private void openImagePicker() {
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("image/*");
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (resultCode != RESULT_OK || data == null) return;
+        // Permet de persister l'accès à l'URI
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION |
+                Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
 
         try {
-            if (requestCode == REQUEST_IMAGE_GALLERY) {
-                Bitmap imageBitmap = MediaStore.Images.Media.getBitmap(
-                        getContentResolver(), data.getData());
-                mCoverImageView.setImageBitmap(imageBitmap);
-                // Arrêter l'animation de pulse
-                if (pulseAnimImg != null) {
-                    mCoverImageView.clearAnimation();
-                }
-            } else if (requestCode == REQUEST_IMAGE_CAPTURE) {
-                Bundle extras = data.getExtras();
-                if (extras != null) {
-                    Bitmap imageBitmap = (Bitmap) extras.get("data");
-                    mCoverImageView.setImageBitmap(imageBitmap);
-                }
+            imagePickerLauncher.launch(Intent.createChooser(intent, "Sélectionner une image"));
+        } catch (android.content.ActivityNotFoundException ex) {
+            Log.e(TAG, "No image picker found", ex);
+            showToast("Impossible d'ouvrir le sélecteur d'images");
+        }
+    }
+
+    /**
+     * Traite la sélection d'image via ContentResolver (sans permissions)
+     */
+    private void handleImageSelection(Uri imageUri) {
+        try {
+            // Persister les permissions
+            persistUriPermission(imageUri);
+
+            // Charger l'image via ContentResolver
+            Bitmap imageBitmap = MediaStore.Images.Media.getBitmap(
+                    getContentResolver(), imageUri);
+
+            mCoverImageView.setImageBitmap(imageBitmap);
+
+            // Arrêter l'animation de pulse
+            if (pulseAnimImg != null) {
+                mCoverImageView.clearAnimation();
             }
         } catch (Exception e) {
             Log.e(TAG, "Error loading image", e);
@@ -361,38 +396,20 @@ public class RegisterAuthorActivity extends AppCompatActivity {
         return byteArrayOutputStream.toByteArray();
     }
 
-    // ==================== File Picking ====================
+    // ==================== File Picking (Sans permissions) ====================
 
-    private void checkPermissionAndOpenPicker(boolean isPdf) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            openFilePicker(isPdf);
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ContextCompat.checkSelfPermission(this,
-                    Manifest.permission.READ_EXTERNAL_STORAGE)
-                    != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                        PERMISSION_REQUEST_CODE);
-            } else {
-                openFilePicker(isPdf);
-            }
-        } else {
-            openFilePicker(isPdf);
-        }
-    }
-
-    private void openFilePicker(boolean isPdf) {
-        if (isPdf) {
-            openPdfPicker();
-        } else {
-            openAudioPicker();
-        }
-    }
-
+    /**
+     * Ouvre le sélecteur de PDF avec ACTION_OPEN_DOCUMENT
+     * Ne nécessite AUCUNE permission sur Android 10+
+     */
     private void openPdfPicker() {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.setType("application/pdf");
         intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+        // Permet de persister l'accès
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION |
+                Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
 
         try {
             pdfPickerLauncher.launch(Intent.createChooser(intent, "Sélectionner un PDF"));
@@ -402,10 +419,18 @@ public class RegisterAuthorActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Ouvre le sélecteur audio avec ACTION_OPEN_DOCUMENT
+     * Ne nécessite AUCUNE permission sur Android 10+
+     */
     private void openAudioPicker() {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.setType("audio/*");
         intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+        // Permet de persister l'accès
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION |
+                Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
 
         try {
             audioPickerLauncher.launch(Intent.createChooser(intent,
@@ -413,23 +438,6 @@ public class RegisterAuthorActivity extends AppCompatActivity {
         } catch (android.content.ActivityNotFoundException ex) {
             Log.e(TAG, "No file manager found", ex);
             showToast("Veuillez installer un gestionnaire de fichiers");
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (requestCode == PERMISSION_REQUEST_CODE) {
-            if (grantResults.length > 0 &&
-                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Log.d(TAG, "Permission granted");
-                openPdfPicker();
-            } else {
-                Log.w(TAG, "Permission denied");
-                showToast("Permission refusée. Impossible d'accéder aux fichiers.");
-            }
         }
     }
 
@@ -534,7 +542,6 @@ public class RegisterAuthorActivity extends AppCompatActivity {
                 String fileName = getFileName(pdfUri);
                 long fileSize = getFileSize(pdfUri);
 
-                // Créer un RequestBody optimisé pour streaming
                 RequestBody fileBody = createStreamingRequestBody(pdfUri, MEDIA_TYPE_PDF, fileSize);
 
                 RequestBody requestBody = new MultipartBody.Builder()
@@ -578,7 +585,6 @@ public class RegisterAuthorActivity extends AppCompatActivity {
         }).start();
     }
 
-    // RequestBody optimisé avec streaming pour éviter OutOfMemory
     private RequestBody createStreamingRequestBody(Uri uri, MediaType mediaType, long fileSize) {
         return new RequestBody() {
             @Override
@@ -609,7 +615,6 @@ public class RegisterAuthorActivity extends AppCompatActivity {
                         totalBytesRead += bytesRead;
                         final long finalTotalBytesRead = totalBytesRead;
 
-                        // Mise à jour du progrès
                         runOnUiThread(() -> updateUploadProgress(finalTotalBytesRead, fileSize));
 
                         sink.flush();
@@ -778,7 +783,6 @@ public class RegisterAuthorActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // Arrêter les animations
         if (mCoverImageView != null) {
             mCoverImageView.clearAnimation();
         }
