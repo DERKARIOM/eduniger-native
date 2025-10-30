@@ -42,7 +42,7 @@ public class NotificationTable extends SQLiteOpenHelper {
     public Cursor getData(String idNumber)
     {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("SELECT * FROM " + NAME_TABLE + " WHERE idNumberNotif='" + idNumber + "';",null);
+        Cursor res = db.rawQuery("SELECT * FROM " + NAME_TABLE + " WHERE idNumberNotif='" + idNumber + "' ORDER BY idNotification DESC;", null);
         return res;
     }
     public boolean remove(String id)

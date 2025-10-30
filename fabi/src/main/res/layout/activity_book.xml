@@ -193,7 +193,7 @@
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="5dp"
                     android:layout_marginBottom="5dp"
-                    android:drawableLeft="@drawable/vector_black3_physical"
+                    android:drawableLeft="@drawable/vector_black3_physical2"
                     android:textSize="@dimen/size_button"
                     android:backgroundTint="@color/purple_200"/>
             </LinearLayout>
