@@ -56,7 +56,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = "LoginActivity";
     private static final String DEFAULT_TOKEN = "null";
-    private static final String UPDATE_URL = "https://play.google.com/store/apps/details?id=com.ninotech.fabi&pcampaignid=web_share";
+    private static final String UPDATE_URL = "https://eduniger.com";
 
     // Views
     private EditText mIdNumberEditText;

@@ -578,7 +578,7 @@ public class HomeFragment extends Fragment {
         TextView installer = dialog.findViewById(R.id.installer);
 
         annuler.setOnClickListener(v -> handleLogout(dialog));
-        installer.setOnClickListener(v -> openWebsite("https://play.google.com/store/apps/details?id=com.ninotech.fabi&pcampaignid=web_share"));
+        installer.setOnClickListener(v -> openWebsite("https://eduniger.com"));
         dialog.setOnCancelListener(d -> handleLogout(dialog));
 
         dialog.build();
