@@ -30,24 +30,5 @@ public class InfosActivity extends AppCompatActivity {
         getSupportActionBar().hide();
         mButton = findViewById(R.id.licence);
         TextView versionTextView = findViewById(R.id.version);
-        //.setText("Version " + getString(R.string.app_version));
-        Uri data = getIntent().getData();
-        if (data != null) {
-            String id = data.getQueryParameter("id");
-            String name = data.getQueryParameter("name");
-            versionTextView.setText("Lien reçu : " + data.toString() +
-                    "\nID = " + id +
-                    "\nNom = " + name);
-        } else {
-            versionTextView.setText("Aucun lien reçu");
-        }
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
-        mButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent licence = new Intent(InfosActivity.this, LicenceActivity.class);
-                startActivity(licence);
-            }
-        });
     }
 }

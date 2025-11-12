@@ -65,7 +65,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/iconifos"
         android:layout_centerHorizontal="true"
-        android:text="Version 2.0.0 Beta"
+        android:text="Version 3.1.3"
         />
     <TextView
         android:id="@+id/nameapp"
