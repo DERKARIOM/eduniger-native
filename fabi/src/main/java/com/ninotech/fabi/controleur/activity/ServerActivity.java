@@ -2,8 +2,6 @@ package com.ninotech.fabi.controleur.activity;
 
 import android.app.UiModeManager;
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
-import android.hardware.fingerprint.FingerprintManager;
 import android.os.Build;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,30 +9,16 @@ import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.adapter.StatusBarAdapter;
 import com.ninotech.fabi.model.data.Server;
 import com.ninotech.fabi.model.data.Themes;
-import com.ninotech.fabi.model.table.DigitalPrintTable;
 
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.res.Configuration;
-import android.content.res.Resources;
-import android.os.CancellationSignal;
-import android.os.Handler;
-import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.Spinner;
 import android.widget.Switch;
 
-import androidx.annotation.Nullable;
-
-import java.util.Locale;
 import java.util.Objects;
 
 public class ServerActivity extends AppCompatActivity {
@@ -72,11 +56,11 @@ public class ServerActivity extends AppCompatActivity {
         {
             mSwitch.setChecked(false);
             mRadioGroup.setVisibility(View.GONE);
-            Server.saveIpServer(getApplicationContext(),getString(R.string.ip_server));
-            Server.saveIpServerAndroid(getApplicationContext(),getString(R.string.ip_server_android));
+            Server.saveUrlServer(getApplicationContext(),getString(R.string.url_server));
+            Server.saveUrlApi(getApplicationContext(),getString(R.string.url_api));
         }
         mSwitch.setChecked(Server.getPass(getApplicationContext()) == 1);
-        switch (Server.getIpServer(getApplicationContext()))
+        switch (Server.getUrlServer(getApplicationContext()))
         {
             case "http://78.46.46.154/fabi/":
                 mUrlEditText.setVisibility(View.GONE);
@@ -91,7 +75,7 @@ public class ServerActivity extends AppCompatActivity {
             default:
                 RadioButton radioButton3 = (RadioButton) mRadioGroup.getChildAt(3);
                 radioButton3.setChecked(true);
-                mUrlEditText.setText(Server.getIpServer(getApplicationContext()));
+                mUrlEditText.setText(Server.getUrlServer(getApplicationContext()));
                 mUrlEditText.setVisibility(View.VISIBLE);
                 break;
         }
@@ -128,8 +112,8 @@ public class ServerActivity extends AppCompatActivity {
                     Server.saveActivate(getApplicationContext(),0);
                     mRadioGroup.setVisibility(View.GONE);
                     mUrlEditText.setVisibility(View.GONE);
-                    Server.saveIpServer(getApplicationContext(),getString(R.string.ip_server));
-                    Server.saveIpServerAndroid(getApplicationContext(),getString(R.string.ip_server_android));
+                    Server.saveUrlServer(getApplicationContext(),getString(R.string.url_server));
+                    Server.saveUrlApi(getApplicationContext(),getString(R.string.url_api));
                     RadioButton radioButton1 = (RadioButton) mRadioGroup.getChildAt(1);
                     radioButton1.setChecked(true);
                 }

@@ -130,7 +130,7 @@ public class BooksFragment extends Fragment {
 
     private void loadRankingData() {
         new RankingSyn().execute(
-                Server.getIpServerAndroid(requireContext()) + "Ranking.php",
+                Server.getUrlApi(requireContext()) + "Ranking.php",
                 mSession.getIdNumber()
         );
     }

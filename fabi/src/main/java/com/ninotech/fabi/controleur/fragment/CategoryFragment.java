@@ -130,7 +130,7 @@ public class CategoryFragment extends Fragment {
 
     private void loadCategoryData() {
         new CategorySyn().execute(
-                Server.getIpServerAndroid(requireContext()) + "Category.php",
+                Server.getUrlApi(requireContext()) + "Category.php",
                 mSession.getIdNumber()
         );
     }

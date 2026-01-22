@@ -269,7 +269,7 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.MyViewHo
                                 // Passez à l'Activity suivante après l'acceptation
                                 Log.e("Confirmation","no");
                                 DeleteAccountSyn deleteAccountSyn = new DeleteAccountSyn();
-                                deleteAccountSyn.execute(Server.getIpServerAndroid(itemView.getContext()) + "DeleteAccountSyn.php",mSession.getIdNumber());
+                                deleteAccountSyn.execute(Server.getUrlApi(itemView.getContext()) + "DeleteAccountSyn.php",mSession.getIdNumber());
                             })
                             .setNegativeButton("Non", (dialog, which) -> {
                                 Log.e("Confirmation","no");
@@ -281,7 +281,7 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.MyViewHo
         private void updateDate(String idNumber , String column , String newValues)
         {
             UpdateSyn updateSyn = new UpdateSyn();
-            updateSyn.execute(Server.getIpServerAndroid(itemView.getContext()) + "UpdateSyn.php",idNumber,column,newValues);
+            updateSyn.execute(Server.getUrlApi(itemView.getContext()) + "UpdateSyn.php",idNumber,column,newValues);
         }
         private void oneEditTextDialog(String label , String message,int inputType , String hint){
             mOneEditTextDialog = new OneEditTextDialog((Activity) itemView.getContext());
@@ -329,7 +329,7 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.MyViewHo
                                 break;
                             case "Evaluez-nous":
                                 GradeSyn gradeSyn = new GradeSyn();
-                                gradeSyn.execute(Server.getIpServerAndroid(itemView.getContext()) + "GradeSyn.php",mSession.getIdNumber(),editText.getText().toString());
+                                gradeSyn.execute(Server.getUrlApi(itemView.getContext()) + "GradeSyn.php",mSession.getIdNumber(),editText.getText().toString());
                                 break;
                         }
                     }

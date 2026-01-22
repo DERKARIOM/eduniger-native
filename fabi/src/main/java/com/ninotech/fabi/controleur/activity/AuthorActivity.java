@@ -226,7 +226,7 @@ public class AuthorActivity extends AppCompatActivity {
 
     private void loadAuthorImage() {
         Picasso.get()
-                .load(Server.getIpServer(this) + "ressources/profile/" + mAuthor.getProfile())
+                .load(Server.getUrlServer(this) + "ressources/profile/" + mAuthor.getProfile())
                 .placeholder(R.drawable.img_wait_profile)
                 .error(R.drawable.img_wait_profile)
                 .transform(new RoundedTransformation(1000, 4))
@@ -270,7 +270,7 @@ public class AuthorActivity extends AppCompatActivity {
     }
 
     private void loadAuthorData() {
-        String baseUrl = Server.getIpServerAndroid(this);
+        String baseUrl = Server.getUrlApi(this);
         String idNumber = mSession.getIdNumber();
         String authorId = mAuthor.getIdNumber();
 

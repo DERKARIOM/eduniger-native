@@ -7,7 +7,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import androidx.core.app.NotificationCompat;
-import com.ninotech.fabi.R;
+
 import com.ninotech.fabi.model.table.ElectronicTable;
 
 public class ElectronicDownloader extends AsyncTask<String, Integer, ElectronicBook> {
@@ -65,25 +65,25 @@ public class ElectronicDownloader extends AsyncTask<String, Integer, ElectronicB
         try {
             // Télécharger les fichiers avec progression
             electronicBook.setCover(downloadFile.start(
-                    Server.getIpServer(mContext) + "ressources/cover/" + names[0],
+                    Server.getUrlServer(mContext) + "ressources/cover/" + names[0],
                     names[0],
                     progress -> publishProgress(progress)
             ));
 
             electronicBook.setPdf(downloadFile.start(
-                    Server.getIpServer(mContext) + "ressources/pdf/" + names[1],
+                    Server.getUrlServer(mContext) + "ressources/pdf/" + names[1],
                     names[1],
                     progress -> publishProgress(progress)
             ));
 
             electronicBook.setCoverCategory(downloadFile.start(
-                    Server.getIpServer(mContext) + "ressources/cover/" + names[2],
+                    Server.getUrlServer(mContext) + "ressources/cover/" + names[2],
                     names[2],
                     progress -> publishProgress(progress)
             ));
 
             electronicBook.setProfileAuthor(downloadFile.start(
-                    Server.getIpServer(mContext) + "ressources/profile/" + names[3],
+                    Server.getUrlServer(mContext) + "ressources/profile/" + names[3],
                     names[3],
                     progress -> publishProgress(progress)
             ));

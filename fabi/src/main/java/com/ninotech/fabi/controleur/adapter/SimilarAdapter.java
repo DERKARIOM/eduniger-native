@@ -64,7 +64,7 @@ public class SimilarAdapter extends RecyclerView.Adapter<SimilarAdapter.MyViewHo
 
         void display(LocalBooks localBooks) throws SQLException, IOException {
             Picasso.get()
-                    .load(Server.getIpServer(itemView.getContext()) + "ressources/cover/"  + localBooks.getCover())
+                    .load(Server.getUrlServer(itemView.getContext()) + "ressources/cover/"  + localBooks.getCover())
                     .placeholder(R.drawable.img_default_book)
                     .error(R.drawable.img_default_book)
                     .transform(new RoundedTransformation(15,4))

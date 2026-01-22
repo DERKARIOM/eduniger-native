@@ -1,12 +1,9 @@
 package com.ninotech.fabi.controleur.fragment;
 
-import static android.view.View.GONE;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,14 +14,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -36,7 +29,6 @@ import com.ninotech.fabi.model.data.Chat;
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.model.data.Server;
 import com.ninotech.fabi.model.table.Session;
-import com.ninotech.fabi.model.table.UserTable;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -245,7 +237,7 @@ public class ChatBotFragment extends Fragment {
     }
 
     private void executeReservation() {
-        String url = Server.getIpServerAndroid(requireContext()) + "Reservation.php";
+        String url = Server.getUrlApi(requireContext()) + "Reservation.php";
         new ReservationTask(this).execute(url, mSession.getIdNumber(),
                 mArm.getId(), String.valueOf(mArm.getNumberOfDays()));
     }

@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -90,7 +89,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyView
         }
         void display(Category category){
             Picasso.get()
-                    .load(Server.getIpServer(itemView.getContext()) + "ressources/cover/" + category.getCover())
+                    .load(Server.getUrlServer(itemView.getContext()) + "ressources/cover/" + category.getCover())
                     .placeholder(R.drawable.img_default_book)
                     .error(R.drawable.img_default_book)
                     .into(mBlanketImageView);

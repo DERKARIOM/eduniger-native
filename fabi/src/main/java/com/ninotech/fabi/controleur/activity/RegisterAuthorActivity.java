@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
@@ -28,7 +27,6 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.ninotech.fabi.R;
@@ -285,7 +283,7 @@ public class RegisterAuthorActivity extends AppCompatActivity {
         );
 
         new AddBookTask(this).execute(
-                Server.getIpServerAndroid(getApplicationContext()) + "RegisterAuthor.php",
+                Server.getUrlApi(getApplicationContext()) + "RegisterAuthor.php",
                 mSession.getIdNumber(),
                 mBook.getTitle(),
                 mBook.getDescription(),
@@ -523,7 +521,7 @@ public class RegisterAuthorActivity extends AppCompatActivity {
             return;
         }
 
-        String serverUrl = Server.getIpServer(this) + "upload.php";
+        String serverUrl = Server.getUrlServer(this) + "upload.php";
         isUploading = true;
 
         runOnUiThread(() -> {

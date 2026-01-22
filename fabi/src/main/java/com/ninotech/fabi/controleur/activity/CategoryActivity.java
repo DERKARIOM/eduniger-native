@@ -18,7 +18,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -120,7 +119,7 @@ public class CategoryActivity extends AppCompatActivity {
                         mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                         mWaitRecyclerView.setAdapter(noConnectionAdapter);
                         CategoryInSyn categoryInSyn = new CategoryInSyn();
-                        categoryInSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "CategoryIn.php",mSession.getIdNumber(),mCategorie);
+                        categoryInSyn.execute(Server.getUrlApi(getApplicationContext()) + "CategoryIn.php",mSession.getIdNumber(),mCategorie);
                     }catch (Exception e)
                     {
                         Log.e("errRankingFragment",e.getMessage());
@@ -135,12 +134,12 @@ public class CategoryActivity extends AppCompatActivity {
         if (mNameStruct == null)
         {
             CategoryInSyn categoryInSyn = new CategoryInSyn();
-            categoryInSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "CategoryIn.php",mSession.getIdNumber(),mCategorie);
+            categoryInSyn.execute(Server.getUrlApi(getApplicationContext()) + "CategoryIn.php",mSession.getIdNumber(),mCategorie);
         }
         else
         {
             StructCategoryInSyn structCategoryInSyn = new StructCategoryInSyn();
-            structCategoryInSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "StructCategoryIn.php",mSession.getIdNumber(),mCategorie,mNameStruct);
+            structCategoryInSyn.execute(Server.getUrlApi(getApplicationContext()) + "StructCategoryIn.php",mSession.getIdNumber(),mCategorie,mNameStruct);
         }
     }
 

@@ -6,31 +6,31 @@ import com.ninotech.fabi.R;
 
 public class Server {
     private static final String PREFS_NAME = "server_prefs";
-    private static final String IP_SERVER = "http://78.46.46.154/fabi/";
-    private static final String IP_SERVER_ANDROID = "http://78.46.46.154/fabi/android/";
+    private static final String URL_SERVER = "https://eduniger.com/";
+    private static final String URL_API = "https://eduniger.com/api/";
     private static final String IS_ACTIVATE = "pass";
     public Server()
     {
 
     }
 
-    public static void saveServer(Context context, String ip_server , String ip_server_android) {
+    public static void saveServer(Context context, String urlServer , String urlApi) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(IP_SERVER, ip_server);
-        editor.putString(IP_SERVER_ANDROID,ip_server_android);
+        editor.putString(URL_SERVER, urlServer);
+        editor.putString(URL_API,urlApi);
         editor.apply();
     }
-    public static void saveIpServer(Context context, String ip_server) {
+    public static void saveUrlServer(Context context, String urlServer) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(IP_SERVER, ip_server);
+        editor.putString(URL_SERVER, urlServer);
         editor.apply();
     }
-    public static void saveIpServerAndroid(Context context, String ip_server_android) {
+    public static void saveUrlApi(Context context, String urlApi) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(IP_SERVER_ANDROID, ip_server_android);
+        editor.putString(URL_API, urlApi);
         editor.apply();
     }
 
@@ -44,12 +44,12 @@ public class Server {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getInt(IS_ACTIVATE, 0);
     }
-    public static String getIpServer(Context context) {
+    public static String getUrlServer(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        return prefs.getString(IP_SERVER, context.getString(R.string.ip_server));
+        return prefs.getString(URL_SERVER, context.getString(R.string.url_server));
     }
-    public static String getIpServerAndroid(Context context) {
+    public static String getUrlApi(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        return prefs.getString(IP_SERVER_ANDROID, context.getString(R.string.ip_server_android));
+        return prefs.getString(URL_API, context.getString(R.string.url_api));
     }
 }

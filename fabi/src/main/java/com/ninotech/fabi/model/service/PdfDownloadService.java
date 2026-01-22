@@ -10,11 +10,9 @@ import android.os.IBinder;
 
 import androidx.core.app.NotificationCompat;
 
-import com.ninotech.fabi.model.data.AudioBook;
 import com.ninotech.fabi.model.data.DownloadFile;
 import com.ninotech.fabi.model.data.ElectronicBook;
 import com.ninotech.fabi.model.data.Server;
-import com.ninotech.fabi.model.table.AudioTable;
 import com.ninotech.fabi.model.table.ElectronicTable;
 
 public class PdfDownloadService extends Service {
@@ -50,10 +48,10 @@ public class PdfDownloadService extends Service {
         try {
             ElectronicBook electronicBook = new ElectronicBook();
             DownloadFile downloadFile = new DownloadFile(this);
-            electronicBook.setCover(downloadFile.start(Server.getIpServer(this) + "ressources/cover/" + names[0], names[0], this::updateProgress));
-            electronicBook.setPdf(downloadFile.start(Server.getIpServer(this) + "ressources/pdf/" + names[1], names[1], this::updateProgress));
-            electronicBook.setCoverCategory(downloadFile.start(Server.getIpServer(this) + "ressources/cover/" + names[2], names[2], this::updateProgress));
-            electronicBook.setProfileAuthor(downloadFile.start(Server.getIpServer(this) + "ressources/profile/" + names[3], names[3], this::updateProgress));
+            electronicBook.setCover(downloadFile.start(Server.getUrlServer(this) + "ressources/cover/" + names[0], names[0], this::updateProgress));
+            electronicBook.setPdf(downloadFile.start(Server.getUrlServer(this) + "ressources/pdf/" + names[1], names[1], this::updateProgress));
+            electronicBook.setCoverCategory(downloadFile.start(Server.getUrlServer(this) + "ressources/cover/" + names[2], names[2], this::updateProgress));
+            electronicBook.setProfileAuthor(downloadFile.start(Server.getUrlServer(this) + "ressources/profile/" + names[3], names[3], this::updateProgress));
 
             ElectronicTable electronicTable = new ElectronicTable(getApplicationContext());
             electronicTable.insert(names[4], names[5], names[6], names[7],electronicBook.getCover(),electronicBook.getPdf(), names[8], names[9],electronicBook.getCoverCategory(),electronicBook.getProfileAuthor());

@@ -22,7 +22,6 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
@@ -123,7 +122,7 @@ public class AddBookActivity extends AppCompatActivity {
                         mIdAuthorEditText.getText().toString(),
                         mDescriptionEditText.getText().toString());
                 AddBookSyn addBookSyn = new AddBookSyn();
-                addBookSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "AddBook.php",
+                addBookSyn.execute(Server.getUrlApi(getApplicationContext()) + "AddBook.php",
                         mSession.getIdNumber(),
                         mBook.getId(),
                         mBook.getTitle(),

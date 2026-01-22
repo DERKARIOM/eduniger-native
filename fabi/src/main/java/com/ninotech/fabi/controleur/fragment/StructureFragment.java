@@ -63,9 +63,9 @@ public class StructureFragment extends Fragment {
                         mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                         mWaitRecyclerView.setAdapter(noConnectionAdapter);
                         StructureSyn structureSyn = new StructureSyn();
-                        structureSyn.execute(Server.getIpServerAndroid(getContext()) + "Structure.php", session.getIdNumber());
+                        structureSyn.execute(Server.getUrlApi(getContext()) + "Structure.php", session.getIdNumber());
                         StructureSyn2 structureSyn2 = new StructureSyn2();
-                        structureSyn2.execute(Server.getIpServerAndroid(getContext()) + "StructureMore.php", session.getIdNumber());
+                        structureSyn2.execute(Server.getUrlApi(getContext()) + "StructureMore.php", session.getIdNumber());
                     }catch (Exception e)
                     {
                         Log.e("errCategoryFragment",e.getMessage());
@@ -78,9 +78,9 @@ public class StructureFragment extends Fragment {
             getContext().registerReceiver(receiverNoConnectionAdapter, new IntentFilter("CATEGORY_FRAGMENT"),Context.RECEIVER_EXPORTED);
         }
         StructureSyn structureSyn = new StructureSyn();
-        structureSyn.execute(Server.getIpServerAndroid(getContext()) + "Structure.php", session.getIdNumber());
+        structureSyn.execute(Server.getUrlApi(getContext()) + "Structure.php", session.getIdNumber());
         StructureSyn2 structureSyn2 = new StructureSyn2();
-        structureSyn2.execute(Server.getIpServerAndroid(getContext()) + "StructureMore.php", session.getIdNumber());
+        structureSyn2.execute(Server.getUrlApi(getContext()) + "StructureMore.php", session.getIdNumber());
         return view;
     }
 

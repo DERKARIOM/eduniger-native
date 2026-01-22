@@ -7,12 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.R;
-import com.ninotech.fabi.controleur.activity.BookActivity;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
 import com.ninotech.fabi.model.data.OnlineBook;
 import com.ninotech.fabi.model.data.Server;
@@ -102,7 +100,7 @@ public class FabiolaBookAdapter extends RecyclerView.Adapter<FabiolaBookAdapter.
         }
         void display(OnlineBook onlineBook){
             Picasso.get()
-                    .load(Server.getIpServer(itemView.getContext()) + "ressources/cover/" + onlineBook.getCover())
+                    .load(Server.getUrlServer(itemView.getContext()) + "ressources/cover/" + onlineBook.getCover())
                     .placeholder(R.drawable.img_default_book)
                     .error(R.drawable.img_default_book)
                     .transform(new RoundedTransformation(15,4))

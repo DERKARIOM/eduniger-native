@@ -95,7 +95,7 @@ public class NetworkCheckWorker extends Worker {
         try {
             Log.d(TAG, "Network available, checking notifications for user: " + mSession.getIdNumber());
             new NotificationSyn().execute(
-                    Server.getIpServerAndroid(getApplicationContext()) + "NotificationSyn.php",
+                    Server.getUrlApi(getApplicationContext()) + "NotificationSyn.php",
                     mSession.getIdNumber()
             );
         } catch (Exception e) {

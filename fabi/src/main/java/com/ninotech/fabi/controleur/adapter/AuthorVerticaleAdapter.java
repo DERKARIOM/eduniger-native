@@ -71,7 +71,7 @@ public class AuthorVerticaleAdapter extends RecyclerView.Adapter<AuthorVerticale
 
         void display(Author author) throws SQLException, IOException {
             Picasso.get()
-                    .load(Server.getIpServer(itemView.getContext()) + "ressources/profile/" + author.getProfile())
+                    .load(Server.getUrlServer(itemView.getContext()) + "ressources/profile/" + author.getProfile())
                     .placeholder(R.drawable.img_wait_profile)
                     .error(R.drawable.img_wait_profile)
                     .transform(new RoundedTransformation(1000,4))

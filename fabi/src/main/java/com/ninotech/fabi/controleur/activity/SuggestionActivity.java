@@ -71,7 +71,7 @@ public class SuggestionActivity extends AppCompatActivity {
                     mConnectionProgressBar.setVisibility(View.VISIBLE);
                     mSuggestionSendButton.setText("");
                     SuggestionSyn suggestionSyn = new SuggestionSyn();
-                    suggestionSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "Suggestion.php",mSuggestion.getIdNumber(),mSuggestion.getObjet(),mSuggestion.getMessage(),mPhone.getModel(),mPhone.getVersion());
+                    suggestionSyn.execute(Server.getUrlApi(getApplicationContext()) + "Suggestion.php",mSuggestion.getIdNumber(),mSuggestion.getObjet(),mSuggestion.getMessage(),mPhone.getModel(),mPhone.getVersion());
                 }
             }
         });

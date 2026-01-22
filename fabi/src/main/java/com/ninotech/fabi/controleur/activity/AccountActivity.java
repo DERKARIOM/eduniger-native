@@ -17,11 +17,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -224,7 +220,7 @@ public class AccountActivity extends AppCompatActivity {
         }
     }
     private void uploadImage(File imageFile) {
-        String serverUrl = Server.getIpServer(getApplicationContext()) + "ressources/uploadProfile.php"; // Remplace par ton URL de serveur
+        String serverUrl = Server.getUrlServer(getApplicationContext()) + "ressources/uploadProfile.php"; // Remplace par ton URL de serveur
 
         OkHttpClient client = new OkHttpClient();
 

@@ -2,7 +2,6 @@ package com.ninotech.fabi.controleur.fragment;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
@@ -18,7 +17,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -235,7 +233,7 @@ public class HomeFragment extends Fragment {
 
     private void loadAllData() {
         Context context = requireContext();
-        String baseUrl = Server.getIpServerAndroid(context);
+        String baseUrl = Server.getUrlApi(context);
         String idNumber = mSession.getIdNumber();
         String version = getString(R.string.app_version);
 
@@ -312,7 +310,7 @@ public class HomeFragment extends Fragment {
         private void loadPublicityImage() {
             if (mPubData != null && isAdded()) {
                 Picasso.get()
-                        .load(Server.getIpServer(requireContext()) + "ressources/pub/" + mPubData)
+                        .load(Server.getUrlServer(requireContext()) + "ressources/pub/" + mPubData)
                         .transform(new RoundedTransformation(200, 10))
                         .resize(6200, 3333)
                         .placeholder(R.drawable.img_wait_pub)

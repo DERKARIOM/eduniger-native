@@ -12,12 +12,9 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -875,7 +872,7 @@ public class SearchActivity extends AppCompatActivity {
 
                 RequestBody requestBody = bodyBuilder.build();
                 Request request = new Request.Builder()
-                        .url(Server.getIpServerAndroid(activity) + fileName)
+                        .url(Server.getUrlApi(activity) + fileName)
                         .post(requestBody)
                         .build();
 
@@ -957,7 +954,7 @@ public class SearchActivity extends AppCompatActivity {
                         .build();
 
                 Request request = new Request.Builder()
-                        .url(Server.getIpServerAndroid(activity) + "FabiolaBook.php")
+                        .url(Server.getUrlApi(activity) + "FabiolaBook.php")
                         .post(requestBody)
                         .build();
 
@@ -1013,7 +1010,7 @@ public class SearchActivity extends AppCompatActivity {
                         .build();
 
                 Request request = new Request.Builder()
-                        .url(Server.getIpServerAndroid(activity) + "CategoryIn.php")
+                        .url(Server.getUrlApi(activity) + "CategoryIn.php")
                         .post(requestBody)
                         .build();
 
@@ -1070,7 +1067,7 @@ public class SearchActivity extends AppCompatActivity {
                         .build();
 
                 Request request = new Request.Builder()
-                        .url(Server.getIpServerAndroid(activity) + fileName)
+                        .url(Server.getUrlApi(activity) + fileName)
                         .post(requestBody)
                         .build();
 
@@ -1126,7 +1123,7 @@ public class SearchActivity extends AppCompatActivity {
                         .build();
 
                 Request request = new Request.Builder()
-                        .url(Server.getIpServerAndroid(activity) + fileName)
+                        .url(Server.getUrlApi(activity) + fileName)
                         .post(requestBody)
                         .build();
 
@@ -1210,7 +1207,7 @@ public class SearchActivity extends AppCompatActivity {
                         .build();
 
                 Request request = new Request.Builder()
-                        .url(Server.getIpServerAndroid(activity) + "Author.php")
+                        .url(Server.getUrlApi(activity) + "Author.php")
                         .post(requestBody)
                         .build();
 

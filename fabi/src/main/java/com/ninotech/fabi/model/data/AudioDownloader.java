@@ -1,23 +1,15 @@
 package com.ninotech.fabi.model.data;
 
-import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.view.View;
-import android.widget.TextView;
 
 import androidx.core.app.NotificationCompat;
-import com.ninotech.fabi.R;
-import com.ninotech.fabi.controleur.dialog.SimpleOkDialog;
+
 import com.ninotech.fabi.model.table.AudioTable;
-import com.ninotech.fabi.model.table.ElectronicTable;
 
 public class AudioDownloader extends AsyncTask<String, Integer, AudioBook> {
 
@@ -76,25 +68,25 @@ public class AudioDownloader extends AsyncTask<String, Integer, AudioBook> {
         try {
             // Télécharger les fichiers avec progression
             audioBook.setCover(downloadFile.start(
-                    Server.getIpServer(mContext) + "ressources/cover/" + names[0],
+                    Server.getUrlServer(mContext) + "ressources/cover/" + names[0],
                     names[0],
                     progress -> publishProgress(progress)
             ));
 
             audioBook.setCoverCategory(downloadFile.start(
-                    Server.getIpServer(mContext) + "ressources/cover/" + names[2],
+                    Server.getUrlServer(mContext) + "ressources/cover/" + names[2],
                     names[2],
                     progress -> publishProgress(progress)
             ));
 
             audioBook.setProfileAuthor(downloadFile.start(
-                    Server.getIpServer(mContext) + "ressources/profile/" + names[3],
+                    Server.getUrlServer(mContext) + "ressources/profile/" + names[3],
                     names[3],
                     progress -> publishProgress(progress)
             ));
 
             audioBook.setAudio(downloadFile.start(
-                    Server.getIpServer(mContext) + "ressources/audio/" + names[4],
+                    Server.getUrlServer(mContext) + "ressources/audio/" + names[4],
                     names[4],
                     progress -> publishProgress(progress)
             ));

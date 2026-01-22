@@ -19,14 +19,11 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.ninotech.fabi.model.data.Account;
 import com.ninotech.fabi.controleur.dialog.UpdateDialog;
 import com.ninotech.fabi.R;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.ninotech.fabi.model.data.PasswordUtil;
 import com.ninotech.fabi.model.data.Server;
@@ -221,7 +218,7 @@ public class RegisterActivity extends AppCompatActivity {
     private void performRegistration() {
         new Thread(() -> {
             try {
-                String serverUrl = Server.getIpServerAndroid(getApplicationContext()) + "Register.php";
+                String serverUrl = Server.getUrlApi(getApplicationContext()) + "Register.php";
 
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)

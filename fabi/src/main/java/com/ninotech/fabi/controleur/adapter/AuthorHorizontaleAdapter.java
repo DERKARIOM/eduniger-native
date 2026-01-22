@@ -9,15 +9,10 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.activity.AuthorActivity;
-import com.ninotech.fabi.controleur.activity.BookActivity;
-import com.ninotech.fabi.controleur.activity.StructureActivity;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
 import com.ninotech.fabi.model.data.Author;
-import com.ninotech.fabi.model.data.Book;
 import com.ninotech.fabi.model.data.Server;
 import com.squareup.picasso.Picasso;
 
@@ -71,7 +66,7 @@ public class AuthorHorizontaleAdapter extends RecyclerView.Adapter<AuthorHorizon
 
         void display(Author author) throws SQLException, IOException {
             Picasso.get()
-                    .load(Server.getIpServer(itemView.getContext()) + "ressources/profile/" + author.getProfile())
+                    .load(Server.getUrlServer(itemView.getContext()) + "ressources/profile/" + author.getProfile())
                     .placeholder(R.drawable.img_wait_profile)
                     .error(R.drawable.img_wait_profile)
                     .transform(new RoundedTransformation(1000,4))

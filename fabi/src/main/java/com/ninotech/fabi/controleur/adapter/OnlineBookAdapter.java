@@ -101,7 +101,7 @@ public class OnlineBookAdapter extends RecyclerView.Adapter<OnlineBookAdapter.My
         }
         void display(OnlineBook onlineBook){
             Picasso.get()
-                    .load(Server.getIpServer(itemView.getContext()) + "ressources/cover/" + onlineBook.getCover())
+                    .load(Server.getUrlServer(itemView.getContext()) + "ressources/cover/" + onlineBook.getCover())
                     .placeholder(R.drawable.img_wait_cover_book)
                     .error(R.drawable.img_wait_cover_book)
                     .transform(new RoundedTransformation(15,4))

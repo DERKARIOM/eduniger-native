@@ -3,9 +3,9 @@ import android.app.*;
 import android.content.Context;
 import android.content.Intent;
 import android.os.*;
-import androidx.annotation.Nullable;
+
 import androidx.core.app.NotificationCompat;
-import com.ninotech.fabi.R;
+
 import com.ninotech.fabi.model.data.AudioBook;
 import com.ninotech.fabi.model.data.DownloadFile;
 import com.ninotech.fabi.model.data.Server;
@@ -44,10 +44,10 @@ public class AudioDownloadService extends Service {
         try {
             AudioBook audioBook = new AudioBook();
             DownloadFile downloadFile = new DownloadFile(this);
-            audioBook.setCover(downloadFile.start(Server.getIpServer(this) + "ressources/cover/" + names[0], names[0], this::updateProgress));
-            audioBook.setCoverCategory(downloadFile.start(Server.getIpServer(this) + "ressources/cover/" + names[2], names[2], this::updateProgress));
-            audioBook.setProfileAuthor(downloadFile.start(Server.getIpServer(this) + "ressources/profile/" + names[3], names[3], this::updateProgress));
-            audioBook.setAudio(downloadFile.start(Server.getIpServer(this) + "ressources/audio/" + names[4], names[4], this::updateProgress));
+            audioBook.setCover(downloadFile.start(Server.getUrlServer(this) + "ressources/cover/" + names[0], names[0], this::updateProgress));
+            audioBook.setCoverCategory(downloadFile.start(Server.getUrlServer(this) + "ressources/cover/" + names[2], names[2], this::updateProgress));
+            audioBook.setProfileAuthor(downloadFile.start(Server.getUrlServer(this) + "ressources/profile/" + names[3], names[3], this::updateProgress));
+            audioBook.setAudio(downloadFile.start(Server.getUrlServer(this) + "ressources/audio/" + names[4], names[4], this::updateProgress));
 
             AudioTable audioTable = new AudioTable(getApplicationContext());
             audioTable.insert(names[5], names[6], names[7], names[8],audioBook.getCover(),audioBook.getAudio(), names[9], names[10],audioBook.getCoverCategory(),audioBook.getProfileAuthor(),names[11]);

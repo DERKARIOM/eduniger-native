@@ -19,7 +19,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
@@ -272,7 +271,7 @@ public class StructureActivity extends AppCompatActivity {
         mStructure.setAdhere(true);
 
         new DetachStructSyn().execute(
-                Server.getIpServerAndroid(this) + "AdhererStruct.php",
+                Server.getUrlApi(this) + "AdhererStruct.php",
                 mSession.getIdNumber(),
                 mStructure.getId()
         );
@@ -280,7 +279,7 @@ public class StructureActivity extends AppCompatActivity {
 
     private void loadStructureImages() {
         Picasso.get()
-                .load(Server.getIpServer(this) + "ressources/baniere/" + mStructure.getBanner())
+                .load(Server.getUrlServer(this) + "ressources/baniere/" + mStructure.getBanner())
                 .transform(new RoundedTransformation(200, 10))
                 .resize(6200, 2222)
                 .placeholder(R.drawable.img_wait_banner)
@@ -290,7 +289,7 @@ public class StructureActivity extends AppCompatActivity {
         mWelcomeImageView.setVisibility(View.VISIBLE);
 
         Picasso.get()
-                .load(Server.getIpServer(this) + "ressources/cover/" + mStructure.getCover())
+                .load(Server.getUrlServer(this) + "ressources/cover/" + mStructure.getCover())
                 .placeholder(R.drawable.img_wait_struct)
                 .error(R.drawable.img_default_book)
                 .transform(new RoundedTransformation(1000, 4))
@@ -328,7 +327,7 @@ public class StructureActivity extends AppCompatActivity {
     }
 
     private void loadStructureData() {
-        String baseUrl = Server.getIpServerAndroid(this);
+        String baseUrl = Server.getUrlApi(this);
         String idNumber = mSession.getIdNumber();
         String structId = mStructure.getId();
 
@@ -592,7 +591,7 @@ public class StructureActivity extends AppCompatActivity {
         mStructure.setAdhere(false);
 
         new DetachStructSyn().execute(
-                Server.getIpServerAndroid(this) + "DetachStruct.php",
+                Server.getUrlApi(this) + "DetachStruct.php",
                 mSession.getIdNumber(),
                 structId
         );

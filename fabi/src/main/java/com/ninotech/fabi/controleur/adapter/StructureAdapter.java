@@ -22,7 +22,6 @@ import android.widget.Toast;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.fabi.R;
-import com.ninotech.fabi.controleur.activity.AddBookActivity;
 import com.ninotech.fabi.controleur.activity.RegisterAuthorActivity;
 import com.ninotech.fabi.controleur.activity.StructureActivity;
 import com.ninotech.fabi.controleur.animation.RoundedTransformation;
@@ -141,7 +140,7 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
                 default:
                     mBookNumberTextView.setText(structure.getBookNumber() + " Livres");
                     Picasso.get()
-                            .load(Server.getIpServer(itemView.getContext()) + "ressources/cover/" + structure.getCover())
+                            .load(Server.getUrlServer(itemView.getContext()) + "ressources/cover/" + structure.getCover())
                             .placeholder(R.drawable.img_wait_struct)
                             .error(R.drawable.img_wait_struct)
                             .transform(new RoundedTransformation(1000,4))
@@ -206,7 +205,7 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
                                 mAdhereButton.setText("Détacher");
                                 structure.setAdhere(false);
                                 DetachStructSyn detachStructSyn = new DetachStructSyn();
-                                detachStructSyn.execute(Server.getIpServerAndroid(itemView.getContext()) + "AdhererStruct.php",mSession.getIdNumber(),structure.getId());
+                                detachStructSyn.execute(Server.getUrlApi(itemView.getContext()) + "AdhererStruct.php",mSession.getIdNumber(),structure.getId());
                             }
                             break;
                         case "AddBook","RegisterAuthor":
@@ -246,7 +245,7 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
                                 mAdhereButton.setBackgroundTintList(ColorStateList.valueOf(itemView.getContext().getColor(R.color.purple_200)));
                                 mAdhereButton.setText("S'adhérer");
                                 DetachStructSyn detachStructSyn = new DetachStructSyn();
-                                detachStructSyn.execute(Server.getIpServerAndroid(itemView.getContext()) + "DetachStruct.php",mSession.getIdNumber(),id);
+                                detachStructSyn.execute(Server.getUrlApi(itemView.getContext()) + "DetachStruct.php",mSession.getIdNumber(),id);
                             }
                         }
                     }

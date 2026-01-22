@@ -13,7 +13,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -25,7 +24,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -236,7 +234,7 @@ public class LoginActivity extends AppCompatActivity {
     private void performLogin() {
         setLoadingState(true);
         new LoginTask(this).execute(
-                Server.getIpServerAndroid(getApplicationContext()) + "Login.php",
+                Server.getUrlApi(getApplicationContext()) + "Login.php",
                 mAccount.getIdNumber(),
                 mAccount.getPassword()
         );

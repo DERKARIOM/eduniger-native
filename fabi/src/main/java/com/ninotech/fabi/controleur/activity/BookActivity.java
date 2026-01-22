@@ -2,14 +2,12 @@ package com.ninotech.fabi.controleur.activity;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -66,10 +64,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -321,7 +317,7 @@ public class BookActivity extends AppCompatActivity {
     }
 
     private void loadBookData() {
-        String baseUrl = Server.getIpServerAndroid(this);
+        String baseUrl = Server.getUrlApi(this);
         String idNumber = mSession.getIdNumber();
         String bookId = mOnlineBook.getId();
 
@@ -343,7 +339,7 @@ public class BookActivity extends AppCompatActivity {
             showReservationDialog();
         } else if (buttonText.equals(getString(R.string.cancel_reservation))) {
             new CancelReservationSyn().execute(
-                    Server.getIpServerAndroid(this) + "CancelReservation.php",
+                    Server.getUrlApi(this) + "CancelReservation.php",
                     mSession.getIdNumber(),
                     mOnlineBook.getId()
             );
@@ -471,7 +467,7 @@ public class BookActivity extends AppCompatActivity {
 
         mNumberLikeTextView.setText(String.valueOf(mOnlineBook.getNumberLikes()));
         new InsertLikeSyn().execute(
-                Server.getIpServerAndroid(this) + "InsertLike.php",
+                Server.getUrlApi(this) + "InsertLike.php",
                 mSession.getIdNumber(),
                 mOnlineBook.getId()
         );
@@ -497,7 +493,7 @@ public class BookActivity extends AppCompatActivity {
 
         mNumberNoLikeTextView.setText(String.valueOf(mOnlineBook.getNumberNoLikes()));
         new InsertNoLikeSyn().execute(
-                Server.getIpServerAndroid(this) + "InsertNoLike.php",
+                Server.getUrlApi(this) + "InsertNoLike.php",
                 mSession.getIdNumber(),
                 mOnlineBook.getId()
         );
@@ -516,7 +512,7 @@ public class BookActivity extends AppCompatActivity {
 
         mNumberSubscribeTextView.setText(String.valueOf(mOnlineBook.getNumberSubscribe()));
         new InsertSubscribeBookSyn().execute(
-                Server.getIpServerAndroid(this) + "InsertSubscribeBook.php",
+                Server.getUrlApi(this) + "InsertSubscribeBook.php",
                 mSession.getIdNumber(),
                 mOnlineBook.getId()
         );
@@ -540,7 +536,7 @@ public class BookActivity extends AppCompatActivity {
             mCommentsRecyclerView.smoothScrollToPosition(talksAdapter.getItemCount() - 1);
 
             new SendComments().execute(
-                    Server.getIpServerAndroid(this) + "SendComments.php",
+                    Server.getUrlApi(this) + "SendComments.php",
                     mSession.getIdNumber(),
                     mOnlineBook.getId(),
                     chat.getMessage()
@@ -627,7 +623,7 @@ public class BookActivity extends AppCompatActivity {
 
         private void loadBookCoverImage() {
             Picasso.get()
-                    .load(Server.getIpServer(BookActivity.this) +
+                    .load(Server.getUrlServer(BookActivity.this) +
                             "ressources/cover/" + mOnlineBook.getCover())
                     .placeholder(R.drawable.img_wait_cover_book)
                     .error(R.drawable.img_wait_cover_book)
@@ -820,7 +816,7 @@ public class BookActivity extends AppCompatActivity {
         }
 
         private void setupMediaPlayer() {
-            String url = Server.getIpServer(BookActivity.this) +
+            String url = Server.getUrlServer(BookActivity.this) +
                     "ressources/audio/" + mTones.getAudio();
 
             try {
@@ -1121,7 +1117,7 @@ public class BookActivity extends AppCompatActivity {
                     : String.valueOf(-1);
 
             new Reservation().execute(
-                    Server.getIpServerAndroid(this) + "Reservation.php",
+                    Server.getUrlApi(this) + "Reservation.php",
                     mSession.getIdNumber(),
                     mOnlineBook.getId(),
                     mNbrJour

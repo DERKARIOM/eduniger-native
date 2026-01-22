@@ -15,7 +15,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.ninotech.fabi.controleur.dialog.SimpleOkDialog;
 import com.ninotech.fabi.model.data.Account;
@@ -25,9 +24,6 @@ import com.ninotech.fabi.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.FirebaseMessaging;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -87,7 +83,7 @@ public class ChangeEmailActivity extends AppCompatActivity {
                         mConnectionProgressBar.setVisibility(View.VISIBLE);
                         mConnectionButton.setText(R.string.register_succes_1111);
                         ChangeEmailSyn changeEmailSyn = new ChangeEmailSyn();
-                        changeEmailSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "ChangeEmail.php",mAccount.getIdNumber(),mAccount.getPassword(),mAccount.getEmail());
+                        changeEmailSyn.execute(Server.getUrlApi(getApplicationContext()) + "ChangeEmail.php",mAccount.getIdNumber(),mAccount.getPassword(),mAccount.getEmail());
                         break;
                 }
 

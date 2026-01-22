@@ -2,7 +2,6 @@ package com.ninotech.fabi.controleur.activity;
 
 import android.app.UiModeManager;
 import android.content.Context;
-import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -15,7 +14,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -172,7 +170,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
                 mConnectionProgressBar.setVisibility(View.VISIBLE);
                 mConnectionButton.setText(R.string.register_succes_1111);
                 ChangePassword changePassword = new ChangePassword();
-                changePassword.execute(Server.getIpServerAndroid(getApplicationContext()) + "ChangePassword.php",
+                changePassword.execute(Server.getUrlApi(getApplicationContext()) + "ChangePassword.php",
                         mAccount.getIdNumber(),
                         mAccount.getEmail(),
                         mAccount.getPassword()
@@ -242,7 +240,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
                 mConnectionProgressBar.setVisibility(View.VISIBLE);
                 mConnectionButton.setText(R.string.register_succes_1111);
                 ChangePassword changePassword = new ChangePassword();
-                changePassword.execute(Server.getIpServerAndroid(getApplicationContext()) + "ChangePassword.php",
+                changePassword.execute(Server.getUrlApi(getApplicationContext()) + "ChangePassword.php",
                         mAccount.getIdNumber(),
                         mAccount.getEmail(),
                         mAccount.getPassword()

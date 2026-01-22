@@ -1,6 +1,5 @@
 package com.ninotech.fabi.controleur.activity;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
@@ -14,20 +13,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.ninotech.fabi.R;
 import com.ninotech.fabi.controleur.dialog.SimpleOkDialog;
 import com.ninotech.fabi.model.data.Server;
 import com.ninotech.fabi.model.table.Session;
 import com.ninotech.fabi.model.table.StudentTable;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -127,7 +119,7 @@ public class PreRegistrationActivity extends AppCompatActivity {
                     case "11111":
                         mProgressBar.setVisibility(View.VISIBLE);
                         mRegisterButton.setText("Enregistrement.");
-                        preRegisterSyn.execute(Server.getIpServerAndroid(getApplicationContext()) + "PreRegister.php",
+                        preRegisterSyn.execute(Server.getUrlApi(getApplicationContext()) + "PreRegister.php",
                                 mIdNumberEditText.getText().toString(),
                                 mNameEditText.getText().toString(),
                                 mFirstNameEditText.getText().toString(),
