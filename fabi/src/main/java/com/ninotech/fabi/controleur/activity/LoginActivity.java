@@ -234,7 +234,7 @@ public class LoginActivity extends AppCompatActivity {
     private void performLogin() {
         setLoadingState(true);
         new LoginTask(this).execute(
-                Server.getUrlApi(getApplicationContext()) + "Login.php",
+                Server.getUrlApi(getApplicationContext()) + "login.php",
                 mAccount.getIdNumber(),
                 mAccount.getPassword()
         );
@@ -428,7 +428,7 @@ public class LoginActivity extends AppCompatActivity {
             try {
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
-                        .addFormDataPart("idNumber", params[1])
+                        .addFormDataPart("id_number", params[1])
                         .addFormDataPart("password", params[2])
                         .addFormDataPart("token", activity.mToken)
                         .addFormDataPart("version",
