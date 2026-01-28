@@ -218,13 +218,13 @@ public class RegisterActivity extends AppCompatActivity {
     private void performRegistration() {
         new Thread(() -> {
             try {
-                String serverUrl = Server.getUrlApi(getApplicationContext()) + "Register.php";
+                String serverUrl = Server.getUrlApi(getApplicationContext()) + "register.php";
 
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
-                        .addFormDataPart("idUser", mAccount.getIdNumber())
+                        .addFormDataPart("id_user", mAccount.getIdNumber())
                         .addFormDataPart("name", mAccount.getName())
-                        .addFormDataPart("firstName", mAccount.getFirstName())
+                        .addFormDataPart("first_name", mAccount.getFirstName())
                         .addFormDataPart("email", mAccount.getEmail())
                         .addFormDataPart("password", mAccount.getPassword())
                         .addFormDataPart("profession", String.valueOf(mAccount.getProfession()))
