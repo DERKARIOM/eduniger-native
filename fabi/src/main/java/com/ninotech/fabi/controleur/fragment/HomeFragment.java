@@ -240,7 +240,7 @@ public class HomeFragment extends Fragment {
         new PubSyn().execute(baseUrl + "Pub.php", idNumber, version);
         new RecommendedSyn().execute(baseUrl + "recommended.php", idNumber, version);
         new StructureSyn().execute(baseUrl + "structure.php", idNumber);
-        new StructureSyn2().execute(baseUrl + "StructureTop.php", idNumber);
+        new StructureSyn2().execute(baseUrl + "structure_top.php", idNumber);
         new AuthorSyn().execute(baseUrl + "AuthorTop.php", idNumber);
     }
 
@@ -426,11 +426,9 @@ public class HomeFragment extends Fragment {
     private class StructureSyn2 extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-            return executePostRequest(params[0],
-                    new MultipartBody.Builder()
-                            .setType(MultipartBody.FORM)
-                            .addFormDataPart("idUser", params[1])
-                            .build());
+            // Construction de l'URL avec le paramètre en query string
+            String url = params[0] + "?id_user=" + params[1];
+            return executeGetRequest(url);
         }
 
         @Override
