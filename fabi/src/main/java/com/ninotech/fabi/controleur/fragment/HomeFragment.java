@@ -238,8 +238,8 @@ public class HomeFragment extends Fragment {
         String version = getString(R.string.app_version);
 
         new PubSyn().execute(baseUrl + "Pub.php", idNumber, version);
-        new RecommendedSyn().execute(baseUrl + "Recommended.php", idNumber, version);
-        new StructureSyn().execute(baseUrl + "Structure.php", idNumber);
+        new RecommendedSyn().execute(baseUrl + "recommended.php", idNumber, version);
+        new StructureSyn().execute(baseUrl + "structure.php", idNumber);
         new StructureSyn2().execute(baseUrl + "StructureTop.php", idNumber);
         new AuthorSyn().execute(baseUrl + "AuthorTop.php", idNumber);
     }
@@ -278,12 +278,9 @@ public class HomeFragment extends Fragment {
     private class RecommendedSyn extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-            return executePostRequest(params[0],
-                    new MultipartBody.Builder()
-                            .setType(MultipartBody.FORM)
-                            .addFormDataPart("idNumber", params[1])
-                            .addFormDataPart("version", params[2])
-                            .build());
+            // Construction de l'URL avec les paramètres en query string
+            String url = params[0] + "?id_number=" + params[1] + "&version=" + params[2];
+            return executeGetRequest(url);
         }
 
         @Override
@@ -372,11 +369,9 @@ public class HomeFragment extends Fragment {
     private class StructureSyn extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-            return executePostRequest(params[0],
-                    new MultipartBody.Builder()
-                            .setType(MultipartBody.FORM)
-                            .addFormDataPart("idUser", params[1])
-                            .build());
+            // Construction de l'URL avec le paramètre en query string
+            String url = params[0] + "?id_user=" + params[1];
+            return executeGetRequest(url);
         }
 
         @Override
@@ -536,7 +531,25 @@ public class HomeFragment extends Fragment {
     }
 
     // ==================== Helper Methods ====================
+    private String executeGetRequest(String url) {
+        try {
+            Request request = new Request.Builder()
+                    .url(url)
+                    .get()
+                    .build();
 
+            try (Response response = mHttpClient.newCall(request).execute()) {
+                if (response.body() != null) {
+                    return response.body().string();
+                }
+            }
+        } catch (IOException e) {
+            Log.e(TAG, "Network error: " + e.getMessage(), e);
+        } catch (Exception e) {
+            Log.e(TAG, "Unexpected error: " + e.getMessage(), e);
+        }
+        return null;
+    }
     private String executePostRequest(String url, RequestBody requestBody) {
         try {
             Request request = new Request.Builder()
