@@ -1,0 +1,7 @@
+<!-- res/anim/slide_down_up.xml -->
+<translate xmlns:android="http://schemas.android.com/apk/res/android"
+    android:duration="1000"
+    android:fromYDelta="0"
+    android:toYDelta="30"
+    android:repeatCount="infinite"
+    android:repeatMode="reverse" />

@@ -1,0 +1,95 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.ninotech.eduniger.fabi-mergeDebugResources-58:/values-v23/values-v23.xml",
+            "map": [
+                {
+                    "source": "/home/derkariom/.gradle/caches/8.13/transforms/6efc2a463c52c75b48ffab55197f4bea/transformed/cardview-1.0.0/res/values-v23/values-v23.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endLines": "4",
+                        "endColumns": "12",
+                        "endOffsets": "200"
+                    },
+                    "to": {
+                        "startLines": "67",
+                        "startColumns": "4",
+                        "startOffsets": "4000",
+                        "endLines": "69",
+                        "endColumns": "12",
+                        "endOffsets": "4145"
+                    }
+                },
+                {
+                    "source": "/home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/res/values-v23/values-v23.xml",
+                    "from": {
+                        "startLines": "2,3",
+                        "startColumns": "4,4",
+                        "startOffsets": "55,121",
+                        "endColumns": "65,62",
+                        "endOffsets": "116,179"
+                    }
+                },
+                {
+                    "source": "/home/derkariom/.gradle/caches/8.13/transforms/c2a8b28d99d99bcbe088cef7b51c6fc6/transformed/material-1.5.0/res/values-v23/values-v23.xml",
+                    "from": {
+                        "startLines": "2,5,8,13,17,20,23,26,31,34,38",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,271,481,801,1038,1245,1452,1655,1987,2189,2454",
+                        "endLines": "4,7,12,16,19,22,25,30,33,37,41",
+                        "endColumns": "10,10,10,10,10,10,10,10,10,10,10",
+                        "endOffsets": "266,476,796,1033,1240,1447,1650,1982,2184,2449,2722"
+                    },
+                    "to": {
+                        "startLines": "70,73,76,81,85,88,91,94,99,102,106",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "4150,4366,4576,4896,5133,5340,5547,5750,6082,6284,6549",
+                        "endLines": "72,75,80,84,87,90,93,98,101,105,109",
+                        "endColumns": "10,10,10,10,10,10,10,10,10,10,10",
+                        "endOffsets": "4361,4571,4891,5128,5335,5542,5745,6077,6279,6544,6817"
+                    }
+                },
+                {
+                    "source": "/home/derkariom/.gradle/caches/8.13/transforms/164a7d5ee9598614977958354ce74296/transformed/appcompat-1.7.1/res/values-v23/values-v23.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,20,34,35,36,39,43,44,45,46",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,190,325,400,487,1225,1975,2094,2221,2443,2667,2782,2889,3002",
+                        "endLines": "2,3,4,5,19,33,34,35,38,42,43,44,45,49",
+                        "endColumns": "134,134,74,86,12,12,118,126,12,12,114,106,112,12",
+                        "endOffsets": "185,320,395,482,1220,1970,2089,2216,2438,2662,2777,2884,2997,3227"
+                    },
+                    "to": {
+                        "startLines": "19,20,21,22,23,37,51,52,53,56,60,61,62,63",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "823,958,1093,1168,1255,1993,2743,2862,2989,3211,3435,3550,3657,3770",
+                        "endLines": "19,20,21,22,36,50,51,52,55,59,60,61,62,66",
+                        "endColumns": "134,134,74,86,12,12,118,126,12,12,114,106,112,12",
+                        "endOffsets": "953,1088,1163,1250,1988,2738,2857,2984,3206,3430,3545,3652,3765,3995"
+                    }
+                },
+                {
+                    "source": "/home/derkariom/projets/meduniger/fabi/src/main/res/values-v23/themes.xml",
+                    "from": {
+                        "startLines": "3,18,21",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "56,853,963",
+                        "endLines": "17,20,23",
+                        "endColumns": "12,12,12",
+                        "endOffsets": "848,958,1063"
+                    },
+                    "to": {
+                        "startLines": "4,110,113",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "184,6822,6932",
+                        "endLines": "18,112,115",
+                        "endColumns": "12,12,12",
+                        "endOffsets": "818,6927,7032"
+                    }
+                }
+            ]
+        }
+    ]
+}

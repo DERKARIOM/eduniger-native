@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp">
+    <ImageView
+        android:id="@+id/image_view_adapter_structure_cover"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_centerVertical="true"
+        android:elevation="5dp"
+        android:src="@mipmap/ic_fabi_round"
+        android:contentDescription="@string/todo" />
+    <RelativeLayout
+        android:id="@+id/info_livre2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/image_view_adapter_structure_cover"
+        android:layout_centerVertical="true">
+
+        <TextView
+            android:id="@+id/text_view_adapter_structure_title"
+            style="@style/wrap_content_all"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="5dp"
+            android:text="NinoLib"
+            android:textStyle="bold"
+            android:textSize="@dimen/size_title" />
+        <TextView
+            android:id="@+id/image_view_adapter_structure_book_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_below="@id/text_view_adapter_structure_title"
+            android:text="293 Livres"/>
+    </RelativeLayout>
+    <Button
+        android:id="@+id/button_adapter_structure"
+        android:layout_width="wrap_content"
+        android:layout_height="33dp"
+        android:text="S'adhérer"
+        android:textAllCaps="false"
+        style="@style/adapter_struture_btt"
+        android:layout_margin="10dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:textSize="12sp"
+        android:paddingTop="-1dp"
+        android:background="@drawable/form_purple_200_radius_100dp"
+        android:backgroundTint="@color/purple_200"/>
+</RelativeLayout>

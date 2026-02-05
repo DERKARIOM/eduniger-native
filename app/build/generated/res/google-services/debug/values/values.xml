@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gcm_defaultSenderId" translatable="false">512404695152</string>
+    <string name="google_api_key" translatable="false">AIzaSyBTU5Np3qxXh89rD5NLEB5pnUEMbabH9PY</string>
+    <string name="google_app_id" translatable="false">1:512404695152:android:fcd52927bd3b40c5a9acb5</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyBTU5Np3qxXh89rD5NLEB5pnUEMbabH9PY</string>
+    <string name="google_storage_bucket" translatable="false">fabi-e56e6.appspot.com</string>
+    <string name="project_id" translatable="false">fabi-e56e6</string>
+</resources>

@@ -1,0 +1,1590 @@
+[
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-hdpi_ic_v2_round.webp.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-hdpi/ic_v2_round.webp"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/xml_data_extraction_rules.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/xml/data_extraction_rules.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_forme_sombre_radius_10dp.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/forme_sombre_radius_10dp.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_dialog_confirmer_empreinte.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/dialog_confirmer_empreinte.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_forme_white_radius_100dp_border_rouge.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/forme_white_radius_100dp_border_rouge.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_forme_white_radius_100dp_border_vert.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/forme_white_radius_100dp_border_vert.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_black3_download.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_black3_download.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-xhdpi_ic_launcher.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-xhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_black3_profile.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_black3_profile.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_adapter_tones.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/adapter_tones.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_activity_setting_v2.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/activity_setting_v2.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_black3_pdf.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_black3_pdf.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_white_send.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_white_send.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_white_sombre_identify.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_white_sombre_identify.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_forme_black3_radius_100dp_border_dark.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/forme_black3_radius_100dp_border_dark.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_add_auteurs2.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/add_auteurs2.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_adapter_my_profile.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/adapter_my_profile.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-xxxhdpi_fastpv_foreground.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-xxxhdpi/fastpv_foreground.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_toolbar_search.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/toolbar_search.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_forme_black3_radius_100dp_border_vert.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/forme_black3_radius_100dp_border_vert.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_white_sombre_scanner.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_white_sombre_scanner.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/font_linux2.ttf.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/font/linux2.ttf"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_ic_fabi_background.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/ic_fabi_background.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_btn_verify_connection.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/btn_verify_connection.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_white_sombre_importe.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_white_sombre_importe.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_activity_pre_registration.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/activity_pre_registration.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_user.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/user.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_background_play_music.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/background_play_music.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_black3_pause.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_black3_pause.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_img_wait_struct.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/img_wait_struct.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_forme_white_radius_100dp_border_dark.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/forme_white_radius_100dp_border_dark.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_activity_structure.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/activity_structure.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_white_messagerie.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_white_messagerie.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_form_white_radius_10dp.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/form_white_radius_10dp.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_white_lock.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_white_lock.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-mdpi_ic_fabi_round.webp.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-mdpi/ic_fabi_round.webp"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_forme_sombre_radius_25dp.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/forme_sombre_radius_25dp.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/font_heycomic.ttf.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/font/heycomic.ttf"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_toolbar_simple.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/toolbar_simple.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_activity_server.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/activity_server.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_white_sombre_back.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_white_sombre_back.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_bg_gradient.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/bg_gradient.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_forme_purple_200_radius_25dp.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/forme_purple_200_radius_25dp.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_dialog_evaluez_nous.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/dialog_evaluez_nous.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/font_times1.ttf.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/font/times1.ttf"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout-land_adapter_book.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout-land/adapter_book.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_forme_purple_200_bottom_radius_25dp.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/forme_purple_200_bottom_radius_25dp.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_img_wait_banner.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/img_wait_banner.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_white_sombre_search.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_white_sombre_search.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_black2_replay.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_black2_replay.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_black3_physical.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_black3_physical.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_white_sombre_email.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_white_sombre_email.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_black2_volume.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_black2_volume.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_dialog_edit_text_one.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/dialog_edit_text_one.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_img_message_suggestion.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/img_message_suggestion.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_bibliotheque_new.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/bibliotheque_new.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_fragment_chat_bot.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/fragment_chat_bot.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_appel_new.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/appel_new.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_forme_white_radius_1000dp_border_black3.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/forme_white_radius_1000dp_border_black3.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_forget_pass.jpg.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/forget_pass.jpg"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_audio.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_audio.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_activity_licence.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/activity_licence.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/font_timeslight.otf.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/font/timeslight.otf"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_img_ninotech.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/img_ninotech.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/anim_agrandir_dilog_out.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/anim/agrandir_dilog_out.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_img_categorie.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/img_categorie.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_activity_audio_player.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/activity_audio_player.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-xxxhdpi_ic_v2_foreground.webp.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-xxxhdpi/ic_v2_foreground.webp"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_white_sombre_add.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_white_sombre_add.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_black3_phone_connected.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_black3_phone_connected.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_adapter_author_verticale.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/adapter_author_verticale.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-mdpi_fast2.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-mdpi/fast2.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_adapter_book_simple.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/adapter_book_simple.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/font_boba.ttf.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/font/boba.ttf"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_purple_200_start.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_purple_200_start.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_activity_account.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/activity_account.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_badge_background.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/badge_background.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_uam.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/uam.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_activity_list_player.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/activity_list_player.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-xxxhdpi_ic_launcher_round.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-xxxhdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_auteurs.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/auteurs.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_purple_200_update.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_purple_200_update.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_black3_off_like.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_black3_off_like.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/anim_zoom_out.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/anim/zoom_out.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_activity_main.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/activity_main.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_dialog_reservation.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/dialog_reservation.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_fragment_library.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/fragment_library.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/xml_backup_rules.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/xml/backup_rules.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_img_google.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/img_google.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_img_register.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/img_register.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-xxxhdpi_fast2.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-xxxhdpi/fast2.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_purple_200_video.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_purple_200_video.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_black3_grade.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_black3_grade.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_dialog_update.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/dialog_update.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_activity_author.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/activity_author.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_rouge_error.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_rouge_error.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_livres_new.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/livres_new.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-xhdpi_ic_fabi_foreground.webp.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-xhdpi/ic_fabi_foreground.webp"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_activity_pdfbox_viewer.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/activity_pdfbox_viewer.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/anim_agrandir_dilog.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/anim/agrandir_dilog.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_menu_item_badge.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/menu_item_badge.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_activity_notification.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/activity_notification.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/anim_zoom_in.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/anim/zoom_in.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_purple2_200_digitale.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_purple2_200_digitale.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_dialog_succes_suggestion.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/dialog_succes_suggestion.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_white_sombre_lock.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_white_sombre_lock.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-hdpi_ic_launcher_round.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-hdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-xhdpi_ic_v2_foreground.webp.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-xhdpi/ic_v2_foreground.webp"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-mdpi_fastpv_round.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-mdpi/fastpv_round.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-anydpi-v26_ic_fabi_round.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-anydpi-v26/ic_fabi_round.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_img_loand_book.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/img_loand_book.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/menu_menu_search.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/menu/menu_search.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_white_sombre_grade.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_white_sombre_grade.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-xhdpi_fast2.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-xhdpi/fast2.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_black3_importe.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_black3_importe.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_black3_time.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_black3_time.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_ico_add_book.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/ico_add_book.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_img_auteur_local.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/img_auteur_local.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_adapter_book.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/adapter_book.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_forme_black3_radius_100dp_border_rouge.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/forme_black3_radius_100dp_border_rouge.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_black3_video.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_black3_video.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_fragment_structure.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/fragment_structure.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_white_download.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_white_download.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_white_sombre_password.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_white_sombre_password.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/font_bouncy.otf.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/font/bouncy.otf"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_white_vue.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_white_vue.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_custom_action_bar.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/custom_action_bar.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_fragment_books.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/fragment_books.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_adapter_semi_no_connection.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/adapter_semi_no_connection.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-xxhdpi_ic_v2_round.webp.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-xxhdpi/ic_v2_round.webp"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_purple_200_bibliotheque.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_purple_200_bibliotheque.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_black3_mathematique.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_black3_mathematique.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_adapter_structure.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/adapter_structure.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_courrier_new.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/courrier_new.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_activity_digital_print.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/activity_digital_print.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-xxxhdpi_ic_launcher.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-xxxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_forme_default_radius_10dp.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/forme_default_radius_10dp.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_sorry_2.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_sorry_2.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_activity_change_email.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/activity_change_email.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_baseline_insert_chart_24.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/baseline_insert_chart_24.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-mdpi_ic_launcher.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-mdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_purple2_200_suscribe.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_purple2_200_suscribe.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-hdpi_ic_fabi_foreground.webp.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-hdpi/ic_fabi_foreground.webp"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_img_wait_pub.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/img_wait_pub.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_white_off_subscribe.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_white_off_subscribe.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_home_new.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/home_new.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_white_sombre_pdf.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_white_sombre_pdf.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-hdpi_ic_v2_foreground.webp.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-hdpi/ic_v2_foreground.webp"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_form_purple_200_radius_10dp.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/form_purple_200_radius_10dp.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_background_audio_player.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/background_audio_player.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_dialog_simple_ok.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/dialog_simple_ok.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_img_login_edu_niger.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/img_login_edu_niger.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-hdpi_ic_fabi_round.webp.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-hdpi/ic_fabi_round.webp"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-mdpi_ic_v2.webp.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-mdpi/ic_v2.webp"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_activity_change_password.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/activity_change_password.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_phone_locked.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_phone_locked.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_activity_container.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/activity_container.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_sorry.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_sorry.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_black3_add.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_black3_add.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_img_playliste_local.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/img_playliste_local.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_purple_200_phone.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_purple_200_phone.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-xxhdpi_fast2.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-xxhdpi/fast2.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_forme_black3_radius_100dp.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/forme_black3_radius_100dp.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_white_sombre_stop.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_white_sombre_stop.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-xxhdpi_fastpv_foreground.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-xxhdpi/fastpv_foreground.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_local_book.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/local_book.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_img_author.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/img_author.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-xxxhdpi_ic_fabi_round.webp.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-xxxhdpi/ic_fabi_round.webp"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_adapter_physical.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/adapter_physical.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-mdpi_ic_fabi.webp.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-mdpi/ic_fabi.webp"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_fichier_pdf.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/fichier_pdf.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_white_sombre_off_like.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_white_sombre_off_like.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_white_micro.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_white_micro.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_forme_white_radius_1000dp.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/forme_white_radius_1000dp.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_black2_pause.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_black2_pause.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_ia_new.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/ia_new.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_dialog_structure_delete.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/dialog_structure_delete.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-mdpi_ic_launcher_round.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-mdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_wait_chat.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/wait_chat.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_activity_pdf_nino_view.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/activity_pdf_nino_view.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/menu_menu_item.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/menu/menu_item.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_black3_off_subscribe.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_black3_off_subscribe.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_bg_gradient_sombre.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/bg_gradient_sombre.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-xxhdpi_ic_fabi.webp.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-xxhdpi/ic_fabi.webp"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-mdpi_ic_v2_foreground.webp.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-mdpi/ic_v2_foreground.webp"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_black3_off_no_like.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_black3_off_no_like.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-hdpi_fastpv_foreground.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-hdpi/fastpv_foreground.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_img_no_wifi.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/img_no_wifi.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_forme_white_radius_100dp_border_blue.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/forme_white_radius_100dp_border_blue.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_white_off_like.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_white_off_like.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-xxhdpi_ic_launcher_round.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-xxhdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_black3_print_digital.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_black3_print_digital.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_black3_microscopt.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_black3_microscopt.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_img_physical.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/img_physical.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_rouge_on_nolike.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_rouge_on_nolike.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_adapter_author_horizotal.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/adapter_author_horizotal.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_vert_success_2.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_vert_success_2.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-hdpi_fastpv.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-hdpi/fastpv.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_while_pdf.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_while_pdf.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_activity_add_book.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/activity_add_book.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_img_wait_profile.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/img_wait_profile.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_forme_black3_radius_100dp_border_blue.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/forme_black3_radius_100dp_border_blue.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_white_music.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_white_music.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_fragment_physique.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/fragment_physique.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_white_sombre_family.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_white_sombre_family.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-xhdpi_fastpv.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-xhdpi/fastpv.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/menu_menu_home.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/menu/menu_home.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_rouge_desole.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_rouge_desole.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_open.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/open.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_purple_200_desole.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_purple_200_desole.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_black2_favorite.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_black2_favorite.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_form_purple_200_radius_100dp.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/form_purple_200_radius_100dp.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_black2_audio_player_back.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_black2_audio_player_back.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_fragment_assistance.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/fragment_assistance.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_activity_setting.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/activity_setting.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_activity_category.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/activity_category.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_adapter_void_container.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/adapter_void_container.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_whatsapp_white.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/whatsapp_white.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_black3_message.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_black3_message.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_fragment_category.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/fragment_category.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_forme_white_vert_radius_10dp.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/forme_white_vert_radius_10dp.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-anydpi-v26_ic_v2.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-anydpi-v26/ic_v2.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_black2_add_24.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_black2_add_24.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_forme_black3_radius_1000dp_border_white.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/forme_black3_radius_1000dp_border_white.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_black3_photo.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_black3_photo.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_activity_search.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/activity_search.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_vert_success.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_vert_success.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_img_default_book.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/img_default_book.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_toolbar_book.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/toolbar_book.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_black3_password.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_black3_password.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_fragment_audio.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/fragment_audio.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-xhdpi_ic_v2_round.webp.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-xhdpi/ic_v2_round.webp"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_activity_register_author.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/activity_register_author.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_books_emp.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/books_emp.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/anim_pulse.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/anim/pulse.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-xhdpi_ic_launcher_round.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-xhdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_white_sombre_photo.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_white_sombre_photo.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_new.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_new.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_black3_my_phone.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_black3_my_phone.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-xhdpi_ic_fabi_round.webp.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-xhdpi/ic_fabi_round.webp"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_black3_vue.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_black3_vue.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-hdpi_fast2.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-hdpi/fast2.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_img_digital.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/img_digital.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-mdpi_fastpv.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-mdpi/fastpv.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-hdpi_ic_fabi.webp.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-hdpi/ic_fabi.webp"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_purple_200_digital.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_purple_200_digital.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_white_sombre_help.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_white_sombre_help.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_forme_white_circulaire.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/forme_white_circulaire.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_section.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_section.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_add_auteurs.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/add_auteurs.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_black3_micro.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_black3_micro.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-xhdpi_ic_fabi.webp.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-xhdpi/ic_fabi.webp"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_adapter_chat.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/adapter_chat.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_forme_white_100dp.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/forme_white_100dp.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_audio.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/audio.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_facebook.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/facebook.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/anim_fade_in.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/anim/fade_in.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_forme_black3_radius_10dp.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/forme_black3_radius_10dp.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_adapter_book_audio.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/adapter_book_audio.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_white_sombre_new.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_white_sombre_new.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-xxhdpi_ic_fabi_foreground.webp.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-xxhdpi/ic_fabi_foreground.webp"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/menu_menu_structure.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/menu/menu_structure.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-xxhdpi_ic_fabi_round.webp.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-xxhdpi/ic_fabi_round.webp"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_departement.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_departement.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_activity_infos.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/activity_infos.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_rouge_error2.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_rouge_error2.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_black2_back_player.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_black2_back_player.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_img_wait_cover_book.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/img_wait_cover_book.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_fragment_home.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/fragment_home.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_activity_login.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/activity_login.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/font_university.otf.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/font/university.otf"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-xxxhdpi_ic_v2.webp.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-xxxhdpi/ic_v2.webp"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_toolbar_main.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/toolbar_main.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/menu_tool_bar_audio_player.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/menu/tool_bar_audio_player.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/font_roman.otf.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/font/roman.otf"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_toolbar_structure.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/toolbar_structure.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_adapter_structure_horizontal.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/adapter_structure_horizontal.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_forme_purple_500_radius_25dp.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/forme_purple_500_radius_25dp.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_white_sombre_phone_locked.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_white_sombre_phone_locked.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_img_love_livre.jpg.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/img_love_livre.jpg"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_activity_suggestion.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/activity_suggestion.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_forget_password.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/forget_password.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-xxhdpi_fastpv.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-xxhdpi/fastpv.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_fragment_suggestion.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/fragment_suggestion.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-xxhdpi_ic_launcher.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-xxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_back.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_back.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_activity_tmp.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/activity_tmp.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_activity_theme.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/activity_theme.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/font_rochaline.otf.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/font/rochaline.otf"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_purple_200_messagerie.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_purple_200_messagerie.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-mdpi_ic_v2_round.webp.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-mdpi/ic_v2_round.webp"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-hdpi_ic_launcher.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-hdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_adapter_similar.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/adapter_similar.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_forme_white_sombre_radius_100dp.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/forme_white_sombre_radius_100dp.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_adapter_setting.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/adapter_setting.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-xxhdpi_fastpv_round.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-xxhdpi/fastpv_round.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_fragment_book_store.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/fragment_book_store.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_activity_contact.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/activity_contact.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_white_sombre_mode_night.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_white_sombre_mode_night.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_black3_lock.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_black3_lock.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_categorie.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/categorie.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-xxxhdpi_fastpv.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-xxxhdpi/fastpv.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_adapter_no_connection.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/adapter_no_connection.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-xxxhdpi_ic_fabi.webp.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-xxxhdpi/ic_fabi.webp"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_cati.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/cati.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_white_home.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_white_home.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_img_audio_book.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/img_audio_book.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_ecouteurs.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/ecouteurs.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_forme_circulaire.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/forme_circulaire.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_black_search.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_black_search.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_family.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_family.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-xhdpi_ic_v2.webp.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-xhdpi/ic_v2.webp"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-xhdpi_fastpv_foreground.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-xhdpi/fastpv_foreground.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_black2_audio_player_next.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_black2_audio_player_next.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/font_apple2.ttf.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/font/apple2.ttf"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_black3_email.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_black3_email.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_black3_identify.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_black3_identify.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-anydpi-v26_ic_v2_round.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-anydpi-v26/ic_v2_round.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/xml_file_paths.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/xml/file_paths.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_ic_v2_background.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/ic_v2_background.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_background_play.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/background_play.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_white_sombre_time.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_white_sombre_time.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-hdpi_ic_v2.webp.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-hdpi/ic_v2.webp"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_black2_shuffle_24.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_black2_shuffle_24.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_img_electronic_book.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/img_electronic_book.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_activity_register.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/activity_register.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_black3_physical2.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_black3_physical2.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-xxxhdpi_fastpv_round.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-xxxhdpi/fastpv_round.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_activity_finger_print.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/activity_finger_print.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/font_apple1.ttf.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/font/apple1.ttf"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_structure.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_structure.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/font_linux.ttf.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/font/linux.ttf"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_purple_200_compte.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_purple_200_compte.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_forme_white_radius_25dp.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/forme_white_radius_25dp.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_white_sombre_phone.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_white_sombre_phone.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_black2_queue_music_24.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_black2_queue_music_24.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/navigation_mobile_navigation.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/navigation/mobile_navigation.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_black3_start.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_black3_start.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-xxhdpi_ic_v2.webp.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-xxhdpi/ic_v2.webp"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-anydpi-v26_ic_fabi.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-anydpi-v26/ic_fabi.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_white_sombre_print_digital.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_white_sombre_print_digital.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-mdpi_ic_fabi_foreground.webp.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-mdpi/ic_fabi_foreground.webp"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_img_add_cover.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/img_add_cover.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_black3_stop.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_black3_stop.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_forme_white_radius_1000dp_border_white.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/forme_white_radius_1000dp_border_white.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_forme_white_radius_10dp_border_pupel_200.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/forme_white_radius_10dp_border_pupel_200.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_whaptsapp_black3.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/whaptsapp_black3.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_baseline_bar_chart_24.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/baseline_bar_chart_24.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/anim_slide_down_up.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/anim/slide_down_up.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/menu_menu_bottom.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/menu/menu_bottom.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_forme_purple2_200_radius_10dp.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/forme_purple2_200_radius_10dp.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_white_sombre_video.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_white_sombre_video.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_adapter_electronic.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/adapter_electronic.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_img_category.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/img_category.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_black2_play.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_black2_play.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-xxxhdpi_ic_fabi_foreground.webp.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-xxxhdpi/ic_fabi_foreground.webp"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_warning.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_warning.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_white_sombre_phone_connected.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_white_sombre_phone_connected.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_toolbar_suggestion.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/toolbar_suggestion.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_adapter_talks.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/adapter_talks.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_black3_scanner.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_black3_scanner.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_adapter_parametre.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/adapter_parametre.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-xxhdpi_ic_v2_foreground.webp.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-xxhdpi/ic_v2_foreground.webp"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_white_sombre_pause.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_white_sombre_pause.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_adapter_book_horizotal.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/adapter_book_horizotal.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_theme_default.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_theme_default.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_eduniger.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/eduniger.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_activity_book.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/activity_book.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_white_sombre_micro.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_white_sombre_micro.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_forme_white2_radius_10dp.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/forme_white2_radius_10dp.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_whatsapp.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/whatsapp.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_forme_white_radius_10dp.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/forme_white_radius_10dp.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/font_soka.ttf.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/font/soka.ttf"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_emoji_success.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_emoji_success.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_white_sombre_audio.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_white_sombre_audio.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_add_book.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/add_book.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-mdpi_fastpv_foreground.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-mdpi/fastpv_foreground.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_form_circular_bar_connexion.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/form_circular_bar_connexion.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_black3_help.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_black3_help.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_black3_play.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_black3_play.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_adapter_historique.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/adapter_historique.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_white_sombre_physical.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_white_sombre_physical.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_utilisateur_du_livre.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/utilisateur_du_livre.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/font_campus.ttf.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/font/campus.ttf"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_adapter_category.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/adapter_category.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_adapter_tmp.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/adapter_tmp.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_black2_equalizer.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_black2_equalizer.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_purple_200_information.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_purple_200_information.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_black2_rotation_none.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_black2_rotation_none.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-xhdpi_fastpv_round.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-xhdpi/fastpv_round.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/layout_adapter_notification.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/layout/adapter_notification.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_purple2_200_on_like.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_purple2_200_on_like.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-xxxhdpi_ic_v2_round.webp.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-xxxhdpi/ic_v2_round.webp"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_white_sombre_message.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_white_sombre_message.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/mipmap-hdpi_fastpv_round.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/mipmap-hdpi/fastpv_round.png"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_vector_white_back_player.xml.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/vector_white_back_player.xml"
+    },
+    {
+        "merged": "com.ninotech.eduniger.fabi-debug-60:/drawable_img_telecharge_local.png.flat",
+        "source": "com.ninotech.eduniger.fabi-main-62:/drawable/img_telecharge_local.png"
+    }
+]

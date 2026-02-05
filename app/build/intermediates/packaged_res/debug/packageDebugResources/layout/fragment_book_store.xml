@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    style="@style/background"
+    tools:context=".controleur.fragment.BookStoreFragment">
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tab_layout_accuiel"
+        android:background="@color/transparent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <com.google.android.material.tabs.TabItem
+            style="@style/wrap_content_all"
+            android:text="@string/books_title"/>
+        <com.google.android.material.tabs.TabItem
+            style="@style/wrap_content_all"
+            android:text="@string/category_title"/>
+        <com.google.android.material.tabs.TabItem
+            style="@style/wrap_content_all"
+            android:text="@string/structure"/>
+    </com.google.android.material.tabs.TabLayout>
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/view_page_accuiel"
+        android:layout_below="@id/tab_layout_accuiel"
+        style="@style/match_parent_all"/>
+</RelativeLayout>

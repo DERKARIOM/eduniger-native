@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".controleur.activity.ThemeActivity">
+
+    <RadioGroup
+        android:id="@+id/radio_group_activity_theme"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="8dp">
+
+        <TextView
+            android:id="@+id/text_view_activity_theme_select"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Choisissez un thème"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginStart="10dp"
+            android:textSize="20dp"
+            android:fontFamily="@font/linux"
+            android:textColor="@color/black"
+            />
+
+        <RadioButton
+            android:id="@+id/radio_button_activity_theme_default"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:checked="true"
+            android:text="Clair" />
+
+        <RadioButton
+            android:layout_marginStart="10dp"
+            android:id="@+id/radio_button_activity_theme_night"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Sombre" />
+
+        <RadioButton
+            android:id="@+id/radio_button_activity_theme_other"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="Systémes" />
+    </RadioGroup>
+
+</RelativeLayout>

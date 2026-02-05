@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/forme_white_radius_10dp"
+    android:padding="20dp">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginBottom="20dp">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/vector_purple_200_update" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:text="Mise à jour requise"
+            android:textSize="20dp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/linux2"
+            />
+    </LinearLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Une nouvelle version de EduNiger est désormais disponible , mettez à jour l' application pour profiter de nouvelles fonctionnalités et améliorations."
+        android:layout_margin="10dp"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:fontFamily="@font/linux2"
+        android:textColor="@color/black2"
+        android:textSize="15dp"
+        />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="end"
+        android:layout_margin="10dp"
+        >
+        <TextView
+            android:id="@+id/annuler"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Annuler"
+            android:padding="10dp"
+            android:textColor="@color/purple_200"
+            android:fontFamily="@font/linux2"
+            android:layout_margin="10dp"
+            android:textSize="20dp"/>
+        <TextView
+            android:id="@+id/installer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Installer"
+            android:layout_margin="10dp"
+            android:padding="10dp"
+            android:textColor="@color/purple_200"
+            android:fontFamily="@font/linux2"
+            android:textSize="20dp"
+            />
+    </LinearLayout>
+</LinearLayout>

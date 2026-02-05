@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".controleur.activity.ServerActivity">
+    <Switch
+        android:id="@+id/switch_activity_server"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/linux2"
+        android:showText="false"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginTop="15dp"
+        android:text="Mode multi serveurs"
+        android:layout_marginBottom="5dp"
+        android:textSize="20dp" />
+
+    <TextView
+        android:id="@+id/text_view_activity_server_desc_muti_server"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Lorsque cette option sera activée, vous pouvez synchroniser les données de plusieurs serveurs."
+        android:layout_marginStart="12dp"
+        android:fontFamily="@font/linux2"
+        android:textSize="15dp"
+        android:layout_marginEnd="10dp"
+        android:layout_below="@+id/switch_activity_server"
+        />
+
+    <RadioGroup
+        android:id="@+id/radio_group_activity_server"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_below="@+id/text_view_activity_server_desc_muti_server"
+        android:layout_marginStart="8dp">
+
+        <TextView
+            android:id="@+id/text_view_activity_server_select"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Choisir un serveur de synchronisation"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginStart="10dp"
+            android:textSize="20dp"
+            android:fontFamily="@font/linux"
+            android:textColor="@color/black"
+            />
+
+        <RadioButton
+            android:id="@+id/radio_button_activity_server_inetrnet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:checked="true"
+            android:text="Internet" />
+
+        <RadioButton
+            android:layout_marginStart="10dp"
+            android:id="@+id/radio_button_activity_server_extranet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="DevHub" />
+
+        <RadioButton
+            android:id="@+id/radioButton3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="Autre" />
+    </RadioGroup>
+    <EditText
+        android:id="@+id/edit_text_activity_server_ip"
+        android:hint=" https://exemple.com"
+        android:layout_below="@id/radio_group_activity_server"
+        style="@style/activity_url_server"
+        android:inputType="text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:autofillHints="" />
+
+</RelativeLayout>

@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/match_parent_all"
+    tools:context=".controleur.activity.SuggestionActivity">
+   <include layout="@layout/toolbar_suggestion"/>
+    <ScrollView
+        android:layout_below="@+id/relative_layout_toolbar_suggestion"
+        style="@style/match_parent_all"
+        android:layout_centerInParent="true"
+        >
+        <RelativeLayout
+            style="@style/match_wrap">
+            <LinearLayout
+                android:id="@+id/linear_layout_activity_suggestion_image"
+                style="@style/wrap_content_all"
+                android:layout_marginTop="10dp"
+                >
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="200dp"
+                    android:src="@drawable/img_message_suggestion"
+                    android:contentDescription="@string/todo" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_below="@id/linear_layout_activity_suggestion_image"
+                android:id="@+id/BlockJuggestion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="40dp"
+                android:orientation="vertical">
+                <Spinner
+                    android:id="@+id/spinner_activity_register_profession"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:autofillHints="rasdkdkdkdkdkd"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="25dp"
+                    android:layout_marginEnd="20dp"
+                    android:fontFamily="sans-serif-smallcaps"
+                    android:gravity="center"
+                    android:backgroundTint="@color/purple_200"
+                    android:padding="10dp"/>
+                <ScrollView
+                    style="@style/wrap_content_all"
+                    tools:ignore="NestedScrolling">
+
+                    <EditText
+                        android:id="@+id/edit_text_activity_suggestion_message"
+                        style="@style/match_wrap"
+                        android:layout_marginStart="30dp"
+                        android:layout_marginTop="20dp"
+                        android:backgroundTint="@color/purple_200"
+                        android:layout_marginEnd="30dp"
+                        android:fontFamily="@font/apple1"
+                        android:gravity="top"
+                        android:hint="@string/suggestion_hint_message"
+                        android:inputType="textMultiLine"
+                        android:minLines="4"
+                        android:padding="10dp"
+                        android:scrollbars="vertical"
+                        android:autofillHints="" />
+                </ScrollView>
+                <LinearLayout
+                    style="@style/match_wrap"
+                    android:layout_marginTop="25dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginStart="25dp"
+                    >
+                    <TextView
+                        style="@style/wrap_content_all"
+                        android:fontFamily="@font/apple1"
+                        android:text="@string/information_phone"
+                        />
+                    <CheckBox
+                        android:id="@+id/check_box_activity_suggestion_information_phone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"/>
+                </LinearLayout>
+
+                <TextView
+                    style="@style/wrap_content_all"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="20dp"
+                    android:fontFamily="@font/apple1"
+                    android:text="@string/details_information_phone" />
+
+                <TextView
+                    android:id="@+id/text_view_activity_suggestion_error"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_marginBottom="10dp"
+                    android:text=""
+                    android:textColor="@color/rouge"
+                    android:textSize="@dimen/size_sub_title" />
+                <RelativeLayout
+                    android:id="@+id/BlockButtonConnect"
+                    style="@style/wrap_content_all"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginEnd="30dp"
+                    >
+
+                    <ProgressBar
+                        android:id="@+id/progress_bar_activity_suggestion_connection"
+                        style="@android:style/Widget.Holo.ProgressBar.Small"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_centerInParent="true"
+                        android:layout_marginStart="40dp"
+                        android:layout_centerVertical="true"
+                        android:elevation="5dp"
+                        android:padding="20dp"
+                        android:visibility="invisible"
+                        android:progressDrawable="@drawable/form_circular_bar_connexion" />
+                    <Button
+                        android:id="@+id/button_activity_suggestion_send"
+                        style="@style/match_wrap"
+                        android:layout_centerInParent="true"
+                        android:textColor="@color/white"
+                        android:background="@drawable/form_purple_200_radius_10dp"
+                        android:textAllCaps="false"
+                        android:text="@string/send" />
+                </RelativeLayout>
+            </LinearLayout>
+        </RelativeLayout>
+    </ScrollView>
+</RelativeLayout>

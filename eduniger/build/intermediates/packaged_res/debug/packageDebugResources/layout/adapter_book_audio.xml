@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp">
+
+    <ImageView
+        android:id="@+id/image_view_adapter_book_audio_blanket"
+        android:layout_width="100dp"
+        android:layout_height="80dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:elevation="2dp"
+        android:src="@mipmap/ic_fabi_round"
+        android:contentDescription="@string/todo" />
+    <RelativeLayout
+        android:id="@+id/info_livre"
+        style="@style/wrap_content_all"
+        android:layout_toEndOf="@+id/image_view_adapter_book_audio_blanket"
+        android:layout_centerVertical="true">
+        <TextView
+            android:id="@+id/text_view_adapter_book_audio_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Titre du livre"
+            android:layout_margin="5dp"
+            android:textSize="@dimen/size_title"
+            android:textStyle="bold"
+            />
+        <TextView
+            android:id="@+id/text_view_adapter_book_audio_author"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_below="@id/text_view_adapter_book_audio_title"
+            android:text="Auteur du livre"
+            android:textSize="@dimen/size_sub_title"
+            />
+        <TextView
+            android:id="@+id/text_view_adapter_book_audio_duration"
+            android:layout_margin="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="30:15"
+            android:layout_below="@id/text_view_adapter_book_audio_author"
+            android:textSize="@dimen/size_sub_title"
+            android:layout_centerVertical="true"/>
+
+    </RelativeLayout>
+
+</RelativeLayout>

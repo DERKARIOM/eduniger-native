@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_home"
+        android:icon="@drawable/home_new"
+        android:title="Accueil" />
+    <item
+        android:id="@+id/navigation_structure"
+        android:icon="@drawable/livres_new"
+        android:title="Librairie" />
+    <item
+        android:id="@+id/navigation_suggestion"
+        android:icon="@drawable/ia_new"
+        android:title="Eduna" />
+    <item
+        android:id="@+id/navigation_library"
+        android:icon="@drawable/bibliotheque_new"
+        android:title="Bibliothèque" />
+</menu>

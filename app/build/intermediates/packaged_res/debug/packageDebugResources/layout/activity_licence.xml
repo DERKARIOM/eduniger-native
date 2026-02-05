@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".controleur.activity.LicenceActivity">
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/linux2"
+            android:layout_margin="10dp"
+            android:textSize="20dp"
+            android:paddingBottom="20dp"
+            android:text="Conditions d’Utilisation de l’Application EduNiger\n\nDernière mise à jour : 6/04/2025\n\nBienvenue sur EduNiger ! En utilisant notre application, vous acceptez les présentes Conditions d’Utilisation. Nous vous encourageons à les lire attentivement.\n\n1. Acceptation des Conditions\n\n
+L’utilisation de l’application EduNiger implique votre acceptation pleine et entière des présentes conditions. Si vous ne les acceptez pas, veuillez ne pas utiliser l’application.\n\n2. Objectif de l’Application\n\n
+EduNiger est une plateforme dédiée à l’apprentissage et à l’accès aux ressources éducatives sous divers formats (livres électroniques, audio, Physique, etc.). Son but est de faciliter l’accès au savoir à tous.\n\n3. Utilisation Responsable\n\n
+Vous vous engagez à utiliser l’application de manière légale et conforme aux règles de bonne conduite. Il est interdit de publier, partager ou télécharger du contenu inapproprié, offensant ou violant les droits d’autrui.L’utilisation de l’application à des fins frauduleuses, commerciales non autorisées ou pour toute activité illicite est strictement interdite.\n\n
+4. Comptes Utilisateurs\n\nL'utilisation de l'application  nécessitent la création d’un compte utilisateur. Vous êtes responsable de la confidentialité de vos identifiants.
+
+En cas d’utilisation non autorisée de votre compte, veuillez nous en informer immédiatement.\n\n
+5. Protection des Données et Confidentialité
+EduNiger respecte votre vie privée et protège vos données personnelles conformément à notre Politique de Confidentialité.
+
+Vos informations ne seront ni vendues ni partagées avec des tiers sans votre consentement.\n\n
+6. Propriété Intellectuelle\n\n
+Tout le contenu disponible sur EduNiger (livres, articles, Blog, etc.) est protégé par les droits d’auteur.
+Toute reproduction, modification ou distribution sans autorisation est interdite.\n\n
+7. Limitation de Responsabilité\n\n
+Nous nous efforçons de garantir la disponibilité et la fiabilité de l’application, mais nous ne pouvons garantir l’absence d’erreurs ou d’interruptions.
+
+EduNiger ne saurait être tenu responsable en cas de perte de données ou de tout dommage résultant de l’utilisation de l’application.\n\n
+8. Modifications des Conditions\n\n
+Nous nous réservons le droit de modifier ces conditions à tout moment. Les utilisateurs seront informés des mises à jour importantes.\n\n
+9. Contact\n\n
+Pour toute question ou suggestion, contactez-nous à contact@eduniger.com
+
+En utilisant EduNiger, vous acceptez ces conditions. Merci de faire partie de notre communauté d’apprentissage ! 🚀📚\n\n"/>
+    </ScrollView>
+</RelativeLayout>

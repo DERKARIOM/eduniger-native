@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".controleur.activity.LockActivity">
+    <RelativeLayout
+        android:id="@+id/relative_layout_activity_login_img"
+        style="@style/match_wrap"
+        android:layout_above="@+id/edit_text_activity_digital_print_id_number"
+        android:layout_alignParentTop="true"
+        android:background="@android:color/transparent"
+        android:elevation="10dp"
+        android:layout_marginBottom="10dp">
+        <ImageView
+            style="@style/wrap_content_all"
+            android:src="@drawable/img_login_edu_niger"
+            android:contentDescription="@string/todo" />
+    </RelativeLayout>
+
+    <EditText
+        android:id="@+id/edit_text_activity_digital_print_id_number"
+        android:layout_above="@+id/edit_text_activity_digital_print_password"
+        android:hint="@string/edit_text_hint_id_number"
+        android:inputType="number"
+        android:selectAllOnFocus="false"
+        android:drawableStart="@drawable/vector_black3_identify"
+        style="@style/edit_text_register"
+        android:autofillHints="" />
+
+    <EditText
+        android:id="@+id/edit_text_activity_digital_print_password"
+        android:layout_above="@+id/text_view_activity_digital_print_error"
+        android:inputType="textPassword"
+        android:hint="@string/edit_text_hint_password"
+        android:drawableStart="@drawable/vector_black3_password"
+        style="@style/edit_text_register"
+        android:autofillHints="" />
+
+    <TextView
+        android:id="@+id/text_view_activity_digital_print_error"
+        android:layout_above="@id/relative_layout_activity_digital_print_connection"
+        style="@style/text_view_error_register"/>
+
+    <RelativeLayout
+        android:id="@+id/relative_layout_activity_digital_print_connection"
+        style="@style/wrap_content_all"
+        android:layout_above="@+id/image_view_activity_digital_print_lock"
+        android:layout_marginStart="28dp"
+        android:layout_marginEnd="28dp"
+        android:layout_marginBottom="30dp"
+        >
+        <ProgressBar
+            android:id="@+id/progress_bar_activity_digital_print_connection"
+            style="@style/progress_bar_connection" />
+        <Button
+            android:id="@+id/button_activity_digital_print_connection"
+            style="@style/button_connexion" />
+    </RelativeLayout>
+    <ImageView
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/image_view_activity_digital_print_lock"
+        android:layout_above="@+id/text_view_activity_digital_print_helper"
+        android:src="@drawable/vector_purple_200_digital"
+        android:layout_marginBottom="30dp"
+        android:contentDescription="@string/todo" />
+
+    <TextView
+        android:id="@+id/text_view_activity_digital_print_helper"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:text="NINOTECH"
+        android:textSize="@dimen/size_sub_title"
+        style="@style/text_view_pass_login_register" />
+</RelativeLayout>

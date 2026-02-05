@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/match_parent_all"
+    android:orientation="vertical"
+    android:background="@color/white"
+    tools:context=".controleur.activity.ChangeEmailActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_above="@+id/edit_text_activity_change_email_id_number"
+        android:layout_marginBottom="40dp"
+        android:background="@android:color/transparent"
+        android:elevation="10dp"
+        android:layout_alignParentTop="true">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/todo" />
+
+    </RelativeLayout>
+
+    <EditText
+        android:id="@+id/edit_text_activity_change_email_id_number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/edit_text_activity_change_email_password"
+        android:layout_marginStart="28dp"
+        android:layout_marginEnd="28dp"
+        android:layout_marginBottom="30dp"
+        android:background="@drawable/forme_white_radius_10dp"
+        android:elevation="10dp"
+        android:hint="@string/edit_text_hint_id_number"
+        android:drawableStart="@drawable/vector_black3_identify"
+        android:inputType="number"
+        android:padding="10dp"
+        android:autofillHints="" />
+
+    <EditText
+        android:id="@+id/edit_text_activity_change_email_password"
+        style="@style/match_wrap"
+        android:layout_above="@id/EditMail3"
+        android:layout_marginStart="28dp"
+        android:layout_marginEnd="28dp"
+        android:layout_marginBottom="30dp"
+        android:background="@drawable/forme_white_radius_10dp"
+        android:elevation="10dp"
+        android:hint="@string/edit_text_hint_password"
+        android:drawableStart="@drawable/vector_black3_password"
+        android:inputType="textPassword"
+        android:padding="10dp"
+        android:autofillHints=""
+        tools:ignore="TextFields" />
+
+    <EditText
+        android:id="@+id/EditMail3"
+        style="@style/match_wrap"
+        android:layout_above="@id/text_view_activity_change_email_error"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="30dp"
+        android:background="@drawable/forme_white_radius_10dp"
+        android:elevation="10dp"
+        android:hint="@string/email_new"
+        android:drawableStart="@drawable/vector_black3_email"
+        android:inputType="textEmailAddress"
+        android:padding="10dp"
+        android:autofillHints="" />
+
+    <TextView
+        android:id="@+id/text_view_activity_change_email_error"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/relative_layout_change_email_connection"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="30dp"
+        android:textColor="@color/rouge"
+        android:textSize="@dimen/size_sub_title" />
+
+
+    <RelativeLayout
+        android:id="@+id/relative_layout_change_email_connection"
+        style="@style/wrap_content_all"
+        android:layout_above="@id/text_view_activity_change_email_change_password"
+        android:layout_marginStart="28dp"
+        android:layout_marginEnd="28dp"
+        android:layout_marginBottom="20dp"
+        >
+
+        <ProgressBar
+            android:id="@+id/progress_bar_change_email_connection"
+            android:layout_alignStart="@id/button_activity_change_email_connection"
+            style="@style/progress_bar_connection"/>
+
+        <Button
+            android:id="@+id/button_activity_change_email_connection"
+            style="@style/button_connexion" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/text_view_activity_change_email_change_password"
+        style="@style/wrap_content_all"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:padding="10dp"
+        android:text="@string/goto_change_password"
+        android:textColor="@color/purple_200"
+        android:textSize="@dimen/size_title" />
+</RelativeLayout>

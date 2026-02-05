@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/match_wrap"
+    android:layout_margin="10dp"
+    tools:ignore="UseCompoundDrawables">
+    <ImageView
+        android:id="@+id/image_view_adapter_category_blanket"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_margin="10dp"
+        android:src="@mipmap/ic_fabi_round"
+        android:contentDescription="@string/todo" />
+    <TextView
+        android:id="@+id/text_view_adapter_category_title"
+        style="@style/wrap_content_all"
+        android:layout_margin="10dp"
+        android:layout_gravity="center_vertical"
+        android:text="@string/category"
+        android:textStyle="bold"
+        android:textSize="@dimen/size_title"/>
+</LinearLayout>

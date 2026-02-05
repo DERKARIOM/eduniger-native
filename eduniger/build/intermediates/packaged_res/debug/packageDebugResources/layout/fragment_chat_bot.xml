@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="com.ninotech.eduniger.controleur.fragment.ChatBotFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recylerDisscution"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/messageNotifB"
+        android:layout_marginBottom="-24dp" />
+
+    <RelativeLayout
+        android:id="@+id/messageNotifB"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/envoyer"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="61dp"
+        android:layout_marginBottom="20dp"
+        >
+        <Button
+            android:id="@+id/bttMemorisation"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@android:color/transparent"
+            android:layout_alignEnd="@id/messageNotif"
+            android:layout_alignBottom="@id/messageNotif"
+            style="@style/fragment_chat_ia_btt_scan"/>
+
+        <Button
+            android:id="@+id/importerMedia"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignStart="@+id/bttMemorisation"
+            android:layout_alignBottom="@id/messageNotif"
+            android:layout_marginStart="-33dp"
+            android:background="@android:color/transparent"
+           style="@style/fragment_chat_ia_btt_join" />
+
+        <Button
+            android:id="@+id/emoji"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignStart="@+id/messageNotif"
+            android:layout_alignBottom="@id/messageNotif"
+            android:background="@android:color/transparent"
+            android:inputType=""
+           style="@style/fragment_chat_ia_btt_micro" />
+
+
+        <EditText
+            android:id="@+id/messageNotif"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/fragment_chat_ia_edit_text_message"
+            android:hint="Message"
+            android:paddingStart="50dp"
+            android:paddingEnd="65dp"
+            android:padding="10dp"
+             />
+
+    </RelativeLayout>
+    <ImageButton
+        android:id="@+id/envoyer"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignBottom="@+id/messageNotifB"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/forme_circulaire"
+        android:src="@drawable/vector_white_send"
+         />
+
+</RelativeLayout>

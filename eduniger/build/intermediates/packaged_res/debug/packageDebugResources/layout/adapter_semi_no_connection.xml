@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="10dp">
+    <RelativeLayout
+        android:id="@+id/relative_adapter_semi_no_connection_wait"
+        android:layout_width="wrap_content"
+        android:padding="10dp"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        >
+        <ProgressBar
+            android:id="@+id/progress_bar_adapter_no_connection"
+            android:layout_centerInParent="true"
+            android:rotation="180"
+            style="@style/progress_bar_try_connection" />
+        <ProgressBar
+            android:id="@+id/progress_bar_adapter_no_connection2"
+            android:layout_centerInParent="true"
+            style="@style/progress_bar_try_connection2" />
+    </RelativeLayout>
+    <ImageView
+        android:id="@+id/image_view_adapter_semi_no_connection"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:visibility="gone"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_centerVertical="true"
+        android:elevation="5dp"
+        android:src="@drawable/img_no_wifi"
+        android:contentDescription="@string/todo" />
+    <RelativeLayout
+        android:id="@+id/info_livre2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/image_view_adapter_semi_no_connection"
+        android:layout_centerVertical="true">
+
+        <TextView
+            android:id="@+id/text_view_adapter_semi_no_connection_title"
+            style="@style/wrap_content_all"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:visibility="gone"
+            android:layout_marginBottom="5dp"
+            android:text="Hors connexion"
+            android:textStyle="bold"
+            android:textSize="@dimen/size_title" />
+    </RelativeLayout>
+    <Button
+        android:id="@+id/button_adapter_semi_no_connection_try"
+        android:layout_width="wrap_content"
+        android:layout_height="33dp"
+        android:text="Réessayer"
+        android:textColor="@color/white"
+        android:textAllCaps="false"
+        android:layout_margin="10dp"
+        android:visibility="gone"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:textSize="12sp"
+        android:paddingTop="-1dp"
+        android:background="@drawable/form_purple_200_radius_100dp"
+        android:backgroundTint="@color/purple_200"/>
+</RelativeLayout>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/match_parent_all"
+    android:fitsSystemWindows="true"
+    tools:context=".controleur.activity.NotificationActivity">
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_activity_notification"
+        style="@style/match_parent_all"
+        android:layout_marginTop="10dp"
+        />
+  </RelativeLayout>

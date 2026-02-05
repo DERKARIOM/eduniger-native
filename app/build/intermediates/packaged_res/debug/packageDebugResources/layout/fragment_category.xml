@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/match_parent_all"
+    tools:context=".controleur.fragment.CategoryFragment">
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_fragment_category"
+        style="@style/match_parent_all"
+        android:visibility="gone"
+        />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_fragment_category_wait"
+        android:nestedScrollingEnabled="false"
+        android:layout_margin="10dp"
+        android:layout_centerInParent="true"
+        style="@style/wrap_content_all"
+        />
+</RelativeLayout>

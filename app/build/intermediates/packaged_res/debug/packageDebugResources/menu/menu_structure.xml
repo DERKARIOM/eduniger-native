@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/idRecherhe"
+        android:title="Actualiser" />
+
+    <item
+        android:id="@+id/menuHomeNotification"
+        android:icon="@drawable/vector_black3_off_subscribe"
+        android:title="notification"
+        app:showAsAction="always|never|collapseActionView|withText" />
+    <item android:title="Préinscription" />
+    <item
+        android:id="@+id/setting"
+        android:title="Paramètres" />
+    <item
+        android:id="@+id/item_menu_search"
+        android:title="@string/search"
+        android:icon="@drawable/vector_black_search"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/deconnect"
+        android:title="Déconnecter" />
+</menu>

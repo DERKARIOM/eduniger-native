@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:background="@android:color/white">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- Zone d'affichage du PDF avec support du swipe -->
+        <FrameLayout
+            android:id="@+id/pdfContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/controlLayout">
+
+            <!-- ScrollView pour zoom vertical -->
+            <ScrollView
+                android:id="@+id/scrollViewVertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="-10dp"
+                android:fillViewport="true"
+                android:scrollbars="none">
+
+                <!-- HorizontalScrollView pour zoom horizontal -->
+                <HorizontalScrollView
+                    android:id="@+id/scrollViewHorizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fillViewport="true"
+                    android:scrollbars="none">
+
+                    <!-- ImageView pour afficher la page PDF -->
+                    <ImageView
+                        android:id="@+id/imageViewPdf"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:adjustViewBounds="true"
+
+                        android:scaleType="fitCenter"
+                        android:visibility="gone"/>
+
+                </HorizontalScrollView>
+
+            </ScrollView>
+
+            <!-- Message de swipe pour A5 -->
+            <TextView
+                android:id="@+id/textViewSwipeHint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="⬅️ Swipez pour naviguer ➡️"
+                android:textSize="16sp"
+                android:textColor="@android:color/darker_gray"
+                android:background="#33000000"
+                android:padding="16dp"
+                android:visibility="gone"
+                android:alpha="0.7"/>
+
+        </FrameLayout>
+
+        <!-- Barre de progression centrée -->
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:indeterminate="true"
+            android:visibility="gone"/>
+
+        <!-- Texte de chargement -->
+        <TextView
+            android:id="@+id/textViewLoading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/progressBar"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="16dp"
+            android:text="Chargement du PDF..."
+            android:textSize="14sp"
+            android:textColor="@android:color/darker_gray"
+            android:visibility="gone"/>
+
+        <!-- Contrôles de navigation (bas de l'écran) -->
+        <LinearLayout
+            android:id="@+id/controlLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="vertical"
+           style="@style/pdf_controle"
+            android:elevation="8dp"
+            android:padding="12dp">
+
+            <!-- Info page avec style amélioré -->
+            <TextView
+                android:id="@+id/textViewPageInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Page 1 / 1"
+                android:textAlignment="center"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:paddingBottom="12dp"/>
+
+            <!-- Barre de progression de page -->
+            <ProgressBar
+                android:id="@+id/progressBarPage"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:layout_marginBottom="12dp"
+                android:progress="0"
+                android:max="100"/>
+
+            <!-- Boutons de contrôle -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:weightSum="4">
+
+                <!-- Bouton Précédent -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <ImageButton
+                        android:id="@+id/btnPrevious"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:src="@android:drawable/ic_media_previous"
+                        android:contentDescription="Page précédente"
+                        />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Précédent"
+                        android:textSize="10sp"
+                        android:textColor="@android:color/darker_gray"/>
+
+                </LinearLayout>
+
+                <!-- Bouton Zoom Out -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <ImageButton
+                        android:id="@+id/btnZoomOut"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:src="@android:drawable/ic_menu_zoom"
+                        android:contentDescription="Dézoomer"
+                        android:rotation="180"
+                        />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Zoom -"
+                        android:textSize="10sp"
+                        android:textColor="@android:color/darker_gray"/>
+
+                </LinearLayout>
+
+                <!-- Bouton Zoom In -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <ImageButton
+                        android:id="@+id/btnZoomIn"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:src="@android:drawable/ic_menu_zoom"
+                        android:contentDescription="Zoomer"
+                        />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Zoom +"
+                        android:textSize="10sp"
+                        android:textColor="@android:color/darker_gray"/>
+
+                </LinearLayout>
+
+                <!-- Bouton Suivant -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <ImageButton
+                        android:id="@+id/btnNext"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:src="@android:drawable/ic_media_next"
+                        android:contentDescription="Page suivante"
+                        />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Suivant"
+                        android:textSize="10sp"
+                        android:textColor="@android:color/darker_gray"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- Niveau de zoom -->
+            <TextView
+                android:id="@+id/textViewZoomLevel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Zoom: 100%"
+                android:textAlignment="center"
+                android:textSize="10sp"
+                android:layout_margin="6dp"
+                android:textColor="@android:color/darker_gray"
+                android:paddingTop="8dp"/>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

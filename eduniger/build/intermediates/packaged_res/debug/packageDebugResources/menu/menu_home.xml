@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/idRecherhe"
+        android:title="Actualiser" />
+
+    <item
+        android:id="@+id/menuHomeNotification"
+        style="@style/activity_main_ico_notification"
+        android:title="notification"
+        app:actionLayout="@layout/menu_item_badge"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/setting"
+        android:title="Paramètres" />
+
+    <item
+        android:id="@+id/deconnect"
+        android:title="Déconnecter" />
+</menu>

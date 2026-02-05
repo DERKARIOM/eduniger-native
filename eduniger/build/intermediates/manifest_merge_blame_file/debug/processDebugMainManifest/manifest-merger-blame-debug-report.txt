@@ -1,0 +1,984 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.ninotech.eduniger"
+4    android:versionCode="13"
+5    android:versionName="3.1.3" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="28"
+9        android:targetSdkVersion="35" />
+10    <!-- ==================== Permissions Réseau ==================== -->
+11    <uses-feature
+11-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:5:5-7:36
+12        android:name="android.hardware.telephony"
+12-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:6:9-50
+13        android:required="false" />
+13-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:7:9-33
+14
+15    <uses-permission android:name="android.permission.INTERNET" />
+15-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:9:5-67
+15-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:9:22-64
+16    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+16-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:10:5-79
+16-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:10:22-76
+17    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> <!-- ==================== Permissions Services ==================== -->
+17-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:11:5-76
+17-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:11:22-73
+18    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+18-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:12:5-77
+18-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:12:22-74
+19    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+19-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:13:5-87
+19-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:13:22-84
+20    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" /> <!-- ==================== Permissions Système ==================== -->
+20-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:14:5-92
+20-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:14:22-89
+21    <uses-permission android:name="android.permission.VIBRATE" />
+21-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:15:5-66
+21-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:15:22-63
+22    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" /> <!-- ==================== Permissions Téléphone ==================== -->
+22-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:16:5-77
+22-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:16:22-74
+23    <uses-permission android:name="android.permission.CALL_PHONE" /> <!-- ==================== Permissions Biométrie ==================== -->
+23-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:17:5-69
+23-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:17:22-66
+24    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+24-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:18:5-72
+24-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:18:22-69
+25    <uses-permission
+25-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:19:5-22:51
+26        android:name="android.permission.USE_FINGERPRINT"
+26-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:20:9-58
+27        android:maxSdkVersion="27" /> <!-- ==================== Permissions Stockage ==================== -->
+27-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:21:9-35
+28    <!-- Pour Android 10 et inférieur -->
+29    <uses-permission
+29-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:24:5-27:40
+30        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+30-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:25:9-65
+31        android:maxSdkVersion="29" />
+31-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:26:9-35
+32    <uses-permission android:name="android.permission.WAKE_LOCK" /> <!-- Required by older versions of Google Play services to create IID tokens -->
+32-->[com.google.firebase:firebase-messaging:23.1.2] /home/derkariom/.gradle/caches/8.13/transforms/8b2ccc5494a364a32d0d25c5940b51be/transformed/firebase-messaging-23.1.2/AndroidManifest.xml:26:5-68
+32-->[com.google.firebase:firebase-messaging:23.1.2] /home/derkariom/.gradle/caches/8.13/transforms/8b2ccc5494a364a32d0d25c5940b51be/transformed/firebase-messaging-23.1.2/AndroidManifest.xml:26:22-65
+33    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+33-->[com.google.firebase:firebase-messaging:23.1.2] /home/derkariom/.gradle/caches/8.13/transforms/8b2ccc5494a364a32d0d25c5940b51be/transformed/firebase-messaging-23.1.2/AndroidManifest.xml:28:5-82
+33-->[com.google.firebase:firebase-messaging:23.1.2] /home/derkariom/.gradle/caches/8.13/transforms/8b2ccc5494a364a32d0d25c5940b51be/transformed/firebase-messaging-23.1.2/AndroidManifest.xml:28:22-79
+34    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+34-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:25:5-81
+34-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:25:22-78
+35
+36    <permission
+36-->[androidx.core:core:1.13.0] /home/derkariom/.gradle/caches/8.13/transforms/7675235092bda1f771f3e008c67dac30/transformed/core-1.13.0/AndroidManifest.xml:22:5-24:47
+37        android:name="com.ninotech.eduniger.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+37-->[androidx.core:core:1.13.0] /home/derkariom/.gradle/caches/8.13/transforms/7675235092bda1f771f3e008c67dac30/transformed/core-1.13.0/AndroidManifest.xml:23:9-81
+38        android:protectionLevel="signature" />
+38-->[androidx.core:core:1.13.0] /home/derkariom/.gradle/caches/8.13/transforms/7675235092bda1f771f3e008c67dac30/transformed/core-1.13.0/AndroidManifest.xml:24:9-44
+39
+40    <uses-permission android:name="com.ninotech.eduniger.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+40-->[androidx.core:core:1.13.0] /home/derkariom/.gradle/caches/8.13/transforms/7675235092bda1f771f3e008c67dac30/transformed/core-1.13.0/AndroidManifest.xml:26:5-97
+40-->[androidx.core:core:1.13.0] /home/derkariom/.gradle/caches/8.13/transforms/7675235092bda1f771f3e008c67dac30/transformed/core-1.13.0/AndroidManifest.xml:26:22-94
+41
+42    <application
+42-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:29:5-271:19
+43        android:allowBackup="true"
+43-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:30:9-35
+44        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+44-->[androidx.core:core:1.13.0] /home/derkariom/.gradle/caches/8.13/transforms/7675235092bda1f771f3e008c67dac30/transformed/core-1.13.0/AndroidManifest.xml:28:18-86
+45        android:dataExtractionRules="@xml/data_extraction_rules"
+45-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:31:9-65
+46        android:debuggable="true"
+47        android:enableOnBackInvokedCallback="true"
+47-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:32:9-51
+48        android:extractNativeLibs="false"
+49        android:fullBackupContent="@xml/backup_rules"
+49-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:33:9-54
+50        android:icon="@mipmap/ic_v2"
+50-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:34:9-37
+51        android:label="@string/app_name"
+51-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:35:9-41
+52        android:logo="@mipmap/ic_v2"
+52-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:36:9-37
+53        android:supportsRtl="true"
+53-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:37:9-35
+54        android:testOnly="true"
+55        android:theme="@style/AppTheme"
+55-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:38:9-40
+56        android:usesCleartextTraffic="true" >
+56-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:39:9-44
+57        <activity
+57-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:41:9-43:40
+58            android:name="com.ninotech.eduniger.controleur.activity.PdfBoxViewerActivity"
+58-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:42:13-69
+59            android:exported="false" />
+59-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:43:13-37
+60        <!-- ==================== Activité Principale ==================== -->
+61        <activity
+61-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:45:9-58:20
+62            android:name="com.ninotech.eduniger.controleur.activity.MainActivity"
+62-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:46:13-61
+63            android:exported="true"
+63-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:47:13-36
+64            android:icon="@mipmap/ic_v2"
+64-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:48:13-41
+65            android:label="@string/app_name"
+65-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:49:13-45
+66            android:launchMode="singleTop"
+66-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:50:13-43
+67            android:logo="@mipmap/ic_v2"
+67-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:51:13-41
+68            android:screenOrientation="portrait" >
+68-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:52:13-49
+69            <intent-filter>
+69-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:53:13-57:29
+70                <action android:name="android.intent.action.MAIN" />
+70-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:54:17-69
+70-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:54:25-66
+71
+72                <category android:name="android.intent.category.LAUNCHER" />
+72-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:56:17-77
+72-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:56:27-74
+73            </intent-filter>
+74        </activity> <!-- ==================== Activités d'Authentification ==================== -->
+75        <activity
+75-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:59:9-63:58
+76            android:name="com.ninotech.eduniger.controleur.activity.LoginActivity"
+76-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:60:13-62
+77            android:exported="false"
+77-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:61:13-37
+78            android:screenOrientation="portrait"
+78-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:62:13-49
+79            android:windowSoftInputMode="adjustResize" />
+79-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:63:13-55
+80        <activity
+80-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:64:9-68:58
+81            android:name="com.ninotech.eduniger.controleur.activity.RegisterActivity"
+81-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:65:13-65
+82            android:exported="false"
+82-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:66:13-37
+83            android:screenOrientation="portrait"
+83-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:67:13-49
+84            android:windowSoftInputMode="adjustResize" />
+84-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:68:13-55
+85        <activity
+85-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:69:9-73:58
+86            android:name="com.ninotech.eduniger.controleur.activity.PreRegistrationActivity"
+86-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:70:13-72
+87            android:exported="false"
+87-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:71:13-37
+88            android:screenOrientation="portrait"
+88-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:72:13-49
+89            android:windowSoftInputMode="adjustResize" /> <!-- ==================== Activités de Sécurité ==================== -->
+89-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:73:13-55
+90        <activity
+90-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:74:9-78:52
+91            android:name="com.ninotech.eduniger.controleur.activity.LockActivity"
+91-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:75:13-61
+92            android:excludeFromRecents="true"
+92-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:76:13-46
+93            android:exported="false"
+93-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:77:13-37
+94            android:screenOrientation="portrait" />
+94-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:78:13-49
+95        <activity
+95-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:79:9-84:52
+96            android:name="com.ninotech.eduniger.controleur.activity.FingerPrintActivity"
+96-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:80:13-68
+97            android:exported="false"
+97-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:81:13-37
+98            android:label="Verrouillage de l&apos;application"
+98-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:82:13-63
+99            android:parentActivityName="com.ninotech.eduniger.controleur.activity.SettingV2Activity"
+99-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:83:13-80
+100            android:screenOrientation="portrait" /> <!-- ==================== Activités de Paramètres ==================== -->
+100-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:84:13-49
+101        <activity
+101-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:85:9-90:52
+102            android:name="com.ninotech.eduniger.controleur.activity.SettingV2Activity"
+102-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:86:13-66
+103            android:exported="false"
+103-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:87:13-37
+104            android:label="Paramètres"
+104-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:88:13-39
+105            android:parentActivityName="com.ninotech.eduniger.controleur.activity.MainActivity"
+105-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:89:13-75
+106            android:screenOrientation="portrait" />
+106-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:90:13-49
+107        <activity
+107-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:91:9-96:52
+108            android:name="com.ninotech.eduniger.controleur.activity.AccountActivity"
+108-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:92:13-64
+109            android:exported="false"
+109-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:93:13-37
+110            android:label="@string/account"
+110-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:94:13-44
+111            android:parentActivityName="com.ninotech.eduniger.controleur.activity.SettingV2Activity"
+111-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:95:13-80
+112            android:screenOrientation="portrait" />
+112-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:96:13-49
+113        <activity
+113-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:97:9-103:58
+114            android:name="com.ninotech.eduniger.controleur.activity.ChangePasswordActivity"
+114-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:98:13-71
+115            android:exported="false"
+115-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:99:13-37
+116            android:label="@string/change_password"
+116-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:100:13-52
+117            android:parentActivityName="com.ninotech.eduniger.controleur.activity.AccountActivity"
+117-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:101:13-78
+118            android:screenOrientation="portrait"
+118-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:102:13-49
+119            android:windowSoftInputMode="adjustResize" />
+119-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:103:13-55
+120        <activity
+120-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:104:9-110:58
+121            android:name="com.ninotech.eduniger.controleur.activity.ChangeEmailActivity"
+121-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:105:13-68
+122            android:exported="false"
+122-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:106:13-37
+123            android:label="@string/change_email"
+123-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:107:13-49
+124            android:parentActivityName="com.ninotech.eduniger.controleur.activity.AccountActivity"
+124-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:108:13-78
+125            android:screenOrientation="portrait"
+125-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:109:13-49
+126            android:windowSoftInputMode="adjustResize" />
+126-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:110:13-55
+127        <activity
+127-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:111:9-116:52
+128            android:name="com.ninotech.eduniger.controleur.activity.ThemeActivity"
+128-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:112:13-62
+129            android:exported="false"
+129-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:113:13-37
+130            android:label="Théme appliquée"
+130-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:114:13-44
+131            android:parentActivityName="com.ninotech.eduniger.controleur.activity.SettingV2Activity"
+131-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:115:13-80
+132            android:screenOrientation="portrait" />
+132-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:116:13-49
+133        <activity
+133-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:117:9-122:52
+134            android:name="com.ninotech.eduniger.controleur.activity.ServerActivity"
+134-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:118:13-63
+135            android:exported="false"
+135-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:119:13-37
+136            android:label="Serveur connecté"
+136-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:120:13-45
+137            android:parentActivityName="com.ninotech.eduniger.controleur.activity.SettingV2Activity"
+137-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:121:13-80
+138            android:screenOrientation="portrait" />
+138-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:122:13-49
+139        <activity
+139-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:123:9-128:52
+140            android:name="com.ninotech.eduniger.controleur.activity.ContactActivity"
+140-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:124:13-64
+141            android:exported="false"
+141-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:125:13-37
+142            android:label="@string/contact_us"
+142-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:126:13-47
+143            android:parentActivityName="com.ninotech.eduniger.controleur.activity.SettingV2Activity"
+143-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:127:13-80
+144            android:screenOrientation="portrait" /> <!-- ==================== Activités de Contenu ==================== -->
+144-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:128:13-49
+145        <activity
+145-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:129:9-133:52
+146            android:name="com.ninotech.eduniger.controleur.activity.BookActivity"
+146-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:130:13-61
+147            android:configChanges="orientation|screenSize"
+147-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:131:13-59
+148            android:exported="false"
+148-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:132:13-37
+149            android:screenOrientation="portrait" />
+149-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:133:13-49
+150        <activity
+150-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:134:9-138:52
+151            android:name="com.ninotech.eduniger.controleur.activity.CategoryActivity"
+151-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:135:13-65
+152            android:exported="false"
+152-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:136:13-37
+153            android:parentActivityName="com.ninotech.eduniger.controleur.activity.MainActivity"
+153-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:137:13-75
+154            android:screenOrientation="portrait" />
+154-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:138:13-49
+155        <activity
+155-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:139:9-144:58
+156            android:name="com.ninotech.eduniger.controleur.activity.SearchActivity"
+156-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:140:13-63
+157            android:exported="false"
+157-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:141:13-37
+158            android:launchMode="singleTop"
+158-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:142:13-43
+159            android:screenOrientation="portrait"
+159-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:143:13-49
+160            android:windowSoftInputMode="adjustResize" />
+160-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:144:13-55
+161        <activity
+161-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:145:9-148:52
+162            android:name="com.ninotech.eduniger.controleur.activity.StructureActivity"
+162-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:146:13-66
+163            android:exported="false"
+163-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:147:13-37
+164            android:screenOrientation="portrait" />
+164-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:148:13-49
+165        <activity
+165-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:149:9-152:52
+166            android:name="com.ninotech.eduniger.controleur.activity.AuthorActivity"
+166-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:150:13-63
+167            android:exported="false"
+167-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:151:13-37
+168            android:screenOrientation="portrait" />
+168-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:152:13-49
+169        <activity
+169-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:153:9-156:52
+170            android:name="com.ninotech.eduniger.controleur.activity.ContainerActivity"
+170-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:154:13-66
+171            android:exported="false"
+171-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:155:13-37
+172            android:screenOrientation="portrait" /> <!-- ==================== Activités de Gestion de Livres ==================== -->
+172-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:156:13-49
+173        <activity
+173-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:157:9-161:58
+174            android:name="com.ninotech.eduniger.controleur.activity.RegisterAuthorActivity"
+174-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:158:13-71
+175            android:exported="false"
+175-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:159:13-37
+176            android:screenOrientation="portrait"
+176-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:160:13-49
+177            android:windowSoftInputMode="adjustResize" />
+177-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:161:13-55
+178        <activity
+178-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:162:9-166:58
+179            android:name="com.ninotech.eduniger.controleur.activity.AddBookActivity"
+179-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:163:13-64
+180            android:exported="false"
+180-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:164:13-37
+181            android:screenOrientation="portrait"
+181-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:165:13-49
+182            android:windowSoftInputMode="adjustResize" /> <!-- ==================== Activités Multimédia ==================== -->
+182-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:166:13-55
+183        <activity
+183-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:167:9-172:52
+184            android:name="com.ninotech.eduniger.controleur.activity.AudioPlayerActivity"
+184-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:168:13-68
+185            android:configChanges="orientation|screenSize"
+185-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:169:13-59
+186            android:exported="false"
+186-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:170:13-37
+187            android:launchMode="singleTask"
+187-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:171:13-44
+188            android:screenOrientation="portrait" />
+188-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:172:13-49
+189        <activity
+189-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:173:9-176:52
+190            android:name="com.ninotech.eduniger.controleur.activity.ListPlayerActivity"
+190-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:174:13-67
+191            android:exported="false"
+191-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:175:13-37
+192            android:screenOrientation="portrait" /> <!-- ==================== Activités PDF ==================== -->
+192-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:176:13-49
+193        <activity
+193-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:177:9-182:52
+194            android:name="com.ninotech.eduniger.controleur.activity.NotificationActivity"
+194-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:178:13-69
+195            android:exported="false"
+195-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:179:13-37
+196            android:label="Notifications"
+196-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:180:13-42
+197            android:parentActivityName="com.ninotech.eduniger.controleur.activity.MainActivity"
+197-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:181:13-75
+198            android:screenOrientation="portrait" />
+198-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:182:13-49
+199        <activity
+199-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:183:9-189:58
+200            android:name="com.ninotech.eduniger.controleur.activity.SuggestionActivity"
+200-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:184:13-67
+201            android:exported="false"
+201-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:185:13-37
+202            android:label="Suggestion"
+202-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:186:13-39
+203            android:parentActivityName="com.ninotech.eduniger.controleur.activity.MainActivity"
+203-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:187:13-75
+204            android:screenOrientation="portrait"
+204-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:188:13-49
+205            android:windowSoftInputMode="adjustResize" /> <!-- ==================== Activités Informatives ==================== -->
+205-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:189:13-55
+206        <activity
+206-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:190:9-205:20
+207            android:name="com.ninotech.eduniger.controleur.activity.InfosActivity"
+207-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:191:13-62
+208            android:exported="true"
+208-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:192:13-36
+209            android:screenOrientation="portrait" >
+209-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:193:13-49
+210            <intent-filter android:autoVerify="true" >
+210-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:194:13-204:29
+210-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:194:28-53
+211                <action android:name="android.intent.action.VIEW" />
+211-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:195:17-69
+211-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:195:25-66
+212
+213                <category android:name="android.intent.category.DEFAULT" />
+213-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:197:17-76
+213-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:197:27-73
+214                <category android:name="android.intent.category.BROWSABLE" />
+214-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:198:17-78
+214-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:198:27-75
+215
+216                <data
+216-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:200:17-203:46
+217                    android:host="eduniger.com"
+217-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:201:21-48
+218                    android:path="/open"
+218-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:202:21-41
+219                    android:scheme="https" />
+219-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:203:21-43
+220            </intent-filter>
+221        </activity>
+222        <activity
+222-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:206:9-209:52
+223            android:name="com.ninotech.eduniger.controleur.activity.LicenceActivity"
+223-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:207:13-64
+224            android:exported="false"
+224-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:208:13-37
+225            android:screenOrientation="portrait" /> <!-- Retirer en production -->
+225-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:209:13-49
+226        <activity
+226-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:210:9-214:46
+227            android:name="com.ninotech.eduniger.controleur.activity.TmpActivity"
+227-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:211:13-60
+228            android:exported="false" /> <!-- ==================== File Provider ==================== -->
+228-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:212:13-37
+229        <provider
+230            android:name="androidx.core.content.FileProvider"
+230-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:216:13-62
+231            android:authorities="com.ninotech.eduniger.provider"
+231-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:217:13-60
+232            android:exported="false"
+232-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:218:13-37
+233            android:grantUriPermissions="true" >
+233-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:219:13-47
+234            <meta-data
+234-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:220:13-222:54
+235                android:name="android.support.FILE_PROVIDER_PATHS"
+235-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:221:17-67
+236                android:resource="@xml/file_paths" />
+236-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:222:17-51
+237        </provider> <!-- ==================== Services Firebase ==================== -->
+238        <service
+238-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:224:9-231:19
+239            android:name="com.ninotech.eduniger.model.service.MyFirebaseMessagingService"
+239-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:225:13-69
+240            android:directBootAware="true"
+240-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:226:13-43
+241            android:exported="false" >
+241-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:227:13-37
+242            <intent-filter>
+242-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:228:13-230:29
+243                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+243-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:229:17-78
+243-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:229:25-75
+244            </intent-filter>
+245        </service> <!-- ==================== Services Audio ==================== -->
+246        <service
+246-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:232:9-240:19
+247            android:name="com.ninotech.eduniger.model.service.AudioService"
+247-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:233:13-55
+248            android:exported="false"
+248-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:234:13-37
+249            android:foregroundServiceType="mediaPlayback"
+249-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:235:13-58
+250            android:stopWithTask="false" >
+250-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:236:13-41
+251            <intent-filter>
+251-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:237:13-239:29
+252                <action android:name="android.media.browse.MediaBrowserService" />
+252-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:238:17-83
+252-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:238:25-80
+253            </intent-filter>
+254        </service>
+255        <service
+255-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:241:9-244:44
+256            android:name="com.ninotech.eduniger.model.service.OnClearFromRecentService"
+256-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:242:13-67
+257            android:exported="false"
+257-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:243:13-37
+258            android:stopWithTask="false" /> <!-- ==================== Services de Téléchargement ==================== -->
+258-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:244:13-41
+259        <service
+259-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:245:9-249:44
+260            android:name="com.ninotech.eduniger.model.service.AudioDownloadService"
+260-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:246:13-63
+261            android:exported="false"
+261-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:247:13-37
+262            android:foregroundServiceType="dataSync"
+262-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:248:13-53
+263            android:stopWithTask="false" />
+263-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:249:13-41
+264        <service
+264-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:250:9-254:44
+265            android:name="com.ninotech.eduniger.model.service.PdfDownloadService"
+265-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:251:13-61
+266            android:exported="false"
+266-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:252:13-37
+267            android:foregroundServiceType="dataSync"
+267-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:253:13-53
+268            android:stopWithTask="false" /> <!-- ==================== Broadcast Receivers ==================== -->
+268-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:254:13-41
+269        <receiver
+269-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:255:9-266:20
+270            android:name="com.ninotech.eduniger.model.service.AudioReceiver"
+270-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:256:13-56
+271            android:enabled="true"
+271-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:257:13-35
+272            android:exported="false" >
+272-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:258:13-37
+273            <intent-filter>
+273-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:259:13-265:29
+274                <action android:name="com.ninotech.eduniger.PLAY" />
+274-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:260:25-61
+275                <action android:name="com.ninotech.eduniger.PAUSE" />
+275-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:261:25-62
+276                <action android:name="com.ninotech.eduniger.STOP" />
+276-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:262:25-61
+277                <action android:name="com.ninotech.eduniger.NEXT" />
+277-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:263:25-61
+278                <action android:name="com.ninotech.eduniger.PREVIOUS" />
+278-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:264:25-65
+279            </intent-filter>
+280        </receiver>
+281        <receiver
+281-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:267:9-270:40
+282            android:name="com.ninotech.eduniger.model.service.NotificationActionService"
+282-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:268:13-68
+283            android:enabled="true"
+283-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:269:13-35
+284            android:exported="false" />
+284-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:270:13-37
+285
+286        <service
+286-->[com.google.firebase:firebase-messaging-ktx:23.1.2] /home/derkariom/.gradle/caches/8.13/transforms/4d32da28e3e8d7a8422ce0106ba43737/transformed/firebase-messaging-ktx-23.1.2/AndroidManifest.xml:25:9-31:19
+287            android:name="com.google.firebase.components.ComponentDiscoveryService"
+287-->[com.google.firebase:firebase-messaging-ktx:23.1.2] /home/derkariom/.gradle/caches/8.13/transforms/4d32da28e3e8d7a8422ce0106ba43737/transformed/firebase-messaging-ktx-23.1.2/AndroidManifest.xml:26:13-84
+288            android:directBootAware="true"
+288-->[com.google.firebase:firebase-common:20.3.1] /home/derkariom/.gradle/caches/8.13/transforms/5aae10acc03ae6b71b4e37ed4afcb09e/transformed/firebase-common-20.3.1/AndroidManifest.xml:34:13-43
+289            android:exported="false" >
+289-->[com.google.firebase:firebase-messaging-ktx:23.1.2] /home/derkariom/.gradle/caches/8.13/transforms/4d32da28e3e8d7a8422ce0106ba43737/transformed/firebase-messaging-ktx-23.1.2/AndroidManifest.xml:27:13-37
+290            <meta-data
+290-->[com.google.firebase:firebase-messaging-ktx:23.1.2] /home/derkariom/.gradle/caches/8.13/transforms/4d32da28e3e8d7a8422ce0106ba43737/transformed/firebase-messaging-ktx-23.1.2/AndroidManifest.xml:28:13-30:85
+291                android:name="com.google.firebase.components:com.google.firebase.messaging.ktx.FirebaseMessagingKtxRegistrar"
+291-->[com.google.firebase:firebase-messaging-ktx:23.1.2] /home/derkariom/.gradle/caches/8.13/transforms/4d32da28e3e8d7a8422ce0106ba43737/transformed/firebase-messaging-ktx-23.1.2/AndroidManifest.xml:29:17-126
+292                android:value="com.google.firebase.components.ComponentRegistrar" />
+292-->[com.google.firebase:firebase-messaging-ktx:23.1.2] /home/derkariom/.gradle/caches/8.13/transforms/4d32da28e3e8d7a8422ce0106ba43737/transformed/firebase-messaging-ktx-23.1.2/AndroidManifest.xml:30:17-82
+293            <meta-data
+293-->[com.google.firebase:firebase-messaging:23.1.2] /home/derkariom/.gradle/caches/8.13/transforms/8b2ccc5494a364a32d0d25c5940b51be/transformed/firebase-messaging-23.1.2/AndroidManifest.xml:55:13-57:85
+294                android:name="com.google.firebase.components:com.google.firebase.messaging.FirebaseMessagingRegistrar"
+294-->[com.google.firebase:firebase-messaging:23.1.2] /home/derkariom/.gradle/caches/8.13/transforms/8b2ccc5494a364a32d0d25c5940b51be/transformed/firebase-messaging-23.1.2/AndroidManifest.xml:56:17-119
+295                android:value="com.google.firebase.components.ComponentRegistrar" />
+295-->[com.google.firebase:firebase-messaging:23.1.2] /home/derkariom/.gradle/caches/8.13/transforms/8b2ccc5494a364a32d0d25c5940b51be/transformed/firebase-messaging-23.1.2/AndroidManifest.xml:57:17-82
+296            <meta-data
+296-->[com.google.firebase:firebase-datatransport:18.1.7] /home/derkariom/.gradle/caches/8.13/transforms/19978ba868fd90d37e5cdbfe96f483ee/transformed/firebase-datatransport-18.1.7/AndroidManifest.xml:27:13-29:85
+297                android:name="com.google.firebase.components:com.google.firebase.datatransport.TransportRegistrar"
+297-->[com.google.firebase:firebase-datatransport:18.1.7] /home/derkariom/.gradle/caches/8.13/transforms/19978ba868fd90d37e5cdbfe96f483ee/transformed/firebase-datatransport-18.1.7/AndroidManifest.xml:28:17-115
+298                android:value="com.google.firebase.components.ComponentRegistrar" />
+298-->[com.google.firebase:firebase-datatransport:18.1.7] /home/derkariom/.gradle/caches/8.13/transforms/19978ba868fd90d37e5cdbfe96f483ee/transformed/firebase-datatransport-18.1.7/AndroidManifest.xml:29:17-82
+299            <meta-data
+299-->[com.google.firebase:firebase-installations:17.1.3] /home/derkariom/.gradle/caches/8.13/transforms/7f961900f6d9574ee5d7c40b78ead084/transformed/firebase-installations-17.1.3/AndroidManifest.xml:17:13-19:85
+300                android:name="com.google.firebase.components:com.google.firebase.installations.FirebaseInstallationsRegistrar"
+300-->[com.google.firebase:firebase-installations:17.1.3] /home/derkariom/.gradle/caches/8.13/transforms/7f961900f6d9574ee5d7c40b78ead084/transformed/firebase-installations-17.1.3/AndroidManifest.xml:18:17-127
+301                android:value="com.google.firebase.components.ComponentRegistrar" />
+301-->[com.google.firebase:firebase-installations:17.1.3] /home/derkariom/.gradle/caches/8.13/transforms/7f961900f6d9574ee5d7c40b78ead084/transformed/firebase-installations-17.1.3/AndroidManifest.xml:19:17-82
+302            <meta-data
+302-->[com.google.firebase:firebase-common-ktx:20.3.1] /home/derkariom/.gradle/caches/8.13/transforms/33114d692b67ef5ee995ee0c77c1b406/transformed/firebase-common-ktx-20.3.1/AndroidManifest.xml:14:13-16:85
+303                android:name="com.google.firebase.components:com.google.firebase.ktx.FirebaseCommonKtxRegistrar"
+303-->[com.google.firebase:firebase-common-ktx:20.3.1] /home/derkariom/.gradle/caches/8.13/transforms/33114d692b67ef5ee995ee0c77c1b406/transformed/firebase-common-ktx-20.3.1/AndroidManifest.xml:15:17-113
+304                android:value="com.google.firebase.components.ComponentRegistrar" />
+304-->[com.google.firebase:firebase-common-ktx:20.3.1] /home/derkariom/.gradle/caches/8.13/transforms/33114d692b67ef5ee995ee0c77c1b406/transformed/firebase-common-ktx-20.3.1/AndroidManifest.xml:16:17-82
+305        </service>
+306
+307        <receiver
+307-->[com.google.firebase:firebase-messaging:23.1.2] /home/derkariom/.gradle/caches/8.13/transforms/8b2ccc5494a364a32d0d25c5940b51be/transformed/firebase-messaging-23.1.2/AndroidManifest.xml:31:9-38:20
+308            android:name="com.google.firebase.iid.FirebaseInstanceIdReceiver"
+308-->[com.google.firebase:firebase-messaging:23.1.2] /home/derkariom/.gradle/caches/8.13/transforms/8b2ccc5494a364a32d0d25c5940b51be/transformed/firebase-messaging-23.1.2/AndroidManifest.xml:32:13-78
+309            android:exported="true"
+309-->[com.google.firebase:firebase-messaging:23.1.2] /home/derkariom/.gradle/caches/8.13/transforms/8b2ccc5494a364a32d0d25c5940b51be/transformed/firebase-messaging-23.1.2/AndroidManifest.xml:33:13-36
+310            android:permission="com.google.android.c2dm.permission.SEND" >
+310-->[com.google.firebase:firebase-messaging:23.1.2] /home/derkariom/.gradle/caches/8.13/transforms/8b2ccc5494a364a32d0d25c5940b51be/transformed/firebase-messaging-23.1.2/AndroidManifest.xml:34:13-73
+311            <intent-filter>
+311-->[com.google.firebase:firebase-messaging:23.1.2] /home/derkariom/.gradle/caches/8.13/transforms/8b2ccc5494a364a32d0d25c5940b51be/transformed/firebase-messaging-23.1.2/AndroidManifest.xml:35:13-37:29
+312                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+312-->[com.google.firebase:firebase-messaging:23.1.2] /home/derkariom/.gradle/caches/8.13/transforms/8b2ccc5494a364a32d0d25c5940b51be/transformed/firebase-messaging-23.1.2/AndroidManifest.xml:36:17-81
+312-->[com.google.firebase:firebase-messaging:23.1.2] /home/derkariom/.gradle/caches/8.13/transforms/8b2ccc5494a364a32d0d25c5940b51be/transformed/firebase-messaging-23.1.2/AndroidManifest.xml:36:25-78
+313            </intent-filter>
+314        </receiver>
+315        <!--
+316             FirebaseMessagingService performs security checks at runtime,
+317             but set to not exported to explicitly avoid allowing another app to call it.
+318        -->
+319        <service
+319-->[com.google.firebase:firebase-messaging:23.1.2] /home/derkariom/.gradle/caches/8.13/transforms/8b2ccc5494a364a32d0d25c5940b51be/transformed/firebase-messaging-23.1.2/AndroidManifest.xml:44:9-51:19
+320            android:name="com.google.firebase.messaging.FirebaseMessagingService"
+320-->[com.google.firebase:firebase-messaging:23.1.2] /home/derkariom/.gradle/caches/8.13/transforms/8b2ccc5494a364a32d0d25c5940b51be/transformed/firebase-messaging-23.1.2/AndroidManifest.xml:45:13-82
+321            android:directBootAware="true"
+321-->[com.google.firebase:firebase-messaging:23.1.2] /home/derkariom/.gradle/caches/8.13/transforms/8b2ccc5494a364a32d0d25c5940b51be/transformed/firebase-messaging-23.1.2/AndroidManifest.xml:46:13-43
+322            android:exported="false" >
+322-->[com.google.firebase:firebase-messaging:23.1.2] /home/derkariom/.gradle/caches/8.13/transforms/8b2ccc5494a364a32d0d25c5940b51be/transformed/firebase-messaging-23.1.2/AndroidManifest.xml:47:13-37
+323            <intent-filter android:priority="-500" >
+323-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:228:13-230:29
+324                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+324-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:229:17-78
+324-->/home/derkariom/projets/meduniger/fabi/src/main/AndroidManifest.xml:229:25-75
+325            </intent-filter>
+326        </service>
+327
+328        <activity
+328-->[com.google.android.gms:play-services-base:18.0.1] /home/derkariom/.gradle/caches/8.13/transforms/58a90e68a13bc6f5ae1a580dc53ab538/transformed/play-services-base-18.0.1/AndroidManifest.xml:20:9-22:45
+329            android:name="com.google.android.gms.common.api.GoogleApiActivity"
+329-->[com.google.android.gms:play-services-base:18.0.1] /home/derkariom/.gradle/caches/8.13/transforms/58a90e68a13bc6f5ae1a580dc53ab538/transformed/play-services-base-18.0.1/AndroidManifest.xml:20:19-85
+330            android:exported="false"
+330-->[com.google.android.gms:play-services-base:18.0.1] /home/derkariom/.gradle/caches/8.13/transforms/58a90e68a13bc6f5ae1a580dc53ab538/transformed/play-services-base-18.0.1/AndroidManifest.xml:22:19-43
+331            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+331-->[com.google.android.gms:play-services-base:18.0.1] /home/derkariom/.gradle/caches/8.13/transforms/58a90e68a13bc6f5ae1a580dc53ab538/transformed/play-services-base-18.0.1/AndroidManifest.xml:21:19-78
+332
+333        <provider
+333-->[com.google.firebase:firebase-common:20.3.1] /home/derkariom/.gradle/caches/8.13/transforms/5aae10acc03ae6b71b4e37ed4afcb09e/transformed/firebase-common-20.3.1/AndroidManifest.xml:25:9-30:39
+334            android:name="com.google.firebase.provider.FirebaseInitProvider"
+334-->[com.google.firebase:firebase-common:20.3.1] /home/derkariom/.gradle/caches/8.13/transforms/5aae10acc03ae6b71b4e37ed4afcb09e/transformed/firebase-common-20.3.1/AndroidManifest.xml:26:13-77
+335            android:authorities="com.ninotech.eduniger.firebaseinitprovider"
+335-->[com.google.firebase:firebase-common:20.3.1] /home/derkariom/.gradle/caches/8.13/transforms/5aae10acc03ae6b71b4e37ed4afcb09e/transformed/firebase-common-20.3.1/AndroidManifest.xml:27:13-72
+336            android:directBootAware="true"
+336-->[com.google.firebase:firebase-common:20.3.1] /home/derkariom/.gradle/caches/8.13/transforms/5aae10acc03ae6b71b4e37ed4afcb09e/transformed/firebase-common-20.3.1/AndroidManifest.xml:28:13-43
+337            android:exported="false"
+337-->[com.google.firebase:firebase-common:20.3.1] /home/derkariom/.gradle/caches/8.13/transforms/5aae10acc03ae6b71b4e37ed4afcb09e/transformed/firebase-common-20.3.1/AndroidManifest.xml:29:13-37
+338            android:initOrder="100" />
+338-->[com.google.firebase:firebase-common:20.3.1] /home/derkariom/.gradle/caches/8.13/transforms/5aae10acc03ae6b71b4e37ed4afcb09e/transformed/firebase-common-20.3.1/AndroidManifest.xml:30:13-36
+339
+340        <uses-library
+340-->[androidx.window:window:1.0.0] /home/derkariom/.gradle/caches/8.13/transforms/2ffdddcedc544f1c5559376b1c252fa1/transformed/window-1.0.0/AndroidManifest.xml:25:9-27:40
+341            android:name="androidx.window.extensions"
+341-->[androidx.window:window:1.0.0] /home/derkariom/.gradle/caches/8.13/transforms/2ffdddcedc544f1c5559376b1c252fa1/transformed/window-1.0.0/AndroidManifest.xml:26:13-54
+342            android:required="false" />
+342-->[androidx.window:window:1.0.0] /home/derkariom/.gradle/caches/8.13/transforms/2ffdddcedc544f1c5559376b1c252fa1/transformed/window-1.0.0/AndroidManifest.xml:27:13-37
+343        <uses-library
+343-->[androidx.window:window:1.0.0] /home/derkariom/.gradle/caches/8.13/transforms/2ffdddcedc544f1c5559376b1c252fa1/transformed/window-1.0.0/AndroidManifest.xml:28:9-30:40
+344            android:name="androidx.window.sidecar"
+344-->[androidx.window:window:1.0.0] /home/derkariom/.gradle/caches/8.13/transforms/2ffdddcedc544f1c5559376b1c252fa1/transformed/window-1.0.0/AndroidManifest.xml:29:13-51
+345            android:required="false" />
+345-->[androidx.window:window:1.0.0] /home/derkariom/.gradle/caches/8.13/transforms/2ffdddcedc544f1c5559376b1c252fa1/transformed/window-1.0.0/AndroidManifest.xml:30:13-37
+346
+347        <provider
+347-->[androidx.emoji2:emoji2:1.3.0] /home/derkariom/.gradle/caches/8.13/transforms/b2af29086c0b5239d2a771d2c222fc2c/transformed/emoji2-1.3.0/AndroidManifest.xml:24:9-32:20
+348            android:name="androidx.startup.InitializationProvider"
+348-->[androidx.emoji2:emoji2:1.3.0] /home/derkariom/.gradle/caches/8.13/transforms/b2af29086c0b5239d2a771d2c222fc2c/transformed/emoji2-1.3.0/AndroidManifest.xml:25:13-67
+349            android:authorities="com.ninotech.eduniger.androidx-startup"
+349-->[androidx.emoji2:emoji2:1.3.0] /home/derkariom/.gradle/caches/8.13/transforms/b2af29086c0b5239d2a771d2c222fc2c/transformed/emoji2-1.3.0/AndroidManifest.xml:26:13-68
+350            android:exported="false" >
+350-->[androidx.emoji2:emoji2:1.3.0] /home/derkariom/.gradle/caches/8.13/transforms/b2af29086c0b5239d2a771d2c222fc2c/transformed/emoji2-1.3.0/AndroidManifest.xml:27:13-37
+351            <meta-data
+351-->[androidx.emoji2:emoji2:1.3.0] /home/derkariom/.gradle/caches/8.13/transforms/b2af29086c0b5239d2a771d2c222fc2c/transformed/emoji2-1.3.0/AndroidManifest.xml:29:13-31:52
+352                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+352-->[androidx.emoji2:emoji2:1.3.0] /home/derkariom/.gradle/caches/8.13/transforms/b2af29086c0b5239d2a771d2c222fc2c/transformed/emoji2-1.3.0/AndroidManifest.xml:30:17-75
+353                android:value="androidx.startup" />
+353-->[androidx.emoji2:emoji2:1.3.0] /home/derkariom/.gradle/caches/8.13/transforms/b2af29086c0b5239d2a771d2c222fc2c/transformed/emoji2-1.3.0/AndroidManifest.xml:31:17-49
+354            <meta-data
+354-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:34:13-36:52
+355                android:name="androidx.work.WorkManagerInitializer"
+355-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:35:17-68
+356                android:value="androidx.startup" />
+356-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:36:17-49
+357            <meta-data
+357-->[androidx.lifecycle:lifecycle-process:2.6.2] /home/derkariom/.gradle/caches/8.13/transforms/10387343e0585ed7119037d6532a20a1/transformed/lifecycle-process-2.6.2/AndroidManifest.xml:29:13-31:52
+358                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+358-->[androidx.lifecycle:lifecycle-process:2.6.2] /home/derkariom/.gradle/caches/8.13/transforms/10387343e0585ed7119037d6532a20a1/transformed/lifecycle-process-2.6.2/AndroidManifest.xml:30:17-78
+359                android:value="androidx.startup" />
+359-->[androidx.lifecycle:lifecycle-process:2.6.2] /home/derkariom/.gradle/caches/8.13/transforms/10387343e0585ed7119037d6532a20a1/transformed/lifecycle-process-2.6.2/AndroidManifest.xml:31:17-49
+360            <meta-data
+360-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/derkariom/.gradle/caches/8.13/transforms/92b7ef718e6d4c74b5faaac0122893c8/transformed/profileinstaller-1.3.1/AndroidManifest.xml:29:13-31:52
+361                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+361-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/derkariom/.gradle/caches/8.13/transforms/92b7ef718e6d4c74b5faaac0122893c8/transformed/profileinstaller-1.3.1/AndroidManifest.xml:30:17-85
+362                android:value="androidx.startup" />
+362-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/derkariom/.gradle/caches/8.13/transforms/92b7ef718e6d4c74b5faaac0122893c8/transformed/profileinstaller-1.3.1/AndroidManifest.xml:31:17-49
+363        </provider>
+364
+365        <service
+365-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:39:9-45:35
+366            android:name="androidx.work.impl.background.systemalarm.SystemAlarmService"
+366-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:40:13-88
+367            android:directBootAware="false"
+367-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:41:13-44
+368            android:enabled="@bool/enable_system_alarm_service_default"
+368-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:42:13-72
+369            android:exported="false" />
+369-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:43:13-37
+370        <service
+370-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:46:9-52:35
+371            android:name="androidx.work.impl.background.systemjob.SystemJobService"
+371-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:47:13-84
+372            android:directBootAware="false"
+372-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:48:13-44
+373            android:enabled="@bool/enable_system_job_service_default"
+373-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:49:13-70
+374            android:exported="true"
+374-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:50:13-36
+375            android:permission="android.permission.BIND_JOB_SERVICE" />
+375-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:51:13-69
+376        <service
+376-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:53:9-59:35
+377            android:name="androidx.work.impl.foreground.SystemForegroundService"
+377-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:54:13-81
+378            android:directBootAware="false"
+378-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:55:13-44
+379            android:enabled="@bool/enable_system_foreground_service_default"
+379-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:56:13-77
+380            android:exported="false" />
+380-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:57:13-37
+381
+382        <receiver
+382-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:61:9-66:35
+383            android:name="androidx.work.impl.utils.ForceStopRunnable$BroadcastReceiver"
+383-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:62:13-88
+384            android:directBootAware="false"
+384-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:63:13-44
+385            android:enabled="true"
+385-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:64:13-35
+386            android:exported="false" />
+386-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:65:13-37
+387        <receiver
+387-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:67:9-77:20
+388            android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$BatteryChargingProxy"
+388-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:68:13-106
+389            android:directBootAware="false"
+389-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:69:13-44
+390            android:enabled="false"
+390-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:70:13-36
+391            android:exported="false" >
+391-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:71:13-37
+392            <intent-filter>
+392-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:73:13-76:29
+393                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
+393-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:74:17-87
+393-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:74:25-84
+394                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
+394-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:75:17-90
+394-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:75:25-87
+395            </intent-filter>
+396        </receiver>
+397        <receiver
+397-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:78:9-88:20
+398            android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$BatteryNotLowProxy"
+398-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:79:13-104
+399            android:directBootAware="false"
+399-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:80:13-44
+400            android:enabled="false"
+400-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:81:13-36
+401            android:exported="false" >
+401-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:82:13-37
+402            <intent-filter>
+402-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:84:13-87:29
+403                <action android:name="android.intent.action.BATTERY_OKAY" />
+403-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:85:17-77
+403-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:85:25-74
+404                <action android:name="android.intent.action.BATTERY_LOW" />
+404-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:86:17-76
+404-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:86:25-73
+405            </intent-filter>
+406        </receiver>
+407        <receiver
+407-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:89:9-99:20
+408            android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$StorageNotLowProxy"
+408-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:90:13-104
+409            android:directBootAware="false"
+409-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:91:13-44
+410            android:enabled="false"
+410-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:92:13-36
+411            android:exported="false" >
+411-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:93:13-37
+412            <intent-filter>
+412-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:95:13-98:29
+413                <action android:name="android.intent.action.DEVICE_STORAGE_LOW" />
+413-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:96:17-83
+413-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:96:25-80
+414                <action android:name="android.intent.action.DEVICE_STORAGE_OK" />
+414-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:97:17-82
+414-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:97:25-79
+415            </intent-filter>
+416        </receiver>
+417        <receiver
+417-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:100:9-109:20
+418            android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$NetworkStateProxy"
+418-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:101:13-103
+419            android:directBootAware="false"
+419-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:102:13-44
+420            android:enabled="false"
+420-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:103:13-36
+421            android:exported="false" >
+421-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:104:13-37
+422            <intent-filter>
+422-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:106:13-108:29
+423                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+423-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:107:17-79
+423-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:107:25-76
+424            </intent-filter>
+425        </receiver>
+426        <receiver
+426-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:110:9-121:20
+427            android:name="androidx.work.impl.background.systemalarm.RescheduleReceiver"
+427-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:111:13-88
+428            android:directBootAware="false"
+428-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:112:13-44
+429            android:enabled="false"
+429-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:113:13-36
+430            android:exported="false" >
+430-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:114:13-37
+431            <intent-filter>
+431-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:116:13-120:29
+432                <action android:name="android.intent.action.BOOT_COMPLETED" />
+432-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:117:17-79
+432-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:117:25-76
+433                <action android:name="android.intent.action.TIME_SET" />
+433-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:118:17-73
+433-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:118:25-70
+434                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+434-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:119:17-81
+434-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:119:25-78
+435            </intent-filter>
+436        </receiver>
+437        <receiver
+437-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:122:9-131:20
+438            android:name="androidx.work.impl.background.systemalarm.ConstraintProxyUpdateReceiver"
+438-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:123:13-99
+439            android:directBootAware="false"
+439-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:124:13-44
+440            android:enabled="@bool/enable_system_alarm_service_default"
+440-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:125:13-72
+441            android:exported="false" >
+441-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:126:13-37
+442            <intent-filter>
+442-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:128:13-130:29
+443                <action android:name="androidx.work.impl.background.systemalarm.UpdateProxies" />
+443-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:129:17-98
+443-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:129:25-95
+444            </intent-filter>
+445        </receiver>
+446        <receiver
+446-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:132:9-142:20
+447            android:name="androidx.work.impl.diagnostics.DiagnosticsReceiver"
+447-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:133:13-78
+448            android:directBootAware="false"
+448-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:134:13-44
+449            android:enabled="true"
+449-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:135:13-35
+450            android:exported="true"
+450-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:136:13-36
+451            android:permission="android.permission.DUMP" >
+451-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:137:13-57
+452            <intent-filter>
+452-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:139:13-141:29
+453                <action android:name="androidx.work.diagnostics.REQUEST_DIAGNOSTICS" />
+453-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:140:17-88
+453-->[androidx.work:work-runtime:2.8.1] /home/derkariom/.gradle/caches/8.13/transforms/63aa83e726fd7deb43a00c328d9363cc/transformed/work-runtime-2.8.1/AndroidManifest.xml:140:25-85
+454            </intent-filter>
+455        </receiver>
+456
+457        <meta-data
+457-->[com.google.android.gms:play-services-basement:18.4.0] /home/derkariom/.gradle/caches/8.13/transforms/065cc4d15d2bb549948d49d3ec299246/transformed/play-services-basement-18.4.0/AndroidManifest.xml:6:9-122
+458            android:name="com.google.android.gms.version"
+458-->[com.google.android.gms:play-services-basement:18.4.0] /home/derkariom/.gradle/caches/8.13/transforms/065cc4d15d2bb549948d49d3ec299246/transformed/play-services-basement-18.4.0/AndroidManifest.xml:6:20-65
+459            android:value="@integer/google_play_services_version" />
+459-->[com.google.android.gms:play-services-basement:18.4.0] /home/derkariom/.gradle/caches/8.13/transforms/065cc4d15d2bb549948d49d3ec299246/transformed/play-services-basement-18.4.0/AndroidManifest.xml:6:66-119
+460
+461        <service
+461-->[androidx.room:room-runtime:2.5.0] /home/derkariom/.gradle/caches/8.13/transforms/8de55029c75fbf5a1ee0acb8a956a3c4/transformed/room-runtime-2.5.0/AndroidManifest.xml:24:9-28:63
+462            android:name="androidx.room.MultiInstanceInvalidationService"
+462-->[androidx.room:room-runtime:2.5.0] /home/derkariom/.gradle/caches/8.13/transforms/8de55029c75fbf5a1ee0acb8a956a3c4/transformed/room-runtime-2.5.0/AndroidManifest.xml:25:13-74
+463            android:directBootAware="true"
+463-->[androidx.room:room-runtime:2.5.0] /home/derkariom/.gradle/caches/8.13/transforms/8de55029c75fbf5a1ee0acb8a956a3c4/transformed/room-runtime-2.5.0/AndroidManifest.xml:26:13-43
+464            android:exported="false" />
+464-->[androidx.room:room-runtime:2.5.0] /home/derkariom/.gradle/caches/8.13/transforms/8de55029c75fbf5a1ee0acb8a956a3c4/transformed/room-runtime-2.5.0/AndroidManifest.xml:27:13-37
+465        <service
+465-->[com.google.android.datatransport:transport-backend-cct:3.1.8] /home/derkariom/.gradle/caches/8.13/transforms/7f9a535a6667e4614e3189a733fa91c9/transformed/transport-backend-cct-3.1.8/AndroidManifest.xml:28:9-34:19
+466            android:name="com.google.android.datatransport.runtime.backends.TransportBackendDiscovery"
+466-->[com.google.android.datatransport:transport-backend-cct:3.1.8] /home/derkariom/.gradle/caches/8.13/transforms/7f9a535a6667e4614e3189a733fa91c9/transformed/transport-backend-cct-3.1.8/AndroidManifest.xml:29:13-103
+467            android:exported="false" >
+467-->[com.google.android.datatransport:transport-backend-cct:3.1.8] /home/derkariom/.gradle/caches/8.13/transforms/7f9a535a6667e4614e3189a733fa91c9/transformed/transport-backend-cct-3.1.8/AndroidManifest.xml:30:13-37
+468            <meta-data
+468-->[com.google.android.datatransport:transport-backend-cct:3.1.8] /home/derkariom/.gradle/caches/8.13/transforms/7f9a535a6667e4614e3189a733fa91c9/transformed/transport-backend-cct-3.1.8/AndroidManifest.xml:31:13-33:39
+469                android:name="backend:com.google.android.datatransport.cct.CctBackendFactory"
+469-->[com.google.android.datatransport:transport-backend-cct:3.1.8] /home/derkariom/.gradle/caches/8.13/transforms/7f9a535a6667e4614e3189a733fa91c9/transformed/transport-backend-cct-3.1.8/AndroidManifest.xml:32:17-94
+470                android:value="cct" />
+470-->[com.google.android.datatransport:transport-backend-cct:3.1.8] /home/derkariom/.gradle/caches/8.13/transforms/7f9a535a6667e4614e3189a733fa91c9/transformed/transport-backend-cct-3.1.8/AndroidManifest.xml:33:17-36
+471        </service>
+472        <service
+472-->[com.google.android.datatransport:transport-runtime:3.1.8] /home/derkariom/.gradle/caches/8.13/transforms/8c44932eedff2d44b8736df9e6644d3d/transformed/transport-runtime-3.1.8/AndroidManifest.xml:26:9-30:19
+473            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.JobInfoSchedulerService"
+473-->[com.google.android.datatransport:transport-runtime:3.1.8] /home/derkariom/.gradle/caches/8.13/transforms/8c44932eedff2d44b8736df9e6644d3d/transformed/transport-runtime-3.1.8/AndroidManifest.xml:27:13-117
+474            android:exported="false"
+474-->[com.google.android.datatransport:transport-runtime:3.1.8] /home/derkariom/.gradle/caches/8.13/transforms/8c44932eedff2d44b8736df9e6644d3d/transformed/transport-runtime-3.1.8/AndroidManifest.xml:28:13-37
+475            android:permission="android.permission.BIND_JOB_SERVICE" >
+475-->[com.google.android.datatransport:transport-runtime:3.1.8] /home/derkariom/.gradle/caches/8.13/transforms/8c44932eedff2d44b8736df9e6644d3d/transformed/transport-runtime-3.1.8/AndroidManifest.xml:29:13-69
+476        </service>
+477
+478        <receiver
+478-->[com.google.android.datatransport:transport-runtime:3.1.8] /home/derkariom/.gradle/caches/8.13/transforms/8c44932eedff2d44b8736df9e6644d3d/transformed/transport-runtime-3.1.8/AndroidManifest.xml:32:9-34:40
+479            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.AlarmManagerSchedulerBroadcastReceiver"
+479-->[com.google.android.datatransport:transport-runtime:3.1.8] /home/derkariom/.gradle/caches/8.13/transforms/8c44932eedff2d44b8736df9e6644d3d/transformed/transport-runtime-3.1.8/AndroidManifest.xml:33:13-132
+480            android:exported="false" />
+480-->[com.google.android.datatransport:transport-runtime:3.1.8] /home/derkariom/.gradle/caches/8.13/transforms/8c44932eedff2d44b8736df9e6644d3d/transformed/transport-runtime-3.1.8/AndroidManifest.xml:34:13-37
+481        <receiver
+481-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/derkariom/.gradle/caches/8.13/transforms/92b7ef718e6d4c74b5faaac0122893c8/transformed/profileinstaller-1.3.1/AndroidManifest.xml:34:9-52:20
+482            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+482-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/derkariom/.gradle/caches/8.13/transforms/92b7ef718e6d4c74b5faaac0122893c8/transformed/profileinstaller-1.3.1/AndroidManifest.xml:35:13-76
+483            android:directBootAware="false"
+483-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/derkariom/.gradle/caches/8.13/transforms/92b7ef718e6d4c74b5faaac0122893c8/transformed/profileinstaller-1.3.1/AndroidManifest.xml:36:13-44
+484            android:enabled="true"
+484-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/derkariom/.gradle/caches/8.13/transforms/92b7ef718e6d4c74b5faaac0122893c8/transformed/profileinstaller-1.3.1/AndroidManifest.xml:37:13-35
+485            android:exported="true"
+485-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/derkariom/.gradle/caches/8.13/transforms/92b7ef718e6d4c74b5faaac0122893c8/transformed/profileinstaller-1.3.1/AndroidManifest.xml:38:13-36
+486            android:permission="android.permission.DUMP" >
+486-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/derkariom/.gradle/caches/8.13/transforms/92b7ef718e6d4c74b5faaac0122893c8/transformed/profileinstaller-1.3.1/AndroidManifest.xml:39:13-57
+487            <intent-filter>
+487-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/derkariom/.gradle/caches/8.13/transforms/92b7ef718e6d4c74b5faaac0122893c8/transformed/profileinstaller-1.3.1/AndroidManifest.xml:40:13-42:29
+488                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+488-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/derkariom/.gradle/caches/8.13/transforms/92b7ef718e6d4c74b5faaac0122893c8/transformed/profileinstaller-1.3.1/AndroidManifest.xml:41:17-91
+488-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/derkariom/.gradle/caches/8.13/transforms/92b7ef718e6d4c74b5faaac0122893c8/transformed/profileinstaller-1.3.1/AndroidManifest.xml:41:25-88
+489            </intent-filter>
+490            <intent-filter>
+490-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/derkariom/.gradle/caches/8.13/transforms/92b7ef718e6d4c74b5faaac0122893c8/transformed/profileinstaller-1.3.1/AndroidManifest.xml:43:13-45:29
+491                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+491-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/derkariom/.gradle/caches/8.13/transforms/92b7ef718e6d4c74b5faaac0122893c8/transformed/profileinstaller-1.3.1/AndroidManifest.xml:44:17-85
+491-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/derkariom/.gradle/caches/8.13/transforms/92b7ef718e6d4c74b5faaac0122893c8/transformed/profileinstaller-1.3.1/AndroidManifest.xml:44:25-82
+492            </intent-filter>
+493            <intent-filter>
+493-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/derkariom/.gradle/caches/8.13/transforms/92b7ef718e6d4c74b5faaac0122893c8/transformed/profileinstaller-1.3.1/AndroidManifest.xml:46:13-48:29
+494                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+494-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/derkariom/.gradle/caches/8.13/transforms/92b7ef718e6d4c74b5faaac0122893c8/transformed/profileinstaller-1.3.1/AndroidManifest.xml:47:17-88
+494-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/derkariom/.gradle/caches/8.13/transforms/92b7ef718e6d4c74b5faaac0122893c8/transformed/profileinstaller-1.3.1/AndroidManifest.xml:47:25-85
+495            </intent-filter>
+496            <intent-filter>
+496-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/derkariom/.gradle/caches/8.13/transforms/92b7ef718e6d4c74b5faaac0122893c8/transformed/profileinstaller-1.3.1/AndroidManifest.xml:49:13-51:29
+497                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+497-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/derkariom/.gradle/caches/8.13/transforms/92b7ef718e6d4c74b5faaac0122893c8/transformed/profileinstaller-1.3.1/AndroidManifest.xml:50:17-95
+497-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/derkariom/.gradle/caches/8.13/transforms/92b7ef718e6d4c74b5faaac0122893c8/transformed/profileinstaller-1.3.1/AndroidManifest.xml:50:25-92
+498            </intent-filter>
+499        </receiver>
+500
+501        <provider
+501-->[com.squareup.picasso:picasso:2.71828] /home/derkariom/.gradle/caches/8.13/transforms/312caedc2f2a7f8875310d82fd9c0b83/transformed/picasso-2.71828/AndroidManifest.xml:8:9-11:40
+502            android:name="com.squareup.picasso.PicassoProvider"
+502-->[com.squareup.picasso:picasso:2.71828] /home/derkariom/.gradle/caches/8.13/transforms/312caedc2f2a7f8875310d82fd9c0b83/transformed/picasso-2.71828/AndroidManifest.xml:9:13-64
+503            android:authorities="com.ninotech.eduniger.com.squareup.picasso"
+503-->[com.squareup.picasso:picasso:2.71828] /home/derkariom/.gradle/caches/8.13/transforms/312caedc2f2a7f8875310d82fd9c0b83/transformed/picasso-2.71828/AndroidManifest.xml:10:13-72
+504            android:exported="false" /> <!-- The activities will be merged into the manifest of the hosting app. -->
+504-->[com.squareup.picasso:picasso:2.71828] /home/derkariom/.gradle/caches/8.13/transforms/312caedc2f2a7f8875310d82fd9c0b83/transformed/picasso-2.71828/AndroidManifest.xml:11:13-37
+505        <activity
+505-->[com.google.android.play:core-common:2.0.4] /home/derkariom/.gradle/caches/8.13/transforms/32398e38539d802d52e87917e334acb9/transformed/core-common-2.0.4/AndroidManifest.xml:14:9-18:65
+506            android:name="com.google.android.play.core.common.PlayCoreDialogWrapperActivity"
+506-->[com.google.android.play:core-common:2.0.4] /home/derkariom/.gradle/caches/8.13/transforms/32398e38539d802d52e87917e334acb9/transformed/core-common-2.0.4/AndroidManifest.xml:15:13-93
+507            android:exported="false"
+507-->[com.google.android.play:core-common:2.0.4] /home/derkariom/.gradle/caches/8.13/transforms/32398e38539d802d52e87917e334acb9/transformed/core-common-2.0.4/AndroidManifest.xml:16:13-37
+508            android:stateNotNeeded="true"
+508-->[com.google.android.play:core-common:2.0.4] /home/derkariom/.gradle/caches/8.13/transforms/32398e38539d802d52e87917e334acb9/transformed/core-common-2.0.4/AndroidManifest.xml:17:13-42
+509            android:theme="@style/Theme.PlayCore.Transparent" />
+509-->[com.google.android.play:core-common:2.0.4] /home/derkariom/.gradle/caches/8.13/transforms/32398e38539d802d52e87917e334acb9/transformed/core-common-2.0.4/AndroidManifest.xml:18:13-62
+510    </application>
+511
+512</manifest>
