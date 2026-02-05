@@ -130,7 +130,7 @@ public class BooksFragment extends Fragment {
 
     private void loadRankingData() {
         new RankingSyn().execute(
-                Server.getUrlApi(requireContext()) + "Ranking.php",
+                Server.getUrlApi(requireContext()) + "books.php",
                 mSession.getIdNumber()
         );
     }
@@ -140,7 +140,29 @@ public class BooksFragment extends Fragment {
     private class RankingSyn extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-            return executePostRequest(params[0], params[1]);
+            // Construction de l'URL - params[1] contient probablement un paramètre à ajouter
+            String url = params[0] + "?id_number=" + params[1];
+            return executeGetRequest(url);
+        }
+
+        private String executeGetRequest(String url) {
+            try {
+                Request request = new Request.Builder()
+                        .url(url)
+                        .get()
+                        .build();
+
+                try (Response response = mHttpClient.newCall(request).execute()) {
+                    if (response.body() != null) {
+                        return response.body().string();
+                    }
+                }
+            } catch (IOException e) {
+                Log.e(TAG, "Network error: " + e.getMessage(), e);
+            } catch (Exception e) {
+                Log.e(TAG, "Unexpected error: " + e.getMessage(), e);
+            }
+            return null;
         }
 
         @Override
@@ -203,7 +225,7 @@ public class BooksFragment extends Fragment {
         try {
             RequestBody requestBody = new MultipartBody.Builder()
                     .setType(MultipartBody.FORM)
-                    .addFormDataPart("idNumber", idNumber)
+                    .addFormDataPart("id_number", idNumber)
                     .build();
 
             Request request = new Request.Builder()
