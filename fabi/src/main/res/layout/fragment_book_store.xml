@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     style="@style/background"
-    tools:context="com.ninotech.fabi.controleur.fragment.BookStoreFragment">
+    tools:context=".controleur.fragment.BookStoreFragment">
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab_layout_accuiel"
         android:background="@color/transparent"

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/match_parent_all"
-    tools:context="com.ninotech.fabi.controleur.activity.BookActivity">
+    tools:context=".controleur.activity.BookActivity">
     <include layout="@layout/toolbar_book"/>
     <androidx.core.widget.NestedScrollView
         android:id="@+id/nested_scroll_view_activity_book"

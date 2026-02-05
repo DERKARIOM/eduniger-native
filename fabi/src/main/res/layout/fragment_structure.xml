@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/match_parent_all"
-    tools:context="com.ninotech.fabi.controleur.fragment.StructureFragment">
+    tools:context=".controleur.fragment.StructureFragment">
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_fragment_structure"
         style="@style/match_parent_all"

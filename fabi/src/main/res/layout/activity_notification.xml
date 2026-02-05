@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/match_parent_all"
     android:fitsSystemWindows="true"
-    tools:context="com.ninotech.fabi.controleur.activity.NotificationActivity">
+    tools:context=".controleur.activity.NotificationActivity">
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_activity_notification"
         style="@style/match_parent_all"

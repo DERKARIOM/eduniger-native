@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     style="@style/background"
-    tools:context="com.ninotech.fabi.controleur.activity.MainActivity">
+    tools:context="com.ninotech.eduniger.controleur.activity.MainActivity">
    <include layout="@layout/toolbar_main"/>
     <fragment
         android:id="@+id/nav_host_fragment_activity_main"

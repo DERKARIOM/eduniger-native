@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     style="@style/background"
-    tools:context="com.ninotech.fabi.controleur.fragment.HomeFragment">
+    tools:context="com.ninotech.eduniger.controleur.fragment.HomeFragment">
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_fragment_recommended_wait"
         android:nestedScrollingEnabled="false"

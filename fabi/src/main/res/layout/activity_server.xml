@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.ninotech.fabi.controleur.activity.ServerActivity">
+    tools:context=".controleur.activity.ServerActivity">
     <Switch
         android:id="@+id/switch_activity_server"
         android:layout_width="match_parent"

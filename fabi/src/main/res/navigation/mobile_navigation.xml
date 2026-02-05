@@ -7,25 +7,25 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.ninotech.fabi.controleur.fragment.HomeFragment"
+        android:name="com.ninotech.eduniger.controleur.fragment.HomeFragment"
         android:label="Home"
         tools:layout="@layout/fragment_book_store" />
 
     <fragment
         android:id="@+id/navigation_structure"
-        android:name="com.ninotech.fabi.controleur.fragment.BookStoreFragment"
+        android:name="com.ninotech.eduniger.controleur.fragment.BookStoreFragment"
         android:label="Structure"
         tools:layout="@layout/fragment_category" />
 
     <fragment
         android:id="@+id/navigation_suggestion"
-        android:name="com.ninotech.fabi.controleur.fragment.ChatBotFragment"
+        android:name="com.ninotech.eduniger.controleur.fragment.ChatBotFragment"
         android:label="Suggestion"
         tools:layout="@layout/fragment_suggestion" />
 
     <fragment
         android:id="@+id/navigation_library"
-        android:name="com.ninotech.fabi.controleur.fragment.LibraryFragment"
+        android:name="com.ninotech.eduniger.controleur.fragment.LibraryFragment"
         android:label="Library"
         tools:layout="@layout/fragment_library" />
 </navigation>

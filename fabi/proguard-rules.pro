@@ -67,7 +67,7 @@
 # ==========================================
 
 # Si vous voulez conserver vos classes de modèle
--keep class com.ninotech.fabi.model.** { *; }
+-keep class com.ninotech.eduniger.model.** { *; }
 
 # Si vous utilisez Picasso (vous l'utilisez déjà)
 -dontwarn com.squareup.okhttp.**

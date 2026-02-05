@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.ninotech.fabi.controleur.activity.SettingActivity">
+    tools:context=".controleur.activity.SettingActivity">
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_activity_setting"
         android:layout_width="match_parent"

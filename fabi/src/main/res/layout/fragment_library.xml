@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.ninotech.fabi.controleur.fragment.LibraryFragment">
+    tools:context=".controleur.fragment.LibraryFragment">
 
     <RelativeLayout
         android:layout_margin="10dp"

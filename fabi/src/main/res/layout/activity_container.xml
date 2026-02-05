@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/match_parent_all"
     android:fitsSystemWindows="true"
-    tools:context="com.ninotech.fabi.controleur.activity.ContainerActivity">
+    tools:context=".controleur.activity.ContainerActivity">
     <androidx.recyclerview.widget.RecyclerView
         android:layout_margin="5dp"
         android:id="@+id/recycler_view_activity_container"

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.ninotech.fabi.controleur.activity.FingerPrintActivity">
+    tools:context=".controleur.activity.FingerPrintActivity">
     <Switch
         android:id="@+id/switch1"
         android:layout_width="match_parent"

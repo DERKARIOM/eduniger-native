@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:fitsSystemWindows="false"
-    tools:context="com.ninotech.fabi.controleur.activity.LoginActivity">
+    tools:context="com.ninotech.eduniger.controleur.activity.LoginActivity">
 
     <!-- Fond avec gradient -->
     <View
@@ -157,7 +157,7 @@
                     android:layout_width="wrap_content"
 
                     android:textSize="@dimen/size_title"
-                    android:text="Vous n'avez pas de compte ?"
+                    android:text="Vous n\'avez pas de compte ?"
                     />
                 <TextView
                     android:layout_height="wrap_content"
