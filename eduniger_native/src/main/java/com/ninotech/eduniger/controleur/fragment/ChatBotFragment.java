@@ -243,7 +243,7 @@ public class ChatBotFragment extends Fragment {
     }
 
     private void sendToEduna(String message) {
-        String url = getString(R.string.ip_eduna) + "/fabi/api/ask_eduna.php";
+        String url = Server.getUrlServer(getContext()) + "/ai/ask_eduna.php";
         new EdunaTask(this).execute(url, mSession.getIdNumber(), message);
     }
 
@@ -380,7 +380,7 @@ public class ChatBotFragment extends Fragment {
             try {
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
-                        .addFormDataPart("idNumber", params[1])
+                        .addFormDataPart("id_number", params[1])
                         .addFormDataPart("request", params[2])
                         .build();
 
