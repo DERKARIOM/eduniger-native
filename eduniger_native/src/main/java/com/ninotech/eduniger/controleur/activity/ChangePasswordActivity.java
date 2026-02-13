@@ -170,7 +170,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
                 mConnectionProgressBar.setVisibility(View.VISIBLE);
                 mConnectionButton.setText(R.string.register_succes_1111);
                 ChangePassword changePassword = new ChangePassword();
-                changePassword.execute(Server.getUrlApi(getApplicationContext()) + "ChangePassword.php",
+                changePassword.execute(Server.getUrlApi(getApplicationContext()) + "password_change.php",
                         mAccount.getIdNumber(),
                         mAccount.getEmail(),
                         mAccount.getPassword()
@@ -240,7 +240,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
                 mConnectionProgressBar.setVisibility(View.VISIBLE);
                 mConnectionButton.setText(R.string.register_succes_1111);
                 ChangePassword changePassword = new ChangePassword();
-                changePassword.execute(Server.getUrlApi(getApplicationContext()) + "ChangePassword.php",
+                changePassword.execute(Server.getUrlApi(getApplicationContext()) + "password_change.php",
                         mAccount.getIdNumber(),
                         mAccount.getEmail(),
                         mAccount.getPassword()
@@ -277,9 +277,9 @@ public class ChangePasswordActivity extends AppCompatActivity {
                 OkHttpClient client = new OkHttpClient();
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
-                        .addFormDataPart("idNumber",params[1])
+                        .addFormDataPart("id_number",params[1])
                         .addFormDataPart("email",params[2])
-                        .addFormDataPart("passwordNew",params[3])
+                        .addFormDataPart("password_new",params[3])
                         .build();
                 Request request = new Request.Builder()
                         .url(params[0])
