@@ -22,6 +22,7 @@ import android.widget.Toast;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.eduniger.R;
+import com.ninotech.eduniger.controleur.activity.AddBookActivity;
 import com.ninotech.eduniger.controleur.activity.RegisterAuthorActivity;
 import com.ninotech.eduniger.controleur.activity.StructureActivity;
 import com.ninotech.eduniger.controleur.animation.RoundedTransformation;
@@ -209,7 +210,7 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
                             }
                             break;
                         case "AddBook","RegisterAuthor":
-                            Intent registerAuthorIntent = new Intent(itemView.getContext(), RegisterAuthorActivity.class);
+                            Intent registerAuthorIntent = new Intent(itemView.getContext(), AddBookActivity.class);
                             itemView.getContext().startActivity(registerAuthorIntent);
                             //simpleOkDialog(R.drawable.add_auteurs,"Ajouter un contenue dans EduNiger" , "La fonctionnalité Devenir Auteur est actuellement en cours de développement. Elle sera disponible dans la version officielle à venir, inchaAllah.");
                             break;
