@@ -206,7 +206,7 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
                                 mAdhereButton.setText("Détacher");
                                 structure.setAdhere(false);
                                 DetachStructSyn detachStructSyn = new DetachStructSyn();
-                                detachStructSyn.execute(Server.getUrlApi(itemView.getContext()) + "AdhererStruct.php",mSession.getIdNumber(),structure.getId());
+                                detachStructSyn.execute(Server.getUrlApi(itemView.getContext()) + "adherer_struct.php",mSession.getIdNumber(),structure.getId());
                             }
                             break;
                         case "AddBook","RegisterAuthor":
@@ -246,7 +246,7 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
                                 mAdhereButton.setBackgroundTintList(ColorStateList.valueOf(itemView.getContext().getColor(R.color.purple_200)));
                                 mAdhereButton.setText("S'adhérer");
                                 DetachStructSyn detachStructSyn = new DetachStructSyn();
-                                detachStructSyn.execute(Server.getUrlApi(itemView.getContext()) + "DetachStruct.php",mSession.getIdNumber(),id);
+                                detachStructSyn.execute(Server.getUrlApi(itemView.getContext()) + "detach_struct.php",mSession.getIdNumber(),id);
                             }
                         }
                     }
@@ -265,8 +265,8 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
                     OkHttpClient client = new OkHttpClient();
                     RequestBody requestBody = new MultipartBody.Builder()
                             .setType(MultipartBody.FORM)
-                            .addFormDataPart("idUser",params[1])
-                            .addFormDataPart("idStruct",params[2])
+                            .addFormDataPart("id_user",params[1])
+                            .addFormDataPart("id_struct",params[2])
                             .build();
                     Request request = new Request.Builder()
                             .url(params[0])

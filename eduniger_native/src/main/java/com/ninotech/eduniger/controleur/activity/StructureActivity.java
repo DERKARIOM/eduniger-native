@@ -271,7 +271,7 @@ public class StructureActivity extends AppCompatActivity {
         mStructure.setAdhere(true);
 
         new DetachStructSyn().execute(
-                Server.getUrlApi(this) + "AdhererStruct.php",
+                Server.getUrlApi(this) + "adherer_struct.php",
                 mSession.getIdNumber(),
                 mStructure.getId()
         );
@@ -534,8 +534,8 @@ public class StructureActivity extends AppCompatActivity {
             return executePostRequest(params[0],
                     new MultipartBody.Builder()
                             .setType(MultipartBody.FORM)
-                            .addFormDataPart("idUser", params[1])
-                            .addFormDataPart("idStruct", params[2])
+                            .addFormDataPart("id_user", params[1])
+                            .addFormDataPart("id_struct", params[2])
                             .build());
         }
 
