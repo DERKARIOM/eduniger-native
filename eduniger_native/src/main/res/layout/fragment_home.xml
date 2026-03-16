@@ -235,7 +235,10 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recycler_view_author"
                     android:nestedScrollingEnabled="false"
-                    android:layout_margin="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="100dp"
                     android:layout_below="@id/relative_layout_fragment_home_more_author"
                     style="@style/match_parent_all" />
 

@@ -27,7 +27,7 @@
     </style>
 
     <style name="activity_main_research">
-        <item name="android:background">@drawable/forme_black3_radius_10dp</item>
+        <item name="android:background">@drawable/bg_bottom_nav</item>
         <item name="android:drawableEnd">@drawable/vector_white_micro</item>
     </style>
     <style name="activity_main_ico_notification">

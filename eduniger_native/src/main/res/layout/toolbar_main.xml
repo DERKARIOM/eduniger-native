@@ -28,7 +28,7 @@
         android:elevation="1dp"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="90dp"
-        android:hint="@string/find_book"
+        android:hint="  Rechercher un livre"
         android:drawableStart="?android:attr/actionModeWebSearchDrawable"
         android:inputType="text"
         android:layout_centerVertical="true"

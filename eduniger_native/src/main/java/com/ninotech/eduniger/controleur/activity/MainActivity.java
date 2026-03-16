@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
         setupToolbar();
         setupNotificationBadge();
         setupNavigation();
-        //applyGlassmorphism();
+        applyGlassmorphism();
         handleDeepLink();
         checkDigitalPrint();
         requestPermissions();
@@ -105,13 +105,18 @@ public class MainActivity extends AppCompatActivity {
 
     private void applyGlassmorphism() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            // API 31+ : blur natif parfait
-            mBottomNavigationView.setRenderEffect(
-                    RenderEffect.createBlurEffect(40f, 40f, Shader.TileMode.CLAMP)
-            );
+            View backgroundView = findViewById(R.id.backgroundView);
+            if (backgroundView != null) {
+                RenderEffect blurEffect = RenderEffect.createBlurEffect(
+                        80f, 80f, Shader.TileMode.CLAMP);
+                backgroundView.setRenderEffect(blurEffect);
+            }
         } else {
-            // Fallback API < 31 : simple transparence
-            mBottomNavigationView.getBackground().setAlpha(120);
+            // Fallback API < 31
+            View backgroundView = findViewById(R.id.backgroundView);
+            if (backgroundView != null) {
+                backgroundView.getBackground().setAlpha(180);
+            }
         }
     }
 
