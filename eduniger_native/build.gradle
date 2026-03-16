@@ -56,6 +56,7 @@ dependencies {
     implementation "androidx.work:work-runtime-ktx:2.8.1"
     implementation 'com.hbb20:ccp:2.6.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+    implementation 'com.google.android.gms:play-services-auth:21.0.0'
     //implementation 'com.tom-roush:pdfbox-android:2.0.27.0'
     // implementation 'com.etebarian:meow-bottom-navigation:1.2.0'
 }

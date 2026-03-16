@@ -28,6 +28,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
 import com.ninotech.eduniger.R;
 import com.ninotech.eduniger.controleur.dialog.UpdateDialog;
 import com.ninotech.eduniger.model.data.Account;
@@ -70,6 +75,9 @@ public class LoginActivity extends AppCompatActivity {
     private Account mAccount;
     private String mToken;
     private OkHttpClient mHttpClient;
+    // 2. Constantes à ajouter dans LoginActivity
+    private static final int RC_SIGN_IN = 9001;
+    private GoogleSignInClient mGoogleSignInClient;
     private boolean mIsNightMode;
 
     @Override
@@ -139,6 +147,17 @@ public class LoginActivity extends AppCompatActivity {
         mToken = DEFAULT_TOKEN;
         mHttpClient = new OkHttpClient();
         mIsNightMode = isNightMode();
+        setupGoogleSignIn();
+    }
+
+    // 4. Nouvelle méthode setupGoogleSignIn()
+    private void setupGoogleSignIn() {
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .requestProfile()
+                .build();
+
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
     }
 
     private void setupListeners() {
@@ -160,12 +179,54 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         // Google sync (placeholder)
+        // 5. Remplacer le placeholder dans setupListeners()
         mGoogleLinearLayout.setOnClickListener(v -> {
-            Intent intent = new Intent(android.provider.Settings.ACTION_SYNC_SETTINGS);
-            if (intent.resolveActivity(getPackageManager()) != null) {
-                startActivity(intent);
-            }
+            launchGoogleSignIn();
         });
+    }
+
+    // 6. Méthodes Google Sign-In — même pattern que handleLoginClick()
+    private void launchGoogleSignIn() {
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == RC_SIGN_IN) {
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            handleGoogleSignInResult(task);
+        }
+    }
+
+    private void handleGoogleSignInResult(Task<GoogleSignInAccount> completedTask) {
+        try {
+            GoogleSignInAccount googleAccount = completedTask.getResult(ApiException.class);
+            performGoogleLogin(googleAccount);
+        } catch (ApiException e) {
+            Log.w(TAG, "Google sign-in failed, code: " + e.getStatusCode());
+            mErrorTextView.setText(R.string.no_connection);
+        }
+    }
+
+    // 7. Envoi au backend — même pattern que performLogin()
+    private void performGoogleLogin(GoogleSignInAccount googleAccount) {
+        setLoadingState(true);
+
+        String googleId    = googleAccount.getId();
+        String email       = googleAccount.getEmail() != null ? googleAccount.getEmail() : "";
+        String name        = googleAccount.getFamilyName() != null ? googleAccount.getFamilyName() : "";
+        String firstName   = googleAccount.getGivenName() != null ? googleAccount.getGivenName() : "";
+
+        new GoogleLoginTask(this).execute(
+                Server.getUrlApi(getApplicationContext()) + "login_google.php",
+                googleId,
+                email,
+                name,
+                firstName
+        );
     }
 
     private void setupAnimations() {
@@ -412,6 +473,65 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     // ==================== AsyncTask ====================
+
+    // 8. AsyncTask Google — même structure que LoginTask
+    private static class GoogleLoginTask extends AsyncTask<String, Void, String> {
+        private final WeakReference<LoginActivity> activityRef;
+
+        GoogleLoginTask(LoginActivity activity) {
+            this.activityRef = new WeakReference<>(activity);
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            // params[0] = url
+            // params[1] = googleId
+            // params[2] = email
+            // params[3] = name
+            // params[4] = firstName
+            LoginActivity activity = activityRef.get();
+            if (activity == null || activity.mHttpClient == null) return null;
+
+            try {
+                RequestBody requestBody = new MultipartBody.Builder()
+                        .setType(MultipartBody.FORM)
+                        .addFormDataPart("google_id", params[1])
+                        .addFormDataPart("email",     params[2])
+                        .addFormDataPart("name",      params[3])
+                        .addFormDataPart("firstName", params[4])
+                        .addFormDataPart("token",     "ras")
+                        .addFormDataPart("version",
+                                activity.getResources().getString(R.string.app_version))
+                        .build();
+
+                Request request = new Request.Builder()
+                        .url(params[0])
+                        .post(requestBody)
+                        .build();
+
+                try (Response response = activity.mHttpClient.newCall(request).execute()) {
+                    if (response.body() != null) {
+                        Log.e("GooglePass",response.body().string());
+                        return response.body().string();
+                    }
+                } catch (IOException e) {
+                    Log.e(TAG, "Google login network request failed", e);
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Unexpected error in Google login task", e);
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            LoginActivity activity = activityRef.get();
+            if (activity != null) {
+                // Réutilise exactement le même handler que le login classique
+                activity.handleLoginResponse(result);
+            }
+        }
+    }
 
     private static class LoginTask extends AsyncTask<String, Void, String> {
         private final WeakReference<LoginActivity> activityRef;
