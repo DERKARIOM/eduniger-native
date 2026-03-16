@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.RenderEffect;
+import android.graphics.Shader;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -94,10 +96,23 @@ public class MainActivity extends AppCompatActivity {
         setupToolbar();
         setupNotificationBadge();
         setupNavigation();
+        //applyGlassmorphism();
         handleDeepLink();
         checkDigitalPrint();
         requestPermissions();
         startNetworkWorker();
+    }
+
+    private void applyGlassmorphism() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            // API 31+ : blur natif parfait
+            mBottomNavigationView.setRenderEffect(
+                    RenderEffect.createBlurEffect(40f, 40f, Shader.TileMode.CLAMP)
+            );
+        } else {
+            // Fallback API < 31 : simple transparence
+            mBottomNavigationView.getBackground().setAlpha(120);
+        }
     }
 
     private void initializeApp() {

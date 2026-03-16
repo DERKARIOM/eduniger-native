@@ -9,20 +9,29 @@
 
     <include layout="@layout/toolbar_main"/>
 
+    <!-- FrameLayout qui contient TOUT : fragment + navbar flottante -->
     <FrameLayout
-        android:id="@+id/nav_host_fragment_activity_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/relative_layout_toolbar_search"
-        android:layout_above="@+id/bottom_navigation_main" />
+        android:layout_below="@+id/relative_layout_toolbar_search">
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_navigation_main"
-        android:layout_width="match_parent"
-        style="@style/botton_navigation"
-        android:elevation="10dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        app:menu="@menu/menu_bottom" />
+        <!-- Le fragment prend tout l'espace, y compris derrière la navbar -->
+        <FrameLayout
+            android:id="@+id/nav_host_fragment_activity_main"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <!-- La navbar flotte AU-DESSUS du fragment -->
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottom_navigation_main"
+            android:layout_width="wrap_content"
+            style="@style/botton_navigation2"
+            android:elevation="20dp"
+            android:layout_height="50dp"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="20dp"
+            app:menu="@menu/menu_bottom" />
+
+    </FrameLayout>
 
 </RelativeLayout>
