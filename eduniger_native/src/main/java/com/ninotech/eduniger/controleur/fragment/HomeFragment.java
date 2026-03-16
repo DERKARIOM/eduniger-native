@@ -10,16 +10,16 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.ViewFlipper;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -28,7 +28,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import androidx.viewpager2.widget.ViewPager2;
 
 import com.ninotech.eduniger.R;
 import com.ninotech.eduniger.controleur.activity.LoginActivity;
@@ -36,7 +35,6 @@ import com.ninotech.eduniger.controleur.activity.SearchActivity;
 import com.ninotech.eduniger.controleur.adapter.AuthorHorizontaleAdapter;
 import com.ninotech.eduniger.controleur.adapter.HorizontaleAdapter;
 import com.ninotech.eduniger.controleur.adapter.NoConnectionAdapter;
-import com.ninotech.eduniger.controleur.adapter.PubSliderAdapter;
 import com.ninotech.eduniger.controleur.adapter.SemiNoConnectionAdapter;
 import com.ninotech.eduniger.controleur.adapter.StructureAdapter;
 import com.ninotech.eduniger.controleur.dialog.UpdateDialog;
@@ -71,11 +69,11 @@ public class HomeFragment extends Fragment {
     private static final String ACTION_HOME_FRAGMENT = "HOME_FRAGMENT";
     private static final String RESPONSE_RAS = "RAS";
     private static final String RESPONSE_EXPIRED_VERSION = "expiresVersion";
-    private static final long SLIDER_DELAY = 3000L;
 
     // Views
-    private ViewPager2 mViewPagerPub;
+    private ViewFlipper mViewFlipperPub;
     private LinearLayout mLayoutDotsPub;
+    private ImageView mImagePub1, mImagePub2, mImagePub3;
     private RecyclerView mBookRecommendedRecyclerView;
     private RecyclerView mServerdRecyclerView;
     private RecyclerView mStructureRecyclerView;
@@ -88,10 +86,6 @@ public class HomeFragment extends Fragment {
     private RelativeLayout mMoreStructRelativeLayout;
     private RelativeLayout mMoreAuthorRelativeLayout;
     private SwipeRefreshLayout mSwipeRefreshLayout;
-
-    // Slider auto-scroll
-    private Handler mSliderHandler;
-    private Runnable mSliderRunnable;
 
     // Data
     private final List<OnlineBook> mOnlineBookList = new ArrayList<>();
@@ -149,9 +143,12 @@ public class HomeFragment extends Fragment {
     }
 
     private void initializeViews(View view) {
-        // Slider pub
-        mViewPagerPub   = view.findViewById(R.id.view_pager_pub);
+        // ViewFlipper pub
+        mViewFlipperPub = view.findViewById(R.id.view_flipper_pub);
         mLayoutDotsPub  = view.findViewById(R.id.layout_dots_pub);
+        mImagePub1      = view.findViewById(R.id.image_pub_1);
+        mImagePub2      = view.findViewById(R.id.image_pub_2);
+        mImagePub3      = view.findViewById(R.id.image_pub_3);
 
         // Autres vues
         mBookRecommendedRecyclerView = view.findViewById(R.id.recycler_view_ranking);
@@ -188,7 +185,7 @@ public class HomeFragment extends Fragment {
             mServers.clear();
             mAuthorArrayList.clear();
             mStructureIds.clear();
-            stopAutoSlide();
+            stopPubFlipper();
             loadAllData();
         });
 
@@ -203,25 +200,42 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    // ==================== Slider Pub ====================
+    // ==================== ViewFlipper Pub ====================
 
-    private void setupPubSlider(List<String> imageUrls) {
+    private void setupPubFlipper(List<String> imageUrls) {
         if (!isAdded() || imageUrls.isEmpty()) return;
 
-        // Arrêter un éventuel slider précédent
-        stopAutoSlide();
+        stopPubFlipper();
 
-        PubSliderAdapter adapter = new PubSliderAdapter(requireContext(), imageUrls);
-        mViewPagerPub.setAdapter(adapter);
+        // Charger chaque image dans son ImageView dédié — zéro recyclage
+        ImageView[] imageViews = {mImagePub1, mImagePub2, mImagePub3};
+        for (int i = 0; i < imageUrls.size() && i < imageViews.length; i++) {
+            com.squareup.picasso.Picasso.get()
+                    .load(imageUrls.get(i))
+                    .fit()
+                    .centerInside()
+                    .placeholder(R.drawable.img_wait_pub)
+                    .error(R.drawable.img_wait_pub)
+                    .into(imageViews[i]);
+        }
 
-        // Animation gauche → droite (parallax léger)
-        mViewPagerPub.setPageTransformer((page, position) -> {
-            page.setTranslationX(-position * page.getWidth() * 0.1f);
-            page.setAlpha(1 - Math.abs(position) * 0.25f);
-        });
+        // Animation gauche → droite
+        mViewFlipperPub.setInAnimation(
+                AnimationUtils.loadAnimation(requireContext(), R.anim.slide_in_right));
+        mViewFlipperPub.setOutAnimation(
+                AnimationUtils.loadAnimation(requireContext(), R.anim.slide_out_left));
+
+        // Démarrer le défilement automatique
+        mViewFlipperPub.setFlipInterval(3000);
+        mViewFlipperPub.startFlipping();
 
         setupDotIndicators(imageUrls.size());
-        startAutoSlide(imageUrls.size());
+    }
+
+    private void stopPubFlipper() {
+        if (mViewFlipperPub != null && mViewFlipperPub.isFlipping()) {
+            mViewFlipperPub.stopFlipping();
+        }
     }
 
     private void setupDotIndicators(int count) {
@@ -240,36 +254,21 @@ public class HomeFragment extends Fragment {
             mLayoutDotsPub.addView(dots[i], params);
         }
 
-        mViewPagerPub.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+        // Mettre à jour les dots à chaque changement de page
+        mViewFlipperPub.setOnHierarchyChangeListener(new ViewGroup.OnHierarchyChangeListener() {
             @Override
-            public void onPageSelected(int position) {
+            public void onChildViewAdded(View parent, View child) {}
+
+            @Override
+            public void onChildViewRemoved(View parent, View child) {
+                int current = mViewFlipperPub.getDisplayedChild();
                 for (int i = 0; i < count; i++) {
-                    dots[i].setImageResource(i == position
+                    dots[i].setImageResource(i == current
                             ? R.drawable.dot_active
                             : R.drawable.dot_inactive);
                 }
             }
         });
-    }
-
-    private void startAutoSlide(int pageCount) {
-        mSliderHandler = new Handler(Looper.getMainLooper());
-        mSliderRunnable = new Runnable() {
-            @Override
-            public void run() {
-                if (!isAdded() || mViewPagerPub == null) return;
-                int next = (mViewPagerPub.getCurrentItem() + 1) % pageCount;
-                mViewPagerPub.setCurrentItem(next, true);
-                mSliderHandler.postDelayed(this, SLIDER_DELAY);
-            }
-        };
-        mSliderHandler.postDelayed(mSliderRunnable, SLIDER_DELAY);
-    }
-
-    private void stopAutoSlide() {
-        if (mSliderHandler != null && mSliderRunnable != null) {
-            mSliderHandler.removeCallbacks(mSliderRunnable);
-        }
     }
 
     // ==================== RecyclerViews ====================
@@ -372,7 +371,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        stopAutoSlide();
+        stopPubFlipper();
         if (mReceiver != null) {
             try {
                 requireContext().unregisterReceiver(mReceiver);
@@ -415,7 +414,7 @@ public class HomeFragment extends Fragment {
             stopRefreshing();
 
             if (jsonData != null) {
-                loadPublicitySlider();   // ← slider au lieu d'une image fixe
+                loadPublicitySlider();
                 showContentState();
 
                 if (RESPONSE_EXPIRED_VERSION.equals(jsonData)) {
@@ -431,13 +430,10 @@ public class HomeFragment extends Fragment {
             }
         }
 
-        /** Construit les 3 URLs de pub et lance le slider */
         private void loadPublicitySlider() {
             if (mPubData == null || !isAdded()) return;
 
             String baseUrl = Server.getUrlServer(requireContext()) + "ressources/pub/";
-
-            // mPubData = "1.png" → on extrait l'extension pour garder la cohérence
             String ext = mPubData.contains(".")
                     ? mPubData.substring(mPubData.lastIndexOf('.'))
                     : ".png";
@@ -447,7 +443,7 @@ public class HomeFragment extends Fragment {
             urls.add(baseUrl + "2" + ext);
             urls.add(baseUrl + "3" + ext);
 
-            setupPubSlider(urls);
+            setupPubFlipper(urls);
         }
 
         private void showContentState() {
@@ -701,7 +697,7 @@ public class HomeFragment extends Fragment {
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
 
-        TextView annuler  = dialog.findViewById(R.id.annuler);
+        TextView annuler   = dialog.findViewById(R.id.annuler);
         TextView installer = dialog.findViewById(R.id.installer);
 
         annuler.setOnClickListener(v -> handleLogout(dialog));

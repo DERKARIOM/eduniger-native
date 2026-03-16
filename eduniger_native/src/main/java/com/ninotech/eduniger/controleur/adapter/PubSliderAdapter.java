@@ -11,7 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.eduniger.R;
-import com.ninotech.eduniger.controleur.animation.RoundedTransformation;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -26,9 +25,20 @@ public class PubSliderAdapter extends RecyclerView.Adapter<PubSliderAdapter.Slid
         this.mImageUrls = imageUrls;
 
         DisplayMetrics metrics = context.getResources().getDisplayMetrics();
-        int marginPx   = (int) (15 * metrics.density * 2); // paddingStart + paddingEnd
-        mTargetWidth   = metrics.widthPixels - marginPx;
-        mTargetHeight  = (int) (160 * metrics.density);    // correspond au 160dp du XML
+        int marginPx  = (int) (15 * metrics.density * 2);
+        mTargetWidth  = metrics.widthPixels - marginPx;
+        mTargetHeight = (int) (160 * metrics.density);
+    }
+
+    // ← Un type de vue unique par position = jamais de recyclage croisé
+    @Override
+    public int getItemViewType(int position) {
+        return position;
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return mImageUrls.get(position).hashCode();
     }
 
     @NonNull
@@ -36,19 +46,35 @@ public class PubSliderAdapter extends RecyclerView.Adapter<PubSliderAdapter.Slid
     public SlideViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_pub_slide, parent, false);
-        return new SlideViewHolder(view);
+        SlideViewHolder holder = new SlideViewHolder(view);
+
+        // ← Charger l'image dès la création du ViewHolder via le viewType = position
+        loadImage(holder.imageView, mImageUrls.get(viewType));
+
+        return holder;
     }
 
     @Override
     public void onBindViewHolder(@NonNull SlideViewHolder holder, int position) {
+        // ← Vide intentionnellement : le chargement est fait dans onCreateViewHolder
+        // grâce au viewType = position, chaque ViewHolder est unique et jamais recyclé
+    }
+
+    @Override
+    public void onViewRecycled(@NonNull SlideViewHolder holder) {
+        super.onViewRecycled(holder);
+        // ← Annuler toute requête Picasso en cours sur ce holder
+        Picasso.get().cancelRequest(holder.imageView);
+    }
+
+    private void loadImage(ImageView imageView, String url) {
         Picasso.get()
-                .load(mImageUrls.get(position))
-                .transform(new RoundedTransformation(16, 0))
+                .load(url)
                 .resize(mTargetWidth, mTargetHeight)
-                .centerCrop()
+                .centerInside()
                 .placeholder(R.drawable.img_wait_pub)
                 .error(R.drawable.img_wait_pub)
-                .into(holder.imageView);
+                .into(imageView);
     }
 
     @Override
