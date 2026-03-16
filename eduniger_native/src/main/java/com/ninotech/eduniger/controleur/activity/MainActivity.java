@@ -26,11 +26,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.navigation.NavController;
-import androidx.navigation.NavOptions;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
+import androidx.fragment.app.Fragment;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 
@@ -38,6 +34,10 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.ninotech.eduniger.R;
+import com.ninotech.eduniger.controleur.fragment.BookStoreFragment;
+import com.ninotech.eduniger.controleur.fragment.ChatBotFragment;
+import com.ninotech.eduniger.controleur.fragment.HomeFragment;
+import com.ninotech.eduniger.controleur.fragment.LibraryFragment;
 import com.ninotech.eduniger.model.data.Account;
 import com.ninotech.eduniger.model.data.Initialization;
 import com.ninotech.eduniger.model.data.NotifNumber;
@@ -65,10 +65,17 @@ public class MainActivity extends AppCompatActivity {
     private ImageView mProfileImageView;
     private TextView mBadgeTextView;
 
+    // Fragments
+    private Fragment mFragmentHome;
+    private Fragment mFragmentChat;
+    private Fragment mFragmentLibrary;
+    private Fragment mActiveFragment;
+
     // Data
     private Account mAccount;
     private DigitalPrintTable mDigitalPrintTable;
     private BroadcastReceiver mUpdateBadgeReceiver;
+    private Fragment mFragmentBookStore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,25 +154,21 @@ public class MainActivity extends AppCompatActivity {
     private void setupToolbar() {
         Toolbar toolbar = findViewById(R.id.toolbar_search);
 
-        // Refresh button
         toolbar.getMenu().getItem(0).setOnMenuItemClickListener(item -> {
             refreshActivity();
             return true;
         });
 
-        // Notifications button
         toolbar.getMenu().getItem(1).setOnMenuItemClickListener(item -> {
             navigateToNotifications();
             return true;
         });
 
-        // Settings button
         toolbar.getMenu().getItem(2).setOnMenuItemClickListener(item -> {
             navigateToSettings();
             return true;
         });
 
-        // Logout button
         toolbar.getMenu().getItem(3).setOnMenuItemClickListener(item -> {
             logout();
             return true;
@@ -259,32 +262,58 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // ==================== Navigation par fragments (hide/show) ====================
+
     private void setupNavigation() {
-        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_home,
-                R.id.navigation_suggestion,
-                R.id.navigation_library
-        ).build();
+        // Créer les fragments une seule fois
+        mFragmentHome    = new HomeFragment();
+        mFragmentBookStore = new BookStoreFragment();
+        mFragmentChat    = new ChatBotFragment();
+        mFragmentLibrary = new LibraryFragment();
 
-        NavController navController = Navigation.findNavController(
-                this, R.id.nav_host_fragment_activity_main);
+        // Les ajouter tous les 3, cacher chat et library
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.nav_host_fragment_activity_main, mFragmentLibrary, "library").hide(mFragmentLibrary)
+                .add(R.id.nav_host_fragment_activity_main, mFragmentBookStore, "bookstore").hide(mFragmentBookStore)
+                .add(R.id.nav_host_fragment_activity_main, mFragmentChat,    "chat").hide(mFragmentChat)
+                .add(R.id.nav_host_fragment_activity_main, mFragmentHome,    "home")
+                .commit();
 
-        // Handle offline mode
+        mActiveFragment = mFragmentHome;
+
+        // Gérer le mode hors-ligne : démarrer sur Library
         String horsLine = getIntent().getStringExtra(EXTRA_HORS_LINE);
         if (HORS_LINE_ON.equals(horsLine)) {
-            navigateToLibrary(navController);
+            showFragment(mFragmentLibrary);
+            mBottomNavigationView.setSelectedItemId(R.id.navigation_library);
         }
 
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-        NavigationUI.setupWithNavController(mBottomNavigationView, navController);
+        // Écouter les clics sur la barre de navigation
+        mBottomNavigationView.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.navigation_home) {
+                showFragment(mFragmentHome);
+            } else if (id == R.id.navigation_structure) {  // ← remplacez par le bon ID
+                showFragment(mFragmentBookStore);
+            } else if (id == R.id.navigation_suggestion) {        // ← remplacez par le bon ID
+                showFragment(mFragmentChat);
+            } else if (id == R.id.navigation_library) {
+                showFragment(mFragmentLibrary);
+            }
+            return true;
+        });
     }
 
-    private void navigateToLibrary(NavController navController) {
-        navController.navigate(R.id.navigation_library, null,
-                new NavOptions.Builder()
-                        .setPopUpTo(navController.getGraph().getStartDestinationId(), true)
-                        .build());
+    private void showFragment(Fragment target) {
+        if (target == mActiveFragment) return;
+        getSupportFragmentManager().beginTransaction()
+                .hide(mActiveFragment)
+                .show(target)
+                .commit();
+        mActiveFragment = target;
     }
+
+    // ==================== Deep link ====================
 
     private void handleDeepLink() {
         Uri data = getIntent().getData();
@@ -292,9 +321,10 @@ public class MainActivity extends AppCompatActivity {
             String id = data.getQueryParameter("id");
             String name = data.getQueryParameter("name");
             Log.d(TAG, "Deep link received - ID: " + id + ", Name: " + name);
-            // Handle deep link data as needed
         }
     }
+
+    // ==================== Digital print ====================
 
     private void checkDigitalPrint() {
         try {
@@ -310,6 +340,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // ==================== Permissions ====================
+
     private void requestPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
@@ -324,11 +356,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // ==================== Worker réseau ====================
+
     private void startNetworkWorker() {
         OneTimeWorkRequest networkCheckRequest =
                 new OneTimeWorkRequest.Builder(NetworkCheckWorker.class).build();
         WorkManager.getInstance(this).enqueue(networkCheckRequest);
     }
+
+    // ==================== Menu ====================
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -340,20 +376,17 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    // ==================== Utility Methods ====================
+    // ==================== Utilitaires ====================
 
     private boolean isConnectedToInternet() {
         ConnectivityManager connectivityManager =
                 (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-
         if (connectivityManager != null) {
             NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
             return networkInfo != null && networkInfo.isConnected();
         }
         return false;
     }
-
-    // ==================== Getters/Setters ====================
 
     public BottomNavigationView getBottomNavigationView() {
         return mBottomNavigationView;
@@ -366,6 +399,8 @@ public class MainActivity extends AppCompatActivity {
     public void setEditText(EditText editText) {
         mEditText = editText;
     }
+
+    // ==================== Cycle de vie ====================
 
     @Override
     protected void onDestroy() {
