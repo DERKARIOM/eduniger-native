@@ -28,7 +28,7 @@
             android:layout_marginStart="40dp"
             android:layout_marginEnd="40dp"
             android:layout_gravity="bottom|center_horizontal"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="15dp"
             android:background="@drawable/bg_bottom_nav"
             android:minWidth="220dp" />
 
@@ -40,7 +40,7 @@
             android:elevation="20dp"
             android:layout_height="50dp"
             android:layout_gravity="bottom|center_horizontal"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="15dp"
             app:menu="@menu/menu_bottom" />
 
     </FrameLayout>
