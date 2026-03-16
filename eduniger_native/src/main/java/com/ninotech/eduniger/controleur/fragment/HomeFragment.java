@@ -24,6 +24,7 @@ import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.ninotech.eduniger.R;
 import com.ninotech.eduniger.controleur.activity.LoginActivity;
@@ -81,6 +82,7 @@ public class HomeFragment extends Fragment {
     private NestedScrollView mNestedScrollView;
     private RelativeLayout mMoreStructRelativeLayout;
     private RelativeLayout mMoreAuthorRelativeLayout;
+    private SwipeRefreshLayout mSwipeRefreshLayout;   // ← nouveau
 
     // Data
     private final List<OnlineBook> mOnlineBookList = new ArrayList<>();
@@ -119,6 +121,7 @@ public class HomeFragment extends Fragment {
         initializeViews(view);
         setupRecyclerViews();
         setupClickListeners();
+        setupSwipeRefresh();       // ← nouveau
         registerBroadcastReceiver();
         loadInitialData();
 
@@ -147,6 +150,7 @@ public class HomeFragment extends Fragment {
         mNestedScrollView = view.findViewById(R.id.nested_scroll_view_fragment_home);
         mMoreStructRelativeLayout = view.findViewById(R.id.relative_layout_fragment_home_more_structure);
         mMoreAuthorRelativeLayout = view.findViewById(R.id.relative_layout_fragment_home_more_author);
+        mSwipeRefreshLayout = view.findViewById(R.id.swipe_refresh_home);  // ← nouveau
 
         mMoreStructRelativeLayout.setVisibility(View.GONE);
         mStructureRecyclerView.setVisibility(View.GONE);
@@ -154,10 +158,47 @@ public class HomeFragment extends Fragment {
         mMoreAuthorRelativeLayout.setVisibility(View.GONE);
     }
 
+    // ==================== SwipeRefresh ====================
+
+    private void setupSwipeRefresh() {
+        // Couleurs de l'indicateur de chargement (adapter à votre thème)
+        mSwipeRefreshLayout.setColorSchemeResources(
+                R.color.purple_200,
+                android.R.color.holo_blue_light,
+                android.R.color.holo_orange_light
+        );
+
+        mSwipeRefreshLayout.setOnRefreshListener(() -> {
+            // Vider les données existantes avant de recharger
+            mOnlineBookList.clear();
+            mStructures.clear();
+            mServers.clear();
+            mAuthorArrayList.clear();
+            mStructureIds.clear();
+
+            // Relancer le chargement
+            loadAllData();
+        });
+
+        // Le swipe n'est actif que quand le NestedScrollView est visible
+        mNestedScrollView.setOnScrollChangeListener(
+                (NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
+                    // Autoriser le swipe uniquement quand on est tout en haut
+                    mSwipeRefreshLayout.setEnabled(scrollY == 0);
+                });
+    }
+
+    // ==================== Arrêter le SwipeRefresh après chargement ====================
+
+    private void stopRefreshing() {
+        if (mSwipeRefreshLayout != null && mSwipeRefreshLayout.isRefreshing()) {
+            mSwipeRefreshLayout.setRefreshing(false);
+        }
+    }
+
     private void setupRecyclerViews() {
         Context context = requireContext();
 
-        // Wait RecyclerView
         List<Connection> waitList = new ArrayList<>();
         waitList.add(new Connection(getString(R.string.wait), ACTION_HOME_FRAGMENT, true));
 
@@ -165,12 +206,10 @@ public class HomeFragment extends Fragment {
         mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(context));
         mWaitRecyclerView.setAdapter(mNoConnectionAdapter);
 
-        // Structure RecyclerView
         mSemiNoConnectionAdapter = new SemiNoConnectionAdapter(waitList);
         mStructureRecyclerView.setLayoutManager(new LinearLayoutManager(context));
         mStructureRecyclerView.setAdapter(mSemiNoConnectionAdapter);
 
-        // Author RecyclerView
         mAuthorRecyclerView.setLayoutManager(new LinearLayoutManager(context));
         mAuthorRecyclerView.setAdapter(mNoConnectionAdapter);
     }
@@ -278,7 +317,6 @@ public class HomeFragment extends Fragment {
     private class RecommendedSyn extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-            // Construction de l'URL avec les paramètres en query string
             String url = params[0] + "?id_number=" + params[1] + "&version=" + params[2];
             return executeGetRequest(url);
         }
@@ -286,6 +324,9 @@ public class HomeFragment extends Fragment {
         @Override
         protected void onPostExecute(String jsonData) {
             if (!isAdded()) return;
+
+            // ← Arrêter le SwipeRefresh dans tous les cas à la fin du chargement
+            stopRefreshing();
 
             if (jsonData != null) {
                 loadPublicityImage();
@@ -351,7 +392,6 @@ public class HomeFragment extends Fragment {
         }
 
         private void setupServerRecyclerView() {
-            String isAuthor = mUserTable.getIsAuthor(mSession.getIdNumber());
             mServers.clear();
             mServers.add(createStructure("AddBook", "eduniger.png",
                     "Ajouter un contenu", "@ninotech", "Créez librement", "0"));
@@ -369,7 +409,6 @@ public class HomeFragment extends Fragment {
     private class StructureSyn extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-            // Construction de l'URL avec le paramètre en query string
             String url = params[0] + "?id_user=" + params[1];
             return executeGetRequest(url);
         }
@@ -426,7 +465,6 @@ public class HomeFragment extends Fragment {
     private class StructureSyn2 extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-            // Construction de l'URL avec le paramètre en query string
             String url = params[0] + "?id_user=" + params[1];
             return executeGetRequest(url);
         }
@@ -477,7 +515,6 @@ public class HomeFragment extends Fragment {
     private class AuthorSyn extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-            // Construction de l'URL avec le paramètre en query string
             String url = params[0] + "?id_user=" + params[1];
             return executeGetRequest(url);
         }
@@ -527,6 +564,7 @@ public class HomeFragment extends Fragment {
     }
 
     // ==================== Helper Methods ====================
+
     private String executeGetRequest(String url) {
         try {
             Request request = new Request.Builder()
@@ -546,6 +584,7 @@ public class HomeFragment extends Fragment {
         }
         return null;
     }
+
     private String executePostRequest(String url, RequestBody requestBody) {
         try {
             Request request = new Request.Builder()

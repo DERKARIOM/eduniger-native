@@ -78,61 +78,54 @@ public class StructureFragment extends Fragment {
             getContext().registerReceiver(receiverNoConnectionAdapter, new IntentFilter("CATEGORY_FRAGMENT"),Context.RECEIVER_EXPORTED);
         }
         StructureSyn structureSyn = new StructureSyn();
-        structureSyn.execute(Server.getUrlApi(getContext()) + "Structure.php", session.getIdNumber());
+        structureSyn.execute(Server.getUrlApi(getContext()) + "structure.php", session.getIdNumber());
         StructureSyn2 structureSyn2 = new StructureSyn2();
         structureSyn2.execute(Server.getUrlApi(getContext()) + "StructureMore.php", session.getIdNumber());
         return view;
     }
 
-    private class StructureSyn extends AsyncTask<String,Void,String> {
+    private class StructureSyn extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
             try {
                 OkHttpClient client = new OkHttpClient();
-                RequestBody requestBody = new MultipartBody.Builder()
-                        .setType(MultipartBody.FORM)
-                        .addFormDataPart("idUser",params[1])
-                        .build();
+                String url = params[0] + "?id_user=" + params[1];
                 Request request = new Request.Builder()
-                        .url(params[0])
-                        .post(requestBody)
+                        .url(url)
+                        .get()
                         .build();
                 try {
                     Response response = client.newCall(request).execute();
                     assert response.body() != null;
                     return response.body().string();
-                }catch (IOException e)
-                {
+                } catch (IOException e) {
                     Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
-
-            }catch (Exception e)
-            {
+            } catch (Exception e) {
                 return null;
             }
             return null;
         }
+
         @Override
-        protected void onPostExecute(String jsonData){
-            if(jsonData != null)
-            {
+        protected void onPostExecute(String jsonData) {
+            if (jsonData != null) {
                 mWaitRecyclerView.setVisibility(View.GONE);
                 mStructureRecyclerView.setVisibility(View.VISIBLE);
-                if (!jsonData.equals("RAS"))
-                {
+                if (!jsonData.equals("RAS")) {
                     JSONArray jsonArray = null;
                     try {
                         jsonArray = new JSONArray(jsonData);
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
-                    for (int i=0;i<jsonArray.length();i++) {
+                    for (int i = 0; i < jsonArray.length(); i++) {
                         try {
                             mStructures.add(new Structure(
                                     jsonArray.getJSONObject(i).getString("id"),
                                     jsonArray.getJSONObject(i).getString("logo"),
                                     jsonArray.getJSONObject(i).getString("nameStruct"),
-                                    jsonArray.getJSONObject(i).getString("description"),true,
+                                    jsonArray.getJSONObject(i).getString("description"), true,
                                     jsonArray.getJSONObject(i).getString("banner"),
                                     jsonArray.getJSONObject(i).getString("author"),
                                     jsonArray.getJSONObject(i).getString("adhererNumber"),
@@ -145,16 +138,16 @@ public class StructureFragment extends Fragment {
                     mStructureRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                     mStructureRecyclerView.setAdapter(StructAdapter);
                 }
-            }
-            else {
+            } else {
                 ArrayList<Connection> list = new ArrayList<>();
-                list.add(new Connection(getString(R.string.no_connection_available),"CATEGORY_FRAGMENT",false));
+                list.add(new Connection(getString(R.string.no_connection_available), "CATEGORY_FRAGMENT", false));
                 NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
                 mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                 mWaitRecyclerView.setAdapter(noConnectionAdapter);
             }
         }
     }
+
     private class StructureSyn2 extends AsyncTask<String,Void,String> {
         @Override
         protected String doInBackground(String... params) {
@@ -222,6 +215,7 @@ public class StructureFragment extends Fragment {
             }
         }
     }
+
     public boolean isExistsS(ArrayList<Structure> structures , String id)
     {
         for(int i=0 ; i<structures.size() ; i++)
@@ -231,6 +225,7 @@ public class StructureFragment extends Fragment {
         }
         return false;
     }
+
     private RecyclerView mStructureRecyclerView;
     private RecyclerView mWaitRecyclerView;
     private ArrayList<Structure> mStructures;

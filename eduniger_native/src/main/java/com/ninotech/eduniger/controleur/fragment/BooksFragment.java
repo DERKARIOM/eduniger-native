@@ -17,6 +17,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.ninotech.eduniger.R;
 import com.ninotech.eduniger.controleur.adapter.NoConnectionAdapter;
@@ -49,6 +50,7 @@ public class BooksFragment extends Fragment {
     // Views
     private RecyclerView mBookRecyclerView;
     private RecyclerView mWaitRecyclerView;
+    private SwipeRefreshLayout mSwipeRefreshLayout;  // ← nouveau
 
     // Data
     private final List<OnlineBook> mOnlineBookList = new ArrayList<>();
@@ -73,6 +75,7 @@ public class BooksFragment extends Fragment {
 
         initializeViews(view);
         setupRecyclerView();
+        setupSwipeRefresh();         // ← nouveau
         registerBroadcastReceiver();
         loadRankingData();
 
@@ -80,9 +83,33 @@ public class BooksFragment extends Fragment {
     }
 
     private void initializeViews(View view) {
-        mBookRecyclerView = view.findViewById(R.id.recycler_view_ranking);
-        mWaitRecyclerView = view.findViewById(R.id.recycler_view_fragment_books_wait);
+        mBookRecyclerView  = view.findViewById(R.id.recycler_view_ranking);
+        mWaitRecyclerView  = view.findViewById(R.id.recycler_view_fragment_books_wait);
+        mSwipeRefreshLayout = view.findViewById(R.id.swipe_refresh_books);  // ← nouveau
     }
+
+    // ==================== SwipeRefresh ====================
+
+    private void setupSwipeRefresh() {
+        mSwipeRefreshLayout.setColorSchemeResources(
+                R.color.purple_200,
+                android.R.color.holo_blue_light,
+                android.R.color.holo_orange_light
+        );
+
+        mSwipeRefreshLayout.setOnRefreshListener(() -> {
+            mOnlineBookList.clear();
+            loadRankingData();
+        });
+    }
+
+    private void stopRefreshing() {
+        if (mSwipeRefreshLayout != null && mSwipeRefreshLayout.isRefreshing()) {
+            mSwipeRefreshLayout.setRefreshing(false);
+        }
+    }
+
+    // ==================== Setup ====================
 
     private void setupRecyclerView() {
         List<Connection> waitList = new ArrayList<>();
@@ -140,7 +167,6 @@ public class BooksFragment extends Fragment {
     private class RankingSyn extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-            // Construction de l'URL - params[1] contient probablement un paramètre à ajouter
             String url = params[0] + "?id_number=" + params[1];
             return executeGetRequest(url);
         }
@@ -168,6 +194,9 @@ public class BooksFragment extends Fragment {
         @Override
         protected void onPostExecute(String jsonData) {
             if (!isAdded()) return;
+
+            // ← Arrêter le SwipeRefresh dans tous les cas
+            stopRefreshing();
 
             if (jsonData != null) {
                 processRankingData(jsonData);

@@ -6,18 +6,26 @@
     style="@style/background"
     tools:context=".controleur.fragment.BooksFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view_ranking"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"
-        />
+    <!-- RecyclerView de chargement : EN DEHORS du SwipeRefresh -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_fragment_books_wait"
         android:nestedScrollingEnabled="false"
         android:layout_margin="10dp"
         android:layout_centerInParent="true"
-        style="@style/wrap_content_all"
-        />
+        style="@style/wrap_content_all" />
+
+    <!-- SwipeRefreshLayout enveloppe uniquement le RecyclerView principal -->
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh_books"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view_ranking"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
 </RelativeLayout>
