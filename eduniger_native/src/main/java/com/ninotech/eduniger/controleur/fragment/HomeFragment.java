@@ -10,6 +10,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -107,6 +109,8 @@ public class HomeFragment extends Fragment {
     private String mPubData;
     private BroadcastReceiver mReceiver;
     private OkHttpClient mHttpClient;
+    private Handler mDotsHandler;
+    private Runnable mDotsRunnable;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -207,7 +211,6 @@ public class HomeFragment extends Fragment {
 
         stopPubFlipper();
 
-        // Charger chaque image dans son ImageView dédié — zéro recyclage
         ImageView[] imageViews = {mImagePub1, mImagePub2, mImagePub3};
         for (int i = 0; i < imageUrls.size() && i < imageViews.length; i++) {
             com.squareup.picasso.Picasso.get()
@@ -219,26 +222,18 @@ public class HomeFragment extends Fragment {
                     .into(imageViews[i]);
         }
 
-        // Animation gauche → droite
         mViewFlipperPub.setInAnimation(
                 AnimationUtils.loadAnimation(requireContext(), R.anim.slide_in_right));
         mViewFlipperPub.setOutAnimation(
                 AnimationUtils.loadAnimation(requireContext(), R.anim.slide_out_left));
 
-        // Démarrer le défilement automatique
         mViewFlipperPub.setFlipInterval(3000);
         mViewFlipperPub.startFlipping();
 
         setupDotIndicators(imageUrls.size());
     }
 
-    private void stopPubFlipper() {
-        if (mViewFlipperPub != null && mViewFlipperPub.isFlipping()) {
-            mViewFlipperPub.stopFlipping();
-        }
-    }
-
-    private void setupDotIndicators(int count) {
+    private void setupDotIndicators(final int count) {
         if (!isAdded()) return;
         mLayoutDotsPub.removeAllViews();
 
@@ -254,21 +249,34 @@ public class HomeFragment extends Fragment {
             mLayoutDotsPub.addView(dots[i], params);
         }
 
-        // Mettre à jour les dots à chaque changement de page
-        mViewFlipperPub.setOnHierarchyChangeListener(new ViewGroup.OnHierarchyChangeListener() {
+        // Handler synchronisé avec le flipInterval (3000ms)
+        mDotsHandler = new Handler(Looper.getMainLooper());
+        mDotsRunnable = new Runnable() {
             @Override
-            public void onChildViewAdded(View parent, View child) {}
+            public void run() {
+                if (!isAdded() || mViewFlipperPub == null) return;
 
-            @Override
-            public void onChildViewRemoved(View parent, View child) {
                 int current = mViewFlipperPub.getDisplayedChild();
                 for (int i = 0; i < count; i++) {
                     dots[i].setImageResource(i == current
                             ? R.drawable.dot_active
                             : R.drawable.dot_inactive);
                 }
+                mDotsHandler.postDelayed(this, 3000);
             }
-        });
+        };
+        // Démarrer après 3000ms (en même temps que le premier flip)
+        mDotsHandler.postDelayed(mDotsRunnable, 3000);
+    }
+
+    private void stopPubFlipper() {
+        if (mViewFlipperPub != null && mViewFlipperPub.isFlipping()) {
+            mViewFlipperPub.stopFlipping();
+        }
+        // Arrêter le handler des dots
+        if (mDotsHandler != null && mDotsRunnable != null) {
+            mDotsHandler.removeCallbacks(mDotsRunnable);
+        }
     }
 
     // ==================== RecyclerViews ====================
