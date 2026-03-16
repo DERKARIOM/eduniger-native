@@ -70,7 +70,7 @@ public class PubSliderAdapter extends RecyclerView.Adapter<PubSliderAdapter.Slid
     private void loadImage(ImageView imageView, String url) {
         Picasso.get()
                 .load(url)
-                .resize(mTargetWidth, mTargetHeight)
+                .resize(6200, 3333)
                 .centerInside()
                 .placeholder(R.drawable.img_wait_pub)
                 .error(R.drawable.img_wait_pub)
