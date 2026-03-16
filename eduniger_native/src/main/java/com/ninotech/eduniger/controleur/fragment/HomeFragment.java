@@ -10,11 +10,14 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -25,6 +28,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.ninotech.eduniger.R;
 import com.ninotech.eduniger.controleur.activity.LoginActivity;
@@ -32,9 +36,9 @@ import com.ninotech.eduniger.controleur.activity.SearchActivity;
 import com.ninotech.eduniger.controleur.adapter.AuthorHorizontaleAdapter;
 import com.ninotech.eduniger.controleur.adapter.HorizontaleAdapter;
 import com.ninotech.eduniger.controleur.adapter.NoConnectionAdapter;
+import com.ninotech.eduniger.controleur.adapter.PubSliderAdapter;
 import com.ninotech.eduniger.controleur.adapter.SemiNoConnectionAdapter;
 import com.ninotech.eduniger.controleur.adapter.StructureAdapter;
-import com.ninotech.eduniger.controleur.animation.RoundedTransformation;
 import com.ninotech.eduniger.controleur.dialog.UpdateDialog;
 import com.ninotech.eduniger.model.data.Account;
 import com.ninotech.eduniger.model.data.Author;
@@ -44,7 +48,6 @@ import com.ninotech.eduniger.model.data.Server;
 import com.ninotech.eduniger.model.data.Structure;
 import com.ninotech.eduniger.model.table.Session;
 import com.ninotech.eduniger.model.table.UserTable;
-import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -68,21 +71,27 @@ public class HomeFragment extends Fragment {
     private static final String ACTION_HOME_FRAGMENT = "HOME_FRAGMENT";
     private static final String RESPONSE_RAS = "RAS";
     private static final String RESPONSE_EXPIRED_VERSION = "expiresVersion";
+    private static final long SLIDER_DELAY = 3000L;
 
     // Views
+    private ViewPager2 mViewPagerPub;
+    private LinearLayout mLayoutDotsPub;
     private RecyclerView mBookRecommendedRecyclerView;
     private RecyclerView mServerdRecyclerView;
     private RecyclerView mStructureRecyclerView;
     private RecyclerView mAuthorRecyclerView;
     private RecyclerView mWaitRecyclerView;
-    private ImageView mWelcomeImageView;
     private TextView mBookMoreTextView;
     private TextView mStructMoreTextView;
     private TextView mAuthorMoreTextView;
     private NestedScrollView mNestedScrollView;
     private RelativeLayout mMoreStructRelativeLayout;
     private RelativeLayout mMoreAuthorRelativeLayout;
-    private SwipeRefreshLayout mSwipeRefreshLayout;   // ← nouveau
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+
+    // Slider auto-scroll
+    private Handler mSliderHandler;
+    private Runnable mSliderRunnable;
 
     // Data
     private final List<OnlineBook> mOnlineBookList = new ArrayList<>();
@@ -121,12 +130,14 @@ public class HomeFragment extends Fragment {
         initializeViews(view);
         setupRecyclerViews();
         setupClickListeners();
-        setupSwipeRefresh();       // ← nouveau
+        setupSwipeRefresh();
         registerBroadcastReceiver();
         loadInitialData();
 
         return view;
     }
+
+    // ==================== Initialisation ====================
 
     private void initializeComponents() {
         Context context = requireContext();
@@ -138,19 +149,23 @@ public class HomeFragment extends Fragment {
     }
 
     private void initializeViews(View view) {
+        // Slider pub
+        mViewPagerPub   = view.findViewById(R.id.view_pager_pub);
+        mLayoutDotsPub  = view.findViewById(R.id.layout_dots_pub);
+
+        // Autres vues
         mBookRecommendedRecyclerView = view.findViewById(R.id.recycler_view_ranking);
-        mWelcomeImageView = view.findViewById(R.id.image_view_fragment_recommended_welcome);
-        mBookMoreTextView = view.findViewById(R.id.text_view_recommended_more);
-        mStructMoreTextView = view.findViewById(R.id.text_view_recommended_more_structure);
-        mAuthorMoreTextView = view.findViewById(R.id.text_view_recommended_more_author);
-        mStructureRecyclerView = view.findViewById(R.id.recycler_view_fragment_recommended_structure);
-        mAuthorRecyclerView = view.findViewById(R.id.recycler_view_author);
-        mWaitRecyclerView = view.findViewById(R.id.recycler_view_fragment_recommended_wait);
-        mServerdRecyclerView = view.findViewById(R.id.recycler_view_fragment_home_server);
-        mNestedScrollView = view.findViewById(R.id.nested_scroll_view_fragment_home);
-        mMoreStructRelativeLayout = view.findViewById(R.id.relative_layout_fragment_home_more_structure);
-        mMoreAuthorRelativeLayout = view.findViewById(R.id.relative_layout_fragment_home_more_author);
-        mSwipeRefreshLayout = view.findViewById(R.id.swipe_refresh_home);  // ← nouveau
+        mBookMoreTextView            = view.findViewById(R.id.text_view_recommended_more);
+        mStructMoreTextView          = view.findViewById(R.id.text_view_recommended_more_structure);
+        mAuthorMoreTextView          = view.findViewById(R.id.text_view_recommended_more_author);
+        mStructureRecyclerView       = view.findViewById(R.id.recycler_view_fragment_recommended_structure);
+        mAuthorRecyclerView          = view.findViewById(R.id.recycler_view_author);
+        mWaitRecyclerView            = view.findViewById(R.id.recycler_view_fragment_recommended_wait);
+        mServerdRecyclerView         = view.findViewById(R.id.recycler_view_fragment_home_server);
+        mNestedScrollView            = view.findViewById(R.id.nested_scroll_view_fragment_home);
+        mMoreStructRelativeLayout    = view.findViewById(R.id.relative_layout_fragment_home_more_structure);
+        mMoreAuthorRelativeLayout    = view.findViewById(R.id.relative_layout_fragment_home_more_author);
+        mSwipeRefreshLayout          = view.findViewById(R.id.swipe_refresh_home);
 
         mMoreStructRelativeLayout.setVisibility(View.GONE);
         mStructureRecyclerView.setVisibility(View.GONE);
@@ -161,7 +176,6 @@ public class HomeFragment extends Fragment {
     // ==================== SwipeRefresh ====================
 
     private void setupSwipeRefresh() {
-        // Couleurs de l'indicateur de chargement (adapter à votre thème)
         mSwipeRefreshLayout.setColorSchemeResources(
                 R.color.purple_200,
                 android.R.color.holo_blue_light,
@@ -169,32 +183,96 @@ public class HomeFragment extends Fragment {
         );
 
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
-            // Vider les données existantes avant de recharger
             mOnlineBookList.clear();
             mStructures.clear();
             mServers.clear();
             mAuthorArrayList.clear();
             mStructureIds.clear();
-
-            // Relancer le chargement
+            stopAutoSlide();
             loadAllData();
         });
 
-        // Le swipe n'est actif que quand le NestedScrollView est visible
         mNestedScrollView.setOnScrollChangeListener(
-                (NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
-                    // Autoriser le swipe uniquement quand on est tout en haut
-                    mSwipeRefreshLayout.setEnabled(scrollY == 0);
-                });
+                (NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) ->
+                        mSwipeRefreshLayout.setEnabled(scrollY == 0));
     }
-
-    // ==================== Arrêter le SwipeRefresh après chargement ====================
 
     private void stopRefreshing() {
         if (mSwipeRefreshLayout != null && mSwipeRefreshLayout.isRefreshing()) {
             mSwipeRefreshLayout.setRefreshing(false);
         }
     }
+
+    // ==================== Slider Pub ====================
+
+    private void setupPubSlider(List<String> imageUrls) {
+        if (!isAdded() || imageUrls.isEmpty()) return;
+
+        // Arrêter un éventuel slider précédent
+        stopAutoSlide();
+
+        PubSliderAdapter adapter = new PubSliderAdapter(requireContext(), imageUrls);
+        mViewPagerPub.setAdapter(adapter);
+
+        // Animation gauche → droite (parallax léger)
+        mViewPagerPub.setPageTransformer((page, position) -> {
+            page.setTranslationX(-position * page.getWidth() * 0.1f);
+            page.setAlpha(1 - Math.abs(position) * 0.25f);
+        });
+
+        setupDotIndicators(imageUrls.size());
+        startAutoSlide(imageUrls.size());
+    }
+
+    private void setupDotIndicators(int count) {
+        if (!isAdded()) return;
+        mLayoutDotsPub.removeAllViews();
+
+        final ImageView[] dots = new ImageView[count];
+
+        for (int i = 0; i < count; i++) {
+            dots[i] = new ImageView(requireContext());
+            dots[i].setImageResource(i == 0
+                    ? R.drawable.dot_active
+                    : R.drawable.dot_inactive);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(24, 24);
+            params.setMargins(8, 0, 8, 0);
+            mLayoutDotsPub.addView(dots[i], params);
+        }
+
+        mViewPagerPub.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                for (int i = 0; i < count; i++) {
+                    dots[i].setImageResource(i == position
+                            ? R.drawable.dot_active
+                            : R.drawable.dot_inactive);
+                }
+            }
+        });
+    }
+
+    private void startAutoSlide(int pageCount) {
+        mSliderHandler = new Handler(Looper.getMainLooper());
+        mSliderRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if (!isAdded() || mViewPagerPub == null) return;
+                int next = (mViewPagerPub.getCurrentItem() + 1) % pageCount;
+                mViewPagerPub.setCurrentItem(next, true);
+                mSliderHandler.postDelayed(this, SLIDER_DELAY);
+            }
+        };
+        mSliderHandler.postDelayed(mSliderRunnable, SLIDER_DELAY);
+    }
+
+    private void stopAutoSlide() {
+        if (mSliderHandler != null && mSliderRunnable != null) {
+            mSliderHandler.removeCallbacks(mSliderRunnable);
+        }
+    }
+
+    // ==================== RecyclerViews ====================
 
     private void setupRecyclerViews() {
         Context context = requireContext();
@@ -214,6 +292,8 @@ public class HomeFragment extends Fragment {
         mAuthorRecyclerView.setAdapter(mNoConnectionAdapter);
     }
 
+    // ==================== Click Listeners ====================
+
     private void setupClickListeners() {
         mBookMoreTextView.setOnClickListener(v -> navigateToSearch("ONLINE_BOOK"));
         mStructMoreTextView.setOnClickListener(v -> navigateToSearch("STRUCTURE"));
@@ -226,6 +306,8 @@ public class HomeFragment extends Fragment {
         intent.putExtra("online_book_key", "MAIN_ACTIVITY");
         startActivity(intent);
     }
+
+    // ==================== BroadcastReceiver ====================
 
     private void registerBroadcastReceiver() {
         mReceiver = new BroadcastReceiver() {
@@ -264,6 +346,8 @@ public class HomeFragment extends Fragment {
         mWaitRecyclerView.setAdapter(adapter);
     }
 
+    // ==================== Chargement des données ====================
+
     private void loadInitialData() {
         if (mAccount.isSession(requireContext())) {
             loadAllData();
@@ -272,9 +356,9 @@ public class HomeFragment extends Fragment {
 
     private void loadAllData() {
         Context context = requireContext();
-        String baseUrl = Server.getUrlApi(context);
+        String baseUrl  = Server.getUrlApi(context);
         String idNumber = mSession.getIdNumber();
-        String version = getString(R.string.app_version);
+        String version  = getString(R.string.app_version);
 
         new PubSyn().execute(baseUrl + "Pub.php", idNumber, version);
         new RecommendedSyn().execute(baseUrl + "recommended.php", idNumber, version);
@@ -283,9 +367,12 @@ public class HomeFragment extends Fragment {
         new AuthorSyn().execute(baseUrl + "author_top.php", idNumber);
     }
 
+    // ==================== Cycle de vie ====================
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        stopAutoSlide();
         if (mReceiver != null) {
             try {
                 requireContext().unregisterReceiver(mReceiver);
@@ -325,11 +412,10 @@ public class HomeFragment extends Fragment {
         protected void onPostExecute(String jsonData) {
             if (!isAdded()) return;
 
-            // ← Arrêter le SwipeRefresh dans tous les cas à la fin du chargement
             stopRefreshing();
 
             if (jsonData != null) {
-                loadPublicityImage();
+                loadPublicitySlider();   // ← slider au lieu d'une image fixe
                 showContentState();
 
                 if (RESPONSE_EXPIRED_VERSION.equals(jsonData)) {
@@ -345,15 +431,23 @@ public class HomeFragment extends Fragment {
             }
         }
 
-        private void loadPublicityImage() {
-            if (mPubData != null && isAdded()) {
-                Picasso.get()
-                        .load(Server.getUrlServer(requireContext()) + "ressources/pub/" + mPubData)
-                        .transform(new RoundedTransformation(200, 10))
-                        .resize(6200, 3333)
-                        .placeholder(R.drawable.img_wait_pub)
-                        .into(mWelcomeImageView);
-            }
+        /** Construit les 3 URLs de pub et lance le slider */
+        private void loadPublicitySlider() {
+            if (mPubData == null || !isAdded()) return;
+
+            String baseUrl = Server.getUrlServer(requireContext()) + "ressources/pub/";
+
+            // mPubData = "1.png" → on extrait l'extension pour garder la cohérence
+            String ext = mPubData.contains(".")
+                    ? mPubData.substring(mPubData.lastIndexOf('.'))
+                    : ".png";
+
+            List<String> urls = new ArrayList<>();
+            urls.add(baseUrl + "1" + ext);
+            urls.add(baseUrl + "2" + ext);
+            urls.add(baseUrl + "3" + ext);
+
+            setupPubSlider(urls);
         }
 
         private void showContentState() {
@@ -567,15 +661,9 @@ public class HomeFragment extends Fragment {
 
     private String executeGetRequest(String url) {
         try {
-            Request request = new Request.Builder()
-                    .url(url)
-                    .get()
-                    .build();
-
+            Request request = new Request.Builder().url(url).get().build();
             try (Response response = mHttpClient.newCall(request).execute()) {
-                if (response.body() != null) {
-                    return response.body().string();
-                }
+                if (response.body() != null) return response.body().string();
             }
         } catch (IOException e) {
             Log.e(TAG, "Network error: " + e.getMessage(), e);
@@ -587,15 +675,9 @@ public class HomeFragment extends Fragment {
 
     private String executePostRequest(String url, RequestBody requestBody) {
         try {
-            Request request = new Request.Builder()
-                    .url(url)
-                    .post(requestBody)
-                    .build();
-
+            Request request = new Request.Builder().url(url).post(requestBody).build();
             try (Response response = mHttpClient.newCall(request).execute()) {
-                if (response.body() != null) {
-                    return response.body().string();
-                }
+                if (response.body() != null) return response.body().string();
             }
         } catch (IOException e) {
             Log.e(TAG, "Network error: " + e.getMessage(), e);
@@ -609,7 +691,6 @@ public class HomeFragment extends Fragment {
         List<Connection> list = new ArrayList<>();
         list.add(new Connection(getString(R.string.no_connection_available),
                 ACTION_HOME_FRAGMENT, false));
-
         NoConnectionAdapter adapter = new NoConnectionAdapter(list);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
@@ -620,7 +701,7 @@ public class HomeFragment extends Fragment {
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
 
-        TextView annuler = dialog.findViewById(R.id.annuler);
+        TextView annuler  = dialog.findViewById(R.id.annuler);
         TextView installer = dialog.findViewById(R.id.installer);
 
         annuler.setOnClickListener(v -> handleLogout(dialog));
