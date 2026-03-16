@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">EduNiger</string>
     <string name="app_version">3.1.3</string>
-    <string name="url_api">https://eduniger.com/api/</string>
+    <string name="url_api">https://api.eduniger.com/</string>
     <string name="url_server">https://eduniger.com/</string>
     <string name="database_name">data.db</string>
     <string name="edit_text_hint_id_number">  Votre matricule ?</string>

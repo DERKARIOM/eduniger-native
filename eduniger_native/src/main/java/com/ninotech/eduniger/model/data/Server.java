@@ -7,7 +7,7 @@ import com.ninotech.eduniger.R;
 public class Server {
     private static final String PREFS_NAME = "server_prefs";
     private static final String URL_SERVER = "https://eduniger.com/";
-    private static final String URL_API = "https://eduniger.com/api/";
+    private static final String URL_API = "https://api.eduniger.com/";
     private static final String IS_ACTIVATE = "pass";
     public Server()
     {

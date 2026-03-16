@@ -65,6 +65,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -321,7 +322,7 @@ public class BookActivity extends AppCompatActivity {
         String idNumber = mSession.getIdNumber();
         String bookId = mOnlineBook.getId();
 
-        new RecoveryBook().execute(baseUrl + "Book.php", idNumber, bookId);
+        new RecoveryBook(this).execute(baseUrl + "book.php", idNumber, bookId);
         new IsReservationSyn().execute(baseUrl + "IsReservation.php", idNumber, bookId);
         new InsertViewSyn().execute(baseUrl + "InsertView.php", idNumber, bookId);
         new IsSubscribeBookSyn().execute(baseUrl + "IsSubscribeBook.php", idNumber, bookId);
@@ -544,151 +545,165 @@ public class BookActivity extends AppCompatActivity {
         }
     }
 
+    // ==================== Book Data Processing (used by RecoveryBook) ====================
+
+    void processBookData(String jsonData) {
+        mNoConnectionRecyclerView.setVisibility(View.GONE);
+        mNestedScrollView.setVisibility(View.VISIBLE);
+
+        try {
+            JSONObject obj = new JSONObject(jsonData);
+            updateBookDetails(obj);
+            loadBookCoverImage();
+            updateStatistics();
+            configureBookFormats();
+        } catch (JSONException e) {
+            Log.e(TAG, "Error parsing book data", e);
+        }
+    }
+
+    private void updateBookDetails(JSONObject obj) throws JSONException {
+        mOnlineBook.setCover(obj.getString("bookBlanket"));
+        mOnlineBook.setTitle(obj.getString("bookTitle"));
+        mOnlineBook.setIsPhysic(obj.getString("isPhysic"));
+        mOnlineBook.setIsAudio(obj.getString("isAudio"));
+        mOnlineBook.setElectronic(obj.getString("electronic"));
+        mOnlineBook.setDescription(obj.getString("description"));
+        mOnlineBook.setCategory(obj.getString("categoryTitle"));
+        mOnlineBook.setIsAvailable(obj.getString("available"));
+        mOnlineBook.setSize(obj.getString("size"));
+        mOnlineBook.setNbrPage(obj.getString("nbrPage"));
+        mOnlineBook.setNumberLikes(Integer.parseInt(obj.getString("numberLike")));
+        mOnlineBook.setNumberNoLikes(Integer.parseInt(obj.getString("numberNoLike")));
+        mOnlineBook.setNumberSubscribe(Integer.parseInt(obj.getString("numberSubscribe")));
+        mOnlineBook.setNumberView(Integer.parseInt(obj.getString("numberView")));
+        mOnlineBook.setAuthor(obj.getString("firstName") + " " + obj.getString("name"));
+
+        mCategory = new Category(
+                obj.getString("categoryBlanket"),
+                obj.getString("categoryTitle")
+        );
+
+        mAuthor = new Author(
+                obj.getString("idAuthor"),
+                obj.getString("name"),
+                obj.getString("firstName"),
+                obj.getString("profile"),
+                obj.getString("profession"),
+                obj.getString("call"),
+                obj.getString("email"),
+                obj.getString("whatsapp")
+        );
+
+        mTitleTextView.setText(mOnlineBook.getTitle());
+        mNameAuthor.setText("De " + obj.getString("name") + " " + obj.getString("firstName"));
+        mCote.setText("Cote : " + mOnlineBook.getId());
+        mCategoryTextView.setText("Catégorie : " + mOnlineBook.getCategory());
+        mDescriptionTextView.setText(mOnlineBook.getDescription());
+    }
+
+    private void loadBookCoverImage() {
+        Picasso.get()
+                .load(Server.getUrlServer(BookActivity.this) +
+                        "ressources/cover/" + mOnlineBook.getCover())
+                .placeholder(R.drawable.img_wait_cover_book)
+                .error(R.drawable.img_wait_cover_book)
+                .transform(new RoundedTransformation(15, 4))
+                .resize(270, 404)
+                .into(mBlanketImageView);
+    }
+
+    private void updateStatistics() {
+        mNumberLikeTextView.setText(String.valueOf(mOnlineBook.getNumberLikes()));
+        mNumberNoLikeTextView.setText(String.valueOf(mOnlineBook.getNumberNoLikes()));
+        mNumberSubscribeTextView.setText(String.valueOf(mOnlineBook.getNumberSubscribe()));
+        mNbrView.setText(String.valueOf(mOnlineBook.getNumberView()));
+    }
+
+    private void configureBookFormats() {
+        configurePhysicalFormat();
+        configureAudioFormat();
+        configureElectronicFormat();
+    }
+
+    private void configurePhysicalFormat() {
+        if ("1".equals(mOnlineBook.getIsPhysic())) {
+            mReservationLinearLayout.setVisibility(View.VISIBLE);
+            if ("0".equals(mOnlineBook.getIsAvailable())) {
+                mReservationButton.setText("En cours de consultation");
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    mReservationButton.setBackgroundTintList(
+                            ColorStateList.valueOf(ContextCompat.getColor(BookActivity.this, R.color.whiteSombre)));
+                    mReservationButton.setEnabled(false);
+                }
+            }
+        }
+    }
+
+    private void configureAudioFormat() {
+        if ("1".equals(mOnlineBook.getIsAudio())) {
+            mAudioLinearLayout.setVisibility(View.VISIBLE);
+            if (mAudioTable.isExist(mSession.getIdNumber(), mOnlineBook.getId())) {
+                audioButton.setText("Lire");
+            }
+        }
+    }
+
+    private void configureElectronicFormat() {
+        if (!"null".equals(mOnlineBook.getElectronic())) {
+            mElectronicLinearLayout.setVisibility(View.VISIBLE);
+            mSourcePdf = mElectronicTable.isExist(mSession.getIdNumber(), mOnlineBook.getId());
+
+            if (!"false".equals(mSourcePdf)) {
+                downloadPDFButton.setText("Ouvrir");
+            }
+
+            if (!"null".equals(mOnlineBook.getSize())) {
+                mPdfSizeTextView.setText(mOnlineBook.getSize());
+                mPdfSizeLinearLayout.setVisibility(View.VISIBLE);
+            } else {
+                downloadPDFButton.setEnabled(false);
+                downloadPDFButton.setText("Bientôt");
+            }
+
+            if (!"null".equals(mOnlineBook.getNbrPage())) {
+                mNbrPageTextView.setText(mOnlineBook.getNbrPage());
+                mNbrPageLinearLayout.setVisibility(View.VISIBLE);
+            }
+        }
+    }
+
     // ==================== AsyncTask Classes ====================
 
-    private class RecoveryBook extends AsyncTask<String, Void, String> {
+    /**
+     * Récupère les données du livre depuis le serveur.
+     * Classe static avec WeakReference pour éviter les memory leaks.
+     */
+    private static class RecoveryBook extends AsyncTask<String, Void, String> {
+        private final WeakReference<BookActivity> activityRef;
+
+        RecoveryBook(BookActivity activity) {
+            this.activityRef = new WeakReference<>(activity);
+        }
+
         @Override
         protected String doInBackground(String... params) {
-            return executePostRequest(params[0],
-                    new MultipartBody.Builder()
-                            .setType(MultipartBody.FORM)
-                            .addFormDataPart("idNumber", params[1])
-                            .addFormDataPart("idBook", params[2])
-                            .build());
+            BookActivity activity = activityRef.get();
+            if (activity == null) return null;
+
+            String url = params[0] + "?id_number=" + params[1] + "&id_book=" + params[2];
+            return activity.executeGetRequest(url);
         }
 
         @Override
         protected void onPostExecute(String jsonData) {
+            BookActivity activity = activityRef.get();
+            if (activity == null) return;
+
             if (jsonData != null) {
-                processBookData(jsonData);
+                activity.processBookData(jsonData);
             } else {
-                showNoConnectionError();
-            }
-        }
-
-        private void processBookData(String jsonData) {
-            mNoConnectionRecyclerView.setVisibility(View.GONE);
-            mNestedScrollView.setVisibility(View.VISIBLE);
-
-            try {
-                JSONObject obj = new JSONObject(jsonData);
-                updateBookDetails(obj);
-                loadBookCoverImage();
-                updateStatistics();
-                configureBookFormats();
-            } catch (JSONException e) {
-                Log.e(TAG, "Error parsing book data", e);
-            }
-        }
-
-        private void updateBookDetails(JSONObject obj) throws JSONException {
-            mOnlineBook.setCover(obj.getString("bookBlanket"));
-            mOnlineBook.setTitle(obj.getString("bookTitle"));
-            mOnlineBook.setIsPhysic(obj.getString("isPhysic"));
-            mOnlineBook.setIsAudio(obj.getString("isAudio"));
-            mOnlineBook.setElectronic(obj.getString("electronic"));
-            mOnlineBook.setDescription(obj.getString("description"));
-            mOnlineBook.setCategory(obj.getString("categoryTitle"));
-            mOnlineBook.setIsAvailable(obj.getString("available"));
-            mOnlineBook.setSize(obj.getString("size"));
-            mOnlineBook.setNbrPage(obj.getString("nbrPage"));
-            mOnlineBook.setNumberLikes(Integer.parseInt(obj.getString("numberLike")));
-            mOnlineBook.setNumberNoLikes(Integer.parseInt(obj.getString("numberNoLike")));
-            mOnlineBook.setNumberSubscribe(Integer.parseInt(obj.getString("numberSubscribe")));
-            mOnlineBook.setNumberView(Integer.parseInt(obj.getString("numberView")));
-            mOnlineBook.setAuthor(obj.getString("firstName") + " " + obj.getString("name"));
-
-            mCategory = new Category(
-                    obj.getString("categoryBlanket"),
-                    obj.getString("categoryTitle")
-            );
-
-            mAuthor = new Author(
-                    obj.getString("idAuthor"),
-                    obj.getString("name"),
-                    obj.getString("firstName"),
-                    obj.getString("profile"),
-                    obj.getString("profession"),
-                    obj.getString("call"),
-                    obj.getString("email"),
-                    obj.getString("whatsapp")
-            );
-
-            mTitleTextView.setText(mOnlineBook.getTitle());
-            mNameAuthor.setText("De " + obj.getString("name") + " " + obj.getString("firstName"));
-            mCote.setText("Cote : " + mOnlineBook.getId());
-            mCategoryTextView.setText("Catégorie : " + mOnlineBook.getCategory());
-            mDescriptionTextView.setText(mOnlineBook.getDescription());
-        }
-
-        private void loadBookCoverImage() {
-            Picasso.get()
-                    .load(Server.getUrlServer(BookActivity.this) +
-                            "ressources/cover/" + mOnlineBook.getCover())
-                    .placeholder(R.drawable.img_wait_cover_book)
-                    .error(R.drawable.img_wait_cover_book)
-                    .transform(new RoundedTransformation(15, 4))
-                    .resize(270, 404)
-                    .into(mBlanketImageView);
-        }
-
-        private void updateStatistics() {
-            mNumberLikeTextView.setText(String.valueOf(mOnlineBook.getNumberLikes()));
-            mNumberNoLikeTextView.setText(String.valueOf(mOnlineBook.getNumberNoLikes()));
-            mNumberSubscribeTextView.setText(String.valueOf(mOnlineBook.getNumberSubscribe()));
-            mNbrView.setText(String.valueOf(mOnlineBook.getNumberView()));
-        }
-
-        private void configureBookFormats() {
-            configurePhysicalFormat();
-            configureAudioFormat();
-            configureElectronicFormat();
-        }
-
-        private void configurePhysicalFormat() {
-            if ("1".equals(mOnlineBook.getIsPhysic())) {
-                mReservationLinearLayout.setVisibility(View.VISIBLE);
-                if ("0".equals(mOnlineBook.getIsAvailable())) {
-                    mReservationButton.setText("En cours de consultation");
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        mReservationButton.setBackgroundTintList(
-                                ColorStateList.valueOf(ContextCompat.getColor(BookActivity.this, R.color.whiteSombre)));
-                        mReservationButton.setEnabled(false);
-                    }
-                }
-            }
-        }
-
-        private void configureAudioFormat() {
-            if ("1".equals(mOnlineBook.getIsAudio())) {
-                mAudioLinearLayout.setVisibility(View.VISIBLE);
-                if (mAudioTable.isExist(mSession.getIdNumber(), mOnlineBook.getId())) {
-                    audioButton.setText("Lire");
-                }
-            }
-        }
-
-        private void configureElectronicFormat() {
-            if (!"null".equals(mOnlineBook.getElectronic())) {
-                mElectronicLinearLayout.setVisibility(View.VISIBLE);
-                mSourcePdf = mElectronicTable.isExist(mSession.getIdNumber(), mOnlineBook.getId());
-
-                if (!"false".equals(mSourcePdf)) {
-                    downloadPDFButton.setText("Ouvrir");
-                }
-
-                if (!"null".equals(mOnlineBook.getSize())) {
-                    mPdfSizeTextView.setText(mOnlineBook.getSize());
-                    mPdfSizeLinearLayout.setVisibility(View.VISIBLE);
-                } else {
-                    downloadPDFButton.setEnabled(false);
-                    downloadPDFButton.setText("Bientôt");
-                }
-
-                if (!"null".equals(mOnlineBook.getNbrPage())) {
-                    mNbrPageTextView.setText(mOnlineBook.getNbrPage());
-                    mNbrPageLinearLayout.setVisibility(View.VISIBLE);
-                }
+                activity.showNoConnectionError();
             }
         }
     }
@@ -1160,7 +1175,27 @@ public class BookActivity extends AppCompatActivity {
 
     // ==================== Helper Methods ====================
 
-    private String executePostRequest(String url, RequestBody requestBody) {
+    String executeGetRequest(String url) {
+        try {
+            Request request = new Request.Builder()
+                    .url(url)
+                    .get()
+                    .build();
+
+            try (Response response = mHttpClient.newCall(request).execute()) {
+                if (response.body() != null) {
+                    return response.body().string();
+                }
+            }
+        } catch (IOException e) {
+            Log.e(TAG, "Network error: " + e.getMessage(), e);
+        } catch (Exception e) {
+            Log.e(TAG, "Unexpected error: " + e.getMessage(), e);
+        }
+        return null;
+    }
+
+    String executePostRequest(String url, RequestBody requestBody) {
         try {
             Request request = new Request.Builder()
                     .url(url)
@@ -1188,7 +1223,7 @@ public class BookActivity extends AppCompatActivity {
                 .build();
     }
 
-    private void showNoConnectionError() {
+    void showNoConnectionError() {
         mNestedScrollView.setVisibility(View.GONE);
         mNoConnectionRecyclerView.setVisibility(View.VISIBLE);
 
