@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -78,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
     private DigitalPrintTable mDigitalPrintTable;
     private BroadcastReceiver mUpdateBadgeReceiver;
     private Fragment mFragmentBookStore;
+    private com.google.android.material.floatingactionbutton.FloatingActionButton mFabAiAssistant;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -160,8 +162,14 @@ public class MainActivity extends AppCompatActivity {
         mBottomNavigationView = findViewById(R.id.bottom_navigation_main);
         mEditText = findViewById(R.id.edit_text_toolbar_search);
         mProfileImageView = findViewById(R.id.image_view_toolbar_main_profile);
+        mFabAiAssistant       = findViewById(R.id.fab_ai_assistant);  // ← nouveau
 
         mEditText.setOnClickListener(v -> navigateToSearch());
+        mFabAiAssistant.setOnClickListener(v -> navigateToChatBot());
+    }
+
+    private void navigateToChatBot() {
+        Toast.makeText(this, "Eduna", Toast.LENGTH_SHORT).show();
     }
 
     private void navigateToSearch() {

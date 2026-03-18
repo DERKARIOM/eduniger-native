@@ -9,18 +9,18 @@
 
     <include layout="@layout/toolbar_main"/>
 
-    <!-- FrameLayout qui contient TOUT : fragment + navbar flottante -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/relative_layout_toolbar_search">
 
-        <!-- Le fragment prend tout l'espace, y compris derrière la navbar -->
+        <!-- Fragment principal -->
         <FrameLayout
             android:id="@+id/nav_host_fragment_activity_main"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
+        <!-- Fond glassmorphism de la navbar -->
         <View
             android:id="@+id/backgroundView"
             android:layout_width="wrap_content"
@@ -32,7 +32,7 @@
             android:background="@drawable/bg_bottom_nav"
             android:minWidth="220dp" />
 
-        <!-- Navbar par-dessus, fond transparent -->
+        <!-- Navbar flottante -->
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_navigation_main"
             android:layout_width="wrap_content"
@@ -43,6 +43,21 @@
             android:layout_marginBottom="15dp"
             app:menu="@menu/menu_bottom" />
 
-    </FrameLayout>
+        <!-- Bouton flottant IA -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_ai_assistant"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_gravity="bottom|end"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="75dp"
+            android:elevation="25dp"
+            android:contentDescription="Assistant IA"
+            app:srcCompat="@drawable/ia_new"
+            app:fabSize="normal"
+            app:backgroundTint="?attr/colorPrimary"
+            app:tint="@android:color/white"
+            app:rippleColor="@android:color/white" />
 
+    </FrameLayout>
 </RelativeLayout>
