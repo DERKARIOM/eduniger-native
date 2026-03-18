@@ -12,7 +12,7 @@
         android:title="Librairie" />
     <item
         android:id="@+id/navigation_suggestion"
-        android:icon="@drawable/ia_new"
+        android:icon="@drawable/ic_structure"
         android:title="Eduna" />
     <item
         android:id="@+id/navigation_library"

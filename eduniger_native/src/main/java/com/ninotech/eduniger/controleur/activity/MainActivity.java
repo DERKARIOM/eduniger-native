@@ -37,9 +37,9 @@ import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.ninotech.eduniger.R;
 import com.ninotech.eduniger.controleur.fragment.BookStoreFragment;
-import com.ninotech.eduniger.controleur.fragment.ChatBotFragment;
 import com.ninotech.eduniger.controleur.fragment.HomeFragment;
 import com.ninotech.eduniger.controleur.fragment.LibraryFragment;
+import com.ninotech.eduniger.controleur.fragment.StructureFragment;
 import com.ninotech.eduniger.model.data.Account;
 import com.ninotech.eduniger.model.data.Initialization;
 import com.ninotech.eduniger.model.data.NotifNumber;
@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Fragments
     private Fragment mFragmentHome;
-    private Fragment mFragmentChat;
+    private Fragment mFragmentStructure;
     private Fragment mFragmentLibrary;
     private Fragment mActiveFragment;
 
@@ -288,14 +288,14 @@ public class MainActivity extends AppCompatActivity {
         // Créer les fragments une seule fois
         mFragmentHome    = new HomeFragment();
         mFragmentBookStore = new BookStoreFragment();
-        mFragmentChat    = new ChatBotFragment();
+        mFragmentStructure = new StructureFragment();
         mFragmentLibrary = new LibraryFragment();
 
         // Les ajouter tous les 3, cacher chat et library
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.nav_host_fragment_activity_main, mFragmentLibrary, "library").hide(mFragmentLibrary)
                 .add(R.id.nav_host_fragment_activity_main, mFragmentBookStore, "bookstore").hide(mFragmentBookStore)
-                .add(R.id.nav_host_fragment_activity_main, mFragmentChat,    "chat").hide(mFragmentChat)
+                .add(R.id.nav_host_fragment_activity_main, mFragmentStructure,    "chat").hide(mFragmentStructure)
                 .add(R.id.nav_host_fragment_activity_main, mFragmentHome,    "home")
                 .commit();
 
@@ -316,7 +316,7 @@ public class MainActivity extends AppCompatActivity {
             } else if (id == R.id.navigation_structure) {  // ← remplacez par le bon ID
                 showFragment(mFragmentBookStore);
             } else if (id == R.id.navigation_suggestion) {        // ← remplacez par le bon ID
-                showFragment(mFragmentChat);
+                showFragment(mFragmentStructure);
             } else if (id == R.id.navigation_library) {
                 showFragment(mFragmentLibrary);
             }
