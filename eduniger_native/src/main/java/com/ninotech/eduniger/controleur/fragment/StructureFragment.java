@@ -1,4 +1,5 @@
 package com.ninotech.eduniger.controleur.fragment;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.ninotech.eduniger.R;
 import com.ninotech.eduniger.controleur.adapter.NoConnectionAdapter;
@@ -38,51 +40,98 @@ import okhttp3.Response;
 
 public class StructureFragment extends Fragment {
 
+    private RecyclerView mStructureRecyclerView;
+    private RecyclerView mWaitRecyclerView;
+    private ArrayList<Structure> mStructures;
+    private NoConnectionAdapter mNoConnectionAdapter;
+    private StructureAdapter StructAdapter;
+    private SwipeRefreshLayout mSwipeRefreshLayout;  // ← nouveau
+    private Session mSession;                        // ← extrait pour le refresh
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_structure, container, false);
+
         mStructureRecyclerView = view.findViewById(R.id.recycler_view_fragment_structure);
-        mWaitRecyclerView = view.findViewById(R.id.recycler_view_fragment_structure_wait);
-        Session session = new Session(getContext());
-        mStructures = new ArrayList<>();
-        StructAdapter = new StructureAdapter(mStructures);
+        mWaitRecyclerView      = view.findViewById(R.id.recycler_view_fragment_structure_wait);
+        mSwipeRefreshLayout    = view.findViewById(R.id.swipe_refresh_structure);  // ← nouveau
+        mSession               = new Session(getContext());
+        mStructures            = new ArrayList<>();
+        StructAdapter          = new StructureAdapter(mStructures);
+
         ArrayList<Connection> list = new ArrayList<>();
-        list.add(new Connection(getString(R.string.wait),null,true));
+        list.add(new Connection(getString(R.string.wait), null, true));
         mNoConnectionAdapter = new NoConnectionAdapter(list);
         mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mWaitRecyclerView.setAdapter(mNoConnectionAdapter);
+
         BroadcastReceiver receiverNoConnectionAdapter = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 if ("CATEGORY_FRAGMENT".equals(intent.getAction())) {
                     try {
                         ArrayList<Connection> list = new ArrayList<>();
-                        list.add(new Connection(getString(R.string.wait),"CATEGORY_FRAGMENT",true));
+                        list.add(new Connection(getString(R.string.wait), "CATEGORY_FRAGMENT", true));
                         NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
                         mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                         mWaitRecyclerView.setAdapter(noConnectionAdapter);
-                        StructureSyn structureSyn = new StructureSyn();
-                        structureSyn.execute(Server.getUrlApi(getContext()) + "Structure.php", session.getIdNumber());
-                        StructureSyn2 structureSyn2 = new StructureSyn2();
-                        structureSyn2.execute(Server.getUrlApi(getContext()) + "StructureMore.php", session.getIdNumber());
-                    }catch (Exception e)
-                    {
-                        Log.e("errCategoryFragment",e.getMessage());
+                        new StructureSyn().execute(
+                                Server.getUrlApi(getContext()) + "Structure.php",
+                                mSession.getIdNumber());
+                        new StructureSyn2().execute(
+                                Server.getUrlApi(getContext()) + "StructureMore.php",
+                                mSession.getIdNumber());
+                    } catch (Exception e) {
+                        Log.e("errCategoryFragment", e.getMessage());
                     }
-
                 }
             }
         };
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            getContext().registerReceiver(receiverNoConnectionAdapter, new IntentFilter("CATEGORY_FRAGMENT"),Context.RECEIVER_EXPORTED);
+            getContext().registerReceiver(receiverNoConnectionAdapter,
+                    new IntentFilter("CATEGORY_FRAGMENT"),
+                    Context.RECEIVER_EXPORTED);
         }
-        StructureSyn structureSyn = new StructureSyn();
-        structureSyn.execute(Server.getUrlApi(getContext()) + "structure.php", session.getIdNumber());
-        StructureSyn2 structureSyn2 = new StructureSyn2();
-        structureSyn2.execute(Server.getUrlApi(getContext()) + "StructureMore.php", session.getIdNumber());
+
+        // Chargement initial — inchangé
+        new StructureSyn().execute(
+                Server.getUrlApi(getContext()) + "structure.php",
+                mSession.getIdNumber());
+        new StructureSyn2().execute(
+                Server.getUrlApi(getContext()) + "StructureMore.php",
+                mSession.getIdNumber());
+
+        // ==================== SwipeRefresh ====================
+        mSwipeRefreshLayout.setColorSchemeResources(
+                R.color.purple_200,
+                android.R.color.holo_blue_light,
+                android.R.color.holo_orange_light
+        );
+
+        mSwipeRefreshLayout.setOnRefreshListener(() -> {
+            mStructures.clear();
+            new StructureSyn().execute(
+                    Server.getUrlApi(getContext()) + "structure.php",
+                    mSession.getIdNumber());
+            new StructureSyn2().execute(
+                    Server.getUrlApi(getContext()) + "StructureMore.php",
+                    mSession.getIdNumber());
+        });
+
         return view;
     }
+
+    // ==================== Arrêter le SwipeRefresh ====================
+
+    private void stopRefreshing() {
+        if (mSwipeRefreshLayout != null && mSwipeRefreshLayout.isRefreshing()) {
+            mSwipeRefreshLayout.setRefreshing(false);
+        }
+    }
+
+    // ==================== AsyncTask — inchangés sauf stopRefreshing() ====================
 
     private class StructureSyn extends AsyncTask<String, Void, String> {
         @Override
@@ -109,6 +158,9 @@ public class StructureFragment extends Fragment {
 
         @Override
         protected void onPostExecute(String jsonData) {
+            // ← Arrêter le SwipeRefresh dans tous les cas
+            stopRefreshing();
+
             if (jsonData != null) {
                 mWaitRecyclerView.setVisibility(View.GONE);
                 mStructureRecyclerView.setVisibility(View.VISIBLE);
@@ -140,7 +192,8 @@ public class StructureFragment extends Fragment {
                 }
             } else {
                 ArrayList<Connection> list = new ArrayList<>();
-                list.add(new Connection(getString(R.string.no_connection_available), "CATEGORY_FRAGMENT", false));
+                list.add(new Connection(getString(R.string.no_connection_available),
+                        "CATEGORY_FRAGMENT", false));
                 NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
                 mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                 mWaitRecyclerView.setAdapter(noConnectionAdapter);
@@ -148,15 +201,14 @@ public class StructureFragment extends Fragment {
         }
     }
 
-    private class StructureSyn2 extends AsyncTask<String,Void,String> {
+    private class StructureSyn2 extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-
             try {
                 OkHttpClient client = new OkHttpClient();
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
-                        .addFormDataPart("idUser",params[1])
+                        .addFormDataPart("idUser", params[1])
                         .build();
                 Request request = new Request.Builder()
                         .url(params[0])
@@ -166,49 +218,49 @@ public class StructureFragment extends Fragment {
                     Response response = client.newCall(request).execute();
                     assert response.body() != null;
                     return response.body().string();
-                }catch (IOException e)
-                {
+                } catch (IOException e) {
                     Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
-
-            }catch (Exception e)
-            {
+            } catch (Exception e) {
                 return null;
             }
             return null;
         }
+
         @Override
-        protected void onPostExecute(String jsonData){
-            if(jsonData != null)
-            {
+        protected void onPostExecute(String jsonData) {
+            // ← Arrêter le SwipeRefresh dans tous les cas
+            stopRefreshing();
+
+            if (jsonData != null) {
                 JSONArray jsonArray = null;
                 try {
                     jsonArray = new JSONArray(jsonData);
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
-                for (int i=0;i<jsonArray.length();i++) {
+                for (int i = 0; i < jsonArray.length(); i++) {
                     try {
-                        if(!isExistsS(mStructures,jsonArray.getJSONObject(i).getString("id")))
+                        if (!isExistsS(mStructures, jsonArray.getJSONObject(i).getString("id")))
                             mStructures.add(new Structure(
                                     jsonArray.getJSONObject(i).getString("id"),
                                     jsonArray.getJSONObject(i).getString("logo"),
                                     jsonArray.getJSONObject(i).getString("nameStruct"),
-                                    jsonArray.getJSONObject(i).getString("description"),false,
+                                    jsonArray.getJSONObject(i).getString("description"), false,
                                     jsonArray.getJSONObject(i).getString("banner"),
                                     jsonArray.getJSONObject(i).getString("author"),
                                     jsonArray.getJSONObject(i).getString("adhererNumber"),
-                                    jsonArray.getJSONObject(i).getString("bookNumber"),"0"));
+                                    jsonArray.getJSONObject(i).getString("bookNumber"), "0"));
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
                 }
                 mStructureRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                 mStructureRecyclerView.setAdapter(StructAdapter);
-            }
-            else {
+            } else {
                 ArrayList<Connection> list = new ArrayList<>();
-                list.add(new Connection(getString(R.string.no_connection_available),"CATEGORY_FRAGMENT",false));
+                list.add(new Connection(getString(R.string.no_connection_available),
+                        "CATEGORY_FRAGMENT", false));
                 NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(list);
                 mStructureRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                 mStructureRecyclerView.setAdapter(noConnectionAdapter);
@@ -216,19 +268,13 @@ public class StructureFragment extends Fragment {
         }
     }
 
-    public boolean isExistsS(ArrayList<Structure> structures , String id)
-    {
-        for(int i=0 ; i<structures.size() ; i++)
-        {
-            if(structures.get(i).getId().equals(id))
+    // ==================== Utilitaire — inchangé ====================
+
+    public boolean isExistsS(ArrayList<Structure> structures, String id) {
+        for (int i = 0; i < structures.size(); i++) {
+            if (structures.get(i).getId().equals(id))
                 return true;
         }
         return false;
     }
-
-    private RecyclerView mStructureRecyclerView;
-    private RecyclerView mWaitRecyclerView;
-    private ArrayList<Structure> mStructures;
-    private NoConnectionAdapter mNoConnectionAdapter;
-    private StructureAdapter StructAdapter;
 }

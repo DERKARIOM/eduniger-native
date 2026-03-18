@@ -17,6 +17,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.ninotech.eduniger.R;
 import com.ninotech.eduniger.controleur.adapter.CategoryAdapter;
@@ -49,6 +50,7 @@ public class CategoryFragment extends Fragment {
     // Views
     private RecyclerView mCategoryRecyclerView;
     private RecyclerView mWaitRecyclerView;
+    private SwipeRefreshLayout mSwipeRefreshLayout;  // ← nouveau
 
     // Data
     private final List<Category> mCategoryList = new ArrayList<>();
@@ -73,6 +75,7 @@ public class CategoryFragment extends Fragment {
 
         initializeViews(view);
         setupRecyclerView();
+        setupSwipeRefresh();         // ← nouveau
         registerBroadcastReceiver();
         loadCategoryData();
 
@@ -81,8 +84,32 @@ public class CategoryFragment extends Fragment {
 
     private void initializeViews(View view) {
         mCategoryRecyclerView = view.findViewById(R.id.recycler_view_fragment_category);
-        mWaitRecyclerView = view.findViewById(R.id.recycler_view_fragment_category_wait);
+        mWaitRecyclerView     = view.findViewById(R.id.recycler_view_fragment_category_wait);
+        mSwipeRefreshLayout   = view.findViewById(R.id.swipe_refresh_category);  // ← nouveau
     }
+
+    // ==================== SwipeRefresh ====================
+
+    private void setupSwipeRefresh() {
+        mSwipeRefreshLayout.setColorSchemeResources(
+                R.color.purple_200,
+                android.R.color.holo_blue_light,
+                android.R.color.holo_orange_light
+        );
+
+        mSwipeRefreshLayout.setOnRefreshListener(() -> {
+            mCategoryList.clear();
+            loadCategoryData();
+        });
+    }
+
+    private void stopRefreshing() {
+        if (mSwipeRefreshLayout != null && mSwipeRefreshLayout.isRefreshing()) {
+            mSwipeRefreshLayout.setRefreshing(false);
+        }
+    }
+
+    // ==================== Setup ====================
 
     private void setupRecyclerView() {
         List<Connection> waitList = new ArrayList<>();
@@ -146,6 +173,9 @@ public class CategoryFragment extends Fragment {
         @Override
         protected void onPostExecute(String jsonData) {
             if (!isAdded()) return;
+
+            // ← Arrêter le SwipeRefresh dans tous les cas
+            stopRefreshing();
 
             if (jsonData != null) {
                 processCategoryData(jsonData);

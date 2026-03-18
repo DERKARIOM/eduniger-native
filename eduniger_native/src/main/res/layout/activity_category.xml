@@ -5,18 +5,28 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".controleur.activity.CategoryActivity">
+
+    <!-- RecyclerView de chargement : EN DEHORS du SwipeRefresh -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_activity_category_wait"
         android:nestedScrollingEnabled="false"
         android:layout_margin="10dp"
         android:layout_centerInParent="true"
-        style="@style/wrap_content_all"
-        />
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recylerCategorie2"
-        android:visibility="gone"
+        style="@style/wrap_content_all" />
+
+    <!-- SwipeRefreshLayout enveloppe uniquement le RecyclerView principal -->
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh_category"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="10dp"
-        />
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recylerCategorie2"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
 </RelativeLayout>
