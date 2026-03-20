@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -20,6 +21,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -71,11 +73,14 @@ public class LoginActivity extends AppCompatActivity {
     private ImageView mLoginImageView;
     private LinearLayout mIdNumberLinearLayout;
 
+    // ✅ AJOUTÉ : bouton toggle + état visibilité mot de passe
+    private ImageButton mTogglePasswordButton;
+    private boolean mIsPasswordVisible = false;
+
     // Data
     private Account mAccount;
     private String mToken;
     private OkHttpClient mHttpClient;
-    // 2. Constantes à ajouter dans LoginActivity
     private static final int RC_SIGN_IN = 9001;
     private GoogleSignInClient mGoogleSignInClient;
     private boolean mIsNightMode;
@@ -135,6 +140,9 @@ public class LoginActivity extends AppCompatActivity {
         mLoginImageView = findViewById(R.id.activity_login_image_view);
         mIdNumberLinearLayout = findViewById(R.id.activity_login_linear_layout_number);
 
+        // ✅ AJOUTÉ : récupération du bouton toggle
+        mTogglePasswordButton = findViewById(R.id.image_button_toggle_password);
+
         TextView registerTextView = findViewById(R.id.text_view_login_pass_register);
         TextView forgetPasswordTextView = findViewById(R.id.text_view_activity_login_forget_password);
 
@@ -150,7 +158,6 @@ public class LoginActivity extends AppCompatActivity {
         setupGoogleSignIn();
     }
 
-    // 4. Nouvelle méthode setupGoogleSignIn()
     private void setupGoogleSignIn() {
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
@@ -178,14 +185,34 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // Google sync (placeholder)
-        // 5. Remplacer le placeholder dans setupListeners()
-        mGoogleLinearLayout.setOnClickListener(v -> {
-            launchGoogleSignIn();
+        // Google sign-in
+        mGoogleLinearLayout.setOnClickListener(v -> launchGoogleSignIn());
+
+        // ✅ AJOUTÉ : toggle affichage mot de passe
+        mTogglePasswordButton.setOnClickListener(v -> {
+            mIsPasswordVisible = !mIsPasswordVisible;
+
+            if (mIsPasswordVisible) {
+                // Afficher le mot de passe en clair
+                mPasswordEditText.setInputType(
+                        InputType.TYPE_CLASS_TEXT |
+                                InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                );
+                mTogglePasswordButton.setImageResource(R.drawable.ic_visibility_off);
+            } else {
+                // Masquer le mot de passe
+                mPasswordEditText.setInputType(
+                        InputType.TYPE_CLASS_TEXT |
+                                InputType.TYPE_TEXT_VARIATION_PASSWORD
+                );
+                mTogglePasswordButton.setImageResource(R.drawable.ic_visibility_on);
+            }
+
+            // Replacer le curseur à la fin du texte saisi
+            mPasswordEditText.setSelection(mPasswordEditText.getText().length());
         });
     }
 
-    // 6. Méthodes Google Sign-In — même pattern que handleLoginClick()
     private void launchGoogleSignIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
@@ -211,14 +238,13 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    // 7. Envoi au backend — même pattern que performLogin()
     private void performGoogleLogin(GoogleSignInAccount googleAccount) {
         setLoadingState(true);
 
-        String googleId    = googleAccount.getId();
-        String email       = googleAccount.getEmail() != null ? googleAccount.getEmail() : "";
-        String name        = googleAccount.getFamilyName() != null ? googleAccount.getFamilyName() : "";
-        String firstName   = googleAccount.getGivenName() != null ? googleAccount.getGivenName() : "";
+        String googleId  = googleAccount.getId();
+        String email     = googleAccount.getEmail()      != null ? googleAccount.getEmail()      : "";
+        String name      = googleAccount.getFamilyName() != null ? googleAccount.getFamilyName() : "";
+        String firstName = googleAccount.getGivenName()  != null ? googleAccount.getGivenName()  : "";
 
         new GoogleLoginTask(this).execute(
                 Server.getUrlApi(getApplicationContext()) + "login_google.php",
@@ -348,7 +374,6 @@ public class LoginActivity extends AppCompatActivity {
             return uiModeManager.getNightMode() == UiModeManager.MODE_NIGHT_YES;
         }
 
-        // Fallback for older versions
         int currentNightMode = getResources().getConfiguration().uiMode
                 & Configuration.UI_MODE_NIGHT_MASK;
         return currentNightMode == Configuration.UI_MODE_NIGHT_YES;
@@ -474,7 +499,6 @@ public class LoginActivity extends AppCompatActivity {
 
     // ==================== AsyncTask ====================
 
-    // 8. AsyncTask Google — même structure que LoginTask
     private static class GoogleLoginTask extends AsyncTask<String, Void, String> {
         private final WeakReference<LoginActivity> activityRef;
 
@@ -484,11 +508,6 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... params) {
-            // params[0] = url
-            // params[1] = googleId
-            // params[2] = email
-            // params[3] = name
-            // params[4] = firstName
             LoginActivity activity = activityRef.get();
             if (activity == null || activity.mHttpClient == null) return null;
 
@@ -511,7 +530,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 try (Response response = activity.mHttpClient.newCall(request).execute()) {
                     if (response.body() != null) {
-                        Log.e("GooglePass",response.body().string());
+                        Log.e("GooglePass", response.body().string());
                         return response.body().string();
                     }
                 } catch (IOException e) {
@@ -527,7 +546,6 @@ public class LoginActivity extends AppCompatActivity {
         protected void onPostExecute(String result) {
             LoginActivity activity = activityRef.get();
             if (activity != null) {
-                // Réutilise exactement le même handler que le login classique
                 activity.handleLoginResponse(result);
             }
         }

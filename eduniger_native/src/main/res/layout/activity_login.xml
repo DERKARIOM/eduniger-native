@@ -38,6 +38,7 @@
                     android:src="@drawable/img_login_edu_niger"
                     android:contentDescription="@string/todo" />
             </RelativeLayout>
+
             <LinearLayout
                 android:id="@+id/activity_login_linear_layout_number"
                 xmlns:android="http://schemas.android.com/apk/res/android"
@@ -58,7 +59,7 @@
                     app:ccp_showFlag="true"
                     app:ccp_showFullName="false"
                     app:ccp_showNameCode="false"
-                    app:ccp_defaultNameCode="NE" /> <!-- NE = Niger -->
+                    app:ccp_defaultNameCode="NE" />
 
                 <!-- Zone de saisie numéro -->
                 <EditText
@@ -72,18 +73,44 @@
                     android:padding="8dp"
                     android:background="@null"/>
             </LinearLayout>
-            <EditText
-                android:id="@+id/edit_text_login_password"
-                android:hint=" Votre mot de passe ?"
-                android:layout_below="@id/activity_login_linear_layout_number"
-                android:inputType="textPassword"
-                style="@style/activity_login_edit_text_password"
-                android:autofillHints="" />
+
+            <!-- ✅ MODIFIÉ : EditText password encapsulé dans un RelativeLayout avec bouton toggle -->
+            <FrameLayout
+                android:id="@+id/relative_layout_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/activity_login_linear_layout_number">
+
+                <EditText
+                    android:id="@+id/edit_text_login_password"
+                    android:hint=" Votre mot de passe ?"
+                    android:inputType="textPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingEnd="52dp"
+                    style="@style/activity_login_edit_text_password"
+                    android:autofillHints="" />
+
+                <!-- Le bouton est déclaré APRÈS = au-dessus dans le Z-order -->
+                <ImageButton
+                    android:id="@+id/image_button_toggle_password"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginEnd="35dp"
+                    android:background="@null"
+                    android:elevation="10dp"
+                    android:layout_marginBottom="15dp"
+                    android:src="@drawable/ic_visibility_on"
+                    android:contentDescription="Afficher/masquer le mot de passe" />
+
+            </FrameLayout>
+
             <TextView
                 android:id="@+id/text_view_activity_login_forget_password"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
-                android:layout_below="@id/edit_text_login_password"
+                android:layout_below="@id/relative_layout_password"
                 android:layout_alignParentEnd="true"
                 android:padding="10dp"
                 android:layout_marginEnd="25dp"
@@ -92,11 +119,13 @@
                 android:textStyle="bold"
                 android:text="Mot de passe oublié ?"
                 />
+
             <TextView
                 android:id="@+id/text_view_login_error"
-                android:layout_below="@id/edit_text_login_password"
+                android:layout_below="@id/relative_layout_password"
                 style="@style/text_view_error_register"
                 android:layout_marginTop="20dp"/>
+
             <RelativeLayout
                 android:id="@+id/relative_layout_activity_register_connection"
                 style="@style/wrap_content_all"
@@ -105,7 +134,6 @@
                 android:layout_marginEnd="28dp"
                 android:layout_marginBottom="20dp"
                 >
-
                 <ProgressBar
                     android:id="@+id/progress_bar_register_connection"
                     android:layout_alignStart="@id/button_login_connection"
@@ -116,6 +144,7 @@
                     android:textAllCaps="false"
                     style="@style/button_connexion" />
             </RelativeLayout>
+
             <LinearLayout
                 android:id="@+id/linear_layout_activity_login_google"
                 android:layout_width="match_parent"
@@ -127,9 +156,8 @@
                 android:orientation="horizontal"
                 android:layout_marginBottom="30dp"
                 style="@style/activity_login_pass_google"
-                android:layout_below="@id/relative_layout_activity_register_connection"
+                android:layout_below="@id/relative_layout_activity_register_connection">
 
-                >
                 <ImageView
                     android:layout_width="25dp"
                     android:layout_height="25dp"
@@ -143,6 +171,7 @@
                     android:textStyle="bold"
                     android:layout_gravity="center"/>
             </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/linear_layout_activity_login_create_account"
                 android:layout_width="wrap_content"
@@ -150,15 +179,13 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="10dp"
                 android:layout_below="@id/linear_layout_activity_login_google"
-                android:layout_gravity="center_horizontal"
-                >
+                android:layout_gravity="center_horizontal">
+
                 <TextView
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
-
                     android:textSize="@dimen/size_title"
-                    android:text="Vous n\'avez pas de compte ?"
-                    />
+                    android:text="Vous n\'avez pas de compte ?" />
                 <TextView
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
@@ -166,9 +193,9 @@
                     android:padding="10dp"
                     android:textSize="@dimen/size_title"
                     android:textStyle="bold"
-                    android:text="Céer un compte"
-                    />
+                    android:text="Céer un compte" />
             </LinearLayout>
+
             <TextView
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
@@ -177,8 +204,8 @@
                 android:text="Version : 3.1.3"
                 android:layout_below="@id/linear_layout_activity_login_create_account"
                 android:layout_centerHorizontal="true"
-                android:textColor="@color/purple_200"
-                />
+                android:textColor="@color/purple_200" />
+
         </RelativeLayout>
     </androidx.core.widget.NestedScrollView>
 </FrameLayout>
