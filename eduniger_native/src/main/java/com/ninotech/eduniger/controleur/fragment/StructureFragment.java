@@ -21,9 +21,11 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.ninotech.eduniger.R;
 import com.ninotech.eduniger.controleur.adapter.NoConnectionAdapter;
 import com.ninotech.eduniger.controleur.adapter.StructureAdapter;
+import com.ninotech.eduniger.controleur.adapter.StructureStoryAdapter;
 import com.ninotech.eduniger.model.data.Connection;
 import com.ninotech.eduniger.model.data.Server;
 import com.ninotech.eduniger.model.data.Structure;
+import com.ninotech.eduniger.model.data.StructureStory;
 import com.ninotech.eduniger.model.table.Session;
 
 import org.json.JSONArray;
@@ -31,6 +33,7 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -42,11 +45,16 @@ public class StructureFragment extends Fragment {
 
     private RecyclerView mStructureRecyclerView;
     private RecyclerView mWaitRecyclerView;
+    private RecyclerView mStoriesRecyclerView;          // ← nouveau
     private ArrayList<Structure> mStructures;
     private NoConnectionAdapter mNoConnectionAdapter;
     private StructureAdapter StructAdapter;
-    private SwipeRefreshLayout mSwipeRefreshLayout;  // ← nouveau
-    private Session mSession;                        // ← extrait pour le refresh
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private Session mSession;
+
+    // Stories
+    private final List<StructureStory> mStories = new ArrayList<>(); // ← nouveau
+    private StructureStoryAdapter mStoryAdapter;                     // ← nouveau
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,17 +63,23 @@ public class StructureFragment extends Fragment {
 
         mStructureRecyclerView = view.findViewById(R.id.recycler_view_fragment_structure);
         mWaitRecyclerView      = view.findViewById(R.id.recycler_view_fragment_structure_wait);
-        mSwipeRefreshLayout    = view.findViewById(R.id.swipe_refresh_structure);  // ← nouveau
+        mSwipeRefreshLayout    = view.findViewById(R.id.swipe_refresh_structure);
+        mStoriesRecyclerView   = view.findViewById(R.id.recycler_view_stories);  // ← nouveau
         mSession               = new Session(getContext());
         mStructures            = new ArrayList<>();
         StructAdapter          = new StructureAdapter(mStructures);
 
+        // ====== Setup Stories ======
+        setupStories();
+
+        // ====== Setup wait adapter ======
         ArrayList<Connection> list = new ArrayList<>();
         list.add(new Connection(getString(R.string.wait), null, true));
         mNoConnectionAdapter = new NoConnectionAdapter(list);
         mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mWaitRecyclerView.setAdapter(mNoConnectionAdapter);
 
+        // ====== BroadcastReceiver — inchangé ======
         BroadcastReceiver receiverNoConnectionAdapter = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -95,7 +109,7 @@ public class StructureFragment extends Fragment {
                     Context.RECEIVER_EXPORTED);
         }
 
-        // Chargement initial — inchangé
+        // ====== Chargement initial — inchangé ======
         new StructureSyn().execute(
                 Server.getUrlApi(getContext()) + "structure.php",
                 mSession.getIdNumber());
@@ -103,7 +117,7 @@ public class StructureFragment extends Fragment {
                 Server.getUrlApi(getContext()) + "StructureMore.php",
                 mSession.getIdNumber());
 
-        // ==================== SwipeRefresh ====================
+        // ====== SwipeRefresh — inchangé ======
         mSwipeRefreshLayout.setColorSchemeResources(
                 R.color.purple_200,
                 android.R.color.holo_blue_light,
@@ -123,6 +137,28 @@ public class StructureFragment extends Fragment {
         return view;
     }
 
+    // ==================== Stories ====================
+
+    private void setupStories() {
+        // Données d'exemple — à remplacer par vos données API
+        mStories.add(new StructureStory("1", "eduniger.png",   "EduNiger",     true));
+        mStories.add(new StructureStory("2", "ninotech.png",   "NinoTech",     true));
+        mStories.add(new StructureStory("3", "sosbac.png",     "SOS BAC",      false));
+        mStories.add(new StructureStory("4", "uaz.png",        "UAZ",          true));
+        mStories.add(new StructureStory("5", "inp.png",        "INP-HB",       false));
+        mStories.add(new StructureStory("6", "iftic.png",      "IFTIC",        true));
+        mStories.add(new StructureStory("7", "ungestion.png",  "UN Gestion",   false));
+
+        mStoryAdapter = new StructureStoryAdapter(mStories, story ->
+                Toast.makeText(getContext(),
+                        "Story : " + story.getName(), Toast.LENGTH_SHORT).show()
+        );
+
+        mStoriesRecyclerView.setLayoutManager(
+                new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        mStoriesRecyclerView.setAdapter(mStoryAdapter);
+    }
+
     // ==================== Arrêter le SwipeRefresh ====================
 
     private void stopRefreshing() {
@@ -131,7 +167,7 @@ public class StructureFragment extends Fragment {
         }
     }
 
-    // ==================== AsyncTask — inchangés sauf stopRefreshing() ====================
+    // ==================== AsyncTask — inchangés ====================
 
     private class StructureSyn extends AsyncTask<String, Void, String> {
         @Override
@@ -158,7 +194,6 @@ public class StructureFragment extends Fragment {
 
         @Override
         protected void onPostExecute(String jsonData) {
-            // ← Arrêter le SwipeRefresh dans tous les cas
             stopRefreshing();
 
             if (jsonData != null) {
@@ -229,7 +264,6 @@ public class StructureFragment extends Fragment {
 
         @Override
         protected void onPostExecute(String jsonData) {
-            // ← Arrêter le SwipeRefresh dans tous les cas
             stopRefreshing();
 
             if (jsonData != null) {

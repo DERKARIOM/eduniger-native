@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="80dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="6dp">
+
+    <!-- Anneau coloré si nouvelle story -->
+    <FrameLayout
+        android:layout_width="64dp"
+        android:layout_height="64dp">
+
+        <!-- Cercle de bordure (story non vue = coloré, vue = gris) -->
+        <View
+            android:id="@+id/view_story_ring"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:background="@drawable/img_wait_profile"
+            android:layout_gravity="center" />
+
+        <!-- Photo de profil -->
+        <ImageView
+            android:id="@+id/image_view_story_logo"
+            android:layout_width="54dp"
+            android:layout_height="54dp"
+            android:layout_gravity="center"
+            android:layout_margin="5dp"
+            android:src="@drawable/user"
+            android:scaleType="centerCrop" />
+
+    </FrameLayout>
+
+    <!-- Nom de la structure -->
+    <TextView
+        android:id="@+id/text_view_story_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:gravity="center"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:textSize="11sp" />
+
+</LinearLayout>

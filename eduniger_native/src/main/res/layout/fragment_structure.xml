@@ -12,16 +12,63 @@
         android:layout_centerInParent="true"
         style="@style/wrap_content_all" />
 
-    <!-- SwipeRefreshLayout enveloppe uniquement le RecyclerView principal -->
+    <!-- SwipeRefreshLayout -->
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh_structure"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view_fragment_structure"
-            style="@style/match_parent_all"
-            android:visibility="gone" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <!-- ====== BLOC STORIES ====== -->
+            <LinearLayout
+                android:id="@+id/layout_stories"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="10dp"
+                android:paddingBottom="6dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    android:text="Story"
+                    android:textStyle="bold"
+                    android:textSize="18sp" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_view_stories"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
+                    android:clipToPadding="false" />
+
+            </LinearLayout>
+
+            <!-- Séparateur -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="Structures"
+                android:textStyle="bold"
+                android:textSize="18sp" />
+
+            <!-- ====== LISTE DES STRUCTURES ====== -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view_fragment_structure"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:visibility="gone" />
+
+        </LinearLayout>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
