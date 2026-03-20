@@ -9,19 +9,20 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <RelativeLayout
             android:layout_marginTop="10dp"
             android:id="@+id/relative_layout_activity_register_img"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="25dp"
-            >
+            android:layout_margin="25dp">
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="250dp"
                 android:src="@drawable/img_register"
                 android:contentDescription="@string/todo" />
         </RelativeLayout>
+
         <EditText
             android:id="@+id/edit_text_activity_register_name"
             android:hint=" Entrer votre nom"
@@ -29,6 +30,7 @@
             android:inputType="text"
             style="@style/activity_login_edit_text_number"
             android:autofillHints="" />
+
         <EditText
             android:id="@+id/edit_text_activity_register_first_name"
             android:hint=" Entrer votre prénom"
@@ -36,6 +38,7 @@
             android:inputType="text"
             style="@style/activity_register_edit_text_firstname"
             android:autofillHints="" />
+
         <EditText
             android:id="@+id/edit_text_activity_register_id_number"
             android:hint=" Entrer votre numéro"
@@ -44,6 +47,7 @@
             android:importantForAutofill="no"
             style="@style/activity_register_edit_text_number"
             android:autofillHints="" />
+
         <EditText
             android:id="@+id/edit_text_activity_register_email"
             android:hint=" exemple@gmail.com"
@@ -51,26 +55,73 @@
             android:inputType="textEmailAddress"
             style="@style/activity_register_edit_text_email"
             android:autofillHints="" />
-        <EditText
-            android:id="@+id/edit_text_activity_register_password"
-            android:hint="@string/edit_text_hint_password"
-            android:layout_below="@id/edit_text_activity_register_email"
-            android:inputType="textPassword"
-            style="@style/activity_login_edit_text_password"
-            android:autofillHints="" />
-        <EditText
-            android:id="@+id/edit_text_activity_register_password_confirm"
-            android:hint="@string/edit_text_hint_password_confirm"
-            android:layout_below="@id/edit_text_activity_register_password"
-            android:inputType="textPassword"
-            style="@style/activity_register_edit_text_password_confirm"
-            android:autofillHints="" />
+
+        <!-- ✅ MODIFIÉ : Mot de passe avec bouton toggle -->
+        <FrameLayout
+            android:id="@+id/frame_layout_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/edit_text_activity_register_email">
+
+            <EditText
+                android:id="@+id/edit_text_activity_register_password"
+                android:hint="@string/edit_text_hint_password"
+                android:inputType="textPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingEnd="52dp"
+                style="@style/activity_login_edit_text_password"
+                android:autofillHints="" />
+
+            <ImageButton
+                android:id="@+id/image_button_toggle_password"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="35dp"
+                android:layout_marginBottom="15dp"
+                android:background="@null"
+                android:elevation="10dp"
+                android:src="@drawable/ic_visibility_off"
+                android:contentDescription="Afficher/masquer le mot de passe" />
+        </FrameLayout>
+
+        <!-- ✅ MODIFIÉ : Confirmer mot de passe avec bouton toggle -->
+        <FrameLayout
+            android:id="@+id/frame_layout_password_confirm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/frame_layout_password">
+
+            <EditText
+                android:id="@+id/edit_text_activity_register_password_confirm"
+                android:hint="@string/edit_text_hint_password_confirm"
+                android:inputType="textPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingEnd="52dp"
+                style="@style/activity_register_edit_text_password_confirm"
+                android:autofillHints="" />
+
+            <ImageButton
+                android:id="@+id/image_button_toggle_password_confirm"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="35dp"
+                android:layout_marginBottom="15dp"
+                android:background="@null"
+                android:elevation="10dp"
+                android:src="@drawable/ic_visibility_off"
+                android:contentDescription="Afficher/masquer la confirmation du mot de passe" />
+        </FrameLayout>
+
         <Spinner
             android:id="@+id/spinner_activity_register_profession"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
-            android:layout_below="@id/edit_text_activity_register_password_confirm"
+            android:layout_below="@id/frame_layout_password_confirm"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="25dp"
             android:layout_marginEnd="20dp"
@@ -78,6 +129,7 @@
             android:gravity="center"
             android:backgroundTint="@color/purple_200"
             android:padding="10dp"/>
+
         <TextView
             android:id="@+id/text_view_activity_register_error"
             style="@style/text_view_error_register"
@@ -85,14 +137,14 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/spinner_activity_register_profession"
             android:layout_marginBottom="31dp" />
+
         <RelativeLayout
             android:id="@+id/relative_layout_activity_register_connection"
             style="@style/wrap_content_all"
             android:layout_below="@+id/text_view_activity_register_error"
             android:layout_marginStart="28dp"
             android:layout_marginEnd="28dp"
-            android:layout_marginBottom="20dp"
-            >
+            android:layout_marginBottom="20dp">
 
             <ProgressBar
                 android:id="@+id/progress_bar_activity_register_connection"
@@ -103,6 +155,7 @@
                 android:id="@+id/button_activity_register_connection"
                 style="@style/button_connexion" />
         </RelativeLayout>
+
         <TextView
             android:id="@+id/text_view_activity_register_login"
             android:layout_below="@id/relative_layout_activity_register_connection"
@@ -110,5 +163,6 @@
             android:layout_centerHorizontal="true"
             android:layout_gravity="center_horizontal"
             style="@style/text_view_pass_login_register" />
+
     </RelativeLayout>
 </androidx.core.widget.NestedScrollView>

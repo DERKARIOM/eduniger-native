@@ -9,11 +9,13 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -55,6 +57,12 @@ public class RegisterActivity extends AppCompatActivity {
     private TextView mErrorTextView;
     private ProgressBar mConnectionProgressBar;
 
+    // ✅ AJOUTÉ : boutons toggle + états visibilité
+    private ImageButton mTogglePasswordButton;
+    private ImageButton mTogglePasswordConfirmButton;
+    private boolean mIsPasswordVisible = false;
+    private boolean mIsPasswordConfirmVisible = false;
+
     // Data
     private Account mAccount;
     private String mJeton = "null";
@@ -72,7 +80,6 @@ public class RegisterActivity extends AppCompatActivity {
         initializeFirebaseToken();
         setupClickListeners();
 
-        // Initialiser OkHttpClient une seule fois
         mHttpClient = new OkHttpClient();
     }
 
@@ -88,6 +95,10 @@ public class RegisterActivity extends AppCompatActivity {
         mLoginTextView = findViewById(R.id.text_view_activity_register_login);
         mErrorTextView = findViewById(R.id.text_view_activity_register_error);
         mConnectionProgressBar = findViewById(R.id.progress_bar_activity_register_connection);
+
+        // ✅ AJOUTÉ : récupération des boutons toggle
+        mTogglePasswordButton = findViewById(R.id.image_button_toggle_password);
+        mTogglePasswordConfirmButton = findViewById(R.id.image_button_toggle_password_confirm);
     }
 
     private void setupProfessionSpinner() {
@@ -114,6 +125,48 @@ public class RegisterActivity extends AppCompatActivity {
     private void setupClickListeners() {
         mConnectionButton.setOnClickListener(v -> handleRegistration());
         mLoginTextView.setOnClickListener(v -> navigateToLogin());
+
+        // ✅ AJOUTÉ : toggle mot de passe
+        mTogglePasswordButton.setOnClickListener(v -> {
+            mIsPasswordVisible = !mIsPasswordVisible;
+
+            if (mIsPasswordVisible) {
+                mPasswordEditText.setInputType(
+                        InputType.TYPE_CLASS_TEXT |
+                                InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                );
+                mTogglePasswordButton.setImageResource(R.drawable.ic_visibility_on);
+            } else {
+                mPasswordEditText.setInputType(
+                        InputType.TYPE_CLASS_TEXT |
+                                InputType.TYPE_TEXT_VARIATION_PASSWORD
+                );
+                mTogglePasswordButton.setImageResource(R.drawable.ic_visibility_off);
+            }
+            // Replacer le curseur à la fin
+            mPasswordEditText.setSelection(mPasswordEditText.getText().length());
+        });
+
+        // ✅ AJOUTÉ : toggle confirmer mot de passe
+        mTogglePasswordConfirmButton.setOnClickListener(v -> {
+            mIsPasswordConfirmVisible = !mIsPasswordConfirmVisible;
+
+            if (mIsPasswordConfirmVisible) {
+                mPasswordConfirmEditText.setInputType(
+                        InputType.TYPE_CLASS_TEXT |
+                                InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                );
+                mTogglePasswordConfirmButton.setImageResource(R.drawable.ic_visibility_on);
+            } else {
+                mPasswordConfirmEditText.setInputType(
+                        InputType.TYPE_CLASS_TEXT |
+                                InputType.TYPE_TEXT_VARIATION_PASSWORD
+                );
+                mTogglePasswordConfirmButton.setImageResource(R.drawable.ic_visibility_off);
+            }
+            // Replacer le curseur à la fin
+            mPasswordConfirmEditText.setSelection(mPasswordConfirmEditText.getText().length());
+        });
     }
 
     private void handleRegistration() {
@@ -145,7 +198,7 @@ public class RegisterActivity extends AppCompatActivity {
             return true;
         } else if ("notNight".equals(theme)) {
             return false;
-        } else { // "system"
+        } else {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 UiModeManager uiModeManager = (UiModeManager) getSystemService(Context.UI_MODE_SERVICE);
                 return uiModeManager.getNightMode() != UiModeManager.MODE_NIGHT_NO;
@@ -331,7 +384,6 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // Libérer les ressources si nécessaire
         mHttpClient = null;
     }
 }

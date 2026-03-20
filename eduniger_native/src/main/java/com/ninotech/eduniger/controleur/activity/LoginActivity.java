@@ -198,14 +198,14 @@ public class LoginActivity extends AppCompatActivity {
                         InputType.TYPE_CLASS_TEXT |
                                 InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
                 );
-                mTogglePasswordButton.setImageResource(R.drawable.ic_visibility_off);
+                mTogglePasswordButton.setImageResource(R.drawable.ic_visibility_on);
             } else {
                 // Masquer le mot de passe
                 mPasswordEditText.setInputType(
                         InputType.TYPE_CLASS_TEXT |
                                 InputType.TYPE_TEXT_VARIATION_PASSWORD
                 );
-                mTogglePasswordButton.setImageResource(R.drawable.ic_visibility_on);
+                mTogglePasswordButton.setImageResource(R.drawable.ic_visibility_off);
             }
 
             // Replacer le curseur à la fin du texte saisi
