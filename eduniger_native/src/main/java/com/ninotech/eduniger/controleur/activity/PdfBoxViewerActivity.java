@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.MenuItem;
@@ -44,6 +45,8 @@ import java.io.IOException;
  */
 public class PdfBoxViewerActivity extends AppCompatActivity {
 
+    private static final String TAG = "PdfBoxViewer";
+
     private ImageView imageViewPdf;
     private TextView textViewPageInfo;
     private TextView textViewZoomLevel;
@@ -69,7 +72,6 @@ public class PdfBoxViewerActivity extends AppCompatActivity {
     private int screenWidth;
     private int screenHeight;
     private int screenDensity;
-    private boolean isA5Format = false;
     private boolean isTablet = false;
     private boolean isLandscape = false;
 
@@ -85,6 +87,8 @@ public class PdfBoxViewerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        Log.d(TAG, "onCreate() démarré");
         setContentView(R.layout.activity_pdfbox_viewer);
 
         // Détection du type d'appareil et orientation
@@ -96,352 +100,266 @@ public class PdfBoxViewerActivity extends AppCompatActivity {
         ab.setCustomView(R.layout.custom_action_bar);
         ab.setDisplayHomeAsUpEnabled(true);
 
-        // Configuration responsive de l'ActionBar
         setupResponsiveActionBar(ab);
 
         TextView actionBarTitle = ab.getCustomView().findViewById(R.id.action_bar_title);
         setupTheme(ab, actionBarTitle);
 
-        // Récupérer les données
-        pdfPath = getIntent().getStringExtra("PDF_PATH");
+        // Récupérer les données de l'Intent
+        pdfPath  = getIntent().getStringExtra("PDF_PATH");
         pdfTitle = getIntent().getStringExtra("PDF_TITLE");
+
+        // ── LOG INTENT ──────────────────────────────────────────────────────
+        Log.d(TAG, "Intent reçu :");
+        Log.d(TAG, "  PDF_PATH  = " + (pdfPath  != null ? pdfPath  : "NULL ⚠️"));
+        Log.d(TAG, "  PDF_TITLE = " + (pdfTitle != null ? pdfTitle : "NULL ⚠️"));
+        // ────────────────────────────────────────────────────────────────────
+
         if (actionBarTitle != null) {
             actionBarTitle.setText(pdfTitle);
         }
 
-        // Initialiser les vues
         initViews();
-
-        // Configuration responsive des layouts
         setupResponsiveLayouts();
-
-        // Initialiser le détecteur de gestes
         setupGestureDetector();
-
-        // Charger le PDF
         loadPdfDocument();
+
+        Log.d(TAG, "onCreate() terminé");
     }
 
-    /**
-     * Méthode pour charger le document PDF
-     */
+    // ==================== Chargement du PDF ====================
+
     private void loadPdfDocument() {
+        Log.d(TAG, "loadPdfDocument() → lancement de LoadPdfTask");
         new LoadPdfTask().execute(pdfPath);
     }
+
+    // ==================== Détection écran ====================
 
     private void detectScreenCharacteristics() {
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 
-        screenWidth = displayMetrics.widthPixels;
-        screenHeight = displayMetrics.heightPixels;
+        screenWidth   = displayMetrics.widthPixels;
+        screenHeight  = displayMetrics.heightPixels;
         screenDensity = displayMetrics.densityDpi;
 
-        // Détection tablette
         isTablet = (getResources().getConfiguration().screenLayout
                 & Configuration.SCREENLAYOUT_SIZE_MASK)
                 >= Configuration.SCREENLAYOUT_SIZE_LARGE;
 
-        // Détection orientation
         isLandscape = getResources().getConfiguration().orientation
                 == Configuration.ORIENTATION_LANDSCAPE;
+
+        Log.d(TAG, "Écran : " + screenWidth + "x" + screenHeight
+                + " | densité=" + screenDensity
+                + " | tablette=" + isTablet
+                + " | paysage=" + isLandscape);
     }
 
+    // ==================== ActionBar ====================
+
     private void setupResponsiveActionBar(ActionBar ab) {
-        // Ajuster la hauteur de l'ActionBar selon la densité d'écran
         View customView = ab.getCustomView();
         if (customView != null) {
             ViewGroup.LayoutParams params = customView.getLayoutParams();
-
             if (isTablet) {
-                params.height = (int) TypedValue.applyDimension(
-                        TypedValue.COMPLEX_UNIT_DIP, 80, getResources().getDisplayMetrics());
+                params.height = dp(80);
             } else if (screenDensity >= DisplayMetrics.DENSITY_XXHIGH) {
-                params.height = (int) TypedValue.applyDimension(
-                        TypedValue.COMPLEX_UNIT_DIP, 70, getResources().getDisplayMetrics());
+                params.height = dp(70);
             } else {
-                params.height = (int) TypedValue.applyDimension(
-                        TypedValue.COMPLEX_UNIT_DIP, 56, getResources().getDisplayMetrics());
+                params.height = dp(56);
             }
-
             customView.setLayoutParams(params);
         }
     }
 
+    // ==================== Layouts ====================
+
     private void setupResponsiveLayouts() {
-        // Configuration responsive des contrôles
         setupResponsiveControls();
-
-        // Configuration responsive des textes
         setupResponsiveTextSizes();
-
-        // Configuration spécifique pour tablettes
         if (isTablet) {
             setupTabletLayout();
         }
     }
 
     private void setupResponsiveControls() {
-        // Taille des boutons selon la résolution
-        int buttonSize;
-        if (isTablet) {
-            buttonSize = (int) TypedValue.applyDimension(
-                    TypedValue.COMPLEX_UNIT_DIP, 64, getResources().getDisplayMetrics());
-        } else if (screenDensity >= DisplayMetrics.DENSITY_XXHIGH) {
-            buttonSize = (int) TypedValue.applyDimension(
-                    TypedValue.COMPLEX_UNIT_DIP, 56, getResources().getDisplayMetrics());
-        } else {
-            buttonSize = (int) TypedValue.applyDimension(
-                    TypedValue.COMPLEX_UNIT_DIP, 50, getResources().getDisplayMetrics());
-        }
+        int buttonSize = isTablet ? dp(64)
+                : screenDensity >= DisplayMetrics.DENSITY_XXHIGH ? dp(56) : dp(50);
 
-        // Appliquer la taille aux boutons
         if (btnPrevious != null) {
-            ViewGroup.LayoutParams previousParams = btnPrevious.getLayoutParams();
-            ViewGroup.LayoutParams nextParams = btnNext.getLayoutParams();
-            ViewGroup.LayoutParams zoomInParams = btnZoomIn.getLayoutParams();
-            ViewGroup.LayoutParams zoomOutParams = btnZoomOut.getLayoutParams();
-
-            previousParams.width = buttonSize;
-            previousParams.height = buttonSize;
-            nextParams.width = buttonSize;
-            nextParams.height = buttonSize;
-            zoomInParams.width = buttonSize;
-            zoomInParams.height = buttonSize;
-            zoomOutParams.width = buttonSize;
-            zoomOutParams.height = buttonSize;
-
-            btnPrevious.setLayoutParams(previousParams);
-            btnNext.setLayoutParams(nextParams);
-            btnZoomIn.setLayoutParams(zoomInParams);
-            btnZoomOut.setLayoutParams(zoomOutParams);
+            setButtonSize(btnPrevious, buttonSize);
+            setButtonSize(btnNext,     buttonSize);
+            setButtonSize(btnZoomIn,   buttonSize);
+            setButtonSize(btnZoomOut,  buttonSize);
         }
     }
 
+    private void setButtonSize(ImageButton btn, int size) {
+        ViewGroup.LayoutParams p = btn.getLayoutParams();
+        p.width  = size;
+        p.height = size;
+        btn.setLayoutParams(p);
+    }
+
     private void setupTabletLayout() {
-        // Pour les tablettes, ajuster les layouts pour mieux utiliser l'espace
         if (isLandscape && controlLayout != null) {
-            // En mode paysage tablette, on peut réduire la hauteur des contrôles
             ViewGroup.LayoutParams params = controlLayout.getLayoutParams();
-            params.height = (int) TypedValue.applyDimension(
-                    TypedValue.COMPLEX_UNIT_DIP, 100, getResources().getDisplayMetrics());
+            params.height = dp(100);
             controlLayout.setLayoutParams(params);
         }
-
-        // Agrandir le texte du hint de swipe pour tablettes
         if (textViewSwipeHint != null) {
             textViewSwipeHint.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
         }
     }
 
     private void setupResponsiveTextSizes() {
-        float pageInfoTextSize, zoomTextSize, hintTextSize, loadingTextSize;
-
+        float pageInfoSize, zoomSize, hintSize, loadingSize;
         if (isTablet) {
-            pageInfoTextSize = 18f;
-            zoomTextSize = 14f;
-            hintTextSize = 20f;
-            loadingTextSize = 16f;
+            pageInfoSize = 18f; zoomSize = 14f; hintSize = 20f; loadingSize = 16f;
         } else if (screenDensity >= DisplayMetrics.DENSITY_XXHIGH) {
-            pageInfoTextSize = 16f;
-            zoomTextSize = 12f;
-            hintTextSize = 18f;
-            loadingTextSize = 14f;
+            pageInfoSize = 16f; zoomSize = 12f; hintSize = 18f; loadingSize = 14f;
         } else {
-            pageInfoTextSize = 14f;
-            zoomTextSize = 10f;
-            hintTextSize = 16f;
-            loadingTextSize = 12f;
+            pageInfoSize = 14f; zoomSize = 10f; hintSize = 16f; loadingSize = 12f;
         }
-
-        if (textViewPageInfo != null) {
-            textViewPageInfo.setTextSize(TypedValue.COMPLEX_UNIT_SP, pageInfoTextSize);
-        }
-        if (textViewZoomLevel != null) {
-            textViewZoomLevel.setTextSize(TypedValue.COMPLEX_UNIT_SP, zoomTextSize);
-        }
-        if (textViewSwipeHint != null) {
-            textViewSwipeHint.setTextSize(TypedValue.COMPLEX_UNIT_SP, hintTextSize);
-        }
-        if (textViewLoading != null) {
-            textViewLoading.setTextSize(TypedValue.COMPLEX_UNIT_SP, loadingTextSize);
-        }
+        if (textViewPageInfo  != null) textViewPageInfo.setTextSize(TypedValue.COMPLEX_UNIT_SP, pageInfoSize);
+        if (textViewZoomLevel != null) textViewZoomLevel.setTextSize(TypedValue.COMPLEX_UNIT_SP, zoomSize);
+        if (textViewSwipeHint != null) textViewSwipeHint.setTextSize(TypedValue.COMPLEX_UNIT_SP, hintSize);
+        if (textViewLoading   != null) textViewLoading.setTextSize(TypedValue.COMPLEX_UNIT_SP, loadingSize);
     }
 
-    private void initViews() {
-        imageViewPdf = findViewById(R.id.imageViewPdf);
-        textViewPageInfo = findViewById(R.id.textViewPageInfo);
-        textViewZoomLevel = findViewById(R.id.textViewZoomLevel);
-        textViewSwipeHint = findViewById(R.id.textViewSwipeHint);
-        textViewLoading = findViewById(R.id.textViewLoading);
-        btnPrevious = findViewById(R.id.btnPrevious);
-        btnNext = findViewById(R.id.btnNext);
-        btnZoomIn = findViewById(R.id.btnZoomIn);
-        btnZoomOut = findViewById(R.id.btnZoomOut);
-        progressBar = findViewById(R.id.progressBar);
-        progressBarPage = findViewById(R.id.progressBarPage);
-        scrollViewVertical = findViewById(R.id.scrollViewVertical);
-        scrollViewHorizontal = findViewById(R.id.scrollViewHorizontal);
-        controlLayout = findViewById(R.id.controlLayout);
-        pdfContainer = findViewById(R.id.pdfContainer);
+    // ==================== Vues ====================
 
-        // Configuration de l'ImageView pour un meilleur affichage
+    private void initViews() {
+        Log.d(TAG, "initViews() démarré");
+
+        imageViewPdf          = findViewById(R.id.imageViewPdf);
+        textViewPageInfo      = findViewById(R.id.textViewPageInfo);
+        textViewZoomLevel     = findViewById(R.id.textViewZoomLevel);
+        textViewSwipeHint     = findViewById(R.id.textViewSwipeHint);
+        textViewLoading       = findViewById(R.id.textViewLoading);
+        btnPrevious           = findViewById(R.id.btnPrevious);
+        btnNext               = findViewById(R.id.btnNext);
+        btnZoomIn             = findViewById(R.id.btnZoomIn);
+        btnZoomOut            = findViewById(R.id.btnZoomOut);
+        progressBar           = findViewById(R.id.progressBar);
+        progressBarPage       = findViewById(R.id.progressBarPage);
+        scrollViewVertical    = findViewById(R.id.scrollViewVertical);
+        scrollViewHorizontal  = findViewById(R.id.scrollViewHorizontal);
+        controlLayout         = findViewById(R.id.controlLayout);
+        pdfContainer          = findViewById(R.id.pdfContainer);
+
+        // ── LOG VUES NULLES ─────────────────────────────────────────────────
+        if (imageViewPdf         == null) Log.w(TAG, "  imageViewPdf est NULL ⚠️ (vérifier l'id R.id.imageViewPdf)");
+        if (btnPrevious          == null) Log.w(TAG, "  btnPrevious est NULL ⚠️");
+        if (btnNext              == null) Log.w(TAG, "  btnNext est NULL ⚠️");
+        if (btnZoomIn            == null) Log.w(TAG, "  btnZoomIn est NULL ⚠️");
+        if (btnZoomOut           == null) Log.w(TAG, "  btnZoomOut est NULL ⚠️");
+        if (scrollViewVertical   == null) Log.w(TAG, "  scrollViewVertical est NULL ⚠️");
+        if (scrollViewHorizontal == null) Log.w(TAG, "  scrollViewHorizontal est NULL ⚠️");
+        if (pdfContainer         == null) Log.w(TAG, "  pdfContainer est NULL ⚠️");
+        // ────────────────────────────────────────────────────────────────────
+
         setupImageView();
 
-        if (btnPrevious != null) {
-            btnPrevious.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    previousPage();
-                }
-            });
-        }
+        if (btnPrevious != null) btnPrevious.setOnClickListener(v -> previousPage());
+        if (btnNext     != null) btnNext.setOnClickListener(v -> nextPage());
+        if (btnZoomIn   != null) btnZoomIn.setOnClickListener(v -> zoomIn());
+        if (btnZoomOut  != null) btnZoomOut.setOnClickListener(v -> zoomOut());
 
-        if (btnNext != null) {
-            btnNext.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    nextPage();
-                }
-            });
-        }
-
-        if (btnZoomIn != null) {
-            btnZoomIn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    zoomIn();
-                }
-            });
-        }
-
-        if (btnZoomOut != null) {
-            btnZoomOut.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    zoomOut();
-                }
-            });
-        }
-
-        // Configuration des ScrollViews
         setupScrollViews();
+
+        Log.d(TAG, "initViews() terminé");
     }
 
     private void setupImageView() {
         if (imageViewPdf != null) {
-            // Configuration pour un affichage optimal
             imageViewPdf.setScaleType(ImageView.ScaleType.FIT_CENTER);
             imageViewPdf.setAdjustViewBounds(true);
         }
     }
 
     private void setupScrollViews() {
-        // Configuration des ScrollViews pour permettre le défilement
-        if (scrollViewVertical != null) {
-            scrollViewVertical.setVerticalScrollBarEnabled(true);
-            scrollViewVertical.setScrollbarFadingEnabled(true);
-        }
-        if (scrollViewHorizontal != null) {
-            scrollViewHorizontal.setHorizontalScrollBarEnabled(true);
-            scrollViewHorizontal.setScrollbarFadingEnabled(true);
-        }
+        if (scrollViewVertical   != null) { scrollViewVertical.setVerticalScrollBarEnabled(true);     scrollViewVertical.setScrollbarFadingEnabled(true); }
+        if (scrollViewHorizontal != null) { scrollViewHorizontal.setHorizontalScrollBarEnabled(true); scrollViewHorizontal.setScrollbarFadingEnabled(true); }
     }
+
+    // ==================== Gestes ====================
 
     private void setupGestureDetector() {
         gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
             @Override
-            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            public boolean onFling(MotionEvent e1, MotionEvent e2,
+                                   float velocityX, float velocityY) {
                 try {
                     float diffX = e2.getX() - e1.getX();
                     float diffY = e2.getY() - e1.getY();
 
-                    // Ajuster les seuils selon la densité d'écran
                     float density = getResources().getDisplayMetrics().density;
-                    int adaptiveSwipeThreshold = (int) (SWIPE_THRESHOLD * density);
-                    int adaptiveVelocityThreshold = (int) (SWIPE_VELOCITY_THRESHOLD * density);
+                    int adaptiveSwipe    = (int) (SWIPE_THRESHOLD * density);
+                    int adaptiveVelocity = (int) (SWIPE_VELOCITY_THRESHOLD * density);
 
-                    // Vérifier que le mouvement horizontal est dominant
-                    if (Math.abs(diffX) > Math.abs(diffY)) {
-                        if (Math.abs(diffX) > adaptiveSwipeThreshold &&
-                                Math.abs(velocityX) > adaptiveVelocityThreshold) {
-                            if (diffX > 0) {
-                                // Swipe vers la droite = page précédente
-                                onSwipeRight();
-                            } else {
-                                // Swipe vers la gauche = page suivante
-                                onSwipeLeft();
-                            }
-                            return true;
-                        }
+                    if (Math.abs(diffX) > Math.abs(diffY)
+                            && Math.abs(diffX) > adaptiveSwipe
+                            && Math.abs(velocityX) > adaptiveVelocity) {
+                        if (diffX > 0) onSwipeRight();
+                        else           onSwipeLeft();
+                        return true;
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Log.e(TAG, "Erreur geste fling : " + e.getMessage(), e);
                 }
                 return false;
             }
 
-            @Override
-            public boolean onDown(MotionEvent e) {
-                return true;
-            }
+            @Override public boolean onDown(MotionEvent e) { return true; }
 
             @Override
             public boolean onDoubleTap(MotionEvent e) {
-                // Zoom/dézoom au double tap
-                if (zoomLevel > 1.0f) {
-                    zoomLevel = 1.0f;
-                    resetScrollPosition();
-                } else {
-                    zoomLevel = 2.0f;
-                }
+                if (zoomLevel > 1.0f) { zoomLevel = 1.0f; resetScrollPosition(); }
+                else                  { zoomLevel = 2.0f; }
                 renderPage(currentPage);
                 updateZoomLevel();
                 return true;
             }
         });
 
-        // Ajouter le listener de touch sur le container PDF
         if (pdfContainer != null) {
-            pdfContainer.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    gestureDetector.onTouchEvent(event);
-                    // Permettre le défilement normal
-                    return false;
-                }
+            pdfContainer.setOnTouchListener((v, event) -> {
+                gestureDetector.onTouchEvent(event);
+                return false;
             });
         }
     }
 
     private void resetScrollPosition() {
-        // Réinitialiser la position de défilement
-        if (scrollViewVertical != null) {
-            scrollViewVertical.scrollTo(0, 0);
-        }
-        if (scrollViewHorizontal != null) {
-            scrollViewHorizontal.scrollTo(0, 0);
-        }
+        if (scrollViewVertical   != null) scrollViewVertical.scrollTo(0, 0);
+        if (scrollViewHorizontal != null) scrollViewHorizontal.scrollTo(0, 0);
     }
+
+    // ==================== Rendu ====================
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-
-        // Recréer les dimensions d'écran
+        Log.d(TAG, "onConfigurationChanged() → re-rendu de la page " + currentPage);
         detectScreenCharacteristics();
-
-        // Re-rendre la page courante avec la nouvelle configuration
-        if (pdfRenderer != null) {
-            renderPage(currentPage);
-        }
+        if (pdfRenderer != null) renderPage(currentPage);
     }
 
     private void renderPage(int pageNumber) {
-        if (pdfRenderer == null || pageNumber < 0 || pageNumber >= totalPages) {
+        if (pdfRenderer == null) {
+            Log.e(TAG, "renderPage() → pdfRenderer est NULL, rendu impossible ⚠️");
             return;
         }
-
+        if (pageNumber < 0 || pageNumber >= totalPages) {
+            Log.e(TAG, "renderPage() → pageNumber invalide : " + pageNumber
+                    + " (totalPages=" + totalPages + ") ⚠️");
+            return;
+        }
+        Log.d(TAG, "renderPage() → page " + (pageNumber + 1) + "/" + totalPages
+                + " | zoom=" + zoomLevel);
         currentPage = pageNumber;
         new RenderPageTask().execute(pageNumber);
         updatePageInfo();
@@ -450,23 +368,20 @@ public class PdfBoxViewerActivity extends AppCompatActivity {
 
     private void updatePageInfo() {
         if (textViewPageInfo != null) {
-            textViewPageInfo.setText(String.format("Page %d / %d", currentPage + 1, totalPages));
+            textViewPageInfo.setText(
+                    String.format("Page %d / %d", currentPage + 1, totalPages));
         }
-
-        // Mettre à jour la barre de progression
         if (progressBarPage != null && totalPages > 0) {
             int progress = (int) (((float) (currentPage + 1) / totalPages) * 100);
             progressBarPage.setProgress(progress);
         }
-
-        // Mettre à jour le niveau de zoom
         updateZoomLevel();
     }
 
     private void updateZoomLevel() {
         if (textViewZoomLevel != null) {
-            int zoomPercent = (int) (zoomLevel * 100);
-            textViewZoomLevel.setText(String.format("Zoom: %d%%", zoomPercent));
+            textViewZoomLevel.setText(
+                    String.format("Zoom: %d%%", (int) (zoomLevel * 100)));
         }
     }
 
@@ -474,15 +389,16 @@ public class PdfBoxViewerActivity extends AppCompatActivity {
         if (btnPrevious != null && btnNext != null) {
             btnPrevious.setEnabled(currentPage > 0);
             btnNext.setEnabled(currentPage < totalPages - 1);
-
-            // Feedback visuel pour les boutons désactivés
             btnPrevious.setAlpha(currentPage > 0 ? 1.0f : 0.5f);
             btnNext.setAlpha(currentPage < totalPages - 1 ? 1.0f : 0.5f);
         }
     }
 
+    // ==================== Navigation ====================
+
     private void previousPage() {
         if (currentPage > 0) {
+            Log.d(TAG, "previousPage() → " + currentPage + " → " + (currentPage - 1));
             renderPage(currentPage - 1);
             resetScrollPosition();
         } else {
@@ -492,6 +408,7 @@ public class PdfBoxViewerActivity extends AppCompatActivity {
 
     private void nextPage() {
         if (currentPage < totalPages - 1) {
+            Log.d(TAG, "nextPage() → " + currentPage + " → " + (currentPage + 1));
             renderPage(currentPage + 1);
             resetScrollPosition();
         } else {
@@ -502,6 +419,7 @@ public class PdfBoxViewerActivity extends AppCompatActivity {
     private void zoomIn() {
         if (zoomLevel < MAX_ZOOM) {
             zoomLevel += ZOOM_STEP;
+            Log.d(TAG, "zoomIn() → zoomLevel=" + zoomLevel);
             renderPage(currentPage);
             updateZoomLevel();
         } else {
@@ -512,95 +430,77 @@ public class PdfBoxViewerActivity extends AppCompatActivity {
     private void zoomOut() {
         if (zoomLevel > MIN_ZOOM) {
             zoomLevel -= ZOOM_STEP;
+            Log.d(TAG, "zoomOut() → zoomLevel=" + zoomLevel);
             renderPage(currentPage);
             updateZoomLevel();
-            if (zoomLevel == 1.0f) {
-                resetScrollPosition();
-            }
+            if (zoomLevel == 1.0f) resetScrollPosition();
         } else {
             Toast.makeText(this, "Zoom minimum atteint", Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void onSwipeRight() {
-        previousPage();
-    }
+    private void onSwipeRight() { previousPage(); }
+    private void onSwipeLeft()  { nextPage(); }
 
-    private void onSwipeLeft() {
-        nextPage();
-    }
+    // ==================== Calcul dimensions ====================
 
-    /**
-     * Calculer les dimensions optimales pour afficher le PDF en entier
-     */
     private int[] calculateOptimalDimensions(PdfRenderer.Page page) {
-        int pageWidth = page.getWidth();
+        int pageWidth  = page.getWidth();
         int pageHeight = page.getHeight();
 
-        // Calculer la zone d'affichage disponible (écran moins les contrôles)
-        int availableWidth = screenWidth;
+        int availableWidth  = screenWidth;
         int availableHeight = screenHeight - getControlHeight();
 
-        // Calculer les ratios pour s'adapter à l'écran
-        float widthRatio = (float) availableWidth / pageWidth;
+        float widthRatio  = (float) availableWidth  / pageWidth;
         float heightRatio = (float) availableHeight / pageHeight;
+        float scaleFactor = Math.min(widthRatio, heightRatio) * zoomLevel;
 
-        // Utiliser le ratio le plus petit pour afficher la page en entier
-        float scaleFactor = Math.min(widthRatio, heightRatio);
-
-        // Appliquer le niveau de zoom
-        scaleFactor *= zoomLevel;
-
-        // Calculer les dimensions finales
-        int finalWidth = (int) (pageWidth * scaleFactor);
+        int finalWidth  = (int) (pageWidth  * scaleFactor);
         int finalHeight = (int) (pageHeight * scaleFactor);
 
-        // Pour les très grands zooms, limiter la taille pour éviter les OutOfMemory
         int maxBitmapSize = getMaxBitmapSize();
         if (finalWidth > maxBitmapSize || finalHeight > maxBitmapSize) {
-            float scale = Math.min((float) maxBitmapSize / finalWidth, (float) maxBitmapSize / finalHeight);
-            finalWidth = (int) (finalWidth * scale);
+            float scale = Math.min(
+                    (float) maxBitmapSize / finalWidth,
+                    (float) maxBitmapSize / finalHeight);
+            finalWidth  = (int) (finalWidth  * scale);
             finalHeight = (int) (finalHeight * scale);
+            Log.w(TAG, "Bitmap limité à " + finalWidth + "x" + finalHeight
+                    + " pour éviter OutOfMemory");
         }
+
+        Log.d(TAG, "Dimensions calculées : pageSource=" + pageWidth + "x" + pageHeight
+                + " → rendu=" + finalWidth + "x" + finalHeight
+                + " | scaleFactor=" + scaleFactor);
 
         return new int[]{finalWidth, finalHeight};
     }
 
-    /**
-     * Obtenir la taille maximale du bitmap pour éviter les OutOfMemory
-     */
     private int getMaxBitmapSize() {
-        // Limiter à 4K pour éviter les problèmes de mémoire
         return Math.min(screenWidth * 4, screenHeight * 4);
     }
 
     private int getControlHeight() {
-        // Hauteur estimée des contrôles en bas de l'écran
-        if (isTablet) {
-            return isLandscape ? 120 : 180;
-        } else {
-            return isLandscape ? 100 : 160;
-        }
+        if (isTablet) return isLandscape ? 120 : 180;
+        else          return isLandscape ? 100 : 160;
     }
+
+    // ==================== Cycle de vie ====================
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Log.d(TAG, "onDestroy() → fermeture du PdfRenderer");
         closeRenderer();
     }
 
     private void closeRenderer() {
         try {
-            if (pdfRenderer != null) {
-                pdfRenderer.close();
-                pdfRenderer = null;
-            }
-            if (fileDescriptor != null) {
-                fileDescriptor.close();
-                fileDescriptor = null;
-            }
+            if (pdfRenderer != null) { pdfRenderer.close(); pdfRenderer = null; }
+            if (fileDescriptor != null) { fileDescriptor.close(); fileDescriptor = null; }
+            Log.d(TAG, "closeRenderer() → ressources libérées ✓");
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, "closeRenderer() → erreur : " + e.getMessage(), e);
         }
     }
 
@@ -609,86 +509,135 @@ public class PdfBoxViewerActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
         outState.putInt("currentPage", currentPage);
         outState.putFloat("zoomLevel", zoomLevel);
+        Log.d(TAG, "onSaveInstanceState() → page=" + currentPage + " zoom=" + zoomLevel);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         currentPage = savedInstanceState.getInt("currentPage", 0);
-        zoomLevel = savedInstanceState.getFloat("zoomLevel", 1.0f);
+        zoomLevel   = savedInstanceState.getFloat("zoomLevel", 1.0f);
+        Log.d(TAG, "onRestoreInstanceState() → page=" + currentPage + " zoom=" + zoomLevel);
     }
 
-    // AsyncTask pour charger le PDF
+    // ==================== AsyncTask : chargement ====================
+
     private class LoadPdfTask extends AsyncTask<String, Void, Boolean> {
+
+        private String errorReason = "";
 
         @Override
         protected void onPreExecute() {
-            if (progressBar != null) {
-                progressBar.setVisibility(View.VISIBLE);
-            }
-            if (textViewLoading != null) {
-                textViewLoading.setVisibility(View.VISIBLE);
-            }
-            if (imageViewPdf != null) {
-                imageViewPdf.setVisibility(View.GONE);
-            }
+            Log.d(TAG, "LoadPdfTask → onPreExecute()");
+            if (progressBar    != null) progressBar.setVisibility(View.VISIBLE);
+            if (textViewLoading != null) textViewLoading.setVisibility(View.VISIBLE);
+            if (imageViewPdf   != null) imageViewPdf.setVisibility(View.GONE);
         }
 
         @Override
         protected Boolean doInBackground(String... params) {
+            Log.d(TAG, "LoadPdfTask → doInBackground() démarré");
+
+            // ── Vérification du chemin ──────────────────────────────────────
+            if (params == null || params.length == 0 || params[0] == null) {
+                errorReason = "PDF_PATH est NULL : aucun chemin transmis via l'Intent ⚠️";
+                Log.e(TAG, errorReason);
+                return false;
+            }
+
+            String path = params[0];
+            Log.d(TAG, "  Chemin reçu : " + path);
+
+            // ── Vérification du fichier ─────────────────────────────────────
+            File file = new File(path);
+            Log.d(TAG, "  Fichier absolu : " + file.getAbsolutePath());
+            Log.d(TAG, "  Fichier existe : " + file.exists());
+            Log.d(TAG, "  Fichier lisible : " + file.canRead());
+            Log.d(TAG, "  Taille fichier : " + file.length() + " octets");
+
+            if (!file.exists()) {
+                errorReason = "Fichier introuvable sur le disque : " + path + " ⚠️";
+                Log.e(TAG, errorReason);
+                return false;
+            }
+
+            if (!file.canRead()) {
+                errorReason = "Fichier non lisible (permissions ?) : " + path + " ⚠️";
+                Log.e(TAG, errorReason);
+                return false;
+            }
+
+            if (file.length() == 0) {
+                errorReason = "Fichier vide (0 octet) : téléchargement incomplet ? ⚠️";
+                Log.e(TAG, errorReason);
+                return false;
+            }
+
+            // ── Ouverture PdfRenderer ───────────────────────────────────────
             try {
-                if (params[0] == null) {
-                    return false;
-                }
+                Log.d(TAG, "  Ouverture du ParcelFileDescriptor...");
+                fileDescriptor = ParcelFileDescriptor.open(
+                        file, ParcelFileDescriptor.MODE_READ_ONLY);
+                Log.d(TAG, "  ParcelFileDescriptor ouvert ✓");
 
-                File file = new File(params[0]);
-                if (!file.exists()) {
-                    return false;
-                }
-
-                fileDescriptor = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY);
+                Log.d(TAG, "  Création du PdfRenderer...");
                 pdfRenderer = new PdfRenderer(fileDescriptor);
-                totalPages = pdfRenderer.getPageCount();
+                totalPages  = pdfRenderer.getPageCount();
+                Log.d(TAG, "  PdfRenderer créé ✓ | totalPages=" + totalPages);
+
+                if (totalPages <= 0) {
+                    errorReason = "Le PDF ne contient aucune page ⚠️";
+                    Log.e(TAG, errorReason);
+                    return false;
+                }
 
                 return true;
+
             } catch (IOException e) {
-                e.printStackTrace();
+                errorReason = "IOException : " + e.getMessage()
+                        + " — fichier corrompu ou format non supporté ⚠️";
+                Log.e(TAG, errorReason, e);
+                return false;
+            } catch (SecurityException e) {
+                errorReason = "SecurityException : permission refusée pour " + path + " ⚠️";
+                Log.e(TAG, errorReason, e);
+                return false;
+            } catch (OutOfMemoryError e) {
+                errorReason = "OutOfMemoryError : PDF trop lourd pour la mémoire disponible ⚠️";
+                Log.e(TAG, errorReason, e);
                 return false;
             } catch (Exception e) {
-                e.printStackTrace();
+                errorReason = "Exception inattendue : " + e.getClass().getSimpleName()
+                        + " — " + e.getMessage() + " ⚠️";
+                Log.e(TAG, errorReason, e);
                 return false;
             }
         }
 
         @Override
         protected void onPostExecute(Boolean success) {
-            if (progressBar != null) {
-                progressBar.setVisibility(View.GONE);
-            }
-            if (textViewLoading != null) {
-                textViewLoading.setVisibility(View.GONE);
-            }
+            Log.d(TAG, "LoadPdfTask → onPostExecute() | success=" + success);
+
+            if (progressBar    != null) progressBar.setVisibility(View.GONE);
+            if (textViewLoading != null) textViewLoading.setVisibility(View.GONE);
 
             if (success && totalPages > 0) {
-                if (imageViewPdf != null) {
-                    imageViewPdf.setVisibility(View.VISIBLE);
-                }
+                Log.d(TAG, "PDF chargé avec succès ✓ | " + totalPages + " pages");
 
-                // Afficher le hint de swipe pour tous les PDF
+                if (imageViewPdf != null) imageViewPdf.setVisibility(View.VISIBLE);
+
                 if (textViewSwipeHint != null) {
                     textViewSwipeHint.setVisibility(View.VISIBLE);
-                    textViewSwipeHint.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (textViewSwipeHint != null) {
-                                textViewSwipeHint.setVisibility(View.GONE);
-                            }
-                        }
+                    textViewSwipeHint.postDelayed(() -> {
+                        if (textViewSwipeHint != null)
+                            textViewSwipeHint.setVisibility(View.GONE);
                     }, 3000);
                 }
 
                 renderPage(0);
+
             } else {
+                Log.e(TAG, "Échec du chargement PDF → raison : " + errorReason);
                 Toast.makeText(PdfBoxViewerActivity.this,
                         "Erreur lors du chargement du PDF", Toast.LENGTH_LONG).show();
                 finish();
@@ -696,92 +645,99 @@ public class PdfBoxViewerActivity extends AppCompatActivity {
         }
     }
 
-    // AsyncTask pour rendre une page
+    // ==================== AsyncTask : rendu page ====================
+
     private class RenderPageTask extends AsyncTask<Integer, Void, Bitmap> {
+
+        private int pageNumRendered = -1;
 
         @Override
         protected void onPreExecute() {
-            if (progressBar != null) {
-                progressBar.setVisibility(View.VISIBLE);
-            }
+            if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
         }
 
         @Override
         protected Bitmap doInBackground(Integer... params) {
             PdfRenderer.Page page = null;
             try {
-                int pageNum = params[0];
-                page = pdfRenderer.openPage(pageNum);
+                pageNumRendered = params[0];
+                Log.d(TAG, "RenderPageTask → rendu page " + (pageNumRendered + 1));
 
-                // Calculer les dimensions optimales
+                page = pdfRenderer.openPage(pageNumRendered);
+
                 int[] dimensions = calculateOptimalDimensions(page);
+                int bmpWidth  = dimensions[0];
+                int bmpHeight = dimensions[1];
 
-                // Créer le bitmap avec la qualité optimale
+                Log.d(TAG, "  Création bitmap " + bmpWidth + "x" + bmpHeight);
                 Bitmap bitmap = Bitmap.createBitmap(
-                        dimensions[0],
-                        dimensions[1],
-                        Bitmap.Config.ARGB_8888
-                );
+                        bmpWidth, bmpHeight, Bitmap.Config.ARGB_8888);
 
-                // Remplir avec fond blanc
                 android.graphics.Canvas canvas = new android.graphics.Canvas(bitmap);
                 canvas.drawColor(Color.WHITE);
 
-                // Rendre la page PDF avec la meilleure qualité
-                page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY);
+                page.render(bitmap, null, null,
+                        PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY);
 
+                Log.d(TAG, "  Rendu terminé ✓ | bitmap=" + bitmap.getWidth()
+                        + "x" + bitmap.getHeight());
                 return bitmap;
+
+            } catch (OutOfMemoryError e) {
+                Log.e(TAG, "RenderPageTask → OutOfMemoryError page "
+                        + (pageNumRendered + 1) + " ⚠️", e);
+                return null;
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.e(TAG, "RenderPageTask → Exception page "
+                        + (pageNumRendered + 1) + " : " + e.getMessage() + " ⚠️", e);
                 return null;
             } finally {
                 if (page != null) {
                     page.close();
+                    Log.d(TAG, "  PdfRenderer.Page fermée ✓");
                 }
             }
         }
 
         @Override
         protected void onPostExecute(Bitmap bitmap) {
-            if (progressBar != null) {
-                progressBar.setVisibility(View.GONE);
-            }
+            if (progressBar != null) progressBar.setVisibility(View.GONE);
 
             if (bitmap != null && imageViewPdf != null) {
                 imageViewPdf.setImageBitmap(bitmap);
-
-                // Animation fluide
                 imageViewPdf.setAlpha(0f);
                 imageViewPdf.animate().alpha(1f).setDuration(200).start();
 
-                // Réinitialiser le défilement
                 resetScrollPosition();
 
-                // Ajuster la taille de l'image view
-                ViewGroup.LayoutParams params = imageViewPdf.getLayoutParams();
-                params.width = bitmap.getWidth();
-                params.height = bitmap.getHeight();
-                imageViewPdf.setLayoutParams(params);
+                ViewGroup.LayoutParams p = imageViewPdf.getLayoutParams();
+                p.width  = bitmap.getWidth();
+                p.height = bitmap.getHeight();
+                imageViewPdf.setLayoutParams(p);
+
+                Log.d(TAG, "RenderPageTask → image affichée ✓");
 
             } else {
+                Log.e(TAG, "RenderPageTask → bitmap NULL, page non affichée ⚠️");
                 Toast.makeText(PdfBoxViewerActivity.this,
                         "Erreur lors du rendu de la page", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
+    // ==================== Options menu ====================
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        switch (id) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    // Méthode pour la configuration du thème
+    // ==================== Thème ====================
+
     private void setupTheme(ActionBar ab, TextView actionBarTitle) {
         UiModeManager uiModeManager = null;
         switch (Themes.getName(getApplicationContext())) {
@@ -790,29 +746,40 @@ public class PdfBoxViewerActivity extends AppCompatActivity {
                     uiModeManager = (UiModeManager) getSystemService(Context.UI_MODE_SERVICE);
                 }
                 if (uiModeManager != null) {
-                    int currentMode = uiModeManager.getNightMode();
-                    if (currentMode == UiModeManager.MODE_NIGHT_YES) {
-                        ab.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.black)));
-                        if (actionBarTitle != null) {
+                    int mode = uiModeManager.getNightMode();
+                    if (mode == UiModeManager.MODE_NIGHT_YES) {
+                        ab.setBackgroundDrawable(new ColorDrawable(
+                                getResources().getColor(R.color.black)));
+                        if (actionBarTitle != null)
                             actionBarTitle.setTextColor(Color.parseColor("#B4EFEFEF"));
-                        }
                     } else {
-                        ab.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.white)));
+                        ab.setBackgroundDrawable(new ColorDrawable(
+                                getResources().getColor(R.color.white)));
                         ab.setHomeAsUpIndicator(R.drawable.vector_back);
                     }
                 }
                 break;
             case "notNight":
-                ab.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.white)));
+                ab.setBackgroundDrawable(new ColorDrawable(
+                        getResources().getColor(R.color.white)));
                 ab.setHomeAsUpIndicator(R.drawable.vector_back);
                 break;
             case "night":
-                ab.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.black)));
+                ab.setBackgroundDrawable(new ColorDrawable(
+                        getResources().getColor(R.color.black)));
                 ab.setHomeAsUpIndicator(R.drawable.vector_white_sombre_back);
-                if (actionBarTitle != null) {
+                if (actionBarTitle != null)
                     actionBarTitle.setTextColor(Color.parseColor("#B4EFEFEF"));
-                }
                 break;
         }
+    }
+
+    // ==================== Utilitaires ====================
+
+    /** Convertit des dp en pixels */
+    private int dp(int dpValue) {
+        return (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, dpValue,
+                getResources().getDisplayMetrics());
     }
 }
