@@ -91,7 +91,7 @@ public class StructureFragment extends Fragment {
                         mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                         mWaitRecyclerView.setAdapter(noConnectionAdapter);
                         new StructureSyn().execute(
-                                Server.getUrlApi(getContext()) + "Structure.php",
+                                Server.getUrlApi(getContext()) + "structure.php",
                                 mSession.getIdNumber());
                         new StructureSyn2().execute(
                                 Server.getUrlApi(getContext()) + "StructureMore.php",

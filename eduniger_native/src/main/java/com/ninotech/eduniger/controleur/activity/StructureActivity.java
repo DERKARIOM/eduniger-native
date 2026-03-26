@@ -279,7 +279,7 @@ public class StructureActivity extends AppCompatActivity {
 
     private void loadStructureImages() {
         Picasso.get()
-                .load(Server.getUrlServer(this) + "ressources/baniere/" + mStructure.getBanner())
+                .load(Server.getUrlServer(this) + "admin-api/storage/app/private/structures/1/banners/" + mStructure.getBanner())
                 .transform(new RoundedTransformation(200, 10))
                 .resize(6200, 2222)
                 .placeholder(R.drawable.img_wait_banner)
@@ -289,7 +289,7 @@ public class StructureActivity extends AppCompatActivity {
         mWelcomeImageView.setVisibility(View.VISIBLE);
 
         Picasso.get()
-                .load(Server.getUrlServer(this) + "ressources/cover/" + mStructure.getCover())
+                .load(Server.getUrlServer(this) + "admin-api/storage/app/private/structures/1/logos/" + mStructure.getCover())
                 .placeholder(R.drawable.img_wait_struct)
                 .error(R.drawable.img_default_book)
                 .transform(new RoundedTransformation(1000, 4))

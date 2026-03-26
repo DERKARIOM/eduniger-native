@@ -605,7 +605,7 @@ public class BookActivity extends AppCompatActivity {
     private void loadBookCoverImage() {
         Picasso.get()
                 .load(Server.getUrlServer(BookActivity.this) +
-                        "ressources/cover/" + mOnlineBook.getCover())
+                        "admin-api/storage/app/private/structures/1/blankets/" + mOnlineBook.getCover())
                 .placeholder(R.drawable.img_wait_cover_book)
                 .error(R.drawable.img_wait_cover_book)
                 .transform(new RoundedTransformation(15, 4))
