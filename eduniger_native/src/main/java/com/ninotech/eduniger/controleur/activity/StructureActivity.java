@@ -333,7 +333,7 @@ public class StructureActivity extends AppCompatActivity {
 
         new StructBookSyn().execute(baseUrl + "StructBook.php", idNumber, structId);
         new CategorySyn().execute(baseUrl + "CategoryStrut.php", idNumber);
-        new AuthorSyn().execute(baseUrl + "AuthorTop.php", idNumber);
+        new AuthorSyn().execute(baseUrl + "author_top.php", idNumber);
     }
 
     // ==================== AsyncTask Classes ====================
@@ -410,11 +410,8 @@ public class StructureActivity extends AppCompatActivity {
     private class AuthorSyn extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-            return executePostRequest(params[0],
-                    new MultipartBody.Builder()
-                            .setType(MultipartBody.FORM)
-                            .addFormDataPart("idUser", params[1])
-                            .build());
+            String url = params[0] + "?id_user=" + params[1];
+            return executeGetRequest(url);
         }
 
         @Override
@@ -622,6 +619,20 @@ public class StructureActivity extends AppCompatActivity {
     }
 
     // ==================== Helper Methods ====================
+
+    private String executeGetRequest(String url) {
+        try {
+            Request request = new Request.Builder().url(url).get().build();
+            try (Response response = mHttpClient.newCall(request).execute()) {
+                if (response.body() != null) return response.body().string();
+            }
+        } catch (IOException e) {
+            Log.e(TAG, "Network error: " + e.getMessage(), e);
+        } catch (Exception e) {
+            Log.e(TAG, "Unexpected error: " + e.getMessage(), e);
+        }
+        return null;
+    }
 
     private String executePostRequest(String url, RequestBody requestBody) {
         try {
