@@ -339,11 +339,8 @@ public class BookActivity extends AppCompatActivity {
         if (buttonText.equals(getString(R.string.reservation_book))) {
             showReservationDialog();
         } else if (buttonText.equals(getString(R.string.cancel_reservation))) {
-            new CancelReservationSyn().execute(
-                    Server.getUrlApi(this) + "CancelReservation.php",
-                    mSession.getIdNumber(),
-                    mOnlineBook.getId()
-            );
+            // Passer l'id de la réservation (à stocker lors de la création)
+            new CancelReservationSyn().execute(mOnlineBook.getId());
         }
     }
 
@@ -1028,12 +1025,31 @@ public class BookActivity extends AppCompatActivity {
     private class CancelReservationSyn extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-            return executePostRequest(params[0], createIdBookRequestBody(params[1], params[2]));
+            // params[0] = reservation id à supprimer
+            String url = "https://server.eduniger.com/api/reservations/" + params[0];
+
+            try {
+                Request request = new Request.Builder()
+                        .url(url)
+                        .delete()
+                        .build();
+
+                try (Response response = mHttpClient.newCall(request).execute()) {
+                    if (response.body() != null) {
+                        return response.body().string();
+                    }
+                }
+            } catch (IOException e) {
+                Log.e(TAG, "Network error: " + e.getMessage(), e);
+            } catch (Exception e) {
+                Log.e(TAG, "Unexpected error: " + e.getMessage(), e);
+            }
+            return null;
         }
 
         @Override
         protected void onPostExecute(String jsonData) {
-            if (jsonData != null && !RESPONSE_RAS.equals(jsonData) && "true".equals(jsonData)) {
+            if (jsonData != null && "true".equals(jsonData)) {
                 mReservationButton.setText(R.string.reservation_book);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     mReservationButton.setBackgroundTintList(
@@ -1046,27 +1062,49 @@ public class BookActivity extends AppCompatActivity {
     private class Reservation extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-            return executePostRequest(params[0],
-                    new MultipartBody.Builder()
-                            .setType(MultipartBody.FORM)
-                            .addFormDataPart("idNumber", params[1])
-                            .addFormDataPart("idBook", params[2])
-                            .addFormDataPart("numberOfDay", params[3])
-                            .build());
+            // params[0] = base url api REST
+            // params[1] = idNumber (idUser)
+            // params[2] = idBook
+            // params[3] = numberOfDays
+            String url = "https://server.eduniger.com/api/reservations";
+
+            RequestBody requestBody = new MultipartBody.Builder()
+                    .setType(MultipartBody.FORM)
+                    .addFormDataPart("idStruct", "1")
+                    .addFormDataPart("idUser", params[1])
+                    .addFormDataPart("idBook", params[2])
+                    .addFormDataPart("numberOfDays", params[3])
+                    .build();
+
+            return executePostRequest(url, requestBody);
         }
 
         @Override
         protected void onPostExecute(String jsonData) {
-            if (jsonData != null && "true".equals(jsonData)) {
-                mReservationDialog.cancel();
-                showSuccessReservationDialog(
-                        "Merci d'avoir réservé \"" + mTitleTextView.getText().toString() +
-                                "\" sur fabi; nous traitons votre demande et vous confirmerons la disponibilité bientôt."
-                );
-                mReservationButton.setText(R.string.cancel_reservation);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    mReservationButton.setBackgroundTintList(
-                            ContextCompat.getColorStateList(BookActivity.this, R.color.rouge));
+            if (jsonData != null) {
+                try {
+                    JSONObject obj = new JSONObject(jsonData);
+                    String message = obj.getString("message");
+
+                    if ("Réservation créée".equals(message)) {
+                        JSONObject data = obj.getJSONObject("data");
+
+                        // Stocker l'id de la réservation pour le DELETE
+                        //mOnlineBook.id(String.valueOf(data.getInt("idReservation")));
+
+                        mReservationDialog.cancel();
+                        showSuccessReservationDialog(
+                                "Merci d'avoir réservé \"" + mTitleTextView.getText().toString() +
+                                        "\" sur fabi; nous traitons votre demande et vous confirmerons la disponibilité bientôt."
+                        );
+                        mReservationButton.setText(R.string.cancel_reservation);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            mReservationButton.setBackgroundTintList(
+                                    ContextCompat.getColorStateList(BookActivity.this, R.color.rouge));
+                        }
+                    }
+                } catch (JSONException e) {
+                    Log.e(TAG, "Error parsing reservation response", e);
                 }
             }
         }
