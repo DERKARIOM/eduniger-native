@@ -38,6 +38,7 @@
                     android:layout_margin="16dp"
                     android:text="Story"
                     android:textStyle="bold"
+                    android:visibility="gone"
                     android:textSize="18sp" />
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -45,6 +46,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:nestedScrollingEnabled="false"
+                    android:visibility="gone"
                     android:paddingStart="8dp"
                     android:paddingEnd="8dp"
                     android:clipToPadding="false" />
@@ -56,6 +58,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
+                android:visibility="gone"
                 android:text="Structures"
                 android:textStyle="bold"
                 android:textSize="18sp" />
@@ -67,9 +70,6 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:visibility="gone" />
-
         </LinearLayout>
-
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
 </RelativeLayout>
