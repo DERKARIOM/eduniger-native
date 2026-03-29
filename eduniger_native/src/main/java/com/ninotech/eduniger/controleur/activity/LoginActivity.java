@@ -263,16 +263,13 @@ public class LoginActivity extends AppCompatActivity {
 
     private void retrieveFirebaseToken() {
         FirebaseMessaging.getInstance().getToken()
-                .addOnCompleteListener(new OnCompleteListener<String>() {
-                    @Override
-                    public void onComplete(@NonNull Task<String> task) {
-                        if (!task.isSuccessful()) {
-                            Log.w(TAG, "Failed to get Firebase token", task.getException());
-                            return;
-                        }
-                        mToken = task.getResult();
-                        Log.d(TAG, "Firebase token retrieved successfully");
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        Log.w(TAG, "Failed to get Firebase token", task.getException());
+                        return;
                     }
+                    mToken = task.getResult();
+                    Log.d(TAG, "Firebase token pré-chargé : " + mToken);
                 });
     }
 
@@ -286,8 +283,32 @@ public class LoginActivity extends AppCompatActivity {
         mIsNightMode = isNightMode();
 
         String validationResult = mAccount.inputControl();
-        handleValidation(validationResult);
+
+        if ("11".equals(validationResult)) {
+            // ✅ Attendre le token FCM avant de lancer le login
+            setLoadingState(true);
+            retrieveFirebaseTokenThenLogin();
+        } else {
+            handleValidation(validationResult);
+        }
     }
+
+    private void retrieveFirebaseTokenThenLogin() {
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        mToken = task.getResult();
+                        Log.d(TAG, "Token FCM récupéré : " + mToken);
+                    } else {
+                        // Token non disponible → on envoie "null" quand même
+                        mToken = DEFAULT_TOKEN;
+                        Log.w(TAG, "Token FCM indisponible, login sans token");
+                    }
+                    // Lance le login dans tous les cas
+                    performLogin();
+                });
+    }
+
 
     private void handleValidation(String validationCode) {
         switch (validationCode) {
@@ -313,13 +334,16 @@ public class LoginActivity extends AppCompatActivity {
                 );
                 break;
             case "11":
-                performLogin();
+                // Ne devrait plus être appelé depuis handleLoginClick
+                // mais conservé par sécurité
+                setLoadingState(true);
+                retrieveFirebaseTokenThenLogin();
                 break;
         }
     }
 
+
     private void performLogin() {
-        setLoadingState(true);
         new LoginTask(this).execute(
                 Server.getUrlApi(getApplicationContext()) + "login.php",
                 mAccount.getIdNumber(),

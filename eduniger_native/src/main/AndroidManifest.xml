@@ -223,12 +223,11 @@
         </provider> <!-- ==================== Services Firebase ==================== -->
         <service
             android:name=".model.service.MyFirebaseMessagingService"
-            android:directBootAware="true"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
-        </service> <!-- ==================== Services Audio ==================== -->
+        </service><!-- ==================== Services Audio ==================== -->
         <service
             android:name=".model.service.AudioService"
             android:exported="false"

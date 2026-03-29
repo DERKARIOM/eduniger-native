@@ -166,6 +166,7 @@ public class MainActivity extends AppCompatActivity {
 
         mEditText.setOnClickListener(v -> navigateToSearch());
         mFabAiAssistant.setOnClickListener(v -> navigateToChatBot());
+        requestNotificationPermission();
     }
 
     private void navigateToChatBot() {
@@ -392,6 +393,20 @@ public class MainActivity extends AppCompatActivity {
         WorkManager.getInstance(this).enqueue(networkCheckRequest);
     }
 
+    // Dans onCreate() de MainActivity
+    private void requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ActivityCompat.checkSelfPermission(this,
+                    android.Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{android.Manifest.permission.POST_NOTIFICATIONS},
+                        101
+                );
+            }
+        }
+    }
     // ==================== Menu ====================
 
     @Override
