@@ -1,5 +1,6 @@
 package com.ninotech.eduniger.controleur.fragment;
 
+import android.animation.ValueAnimator;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -111,6 +112,7 @@ public class HomeFragment extends Fragment {
     private OkHttpClient mHttpClient;
     private Handler mDotsHandler;
     private Runnable mDotsRunnable;
+    private View mSkeletonLoadingContainer;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -161,7 +163,8 @@ public class HomeFragment extends Fragment {
         mAuthorMoreTextView          = view.findViewById(R.id.text_view_recommended_more_author);
         mStructureRecyclerView       = view.findViewById(R.id.recycler_view_fragment_recommended_structure);
         mAuthorRecyclerView          = view.findViewById(R.id.recycler_view_author);
-        mWaitRecyclerView            = view.findViewById(R.id.recycler_view_fragment_recommended_wait);
+        mSkeletonLoadingContainer = view.findViewById(R.id.skeleton_loading_container);
+        startSkeletonShimmer(mSkeletonLoadingContainer);  // ← lance l'animation shimmer
         mServerdRecyclerView         = view.findViewById(R.id.recycler_view_fragment_home_server);
         mNestedScrollView            = view.findViewById(R.id.nested_scroll_view_fragment_home);
         mMoreStructRelativeLayout    = view.findViewById(R.id.relative_layout_fragment_home_more_structure);
@@ -288,8 +291,8 @@ public class HomeFragment extends Fragment {
         waitList.add(new Connection(getString(R.string.wait), ACTION_HOME_FRAGMENT, true));
 
         mNoConnectionAdapter = new NoConnectionAdapter(waitList);
-        mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(context));
-        mWaitRecyclerView.setAdapter(mNoConnectionAdapter);
+       // mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+     //   mWaitRecyclerView.setAdapter(mNoConnectionAdapter);
 
         mSemiNoConnectionAdapter = new SemiNoConnectionAdapter(waitList);
         mStructureRecyclerView.setLayoutManager(new LinearLayoutManager(context));
@@ -344,13 +347,8 @@ public class HomeFragment extends Fragment {
 
     private void showLoadingState() {
         mNestedScrollView.setVisibility(View.GONE);
-        mWaitRecyclerView.setVisibility(View.VISIBLE);
-
-        List<Connection> list = new ArrayList<>();
-        list.add(new Connection(getString(R.string.wait), ACTION_HOME_FRAGMENT, true));
-        NoConnectionAdapter adapter = new NoConnectionAdapter(list);
-        mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mWaitRecyclerView.setAdapter(adapter);
+        mSkeletonLoadingContainer.setVisibility(View.VISIBLE);
+        startSkeletonShimmer(mSkeletonLoadingContainer);
     }
 
     // ==================== Chargement des données ====================
@@ -455,7 +453,8 @@ public class HomeFragment extends Fragment {
         }
 
         private void showContentState() {
-            mWaitRecyclerView.setVisibility(View.GONE);
+            mSkeletonLoadingContainer.setVisibility(View.GONE);
+            stopSkeletonShimmer(mSkeletonLoadingContainer);
             mNestedScrollView.setVisibility(View.VISIBLE);
         }
 
@@ -662,7 +661,52 @@ public class HomeFragment extends Fragment {
     }
 
     // ==================== Helper Methods ====================
+    private ValueAnimator mShimmerAnimator;
+    private void startSkeletonShimmer(View container) {
+        if (!(container instanceof ViewGroup)) return;
 
+        // Collecte toutes les Views squelettes
+        List<View> skeletonViews = new ArrayList<>();
+        collectSkeletonViews((ViewGroup) container, skeletonViews);
+
+        mShimmerAnimator = ValueAnimator.ofFloat(0f, 1f);
+        mShimmerAnimator.setDuration(1200);
+        mShimmerAnimator.setRepeatCount(ValueAnimator.INFINITE);
+        mShimmerAnimator.setRepeatMode(ValueAnimator.RESTART);
+        mShimmerAnimator.addUpdateListener(anim -> {
+            float fraction = (float) anim.getAnimatedValue();
+            // Pulse d'opacité entre 0.4 et 1.0
+            float alpha = 0.4f + 0.6f * (float)(0.5 + 0.5 * Math.sin(fraction * 2 * Math.PI));
+            for (View v : skeletonViews) {
+                v.setAlpha(alpha);
+            }
+        });
+        mShimmerAnimator.start();
+    }
+
+    private void stopSkeletonShimmer(View container) {
+        if (mShimmerAnimator != null) {
+            mShimmerAnimator.cancel();
+            mShimmerAnimator = null;
+        }
+        // Remettre l'opacité normale
+        if (container instanceof ViewGroup) {
+            List<View> views = new ArrayList<>();
+            collectSkeletonViews((ViewGroup) container, views);
+            for (View v : views) v.setAlpha(1f);
+        }
+    }
+
+    private void collectSkeletonViews(ViewGroup parent, List<View> out) {
+        for (int i = 0; i < parent.getChildCount(); i++) {
+            View child = parent.getChildAt(i);
+            if (child instanceof ViewGroup) {
+                collectSkeletonViews((ViewGroup) child, out);
+            } else {
+                out.add(child);  // Toutes les View simples = blocs skeleton
+            }
+        }
+    }
     private String executeGetRequest(String url) {
         try {
             Request request = new Request.Builder().url(url).get().build();

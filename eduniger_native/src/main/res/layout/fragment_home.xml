@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- res/layout/fragment_home.xml — SKELETON VERSION -->
+<!-- Remplace mWaitRecyclerView par skeleton_loading_container -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -6,12 +8,143 @@
     style="@style/background"
     tools:context="com.ninotech.eduniger.controleur.fragment.HomeFragment">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view_fragment_recommended_wait"
-        android:nestedScrollingEnabled="false"
-        android:layout_margin="10dp"
-        android:layout_centerInParent="true"
-        style="@style/wrap_content_all" />
+    <!-- ============================================================ -->
+    <!--  SKELETON LOADING  (remplace recycler_view_fragment_recommended_wait) -->
+    <!-- ============================================================ -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/skeleton_loading_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <!-- Skeleton: bannière pub -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginBottom="14dp"
+                android:background="@drawable/skeleton_shape" />
+
+            <!-- Skeleton: dots indicateur -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:orientation="horizontal"
+                android:layout_marginBottom="16dp">
+                <View android:layout_width="10dp" android:layout_height="10dp"
+                    android:background="@drawable/skeleton_shape_circle"
+                    android:layout_marginEnd="6dp"/>
+                <View android:layout_width="10dp" android:layout_height="10dp"
+                    android:background="@drawable/skeleton_shape_circle"
+                    android:layout_marginEnd="6dp"/>
+                <View android:layout_width="10dp" android:layout_height="10dp"
+                    android:background="@drawable/skeleton_shape_circle"/>
+            </LinearLayout>
+
+            <!-- Skeleton: section header "Recommandé" -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginBottom="12dp">
+                <View
+                    android:layout_width="120dp"
+                    android:layout_height="14dp"
+                    android:background="@drawable/skeleton_shape" />
+                <View
+                    android:layout_width="60dp"
+                    android:layout_height="14dp"
+                    android:background="@drawable/skeleton_shape"
+                    android:layout_alignParentEnd="true" />
+            </RelativeLayout>
+
+            <!-- Skeleton: liste horizontale livres (5 items) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="20dp"
+                android:paddingStart="10dp">
+
+                <include layout="@layout/item_skeleton_book"/>
+                <include layout="@layout/item_skeleton_book"/>
+                <include layout="@layout/item_skeleton_book"/>
+                <include layout="@layout/item_skeleton_book"/>
+
+            </LinearLayout>
+
+            <!-- Skeleton: section header "Structures" -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginBottom="12dp">
+                <View
+                    android:layout_width="100dp"
+                    android:layout_height="14dp"
+                    android:background="@drawable/skeleton_shape" />
+                <View
+                    android:layout_width="60dp"
+                    android:layout_height="14dp"
+                    android:background="@drawable/skeleton_shape"
+                    android:layout_alignParentEnd="true" />
+            </RelativeLayout>
+
+            <!-- Skeleton: liste verticale structures (3 items) -->
+            <include layout="@layout/item_skeleton_structure"/>
+            <include layout="@layout/item_skeleton_structure"/>
+            <include layout="@layout/item_skeleton_structure"/>
+
+            <!-- Skeleton: section header "Auteurs" -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="12dp">
+                <View
+                    android:layout_width="80dp"
+                    android:layout_height="14dp"
+                    android:background="@drawable/skeleton_shape" />
+                <View
+                    android:layout_width="60dp"
+                    android:layout_height="14dp"
+                    android:background="@drawable/skeleton_shape"
+                    android:layout_alignParentEnd="true" />
+            </RelativeLayout>
+
+            <!-- Skeleton: liste horizontale auteurs -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="20dp"
+                android:paddingStart="10dp">
+
+                <include layout="@layout/item_skeleton_author"/>
+                <include layout="@layout/item_skeleton_author"/>
+                <include layout="@layout/item_skeleton_author"/>
+                <include layout="@layout/item_skeleton_author"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+    <!-- ============================================================ -->
+    <!--  FIN SKELETON                                                  -->
+    <!-- ============================================================ -->
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh_home"
@@ -28,9 +161,6 @@
                 android:id="@+id/relative_layout_fragment_home"
                 style="@style/match_parent_all">
 
-                <!-- SLIDER PUB -->
-                <!-- SLIDER PUB -->
-                <!-- SLIDER PUB -->
                 <ViewFlipper
                     android:id="@+id/view_flipper_pub"
                     android:layout_width="match_parent"
@@ -87,8 +217,6 @@
 
                 </ViewFlipper>
 
-
-                <!-- DOTS INDICATEUR -->
                 <LinearLayout
                     android:id="@+id/layout_dots_pub"
                     android:layout_width="wrap_content"
@@ -104,7 +232,6 @@
                     android:layout_below="@id/layout_dots_pub"
                     android:visibility="gone"
                     style="@style/match_wrap">
-
                     <TextView
                         style="@style/wrap_content_all"
                         android:layout_marginStart="25dp"
@@ -114,7 +241,6 @@
                         android:text="Recommandé"
                         android:textStyle="bold"
                         android:textSize="14sp" />
-
                     <TextView
                         android:id="@+id/text_view_server_more"
                         style="@style/wrap_content_all"
@@ -138,7 +264,6 @@
                     android:id="@+id/relative_layout_fragment_home_more_book"
                     android:layout_below="@id/recycler_view_fragment_home_server"
                     style="@style/match_wrap">
-
                     <TextView
                         style="@style/wrap_content_all"
                         android:layout_marginStart="25dp"
@@ -148,7 +273,6 @@
                         android:text="Recommandé"
                         android:textStyle="bold"
                         android:textSize="14sp" />
-
                     <TextView
                         android:id="@+id/text_view_recommended_more"
                         style="@style/wrap_content_all"
@@ -173,7 +297,6 @@
                     android:id="@+id/relative_layout_fragment_home_more_structure"
                     android:layout_below="@id/recycler_view_ranking"
                     style="@style/match_wrap">
-
                     <TextView
                         style="@style/wrap_content_all"
                         android:layout_marginStart="25dp"
@@ -183,7 +306,6 @@
                         android:text="Structures"
                         android:textStyle="bold"
                         android:textSize="14sp" />
-
                     <TextView
                         android:id="@+id/text_view_recommended_more_structure"
                         style="@style/wrap_content_all"
@@ -208,7 +330,6 @@
                     android:id="@+id/relative_layout_fragment_home_more_author"
                     android:layout_below="@id/recycler_view_fragment_recommended_structure"
                     style="@style/match_wrap">
-
                     <TextView
                         style="@style/wrap_content_all"
                         android:layout_marginStart="25dp"
@@ -218,7 +339,6 @@
                         android:text="Auteurs"
                         android:textStyle="bold"
                         android:textSize="14sp" />
-
                     <TextView
                         android:id="@+id/text_view_recommended_more_author"
                         style="@style/wrap_content_all"

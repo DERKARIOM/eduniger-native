@@ -21,4 +21,6 @@
     <color name="vert">#005B4A</color>
     <color name="separator">#6DAAAAAA</color>
     <color name="transparent">#00FFFFFF</color>
+    <color name="skeleton_base">#2A2A2A</color> -->
+<!--    <color name="skeleton_base">#E0E0E0</color>-->
 </resources>
