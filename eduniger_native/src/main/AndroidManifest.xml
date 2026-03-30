@@ -39,9 +39,11 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="33">
         <activity
-            android:name=".controleur.activity.PdfBoxViewerActivity"
+            android:name=".controleur.activity.ChatAiActivity"
             android:exported="false" />
-        <!-- ==================== Activité Principale ==================== -->
+        <activity
+            android:name=".controleur.activity.PdfBoxViewerActivity"
+            android:exported="false" /> <!-- ==================== Activité Principale ==================== -->
         <activity
             android:name=".controleur.activity.MainActivity"
             android:exported="true"
@@ -225,9 +227,9 @@
             android:name=".model.service.MyFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
-        </service><!-- ==================== Services Audio ==================== -->
+        </service> <!-- ==================== Services Audio ==================== -->
         <service
             android:name=".model.service.AudioService"
             android:exported="false"
@@ -268,4 +270,5 @@
             android:enabled="true"
             android:exported="false" />
     </application>
+
 </manifest>

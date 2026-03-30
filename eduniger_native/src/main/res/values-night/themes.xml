@@ -189,8 +189,8 @@
         <item name="android:background">@color/black</item>
     </style>
     <style name="botton_navigation2" parent="Widget.MaterialComponents.BottomNavigationView">
-        <item name="android:layout_marginStart">50dp</item>
-        <item name="android:layout_marginEnd">50dp</item>
+        <item name="android:layout_marginStart">20dp</item>
+        <item name="android:layout_marginEnd">100dp</item>
         <item name="android:layout_marginBottom">16dp</item>
         <item name="android:background">@drawable/bg_bottom_nav</item>
         <item name="android:elevation">12dp</item>
