@@ -107,7 +107,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(this, CHANNEL_ID)
-                        .setSmallIcon(R.drawable.img_default_book)
+                        .setSmallIcon(R.drawable.eduniger)
                         .setContentTitle(title)
                         .setContentText(message)
                         .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
