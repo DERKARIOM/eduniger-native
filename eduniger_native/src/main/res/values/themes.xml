@@ -336,4 +336,8 @@
     <style name="audio_player_activity_btt_back">
         <item name="background">@drawable/vector_black2_back_player</item>
     </style>
+    <!-- Dans res/values/styles.xml -->
+    <style name="RoundedImageStyle">
+        <item name="cornerRadius">12dp</item>
+    </style>
 </resources>

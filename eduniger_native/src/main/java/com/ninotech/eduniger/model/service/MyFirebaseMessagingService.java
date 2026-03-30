@@ -17,10 +17,15 @@ import androidx.core.app.NotificationManagerCompat;
 import com.ninotech.eduniger.R;
 import com.ninotech.eduniger.controleur.activity.BookActivity;
 import com.ninotech.eduniger.controleur.activity.MainActivity;
+import com.ninotech.eduniger.model.data.DownloadFile;
 import com.ninotech.eduniger.model.data.Server;
+import com.ninotech.eduniger.model.table.LoandTable;
 import com.ninotech.eduniger.model.table.Session;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -44,7 +49,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         super.onNewToken(token);
         Log.d(TAG, "Token FCM renouvelé : " + token);
 
-        // Mettre à jour le token sur le serveur si l'utilisateur est connecté
         Session session = new Session(getApplicationContext());
         String idNumber = session.getIdNumber();
 
@@ -61,18 +65,16 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
-        // Récupération du titre et message
         String title   = "";
         String message = "";
 
         if (remoteMessage.getNotification() != null) {
-            title   = remoteMessage.getNotification().getTitle() != null
-                    ? remoteMessage.getNotification().getTitle() : "";
-            message = remoteMessage.getNotification().getBody() != null
-                    ? remoteMessage.getNotification().getBody() : "";
+            title   = remoteMessage.getNotification().getTitle()  != null
+                    ? remoteMessage.getNotification().getTitle()  : "";
+            message = remoteMessage.getNotification().getBody()   != null
+                    ? remoteMessage.getNotification().getBody()   : "";
         }
 
-        // Récupération des données custom
         String type      = remoteMessage.getData().get("type")      != null
                 ? remoteMessage.getData().get("type")      : "";
         String extraData = remoteMessage.getData().get("extraData") != null
@@ -80,11 +82,154 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         Log.d(TAG, "Notification reçue — type: " + type + " | extraData: " + extraData);
 
-        // Créer le canal (Android 8+)
         createNotificationChannel();
 
-        // Afficher la notification
-        showNotification(title, message, type, extraData);
+        // ✅ type = "5" → synchroniser les loands non vus
+        if ("5".equals(type)) {
+            syncUnreadLoands(title, message);
+        } else {
+            showNotification(title, message, type, extraData);
+        }
+    }
+
+
+    // ================================================================
+    // SYNCHRONISATION DES LOANDS NON VUS
+    // ================================================================
+
+    private void syncUnreadLoands(String notifTitle, String notifMessage) {
+        new Thread(() -> {
+            try {
+                Session session  = new Session(getApplicationContext());
+                String idUser    = session.getIdNumber();
+
+                if (idUser == null || idUser.isEmpty() || "null".equals(idUser)) {
+                    Log.w(TAG, "Utilisateur non connecté, sync loand annulée");
+                    return;
+                }
+
+                OkHttpClient client = new OkHttpClient();
+
+                // ── 1. Récupérer les loands non vus ─────────────────────────
+                RequestBody bodyGet = new MultipartBody.Builder()
+                        .setType(MultipartBody.FORM)
+                        .addFormDataPart("idUser", idUser)
+                        .build();
+
+                Request requestGet = new Request.Builder()
+                        .url(Server.getUrlApi(getApplicationContext()) + "get_unread_loands.php")
+                        .post(bodyGet)
+                        .build();
+
+                String jsonResponse;
+                try (Response response = client.newCall(requestGet).execute()) {
+                    if (response.body() == null) {
+                        Log.e(TAG, "Réponse vide de get_unread_loands.php");
+                        return;
+                    }
+                    jsonResponse = response.body().string();
+                }
+
+                Log.d(TAG, "get_unread_loands response : " + jsonResponse);
+
+                JSONObject jsonObject = new JSONObject(jsonResponse);
+
+                if (!jsonObject.getBoolean("success")) {
+                    Log.e(TAG, "Erreur API : " + jsonObject.optString("error"));
+                    return;
+                }
+
+                int count = jsonObject.getInt("count");
+                if (count == 0) {
+                    Log.d(TAG, "Aucun loand non vu");
+                    showNotification(notifTitle, notifMessage, "loand", "");
+                    return;
+                }
+
+                JSONArray data      = jsonObject.getJSONArray("data");
+                LoandTable loandTable = new LoandTable(getApplicationContext());
+                DownloadFile downloader = new DownloadFile(getApplicationContext());
+
+                // ── 2. Traiter chaque loand ──────────────────────────────────
+                for (int i = 0; i < data.length(); i++) {
+                    JSONObject loand = data.getJSONObject(i);
+
+                    String idLoand        = loand.getString("idLoand");
+                    String idBook         = loand.getString("idBook");
+                    String bookTitle      = loand.optString("bookTitle",  "");
+                    String bookCover      = loand.optString("bookCover",  "");
+                    String dateLoand      = loand.optString("dateLoand",  "");
+                    String realReturnDate = loand.optString("realReturnDate", "");
+
+                    // ── 3. Télécharger la couverture en local ────────────────
+                    String localCoverPath = "";
+                    if (!bookCover.isEmpty() && !"null".equals(bookCover)) {
+                        try {
+                            String coverUrl = Server.getUrlServer(getApplicationContext())
+                                    + "admin-api/storage/app/private/structures/1/blankets/"
+                                    + bookCover;
+
+                            localCoverPath = downloader.start(
+                                    coverUrl,
+                                    bookCover,
+                                    null // pas de progress bar en background
+                            );
+                            Log.d(TAG, "Couverture téléchargée : " + localCoverPath);
+
+                        } catch (Exception e) {
+                            Log.e(TAG, "Erreur téléchargement couverture : " + e.getMessage());
+                            localCoverPath = bookCover; // fallback : nom du fichier
+                        }
+                    }
+
+                    // ── 4. Insérer dans la BDD locale ────────────────────────
+                    boolean inserted = loandTable.insert(
+                            idLoand,
+                            idUser,
+                            localCoverPath,
+                            bookTitle,
+                            dateLoand,
+                            realReturnDate
+                    );
+
+                    Log.d(TAG, "Loand " + idLoand + " inséré en local : " + inserted);
+
+                    // ── 5. Marquer le loand comme vu sur le serveur ──────────
+                    markLoandAsViewed(client, idLoand, idUser);
+                }
+
+                // ── 6. Afficher la notification ──────────────────────────────
+                showNotification(notifTitle, notifMessage, "loand", "");
+
+            } catch (Exception e) {
+                Log.e(TAG, "Erreur syncUnreadLoands : " + e.getMessage(), e);
+            }
+        }).start();
+    }
+
+    // ================================================================
+    // MARQUER UN LOAND COMME VU
+    // ================================================================
+
+    private void markLoandAsViewed(OkHttpClient client, String idLoand, String idUser) {
+        try {
+            RequestBody body = new MultipartBody.Builder()
+                    .setType(MultipartBody.FORM)
+                    .addFormDataPart("idLoand", idLoand)
+                    .addFormDataPart("idUser",  idUser)
+                    .build();
+
+            Request request = new Request.Builder()
+                    .url(Server.getUrlApi(getApplicationContext()) + "mark_loand_viewed.php")
+                    .post(body)
+                    .build();
+
+            try (Response response = client.newCall(request).execute()) {
+                Log.d(TAG, "Loand " + idLoand + " marqué comme vu : " + response.code());
+            }
+        } catch (IOException e) {
+            Log.e(TAG, "Erreur markLoandAsViewed : " + e.getMessage());
+        }
     }
 
     // ================================================================
@@ -94,13 +239,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private void showNotification(String title, String message,
                                   String type, String extraData) {
 
-        // Intent selon le type
         Intent intent = buildIntentByType(type, extraData);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(
                 this,
-                (int) System.currentTimeMillis(), // requestCode unique
+                (int) System.currentTimeMillis(),
                 intent,
                 PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE
         );
@@ -119,7 +263,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         NotificationManagerCompat notificationManager =
                 NotificationManagerCompat.from(this);
 
-        // Vérification permission POST_NOTIFICATIONS (Android 13+)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ActivityCompat.checkSelfPermission(this,
                     android.Manifest.permission.POST_NOTIFICATIONS)
@@ -129,7 +272,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             }
         }
 
-        // ID unique pour chaque notification
         notificationManager.notify((int) System.currentTimeMillis(), builder.build());
     }
 
@@ -139,21 +281,20 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private Intent buildIntentByType(String type, String extraData) {
         Intent intent;
-
         switch (type) {
             case "reservation":
             case "book":
-                // Ouvrir directement le livre concerné
                 intent = new Intent(this, BookActivity.class);
                 intent.putExtra("intent_adapter_book_id", extraData);
                 break;
-
+            case "5":
+                // Ouvrir l'accueil — les loands sont déjà synchronisés en local
+                intent = new Intent(this, MainActivity.class);
+                break;
             default:
-                // Ouvrir l'accueil par défaut
                 intent = new Intent(this, MainActivity.class);
                 break;
         }
-
         return intent;
     }
 
