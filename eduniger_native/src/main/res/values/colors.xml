@@ -23,4 +23,13 @@
     <color name="transparent">#00FFFFFF</color>
     <color name="skeleton_base">#2A2A2A</color> -->
 <!--    <color name="skeleton_base">#E0E0E0</color>-->
+    <color name="bg_dark">#0D0D0D</color>
+    <color name="bg_card">#1A1A1A</color>
+    <color name="bg_section">#141414</color>
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_secondary">#A0A0A0</color>
+    <color name="text_hint">#555555</color>
+    <color name="accent_blue">#2D7CF6</color>
+    <color name="accent_blue_dark">#1A5FCC</color>
+    <color name="divider">#2A2A2A</color>
 </resources>

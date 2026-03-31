@@ -2,558 +2,856 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/match_parent_all"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    style="@style/background"
     tools:context=".controleur.activity.BookActivity">
-    <include layout="@layout/toolbar_book"/>
+
+    <!-- ═══════════════════════════════════════════
+         TOOLBAR — flottante, transparente
+    ════════════════════════════════════════════ -->
+    <RelativeLayout
+        android:id="@+id/relative_layout_toolbar_book"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        style="@style/background">
+
+        <ImageView
+            android:id="@+id/image_view_toolbar_book"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerVertical="true"
+            android:padding="8dp"
+            android:src="@drawable/vector_back"
+            android:tint="@color/text_primary"
+            android:contentDescription="@string/todo" />
+
+        <!-- Actions droite : playlist + téléchargement + marque-page + partage -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/image_view_toolbar_download"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:padding="8dp"
+                android:src="@drawable/vector_white_download"
+                android:tint="@color/text_primary"
+                android:contentDescription="@string/todo" />
+
+            <ImageView
+                android:id="@+id/image_view_toolbar_bookmark"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:padding="8dp"
+                android:src="@drawable/vector_black3_off_subscribe"
+                android:tint="@color/text_primary"
+                android:contentDescription="@string/todo" />
+
+            <ImageView
+                android:id="@+id/image_view_toolbar_share"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:padding="8dp"
+                android:src="@drawable/vector_black3_off_like"
+                android:tint="@color/text_primary"
+                android:contentDescription="@string/todo" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <!-- ═══════════════════════════════════════════
+         CONTENU PRINCIPAL (scrollable)
+    ════════════════════════════════════════════ -->
     <androidx.core.widget.NestedScrollView
         android:id="@+id/nested_scroll_view_activity_book"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/bottom_action_bar"
+        android:layout_below="@id/relative_layout_toolbar_book"
         android:visibility="gone"
-        style="@style/match_parent_all"
-        android:layout_below="@id/relative_layout_toolbar_book">
-        <RelativeLayout
-            style="@style/wrap_content_all">
-            <RelativeLayout
-                android:id="@+id/relative_layout_activity_book"
-                style="@style/wrap_content_all"
-                android:layout_marginBottom="20dp"
-                android:layout_marginTop="10dp"
-                >
+        android:clipToPadding="false"
+        android:paddingBottom="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- ── Couverture centrée ── -->
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="8dp"
+                android:paddingBottom="24dp">
+
                 <ImageView
                     android:id="@+id/image_view_adapter_book_simple_cover"
-                    android:layout_height="150dp"
-                    android:layout_width="100dp"
-                    android:layout_marginStart="15dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginTop="10dp"
-                    android:elevation="2dp"
+                    android:layout_width="180dp"
+                    android:layout_height="256dp"
+                    android:layout_gravity="center_horizontal"
+                    android:elevation="16dp"
                     android:src="@drawable/img_wait_cover_book"
+                    android:scaleType="centerCrop"
                     android:contentDescription="@string/todo" />
-                <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_marginStart="20dp"
+            </FrameLayout>
+
+            <!-- ── Badge catégorie ── -->
+            <TextView
+                android:id="@+id/text_view_adapter_description_category"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="8dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:paddingTop="3dp"
+                android:paddingBottom="3dp"
+                android:text="@string/category_book"
+                android:textColor="@color/text_secondary"
+                android:textSize="11sp"
+                android:letterSpacing="0.12"
+                android:textAllCaps="true"
+                android:layout_marginStart="16dp" />
+
+            <!-- ── Titre ── -->
+            <TextView
+                android:id="@+id/text_view_adapter_book_simple_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="6dp"
+                android:gravity="center"
+                android:text="@string/book_title"
+                android:textColor="@color/text_primary"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:lineSpacingExtra="2dp" />
+
+            <!-- ── Auteur ── -->
+            <TextView
+                android:id="@+id/text_view_adapter_book_simple_author_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="4dp"
+                android:text="De Bachir Abdoul Kader"
+                android:textColor="@color/text_secondary"
+                android:textSize="14sp" />
+
+            <!-- ── Cote ── -->
+            <TextView
+                android:id="@+id/text_view_adapter_book_simple_id_book"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="20dp"
+                android:text="Cote : MAT001"
+                android:textColor="@color/text_hint"
+                android:textSize="12sp" />
+
+            <!-- ── Métadonnées : likes | dislikes | abonnés | vues ── -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="24dp"
+                android:background="@drawable/bg_meta_card"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="12dp">
+
+                <!-- Like -->
+                <LinearLayout
+                    android:id="@+id/linear_layout_activity_book_like"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_toEndOf="@id/image_view_adapter_book_simple_cover">
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    tools:ignore="UseCompoundDrawables">
 
+                    <ImageView
+                        android:id="@+id/image_view_activity_book_like"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:src="@drawable/vector_black3_off_like"
+                        android:tint="@color/text_secondary"
+                        android:contentDescription="@string/todo" />
                     <TextView
-                        android:id="@+id/text_view_adapter_book_simple_title"
-                        style="@style/wrap_content_all"
-                        android:layout_margin="5dp"
-                        android:text="@string/book_title"
-                        android:textStyle="bold"
-                        android:textSize="@dimen/size_title" />
-                    <TextView
-                        android:id="@+id/text_view_adapter_book_simple_author_name"
-                        style="@style/wrap_content_all"
-                        android:layout_below="@id/text_view_adapter_book_simple_title"
-                        android:layout_margin="5dp"
-                        android:text="De Bachir Abdoul Kader"
-                        android:textSize="@dimen/size_sub_title" />
-                    <TextView
-                        android:id="@+id/text_view_adapter_book_simple_id_book"
-                        style="@style/wrap_content_all"
-                        android:layout_below="@id/text_view_adapter_book_simple_author_name"
-                        android:layout_margin="5dp"
-                        android:text="Cote : MAT001"
-                        android:textSize="@dimen/size_sub_title" />
+                        android:id="@+id/text_view_activity_book_number_like"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp" />
+                </LinearLayout>
 
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="30dp"
+                    android:background="@color/divider" />
+
+                <!-- Dislike -->
+                <LinearLayout
+                    android:id="@+id/linear_layout_activiry_book_nolike"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    tools:ignore="UseCompoundDrawables">
+
+                    <ImageView
+                        android:id="@+id/image_view_activity_book_no_like"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:src="@drawable/vector_black3_off_no_like"
+                        android:tint="@color/text_secondary"
+                        android:contentDescription="@string/todo" />
                     <TextView
-                        android:id="@+id/text_view_adapter_description_category"
-                        style="@style/wrap_content_all"
-                        android:layout_below="@id/text_view_adapter_book_simple_id_book"
-                        android:layout_margin="5dp"
-                        android:text="@string/category_book"
-                        android:textSize="@dimen/size_sub_title" />
-                    <LinearLayout
-                        style="@style/wrap_content_all"
-                        android:layout_below="@id/text_view_adapter_description_category">
-                        <LinearLayout
-                            android:id="@+id/linear_layout_activity_book_like"
-                            style="@style/wrap_content_all"
-                            android:layout_margin="10dp"
-                            tools:ignore="UseCompoundDrawables">
-                            <ImageView
-                                android:id="@+id/image_view_activity_book_like"
-                                android:layout_width="22dp"
-                                android:layout_height="22dp"
-                                android:elevation="10dp"
-                                style="@style/activity_book_img_like"
-                                android:contentDescription="@string/todo" />
-                            <TextView
-                                android:id="@+id/text_view_activity_book_number_like"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="3dp"
-                                android:gravity="center_vertical"
-                                android:textSize="@dimen/size_number_subcribe"
-                                android:layout_gravity="center_vertical"
-                                android:src="@drawable/vector_black3_off_like"/>
-                        </LinearLayout>
-                        <LinearLayout
-                            android:id="@+id/linear_layout_activiry_book_nolike"
-                            style="@style/wrap_content_all"
-                            android:layout_margin="10dp"
-                            tools:ignore="UseCompoundDrawables">
-                            <ImageView
-                                android:id="@+id/image_view_activity_book_no_like"
-                                android:layout_width="22dp"
-                                android:layout_height="22dp"
-                                android:elevation="10dp"
-                                android:src="@drawable/vector_black3_off_no_like"
-                                android:contentDescription="@string/todo" />
-                            <TextView
-                                android:id="@+id/text_view_activity_book_number_no_like"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="3dp"
-                                android:gravity="center_vertical"
-                                android:textSize="@dimen/size_mini_sub_title"
-                                android:layout_gravity="center_vertical" />
-                        </LinearLayout>
-                        <LinearLayout
-                            android:id="@+id/linear_layout_activity_book_subscribe"
-                            style="@style/wrap_content_all"
-                            android:layout_margin="5dp"
-                            android:layout_gravity="center"
-                            tools:ignore="UseCompoundDrawables">
-                            <ImageView
-                                android:id="@+id/image_view_activity_book_subscribe"
-                                android:layout_width="22dp"
-                                android:layout_height="22dp"
-                                android:elevation="10dp"
-                                android:src="@drawable/vector_black3_off_subscribe"
-                                android:contentDescription="@string/todo" />
-                            <TextView
-                                android:id="@+id/text_view_activity_book_number_subscribe"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="3dp"
-                                android:gravity="center_vertical"
-                                android:textSize="@dimen/size_mini_sub_title"
-                                android:layout_gravity="center_vertical" />
-                        </LinearLayout>
-                        <LinearLayout
-                            android:id="@+id/linear_layout_activity_book_nbr_view"
-                            style="@style/wrap_content_all"
-                            android:layout_margin="5dp"
-                            android:layout_gravity="center"
-                            tools:ignore="UseCompoundDrawables">
-                            <ImageView
-                                android:id="@+id/image_view_activity_book_view"
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:elevation="10dp"
-                                android:src="@drawable/vector_black3_vue"
-                                android:contentDescription="@string/todo" />
-                            <TextView
-                                android:id="@+id/text_view_activity_book_view"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="3dp"
-                                android:gravity="center_vertical"
-                                android:text="50"
-                                android:textSize="@dimen/size_mini_sub_title"
-                                android:layout_gravity="center_vertical" />
-                        </LinearLayout>
-                    </LinearLayout>
-                </RelativeLayout>
-            </RelativeLayout>
+                        android:id="@+id/text_view_activity_book_number_no_like"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="30dp"
+                    android:background="@color/divider" />
+
+                <!-- Subscribe -->
+                <LinearLayout
+                    android:id="@+id/linear_layout_activity_book_subscribe"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    tools:ignore="UseCompoundDrawables">
+
+                    <ImageView
+                        android:id="@+id/image_view_activity_book_subscribe"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:src="@drawable/vector_black3_off_subscribe"
+                        android:tint="@color/text_secondary"
+                        android:contentDescription="@string/todo" />
+                    <TextView
+                        android:id="@+id/text_view_activity_book_number_subscribe"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="30dp"
+                    android:background="@color/divider" />
+
+                <!-- Vues -->
+                <LinearLayout
+                    android:id="@+id/linear_layout_activity_book_nbr_view"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    tools:ignore="UseCompoundDrawables">
+
+                    <ImageView
+                        android:id="@+id/image_view_activity_book_view"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:src="@drawable/vector_black3_vue"
+                        android:tint="@color/text_secondary"
+                        android:contentDescription="@string/todo" />
+                    <TextView
+                        android:id="@+id/text_view_activity_book_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:text="50"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- ════════════════════════════════
+                 SECTION : Réservation physique
+            ═════════════════════════════════ -->
             <LinearLayout
                 android:id="@+id/linear_layout_activity_book_reservation"
-                android:visibility="gone"
-                style="@style/match_wrap"
-                android:layout_below="@id/relative_layout_activity_book"
-                android:orientation="vertical">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/bg_section_card"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:visibility="gone">
+
                 <RelativeLayout
-                    style="@style/match_wrap">
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp">
+
                     <TextView
-                        style="@style/wrap_content_all"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:text="@string/to_book_reservation"
-                        android:textColor="@color/black"
-                        android:textStyle="bold"
-                        android:textSize="@dimen/size_title"
-                        tools:ignore="SpUsage" />
-                    <Spinner
-                        style="@style/wrap_content_all"
-                        android:layout_alignParentEnd="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        />
-                </RelativeLayout>
-                <Button
-                    android:id="@+id/button_activity_book_reservation"
-                    style="@style/wrap_content_all"
-                    android:text="@string/reservation_book"
-                    android:textAllCaps="false"
-                    android:textColor="@color/white"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:drawableLeft="@drawable/vector_black3_physical2"
-                    android:textSize="@dimen/size_button"
-                    android:backgroundTint="@color/purple_200"/>
-            </LinearLayout>
-            <LinearLayout
-                android:id="@+id/linear_layout_activity_book_audio"
-                android:visibility="gone"
-                style="@style/match_wrap"
-                android:layout_below="@id/linear_layout_activity_book_reservation"
-                android:orientation="vertical">
-                <RelativeLayout
-                    style="@style/match_wrap">
-                    <TextView
-                        style="@style/wrap_content_all"
-                        android:text="@string/audio_format"
-                        android:textSize="@dimen/size_title"
+                        android:text="@string/to_book_reservation"
+                        android:textColor="@color/text_primary"
                         android:textStyle="bold"
-                        android:layout_margin="10dp"/>
+                        android:textSize="14sp" />
+
                     <Spinner
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        />
+                        android:layout_centerVertical="true" />
                 </RelativeLayout>
+
+                <Button
+                    android:id="@+id/button_activity_book_reservation"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:text="@string/reservation_book"
+                    android:textAllCaps="false"
+                    android:shadowRadius="50"
+                    android:background="@drawable/forme_purple2_200_radius_10dp"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:drawableStart="@drawable/vector_black3_physical2"
+                    android:drawablePadding="8dp"
+                    android:backgroundTint="@color/purple_200"
+                    android:stateListAnimator="@null" />
+            </LinearLayout>
+
+            <!-- ════════════════════════════════
+                 SECTION : Format Audio
+            ═════════════════════════════════ -->
+            <LinearLayout
+                android:id="@+id/linear_layout_activity_book_audio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/bg_section_card"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:visibility="gone">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:text="@string/audio_format"
+                        android:textColor="@color/text_primary"
+                        android:textStyle="bold"
+                        android:textSize="14sp" />
+
+                    <Spinner
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true" />
+                </RelativeLayout>
+
+                <!-- Player bar -->
                 <LinearLayout
                     android:id="@+id/linear_layout_activity_book_media"
-                    style="@style/match_wrap"
-                    android:layout_marginTop="20dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
                     android:orientation="vertical">
+
                     <LinearLayout
-                        style="@style/match_wrap"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
                         android:orientation="horizontal">
+
                         <RelativeLayout
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="10dp">
+                            android:layout_height="wrap_content">
+
                             <ProgressBar
                                 android:id="@+id/progress_bar_activity_book_wait_player"
-                                android:layout_width="25dp"
-                                android:layout_height="25dp"
-                                android:progressDrawable="@drawable/form_circular_bar_connexion"
-                                />
+                                android:layout_width="36dp"
+                                android:layout_height="36dp"
+                                android:progressDrawable="@drawable/form_circular_bar_connexion" />
+
                             <ImageView
                                 android:id="@+id/image_view_activity_book_player"
-                                android:layout_height="wrap_content"
-                                android:layout_width="wrap_content"
-                                style="@style/activity_book_btt_play"
+                                android:layout_width="36dp"
+                                android:layout_height="36dp"
+                                android:src="@drawable/vector_black3_play"
+                                android:tint="@color/accent_blue"
+                                android:padding="4dp"
                                 android:contentDescription="@string/todo" />
                         </RelativeLayout>
+
                         <ImageView
                             android:id="@+id/image_view_activity_book_stop"
-                            android:layout_marginStart="3dp"
-                            android:layout_marginTop="10dp"
-                            android:layout_marginBottom="10dp"
-                            android:layout_marginEnd="3dp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            style="@style/activity_book_btt_stop"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:layout_marginStart="6dp"
+                            android:layout_marginEnd="6dp"
+                            android:src="@drawable/vector_black3_play"
+                            android:tint="@color/text_secondary"
+                            android:padding="4dp"
                             android:contentDescription="@string/todo" />
+
                         <TextView
                             android:id="@+id/text_view_activity_book_time_now"
-                            android:layout_marginStart="8dp"
-                            android:layout_marginTop="10dp"
-                            android:layout_marginBottom="10dp"
-                            android:layout_gravity="center_vertical"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginEnd="8dp"
                             android:text="@string/default_time"
-                            />
+                            android:textColor="@color/text_secondary"
+                            android:textSize="12sp"
+                            android:fontFamily="monospace" />
+
                         <SeekBar
                             android:id="@+id/seekbar_activity_book"
-                            style="@style/match_wrap"
-                            android:layout_gravity="center_vertical"
-                            android:layout_margin="10dp"
-                            android:progress="100"/>
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:progressTint="@color/accent_blue"
+                            android:thumbTint="@color/accent_blue"
+                            android:progress="100" />
                     </LinearLayout>
                 </LinearLayout>
+
+                <!-- Download + infos -->
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
                     android:orientation="horizontal">
+
                     <RelativeLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp">
+                        android:layout_height="wrap_content">
+
                         <ProgressBar
                             android:id="@+id/progress_bar_download_audio"
                             style="@android:style/Widget.Holo.ProgressBar.Small"
-                            android:layout_width="60dp"
-                            android:layout_height="60dp"
+                            android:layout_width="52dp"
+                            android:layout_height="52dp"
                             android:layout_centerInParent="true"
                             android:elevation="5dp"
-                            android:layout_marginStart="10dp"
-                            android:padding="18dp"
+                            android:padding="14dp"
                             android:visibility="invisible"
                             android:progressDrawable="@drawable/form_circular_bar_connexion" />
+
                         <Button
                             android:id="@+id/button_activity_book_audio"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_height="40dp"
                             android:text="@string/audio_format"
                             android:textAllCaps="false"
-                            android:layout_marginTop="5dp"
                             android:textColor="@color/white"
-                            android:layout_marginBottom="5dp"
-                            android:drawableLeft="@drawable/vector_white_download"
-                            android:textSize="@dimen/size_button"
-                            android:backgroundTint="@color/purple_200"/>
+                            android:textSize="13sp"
+                            android:drawableStart="@drawable/vector_white_download"
+                            android:drawablePadding="6dp"
+                            android:backgroundTint="@color/accent_blue"
+                            android:paddingStart="14dp"
+                            android:paddingEnd="14dp"
+                            android:stateListAnimator="@null" />
                     </RelativeLayout>
+
                     <LinearLayout
                         android:id="@+id/linear_layout_activity_book_audio_size"
-                        style="@style/wrap_content_all"
-                        android:layout_margin="10dp"
-                        android:layout_gravity="center_vertical"
-
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
                         tools:ignore="UseCompoundDrawables">
+
                         <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:elevation="10dp"
-                            style="@style/activity_book_img_audio_size"
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:src="@drawable/vector_black3_off_like"
+                            android:tint="@color/text_hint"
                             android:contentDescription="@string/todo" />
+
                         <TextView
                             android:id="@+id/text_view_activity_book_audio_size"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="3dp"
-                            android:gravity="center_vertical"
-                            android:textSize="12sp"
-                            android:layout_gravity="center_vertical"
+                            android:layout_marginStart="4dp"
                             android:text="35Mo"
-                           />
+                            android:textColor="@color/text_hint"
+                            android:textSize="12sp" />
                     </LinearLayout>
 
                     <LinearLayout
                         android:id="@+id/linear_layout_activity_book_maxTime"
-                        style="@style/wrap_content_all"
-                        android:layout_margin="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
                         android:visibility="gone"
-                        android:layout_gravity="center_vertical"
                         tools:ignore="UseCompoundDrawables">
+
                         <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:elevation="10dp"
-                            style="@style/activity_book_img_time_max"
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:src="@drawable/vector_black3_vue"
+                            android:tint="@color/text_hint"
                             android:contentDescription="@string/todo" />
+
                         <TextView
                             android:id="@+id/text_view_activity_book_audio_max_time"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="3dp"
-                            android:gravity="center_vertical"
-                            android:textSize="12sp"
-                            android:layout_gravity="center_vertical"
+                            android:layout_marginStart="4dp"
                             android:text="39:05"
-                            />
+                            android:textColor="@color/text_hint"
+                            android:textSize="12sp"
+                            android:fontFamily="monospace" />
                     </LinearLayout>
                 </LinearLayout>
-
             </LinearLayout>
+
+            <!-- ════════════════════════════════
+                 SECTION : Format Électronique (PDF)
+            ═════════════════════════════════ -->
             <LinearLayout
                 android:id="@+id/linear_layout_activity_book_electronic"
-                android:visibility="gone"
-                style="@style/match_wrap"
-                android:layout_below="@id/linear_layout_activity_book_audio"
-                android:orientation="vertical">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/bg_section_card"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:visibility="gone">
+
                 <RelativeLayout
-                    style="@style/match_wrap">
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp">
+
                     <TextView
-                        style="@style/wrap_content_all"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:text="@string/electronic_format"
-                        android:textColor="@color/black"
-                        android:textStyle="bold"
-                        android:textSize="@dimen/size_title" />
-                    <Spinner
-                        style="@style/wrap_content_all"
-                        android:layout_alignParentEnd="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        />
+                        android:text="@string/electronic_format"
+                        android:textColor="@color/text_primary"
+                        android:textStyle="bold"
+                        android:textSize="14sp" />
+
+                    <Spinner
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true" />
                 </RelativeLayout>
+
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
                     android:orientation="horizontal">
+
                     <RelativeLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp">
+                        android:layout_height="wrap_content">
+
                         <ProgressBar
                             android:id="@+id/progress_bar_download_pdf"
                             style="@android:style/Widget.Holo.ProgressBar.Small"
-                            android:layout_width="60dp"
-                            android:layout_height="60dp"
+                            android:layout_width="52dp"
+                            android:layout_height="52dp"
                             android:layout_centerInParent="true"
                             android:elevation="5dp"
-                            android:layout_marginStart="10dp"
-                            android:padding="18dp"
+                            android:padding="14dp"
                             android:visibility="invisible"
                             android:progressDrawable="@drawable/form_circular_bar_connexion" />
+
                         <Button
                             android:id="@+id/button_activity_book_download_pdf"
-                            style="@style/wrap_content_all"
+                            android:layout_width="wrap_content"
+                            android:layout_height="40dp"
+                            android:background="@drawable/forme_purple2_200_radius_10dp"
                             android:text="@string/pdf_format"
                             android:textAllCaps="false"
-                            android:layout_marginTop="5dp"
-                            android:layout_marginBottom="5dp"
                             android:textColor="@color/white"
-                            android:drawableLeft="@drawable/vector_white_download"
-                            android:textSize="@dimen/size_button"
-                            android:backgroundTint="@color/purple_200"/>
+                            android:textSize="13sp"
+                            android:drawableStart="@drawable/vector_white_download"
+                            android:drawablePadding="6dp"
+                            android:backgroundTint="@color/purple_200"
+                            android:paddingStart="14dp"
+                            android:paddingEnd="14dp"
+                            android:stateListAnimator="@null" />
                     </RelativeLayout>
+
                     <LinearLayout
                         android:id="@+id/linear_layout_activity_book_pdf_size"
-                        style="@style/wrap_content_all"
-                        android:layout_margin="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
                         android:visibility="gone"
-                        android:layout_gravity="center_vertical"
                         tools:ignore="UseCompoundDrawables">
+
                         <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:elevation="10dp"
-                            style="@style/activity_book_img_pdf"
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:src="@drawable/vector_black3_off_like"
+                            android:tint="@color/text_hint"
                             android:contentDescription="@string/todo" />
+
                         <TextView
                             android:id="@+id/text_view_activity_book_pdf_size"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="3dp"
-                            android:gravity="center_vertical"
-                            android:textSize="12sp"
-                            android:layout_gravity="center_vertical"
+                            android:layout_marginStart="4dp"
                             android:text="35Mo"
-                            />
+                            android:textColor="@color/text_hint"
+                            android:textSize="12sp" />
                     </LinearLayout>
 
                     <LinearLayout
                         android:id="@+id/linear_layout_activity_book_nbr_page"
-                        style="@style/wrap_content_all"
-                        android:layout_margin="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
                         android:visibility="gone"
-                        android:layout_gravity="center_vertical"
                         tools:ignore="UseCompoundDrawables">
+
                         <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:elevation="10dp"
-                           style="@style/activity_book_img_physique"
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:src="@drawable/vector_black3_vue"
+                            android:tint="@color/text_hint"
                             android:contentDescription="@string/todo" />
+
                         <TextView
                             android:id="@+id/text_view_activity_book_pdf_max_page"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="3dp"
-                            android:gravity="center_vertical"
-                            android:textSize="12sp"
-                            android:layout_gravity="center_vertical"
+                            android:layout_marginStart="4dp"
                             android:text="300P"
-                            />
+                            android:textColor="@color/text_hint"
+                            android:textSize="12sp" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
+
+            <!-- ════════════════════════════════
+                 SECTION : À propos
+            ═════════════════════════════════ -->
             <LinearLayout
                 android:id="@+id/linear_layout_activity_book_about"
-                style="@style/match_wrap"
-                android:layout_below="@id/linear_layout_activity_book_electronic"
-                android:layout_marginTop="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
                 android:orientation="vertical">
+
                 <RelativeLayout
-                    style="@style/match_wrap">
-                    <TextView
-                        style="@style/wrap_content_all"
-                        android:layout_marginStart="12dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginEnd="12dp"
-                        android:layout_marginBottom="10dp"
-                        android:text="@string/to_book_about"
-                        android:textStyle="bold"
-                        android:textSize="14sp" />
-                    <Spinner
-                        style="@style/wrap_content_all"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        />
-                </RelativeLayout>
-                <TextView
-                    android:id="@+id/text_view_activity_book_description"
-                    style="@style/wrap_content_all"
-                    android:justificationMode="inter_word"
-                    android:layout_marginStart="12sp"
-                    android:layout_marginEnd="12dp"
-                    android:textSize="14dp"
-                    tools:targetApi="o" />
-            </LinearLayout>
-            <LinearLayout
-                android:id="@+id/linear_layout_activity_book_comments"
-                style="@style/match_wrap"
-                android:layout_below="@id/linear_layout_activity_book_about"
-                android:layout_marginTop="20dp"
-                android:orientation="vertical">
-                <RelativeLayout
-                    style="@style/match_wrap">
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp">
 
                     <TextView
-                        style="@style/wrap_content_all"
-                        android:layout_marginStart="12dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginEnd="12dp"
-                        android:layout_marginBottom="10dp"
-                        android:text="@string/comments"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:text="@string/to_book_about"
+                        android:textColor="@color/text_primary"
                         android:textStyle="bold"
-                        android:textSize="@dimen/size_title" />
+                        android:textSize="16sp" />
+
                     <Spinner
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        />
+                        android:layout_centerVertical="true" />
                 </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/text_view_activity_book_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:justificationMode="inter_word"
+                    android:lineSpacingExtra="4dp"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="14sp"
+                    tools:targetApi="o" />
+            </LinearLayout>
+
+            <!-- ════════════════════════════════
+                 SECTION : Commentaires
+            ═════════════════════════════════ -->
+            <LinearLayout
+                android:id="@+id/linear_layout_activity_book_comments"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="8dp"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:text="@string/comments"
+                        android:textColor="@color/text_primary"
+                        android:textStyle="bold"
+                        android:textSize="16sp" />
+
+                    <Spinner
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true" />
+                </RelativeLayout>
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recycler_view_activity_book_Comments"
-                    style="@style/match_parent_all"
-                    />
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <!-- Input commentaire -->
                 <RelativeLayout
                     android:id="@+id/relative_layout_activity_book_comment"
-                    style="@style/match_wrap"
-                    android:visibility="gone"
-                    android:layout_margin="10dp"
-                    >
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/bg_bottom_nav"
+                    android:padding="4dp"
+                    android:visibility="gone">
+
                     <EditText
                         android:id="@+id/text_view_activity_book_message"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        style="@style/activity_main_research"
+                        android:background="@null"
                         android:hint="@string/add_comments"
-                        android:layout_centerVertical="true"
-                        android:padding="8dp"
-                        android:layout_marginEnd="50dp"
+                        android:textColor="@color/text_primary"
+                        android:padding="10dp"
+                        android:layout_marginEnd="44dp"
                         android:importantForAutofill="no"
                         tools:ignore="TextFields" />
+
                     <ImageView
                         android:id="@+id/image_view_activity_book_add_comments"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        style="@style/activity_book_img_add_comment"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
                         android:layout_centerVertical="true"
                         android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="4dp"
+                        android:padding="6dp"
+                        android:src="@drawable/vector_white_send"
+                        android:tint="@color/purple_200"
+                        android:background="@null"
                         android:contentDescription="@string/todo" />
                 </RelativeLayout>
             </LinearLayout>
-        </RelativeLayout>
+
+        </LinearLayout>
     </androidx.core.widget.NestedScrollView>
+
+    <!-- ═══════════════════════════════════════════
+         BARRE D'ACTIONS BAS — fixe, style LeapAhead
+         (Lire | Écouter)
+    ════════════════════════════════════════════ -->
+    <LinearLayout
+        android:id="@+id/bottom_action_bar"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone"
+        android:background="@color/bg_dark"
+        android:elevation="8dp"
+        android:orientation="horizontal"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp">
+
+        <!-- Bouton Lire (PDF) — secondaire -->
+        <Button
+            android:id="@+id/button_bottom_read"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:text="Lire"
+            android:textAllCaps="false"
+            android:textColor="@color/text_primary"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:drawableStart="@drawable/vector_black3_physical2"
+            android:drawablePadding="6dp"
+            android:backgroundTint="@color/bg_card"
+            android:stateListAnimator="@null"
+            />
+
+        <!-- Bouton Écouter (Audio) — primaire bleu -->
+        <Button
+            android:id="@+id/button_bottom_listen"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:text="Écouter"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:drawableStart="@drawable/vector_black3_off_subscribe"
+            android:drawablePadding="6dp"
+            android:backgroundTint="@color/accent_blue"
+            android:stateListAnimator="@null"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <!-- ═══════════════════════════════════════════
+         ÉTAT CHARGEMENT (RecyclerView placeholder)
+    ════════════════════════════════════════════ -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_activity_book_wait"
-        android:layout_centerInParent="true"
-        style="@style/wrap_content_all"
-        />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true" />
+
 </RelativeLayout>
