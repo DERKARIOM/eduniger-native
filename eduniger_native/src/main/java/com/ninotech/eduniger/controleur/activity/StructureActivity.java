@@ -228,7 +228,7 @@ public class StructureActivity extends AppCompatActivity {
         mAnnouncementImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent announcementIntent = new Intent(StructureActivity.this, AnnouncementActivity.class);
+                Intent announcementIntent = new Intent(StructureActivity.this, NotificationActivity.class);
                 startActivity(announcementIntent);
             }
         });
