@@ -101,6 +101,7 @@ public class StructureActivity extends AppCompatActivity {
     // Utils
     private OkHttpClient mHttpClient;
     private BroadcastReceiver mNoConnectionReceiver;
+    private ImageView mAnnouncementImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -162,6 +163,7 @@ public class StructureActivity extends AppCompatActivity {
         mMoreAuthorRelativeLayout = findViewById(R.id.relative_layout_activity_structure_author);
         mCategoryRecyclerView = findViewById(R.id.recycler_view_activity_structure_category);
         mShortcutImageView = findViewById(R.id.image_view_toolbar_shortcut);
+        mAnnouncementImageView = findViewById(R.id.image_view_toolbar_announcement);
         updateStructureInfo();
         configureSearchField();
     }
@@ -223,6 +225,13 @@ public class StructureActivity extends AppCompatActivity {
         mMoreAuthorTextView.setOnClickListener(v -> navigateToSearch(
                 "AUTHOR_ONLINE", "MAIN_ACTIVITY", null));
         mShortcutImageView.setOnClickListener(v -> createHomeShortcut());
+        mAnnouncementImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent announcementIntent = new Intent(StructureActivity.this, AnnouncementActivity.class);
+                startActivity(announcementIntent);
+            }
+        });
     }
 
     private void createHomeShortcut() {
