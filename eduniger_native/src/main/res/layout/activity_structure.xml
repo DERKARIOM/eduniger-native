@@ -35,7 +35,7 @@
             android:gravity="center_vertical">
 
             <ImageView
-                android:id="@+id/image_view_toolbar_download"
+                android:id="@+id/image_view_toolbar_shortcut"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:padding="8dp"

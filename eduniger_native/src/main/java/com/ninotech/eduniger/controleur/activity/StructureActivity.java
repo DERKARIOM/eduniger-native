@@ -1,5 +1,6 @@
 package com.ninotech.eduniger.controleur.activity;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -87,6 +88,7 @@ public class StructureActivity extends AppCompatActivity {
     private Button mAdhererButton;
     private EditText mSearchEditText;
     private ImageView mSearchImageView;
+    private ImageView mShortcutImageView;
     private RelativeLayout mMoreAuthorRelativeLayout;
 
     // Data
@@ -159,7 +161,7 @@ public class StructureActivity extends AppCompatActivity {
         mBookRecommendedRecyclerView = findViewById(R.id.recycler_view_activity_structure_books);
         mMoreAuthorRelativeLayout = findViewById(R.id.relative_layout_activity_structure_author);
         mCategoryRecyclerView = findViewById(R.id.recycler_view_activity_structure_category);
-
+        mShortcutImageView = findViewById(R.id.image_view_toolbar_shortcut);
         updateStructureInfo();
         configureSearchField();
     }
@@ -220,6 +222,105 @@ public class StructureActivity extends AppCompatActivity {
 
         mMoreAuthorTextView.setOnClickListener(v -> navigateToSearch(
                 "AUTHOR_ONLINE", "MAIN_ACTIVITY", null));
+        mShortcutImageView.setOnClickListener(v -> createHomeShortcut());
+    }
+
+    private void createHomeShortcut() {
+        // Télécharge le logo de la structure puis crée le raccourci
+        new AsyncTask<Void, Void, android.graphics.Bitmap>() {
+            @Override
+            protected android.graphics.Bitmap doInBackground(Void... voids) {
+                try {
+                    String logoUrl = Server.getUrlServer(StructureActivity.this)
+                            + "admin-api/storage/app/private/structures/1/logos/"
+                            + mStructure.getCover();
+                    return Picasso.get()
+                            .load(logoUrl)
+                            .resize(192, 192)
+                            .centerCrop()
+                            .get(); // Téléchargement synchrone (hors UI thread)
+                } catch (IOException e) {
+                    Log.e(TAG, "Erreur téléchargement logo raccourci", e);
+                    return null;
+                }
+            }
+
+            @SuppressLint("WrongThread")
+            @Override
+            protected void onPostExecute(android.graphics.Bitmap logoBitmap) {
+                // Intent qui sera lancé au clic du raccourci
+                Intent shortcutIntent = new Intent(StructureActivity.this, StructureActivity.class);
+                shortcutIntent.setAction(Intent.ACTION_MAIN);
+                shortcutIntent.putExtra("intent_structure_adapter_id", mStructure.getId());
+                shortcutIntent.putExtra("intent_structure_adapter_logo", mStructure.getCover());
+                shortcutIntent.putExtra("intent_structure_adapter_name", mStructure.getName());
+                shortcutIntent.putExtra("intent_structure_adapter_description", mStructure.getDescription());
+                shortcutIntent.putExtra("intent_structure_adapter_is_adhere", mStructure.isAdhere());
+                shortcutIntent.putExtra("intent_structure_adapter_banner", mStructure.getBanner());
+                shortcutIntent.putExtra("intent_structure_adapter_author", mStructure.getAuthor());
+                shortcutIntent.putExtra("intent_structure_adapter_adherer_number", mStructure.getAdhererNumber());
+                shortcutIntent.putExtra("intent_structure_adapter_book_number", mStructure.getBookNumber());
+                shortcutIntent.putExtra("intent_structure_adapter_admin", mStructure.getAdmin());
+
+                // Icône : logo téléchargé ou icône par défaut
+                android.graphics.drawable.Icon icon;
+                if (logoBitmap != null) {
+                    icon = android.graphics.drawable.Icon.createWithBitmap(logoBitmap);
+                } else {
+                    icon = android.graphics.drawable.Icon.createWithResource(
+                            StructureActivity.this, R.drawable.img_wait_struct);
+                }
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    // Android 8+ : ShortcutManager
+                    android.content.pm.ShortcutManager shortcutManager =
+                            getSystemService(android.content.pm.ShortcutManager.class);
+
+                    if (shortcutManager != null && shortcutManager.isRequestPinShortcutSupported()) {
+                        android.content.pm.ShortcutInfo shortcutInfo =
+                                new android.content.pm.ShortcutInfo.Builder(
+                                        StructureActivity.this, "struct_" + mStructure.getId())
+                                        .setShortLabel(mStructure.getName())
+                                        .setLongLabel(mStructure.getName())
+                                        .setIcon(icon)
+                                        .setIntent(shortcutIntent)
+                                        .build();
+
+                        shortcutManager.requestPinShortcut(shortcutInfo, null);
+                        Toast.makeText(StructureActivity.this,
+                                "Raccourci « " + mStructure.getName() + " » créé !",
+                                Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(StructureActivity.this,
+                                "Votre lanceur ne supporte pas les raccourcis épinglés.",
+                                Toast.LENGTH_SHORT).show();
+                    }
+
+                } else {
+                    // Android < 8 : méthode classique via broadcast
+                    Intent addShortcutIntent = new Intent("com.android.launcher.action.INSTALL_SHORTCUT");
+                    addShortcutIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, mStructure.getName());
+                    addShortcutIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
+                    addShortcutIntent.putExtra("duplicate", false);
+
+                    if (logoBitmap != null) {
+                        addShortcutIntent.putExtra(
+                                Intent.EXTRA_SHORTCUT_ICON, logoBitmap);
+                    } else {
+                        Intent.ShortcutIconResource iconRes =
+                                Intent.ShortcutIconResource.fromContext(
+                                        StructureActivity.this, R.drawable.img_wait_struct);
+                        addShortcutIntent.putExtra(
+                                Intent.EXTRA_SHORTCUT_ICON_RESOURCE, iconRes);
+                    }
+
+                    sendBroadcast(addShortcutIntent);
+                    Toast.makeText(StructureActivity.this,
+                            "Raccourci « " + mStructure.getName() + " » créé !",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        }.execute();
     }
 
     private void navigateToSearch(String searchKey, String onlineBookKey, String structId) {
