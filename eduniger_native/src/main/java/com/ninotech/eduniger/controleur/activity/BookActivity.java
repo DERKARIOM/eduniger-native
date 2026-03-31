@@ -1060,12 +1060,18 @@ public class BookActivity extends AppCompatActivity {
     }
 
     private class Reservation extends AsyncTask<String, Void, String> {
+
+        // ✅ AJOUT : références aux vues pour réinitialiser l'état
+        private final Button mSendButton;
+        private final ProgressBar mProgressBar;
+
+        Reservation(Button sendButton, ProgressBar progressBar) {
+            this.mSendButton = sendButton;
+            this.mProgressBar = progressBar;
+        }
+
         @Override
         protected String doInBackground(String... params) {
-            // params[0] = base url api REST
-            // params[1] = idNumber (idUser)
-            // params[2] = idBook
-            // params[3] = numberOfDays
             String url = "https://server.eduniger.com/api/reservations";
 
             RequestBody requestBody = new MultipartBody.Builder()
@@ -1081,17 +1087,17 @@ public class BookActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String jsonData) {
+            // ✅ AJOUT : cacher le loader dans tous les cas
+            mProgressBar.setVisibility(View.INVISIBLE);
+            mSendButton.setEnabled(true);
+            mSendButton.setText("Envoyer");
+
             if (jsonData != null) {
                 try {
                     JSONObject obj = new JSONObject(jsonData);
                     String message = obj.getString("message");
 
                     if ("Réservation créée".equals(message)) {
-                        JSONObject data = obj.getJSONObject("data");
-
-                        // Stocker l'id de la réservation pour le DELETE
-                        //mOnlineBook.id(String.valueOf(data.getInt("idReservation")));
-
                         mReservationDialog.cancel();
                         showSuccessReservationDialog(
                                 "Merci d'avoir réservé \"" + mTitleTextView.getText().toString() +
@@ -1150,8 +1156,6 @@ public class BookActivity extends AppCompatActivity {
         sendButton.setOnClickListener(v ->
                 handleReservationSubmit(passwordEditText, errorTextView, timeLimitSpinner));
 
-        mReservationDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        mReservationDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
         mReservationDialog.build();
     }
 
@@ -1169,7 +1173,14 @@ public class BookActivity extends AppCompatActivity {
                     ? String.valueOf(timeLimitSpinner.getSelectedItemPosition() + 1)
                     : String.valueOf(-1);
 
-            new Reservation().execute(
+            // ✅ AJOUT : afficher le loader et bloquer le bouton
+            Button sendButton = mReservationDialog.findViewById(R.id.button_dialog_reservation_send);
+            ProgressBar progressBar = mReservationDialog.findViewById(R.id.progress_circularEvaluez);
+            sendButton.setEnabled(false);
+            sendButton.setText("En cours...");
+            progressBar.setVisibility(View.VISIBLE);
+
+            new Reservation(sendButton, progressBar).execute(
                     Server.getUrlApi(this) + "Reservation.php",
                     mSession.getIdNumber(),
                     mOnlineBook.getId(),

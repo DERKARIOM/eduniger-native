@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_bottom_sheet"
+    android:orientation="vertical"
+    android:paddingBottom="24dp">
+
+    <!-- ── Poignée drag ── -->
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/bg_sheet_handle" />
+
+    <!-- ── Toolbar : retour + titre ── -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="12dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="12dp">
+
+        <ImageView
+            android:id="@+id/image_view_sheet_back"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:padding="6dp"
+            android:src="@drawable/event_24px"
+            android:tint="@color/text_primary"
+            android:contentDescription="Retour" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:text="Réservation"
+            android:textColor="@color/text_primary"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- ── Question / sous-titre ── -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="24dp"
+        android:text="Choisissez une durée et confirmez avec votre mot de passe."
+        android:textColor="@color/text_primary"
+        android:textSize="16sp"
+        android:lineSpacingExtra="3dp" />
+
+    <!-- ── Spinner durée ── -->
+    <Spinner
+        android:id="@+id/spinner_dialog_reservation_time_limit"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="8dp"
+        android:backgroundTint="@color/purple_200"
+        android:gravity="center_vertical"
+        android:padding="10dp"
+        android:theme="@style/AppTheme" />
+
+    <!-- ── Consultation sur place (caché par défaut) ── -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="16dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Consultation sur place"
+            android:textColor="@color/text_primary"
+            android:textSize="15sp" />
+
+        <CheckBox
+            android:id="@+id/check_box_dialog_reservation_local_consultation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:buttonTint="@color/accent_blue"
+            android:theme="@style/AppTheme" />
+    </LinearLayout>
+
+    <!-- ── Séparateur ── -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:background="@color/divider" />
+
+    <!-- ── Champ mot de passe ── -->
+    <EditText
+        android:id="@+id/edit_text_dialog_reservation_password"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="6dp"
+        android:background="@drawable/bg_bottom_nav"
+        android:drawableStart="@drawable/vector_black3_password"
+        android:drawablePadding="10dp"
+        android:drawableTint="@color/text_secondary"
+        android:elevation="2dp"
+        android:hint="Votre mot de passe"
+        android:inputType="textPassword"
+        android:padding="14dp"
+        android:selectAllOnFocus="false"
+        android:textColor="@color/text_primary"
+        android:textSize="14sp" />
+
+    <!-- ── Message d'erreur ── -->
+    <TextView
+        android:id="@+id/text_view_dialog_reservation_error"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginBottom="16dp"
+        android:text=""
+        android:textColor="@color/rouge"
+        android:textSize="12sp" />
+
+    <!-- ── Bouton Envoyer ── -->
+    <RelativeLayout
+        android:id="@+id/BlockButtonConnect"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="4dp">
+
+        <ProgressBar
+            android:id="@+id/progress_circularEvaluez"
+            style="@android:style/Widget.Holo.ProgressBar.Small"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:layout_centerInParent="true"
+            android:elevation="5dp"
+            android:padding="16dp"
+            android:progressDrawable="@drawable/form_circular_bar_connexion"
+            android:visibility="invisible" />
+
+        <Button
+            android:id="@+id/button_dialog_reservation_send"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_centerInParent="true"
+            android:background="@drawable/forme_purple2_200_radius_10dp"
+            android:text="Envoyer"
+            android:textAllCaps="false"
+            android:textColor="@color/text_primary"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:stateListAnimator="@null" />
+    </RelativeLayout>
+
+</LinearLayout>

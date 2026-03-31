@@ -266,7 +266,7 @@ public class StructureFragment extends Fragment {
         protected void onPostExecute(String jsonData) {
             stopRefreshing();
 
-            if (jsonData != null) {
+            if (jsonData != null && !jsonData.equals("RAS")) {
                 JSONArray jsonArray = null;
                 try {
                     jsonArray = new JSONArray(jsonData);

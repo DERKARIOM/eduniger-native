@@ -340,4 +340,13 @@
     <style name="RoundedImageStyle">
         <item name="cornerRadius">12dp</item>
     </style>
+    <style name="BottomSheetDarkTheme" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="bottomSheetStyle">@style/DarkBottomSheetStyle</item>
+    </style>
+
+    <style name="DarkBottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@drawable/bg_bottom_sheet</item>
+    </style>
 </resources>
