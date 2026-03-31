@@ -1,10 +1,170 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".controleur.activity.ChatAiActivity">
+    android:background="@color/black">
+
+    <!-- ══════════════════════ HEADER ══════════════════════ -->
+    <LinearLayout
+        android:id="@+id/header"
+        android:layout_width="0dp"
+        android:background="@color/black"
+        android:layout_height="56dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!-- Bouton retour / menu -->
+        <ImageButton
+            android:id="@+id/btnMenu"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_bottom_nav"
+            android:contentDescription="Menu"
+            android:src="@drawable/vector_back"
+            android:tint="#FFFFFF" />
+
+        <!-- Titre centré -->
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Eduna IA"
+            android:textColor="#FFFFFF"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+
+        <!-- Bouton nouvelle conversation -->
+        <ImageButton
+            android:id="@+id/btnNewChat"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_bottom_nav"
+            android:contentDescription="Nouvelle conversation"
+            android:src="@drawable/ic_ia"
+            android:tint="#FFFFFF" />
+
+    </LinearLayout>
+
+    <!-- Séparateur -->
+    <View
+        android:id="@+id/divider"
+        android:layout_width="0dp"
+        android:layout_height="0.5dp"
+        android:background="#222222"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header" />
+
+    <!-- ══════════════════════ MESSAGES ══════════════════════ -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:background="@color/black"
+        android:id="@+id/recyclerViewMessages"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:paddingBottom="8dp"
+        android:paddingTop="8dp"
+        android:scrollbars="none"
+        app:layout_constraintBottom_toTopOf="@id/layoutTyping"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/divider" />
+
+    <!-- ══════════════════════ INDICATEUR FRAPPE ══════════════ -->
+    <LinearLayout
+        android:id="@+id/layoutTyping"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="4dp"
+        android:background="@drawable/bg_bubble_bot"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="14dp"
+        android:paddingVertical="10dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/layoutInput"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <!-- Trois petits points animés -->
+        <View
+            android:layout_width="6dp"
+            android:layout_height="6dp"
+            android:layout_marginEnd="3dp"
+            android:background="@drawable/bg_dot"
+            android:alpha="0.4" />
+
+        <View
+            android:layout_width="6dp"
+            android:layout_height="6dp"
+            android:layout_marginEnd="3dp"
+            android:background="@drawable/bg_dot"
+            android:alpha="0.7" />
+
+        <View
+            android:layout_width="6dp"
+            android:layout_height="6dp"
+            android:background="@drawable/bg_dot" />
+
+    </LinearLayout>
+
+    <!-- ══════════════════════ BARRE DE SAISIE ══════════════════ -->
+    <LinearLayout
+        android:id="@+id/layoutInput"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/black"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <!-- Bouton pièce jointe (optionnel) -->
+        <ImageButton
+            android:id="@+id/btnAttach"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="Joindre"
+            android:src="@drawable/vector_white_sombre_add"
+            android:tint="#888888" />
+
+        <!-- Champ de texte -->
+        <EditText
+            android:id="@+id/etMessage"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_bottom_nav"
+            android:hint="Message"
+            android:maxLines="5"
+            android:minHeight="44dp"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="10dp"
+            android:textColor="#FFFFFF"
+            android:textSize="15sp" />
+
+        <!-- Bouton envoyer -->
+        <ImageButton
+            android:id="@+id/btnSend"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_send_button"
+            android:contentDescription="Envoyer"
+            android:src="@drawable/vector_white_send"
+            android:tint="#000000" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

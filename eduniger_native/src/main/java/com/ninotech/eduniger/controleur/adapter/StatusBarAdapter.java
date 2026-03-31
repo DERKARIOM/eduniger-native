@@ -12,7 +12,7 @@ import com.ninotech.eduniger.R;
 public class StatusBarAdapter {
     public StatusBarAdapter(Context context, Window window) {
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(ContextCompat.getColor(context, R.color.purple_200));
+        window.setStatusBarColor(ContextCompat.getColor(context, R.color.black));
         window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
     }
 }

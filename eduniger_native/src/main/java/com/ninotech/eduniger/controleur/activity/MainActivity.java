@@ -170,7 +170,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void navigateToChatBot() {
-        Toast.makeText(this, "Eduna", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "Eduna", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, ChatAiActivity.class);
+        startActivity(intent);
     }
 
     private void navigateToSearch() {
