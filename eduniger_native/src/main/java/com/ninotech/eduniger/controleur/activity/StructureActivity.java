@@ -86,6 +86,7 @@ public class StructureActivity extends AppCompatActivity {
     private TextView mMoreAuthorTextView;
     private Button mAdhererButton;
     private EditText mSearchEditText;
+    private ImageView mSearchImageView;
     private RelativeLayout mMoreAuthorRelativeLayout;
 
     // Data
@@ -139,8 +140,9 @@ public class StructureActivity extends AppCompatActivity {
     private void initializeViews() {
         mWaitRecyclerView = findViewById(R.id.recycler_view_activity_structure_wait);
         mNestedScrollView = findViewById(R.id.nested_scroll_view_activity_structure);
-        mBackImageView = findViewById(R.id.image_view_toolbar_search);
-        mSearchEditText = findViewById(R.id.edit_text_toolbar_search);
+        mBackImageView = findViewById(R.id.image_view_toolbar_book);
+       // mSearchEditText = findViewById(R.id.edit_text_toolbar_search);
+        mSearchImageView = findViewById(R.id.image_view_toolbar_research);
         mWelcomeImageView = findViewById(R.id.image_view_structure_activity_welcome);
         mProfileImageView = findViewById(R.id.image_view_structure_activity_profile);
         mAuthorRecyclerView = findViewById(R.id.recycler_view_activity_structure_author);
@@ -181,10 +183,10 @@ public class StructureActivity extends AppCompatActivity {
     }
 
     private void configureSearchField() {
-        mSearchEditText.setVisibility(View.GONE);
-        mSearchEditText.setSelectAllOnFocus(false);
-        mSearchEditText.setFocusable(false);
-        mSearchEditText.setHint("  Recherche nos livres");
+//        mSearchEditText.setVisibility(View.GONE);
+//        mSearchEditText.setSelectAllOnFocus(false);
+//        mSearchEditText.setFocusable(false);
+//        mSearchEditText.setHint("  Recherche nos livres");
     }
 
     private void setupRecyclerViews() {
@@ -203,7 +205,7 @@ public class StructureActivity extends AppCompatActivity {
     private void setupClickListeners() {
         mBackImageView.setOnClickListener(v -> onBackPressed());
 
-        mSearchEditText.setOnClickListener(v -> navigateToSearch(
+        mSearchImageView.setOnClickListener(v -> navigateToSearch(
                 "ONLINE_BOOK", "STRUCTURE_ACTIVITY", mStructure.getId()));
 
         mMoreDescTextView.setOnClickListener(v -> expandDescription());
@@ -361,7 +363,7 @@ public class StructureActivity extends AppCompatActivity {
         private void processBookData(String jsonData) {
             mWaitRecyclerView.setVisibility(View.GONE);
             mNestedScrollView.setVisibility(View.VISIBLE);
-            mSearchEditText.setVisibility(View.VISIBLE);
+//            mSearchEditText.setVisibility(View.VISIBLE);
 
             if (!RESPONSE_RAS.equals(jsonData)) {
                 try {
