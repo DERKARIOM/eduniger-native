@@ -1,5 +1,6 @@
 package com.ninotech.eduniger.model.service;
 
+import android.Manifest;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -16,6 +17,7 @@ import androidx.core.app.NotificationManagerCompat;
 
 import com.ninotech.eduniger.R;
 import com.ninotech.eduniger.controleur.activity.BookActivity;
+import com.ninotech.eduniger.controleur.activity.ContainerActivity;
 import com.ninotech.eduniger.controleur.activity.MainActivity;
 import com.ninotech.eduniger.model.data.DownloadFile;
 import com.ninotech.eduniger.model.data.Server;
@@ -265,7 +267,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ActivityCompat.checkSelfPermission(this,
-                    android.Manifest.permission.POST_NOTIFICATIONS)
+                    Manifest.permission.POST_NOTIFICATIONS)
                     != PackageManager.PERMISSION_GRANTED) {
                 Log.w(TAG, "Permission POST_NOTIFICATIONS non accordée");
                 return;
@@ -280,19 +282,22 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     // ================================================================
 
     private Intent buildIntentByType(String type, String extraData) {
-        Intent intent;
+        Intent intent = null;
         switch (type) {
             case "reservation":
+                break;
             case "book":
                 intent = new Intent(this, BookActivity.class);
                 intent.putExtra("intent_adapter_book_id", extraData);
                 break;
             case "5":
-                // Ouvrir l'accueil — les loands sont déjà synchronisés en local
-                intent = new Intent(this, MainActivity.class);
+                // Ouvrir ContainerActivity sur l'onglet loands (id=3)
+                intent = new Intent(this, ContainerActivity.class);
+                intent.putExtra("id", 3);
                 break;
             default:
-                intent = new Intent(this, MainActivity.class);
+                intent = new Intent(this, ContainerActivity.class);
+                intent.putExtra("id", 3);
                 break;
         }
         return intent;
