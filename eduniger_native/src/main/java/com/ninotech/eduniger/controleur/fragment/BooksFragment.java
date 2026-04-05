@@ -1,5 +1,6 @@
 package com.ninotech.eduniger.controleur.fragment;
 
+import android.animation.ValueAnimator;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,9 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.ninotech.eduniger.R;
-import com.ninotech.eduniger.controleur.adapter.NoConnectionAdapter;
 import com.ninotech.eduniger.controleur.adapter.OnlineBookAdapter;
-import com.ninotech.eduniger.model.data.Connection;
 import com.ninotech.eduniger.model.data.OnlineBook;
 import com.ninotech.eduniger.model.data.Server;
 import com.ninotech.eduniger.model.table.Session;
@@ -35,10 +35,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class BooksFragment extends Fragment {
@@ -49,8 +47,9 @@ public class BooksFragment extends Fragment {
 
     // Views
     private RecyclerView mBookRecyclerView;
-    private RecyclerView mWaitRecyclerView;
-    private SwipeRefreshLayout mSwipeRefreshLayout;  // ← nouveau
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private View mSkeletonLoadingContainer;
+    private View mNoConnectionContainer;
 
     // Data
     private final List<OnlineBook> mOnlineBookList = new ArrayList<>();
@@ -59,6 +58,8 @@ public class BooksFragment extends Fragment {
     // Utils
     private OkHttpClient mHttpClient;
     private BroadcastReceiver mNoConnectionReceiver;
+    private ValueAnimator mShimmerAnimator;
+    private ValueAnimator mArrowAnimator;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -74,8 +75,7 @@ public class BooksFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_books, container, false);
 
         initializeViews(view);
-        setupRecyclerView();
-        setupSwipeRefresh();         // ← nouveau
+        setupSwipeRefresh();
         registerBroadcastReceiver();
         loadRankingData();
 
@@ -83,9 +83,66 @@ public class BooksFragment extends Fragment {
     }
 
     private void initializeViews(View view) {
-        mBookRecyclerView  = view.findViewById(R.id.recycler_view_ranking);
-        mWaitRecyclerView  = view.findViewById(R.id.recycler_view_fragment_books_wait);
-        mSwipeRefreshLayout = view.findViewById(R.id.swipe_refresh_books);  // ← nouveau
+        mBookRecyclerView       = view.findViewById(R.id.recycler_view_ranking);
+        mSwipeRefreshLayout     = view.findViewById(R.id.swipe_refresh_books);
+        mSkeletonLoadingContainer = view.findViewById(R.id.skeleton_loading_container);
+        mNoConnectionContainer  = view.findViewById(R.id.no_connection_container);
+
+        // Bouton Réessayer
+        Button retryButton = mNoConnectionContainer.findViewById(R.id.button_adapter_no_connection_re_load);
+        retryButton.setOnClickListener(v -> {
+            mOnlineBookList.clear();
+            showLoadingState();
+            loadRankingData();
+        });
+
+        // Lancer le shimmer dès le départ
+        startSkeletonShimmer(mSkeletonLoadingContainer);
+        startArrowAnimation();
+    }
+
+    private void startArrowAnimation() {
+        if (mNoConnectionContainer == null) return;
+
+        View arrow1 = mNoConnectionContainer.findViewById(R.id.arrow_1);
+        View arrow2 = mNoConnectionContainer.findViewById(R.id.arrow_2);
+        View arrow3 = mNoConnectionContainer.findViewById(R.id.arrow_3);
+
+        if (arrow1 == null || arrow2 == null || arrow3 == null) return;
+
+        // Animation de translation Y en boucle (effet cascade vers le bas)
+        mArrowAnimator = ValueAnimator.ofFloat(0f, 1f);
+        mArrowAnimator.setDuration(1000);
+        mArrowAnimator.setRepeatCount(ValueAnimator.INFINITE);
+        mArrowAnimator.setRepeatMode(ValueAnimator.RESTART);
+        mArrowAnimator.setInterpolator(new android.view.animation.AccelerateDecelerateInterpolator());
+
+        mArrowAnimator.addUpdateListener(anim -> {
+            float f = (float) anim.getAnimatedValue();
+
+            // Chaque flèche décalée dans le temps (cascade)
+            float t1 = bounce(f);                           // flèche 1 : en avance
+            float t2 = bounce((f + 0.33f) % 1f);           // flèche 2 : +33%
+            float t3 = bounce((f + 0.66f) % 1f);           // flèche 3 : +66%
+
+            float maxTranslation = 10f; // dp en pixels
+            float dp = requireContext().getResources().getDisplayMetrics().density;
+
+            arrow1.setTranslationY(t1 * maxTranslation * dp);
+            arrow2.setTranslationY(t2 * maxTranslation * dp);
+            arrow3.setTranslationY(t3 * maxTranslation * dp);
+
+            // Opacité qui suit le mouvement
+            arrow1.setAlpha(0.25f + t1 * 0.3f);
+            arrow2.setAlpha(0.55f + t2 * 0.25f);
+            arrow3.setAlpha(0.85f + t3 * 0.15f);
+        });
+
+        mArrowAnimator.start();
+    }
+
+    private float bounce(float t) {
+        return (float) Math.sin(t * Math.PI);
     }
 
     // ==================== SwipeRefresh ====================
@@ -98,6 +155,7 @@ public class BooksFragment extends Fragment {
         );
 
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
+            mNoConnectionContainer.setVisibility(View.GONE);
             mOnlineBookList.clear();
             loadRankingData();
         });
@@ -109,16 +167,31 @@ public class BooksFragment extends Fragment {
         }
     }
 
-    // ==================== Setup ====================
+    // ==================== États ====================
 
-    private void setupRecyclerView() {
-        List<Connection> waitList = new ArrayList<>();
-        waitList.add(new Connection(getString(R.string.wait), null, true));
-
-        NoConnectionAdapter adapter = new NoConnectionAdapter(waitList);
-        mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        mWaitRecyclerView.setAdapter(adapter);
+    private void showLoadingState() {
+        mNoConnectionContainer.setVisibility(View.GONE);
+        mBookRecyclerView.setVisibility(View.GONE);
+        mSkeletonLoadingContainer.setVisibility(View.VISIBLE);
+        startSkeletonShimmer(mSkeletonLoadingContainer);
     }
+
+    private void showContentState() {
+        mSkeletonLoadingContainer.setVisibility(View.GONE);
+        stopSkeletonShimmer(mSkeletonLoadingContainer);
+        mNoConnectionContainer.setVisibility(View.GONE);
+        mBookRecyclerView.setVisibility(View.VISIBLE);
+    }
+
+    private void showNoConnectionError() {
+        if (!isAdded()) return;
+        stopSkeletonShimmer(mSkeletonLoadingContainer);
+        mSkeletonLoadingContainer.setVisibility(View.GONE);
+        mBookRecyclerView.setVisibility(View.GONE);
+        mNoConnectionContainer.setVisibility(View.VISIBLE);
+    }
+
+    // ==================== BroadcastReceiver ====================
 
     private void registerBroadcastReceiver() {
         mNoConnectionReceiver = new BroadcastReceiver() {
@@ -146,14 +219,7 @@ public class BooksFragment extends Fragment {
         }
     }
 
-    private void showLoadingState() {
-        List<Connection> list = new ArrayList<>();
-        list.add(new Connection(getString(R.string.wait), ACTION_RANKING, true));
-
-        NoConnectionAdapter adapter = new NoConnectionAdapter(list);
-        mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        mWaitRecyclerView.setAdapter(adapter);
-    }
+    // ==================== Chargement ====================
 
     private void loadRankingData() {
         new RankingSyn().execute(
@@ -173,15 +239,9 @@ public class BooksFragment extends Fragment {
 
         private String executeGetRequest(String url) {
             try {
-                Request request = new Request.Builder()
-                        .url(url)
-                        .get()
-                        .build();
-
+                Request request = new Request.Builder().url(url).get().build();
                 try (Response response = mHttpClient.newCall(request).execute()) {
-                    if (response.body() != null) {
-                        return response.body().string();
-                    }
+                    if (response.body() != null) return response.body().string();
                 }
             } catch (IOException e) {
                 Log.e(TAG, "Network error: " + e.getMessage(), e);
@@ -194,8 +254,6 @@ public class BooksFragment extends Fragment {
         @Override
         protected void onPostExecute(String jsonData) {
             if (!isAdded()) return;
-
-            // ← Arrêter le SwipeRefresh dans tous les cas
             stopRefreshing();
 
             if (jsonData != null) {
@@ -206,8 +264,7 @@ public class BooksFragment extends Fragment {
         }
 
         private void processRankingData(String jsonData) {
-            mWaitRecyclerView.setVisibility(View.GONE);
-            mBookRecyclerView.setVisibility(View.VISIBLE);
+            showContentState();
 
             if (!RESPONSE_RAS.equals(jsonData)) {
                 try {
@@ -216,7 +273,6 @@ public class BooksFragment extends Fragment {
 
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject obj = jsonArray.getJSONObject(i);
-
                         String category = obj.getString("nameStruct") + " : " +
                                 obj.getString("categoryTitle");
 
@@ -233,64 +289,66 @@ public class BooksFragment extends Fragment {
                         ));
                     }
 
-                    updateRecyclerView();
+                    OnlineBookAdapter adapter = new OnlineBookAdapter(mOnlineBookList);
+                    mBookRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+                    mBookRecyclerView.setAdapter(adapter);
 
                 } catch (JSONException e) {
                     Log.e(TAG, "Error parsing ranking data", e);
                 }
             }
         }
+    }
 
-        private void updateRecyclerView() {
-            OnlineBookAdapter adapter = new OnlineBookAdapter(mOnlineBookList);
-            mBookRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-            mBookRecyclerView.setAdapter(adapter);
+    // ==================== Shimmer ====================
+
+    private void startSkeletonShimmer(View container) {
+        if (!(container instanceof ViewGroup)) return;
+
+        List<View> skeletonViews = new ArrayList<>();
+        collectSkeletonViews((ViewGroup) container, skeletonViews);
+
+        mShimmerAnimator = ValueAnimator.ofFloat(0f, 1f);
+        mShimmerAnimator.setDuration(1200);
+        mShimmerAnimator.setRepeatCount(ValueAnimator.INFINITE);
+        mShimmerAnimator.setRepeatMode(ValueAnimator.RESTART);
+        mShimmerAnimator.addUpdateListener(anim -> {
+            float fraction = (float) anim.getAnimatedValue();
+            float alpha = 0.4f + 0.6f * (float)(0.5 + 0.5 * Math.sin(fraction * 2 * Math.PI));
+            for (View v : skeletonViews) v.setAlpha(alpha);
+        });
+        mShimmerAnimator.start();
+    }
+
+    private void stopSkeletonShimmer(View container) {
+        if (mShimmerAnimator != null) {
+            mShimmerAnimator.cancel();
+            mShimmerAnimator = null;
+        }
+        if (container instanceof ViewGroup) {
+            List<View> views = new ArrayList<>();
+            collectSkeletonViews((ViewGroup) container, views);
+            for (View v : views) v.setAlpha(1f);
         }
     }
 
-    // ==================== Helper Methods ====================
-
-    private String executePostRequest(String url, String idNumber) {
-        try {
-            RequestBody requestBody = new MultipartBody.Builder()
-                    .setType(MultipartBody.FORM)
-                    .addFormDataPart("id_number", idNumber)
-                    .build();
-
-            Request request = new Request.Builder()
-                    .url(url)
-                    .post(requestBody)
-                    .build();
-
-            try (Response response = mHttpClient.newCall(request).execute()) {
-                if (response.body() != null) {
-                    return response.body().string();
-                }
-            }
-        } catch (IOException e) {
-            Log.e(TAG, "Network error: " + e.getMessage(), e);
-        } catch (Exception e) {
-            Log.e(TAG, "Unexpected error: " + e.getMessage(), e);
+    private void collectSkeletonViews(ViewGroup parent, List<View> out) {
+        for (int i = 0; i < parent.getChildCount(); i++) {
+            View child = parent.getChildAt(i);
+            if (child instanceof ViewGroup) collectSkeletonViews((ViewGroup) child, out);
+            else out.add(child);
         }
-        return null;
     }
 
-    private void showNoConnectionError() {
-        List<Connection> list = new ArrayList<>();
-        list.add(new Connection(
-                getString(R.string.no_connection_available),
-                ACTION_RANKING,
-                false
-        ));
-
-        NoConnectionAdapter adapter = new NoConnectionAdapter(list);
-        mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        mWaitRecyclerView.setAdapter(adapter);
-    }
+    // ==================== Cycle de vie ====================
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        if (mShimmerAnimator != null) {
+            mShimmerAnimator.cancel();
+            mShimmerAnimator = null;
+        }
         if (mNoConnectionReceiver != null) {
             try {
                 requireContext().unregisterReceiver(mNoConnectionReceiver);

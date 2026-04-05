@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/layout/item_skeleton_book_vertical.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="12dp"
+    android:layout_marginBottom="8dp"
+    android:gravity="center_vertical">
+
+    <!-- Couverture -->
+    <View
+        android:layout_width="80dp"
+        android:layout_height="110dp"
+        android:background="@drawable/skeleton_shape"
+        android:layout_marginEnd="14dp" />
+
+    <!-- Textes -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <!-- Titre ligne 1 -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="14dp"
+            android:background="@drawable/skeleton_shape"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Titre ligne 2 -->
+        <View
+            android:layout_width="180dp"
+            android:layout_height="14dp"
+            android:background="@drawable/skeleton_shape"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Catégorie -->
+        <View
+            android:layout_width="140dp"
+            android:layout_height="11dp"
+            android:background="@drawable/skeleton_shape"
+            android:layout_marginBottom="14dp" />
+
+        <!-- Icônes like / vue -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <View
+                android:layout_width="20dp"
+                android:layout_height="11dp"
+                android:background="@drawable/skeleton_shape"
+                android:layout_marginEnd="16dp" />
+
+            <View
+                android:layout_width="20dp"
+                android:layout_height="11dp"
+                android:background="@drawable/skeleton_shape" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>
