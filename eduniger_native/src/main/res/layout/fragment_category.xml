@@ -4,15 +4,32 @@
     style="@style/match_parent_all"
     tools:context=".controleur.fragment.CategoryFragment">
 
-    <!-- RecyclerView de chargement : EN DEHORS du SwipeRefresh -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view_fragment_category_wait"
-        android:nestedScrollingEnabled="false"
-        android:layout_margin="10dp"
-        android:layout_centerInParent="true"
-        style="@style/wrap_content_all" />
+    <!-- SKELETON LOADING -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/skeleton_loading_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible">
 
-    <!-- SwipeRefreshLayout enveloppe uniquement le RecyclerView principal -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <include layout="@layout/item_skeleton_category"/>
+            <include layout="@layout/item_skeleton_category"/>
+            <include layout="@layout/item_skeleton_category"/>
+            <include layout="@layout/item_skeleton_category"/>
+            <include layout="@layout/item_skeleton_category"/>
+            <include layout="@layout/item_skeleton_category"/>
+            <include layout="@layout/item_skeleton_category"/>
+            <include layout="@layout/item_skeleton_category"/>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- CONTENU PRINCIPAL -->
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh_category"
         android:layout_width="match_parent"
@@ -24,5 +41,13 @@
             android:visibility="gone" />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <!-- NO CONNECTION — EN DERNIER = au-dessus de tout -->
+    <include
+        android:id="@+id/no_connection_container"
+        layout="@layout/item_no_connection"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
 
 </RelativeLayout>
