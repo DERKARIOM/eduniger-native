@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- res/layout/fragment_home.xml — SKELETON VERSION -->
-<!-- Remplace mWaitRecyclerView par skeleton_loading_container -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     style="@style/background"
     tools:context="com.ninotech.eduniger.controleur.fragment.HomeFragment">
-
+    <include
+        android:id="@+id/no_connection_container"
+        layout="@layout/item_no_connection"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
     <!-- ============================================================ -->
-    <!--  SKELETON LOADING  (remplace recycler_view_fragment_recommended_wait) -->
+    <!--  SKELETON LOADING                                             -->
     <!-- ============================================================ -->
     <androidx.core.widget.NestedScrollView
         android:id="@+id/skeleton_loading_container"
@@ -23,7 +26,6 @@
             android:orientation="vertical"
             android:padding="10dp">
 
-            <!-- Skeleton: bannière pub -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
@@ -33,7 +35,6 @@
                 android:layout_marginBottom="14dp"
                 android:background="@drawable/skeleton_shape" />
 
-            <!-- Skeleton: dots indicateur -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -50,63 +51,48 @@
                     android:background="@drawable/skeleton_shape_circle"/>
             </LinearLayout>
 
-            <!-- Skeleton: section header "Recommandé" -->
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
                 android:layout_marginEnd="15dp"
                 android:layout_marginBottom="12dp">
-                <View
-                    android:layout_width="120dp"
-                    android:layout_height="14dp"
+                <View android:layout_width="120dp" android:layout_height="14dp"
                     android:background="@drawable/skeleton_shape" />
-                <View
-                    android:layout_width="60dp"
-                    android:layout_height="14dp"
+                <View android:layout_width="60dp" android:layout_height="14dp"
                     android:background="@drawable/skeleton_shape"
                     android:layout_alignParentEnd="true" />
             </RelativeLayout>
 
-            <!-- Skeleton: liste horizontale livres (5 items) -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginBottom="20dp"
                 android:paddingStart="10dp">
-
                 <include layout="@layout/item_skeleton_book"/>
                 <include layout="@layout/item_skeleton_book"/>
                 <include layout="@layout/item_skeleton_book"/>
                 <include layout="@layout/item_skeleton_book"/>
-
             </LinearLayout>
 
-            <!-- Skeleton: section header "Structures" -->
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
                 android:layout_marginEnd="15dp"
                 android:layout_marginBottom="12dp">
-                <View
-                    android:layout_width="100dp"
-                    android:layout_height="14dp"
+                <View android:layout_width="100dp" android:layout_height="14dp"
                     android:background="@drawable/skeleton_shape" />
-                <View
-                    android:layout_width="60dp"
-                    android:layout_height="14dp"
+                <View android:layout_width="60dp" android:layout_height="14dp"
                     android:background="@drawable/skeleton_shape"
                     android:layout_alignParentEnd="true" />
             </RelativeLayout>
 
-            <!-- Skeleton: liste verticale structures (3 items) -->
             <include layout="@layout/item_skeleton_structure"/>
             <include layout="@layout/item_skeleton_structure"/>
             <include layout="@layout/item_skeleton_structure"/>
 
-            <!-- Skeleton: section header "Auteurs" -->
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -114,38 +100,36 @@
                 android:layout_marginEnd="15dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="12dp">
-                <View
-                    android:layout_width="80dp"
-                    android:layout_height="14dp"
+                <View android:layout_width="80dp" android:layout_height="14dp"
                     android:background="@drawable/skeleton_shape" />
-                <View
-                    android:layout_width="60dp"
-                    android:layout_height="14dp"
+                <View android:layout_width="60dp" android:layout_height="14dp"
                     android:background="@drawable/skeleton_shape"
                     android:layout_alignParentEnd="true" />
             </RelativeLayout>
 
-            <!-- Skeleton: liste horizontale auteurs -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginBottom="20dp"
                 android:paddingStart="10dp">
-
                 <include layout="@layout/item_skeleton_author"/>
                 <include layout="@layout/item_skeleton_author"/>
                 <include layout="@layout/item_skeleton_author"/>
                 <include layout="@layout/item_skeleton_author"/>
-
             </LinearLayout>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
+
     <!-- ============================================================ -->
-    <!--  FIN SKELETON                                                  -->
+    <!--  NO CONNECTION STATE  (caché par défaut)                      -->
     <!-- ============================================================ -->
 
+
+    <!-- ============================================================ -->
+    <!--  CONTENU PRINCIPAL                                            -->
+    <!-- ============================================================ -->
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh_home"
         android:layout_width="match_parent"
@@ -179,8 +163,7 @@
                         android:layout_height="match_parent"
                         app:cardCornerRadius="8dp"
                         app:cardElevation="0dp">
-                        <ImageView
-                            android:id="@+id/image_pub_1"
+                        <ImageView android:id="@+id/image_pub_1"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:scaleType="fitXY"
@@ -193,8 +176,7 @@
                         android:layout_height="match_parent"
                         app:cardCornerRadius="8dp"
                         app:cardElevation="0dp">
-                        <ImageView
-                            android:id="@+id/image_pub_2"
+                        <ImageView android:id="@+id/image_pub_2"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:scaleType="fitXY"
@@ -207,8 +189,7 @@
                         android:layout_height="match_parent"
                         app:cardCornerRadius="8dp"
                         app:cardElevation="0dp">
-                        <ImageView
-                            android:id="@+id/image_pub_3"
+                        <ImageView android:id="@+id/image_pub_3"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:scaleType="fitXY"
@@ -232,26 +213,16 @@
                     android:layout_below="@id/layout_dots_pub"
                     android:visibility="gone"
                     style="@style/match_wrap">
-                    <TextView
+                    <TextView style="@style/wrap_content_all"
+                        android:layout_marginStart="25dp" android:layout_marginTop="10dp"
+                        android:layout_marginEnd="10dp" android:layout_marginBottom="10dp"
+                        android:text="Recommandé" android:textStyle="bold" android:textSize="14sp" />
+                    <TextView android:id="@+id/text_view_server_more"
                         style="@style/wrap_content_all"
-                        android:layout_marginStart="25dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:text="Recommandé"
-                        android:textStyle="bold"
-                        android:textSize="14sp" />
-                    <TextView
-                        android:id="@+id/text_view_server_more"
-                        style="@style/wrap_content_all"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginEnd="25dp"
-                        android:layout_marginBottom="10dp"
-                        android:text="Voir plus"
+                        android:layout_marginTop="10dp" android:layout_marginEnd="25dp"
+                        android:layout_marginBottom="10dp" android:text="Voir plus"
                         android:layout_alignParentEnd="true"
-                        android:textColor="@color/purple_200"
-                        android:textStyle="bold"
-                        android:textSize="14sp" />
+                        android:textColor="@color/purple_200" android:textStyle="bold" android:textSize="14sp" />
                 </RelativeLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -264,26 +235,16 @@
                     android:id="@+id/relative_layout_fragment_home_more_book"
                     android:layout_below="@id/recycler_view_fragment_home_server"
                     style="@style/match_wrap">
-                    <TextView
+                    <TextView style="@style/wrap_content_all"
+                        android:layout_marginStart="25dp" android:layout_marginTop="10dp"
+                        android:layout_marginEnd="10dp" android:layout_marginBottom="10dp"
+                        android:text="Recommandé" android:textStyle="bold" android:textSize="14sp" />
+                    <TextView android:id="@+id/text_view_recommended_more"
                         style="@style/wrap_content_all"
-                        android:layout_marginStart="25dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:text="Recommandé"
-                        android:textStyle="bold"
-                        android:textSize="14sp" />
-                    <TextView
-                        android:id="@+id/text_view_recommended_more"
-                        style="@style/wrap_content_all"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginEnd="25dp"
-                        android:layout_marginBottom="10dp"
-                        android:text="Voir plus"
+                        android:layout_marginTop="10dp" android:layout_marginEnd="25dp"
+                        android:layout_marginBottom="10dp" android:text="Voir plus"
                         android:layout_alignParentEnd="true"
-                        android:textColor="@color/purple_200"
-                        android:textStyle="bold"
-                        android:textSize="14sp" />
+                        android:textColor="@color/purple_200" android:textStyle="bold" android:textSize="14sp" />
                 </RelativeLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -297,26 +258,16 @@
                     android:id="@+id/relative_layout_fragment_home_more_structure"
                     android:layout_below="@id/recycler_view_ranking"
                     style="@style/match_wrap">
-                    <TextView
+                    <TextView style="@style/wrap_content_all"
+                        android:layout_marginStart="25dp" android:layout_marginTop="10dp"
+                        android:layout_marginEnd="10dp" android:layout_marginBottom="10dp"
+                        android:text="Structures" android:textStyle="bold" android:textSize="14sp" />
+                    <TextView android:id="@+id/text_view_recommended_more_structure"
                         style="@style/wrap_content_all"
-                        android:layout_marginStart="25dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:text="Structures"
-                        android:textStyle="bold"
-                        android:textSize="14sp" />
-                    <TextView
-                        android:id="@+id/text_view_recommended_more_structure"
-                        style="@style/wrap_content_all"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginEnd="25dp"
-                        android:layout_marginBottom="10dp"
-                        android:text="Voir plus"
+                        android:layout_marginTop="10dp" android:layout_marginEnd="25dp"
+                        android:layout_marginBottom="10dp" android:text="Voir plus"
                         android:layout_alignParentEnd="true"
-                        android:textColor="@color/purple_200"
-                        android:textStyle="bold"
-                        android:textSize="14sp" />
+                        android:textColor="@color/purple_200" android:textStyle="bold" android:textSize="14sp" />
                 </RelativeLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -330,26 +281,16 @@
                     android:id="@+id/relative_layout_fragment_home_more_author"
                     android:layout_below="@id/recycler_view_fragment_recommended_structure"
                     style="@style/match_wrap">
-                    <TextView
+                    <TextView style="@style/wrap_content_all"
+                        android:layout_marginStart="25dp" android:layout_marginTop="10dp"
+                        android:layout_marginEnd="10dp" android:layout_marginBottom="10dp"
+                        android:text="Auteurs" android:textStyle="bold" android:textSize="14sp" />
+                    <TextView android:id="@+id/text_view_recommended_more_author"
                         style="@style/wrap_content_all"
-                        android:layout_marginStart="25dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:text="Auteurs"
-                        android:textStyle="bold"
-                        android:textSize="14sp" />
-                    <TextView
-                        android:id="@+id/text_view_recommended_more_author"
-                        style="@style/wrap_content_all"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginEnd="25dp"
-                        android:layout_marginBottom="10dp"
-                        android:text="Voir plus"
+                        android:layout_marginTop="10dp" android:layout_marginEnd="25dp"
+                        android:layout_marginBottom="10dp" android:text="Voir plus"
                         android:layout_alignParentEnd="true"
-                        android:textColor="@color/purple_200"
-                        android:textStyle="bold"
-                        android:textSize="14sp" />
+                        android:textColor="@color/purple_200" android:textStyle="bold" android:textSize="14sp" />
                 </RelativeLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -366,5 +307,10 @@
         </androidx.core.widget.NestedScrollView>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
+    <include
+        android:id="@+id/no_connection_container"
+        layout="@layout/item_no_connection"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
 </RelativeLayout>

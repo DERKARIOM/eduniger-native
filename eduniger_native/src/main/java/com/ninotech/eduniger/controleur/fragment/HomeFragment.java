@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -81,7 +82,6 @@ public class HomeFragment extends Fragment {
     private RecyclerView mServerdRecyclerView;
     private RecyclerView mStructureRecyclerView;
     private RecyclerView mAuthorRecyclerView;
-    private RecyclerView mWaitRecyclerView;
     private TextView mBookMoreTextView;
     private TextView mStructMoreTextView;
     private TextView mAuthorMoreTextView;
@@ -113,6 +113,8 @@ public class HomeFragment extends Fragment {
     private Handler mDotsHandler;
     private Runnable mDotsRunnable;
     private View mSkeletonLoadingContainer;
+    private View mNoConnectionContainer;
+    private ValueAnimator mArrowAnimator;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -164,6 +166,13 @@ public class HomeFragment extends Fragment {
         mStructureRecyclerView       = view.findViewById(R.id.recycler_view_fragment_recommended_structure);
         mAuthorRecyclerView          = view.findViewById(R.id.recycler_view_author);
         mSkeletonLoadingContainer = view.findViewById(R.id.skeleton_loading_container);
+        mNoConnectionContainer = view.findViewById(R.id.no_connection_container);
+
+        TextView offlineButton = mNoConnectionContainer.findViewById(R.id.button_adapter_no_connection_off_line);
+        offlineButton.setOnClickListener(v -> {
+            // À personnaliser selon votre logique hors-ligne
+            // Ex: naviguer vers les livres téléchargés
+        });
         startSkeletonShimmer(mSkeletonLoadingContainer);  // ← lance l'animation shimmer
         mServerdRecyclerView         = view.findViewById(R.id.recycler_view_fragment_home_server);
         mNestedScrollView            = view.findViewById(R.id.nested_scroll_view_fragment_home);
@@ -175,7 +184,53 @@ public class HomeFragment extends Fragment {
         mStructureRecyclerView.setVisibility(View.GONE);
         mAuthorRecyclerView.setVisibility(View.GONE);
         mMoreAuthorRelativeLayout.setVisibility(View.GONE);
+        startArrowAnimation();
     }
+
+    private void startArrowAnimation() {
+        if (mNoConnectionContainer == null) return;
+
+        View arrow1 = mNoConnectionContainer.findViewById(R.id.arrow_1);
+        View arrow2 = mNoConnectionContainer.findViewById(R.id.arrow_2);
+        View arrow3 = mNoConnectionContainer.findViewById(R.id.arrow_3);
+
+        if (arrow1 == null || arrow2 == null || arrow3 == null) return;
+
+        // Animation de translation Y en boucle (effet cascade vers le bas)
+        mArrowAnimator = ValueAnimator.ofFloat(0f, 1f);
+        mArrowAnimator.setDuration(1000);
+        mArrowAnimator.setRepeatCount(ValueAnimator.INFINITE);
+        mArrowAnimator.setRepeatMode(ValueAnimator.RESTART);
+        mArrowAnimator.setInterpolator(new android.view.animation.AccelerateDecelerateInterpolator());
+
+        mArrowAnimator.addUpdateListener(anim -> {
+            float f = (float) anim.getAnimatedValue();
+
+            // Chaque flèche décalée dans le temps (cascade)
+            float t1 = bounce(f);                           // flèche 1 : en avance
+            float t2 = bounce((f + 0.33f) % 1f);           // flèche 2 : +33%
+            float t3 = bounce((f + 0.66f) % 1f);           // flèche 3 : +66%
+
+            float maxTranslation = 10f; // dp en pixels
+            float dp = requireContext().getResources().getDisplayMetrics().density;
+
+            arrow1.setTranslationY(t1 * maxTranslation * dp);
+            arrow2.setTranslationY(t2 * maxTranslation * dp);
+            arrow3.setTranslationY(t3 * maxTranslation * dp);
+
+            // Opacité qui suit le mouvement
+            arrow1.setAlpha(0.25f + t1 * 0.3f);
+            arrow2.setAlpha(0.55f + t2 * 0.25f);
+            arrow3.setAlpha(0.85f + t3 * 0.15f);
+        });
+
+        mArrowAnimator.start();
+    }
+
+    private float bounce(float t) {
+        return (float) Math.sin(t * Math.PI);
+    }
+
 
     // ==================== SwipeRefresh ====================
 
@@ -187,6 +242,8 @@ public class HomeFragment extends Fragment {
         );
 
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
+            mNoConnectionContainer.setVisibility(View.GONE); // ← AJOUTER
+            showLoadingState();                               // ← AJOUTER
             mOnlineBookList.clear();
             mStructures.clear();
             mServers.clear();
@@ -347,6 +404,7 @@ public class HomeFragment extends Fragment {
 
     private void showLoadingState() {
         mNestedScrollView.setVisibility(View.GONE);
+        mNoConnectionContainer.setVisibility(View.GONE);
         mSkeletonLoadingContainer.setVisibility(View.VISIBLE);
         startSkeletonShimmer(mSkeletonLoadingContainer);
     }
@@ -378,6 +436,10 @@ public class HomeFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         stopPubFlipper();
+        if (mArrowAnimator != null) {       // ← AJOUTER
+            mArrowAnimator.cancel();        // ← AJOUTER
+            mArrowAnimator = null;          // ← AJOUTER
+        }                                   // ← AJOUTER
         if (mReceiver != null) {
             try {
                 requireContext().unregisterReceiver(mReceiver);
@@ -432,7 +494,8 @@ public class HomeFragment extends Fragment {
                     mStructureRecyclerView.setVisibility(View.VISIBLE);
                 }
             } else {
-                showNoConnectionState(mWaitRecyclerView);
+                stopRefreshing();
+                showNoConnectionError();
             }
         }
 
@@ -501,6 +564,14 @@ public class HomeFragment extends Fragment {
             return new Structure(id, logo, name, "Description", false, "-1",
                     author, "cati", bookNumber, isAdmin);
         }
+    }
+
+    private void showNoConnectionError() {
+        if (!isAdded()) return;
+        stopSkeletonShimmer(mSkeletonLoadingContainer);
+        mSkeletonLoadingContainer.setVisibility(View.GONE);
+        mNestedScrollView.setVisibility(View.GONE);
+        mNoConnectionContainer.setVisibility(View.VISIBLE);
     }
 
     private class StructureSyn extends AsyncTask<String, Void, String> {

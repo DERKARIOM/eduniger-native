@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black">
+
+    <!-- Vue "chargement" utilisée par l'adapter -->
+    <RelativeLayout
+        android:id="@+id/relative_adapter_no_connection_wait"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:visibility="gone"/>
+
+    <!-- Vue "pas de connexion" -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="32dp">
+
+        <!-- Icône WiFi off avec cercle -->
+        <FrameLayout
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:layout_marginBottom="32dp">
+
+            <!-- Cercle fond -->
+            <View
+                android:layout_width="110dp"
+                android:layout_height="110dp"
+                android:background="@drawable/no_connection_circle_bg"/>
+
+            <!-- Icône -->
+            <ImageView
+                android:id="@+id/image_view_adapter_no_connection"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:layout_gravity="center"
+                android:src="@drawable/img_no_wifi"
+                android:alpha="0.85"/>
+
+        </FrameLayout>
+
+        <!-- Titre -->
+        <TextView
+            android:id="@+id/text_view_adapter_no_connection_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pas de connexion"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.02"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- Description -->
+        <TextView
+            android:id="@+id/text_view_adapter_no_connection_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:textColor="@color/white"
+            android:text="Vérifiez votre connexion Internet\npuis Swipe pour réessayer"
+            android:textSize="14sp"
+            android:lineSpacingMultiplier="1.5"
+            android:layout_marginBottom="40dp"/>
+
+        <!-- Flèche animée vers le bas -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+
+            <!-- Flèche 1 (la plus haute, la plus transparente) -->
+            <ImageView
+                android:id="@+id/arrow_1"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_arrow_down"
+                android:alpha="0.25"
+                android:layout_marginBottom="-6dp"/>
+
+            <!-- Flèche 2 (milieu) -->
+            <ImageView
+                android:id="@+id/arrow_2"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_arrow_down"
+                android:alpha="0.55"
+                android:layout_marginBottom="-6dp"/>
+
+            <!-- Flèche 3 (la plus basse, la plus opaque) -->
+            <ImageView
+                android:id="@+id/arrow_3"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_arrow_down"
+                android:alpha="0.9"/>
+
+        </LinearLayout>
+
+        <!-- Boutons cachés (compatibilité adapter) -->
+        <TextView
+            android:id="@+id/button_adapter_no_connection_off_line"
+            android:layout_width="120dp"
+            android:layout_height="35dp"
+            android:visibility="gone"
+            style="@style/adapter_no_connection_btt_offline"/>
+
+        <Button
+            android:id="@+id/button_adapter_no_connection_re_load"
+            android:layout_width="120dp"
+            android:layout_height="35dp"
+            android:visibility="gone"
+            android:text="Réessayer"/>
+
+    </LinearLayout>
+</FrameLayout>
