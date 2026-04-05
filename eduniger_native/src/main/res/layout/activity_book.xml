@@ -290,59 +290,6 @@
             </LinearLayout>
 
             <!-- ════════════════════════════════
-                 SECTION : Réservation physique
-            ═════════════════════════════════ -->
-            <LinearLayout
-                android:id="@+id/linear_layout_activity_book_reservation"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginBottom="16dp"
-                android:background="@drawable/bg_section_card"
-                android:orientation="vertical"
-                android:padding="16dp"
-                android:visibility="gone">
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="12dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:text="@string/to_book_reservation"
-                        android:textColor="@color/text_primary"
-                        android:textStyle="bold"
-                        android:textSize="14sp" />
-
-                    <Spinner
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true" />
-                </RelativeLayout>
-
-                <Button
-                    android:id="@+id/button_activity_book_reservation"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:text="@string/reservation_book"
-                    android:textAllCaps="false"
-                    android:shadowRadius="50"
-                    android:background="@drawable/forme_purple2_200_radius_10dp"
-                    android:textColor="@color/white"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:drawableStart="@drawable/vector_black3_physical2"
-                    android:drawablePadding="8dp"
-                    android:backgroundTint="@color/purple_200"
-                    android:stateListAnimator="@null" />
-            </LinearLayout>
-
-            <!-- ════════════════════════════════
                  SECTION : Format Audio
             ═════════════════════════════════ -->
             <LinearLayout
@@ -666,6 +613,59 @@
                             android:textSize="12sp" />
                     </LinearLayout>
                 </LinearLayout>
+            </LinearLayout>
+
+            <!-- ════════════════════════════════
+                 SECTION : Réservation physique
+            ═════════════════════════════════ -->
+            <LinearLayout
+                android:id="@+id/linear_layout_activity_book_reservation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/bg_section_card"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:visibility="gone">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:text="@string/to_book_reservation"
+                        android:textColor="@color/text_primary"
+                        android:textStyle="bold"
+                        android:textSize="14sp" />
+
+                    <Spinner
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true" />
+                </RelativeLayout>
+
+                <Button
+                    android:id="@+id/button_activity_book_reservation"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:text="@string/reservation_book"
+                    android:textAllCaps="false"
+                    android:shadowRadius="50"
+                    android:background="@drawable/forme_purple2_200_radius_10dp"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:drawableStart="@drawable/vector_black3_physical2"
+                    android:drawablePadding="8dp"
+                    android:backgroundTint="@color/purple_200"
+                    android:stateListAnimator="@null" />
             </LinearLayout>
 
             <!-- ════════════════════════════════
