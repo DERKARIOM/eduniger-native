@@ -1,5 +1,6 @@
 package com.ninotech.eduniger.controleur.activity;
 
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -13,6 +14,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -25,13 +27,12 @@ import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;  // ← AJOUT
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.ninotech.eduniger.R;
 import com.ninotech.eduniger.controleur.adapter.AuthorHorizontaleAdapter;
 import com.ninotech.eduniger.controleur.adapter.CategoryAdapter;
 import com.ninotech.eduniger.controleur.adapter.HorizontaleAdapter;
-import com.ninotech.eduniger.controleur.adapter.NoConnectionAdapter;
 import com.ninotech.eduniger.controleur.adapter.SemiNoConnectionAdapter;
 import com.ninotech.eduniger.controleur.animation.RoundedTransformation;
 import com.ninotech.eduniger.controleur.dialog.SimpleOkDialog;
@@ -70,8 +71,9 @@ public class StructureActivity extends AppCompatActivity {
 
     // Views
     private NestedScrollView mNestedScrollView;
-    private SwipeRefreshLayout mSwipeRefreshLayout;           // ← AJOUT
-    private RecyclerView mWaitRecyclerView;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private View mSkeletonLoadingContainer;
+    private View mNoConnectionContainer;
     private RecyclerView mBookRecommendedRecyclerView;
     private RecyclerView mAuthorRecyclerView;
     private RecyclerView mCategoryRecyclerView;
@@ -88,9 +90,9 @@ public class StructureActivity extends AppCompatActivity {
     private TextView mMoreCategorie;
     private TextView mMoreAuthorTextView;
     private Button mAdhererButton;
-    private EditText mSearchEditText;
     private ImageView mSearchImageView;
     private ImageView mShortcutImageView;
+    private ImageView mAnnouncementImageView;
     private RelativeLayout mMoreAuthorRelativeLayout;
 
     // Data
@@ -103,7 +105,8 @@ public class StructureActivity extends AppCompatActivity {
     // Utils
     private OkHttpClient mHttpClient;
     private BroadcastReceiver mNoConnectionReceiver;
-    private ImageView mAnnouncementImageView;
+    private ValueAnimator mShimmerAnimator;
+    private ValueAnimator mArrowAnimator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,7 +118,7 @@ public class StructureActivity extends AppCompatActivity {
         initializeViews();
         setupRecyclerViews();
         setupClickListeners();
-        setupSwipeRefresh();              // ← AJOUT
+        setupSwipeRefresh();
         loadStructureImages();
         registerBroadcastReceiver();
         loadStructureData();
@@ -144,31 +147,35 @@ public class StructureActivity extends AppCompatActivity {
     }
 
     private void initializeViews() {
-        mWaitRecyclerView = findViewById(R.id.recycler_view_activity_structure_wait);
-        mNestedScrollView = findViewById(R.id.nested_scroll_view_activity_structure);
-        mSwipeRefreshLayout = findViewById(R.id.swipe_refresh_structure);   // ← AJOUT
-        mBackImageView = findViewById(R.id.image_view_toolbar_book);
-        mSearchImageView = findViewById(R.id.image_view_toolbar_research);
-        mWelcomeImageView = findViewById(R.id.image_view_structure_activity_welcome);
-        mProfileImageView = findViewById(R.id.image_view_structure_activity_profile);
-        mAuthorRecyclerView = findViewById(R.id.recycler_view_activity_structure_author);
-        mNameTextView = findViewById(R.id.text_view_structure_activity_name);
-        mAuthorTextView = findViewById(R.id.text_view_activity_structure_author);
-        mNumberTextView = findViewById(R.id.image_view_activity_structure_number);
-        mDescriptionTextView = findViewById(R.id.text_view_activity_structure_description);
-        mMoreDescTextView = findViewById(R.id.text_view_activity_structure_more_desc);
-        mReduceTextView = findViewById(R.id.text_view_activity_structure_reduce_desc);
-        mMoreBookTextView = findViewById(R.id.text_view_activity_structure_more_books);
-        mMoreCategorie = findViewById(R.id.text_view_activity_structure_more_category);
-        mMoreAuthorTextView = findViewById(R.id.text_view_activity_structure_more_author);
-        mAdhererButton = findViewById(R.id.button_activity_structure_adherer);
+        mNestedScrollView         = findViewById(R.id.nested_scroll_view_activity_structure);
+        mSwipeRefreshLayout       = findViewById(R.id.swipe_refresh_structure);
+        mSkeletonLoadingContainer = findViewById(R.id.skeleton_loading_container);
+        mNoConnectionContainer    = findViewById(R.id.no_connection_container);
+        mBackImageView            = findViewById(R.id.image_view_toolbar_book);
+        mSearchImageView          = findViewById(R.id.image_view_toolbar_research);
+        mShortcutImageView        = findViewById(R.id.image_view_toolbar_shortcut);
+        mAnnouncementImageView    = findViewById(R.id.image_view_toolbar_announcement);
+        mWelcomeImageView         = findViewById(R.id.image_view_structure_activity_welcome);
+        mProfileImageView         = findViewById(R.id.image_view_structure_activity_profile);
+        mAuthorRecyclerView       = findViewById(R.id.recycler_view_activity_structure_author);
+        mNameTextView             = findViewById(R.id.text_view_structure_activity_name);
+        mAuthorTextView           = findViewById(R.id.text_view_activity_structure_author);
+        mNumberTextView           = findViewById(R.id.image_view_activity_structure_number);
+        mDescriptionTextView      = findViewById(R.id.text_view_activity_structure_description);
+        mMoreDescTextView         = findViewById(R.id.text_view_activity_structure_more_desc);
+        mReduceTextView           = findViewById(R.id.text_view_activity_structure_reduce_desc);
+        mMoreBookTextView         = findViewById(R.id.text_view_activity_structure_more_books);
+        mMoreCategorie            = findViewById(R.id.text_view_activity_structure_more_category);
+        mMoreAuthorTextView       = findViewById(R.id.text_view_activity_structure_more_author);
+        mAdhererButton            = findViewById(R.id.button_activity_structure_adherer);
         mBookRecommendedRecyclerView = findViewById(R.id.recycler_view_activity_structure_books);
         mMoreAuthorRelativeLayout = findViewById(R.id.relative_layout_activity_structure_author);
-        mCategoryRecyclerView = findViewById(R.id.recycler_view_activity_structure_category);
-        mShortcutImageView = findViewById(R.id.image_view_toolbar_shortcut);
-        mAnnouncementImageView = findViewById(R.id.image_view_toolbar_announcement);
+        mCategoryRecyclerView     = findViewById(R.id.recycler_view_activity_structure_category);
+
+        startSkeletonShimmer(mSkeletonLoadingContainer);
+        startArrowAnimation();
+
         updateStructureInfo();
-        configureSearchField();
     }
 
     private void updateStructureInfo() {
@@ -189,20 +196,9 @@ public class StructureActivity extends AppCompatActivity {
         }
     }
 
-    private void configureSearchField() {
-//        mSearchEditText.setVisibility(View.GONE);
-//        mSearchEditText.setSelectAllOnFocus(false);
-//        mSearchEditText.setFocusable(false);
-//        mSearchEditText.setHint("  Recherche nos livres");
-    }
-
     private void setupRecyclerViews() {
         List<Connection> waitList = new ArrayList<>();
         waitList.add(new Connection(getString(R.string.wait), null, true));
-
-        NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(waitList);
-        mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mWaitRecyclerView.setAdapter(noConnectionAdapter);
 
         SemiNoConnectionAdapter semiNoConnectionAdapter = new SemiNoConnectionAdapter(waitList);
         mAuthorRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -230,16 +226,13 @@ public class StructureActivity extends AppCompatActivity {
 
         mShortcutImageView.setOnClickListener(v -> createHomeShortcut());
 
-        mAnnouncementImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent announcementIntent = new Intent(StructureActivity.this, NotificationActivity.class);
-                startActivity(announcementIntent);
-            }
+        mAnnouncementImageView.setOnClickListener(v -> {
+            Intent announcementIntent = new Intent(StructureActivity.this, NotificationActivity.class);
+            startActivity(announcementIntent);
         });
     }
 
-    // ==================== SwipeRefresh ====================   ← AJOUT BLOC COMPLET
+    // ==================== SwipeRefresh ====================
 
     private void setupSwipeRefresh() {
         mSwipeRefreshLayout.setColorSchemeResources(
@@ -249,11 +242,11 @@ public class StructureActivity extends AppCompatActivity {
         );
 
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
+            mNoConnectionContainer.setVisibility(View.GONE);
             showLoadingState();
             loadStructureData();
         });
 
-        // Désactiver le swipe quand on n'est pas en haut du scroll
         mNestedScrollView.setOnScrollChangeListener(
                 (NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) ->
                         mSwipeRefreshLayout.setEnabled(scrollY == 0));
@@ -263,6 +256,30 @@ public class StructureActivity extends AppCompatActivity {
         if (mSwipeRefreshLayout != null && mSwipeRefreshLayout.isRefreshing()) {
             mSwipeRefreshLayout.setRefreshing(false);
         }
+    }
+
+    // ==================== États ====================
+
+    private void showLoadingState() {
+        mNestedScrollView.setVisibility(View.GONE);
+        mNoConnectionContainer.setVisibility(View.GONE);
+        mSkeletonLoadingContainer.setVisibility(View.VISIBLE);
+        startSkeletonShimmer(mSkeletonLoadingContainer);
+    }
+
+    private void showContentState() {
+        mSkeletonLoadingContainer.setVisibility(View.GONE);
+        stopSkeletonShimmer(mSkeletonLoadingContainer);
+        mNoConnectionContainer.setVisibility(View.GONE);
+        mNestedScrollView.setVisibility(View.VISIBLE);
+    }
+
+    private void showNoConnectionError() {
+        stopRefreshing();
+        stopSkeletonShimmer(mSkeletonLoadingContainer);
+        mSkeletonLoadingContainer.setVisibility(View.GONE);
+        mNestedScrollView.setVisibility(View.GONE);
+        mNoConnectionContainer.setVisibility(View.VISIBLE);
     }
 
     // ==================== BroadcastReceiver ====================
@@ -285,19 +302,10 @@ public class StructureActivity extends AppCompatActivity {
         }
     }
 
-    private void showLoadingState() {
-        mNestedScrollView.setVisibility(View.GONE);
-        mWaitRecyclerView.setVisibility(View.VISIBLE);
-
-        List<Connection> list = new ArrayList<>();
-        list.add(new Connection(getString(R.string.wait), ACTION_STRUCTURE, true));
-        NoConnectionAdapter adapter = new NoConnectionAdapter(list);
-        mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mWaitRecyclerView.setAdapter(adapter);
-    }
+    // ==================== Chargement ====================
 
     private void loadStructureData() {
-        String baseUrl = Server.getUrlApi(this);
+        String baseUrl  = Server.getUrlApi(this);
         String idNumber = mSession.getIdNumber();
         String structId = mStructure.getId();
 
@@ -316,11 +324,7 @@ public class StructureActivity extends AppCompatActivity {
                     String logoUrl = Server.getUrlServer(StructureActivity.this)
                             + "admin-api/storage/app/private/structures/1/logos/"
                             + mStructure.getCover();
-                    return Picasso.get()
-                            .load(logoUrl)
-                            .resize(192, 192)
-                            .centerCrop()
-                            .get();
+                    return Picasso.get().load(logoUrl).resize(192, 192).centerCrop().get();
                 } catch (IOException e) {
                     Log.e(TAG, "Erreur téléchargement logo raccourci", e);
                     return null;
@@ -379,16 +383,13 @@ public class StructureActivity extends AppCompatActivity {
                     addShortcutIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, mStructure.getName());
                     addShortcutIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
                     addShortcutIntent.putExtra("duplicate", false);
-
                     if (logoBitmap != null) {
                         addShortcutIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON, logoBitmap);
                     } else {
-                        Intent.ShortcutIconResource iconRes =
-                                Intent.ShortcutIconResource.fromContext(
-                                        StructureActivity.this, R.drawable.img_wait_struct);
+                        Intent.ShortcutIconResource iconRes = Intent.ShortcutIconResource.fromContext(
+                                StructureActivity.this, R.drawable.img_wait_struct);
                         addShortcutIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, iconRes);
                     }
-
                     sendBroadcast(addShortcutIntent);
                     Toast.makeText(StructureActivity.this,
                             "Raccourci « " + mStructure.getName() + " » créé !",
@@ -402,9 +403,7 @@ public class StructureActivity extends AppCompatActivity {
         Intent intent = new Intent(this, SearchActivity.class);
         intent.putExtra("search_key", searchKey);
         intent.putExtra("online_book_key", onlineBookKey);
-        if (structId != null) {
-            intent.putExtra("id_struct_key", structId);
-        }
+        if (structId != null) intent.putExtra("id_struct_key", structId);
         startActivity(intent);
     }
 
@@ -457,7 +456,8 @@ public class StructureActivity extends AppCompatActivity {
 
     private void loadStructureImages() {
         Picasso.get()
-                .load(Server.getUrlServer(this) + "admin-api/storage/app/private/structures/1/banners/" + mStructure.getBanner())
+                .load(Server.getUrlServer(this) +
+                        "admin-api/storage/app/private/structures/1/banners/" + mStructure.getBanner())
                 .transform(new RoundedTransformation(200, 10))
                 .resize(6200, 2222)
                 .placeholder(R.drawable.img_wait_banner)
@@ -467,7 +467,8 @@ public class StructureActivity extends AppCompatActivity {
         mWelcomeImageView.setVisibility(View.VISIBLE);
 
         Picasso.get()
-                .load(Server.getUrlServer(this) + "admin-api/storage/app/private/structures/1/logos/" + mStructure.getCover())
+                .load(Server.getUrlServer(this) +
+                        "admin-api/storage/app/private/structures/1/logos/" + mStructure.getCover())
                 .placeholder(R.drawable.img_wait_struct)
                 .error(R.drawable.img_default_book)
                 .transform(new RoundedTransformation(1000, 4))
@@ -498,9 +499,8 @@ public class StructureActivity extends AppCompatActivity {
         }
 
         private void processBookData(String jsonData) {
-            stopRefreshing();                    // ← AJOUT
-            mWaitRecyclerView.setVisibility(View.GONE);
-            mNestedScrollView.setVisibility(View.VISIBLE);
+            stopRefreshing();
+            showContentState();
 
             if (!RESPONSE_RAS.equals(jsonData)) {
                 try {
@@ -625,9 +625,6 @@ public class StructureActivity extends AppCompatActivity {
         }
 
         private void processCategories(String jsonData) {
-            mWaitRecyclerView.setVisibility(View.GONE);
-            mCategoryRecyclerView.setVisibility(View.VISIBLE);
-
             if (!RESPONSE_RAS.equals(jsonData)) {
                 try {
                     JSONArray jsonArray = new JSONArray(jsonData);
@@ -653,12 +650,8 @@ public class StructureActivity extends AppCompatActivity {
         }
 
         private void showCategoryLoadError() {
-            List<Connection> list = new ArrayList<>();
-            list.add(new Connection(getString(R.string.no_connection_available),
-                    "CATEGORY_FRAGMENT", false));
-            NoConnectionAdapter adapter = new NoConnectionAdapter(list);
-            mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(StructureActivity.this));
-            mWaitRecyclerView.setAdapter(adapter);
+            // Erreur silencieuse sur les catégories — le contenu principal reste visible
+            Log.e(TAG, "Error loading categories");
         }
     }
 
@@ -689,13 +682,12 @@ public class StructureActivity extends AppCompatActivity {
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
 
-        TextView errorTextView = dialog.findViewById(R.id.text_view_dialog_structure_delete_err);
-        TextView noTextView = dialog.findViewById(R.id.no);
-        TextView yesTextView = dialog.findViewById(R.id.yes);
+        TextView errorTextView    = dialog.findViewById(R.id.text_view_dialog_structure_delete_err);
+        TextView noTextView       = dialog.findViewById(R.id.no);
+        TextView yesTextView      = dialog.findViewById(R.id.yes);
         EditText passwordEditText = dialog.findViewById(R.id.edit_text_dialog_struct_delete_password);
 
         noTextView.setOnClickListener(v -> dialog.cancel());
-
         yesTextView.setOnClickListener(v ->
                 handleStructureDetach(dialog, passwordEditText, errorTextView, structId));
 
@@ -742,10 +734,10 @@ public class StructureActivity extends AppCompatActivity {
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
 
-        ImageView iconImageView = dialog.findViewById(R.id.image_view_dialog_simple_ok_icon);
-        TextView titleTextView = dialog.findViewById(R.id.text_view_dialog_simple_ok_title);
-        TextView messageTextView = dialog.findViewById(R.id.text_view_dialog_simple_ok_message);
-        TextView okTextView = dialog.findViewById(R.id.text_view_dialog_simple_ok);
+        ImageView iconImageView    = dialog.findViewById(R.id.image_view_dialog_simple_ok_icon);
+        TextView titleTextView     = dialog.findViewById(R.id.text_view_dialog_simple_ok_title);
+        TextView messageTextView   = dialog.findViewById(R.id.text_view_dialog_simple_ok_message);
+        TextView okTextView        = dialog.findViewById(R.id.text_view_dialog_simple_ok);
 
         iconImageView.setImageResource(iconRes);
         titleTextView.setText(title);
@@ -773,15 +765,9 @@ public class StructureActivity extends AppCompatActivity {
 
     private String executePostRequest(String url, RequestBody requestBody) {
         try {
-            Request request = new Request.Builder()
-                    .url(url)
-                    .post(requestBody)
-                    .build();
-
+            Request request = new Request.Builder().url(url).post(requestBody).build();
             try (Response response = mHttpClient.newCall(request).execute()) {
-                if (response.body() != null) {
-                    return response.body().string();
-                }
+                if (response.body() != null) return response.body().string();
             }
         } catch (IOException e) {
             Log.e(TAG, "Network error: " + e.getMessage(), e);
@@ -791,25 +777,90 @@ public class StructureActivity extends AppCompatActivity {
         return null;
     }
 
-    private void showNoConnectionError() {
-        stopRefreshing();                        // ← AJOUT
-        List<Connection> list = new ArrayList<>();
-        list.add(new Connection(getString(R.string.no_connection_available),
-                ACTION_STRUCTURE, false));
-        NoConnectionAdapter adapter = new NoConnectionAdapter(list);
-        mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mWaitRecyclerView.setAdapter(adapter);
+    // ==================== Shimmer ====================
+
+    private void startSkeletonShimmer(View container) {
+        if (!(container instanceof ViewGroup)) return;
+        List<View> skeletonViews = new ArrayList<>();
+        collectSkeletonViews((ViewGroup) container, skeletonViews);
+
+        mShimmerAnimator = ValueAnimator.ofFloat(0f, 1f);
+        mShimmerAnimator.setDuration(1200);
+        mShimmerAnimator.setRepeatCount(ValueAnimator.INFINITE);
+        mShimmerAnimator.setRepeatMode(ValueAnimator.RESTART);
+        mShimmerAnimator.addUpdateListener(anim -> {
+            float fraction = (float) anim.getAnimatedValue();
+            float alpha = 0.4f + 0.6f * (float)(0.5 + 0.5 * Math.sin(fraction * 2 * Math.PI));
+            for (View v : skeletonViews) v.setAlpha(alpha);
+        });
+        mShimmerAnimator.start();
     }
+
+    private void stopSkeletonShimmer(View container) {
+        if (mShimmerAnimator != null) {
+            mShimmerAnimator.cancel();
+            mShimmerAnimator = null;
+        }
+        if (container instanceof ViewGroup) {
+            List<View> views = new ArrayList<>();
+            collectSkeletonViews((ViewGroup) container, views);
+            for (View v : views) v.setAlpha(1f);
+        }
+    }
+
+    private void collectSkeletonViews(ViewGroup parent, List<View> out) {
+        for (int i = 0; i < parent.getChildCount(); i++) {
+            View child = parent.getChildAt(i);
+            if (child instanceof ViewGroup) collectSkeletonViews((ViewGroup) child, out);
+            else out.add(child);
+        }
+    }
+
+    // ==================== Arrow Animation ====================
+
+    private void startArrowAnimation() {
+        if (mNoConnectionContainer == null) return;
+        View arrow1 = mNoConnectionContainer.findViewById(R.id.arrow_1);
+        View arrow2 = mNoConnectionContainer.findViewById(R.id.arrow_2);
+        View arrow3 = mNoConnectionContainer.findViewById(R.id.arrow_3);
+        if (arrow1 == null || arrow2 == null || arrow3 == null) return;
+
+        mArrowAnimator = ValueAnimator.ofFloat(0f, 1f);
+        mArrowAnimator.setDuration(1000);
+        mArrowAnimator.setRepeatCount(ValueAnimator.INFINITE);
+        mArrowAnimator.setRepeatMode(ValueAnimator.RESTART);
+        mArrowAnimator.setInterpolator(new android.view.animation.AccelerateDecelerateInterpolator());
+        mArrowAnimator.addUpdateListener(anim -> {
+            float f  = (float) anim.getAnimatedValue();
+            float dp = getResources().getDisplayMetrics().density;
+            float t1 = bounce(f);
+            float t2 = bounce((f + 0.33f) % 1f);
+            float t3 = bounce((f + 0.66f) % 1f);
+            float max = 10f;
+            arrow1.setTranslationY(t1 * max * dp);
+            arrow2.setTranslationY(t2 * max * dp);
+            arrow3.setTranslationY(t3 * max * dp);
+            arrow1.setAlpha(0.25f + t1 * 0.3f);
+            arrow2.setAlpha(0.55f + t2 * 0.25f);
+            arrow3.setAlpha(0.85f + t3 * 0.15f);
+        });
+        mArrowAnimator.start();
+    }
+
+    private float bounce(float t) {
+        return (float) Math.sin(t * Math.PI);
+    }
+
+    // ==================== Cycle de vie ====================
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (mShimmerAnimator != null) { mShimmerAnimator.cancel(); mShimmerAnimator = null; }
+        if (mArrowAnimator != null)   { mArrowAnimator.cancel();   mArrowAnimator = null;   }
         if (mNoConnectionReceiver != null) {
-            try {
-                unregisterReceiver(mNoConnectionReceiver);
-            } catch (Exception e) {
-                Log.e(TAG, "Error unregistering receiver", e);
-            }
+            try { unregisterReceiver(mNoConnectionReceiver); }
+            catch (Exception e) { Log.e(TAG, "Error unregistering receiver", e); }
         }
     }
 }
