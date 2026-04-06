@@ -384,8 +384,25 @@ public class BookActivity extends AppCompatActivity {
         if (buttonText.equals(getString(R.string.reservation_book))) {
             showReservationDialog();
         } else if (buttonText.equals(getString(R.string.cancel_reservation))) {
-            new CancelReservationSyn().execute(mOnlineBook.getId());
+            showCancelConfirmationDialog(); // ← remplace l'appel direct
         }
+    }
+
+    private void showCancelConfirmationDialog() {
+        new android.app.AlertDialog.Builder(this)
+                .setTitle("Annuler la réservation")
+                .setMessage("Êtes-vous sûr de vouloir annuler votre réservation pour \""
+                        + mOnlineBook.getTitle() + "\" ?")
+                .setPositiveButton("Oui, annuler", (dialog, which) -> {
+                    new CancelReservationSyn().execute(
+                            Server.getUrlApi(this) + "cancel_reservation.php",
+                            mOnlineBook.getId(),
+                            mSession.getIdNumber()
+                    );
+                })
+                .setNegativeButton("Non, garder", (dialog, which) -> dialog.dismiss())
+                .setCancelable(true)
+                .show();
     }
 
     private void handlePdfDownload() {
@@ -888,24 +905,37 @@ public class BookActivity extends AppCompatActivity {
     }
 
     private class CancelReservationSyn extends AsyncTask<String, Void, String> {
+
         @Override
         protected String doInBackground(String... params) {
-            try {
-                Request request = new Request.Builder().url("https://server.eduniger.com/api/reservations/" + params[0]).delete().build();
-                try (Response response = mHttpClient.newCall(request).execute()) {
-                    if (response.body() != null) return response.body().string();
-                }
-            } catch (IOException e) { Log.e(TAG, "Network error", e); }
-            return null;
+            // params[0] = url  |  params[1] = idBook  |  params[2] = idNumber
+            RequestBody body = new MultipartBody.Builder()
+                    .setType(MultipartBody.FORM)
+                    .addFormDataPart("idBook",   params[1])
+                    .addFormDataPart("idNumber", params[2])
+                    .build();
+            return executePostRequest(params[0], body);
         }
 
         @Override
         protected void onPostExecute(String jsonData) {
-            if (jsonData != null && "true".equals(jsonData)) {
-                mReservationButton.setText(R.string.reservation_book);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                    mReservationButton.setBackgroundTintList(ContextCompat.getColorStateList(BookActivity.this, R.color.black3));
-            }
+            if (jsonData == null) return;
+            try {
+                JSONObject obj = new JSONObject(jsonData);
+                if (obj.optBoolean("success", false)) {
+                    // Réinitialiser le bouton
+                    mReservationButton.setText(R.string.reservation_book);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                        mReservationButton.setBackgroundTintList(
+                                ContextCompat.getColorStateList(BookActivity.this, R.color.black3));
+                    Toast.makeText(BookActivity.this,
+                            "Réservation annulée avec succès", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(BookActivity.this,
+                            obj.optString("message", "Erreur lors de l'annulation"),
+                            Toast.LENGTH_SHORT).show();
+                }
+            } catch (JSONException e) { Log.e(TAG, "Error parsing cancel response", e); }
         }
     }
 
