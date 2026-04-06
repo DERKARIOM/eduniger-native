@@ -25,6 +25,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;  // ← AJOUT
 
 import com.ninotech.eduniger.R;
 import com.ninotech.eduniger.controleur.adapter.AuthorHorizontaleAdapter;
@@ -69,6 +70,7 @@ public class StructureActivity extends AppCompatActivity {
 
     // Views
     private NestedScrollView mNestedScrollView;
+    private SwipeRefreshLayout mSwipeRefreshLayout;           // ← AJOUT
     private RecyclerView mWaitRecyclerView;
     private RecyclerView mBookRecommendedRecyclerView;
     private RecyclerView mAuthorRecyclerView;
@@ -113,6 +115,7 @@ public class StructureActivity extends AppCompatActivity {
         initializeViews();
         setupRecyclerViews();
         setupClickListeners();
+        setupSwipeRefresh();              // ← AJOUT
         loadStructureImages();
         registerBroadcastReceiver();
         loadStructureData();
@@ -143,8 +146,8 @@ public class StructureActivity extends AppCompatActivity {
     private void initializeViews() {
         mWaitRecyclerView = findViewById(R.id.recycler_view_activity_structure_wait);
         mNestedScrollView = findViewById(R.id.nested_scroll_view_activity_structure);
+        mSwipeRefreshLayout = findViewById(R.id.swipe_refresh_structure);   // ← AJOUT
         mBackImageView = findViewById(R.id.image_view_toolbar_book);
-       // mSearchEditText = findViewById(R.id.edit_text_toolbar_search);
         mSearchImageView = findViewById(R.id.image_view_toolbar_research);
         mWelcomeImageView = findViewById(R.id.image_view_structure_activity_welcome);
         mProfileImageView = findViewById(R.id.image_view_structure_activity_profile);
@@ -224,7 +227,9 @@ public class StructureActivity extends AppCompatActivity {
 
         mMoreAuthorTextView.setOnClickListener(v -> navigateToSearch(
                 "AUTHOR_ONLINE", "MAIN_ACTIVITY", null));
+
         mShortcutImageView.setOnClickListener(v -> createHomeShortcut());
+
         mAnnouncementImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -234,8 +239,76 @@ public class StructureActivity extends AppCompatActivity {
         });
     }
 
+    // ==================== SwipeRefresh ====================   ← AJOUT BLOC COMPLET
+
+    private void setupSwipeRefresh() {
+        mSwipeRefreshLayout.setColorSchemeResources(
+                R.color.purple_200,
+                android.R.color.holo_blue_light,
+                android.R.color.holo_orange_light
+        );
+
+        mSwipeRefreshLayout.setOnRefreshListener(() -> {
+            showLoadingState();
+            loadStructureData();
+        });
+
+        // Désactiver le swipe quand on n'est pas en haut du scroll
+        mNestedScrollView.setOnScrollChangeListener(
+                (NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) ->
+                        mSwipeRefreshLayout.setEnabled(scrollY == 0));
+    }
+
+    private void stopRefreshing() {
+        if (mSwipeRefreshLayout != null && mSwipeRefreshLayout.isRefreshing()) {
+            mSwipeRefreshLayout.setRefreshing(false);
+        }
+    }
+
+    // ==================== BroadcastReceiver ====================
+
+    private void registerBroadcastReceiver() {
+        mNoConnectionReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (ACTION_STRUCTURE.equals(intent.getAction())) {
+                    showLoadingState();
+                    loadStructureData();
+                }
+            }
+        };
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            registerReceiver(mNoConnectionReceiver,
+                    new IntentFilter(ACTION_STRUCTURE),
+                    Context.RECEIVER_EXPORTED);
+        }
+    }
+
+    private void showLoadingState() {
+        mNestedScrollView.setVisibility(View.GONE);
+        mWaitRecyclerView.setVisibility(View.VISIBLE);
+
+        List<Connection> list = new ArrayList<>();
+        list.add(new Connection(getString(R.string.wait), ACTION_STRUCTURE, true));
+        NoConnectionAdapter adapter = new NoConnectionAdapter(list);
+        mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mWaitRecyclerView.setAdapter(adapter);
+    }
+
+    private void loadStructureData() {
+        String baseUrl = Server.getUrlApi(this);
+        String idNumber = mSession.getIdNumber();
+        String structId = mStructure.getId();
+
+        new StructBookSyn().execute(baseUrl + "StructBook.php", idNumber, structId);
+        new CategorySyn().execute(baseUrl + "CategoryStrut.php", idNumber);
+        new AuthorSyn().execute(baseUrl + "author_top.php", idNumber);
+    }
+
+    // ==================== Shortcut ====================
+
     private void createHomeShortcut() {
-        // Télécharge le logo de la structure puis crée le raccourci
         new AsyncTask<Void, Void, android.graphics.Bitmap>() {
             @Override
             protected android.graphics.Bitmap doInBackground(Void... voids) {
@@ -247,7 +320,7 @@ public class StructureActivity extends AppCompatActivity {
                             .load(logoUrl)
                             .resize(192, 192)
                             .centerCrop()
-                            .get(); // Téléchargement synchrone (hors UI thread)
+                            .get();
                 } catch (IOException e) {
                     Log.e(TAG, "Erreur téléchargement logo raccourci", e);
                     return null;
@@ -257,7 +330,6 @@ public class StructureActivity extends AppCompatActivity {
             @SuppressLint("WrongThread")
             @Override
             protected void onPostExecute(android.graphics.Bitmap logoBitmap) {
-                // Intent qui sera lancé au clic du raccourci
                 Intent shortcutIntent = new Intent(StructureActivity.this, StructureActivity.class);
                 shortcutIntent.setAction(Intent.ACTION_MAIN);
                 shortcutIntent.putExtra("intent_structure_adapter_id", mStructure.getId());
@@ -271,7 +343,6 @@ public class StructureActivity extends AppCompatActivity {
                 shortcutIntent.putExtra("intent_structure_adapter_book_number", mStructure.getBookNumber());
                 shortcutIntent.putExtra("intent_structure_adapter_admin", mStructure.getAdmin());
 
-                // Icône : logo téléchargé ou icône par défaut
                 android.graphics.drawable.Icon icon;
                 if (logoBitmap != null) {
                     icon = android.graphics.drawable.Icon.createWithBitmap(logoBitmap);
@@ -281,7 +352,6 @@ public class StructureActivity extends AppCompatActivity {
                 }
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    // Android 8+ : ShortcutManager
                     android.content.pm.ShortcutManager shortcutManager =
                             getSystemService(android.content.pm.ShortcutManager.class);
 
@@ -304,23 +374,19 @@ public class StructureActivity extends AppCompatActivity {
                                 "Votre lanceur ne supporte pas les raccourcis épinglés.",
                                 Toast.LENGTH_SHORT).show();
                     }
-
                 } else {
-                    // Android < 8 : méthode classique via broadcast
                     Intent addShortcutIntent = new Intent("com.android.launcher.action.INSTALL_SHORTCUT");
                     addShortcutIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, mStructure.getName());
                     addShortcutIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
                     addShortcutIntent.putExtra("duplicate", false);
 
                     if (logoBitmap != null) {
-                        addShortcutIntent.putExtra(
-                                Intent.EXTRA_SHORTCUT_ICON, logoBitmap);
+                        addShortcutIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON, logoBitmap);
                     } else {
                         Intent.ShortcutIconResource iconRes =
                                 Intent.ShortcutIconResource.fromContext(
                                         StructureActivity.this, R.drawable.img_wait_struct);
-                        addShortcutIntent.putExtra(
-                                Intent.EXTRA_SHORTCUT_ICON_RESOURCE, iconRes);
+                        addShortcutIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, iconRes);
                     }
 
                     sendBroadcast(addShortcutIntent);
@@ -409,45 +475,6 @@ public class StructureActivity extends AppCompatActivity {
                 .into(mProfileImageView);
     }
 
-    private void registerBroadcastReceiver() {
-        mNoConnectionReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if (ACTION_STRUCTURE.equals(intent.getAction())) {
-                    showLoadingState();
-                    loadStructureData();
-                }
-            }
-        };
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            registerReceiver(mNoConnectionReceiver,
-                    new IntentFilter(ACTION_STRUCTURE),
-                    Context.RECEIVER_EXPORTED);
-        }
-    }
-
-    private void showLoadingState() {
-        mNestedScrollView.setVisibility(View.GONE);
-        mWaitRecyclerView.setVisibility(View.VISIBLE);
-
-        List<Connection> list = new ArrayList<>();
-        list.add(new Connection(getString(R.string.wait), ACTION_STRUCTURE, true));
-        NoConnectionAdapter adapter = new NoConnectionAdapter(list);
-        mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mWaitRecyclerView.setAdapter(adapter);
-    }
-
-    private void loadStructureData() {
-        String baseUrl = Server.getUrlApi(this);
-        String idNumber = mSession.getIdNumber();
-        String structId = mStructure.getId();
-
-        new StructBookSyn().execute(baseUrl + "StructBook.php", idNumber, structId);
-        new CategorySyn().execute(baseUrl + "CategoryStrut.php", idNumber);
-        new AuthorSyn().execute(baseUrl + "author_top.php", idNumber);
-    }
-
     // ==================== AsyncTask Classes ====================
 
     private class StructBookSyn extends AsyncTask<String, Void, String> {
@@ -471,16 +498,15 @@ public class StructureActivity extends AppCompatActivity {
         }
 
         private void processBookData(String jsonData) {
+            stopRefreshing();                    // ← AJOUT
             mWaitRecyclerView.setVisibility(View.GONE);
             mNestedScrollView.setVisibility(View.VISIBLE);
-//            mSearchEditText.setVisibility(View.VISIBLE);
 
             if (!RESPONSE_RAS.equals(jsonData)) {
                 try {
                     JSONArray jsonArray = new JSONArray(jsonData);
                     mOnlineBookList.clear();
 
-                    // Add "Add Book" option for admins
                     if (mStructure.isAdhere() && "1".equals(mStructure.getAdmin())) {
                         mOnlineBookList.add(new OnlineBook(
                                 "add", "addbook.png", "Ajouter un livre",
@@ -488,7 +514,6 @@ public class StructureActivity extends AppCompatActivity {
                         ));
                     }
 
-                    // Add books from server
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject obj = jsonArray.getJSONObject(i);
                         int numberLike = Integer.parseInt(obj.getString("numberLike"));
@@ -767,6 +792,7 @@ public class StructureActivity extends AppCompatActivity {
     }
 
     private void showNoConnectionError() {
+        stopRefreshing();                        // ← AJOUT
         List<Connection> list = new ArrayList<>();
         list.add(new Connection(getString(R.string.no_connection_available),
                 ACTION_STRUCTURE, false));
