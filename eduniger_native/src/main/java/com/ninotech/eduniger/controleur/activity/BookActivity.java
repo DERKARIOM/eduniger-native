@@ -1,5 +1,6 @@
 package com.ninotech.eduniger.controleur.activity;
 
+import android.animation.ValueAnimator;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +18,7 @@ import android.view.ContextMenu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -39,7 +41,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.ninotech.eduniger.R;
-import com.ninotech.eduniger.controleur.adapter.NoConnectionAdapter;
 import com.ninotech.eduniger.controleur.adapter.SemiNoConnectionAdapter;
 import com.ninotech.eduniger.controleur.adapter.TalksAdapter;
 import com.ninotech.eduniger.controleur.animation.RoundedTransformation;
@@ -87,9 +88,10 @@ public class BookActivity extends AppCompatActivity {
 
     // Views
     private NestedScrollView mNestedScrollView;
-    private SwipeRefreshLayout mSwipeRefreshLayout;          // ← AJOUT
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private View mSkeletonLoadingContainer;
+    private View mNoConnectionContainer;
     private RecyclerView mCommentsRecyclerView;
-    private RecyclerView mNoConnectionRecyclerView;
     private RelativeLayout mCommentRelativeLayout;
     private ImageView mBlanketImageView;
     private ImageView mLikeImageView;
@@ -149,6 +151,8 @@ public class BookActivity extends AppCompatActivity {
     private OkHttpClient mHttpClient;
     private BroadcastReceiver mFinishDownloadReceiver;
     private BroadcastReceiver mNoConnectionReceiver;
+    private ValueAnimator mShimmerAnimator;
+    private ValueAnimator mArrowAnimator;
 
     // State
     private boolean isLike = false;
@@ -166,7 +170,7 @@ public class BookActivity extends AppCompatActivity {
         initializeViews();
         setupRecyclerViews();
         setupClickListeners();
-        setupSwipeRefresh();             // ← AJOUT
+        setupSwipeRefresh();
         registerBroadcastReceivers();
         loadBookData();
     }
@@ -184,58 +188,58 @@ public class BookActivity extends AppCompatActivity {
     }
 
     private void initializeViews() {
-        mNestedScrollView = findViewById(R.id.nested_scroll_view_activity_book);
-        mSwipeRefreshLayout = findViewById(R.id.swipe_refresh_book);    // ← AJOUT
-        mCommentsRecyclerView = findViewById(R.id.recycler_view_activity_book_Comments);
-        mNoConnectionRecyclerView = findViewById(R.id.recycler_view_activity_book_wait);
-        mCommentRelativeLayout = findViewById(R.id.relative_layout_activity_book_comment);
-        mBlanketImageView = findViewById(R.id.image_view_adapter_book_simple_cover);
-        mTitleTextView = findViewById(R.id.text_view_adapter_book_simple_title);
-        mCategoryTextView = findViewById(R.id.text_view_adapter_description_category);
-        mDescriptionTextView = findViewById(R.id.text_view_activity_book_description);
-        mTimeNowTextView = findViewById(R.id.text_view_activity_book_time_now);
-        mReservationButton = findViewById(R.id.button_activity_book_reservation);
-        audioButton = findViewById(R.id.button_activity_book_audio);
-        downloadPDFButton = findViewById(R.id.button_activity_book_download_pdf);
-        mMessageTextView = findViewById(R.id.text_view_activity_book_message);
-        mNumberLikeTextView = findViewById(R.id.text_view_activity_book_number_like);
-        mNumberNoLikeTextView = findViewById(R.id.text_view_activity_book_number_no_like);
-        mNumberSubscribeTextView = findViewById(R.id.text_view_activity_book_number_subscribe);
-        mCote = findViewById(R.id.text_view_adapter_book_simple_id_book);
-        mLikeImageView = findViewById(R.id.image_view_activity_book_like);
-        mNoLikeImageView = findViewById(R.id.image_view_activity_book_no_like);
-        mPlayerImageView = findViewById(R.id.image_view_activity_book_player);
-        mSubscribeImageView = findViewById(R.id.image_view_activity_book_subscribe);
-        mSeekBar = findViewById(R.id.seekbar_activity_book);
-        mReservationLinearLayout = findViewById(R.id.linear_layout_activity_book_reservation);
-        mAudioLinearLayout = findViewById(R.id.linear_layout_activity_book_audio);
-        mElectronicLinearLayout = findViewById(R.id.linear_layout_activity_book_electronic);
-        mBackImageView = findViewById(R.id.image_view_toolbar_book);
-        mNameAuthor = findViewById(R.id.text_view_adapter_book_simple_author_name);
-        downloadAudioProgressBar = findViewById(R.id.progress_bar_download_audio);
-        downloadPdfProgressBar = findViewById(R.id.progress_bar_download_pdf);
-        mWaitPlayerProgressBar = findViewById(R.id.progress_bar_activity_book_wait_player);
-        mAudioSizeLinearLayout = findViewById(R.id.linear_layout_activity_book_audio_size);
-        mAudioSizeTextView = findViewById(R.id.text_view_activity_book_audio_size);
-        mMaxTimeLinearLayout = findViewById(R.id.linear_layout_activity_book_maxTime);
-        mMaxTimeTextView = findViewById(R.id.text_view_activity_book_audio_max_time);
-        mPdfSizeLinearLayout = findViewById(R.id.linear_layout_activity_book_pdf_size);
-        mPdfSizeTextView = findViewById(R.id.text_view_activity_book_pdf_size);
-        mNbrPageLinearLayout = findViewById(R.id.linear_layout_activity_book_nbr_page);
-        mNbrPageTextView = findViewById(R.id.text_view_activity_book_pdf_max_page);
-        mNbrView = findViewById(R.id.text_view_activity_book_view);
+        mNestedScrollView         = findViewById(R.id.nested_scroll_view_activity_book);
+        mSwipeRefreshLayout       = findViewById(R.id.swipe_refresh_book);
+        mSkeletonLoadingContainer = findViewById(R.id.skeleton_loading_container);
+        mNoConnectionContainer    = findViewById(R.id.no_connection_container);
+        mCommentsRecyclerView     = findViewById(R.id.recycler_view_activity_book_Comments);
+        mCommentRelativeLayout    = findViewById(R.id.relative_layout_activity_book_comment);
+        mBlanketImageView         = findViewById(R.id.image_view_adapter_book_simple_cover);
+        mTitleTextView            = findViewById(R.id.text_view_adapter_book_simple_title);
+        mCategoryTextView         = findViewById(R.id.text_view_adapter_description_category);
+        mDescriptionTextView      = findViewById(R.id.text_view_activity_book_description);
+        mTimeNowTextView          = findViewById(R.id.text_view_activity_book_time_now);
+        mReservationButton        = findViewById(R.id.button_activity_book_reservation);
+        audioButton               = findViewById(R.id.button_activity_book_audio);
+        downloadPDFButton         = findViewById(R.id.button_activity_book_download_pdf);
+        mMessageTextView          = findViewById(R.id.text_view_activity_book_message);
+        mNumberLikeTextView       = findViewById(R.id.text_view_activity_book_number_like);
+        mNumberNoLikeTextView     = findViewById(R.id.text_view_activity_book_number_no_like);
+        mNumberSubscribeTextView  = findViewById(R.id.text_view_activity_book_number_subscribe);
+        mCote                     = findViewById(R.id.text_view_adapter_book_simple_id_book);
+        mLikeImageView            = findViewById(R.id.image_view_activity_book_like);
+        mNoLikeImageView          = findViewById(R.id.image_view_activity_book_no_like);
+        mPlayerImageView          = findViewById(R.id.image_view_activity_book_player);
+        mSubscribeImageView       = findViewById(R.id.image_view_activity_book_subscribe);
+        mSeekBar                  = findViewById(R.id.seekbar_activity_book);
+        mReservationLinearLayout  = findViewById(R.id.linear_layout_activity_book_reservation);
+        mAudioLinearLayout        = findViewById(R.id.linear_layout_activity_book_audio);
+        mElectronicLinearLayout   = findViewById(R.id.linear_layout_activity_book_electronic);
+        mBackImageView            = findViewById(R.id.image_view_toolbar_book);
+        mNameAuthor               = findViewById(R.id.text_view_adapter_book_simple_author_name);
+        downloadAudioProgressBar  = findViewById(R.id.progress_bar_download_audio);
+        downloadPdfProgressBar    = findViewById(R.id.progress_bar_download_pdf);
+        mWaitPlayerProgressBar    = findViewById(R.id.progress_bar_activity_book_wait_player);
+        mAudioSizeLinearLayout    = findViewById(R.id.linear_layout_activity_book_audio_size);
+        mAudioSizeTextView        = findViewById(R.id.text_view_activity_book_audio_size);
+        mMaxTimeLinearLayout      = findViewById(R.id.linear_layout_activity_book_maxTime);
+        mMaxTimeTextView          = findViewById(R.id.text_view_activity_book_audio_max_time);
+        mPdfSizeLinearLayout      = findViewById(R.id.linear_layout_activity_book_pdf_size);
+        mPdfSizeTextView          = findViewById(R.id.text_view_activity_book_pdf_size);
+        mNbrPageLinearLayout      = findViewById(R.id.linear_layout_activity_book_nbr_page);
+        mNbrPageTextView          = findViewById(R.id.text_view_activity_book_pdf_max_page);
+        mNbrView                  = findViewById(R.id.text_view_activity_book_view);
 
         mPlayerImageView.setVisibility(View.GONE);
         audioButton.setEnabled(false);
+
+        startSkeletonShimmer(mSkeletonLoadingContainer);
+        startArrowAnimation();
     }
 
     private void setupRecyclerViews() {
         List<Connection> waitList = new ArrayList<>();
         waitList.add(new Connection(getString(R.string.wait), null, true));
-
-        NoConnectionAdapter noConnectionAdapter = new NoConnectionAdapter(waitList);
-        mNoConnectionRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mNoConnectionRecyclerView.setAdapter(noConnectionAdapter);
 
         SemiNoConnectionAdapter semiNoConnectionAdapter = new SemiNoConnectionAdapter(waitList);
         mCommentsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -248,9 +252,7 @@ public class BookActivity extends AppCompatActivity {
         mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (fromUser && mMediaPlayer != null) {
-                    mMediaPlayer.seekTo(progress);
-                }
+                if (fromUser && mMediaPlayer != null) mMediaPlayer.seekTo(progress);
             }
             @Override public void onStartTrackingTouch(SeekBar seekBar) {}
             @Override public void onStopTrackingTouch(SeekBar seekBar) {}
@@ -259,17 +261,15 @@ public class BookActivity extends AppCompatActivity {
         mReservationButton.setOnClickListener(v -> handleReservationClick());
         downloadPDFButton.setOnClickListener(v -> handlePdfDownload());
         audioButton.setOnClickListener(v -> handleAudioClick());
-
         mPlayerImageView.setOnClickListener(v -> toggleMediaPlayer());
         findViewById(R.id.image_view_activity_book_stop).setOnClickListener(v -> stopMediaPlayer());
-
         findViewById(R.id.linear_layout_activity_book_like).setOnClickListener(v -> handleLike());
         findViewById(R.id.linear_layout_activiry_book_nolike).setOnClickListener(v -> handleNoLike());
         findViewById(R.id.linear_layout_activity_book_subscribe).setOnClickListener(v -> handleSubscribe());
         findViewById(R.id.image_view_activity_book_add_comments).setOnClickListener(v -> sendComment());
     }
 
-    // ==================== SwipeRefresh ====================   ← AJOUT BLOC COMPLET
+    // ==================== SwipeRefresh ====================
 
     private void setupSwipeRefresh() {
         mSwipeRefreshLayout.setColorSchemeResources(
@@ -279,11 +279,11 @@ public class BookActivity extends AppCompatActivity {
         );
 
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
+            mNoConnectionContainer.setVisibility(View.GONE);
             showLoadingState();
             loadBookData();
         });
 
-        // Désactiver le swipe quand on n'est pas en haut du scroll
         mNestedScrollView.setOnScrollChangeListener(
                 (NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) ->
                         mSwipeRefreshLayout.setEnabled(scrollY == 0));
@@ -293,6 +293,30 @@ public class BookActivity extends AppCompatActivity {
         if (mSwipeRefreshLayout != null && mSwipeRefreshLayout.isRefreshing()) {
             mSwipeRefreshLayout.setRefreshing(false);
         }
+    }
+
+    // ==================== États ====================
+
+    private void showLoadingState() {
+        mNestedScrollView.setVisibility(View.GONE);
+        mNoConnectionContainer.setVisibility(View.GONE);
+        mSkeletonLoadingContainer.setVisibility(View.VISIBLE);
+        startSkeletonShimmer(mSkeletonLoadingContainer);
+    }
+
+    private void showContentState() {
+        mSkeletonLoadingContainer.setVisibility(View.GONE);
+        stopSkeletonShimmer(mSkeletonLoadingContainer);
+        mNoConnectionContainer.setVisibility(View.GONE);
+        mNestedScrollView.setVisibility(View.VISIBLE);
+    }
+
+    void showNoConnectionError() {
+        stopRefreshing();
+        stopSkeletonShimmer(mSkeletonLoadingContainer);
+        mSkeletonLoadingContainer.setVisibility(View.GONE);
+        mNestedScrollView.setVisibility(View.GONE);
+        mNoConnectionContainer.setVisibility(View.VISIBLE);
     }
 
     // ==================== BroadcastReceivers ====================
@@ -338,21 +362,10 @@ public class BookActivity extends AppCompatActivity {
         Toast.makeText(this, mOnlineBook.getTitle() + " Téléchargé avec succès", Toast.LENGTH_SHORT).show();
     }
 
-    private void showLoadingState() {
-        mNestedScrollView.setVisibility(View.GONE);
-        mNoConnectionRecyclerView.setVisibility(View.VISIBLE);
-
-        List<Connection> list = new ArrayList<>();
-        list.add(new Connection(getString(R.string.wait), null, true));
-        NoConnectionAdapter adapter = new NoConnectionAdapter(list);
-        mNoConnectionRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mNoConnectionRecyclerView.setAdapter(adapter);
-    }
-
     private void loadBookData() {
-        String baseUrl = Server.getUrlApi(this);
+        String baseUrl  = Server.getUrlApi(this);
         String idNumber = mSession.getIdNumber();
-        String bookId = mOnlineBook.getId();
+        String bookId   = mOnlineBook.getId();
 
         new RecoveryBook(this).execute(baseUrl + "book.php", idNumber, bookId);
         new IsReservationSyn().execute(baseUrl + "IsReservation.php", idNumber, bookId);
@@ -377,7 +390,6 @@ public class BookActivity extends AppCompatActivity {
 
     private void handlePdfDownload() {
         String buttonText = downloadPDFButton.getText().toString();
-
         if ("Format PDF".equals(buttonText)) {
             downloadPDFButton.setText("En Cours...");
             Toast.makeText(this, "Téléchargement démarré", Toast.LENGTH_SHORT).show();
@@ -390,21 +402,13 @@ public class BookActivity extends AppCompatActivity {
     private void startPdfDownloadService() {
         Intent intent = new Intent(this, PdfDownloadService.class);
         intent.putExtra("fileNames", new String[]{
-                mOnlineBook.getCover(),
-                mOnlineBook.getElectronic(),
-                mCategory.getCover(),
-                mAuthor.getProfile(),
-                mSession.getIdNumber(),
-                mOnlineBook.getId(),
-                mOnlineBook.getDescription(),
-                mOnlineBook.getAuthor(),
-                mOnlineBook.getCategory(),
-                mOnlineBook.getTitle()
+                mOnlineBook.getCover(), mOnlineBook.getElectronic(),
+                mCategory.getCover(), mAuthor.getProfile(),
+                mSession.getIdNumber(), mOnlineBook.getId(),
+                mOnlineBook.getDescription(), mOnlineBook.getAuthor(),
+                mOnlineBook.getCategory(), mOnlineBook.getTitle()
         });
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(intent);
-        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) startForegroundService(intent);
     }
 
     private void openPdfDocument() {
@@ -416,7 +420,6 @@ public class BookActivity extends AppCompatActivity {
 
     private void handleAudioClick() {
         String buttonText = audioButton.getText().toString();
-
         if ("Format Audio".equals(buttonText)) {
             audioButton.setText("En Cours...");
             downloadAudioProgressBar.setVisibility(View.GONE);
@@ -429,23 +432,13 @@ public class BookActivity extends AppCompatActivity {
     private void startAudioDownloadService() {
         Intent intent = new Intent(this, AudioDownloadService.class);
         intent.putExtra("fileNames", new String[]{
-                mOnlineBook.getCover(),
-                mOnlineBook.getElectronic(),
-                mCategory.getCover(),
-                mAuthor.getProfile(),
-                mTones.getAudio(),
-                mSession.getIdNumber(),
-                mOnlineBook.getId(),
-                mOnlineBook.getDescription(),
-                mOnlineBook.getAuthor(),
-                mOnlineBook.getCategory(),
-                mOnlineBook.getTitle(),
-                mTones.getDuration()
+                mOnlineBook.getCover(), mOnlineBook.getElectronic(),
+                mCategory.getCover(), mAuthor.getProfile(), mTones.getAudio(),
+                mSession.getIdNumber(), mOnlineBook.getId(),
+                mOnlineBook.getDescription(), mOnlineBook.getAuthor(),
+                mOnlineBook.getCategory(), mOnlineBook.getTitle(), mTones.getDuration()
         });
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(intent);
-        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) startForegroundService(intent);
     }
 
     private void navigateToAudioPlayer() {
@@ -484,7 +477,6 @@ public class BookActivity extends AppCompatActivity {
         } else {
             mOnlineBook.like();
             mLikeImageView.setImageResource(R.drawable.vector_purple2_200_on_like);
-
             if (isNoLike) {
                 mOnlineBook.disNoLike();
                 mNoLikeImageView.setImageResource(R.drawable.vector_black3_off_no_like);
@@ -493,13 +485,9 @@ public class BookActivity extends AppCompatActivity {
             }
             isLike = true;
         }
-
         mNumberLikeTextView.setText(String.valueOf(mOnlineBook.getNumberLikes()));
-        new InsertLikeSyn().execute(
-                Server.getUrlApi(this) + "InsertLike.php",
-                mSession.getIdNumber(),
-                mOnlineBook.getId()
-        );
+        new InsertLikeSyn().execute(Server.getUrlApi(this) + "InsertLike.php",
+                mSession.getIdNumber(), mOnlineBook.getId());
     }
 
     private void handleNoLike() {
@@ -510,7 +498,6 @@ public class BookActivity extends AppCompatActivity {
         } else {
             mOnlineBook.noLike();
             mNoLikeImageView.setImageResource(R.drawable.vector_rouge_on_nolike);
-
             if (isLike) {
                 mOnlineBook.disLike();
                 mLikeImageView.setImageResource(R.drawable.vector_black3_off_like);
@@ -519,13 +506,9 @@ public class BookActivity extends AppCompatActivity {
             }
             isNoLike = true;
         }
-
         mNumberNoLikeTextView.setText(String.valueOf(mOnlineBook.getNumberNoLikes()));
-        new InsertNoLikeSyn().execute(
-                Server.getUrlApi(this) + "InsertNoLike.php",
-                mSession.getIdNumber(),
-                mOnlineBook.getId()
-        );
+        new InsertNoLikeSyn().execute(Server.getUrlApi(this) + "InsertNoLike.php",
+                mSession.getIdNumber(), mOnlineBook.getId());
     }
 
     private void handleSubscribe() {
@@ -538,13 +521,9 @@ public class BookActivity extends AppCompatActivity {
             mSubscribeImageView.setImageResource(R.drawable.vector_purple2_200_suscribe);
             isSubscribe = true;
         }
-
         mNumberSubscribeTextView.setText(String.valueOf(mOnlineBook.getNumberSubscribe()));
-        new InsertSubscribeBookSyn().execute(
-                Server.getUrlApi(this) + "InsertSubscribeBook.php",
-                mSession.getIdNumber(),
-                mOnlineBook.getId()
-        );
+        new InsertSubscribeBookSyn().execute(Server.getUrlApi(this) + "InsertSubscribeBook.php",
+                mSession.getIdNumber(), mOnlineBook.getId());
     }
 
     private void sendComment() {
@@ -552,33 +531,21 @@ public class BookActivity extends AppCompatActivity {
         if (!"null".equals(message) && !message.isEmpty()) {
             Chat chat = new Chat(mSession.getIdNumber(), this, message);
             mMessageTextView.setText("");
-
-            mTalksList.add(new Talks(
-                    mSession.getIdNumber() + ".png",
-                    chat.getUserName(),
-                    chat.getMessage()
-            ));
-
+            mTalksList.add(new Talks(mSession.getIdNumber() + ".png", chat.getUserName(), chat.getMessage()));
             talksAdapter = new TalksAdapter(mTalksList);
             mCommentsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
             mCommentsRecyclerView.setAdapter(talksAdapter);
             mCommentsRecyclerView.smoothScrollToPosition(talksAdapter.getItemCount() - 1);
-
-            new SendComments().execute(
-                    Server.getUrlApi(this) + "SendComments.php",
-                    mSession.getIdNumber(),
-                    mOnlineBook.getId(),
-                    chat.getMessage()
-            );
+            new SendComments().execute(Server.getUrlApi(this) + "SendComments.php",
+                    mSession.getIdNumber(), mOnlineBook.getId(), chat.getMessage());
         }
     }
 
-    // ==================== Book Data Processing (used by RecoveryBook) ====================
+    // ==================== Book Data Processing ====================
 
     void processBookData(String jsonData) {
-        stopRefreshing();                        // ← AJOUT
-        mNoConnectionRecyclerView.setVisibility(View.GONE);
-        mNestedScrollView.setVisibility(View.VISIBLE);
+        stopRefreshing();
+        showContentState();
 
         try {
             JSONObject obj = new JSONObject(jsonData);
@@ -608,21 +575,10 @@ public class BookActivity extends AppCompatActivity {
         mOnlineBook.setNumberView(Integer.parseInt(obj.getString("numberView")));
         mOnlineBook.setAuthor(obj.getString("firstName") + " " + obj.getString("name"));
 
-        mCategory = new Category(
-                obj.getString("categoryBlanket"),
-                obj.getString("categoryTitle")
-        );
-
-        mAuthor = new Author(
-                obj.getString("idAuthor"),
-                obj.getString("name"),
-                obj.getString("firstName"),
-                obj.getString("profile"),
-                obj.getString("profession"),
-                obj.getString("call"),
-                obj.getString("email"),
-                obj.getString("whatsapp")
-        );
+        mCategory = new Category(obj.getString("categoryBlanket"), obj.getString("categoryTitle"));
+        mAuthor = new Author(obj.getString("idAuthor"), obj.getString("name"),
+                obj.getString("firstName"), obj.getString("profile"), obj.getString("profession"),
+                obj.getString("call"), obj.getString("email"), obj.getString("whatsapp"));
 
         mTitleTextView.setText(mOnlineBook.getTitle());
         mNameAuthor.setText("De " + obj.getString("name") + " " + obj.getString("firstName"));
@@ -661,8 +617,8 @@ public class BookActivity extends AppCompatActivity {
             if ("0".equals(mOnlineBook.getIsAvailable())) {
                 mReservationButton.setText("En cours de consultation");
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    mReservationButton.setBackgroundTintList(
-                            ColorStateList.valueOf(ContextCompat.getColor(BookActivity.this, R.color.whiteSombre)));
+                    mReservationButton.setBackgroundTintList(ColorStateList.valueOf(
+                            ContextCompat.getColor(BookActivity.this, R.color.whiteSombre)));
                     mReservationButton.setEnabled(false);
                 }
             }
@@ -682,10 +638,7 @@ public class BookActivity extends AppCompatActivity {
         if (!"null".equals(mOnlineBook.getElectronic())) {
             mElectronicLinearLayout.setVisibility(View.VISIBLE);
             mSourcePdf = mElectronicTable.isExist(mSession.getIdNumber(), mOnlineBook.getId());
-
-            if (!"false".equals(mSourcePdf)) {
-                downloadPDFButton.setText("Ouvrir");
-            }
+            if (!"false".equals(mSourcePdf)) downloadPDFButton.setText("Ouvrir");
 
             if (!"null".equals(mOnlineBook.getSize())) {
                 mPdfSizeTextView.setText(mOnlineBook.getSize());
@@ -707,15 +660,12 @@ public class BookActivity extends AppCompatActivity {
     private static class RecoveryBook extends AsyncTask<String, Void, String> {
         private final WeakReference<BookActivity> activityRef;
 
-        RecoveryBook(BookActivity activity) {
-            this.activityRef = new WeakReference<>(activity);
-        }
+        RecoveryBook(BookActivity activity) { this.activityRef = new WeakReference<>(activity); }
 
         @Override
         protected String doInBackground(String... params) {
             BookActivity activity = activityRef.get();
             if (activity == null) return null;
-
             String url = params[0] + "?id_number=" + params[1] + "&id_book=" + params[2];
             return activity.executeGetRequest(url);
         }
@@ -724,33 +674,24 @@ public class BookActivity extends AppCompatActivity {
         protected void onPostExecute(String jsonData) {
             BookActivity activity = activityRef.get();
             if (activity == null) return;
-
-            if (jsonData != null) {
-                activity.processBookData(jsonData);
-            } else {
-                activity.showNoConnectionError();
-            }
+            if (jsonData != null) activity.processBookData(jsonData);
+            else activity.showNoConnectionError();
         }
     }
 
     private class ReceiveComments extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-            return executePostRequest(params[0],
-                    new MultipartBody.Builder()
-                            .setType(MultipartBody.FORM)
-                            .addFormDataPart("idNumber", params[1])
-                            .addFormDataPart("idBook", params[2])
-                            .build());
+            return executePostRequest(params[0], new MultipartBody.Builder()
+                    .setType(MultipartBody.FORM)
+                    .addFormDataPart("idNumber", params[1])
+                    .addFormDataPart("idBook", params[2]).build());
         }
 
         @Override
         protected void onPostExecute(String jsonData) {
-            if (jsonData != null) {
-                processComments(jsonData);
-            } else {
-                showCommentLoadError();
-            }
+            if (jsonData != null) processComments(jsonData);
+            else showCommentLoadError();
         }
 
         private void processComments(String jsonData) {
@@ -758,21 +699,13 @@ public class BookActivity extends AppCompatActivity {
                 try {
                     JSONArray jsonArray = new JSONArray(jsonData);
                     mTalksList.clear();
-
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject obj = jsonArray.getJSONObject(i);
                         String fullName = obj.getString("name") + " " + obj.getString("firstName");
-                        mTalksList.add(new Talks(
-                                obj.getString("idUser") + ".png",
-                                fullName,
-                                obj.getString("message")
-                        ));
+                        mTalksList.add(new Talks(obj.getString("idUser") + ".png", fullName, obj.getString("message")));
                     }
-                } catch (JSONException e) {
-                    Log.e(TAG, "Error parsing comments", e);
-                }
+                } catch (JSONException e) { Log.e(TAG, "Error parsing comments", e); }
             }
-
             talksAdapter = new TalksAdapter(mTalksList);
             mCommentsRecyclerView.setLayoutManager(new LinearLayoutManager(BookActivity.this));
             registerForContextMenu(mCommentsRecyclerView);
@@ -792,12 +725,10 @@ public class BookActivity extends AppCompatActivity {
     private class RecoveryTones extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-            return executePostRequest(params[0],
-                    new MultipartBody.Builder()
-                            .setType(MultipartBody.FORM)
-                            .addFormDataPart("idNumber", mSession.getIdNumber())
-                            .addFormDataPart("idBook", mOnlineBook.getId())
-                            .build());
+            return executePostRequest(params[0], new MultipartBody.Builder()
+                    .setType(MultipartBody.FORM)
+                    .addFormDataPart("idNumber", mSession.getIdNumber())
+                    .addFormDataPart("idBook", mOnlineBook.getId()).build());
         }
 
         @Override
@@ -812,53 +743,19 @@ public class BookActivity extends AppCompatActivity {
             try {
                 JSONArray jsonArray = new JSONArray(jsonData);
                 mListTones.clear();
-
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject obj = jsonArray.getJSONObject(i);
-                    mListTones.add(new Tones(
-                            i + 1,
-                            obj.getString("audio"),
-                            obj.getString("title"),
-                            0,
-                            false
-                    ));
-
-                    if (i == 0) {
-                        mTones = new Tones(
-                                0,
-                                obj.getString("audio"),
-                                obj.getString("size"),
-                                obj.getString("maxTime")
-                        );
-                    }
+                    mListTones.add(new Tones(i + 1, obj.getString("audio"), obj.getString("title"), 0, false));
+                    if (i == 0) mTones = new Tones(0, obj.getString("audio"), obj.getString("size"), obj.getString("maxTime"));
                 }
-
-                displayAudioInfo();
-            } catch (JSONException e) {
-                Log.e(TAG, "Error parsing tones", e);
-            }
-        }
-
-        private void displayAudioInfo() {
-            if (!"null".equals(mTones.getSize())) {
-                mAudioSizeTextView.setText(mTones.getSize());
-                mAudioSizeLinearLayout.setVisibility(View.VISIBLE);
-            }
-
-            if (!"null".equals(mTones.getDuration())) {
-                audioButton.setEnabled(true);
-                mMaxTimeTextView.setText(mTones.getDuration());
-                mMaxTimeLinearLayout.setVisibility(View.VISIBLE);
-            } else {
-                audioButton.setEnabled(false);
-                audioButton.setText("Bientôt");
-            }
+                if (!"null".equals(mTones.getSize())) { mAudioSizeTextView.setText(mTones.getSize()); mAudioSizeLinearLayout.setVisibility(View.VISIBLE); }
+                if (!"null".equals(mTones.getDuration())) { audioButton.setEnabled(true); mMaxTimeTextView.setText(mTones.getDuration()); mMaxTimeLinearLayout.setVisibility(View.VISIBLE); }
+                else { audioButton.setEnabled(false); audioButton.setText("Bientôt"); }
+            } catch (JSONException e) { Log.e(TAG, "Error parsing tones", e); }
         }
 
         private void setupMediaPlayer() {
-            String url = Server.getUrlServer(BookActivity.this) +
-                    "ressources/audio/" + mTones.getAudio();
-
+            String url = Server.getUrlServer(BookActivity.this) + "ressources/audio/" + mTones.getAudio();
             try {
                 mMediaPlayer.setDataSource(url);
                 mMediaPlayer.prepare();
@@ -866,186 +763,92 @@ public class BookActivity extends AppCompatActivity {
                 mTones.setDuration(convertDurationToString(mMediaPlayer.getDuration()));
                 mWaitPlayerProgressBar.setVisibility(View.GONE);
                 mPlayerImageView.setVisibility(View.VISIBLE);
-
-                startMediaPlayerThread();
-            } catch (IOException e) {
-                Log.e(TAG, "Error setting up media player", e);
-            } catch (Exception e) {
-                Log.e(TAG, "Unexpected error in media player setup", e);
-            }
-        }
-
-        private void startMediaPlayerThread() {
-            mMediaPlayerThread = new Thread(() -> {
-                while (mMediaPlayer != null && !Thread.currentThread().isInterrupted()) {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                        break;
+                mMediaPlayerThread = new Thread(() -> {
+                    while (mMediaPlayer != null && !Thread.currentThread().isInterrupted()) {
+                        try { Thread.sleep(1000); } catch (InterruptedException e) { Thread.currentThread().interrupt(); break; }
+                        mHandler.post(() -> {
+                            if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
+                                int currentTime = mMediaPlayer.getCurrentPosition();
+                                mSeekBar.setProgress(currentTime);
+                                mTimeNowTextView.setText(convertDurationToString(currentTime));
+                            }
+                        });
                     }
-
-                    mHandler.post(() -> {
-                        if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
-                            int currentTime = mMediaPlayer.getCurrentPosition();
-                            mSeekBar.setProgress(currentTime);
-                            mTimeNowTextView.setText(convertDurationToString(currentTime));
-                        }
-                    });
-                }
-            });
-            mMediaPlayerThread.start();
+                });
+                mMediaPlayerThread.start();
+            } catch (IOException e) { Log.e(TAG, "Error setting up media player", e); }
         }
     }
 
-    // ==================== Simple AsyncTasks ====================
-
     private class InsertLikeSyn extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... params) {
-            return executePostRequest(params[0], createIdBookRequestBody(params[1], params[2]));
-        }
-
-        @Override
-        protected void onPostExecute(String jsonData) {
-            if (jsonData != null && "true".equals(jsonData)) {
-                Log.d(TAG, "Like inserted successfully");
-            }
-        }
+        @Override protected String doInBackground(String... p) { return executePostRequest(p[0], createIdBookRequestBody(p[1], p[2])); }
+        @Override protected void onPostExecute(String d) {}
     }
 
     private class InsertNoLikeSyn extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... params) {
-            return executePostRequest(params[0], createIdBookRequestBody(params[1], params[2]));
-        }
-
-        @Override
-        protected void onPostExecute(String jsonData) {
-            if (jsonData != null && "true".equals(jsonData)) {
-                Log.d(TAG, "NoLike inserted successfully");
-            }
-        }
+        @Override protected String doInBackground(String... p) { return executePostRequest(p[0], createIdBookRequestBody(p[1], p[2])); }
+        @Override protected void onPostExecute(String d) {}
     }
 
     private class InsertSubscribeBookSyn extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... params) {
-            return executePostRequest(params[0], createIdBookRequestBody(params[1], params[2]));
-        }
-
-        @Override
-        protected void onPostExecute(String jsonData) {
-            if (jsonData != null && "true".equals(jsonData)) {
-                Log.d(TAG, "Subscribe inserted successfully");
-            }
-        }
+        @Override protected String doInBackground(String... p) { return executePostRequest(p[0], createIdBookRequestBody(p[1], p[2])); }
+        @Override protected void onPostExecute(String d) {}
     }
 
     private class InsertViewSyn extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... params) {
-            return executePostRequest(params[0], createIdBookRequestBody(params[1], params[2]));
-        }
-
-        @Override
-        protected void onPostExecute(String jsonData) {
-            // View count updated
-        }
+        @Override protected String doInBackground(String... p) { return executePostRequest(p[0], createIdBookRequestBody(p[1], p[2])); }
+        @Override protected void onPostExecute(String d) {}
     }
 
     private class IsLikeSyn extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... params) {
-            return executePostRequest(params[0], createIdBookRequestBody(params[1], params[2]));
-        }
-
-        @Override
-        protected void onPostExecute(String jsonData) {
+        @Override protected String doInBackground(String... p) { return executePostRequest(p[0], createIdBookRequestBody(p[1], p[2])); }
+        @Override protected void onPostExecute(String jsonData) {
             if (jsonData != null && !RESPONSE_RAS.equals(jsonData)) {
-                if (jsonData.equals(mSession.getIdNumber())) {
-                    isLike = true;
-                    mLikeImageView.setImageResource(R.drawable.vector_purple2_200_on_like);
-                } else {
-                    mLikeImageView.setImageResource(R.drawable.vector_black3_off_like);
-                }
+                if (jsonData.equals(mSession.getIdNumber())) { isLike = true; mLikeImageView.setImageResource(R.drawable.vector_purple2_200_on_like); }
+                else mLikeImageView.setImageResource(R.drawable.vector_black3_off_like);
             }
         }
     }
 
     private class IsNoLikeSyn extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... params) {
-            return executePostRequest(params[0], createIdBookRequestBody(params[1], params[2]));
-        }
-
-        @Override
-        protected void onPostExecute(String jsonData) {
+        @Override protected String doInBackground(String... p) { return executePostRequest(p[0], createIdBookRequestBody(p[1], p[2])); }
+        @Override protected void onPostExecute(String jsonData) {
             if (jsonData != null && !RESPONSE_RAS.equals(jsonData)) {
-                if (jsonData.equals(mSession.getIdNumber())) {
-                    isNoLike = true;
-                    mNoLikeImageView.setImageResource(R.drawable.vector_rouge_on_nolike);
-                } else {
-                    mNoLikeImageView.setImageResource(R.drawable.vector_black3_off_no_like);
-                }
+                if (jsonData.equals(mSession.getIdNumber())) { isNoLike = true; mNoLikeImageView.setImageResource(R.drawable.vector_rouge_on_nolike); }
+                else mNoLikeImageView.setImageResource(R.drawable.vector_black3_off_no_like);
             }
         }
     }
 
     private class IsSubscribeBookSyn extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... params) {
-            return executePostRequest(params[0], createIdBookRequestBody(params[1], params[2]));
-        }
-
-        @Override
-        protected void onPostExecute(String jsonData) {
+        @Override protected String doInBackground(String... p) { return executePostRequest(p[0], createIdBookRequestBody(p[1], p[2])); }
+        @Override protected void onPostExecute(String jsonData) {
             if (jsonData != null && !RESPONSE_RAS.equals(jsonData)) {
-                if (jsonData.equals(mSession.getIdNumber())) {
-                    isSubscribe = true;
-                    mSubscribeImageView.setImageResource(R.drawable.vector_purple2_200_suscribe);
-                } else {
-                    mSubscribeImageView.setImageResource(R.drawable.vector_black3_off_subscribe);
-                }
+                if (jsonData.equals(mSession.getIdNumber())) { isSubscribe = true; mSubscribeImageView.setImageResource(R.drawable.vector_purple2_200_suscribe); }
+                else mSubscribeImageView.setImageResource(R.drawable.vector_black3_off_subscribe);
             }
         }
     }
 
     private class IsReservationSyn extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... params) {
-            return executePostRequest(params[0], createIdBookRequestBody(params[1], params[2]));
-        }
-
-        @Override
-        protected void onPostExecute(String jsonData) {
+        @Override protected String doInBackground(String... p) { return executePostRequest(p[0], createIdBookRequestBody(p[1], p[2])); }
+        @Override protected void onPostExecute(String jsonData) {
             if (jsonData != null && !"ras".equals(jsonData)) {
-                processReservationStatus(jsonData);
-            }
-        }
-
-        private void processReservationStatus(String jsonData) {
-            try {
-                JSONObject obj = new JSONObject(jsonData);
-                String state = obj.getString("state");
-                String treat = obj.getString("treat");
-
-                if ("1".equals(state) && "1".equals(treat)) {
-                    mReservationButton.setText(R.string.cancel_reservation);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        mReservationButton.setBackgroundTintList(
-                                ColorStateList.valueOf(ContextCompat.getColor(BookActivity.this, R.color.rouge)));
+                try {
+                    JSONObject obj = new JSONObject(jsonData);
+                    String state = obj.getString("state"), treat = obj.getString("treat");
+                    if ("1".equals(state) && "1".equals(treat)) {
+                        mReservationButton.setText(R.string.cancel_reservation);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                            mReservationButton.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(BookActivity.this, R.color.rouge)));
+                    } else if ("2".equals(state) && "1".equals(treat)) {
+                        mReservationButton.setText("En cours de consultation");
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            mReservationButton.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(BookActivity.this, R.color.whiteSombre)));
+                            mReservationButton.setEnabled(false);
+                        }
                     }
-                } else if ("2".equals(state) && "1".equals(treat)) {
-                    mReservationButton.setText("En cours de consultation");
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        mReservationButton.setBackgroundTintList(
-                                ColorStateList.valueOf(ContextCompat.getColor(BookActivity.this, R.color.whiteSombre)));
-                        mReservationButton.setEnabled(false);
-                    }
-                }
-            } catch (JSONException e) {
-                Log.e(TAG, "Error parsing reservation status", e);
+                } catch (JSONException e) { Log.e(TAG, "Error parsing reservation status", e); }
             }
         }
     }
@@ -1053,24 +856,12 @@ public class BookActivity extends AppCompatActivity {
     private class CancelReservationSyn extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-            String url = "https://server.eduniger.com/api/reservations/" + params[0];
-
             try {
-                Request request = new Request.Builder()
-                        .url(url)
-                        .delete()
-                        .build();
-
+                Request request = new Request.Builder().url("https://server.eduniger.com/api/reservations/" + params[0]).delete().build();
                 try (Response response = mHttpClient.newCall(request).execute()) {
-                    if (response.body() != null) {
-                        return response.body().string();
-                    }
+                    if (response.body() != null) return response.body().string();
                 }
-            } catch (IOException e) {
-                Log.e(TAG, "Network error: " + e.getMessage(), e);
-            } catch (Exception e) {
-                Log.e(TAG, "Unexpected error: " + e.getMessage(), e);
-            }
+            } catch (IOException e) { Log.e(TAG, "Network error", e); }
             return null;
         }
 
@@ -1078,37 +869,26 @@ public class BookActivity extends AppCompatActivity {
         protected void onPostExecute(String jsonData) {
             if (jsonData != null && "true".equals(jsonData)) {
                 mReservationButton.setText(R.string.reservation_book);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    mReservationButton.setBackgroundTintList(
-                            ContextCompat.getColorStateList(BookActivity.this, R.color.black3));
-                }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                    mReservationButton.setBackgroundTintList(ContextCompat.getColorStateList(BookActivity.this, R.color.black3));
             }
         }
     }
 
     private class Reservation extends AsyncTask<String, Void, String> {
-
         private final Button mSendButton;
         private final ProgressBar mProgressBar;
 
-        Reservation(Button sendButton, ProgressBar progressBar) {
-            this.mSendButton = sendButton;
-            this.mProgressBar = progressBar;
-        }
+        Reservation(Button sendButton, ProgressBar progressBar) { this.mSendButton = sendButton; this.mProgressBar = progressBar; }
 
         @Override
         protected String doInBackground(String... params) {
-            String url = "https://server.eduniger.com/api/reservations";
-
-            RequestBody requestBody = new MultipartBody.Builder()
-                    .setType(MultipartBody.FORM)
-                    .addFormDataPart("idStruct", "1")
-                    .addFormDataPart("idUser", params[1])
-                    .addFormDataPart("idBook", params[2])
-                    .addFormDataPart("numberOfDays", params[3])
-                    .build();
-
-            return executePostRequest(url, requestBody);
+            return executePostRequest("https://server.eduniger.com/api/reservations",
+                    new MultipartBody.Builder().setType(MultipartBody.FORM)
+                            .addFormDataPart("idStruct", "1")
+                            .addFormDataPart("idUser", params[1])
+                            .addFormDataPart("idBook", params[2])
+                            .addFormDataPart("numberOfDays", params[3]).build());
         }
 
         @Override
@@ -1116,27 +896,16 @@ public class BookActivity extends AppCompatActivity {
             mProgressBar.setVisibility(View.INVISIBLE);
             mSendButton.setEnabled(true);
             mSendButton.setText("Envoyer");
-
             if (jsonData != null) {
                 try {
-                    JSONObject obj = new JSONObject(jsonData);
-                    String message = obj.getString("message");
-
-                    if ("Réservation créée".equals(message)) {
+                    if ("Réservation créée".equals(new JSONObject(jsonData).getString("message"))) {
                         mReservationDialog.cancel();
-                        showSuccessReservationDialog(
-                                "Merci d'avoir réservé \"" + mTitleTextView.getText().toString() +
-                                        "\" sur fabi; nous traitons votre demande et vous confirmerons la disponibilité bientôt."
-                        );
+                        showSuccessReservationDialog("Merci d'avoir réservé \"" + mTitleTextView.getText().toString() + "\" sur fabi; nous traitons votre demande et vous confirmerons la disponibilité bientôt.");
                         mReservationButton.setText(R.string.cancel_reservation);
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            mReservationButton.setBackgroundTintList(
-                                    ContextCompat.getColorStateList(BookActivity.this, R.color.rouge));
-                        }
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                            mReservationButton.setBackgroundTintList(ContextCompat.getColorStateList(BookActivity.this, R.color.rouge));
                     }
-                } catch (JSONException e) {
-                    Log.e(TAG, "Error parsing reservation response", e);
-                }
+                } catch (JSONException e) { Log.e(TAG, "Error parsing reservation response", e); }
             }
         }
     }
@@ -1144,19 +913,11 @@ public class BookActivity extends AppCompatActivity {
     private class SendComments extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-            return executePostRequest(params[0],
-                    new MultipartBody.Builder()
-                            .setType(MultipartBody.FORM)
-                            .addFormDataPart("idNumber", params[1])
-                            .addFormDataPart("idBook", params[2])
-                            .addFormDataPart("message", params[3])
-                            .build());
+            return executePostRequest(params[0], new MultipartBody.Builder().setType(MultipartBody.FORM)
+                    .addFormDataPart("idNumber", params[1]).addFormDataPart("idBook", params[2])
+                    .addFormDataPart("message", params[3]).build());
         }
-
-        @Override
-        protected void onPostExecute(String jsonData) {
-            // Comment sent
-        }
+        @Override protected void onPostExecute(String d) {}
     }
 
     // ==================== Dialogs ====================
@@ -1168,25 +929,17 @@ public class BookActivity extends AppCompatActivity {
         EditText passwordEditText = mReservationDialog.findViewById(R.id.edit_text_dialog_reservation_password);
         TextView errorTextView = mReservationDialog.findViewById(R.id.text_view_dialog_reservation_error);
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-                this, R.array.delait_reservation, android.R.layout.simple_spinner_item);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.delait_reservation, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         timeLimitSpinner.setAdapter(adapter);
-
         sendButton.setBackground(getDrawable(R.drawable.form_purple_200_radius_10dp));
-
-        localConsultationCheckBox.setOnClickListener(v ->
-                timeLimitSpinner.setEnabled(!localConsultationCheckBox.isChecked()));
-
-        sendButton.setOnClickListener(v ->
-                handleReservationSubmit(passwordEditText, errorTextView, timeLimitSpinner));
-
+        localConsultationCheckBox.setOnClickListener(v -> timeLimitSpinner.setEnabled(!localConsultationCheckBox.isChecked()));
+        sendButton.setOnClickListener(v -> handleReservationSubmit(passwordEditText, errorTextView, timeLimitSpinner));
         mReservationDialog.build();
     }
 
     private void handleReservationSubmit(EditText passwordEditText, TextView errorTextView, Spinner timeLimitSpinner) {
         String password = passwordEditText.getText().toString();
-
         if (password.isEmpty()) {
             errorTextView.setText(R.string.edit_text_hint_password);
             passwordEditText.setBackground(getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
@@ -1194,22 +947,11 @@ public class BookActivity extends AppCompatActivity {
             errorTextView.setText(R.string.incorrect_password);
             passwordEditText.setBackground(getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
         } else {
-            mNbrJour = timeLimitSpinner.isEnabled()
-                    ? String.valueOf(timeLimitSpinner.getSelectedItemPosition() + 1)
-                    : String.valueOf(-1);
-
+            mNbrJour = timeLimitSpinner.isEnabled() ? String.valueOf(timeLimitSpinner.getSelectedItemPosition() + 1) : String.valueOf(-1);
             Button sendButton = mReservationDialog.findViewById(R.id.button_dialog_reservation_send);
             ProgressBar progressBar = mReservationDialog.findViewById(R.id.progress_circularEvaluez);
-            sendButton.setEnabled(false);
-            sendButton.setText("En cours...");
-            progressBar.setVisibility(View.VISIBLE);
-
-            new Reservation(sendButton, progressBar).execute(
-                    Server.getUrlApi(this) + "Reservation.php",
-                    mSession.getIdNumber(),
-                    mOnlineBook.getId(),
-                    mNbrJour
-            );
+            sendButton.setEnabled(false); sendButton.setText("En cours..."); progressBar.setVisibility(View.VISIBLE);
+            new Reservation(sendButton, progressBar).execute(Server.getUrlApi(this) + "Reservation.php", mSession.getIdNumber(), mOnlineBook.getId(), mNbrJour);
         }
     }
 
@@ -1217,13 +959,8 @@ public class BookActivity extends AppCompatActivity {
         SimpleOkDialog dialog = new SimpleOkDialog(this);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
-
-        TextView messageTextView = dialog.findViewById(R.id.text_view_dialog_simple_ok_message);
-        TextView okTextView = dialog.findViewById(R.id.text_view_dialog_simple_ok);
-
-        messageTextView.setText(message);
-        okTextView.setOnClickListener(v -> dialog.cancel());
-
+        ((TextView) dialog.findViewById(R.id.text_view_dialog_simple_ok_message)).setText(message);
+        dialog.findViewById(R.id.text_view_dialog_simple_ok).setOnClickListener(v -> dialog.cancel());
         dialog.build();
     }
 
@@ -1232,117 +969,131 @@ public class BookActivity extends AppCompatActivity {
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_item, menu);
+        getMenuInflater().inflate(R.menu.menu_item, menu);
         mTalksSelect = talksAdapter.getItem(talksAdapter.getPosition());
     }
 
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.menu_item_delete) {
-            talksAdapter.remove(talksAdapter.getPosition());
-            return true;
-        }
+        if (item.getItemId() == R.id.menu_item_delete) { talksAdapter.remove(talksAdapter.getPosition()); return true; }
         return super.onContextItemSelected(item);
     }
+
+    // ==================== Shimmer ====================
+
+    private void startSkeletonShimmer(View container) {
+        if (!(container instanceof ViewGroup)) return;
+        List<View> skeletonViews = new ArrayList<>();
+        collectSkeletonViews((ViewGroup) container, skeletonViews);
+
+        mShimmerAnimator = ValueAnimator.ofFloat(0f, 1f);
+        mShimmerAnimator.setDuration(1200);
+        mShimmerAnimator.setRepeatCount(ValueAnimator.INFINITE);
+        mShimmerAnimator.setRepeatMode(ValueAnimator.RESTART);
+        mShimmerAnimator.addUpdateListener(anim -> {
+            float fraction = (float) anim.getAnimatedValue();
+            float alpha = 0.4f + 0.6f * (float)(0.5 + 0.5 * Math.sin(fraction * 2 * Math.PI));
+            for (View v : skeletonViews) v.setAlpha(alpha);
+        });
+        mShimmerAnimator.start();
+    }
+
+    private void stopSkeletonShimmer(View container) {
+        if (mShimmerAnimator != null) { mShimmerAnimator.cancel(); mShimmerAnimator = null; }
+        if (container instanceof ViewGroup) {
+            List<View> views = new ArrayList<>();
+            collectSkeletonViews((ViewGroup) container, views);
+            for (View v : views) v.setAlpha(1f);
+        }
+    }
+
+    private void collectSkeletonViews(ViewGroup parent, List<View> out) {
+        for (int i = 0; i < parent.getChildCount(); i++) {
+            View child = parent.getChildAt(i);
+            if (child instanceof ViewGroup) collectSkeletonViews((ViewGroup) child, out);
+            else out.add(child);
+        }
+    }
+
+    // ==================== Arrow Animation ====================
+
+    private void startArrowAnimation() {
+        if (mNoConnectionContainer == null) return;
+        View arrow1 = mNoConnectionContainer.findViewById(R.id.arrow_1);
+        View arrow2 = mNoConnectionContainer.findViewById(R.id.arrow_2);
+        View arrow3 = mNoConnectionContainer.findViewById(R.id.arrow_3);
+        if (arrow1 == null || arrow2 == null || arrow3 == null) return;
+
+        mArrowAnimator = ValueAnimator.ofFloat(0f, 1f);
+        mArrowAnimator.setDuration(1000);
+        mArrowAnimator.setRepeatCount(ValueAnimator.INFINITE);
+        mArrowAnimator.setRepeatMode(ValueAnimator.RESTART);
+        mArrowAnimator.setInterpolator(new android.view.animation.AccelerateDecelerateInterpolator());
+        mArrowAnimator.addUpdateListener(anim -> {
+            float f = (float) anim.getAnimatedValue();
+            float dp = getResources().getDisplayMetrics().density;
+            float t1 = bounce(f), t2 = bounce((f + 0.33f) % 1f), t3 = bounce((f + 0.66f) % 1f);
+            float max = 10f;
+            arrow1.setTranslationY(t1 * max * dp); arrow2.setTranslationY(t2 * max * dp); arrow3.setTranslationY(t3 * max * dp);
+            arrow1.setAlpha(0.25f + t1 * 0.3f); arrow2.setAlpha(0.55f + t2 * 0.25f); arrow3.setAlpha(0.85f + t3 * 0.15f);
+        });
+        mArrowAnimator.start();
+    }
+
+    private float bounce(float t) { return (float) Math.sin(t * Math.PI); }
 
     // ==================== Helper Methods ====================
 
     String executeGetRequest(String url) {
         try {
-            Request request = new Request.Builder()
-                    .url(url)
-                    .get()
-                    .build();
-
+            Request request = new Request.Builder().url(url).get().build();
             try (Response response = mHttpClient.newCall(request).execute()) {
-                if (response.body() != null) {
-                    return response.body().string();
-                }
+                if (response.body() != null) return response.body().string();
             }
-        } catch (IOException e) {
-            Log.e(TAG, "Network error: " + e.getMessage(), e);
-        } catch (Exception e) {
-            Log.e(TAG, "Unexpected error: " + e.getMessage(), e);
-        }
+        } catch (IOException e) { Log.e(TAG, "Network error: " + e.getMessage(), e); }
+        catch (Exception e) { Log.e(TAG, "Unexpected error: " + e.getMessage(), e); }
         return null;
     }
 
     String executePostRequest(String url, RequestBody requestBody) {
         try {
-            Request request = new Request.Builder()
-                    .url(url)
-                    .post(requestBody)
-                    .build();
-
+            Request request = new Request.Builder().url(url).post(requestBody).build();
             try (Response response = mHttpClient.newCall(request).execute()) {
-                if (response.body() != null) {
-                    return response.body().string();
-                }
+                if (response.body() != null) return response.body().string();
             }
-        } catch (IOException e) {
-            Log.e(TAG, "Network error: " + e.getMessage(), e);
-        } catch (Exception e) {
-            Log.e(TAG, "Unexpected error: " + e.getMessage(), e);
-        }
+        } catch (IOException e) { Log.e(TAG, "Network error: " + e.getMessage(), e); }
+        catch (Exception e) { Log.e(TAG, "Unexpected error: " + e.getMessage(), e); }
         return null;
     }
 
     private RequestBody createIdBookRequestBody(String idNumber, String idBook) {
-        return new MultipartBody.Builder()
-                .setType(MultipartBody.FORM)
+        return new MultipartBody.Builder().setType(MultipartBody.FORM)
                 .addFormDataPart("idNumber", idNumber)
-                .addFormDataPart("idBook", idBook)
-                .build();
-    }
-
-    void showNoConnectionError() {
-        stopRefreshing();                        // ← AJOUT
-        mNestedScrollView.setVisibility(View.GONE);
-        mNoConnectionRecyclerView.setVisibility(View.VISIBLE);
-
-        List<Connection> list = new ArrayList<>();
-        list.add(new Connection(getString(R.string.no_connection_available), ACTION_BOOK, false));
-        NoConnectionAdapter adapter = new NoConnectionAdapter(list);
-        mNoConnectionRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mNoConnectionRecyclerView.setAdapter(adapter);
+                .addFormDataPart("idBook", idBook).build();
     }
 
     private String convertDurationToString(int duration) {
         return String.format("%02d:%02d",
                 TimeUnit.MILLISECONDS.toMinutes(duration),
-                TimeUnit.MILLISECONDS.toSeconds(duration) -
-                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(duration)));
+                TimeUnit.MILLISECONDS.toSeconds(duration) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(duration)));
     }
+
+    // ==================== Cycle de vie ====================
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-        // Clean up media player
+        if (mShimmerAnimator != null) { mShimmerAnimator.cancel(); mShimmerAnimator = null; }
+        if (mArrowAnimator != null)   { mArrowAnimator.cancel();   mArrowAnimator = null;   }
         if (mMediaPlayer != null) {
-            if (mMediaPlayer.isPlaying()) {
-                mMediaPlayer.stop();
-            }
+            if (mMediaPlayer.isPlaying()) mMediaPlayer.stop();
             mMediaPlayer.release();
             mMediaPlayer = null;
         }
-
-        // Stop media player thread
-        if (mMediaPlayerThread != null && mMediaPlayerThread.isAlive()) {
-            mMediaPlayerThread.interrupt();
-        }
-
-        // Unregister receivers
+        if (mMediaPlayerThread != null && mMediaPlayerThread.isAlive()) mMediaPlayerThread.interrupt();
         try {
-            if (mFinishDownloadReceiver != null) {
-                unregisterReceiver(mFinishDownloadReceiver);
-            }
-            if (mNoConnectionReceiver != null) {
-                unregisterReceiver(mNoConnectionReceiver);
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Error unregistering receivers", e);
-        }
+            if (mFinishDownloadReceiver != null) unregisterReceiver(mFinishDownloadReceiver);
+            if (mNoConnectionReceiver != null) unregisterReceiver(mNoConnectionReceiver);
+        } catch (Exception e) { Log.e(TAG, "Error unregistering receivers", e); }
     }
 }
