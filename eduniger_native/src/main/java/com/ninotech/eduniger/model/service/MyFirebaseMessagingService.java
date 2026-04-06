@@ -19,6 +19,7 @@ import com.ninotech.eduniger.R;
 import com.ninotech.eduniger.controleur.activity.BookActivity;
 import com.ninotech.eduniger.controleur.activity.ContainerActivity;
 import com.ninotech.eduniger.controleur.activity.MainActivity;
+import com.ninotech.eduniger.controleur.activity.NotificationActivity;
 import com.ninotech.eduniger.model.data.DownloadFile;
 import com.ninotech.eduniger.model.data.Server;
 import com.ninotech.eduniger.model.table.LoandTable;
@@ -85,7 +86,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Log.d(TAG, "Notification reçue — type: " + type + " | extraData: " + extraData);
 
         createNotificationChannel();
-
         // ✅ type = "5" → synchroniser les loands non vus
         if ("5".equals(type)) {
             syncUnreadLoands(title, message);
@@ -284,20 +284,17 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private Intent buildIntentByType(String type, String extraData) {
         Intent intent = null;
         switch (type) {
-            case "reservation":
-                break;
-            case "book":
+            case "2":
                 intent = new Intent(this, BookActivity.class);
                 intent.putExtra("intent_adapter_book_id", extraData);
                 break;
-            case "5":
+            case "loand":
                 // Ouvrir ContainerActivity sur l'onglet loands (id=3)
                 intent = new Intent(this, ContainerActivity.class);
                 intent.putExtra("id", 3);
                 break;
             default:
-                intent = new Intent(this, ContainerActivity.class);
-                intent.putExtra("id", 3);
+                intent = new Intent(this, NotificationActivity.class);
                 break;
         }
         return intent;
