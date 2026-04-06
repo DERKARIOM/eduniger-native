@@ -1,5 +1,6 @@
 package com.ninotech.eduniger.controleur.activity;
 
+import android.animation.ValueAnimator;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -12,13 +13,16 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;  // ← AJOUT
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.ninotech.eduniger.R;
 import com.ninotech.eduniger.controleur.adapter.*;
@@ -62,7 +66,9 @@ public class SearchActivity extends AppCompatActivity {
 
     // Views
     private RecyclerView mRecyclerView;
-    private SwipeRefreshLayout mSwipeRefreshLayout;           // ← AJOUT
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private View mSkeletonLoadingContainer;
+    private View mNoConnectionContainer;
     private EditText mSearchEditText;
     private ImageView mBackImageView;
 
@@ -107,13 +113,14 @@ public class SearchActivity extends AppCompatActivity {
     private NotificationAdapter mNotificationAdapter;
     private SettingAdapter mSettingAdapter;
     private LocalBookAdapter mLocalBookAdapter;
-    private NoConnectionAdapter mNoConnectionAdapter;
 
     // Receivers
     private final Set<BroadcastReceiver> mRegisteredReceivers = new HashSet<>();
 
-    // ← AJOUT : sauvegarde du dernier intent pour le refresh
+    // Utils
     private Intent mCurrentIntent;
+    private ValueAnimator mShimmerAnimator;
+    private ValueAnimator mArrowAnimator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,22 +131,25 @@ public class SearchActivity extends AppCompatActivity {
         initializeViews();
         initializeData();
         setupListeners();
-        setupSwipeRefresh();              // ← AJOUT
+        setupSwipeRefresh();
         handleSearchIntent(getIntent());
     }
 
     private void hideActionBar() {
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().hide();
-        }
+        if (getSupportActionBar() != null) getSupportActionBar().hide();
     }
 
     private void initializeViews() {
-        mRecyclerView = findViewById(R.id.recycler_view_activity_search);
-        mSwipeRefreshLayout = findViewById(R.id.swipe_refresh_search);   // ← AJOUT
-        mSearchEditText = findViewById(R.id.edit_text_toolbar_search);
-        mBackImageView = findViewById(R.id.image_view_toolbar_search);
+        mRecyclerView             = findViewById(R.id.recycler_view_activity_search);
+        mSwipeRefreshLayout       = findViewById(R.id.swipe_refresh_search);
+        mSkeletonLoadingContainer = findViewById(R.id.skeleton_loading_container);
+        mNoConnectionContainer    = findViewById(R.id.no_connection_container);
+        mSearchEditText           = findViewById(R.id.edit_text_toolbar_search);
+        mBackImageView            = findViewById(R.id.image_view_toolbar_search);
+
         mSearchEditText.requestFocus();
+        startSkeletonShimmer(mSkeletonLoadingContainer);
+        startArrowAnimation();
     }
 
     private void initializeData() {
@@ -156,7 +166,7 @@ public class SearchActivity extends AppCompatActivity {
         registerBookRecoveryReceiver();
     }
 
-    // ==================== SwipeRefresh ====================   ← AJOUT BLOC COMPLET
+    // ==================== SwipeRefresh ====================
 
     private void setupSwipeRefresh() {
         mSwipeRefreshLayout.setColorSchemeResources(
@@ -167,9 +177,7 @@ public class SearchActivity extends AppCompatActivity {
 
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
             showWaitingState();
-            if (mCurrentIntent != null) {
-                handleSearchIntent(mCurrentIntent);
-            }
+            if (mCurrentIntent != null) handleSearchIntent(mCurrentIntent);
         });
     }
 
@@ -179,15 +187,39 @@ public class SearchActivity extends AppCompatActivity {
         }
     }
 
+    // ==================== États ====================
+
+    private void showWaitingState() {
+        mRecyclerView.setVisibility(View.GONE);
+        mNoConnectionContainer.setVisibility(View.GONE);
+        mSkeletonLoadingContainer.setVisibility(View.VISIBLE);
+        startSkeletonShimmer(mSkeletonLoadingContainer);
+    }
+
+    private void showNoConnectionState(String action) {
+        stopSkeletonShimmer(mSkeletonLoadingContainer);
+        mSkeletonLoadingContainer.setVisibility(View.GONE);
+        mRecyclerView.setVisibility(View.GONE);
+        mNoConnectionContainer.setVisibility(View.VISIBLE);
+    }
+
+    private void setupRecyclerView(RecyclerView.Adapter<?> adapter) {
+        stopRefreshing();
+        stopSkeletonShimmer(mSkeletonLoadingContainer);
+        mSkeletonLoadingContainer.setVisibility(View.GONE);
+        mNoConnectionContainer.setVisibility(View.GONE);
+        mRecyclerView.setVisibility(View.VISIBLE);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setAdapter(adapter);
+    }
+
     // ==================== BroadcastReceiver ====================
 
     private void registerBookRecoveryReceiver() {
         BroadcastReceiver receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if ("ACTION_RECOVER_BOOK".equals(intent.getAction())) {
-                    finish();
-                }
+                if ("ACTION_RECOVER_BOOK".equals(intent.getAction())) finish();
             }
         };
         registerReceiverSafely(receiver, new IntentFilter("ACTION_RECOVER_BOOK"));
@@ -195,27 +227,18 @@ public class SearchActivity extends AppCompatActivity {
 
     private TextWatcher createSearchTextWatcher() {
         return new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                handleSearchFilter(s.toString());
-            }
+            public void afterTextChanged(Editable s) { handleSearchFilter(s.toString()); }
         };
     }
 
     private void handleSearchFilter(String query) {
-        Intent intent = getIntent();
-        String searchKey = intent.getStringExtra("search_key");
+        String searchKey = getIntent().getStringExtra("search_key");
         if (searchKey == null) return;
-
         try {
-            SearchKey key = SearchKey.valueOf(searchKey);
-            performFilter(key, query);
+            performFilter(SearchKey.valueOf(searchKey), query);
         } catch (IllegalArgumentException e) {
             Log.e(TAG, "Invalid search key: " + searchKey, e);
         }
@@ -224,56 +247,41 @@ public class SearchActivity extends AppCompatActivity {
     private void performFilter(SearchKey key, String query) {
         switch (key) {
             case ONLINE_BOOK:
-                if (!mOnlineBooks.isEmpty()) filterOnlineBook(query);
-                break;
+                if (mOnlineBooks != null && !mOnlineBooks.isEmpty()) filterOnlineBook(query); break;
             case ELECTRONIC_BOOK:
-                if (!mElectronicBooks.isEmpty()) filterElectronicBook(query);
-                break;
+                if (mElectronicBooks != null && !mElectronicBooks.isEmpty()) filterElectronicBook(query); break;
             case AUDIO_BOOK:
-                if (!mAudioBooks.isEmpty()) filterAudioBook(query);
-                break;
+                if (mAudioBooks != null && !mAudioBooks.isEmpty()) filterAudioBook(query); break;
             case LOAND_BOOK:
-                if (!mLoandBooks.isEmpty()) filterLoandBook(query);
-                break;
+                if (mLoandBooks != null && !mLoandBooks.isEmpty()) filterLoandBook(query); break;
             case FABIOLA_BOOK:
-                filterFabiolaBook(query);
-                break;
+                filterFabiolaBook(query); break;
             case CATEGORY:
-                if (!mCategorys.isEmpty()) filterCategory(query);
-                break;
+                if (mCategorys != null && !mCategorys.isEmpty()) filterCategory(query); break;
             case STRUCT_CATEGORY:
-                if (!mCategoryList.isEmpty()) filterStructCategory(query);
-                break;
+                if (mCategoryList != null && !mCategoryList.isEmpty()) filterStructCategory(query); break;
             case STRUCTURE:
-                if (!mStructures.isEmpty()) filterOnlineStructure(query);
-                break;
+                if (mStructures != null && !mStructures.isEmpty()) filterOnlineStructure(query); break;
             case AUTHOR:
-                if (!mAuthors.isEmpty()) filterAuthor(query);
-                break;
+                if (mAuthors != null && !mAuthors.isEmpty()) filterAuthor(query); break;
             case AUTHOR_ONLINE:
-                if (!mAuthors.isEmpty()) filterAuthorOnline(query);
-                break;
+                if (mAuthors != null && !mAuthors.isEmpty()) filterAuthorOnline(query); break;
             case NOTIFICATION:
-                if (!mNotifications.isEmpty()) filterNotification(query);
-                break;
+                if (mNotifications != null && !mNotifications.isEmpty()) filterNotification(query); break;
             case SETTING:
-                if (!mSettings.isEmpty()) filterSettings(query);
-                break;
+                if (mSettings != null && !mSettings.isEmpty()) filterSettings(query); break;
             case BOOK_IN_CATEGORY:
             case BOOK_IN_AUTHOR:
-                if (!mLocalBooks.isEmpty()) filterBookInCategory(query);
-                break;
+                if (mLocalBooks != null && !mLocalBooks.isEmpty()) filterBookInCategory(query); break;
         }
     }
 
     private void handleSearchIntent(Intent intent) {
-        mCurrentIntent = intent;                 // ← AJOUT : mémoriser pour le refresh
+        mCurrentIntent = intent;
         String searchKey = intent.getStringExtra("search_key");
         if (searchKey == null) return;
-
         try {
-            SearchKey key = SearchKey.valueOf(searchKey);
-            executeSearch(key, intent);
+            executeSearch(SearchKey.valueOf(searchKey), intent);
         } catch (IllegalArgumentException e) {
             Log.e(TAG, "Invalid search key: " + searchKey, e);
         }
@@ -281,45 +289,19 @@ public class SearchActivity extends AppCompatActivity {
 
     private void executeSearch(SearchKey key, Intent intent) {
         switch (key) {
-            case ONLINE_BOOK:
-                handleOnlineBookSearch(intent);
-                break;
-            case STRUCTURE:
-                handleStructureSearch();
-                break;
-            case ELECTRONIC_BOOK:
-                searchElectronicBook();
-                break;
-            case AUDIO_BOOK:
-                searchAudioBook();
-                break;
-            case LOAND_BOOK:
-                searchLoandBook();
-                break;
-            case FABIOLA_BOOK:
-                handleFabiolaBookSearch();
-                break;
-            case CATEGORY:
-                searchCategory();
-                break;
-            case AUTHOR_ONLINE:
-                handleAuthorOnlineSearch();
-                break;
-            case AUTHOR:
-                searchAuthor();
-                break;
-            case NOTIFICATION:
-                searchNotification();
-                break;
-            case SETTING:
-                searchSetting();
-                break;
-            case BOOK_IN_CATEGORY:
-                searchBookInCategory(intent.getStringExtra("category"));
-                break;
-            case BOOK_IN_AUTHOR:
-                searchBookInAuthor(intent.getStringExtra("author"));
-                break;
+            case ONLINE_BOOK:      handleOnlineBookSearch(intent); break;
+            case STRUCTURE:        handleStructureSearch(); break;
+            case ELECTRONIC_BOOK:  searchElectronicBook(); break;
+            case AUDIO_BOOK:       searchAudioBook(); break;
+            case LOAND_BOOK:       searchLoandBook(); break;
+            case FABIOLA_BOOK:     handleFabiolaBookSearch(); break;
+            case CATEGORY:         searchCategory(); break;
+            case AUTHOR_ONLINE:    handleAuthorOnlineSearch(); break;
+            case AUTHOR:           searchAuthor(); break;
+            case NOTIFICATION:     searchNotification(); break;
+            case SETTING:          searchSetting(); break;
+            case BOOK_IN_CATEGORY: searchBookInCategory(intent.getStringExtra("category")); break;
+            case BOOK_IN_AUTHOR:   searchBookInAuthor(intent.getStringExtra("author")); break;
         }
     }
 
@@ -334,29 +316,21 @@ public class SearchActivity extends AppCompatActivity {
 
         switch (onlineBookKey) {
             case "MAIN_ACTIVITY":
-                searchOnLineBook();
-                break;
+                searchOnLineBook(); break;
             case "CATEGORY_ACTIVITY":
-                onLineBookSwitchCategory(intent.getStringExtra("title_category"));
-                break;
+                onLineBookSwitchCategory(intent.getStringExtra("title_category")); break;
             case "STRUCTURE_ACTIVITY":
-                searchStructBook(intent.getStringExtra("id_struct_key"));
-                break;
+                searchStructBook(intent.getStringExtra("id_struct_key")); break;
             case "AUTHOR_ACTIVITY":
-                searchAuthorBook("AuthorBook.php", intent.getStringExtra("id_author_key"));
-                break;
+                searchAuthorBook("AuthorBook.php", intent.getStringExtra("id_author_key")); break;
             case "AUTHOR_FORMAT_BOOK_PDF_ADAPTER":
-                searchAuthorBook("AuthorPDFBook.php", intent.getStringExtra("id_author_key"));
-                break;
+                searchAuthorBook("AuthorPDFBook.php", intent.getStringExtra("id_author_key")); break;
             case "AUTHOR_FORMAT_BOOK_AUDIO_ADAPTER":
-                searchAuthorBook("AuthorAudioBook.php", intent.getStringExtra("id_author_key"));
-                break;
+                searchAuthorBook("AuthorAudioBook.php", intent.getStringExtra("id_author_key")); break;
             case "AUTHOR_FORMAT_BOOK_PHYSIC_ADAPTER":
-                searchAuthorBook("AuthorPhysicBook.php", intent.getStringExtra("id_author_key"));
-                break;
+                searchAuthorBook("AuthorPhysicBook.php", intent.getStringExtra("id_author_key")); break;
             case "STRUCTURE_CATEGORIE":
-                searchStructCategorie("Category.php", mSession.getIdNumber());
-                break;
+                searchStructCategorie("Category.php", mSession.getIdNumber()); break;
         }
     }
 
@@ -367,30 +341,25 @@ public class SearchActivity extends AppCompatActivity {
 
     private void searchOnLineBook() {
         registerRefreshReceiver("BOOKS_SEARCH", () ->
-                new NetworkTask<>(this, "Ranking.php").execute(mSession.getIdNumber())
-        );
+                new NetworkTask<>(this, "Ranking.php").execute(mSession.getIdNumber()));
         new NetworkTask<OnlineBook>(this, "Ranking.php").execute(mSession.getIdNumber());
     }
 
     private void searchStructBook(String idStruct) {
         registerRefreshReceiver("STRUCT_SEARCH", () ->
-                new NetworkTask<>(this, "StructBookMore.php").execute(mSession.getIdNumber(), idStruct)
-        );
-        new NetworkTask<OnlineBook>(this, "StructBookMore.php")
-                .execute(mSession.getIdNumber(), idStruct);
+                new NetworkTask<>(this, "StructBookMore.php").execute(mSession.getIdNumber(), idStruct));
+        new NetworkTask<OnlineBook>(this, "StructBookMore.php").execute(mSession.getIdNumber(), idStruct);
     }
 
     private void searchAuthorBook(String fileName, String idAuthor) {
         registerRefreshReceiver("AUTHOR_SEARCH", () ->
-                new NetworkTask<>(this, fileName).execute(mSession.getIdNumber(), idAuthor)
-        );
+                new NetworkTask<>(this, fileName).execute(mSession.getIdNumber(), idAuthor));
         new NetworkTask<OnlineBook>(this, fileName).execute(mSession.getIdNumber(), idAuthor);
     }
 
     private void searchStructCategorie(String fileName, String idNumber) {
         registerRefreshReceiver("STRUCT_CATEGORIE", () ->
-                new NetworkTask<>(this, fileName).execute(idNumber)
-        );
+                new NetworkTask<>(this, fileName).execute(idNumber));
         new NetworkTask<Category>(this, fileName).execute(idNumber);
     }
 
@@ -410,7 +379,6 @@ public class SearchActivity extends AppCompatActivity {
             new StructureTask(this, "Structure.php").execute(mSession.getIdNumber());
             new StructureTask2(this, "StructureMore.php").execute(mSession.getIdNumber());
         });
-
         new StructureTask(this, "Structure.php").execute(mSession.getIdNumber());
         new StructureTask2(this, "StructureMore.php").execute(mSession.getIdNumber());
     }
@@ -420,15 +388,13 @@ public class SearchActivity extends AppCompatActivity {
     private void handleFabiolaBookSearch() {
         initializeOnlineBookLists();
         registerRefreshReceiver("RANKING_FRAGMENT", () ->
-                new FabiolaBookTask(this).execute(mSession.getIdNumber())
-        );
+                new FabiolaBookTask(this).execute(mSession.getIdNumber()));
         new FabiolaBookTask(this).execute(mSession.getIdNumber());
     }
 
     private void onLineBookSwitchCategory(String category) {
         registerRefreshReceiver("CATEGORY_ACTIVITY", () ->
-                new CategoryInTask(this).execute(mSession.getIdNumber(), category)
-        );
+                new CategoryInTask(this).execute(mSession.getIdNumber(), category));
         new CategoryInTask(this).execute(mSession.getIdNumber(), category);
     }
 
@@ -444,8 +410,7 @@ public class SearchActivity extends AppCompatActivity {
 
     private void searchAuthorOnline() {
         registerRefreshReceiver("AUTHOR_SEARCH", () ->
-                new AuthorTask(this).execute(mSession.getIdNumber())
-        );
+                new AuthorTask(this).execute(mSession.getIdNumber()));
         new AuthorTask(this).execute(mSession.getIdNumber());
     }
 
@@ -455,26 +420,21 @@ public class SearchActivity extends AppCompatActivity {
         try {
             mElectronicBooks = new ArrayList<>();
             mFilteredElectronicBooks = new ArrayList<>();
-
             ElectronicTable table = new ElectronicTable(this);
             try (Cursor cursor = table.getData(mSession.getIdNumber())) {
                 if (cursor.moveToFirst()) {
                     do {
                         mElectronicBooks.add(new ElectronicBook(
-                                cursor.getString(2), cursor.getString(5),
-                                cursor.getString(8), cursor.getString(7),
-                                cursor.getString(4), cursor.getString(6)
-                        ));
+                                cursor.getString(2), cursor.getString(5), cursor.getString(8),
+                                cursor.getString(7), cursor.getString(4), cursor.getString(6)));
                     } while (cursor.moveToNext());
                 }
             }
-
             mElectronicBookAdapter = new ElectronicBookAdapter(mElectronicBooks);
             setupRecyclerView(mElectronicBookAdapter);
         } catch (Exception e) {
             Log.e(TAG, "Error searching electronic books", e);
-            showEmptyState(R.drawable.img_telecharge_local,
-                    getString(R.string.no_electronic_book));
+            showEmptyState(R.drawable.img_telecharge_local, getString(R.string.no_electronic_book));
         }
     }
 
@@ -482,26 +442,21 @@ public class SearchActivity extends AppCompatActivity {
         try {
             mAudioBooks = new ArrayList<>();
             mFilteredAudioBook = new ArrayList<>();
-
             AudioTable table = new AudioTable(this);
             try (Cursor cursor = table.getData(mSession.getIdNumber())) {
                 if (cursor.moveToFirst()) {
                     do {
                         mAudioBooks.add(new AudioBook(
-                                cursor.getString(2), cursor.getString(5),
-                                cursor.getString(8), cursor.getString(4),
-                                cursor.getString(11), cursor.getString(6)
-                        ));
+                                cursor.getString(2), cursor.getString(5), cursor.getString(8),
+                                cursor.getString(4), cursor.getString(11), cursor.getString(6)));
                     } while (cursor.moveToNext());
                 }
             }
-
             mAudioBookAdapter = new AudioBookAdapter(mAudioBooks);
             setupRecyclerView(mAudioBookAdapter);
         } catch (Exception e) {
             Log.e(TAG, "Error searching audio books", e);
-            showEmptyState(R.drawable.img_playliste_local,
-                    getString(R.string.no_audio_book));
+            showEmptyState(R.drawable.img_playliste_local, getString(R.string.no_audio_book));
         }
     }
 
@@ -509,23 +464,19 @@ public class SearchActivity extends AppCompatActivity {
         try {
             mLoandBooks = new ArrayList<>();
             mFilteredLoandBooks = new ArrayList<>();
-
             LoandTable table = new LoandTable(this);
             try (Cursor cursor = table.getData()) {
                 if (cursor.moveToFirst()) {
                     do {
-                        long startDate = converterDate(cursor.getString(4));
-                        long endDate = converterDate(cursor.getString(5));
+                        long startDate  = converterDate(cursor.getString(4));
+                        long endDate    = converterDate(cursor.getString(5));
                         long percentage = calculatePercentage(startDate, endDate, getCurrentTimeSeconds());
-
                         mLoandBooks.add(new LoandBook(
                                 cursor.getString(2), cursor.getString(3),
-                                cursor.getString(4), cursor.getString(5), percentage
-                        ));
+                                cursor.getString(4), cursor.getString(5), percentage));
                     } while (cursor.moveToNext());
                 }
             }
-
             mLoandBookAdapter = new LoandBookAdapter(mLoandBooks);
             setupRecyclerView(mLoandBookAdapter);
         } catch (Exception e) {
@@ -539,18 +490,14 @@ public class SearchActivity extends AppCompatActivity {
         try {
             mCategorys = new ArrayList<>();
             mFilteredCategorys = new ArrayList<>();
-
             ElectronicTable table = new ElectronicTable(this);
             try (Cursor cursor = table.getCategoryData(mSession.getIdNumber())) {
                 if (cursor.moveToFirst()) {
                     do {
-                        mCategorys.add(new Category(
-                                cursor.getString(0), cursor.getString(1)
-                        ));
+                        mCategorys.add(new Category(cursor.getString(0), cursor.getString(1)));
                     } while (cursor.moveToNext());
                 }
             }
-
             mCategoryLocalAdapter = new CategoryLocalAdapter(mCategorys);
             setupRecyclerView(mCategoryLocalAdapter);
         } catch (Exception e) {
@@ -564,18 +511,14 @@ public class SearchActivity extends AppCompatActivity {
         try {
             mAuthors = new ArrayList<>();
             mFilteredAuthors = new ArrayList<>();
-
             ElectronicTable table = new ElectronicTable(this);
             try (Cursor cursor = table.getAuthorData(mSession.getIdNumber())) {
                 if (cursor.moveToFirst()) {
                     do {
-                        mAuthors.add(new Author(
-                                cursor.getString(0), cursor.getString(1)
-                        ));
+                        mAuthors.add(new Author(cursor.getString(0), cursor.getString(1)));
                     } while (cursor.moveToNext());
                 }
             }
-
             mAuthorLocalAdapter = new AuthorLocalAdapter(mAuthors);
             setupRecyclerView(mAuthorLocalAdapter);
         } catch (Exception e) {
@@ -589,26 +532,22 @@ public class SearchActivity extends AppCompatActivity {
         try {
             mNotifications = new ArrayList<>();
             mFilteredNotifications = new ArrayList<>();
-
             NotificationTable table = new NotificationTable(this);
             try (Cursor cursor = table.getData(mSession.getIdNumber())) {
                 if (cursor.moveToFirst()) {
                     do {
                         mNotifications.add(new Notification(
                                 cursor.getString(0), cursor.getString(2),
-                                cursor.getString(3), cursor.getString(4), null
-                        ));
+                                cursor.getString(3), cursor.getString(4), null));
                     } while (cursor.moveToNext());
                 }
             }
-
             mNotificationAdapter = new NotificationAdapter(mNotifications);
             setupRecyclerView(mNotificationAdapter);
             mRecyclerView.smoothScrollToPosition(mNotificationAdapter.getItemCount() - 1);
         } catch (Exception e) {
             Log.e(TAG, "Error searching notifications", e);
-            showEmptyState(R.drawable.img_message_suggestion,
-                    getString(R.string.no_notification));
+            showEmptyState(R.drawable.img_message_suggestion, getString(R.string.no_notification));
         }
     }
 
@@ -616,38 +555,23 @@ public class SearchActivity extends AppCompatActivity {
         mSearchEditText.setHint(R.string.search_setting);
         mSettings = new ArrayList<>();
         mFilteredSettings = new ArrayList<>();
-
-        mSettings.add(new Setting(R.drawable.vector_purple_200_compte,
-                getString(R.string.account), getString(R.string.change_password)));
-        mSettings.add(new Setting(R.drawable.vector_purple_200_digital,
-                getString(R.string.digital_print), getString(R.string.secure_session)));
-        mSettings.add(new Setting(R.drawable.vector_purple_200_messagerie,
-                getString(R.string.send_suggestion), getString(R.string.subject_suggestion)));
-        mSettings.add(new Setting(R.drawable.vector_purple_200_start,
-                getString(R.string.evaluate_us), getString(R.string.opservation_you)));
-        mSettings.add(new Setting(R.drawable.vector_purple_200_phone,
-                getString(R.string.contact_us), getString(R.string.call_number)));
-        mSettings.add(new Setting(R.drawable.vector_purple_200_video,
-                getString(R.string.how_it_works), getString(R.string.tutorial_that_explains_you_from_a_z)));
-        mSettings.add(new Setting(R.drawable.vector_purple_200_information,
-                getString(R.string.app_information), getString(R.string.sub_app_information)));
-
+        mSettings.add(new Setting(R.drawable.vector_purple_200_compte, getString(R.string.account), getString(R.string.change_password)));
+        mSettings.add(new Setting(R.drawable.vector_purple_200_digital, getString(R.string.digital_print), getString(R.string.secure_session)));
+        mSettings.add(new Setting(R.drawable.vector_purple_200_messagerie, getString(R.string.send_suggestion), getString(R.string.subject_suggestion)));
+        mSettings.add(new Setting(R.drawable.vector_purple_200_start, getString(R.string.evaluate_us), getString(R.string.opservation_you)));
+        mSettings.add(new Setting(R.drawable.vector_purple_200_phone, getString(R.string.contact_us), getString(R.string.call_number)));
+        mSettings.add(new Setting(R.drawable.vector_purple_200_video, getString(R.string.how_it_works), getString(R.string.tutorial_that_explains_you_from_a_z)));
+        mSettings.add(new Setting(R.drawable.vector_purple_200_information, getString(R.string.app_information), getString(R.string.sub_app_information)));
         mSettingAdapter = new SettingAdapter(mSettings);
         setupRecyclerView(mSettingAdapter);
     }
 
-    private void searchBookInCategory(String category) {
-        searchBooksByFilter("category", category);
-    }
-
-    private void searchBookInAuthor(String author) {
-        searchBooksByFilter("author", author);
-    }
+    private void searchBookInCategory(String category) { searchBooksByFilter("category", category); }
+    private void searchBookInAuthor(String author)      { searchBooksByFilter("author", author); }
 
     private void searchBooksByFilter(String filterType, String filterValue) {
         mLocalBooks = new ArrayList<>();
         mFilterLocalBooks = new ArrayList<>();
-
         ElectronicTable electronicTable = new ElectronicTable(this);
         AudioTable audioTable = new AudioTable(this);
         int errorCount = 0;
@@ -656,118 +580,54 @@ public class SearchActivity extends AppCompatActivity {
             Cursor cursor = filterType.equals("category")
                     ? electronicTable.getDataC(mSession.getIdNumber(), filterValue)
                     : electronicTable.getDataA(mSession.getIdNumber(), filterValue);
-
             if (cursor.moveToFirst()) {
                 do {
-                    mLocalBooks.add(new LocalBooks(
-                            cursor.getString(2), cursor.getString(5), cursor.getString(8),
-                            cursor.getString(7), cursor.getString(4), cursor.getString(6),
-                            cursor.getString(5), "Électronique", filterType
-                    ));
+                    mLocalBooks.add(new LocalBooks(cursor.getString(2), cursor.getString(5),
+                            cursor.getString(8), cursor.getString(7), cursor.getString(4),
+                            cursor.getString(6), cursor.getString(5), "Électronique", filterType));
                 } while (cursor.moveToNext());
             }
             cursor.close();
-        } catch (Exception e) {
-            errorCount++;
-            Log.e(TAG, "Error getting electronic books by " + filterType, e);
-        }
+        } catch (Exception e) { errorCount++; Log.e(TAG, "Error getting electronic books by " + filterType, e); }
 
         try {
             Cursor cursor = filterType.equals("category")
                     ? audioTable.getDataC(mSession.getIdNumber(), filterValue)
                     : audioTable.getDataA(mSession.getIdNumber(), filterValue);
-
             if (cursor.moveToFirst()) {
                 do {
-                    mLocalBooks.add(new LocalBooks(
-                            cursor.getString(2), cursor.getString(5), cursor.getString(8),
-                            cursor.getString(7), cursor.getString(4), cursor.getString(6),
-                            cursor.getString(5), "Audio", filterType
-                    ));
+                    mLocalBooks.add(new LocalBooks(cursor.getString(2), cursor.getString(5),
+                            cursor.getString(8), cursor.getString(7), cursor.getString(4),
+                            cursor.getString(6), cursor.getString(5), "Audio", filterType));
                 } while (cursor.moveToNext());
             }
             cursor.close();
-        } catch (Exception e) {
-            errorCount++;
-            Log.e(TAG, "Error getting audio books by " + filterType, e);
-        }
+        } catch (Exception e) { errorCount++; Log.e(TAG, "Error getting audio books by " + filterType, e); }
 
         if (errorCount != 2) {
             mLocalBookAdapter = new LocalBookAdapter(mLocalBooks);
             setupRecyclerView(mLocalBookAdapter);
             registerForContextMenu(mRecyclerView);
         } else {
-            showEmptyState(R.drawable.img_telecharge_local,
-                    getString(R.string.no_electronic_book));
+            showEmptyState(R.drawable.img_telecharge_local, getString(R.string.no_electronic_book));
         }
     }
 
     // ==================== Filter Methods ====================
 
-    private void filterOnlineBook(String query) {
-        filterList(mOnlineBooks, mFilteredOnlineBookList, query,
-                OnlineBook::getTitle, () -> mOnlineBookAdapter.filterList(mFilteredOnlineBookList));
-    }
-
-    private void filterFabiolaBook(String query) {
-        filterList(mOnlineBooks, mFilteredOnlineBookList, query,
-                OnlineBook::getTitle, () -> mFabiolaBookAdapter.filterList(mFilteredOnlineBookList));
-    }
-
-    private void filterOnlineStructure(String query) {
-        filterList(mStructures, mFilterStructures, query,
-                Structure::getName, () -> mStructureAdapter.filterList(mFilterStructures));
-    }
-
-    private void filterElectronicBook(String query) {
-        filterList(mElectronicBooks, mFilteredElectronicBooks, query,
-                ElectronicBook::getTitle, () -> mElectronicBookAdapter.filterList(mFilteredElectronicBooks));
-    }
-
-    private void filterAudioBook(String query) {
-        filterList(mAudioBooks, mFilteredAudioBook, query,
-                AudioBook::getTitle, () -> mAudioBookAdapter.filterList(mFilteredAudioBook));
-    }
-
-    private void filterLoandBook(String query) {
-        filterList(mLoandBooks, mFilteredLoandBooks, query,
-                LoandBook::getTitle, () -> mLoandBookAdapter.filterList(mFilteredLoandBooks));
-    }
-
-    private void filterCategory(String query) {
-        filterList(mCategorys, mFilteredCategorys, query,
-                Category::getTitle, () -> mCategoryLocalAdapter.filterList(mFilteredCategorys));
-    }
-
-    private void filterStructCategory(String query) {
-        filterList(mCategoryList, mFilteredCategorys, query,
-                Category::getTitle, () -> mCategoryLocalAdapter.filterList(mFilteredCategorys));
-    }
-
-    private void filterAuthor(String query) {
-        filterList(mAuthors, mFilteredAuthors, query,
-                Author::getName, () -> mAuthorLocalAdapter.filterList(mFilteredAuthors));
-    }
-
-    private void filterAuthorOnline(String query) {
-        filterList(mAuthors, mFilteredAuthors, query,
-                Author::getName, () -> mAuthorVerticaleAdapter.filterList(mFilteredAuthors));
-    }
-
-    private void filterNotification(String query) {
-        filterList(mNotifications, mFilteredNotifications, query,
-                Notification::getMessage, () -> mNotificationAdapter.filterList(mFilteredNotifications));
-    }
-
-    private void filterSettings(String query) {
-        mFilteredSettings.clear();
-        mSettingAdapter.filterList(mFilteredSettings);
-    }
-
-    private void filterBookInCategory(String query) {
-        filterList(mLocalBooks, mFilterLocalBooks, query,
-                LocalBooks::getTitle, () -> mLocalBookAdapter.filterList(mFilterLocalBooks));
-    }
+    private void filterOnlineBook(String query)    { filterList(mOnlineBooks, mFilteredOnlineBookList, query, OnlineBook::getTitle, () -> mOnlineBookAdapter.filterList(mFilteredOnlineBookList)); }
+    private void filterFabiolaBook(String query)   { filterList(mOnlineBooks, mFilteredOnlineBookList, query, OnlineBook::getTitle, () -> mFabiolaBookAdapter.filterList(mFilteredOnlineBookList)); }
+    private void filterOnlineStructure(String query){ filterList(mStructures, mFilterStructures, query, Structure::getName, () -> mStructureAdapter.filterList(mFilterStructures)); }
+    private void filterElectronicBook(String query){ filterList(mElectronicBooks, mFilteredElectronicBooks, query, ElectronicBook::getTitle, () -> mElectronicBookAdapter.filterList(mFilteredElectronicBooks)); }
+    private void filterAudioBook(String query)     { filterList(mAudioBooks, mFilteredAudioBook, query, AudioBook::getTitle, () -> mAudioBookAdapter.filterList(mFilteredAudioBook)); }
+    private void filterLoandBook(String query)     { filterList(mLoandBooks, mFilteredLoandBooks, query, LoandBook::getTitle, () -> mLoandBookAdapter.filterList(mFilteredLoandBooks)); }
+    private void filterCategory(String query)      { filterList(mCategorys, mFilteredCategorys, query, Category::getTitle, () -> mCategoryLocalAdapter.filterList(mFilteredCategorys)); }
+    private void filterStructCategory(String query){ filterList(mCategoryList, mFilteredCategorys, query, Category::getTitle, () -> mCategoryLocalAdapter.filterList(mFilteredCategorys)); }
+    private void filterAuthor(String query)        { filterList(mAuthors, mFilteredAuthors, query, Author::getName, () -> mAuthorLocalAdapter.filterList(mFilteredAuthors)); }
+    private void filterAuthorOnline(String query)  { filterList(mAuthors, mFilteredAuthors, query, Author::getName, () -> mAuthorVerticaleAdapter.filterList(mFilteredAuthors)); }
+    private void filterNotification(String query)  { filterList(mNotifications, mFilteredNotifications, query, Notification::getMessage, () -> mNotificationAdapter.filterList(mFilteredNotifications)); }
+    private void filterSettings(String query)      { mFilteredSettings.clear(); mSettingAdapter.filterList(mFilteredSettings); }
+    private void filterBookInCategory(String query){ filterList(mLocalBooks, mFilterLocalBooks, query, LocalBooks::getTitle, () -> mLocalBookAdapter.filterList(mFilterLocalBooks)); }
 
     private <T> void filterList(List<T> source, List<T> destination, String query,
                                 FilterPredicate<T> predicate, Runnable updateAction) {
@@ -782,42 +642,24 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     @FunctionalInterface
-    private interface FilterPredicate<T> {
-        String getValue(T item);
-    }
+    private interface FilterPredicate<T> { String getValue(T item); }
 
     // ==================== UI Helper Methods ====================
-
-    private void showWaitingState() {
-        ArrayList<Connection> list = new ArrayList<>();
-        list.add(new Connection(getString(R.string.wait), null, true));
-        mNoConnectionAdapter = new NoConnectionAdapter(list);
-        setupRecyclerView(mNoConnectionAdapter);
-    }
 
     private void showEmptyState(int imageRes, String message) {
         ArrayList<VoidContainer> containers = new ArrayList<>();
         containers.add(new VoidContainer(imageRes, message));
-        VoidContainerAdapter adapter = new VoidContainerAdapter(containers);
-        setupRecyclerView(adapter);
-    }
-
-    private void setupRecyclerView(RecyclerView.Adapter<?> adapter) {
-        stopRefreshing();                        // ← AJOUT
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setAdapter(adapter);
+        setupRecyclerView(new VoidContainerAdapter(containers));
     }
 
     // ==================== Utility Methods ====================
 
     private long calculatePercentage(long startDate, long endDate, long nowDate) {
         if (endDate <= startDate) return 0;
-        return (long) (((float) (nowDate - startDate) / (float) (endDate - startDate)) * 100);
+        return (long)(((float)(nowDate - startDate) / (float)(endDate - startDate)) * 100);
     }
 
-    private long getCurrentTimeSeconds() {
-        return System.currentTimeMillis() / 1000;
-    }
+    private long getCurrentTimeSeconds() { return System.currentTimeMillis() / 1000; }
 
     private long converterDate(String dateString) {
         if (TextUtils.isEmpty(dateString)) return 0;
@@ -837,12 +679,8 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (action.equals(intent.getAction())) {
-                    try {
-                        showWaitingState();
-                        refreshAction.run();
-                    } catch (Exception e) {
-                        Log.e(TAG, "Error in refresh receiver for " + action, e);
-                    }
+                    try { showWaitingState(); refreshAction.run(); }
+                    catch (Exception e) { Log.e(TAG, "Error in refresh receiver for " + action, e); }
                 }
             }
         };
@@ -858,22 +696,76 @@ public class SearchActivity extends AppCompatActivity {
         mRegisteredReceivers.add(receiver);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        unregisterAllReceivers();
-    }
-
     private void unregisterAllReceivers() {
         for (BroadcastReceiver receiver : mRegisteredReceivers) {
-            try {
-                unregisterReceiver(receiver);
-            } catch (IllegalArgumentException e) {
-                Log.e(TAG, "Receiver already unregistered", e);
-            }
+            try { unregisterReceiver(receiver); }
+            catch (IllegalArgumentException e) { Log.e(TAG, "Receiver already unregistered", e); }
         }
         mRegisteredReceivers.clear();
     }
+
+    // ==================== Shimmer ====================
+
+    private void startSkeletonShimmer(View container) {
+        if (!(container instanceof ViewGroup)) return;
+        List<View> skeletonViews = new ArrayList<>();
+        collectSkeletonViews((ViewGroup) container, skeletonViews);
+
+        mShimmerAnimator = ValueAnimator.ofFloat(0f, 1f);
+        mShimmerAnimator.setDuration(1200);
+        mShimmerAnimator.setRepeatCount(ValueAnimator.INFINITE);
+        mShimmerAnimator.setRepeatMode(ValueAnimator.RESTART);
+        mShimmerAnimator.addUpdateListener(anim -> {
+            float fraction = (float) anim.getAnimatedValue();
+            float alpha = 0.4f + 0.6f * (float)(0.5 + 0.5 * Math.sin(fraction * 2 * Math.PI));
+            for (View v : skeletonViews) v.setAlpha(alpha);
+        });
+        mShimmerAnimator.start();
+    }
+
+    private void stopSkeletonShimmer(View container) {
+        if (mShimmerAnimator != null) { mShimmerAnimator.cancel(); mShimmerAnimator = null; }
+        if (container instanceof ViewGroup) {
+            List<View> views = new ArrayList<>();
+            collectSkeletonViews((ViewGroup) container, views);
+            for (View v : views) v.setAlpha(1f);
+        }
+    }
+
+    private void collectSkeletonViews(ViewGroup parent, List<View> out) {
+        for (int i = 0; i < parent.getChildCount(); i++) {
+            View child = parent.getChildAt(i);
+            if (child instanceof ViewGroup) collectSkeletonViews((ViewGroup) child, out);
+            else out.add(child);
+        }
+    }
+
+    // ==================== Arrow Animation ====================
+
+    private void startArrowAnimation() {
+        if (mNoConnectionContainer == null) return;
+        View arrow1 = mNoConnectionContainer.findViewById(R.id.arrow_1);
+        View arrow2 = mNoConnectionContainer.findViewById(R.id.arrow_2);
+        View arrow3 = mNoConnectionContainer.findViewById(R.id.arrow_3);
+        if (arrow1 == null || arrow2 == null || arrow3 == null) return;
+
+        mArrowAnimator = ValueAnimator.ofFloat(0f, 1f);
+        mArrowAnimator.setDuration(1000);
+        mArrowAnimator.setRepeatCount(ValueAnimator.INFINITE);
+        mArrowAnimator.setRepeatMode(ValueAnimator.RESTART);
+        mArrowAnimator.setInterpolator(new android.view.animation.AccelerateDecelerateInterpolator());
+        mArrowAnimator.addUpdateListener(anim -> {
+            float f  = (float) anim.getAnimatedValue();
+            float dp = getResources().getDisplayMetrics().density;
+            float t1 = bounce(f), t2 = bounce((f + 0.33f) % 1f), t3 = bounce((f + 0.66f) % 1f);
+            float max = 10f;
+            arrow1.setTranslationY(t1 * max * dp); arrow2.setTranslationY(t2 * max * dp); arrow3.setTranslationY(t3 * max * dp);
+            arrow1.setAlpha(0.25f + t1 * 0.3f);   arrow2.setAlpha(0.55f + t2 * 0.25f);   arrow3.setAlpha(0.85f + t3 * 0.15f);
+        });
+        mArrowAnimator.start();
+    }
+
+    private float bounce(float t) { return (float) Math.sin(t * Math.PI); }
 
     // ==================== AsyncTask Classes ====================
 
@@ -890,35 +782,22 @@ public class SearchActivity extends AppCompatActivity {
         protected String doInBackground(String... params) {
             SearchActivity activity = activityRef.get();
             if (activity == null || activity.mHttpClient == null) return null;
-
             try {
                 MultipartBody.Builder bodyBuilder = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
                         .addFormDataPart("idNumber", params[0]);
+                if (params.length > 1) bodyBuilder.addFormDataPart("idStruct", params[1]);
+                if (params.length > 2) bodyBuilder.addFormDataPart("idAuthor", params[2]);
 
-                if (params.length > 1) {
-                    bodyBuilder.addFormDataPart("idStruct", params[1]);
-                }
-                if (params.length > 2) {
-                    bodyBuilder.addFormDataPart("idAuthor", params[2]);
-                }
-
-                RequestBody requestBody = bodyBuilder.build();
                 Request request = new Request.Builder()
                         .url(Server.getUrlApi(activity) + fileName)
-                        .post(requestBody)
-                        .build();
+                        .post(bodyBuilder.build()).build();
 
                 try (Response response = activity.mHttpClient.newCall(request).execute()) {
-                    if (response.body() != null) {
-                        return response.body().string();
-                    }
+                    if (response.body() != null) return response.body().string();
                 }
-            } catch (IOException e) {
-                Log.e(TAG, "Network request failed for " + fileName, e);
-            } catch (Exception e) {
-                Log.e(TAG, "Unexpected error in network task", e);
-            }
+            } catch (IOException e) { Log.e(TAG, "Network request failed for " + fileName, e); }
+            catch (Exception e)     { Log.e(TAG, "Unexpected error in network task", e); }
             return null;
         }
 
@@ -926,7 +805,6 @@ public class SearchActivity extends AppCompatActivity {
         protected void onPostExecute(String jsonData) {
             SearchActivity activity = activityRef.get();
             if (activity == null) return;
-
             if (jsonData != null && !"RAS".equals(jsonData)) {
                 try {
                     JSONArray jsonArray = new JSONArray(jsonData);
@@ -947,58 +825,33 @@ public class SearchActivity extends AppCompatActivity {
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject obj = jsonArray.getJSONObject(i);
             mOnlineBooks.add(new OnlineBook(
-                    obj.getString("idBook"),
-                    obj.getString("blanket"),
-                    obj.getString("bookTitle"),
-                    obj.optString("nameStruct", "") +
-                            (obj.has("categoryTitle") ? " : " + obj.getString("categoryTitle") : obj.getString("categoryTitle")),
-                    obj.getString("isPhysic"),
-                    obj.getString("electronic"),
-                    obj.getString("isAudio"),
+                    obj.getString("idBook"), obj.getString("blanket"), obj.getString("bookTitle"),
+                    obj.optString("nameStruct", "") + (obj.has("categoryTitle") ? " : " + obj.getString("categoryTitle") : obj.getString("categoryTitle")),
+                    obj.getString("isPhysic"), obj.getString("electronic"), obj.getString("isAudio"),
                     obj.optInt("numberLike", 0),
                     obj.optInt("numberView", obj.optInt("numberNoLike", 0))
             ));
         }
     }
 
-    private void showNoConnectionState(String action) {
-        ArrayList<Connection> list = new ArrayList<>();
-        list.add(new Connection(getString(R.string.no_connection_available), action, false));
-        NoConnectionAdapter adapter = new NoConnectionAdapter(list);
-        setupRecyclerView(adapter);
-    }
-
     private static class FabiolaBookTask extends AsyncTask<String, Void, String> {
         private final WeakReference<SearchActivity> activityRef;
 
-        FabiolaBookTask(SearchActivity activity) {
-            this.activityRef = new WeakReference<>(activity);
-        }
+        FabiolaBookTask(SearchActivity activity) { this.activityRef = new WeakReference<>(activity); }
 
         @Override
         protected String doInBackground(String... params) {
             SearchActivity activity = activityRef.get();
             if (activity == null) return null;
-
             try {
-                RequestBody requestBody = new MultipartBody.Builder()
-                        .setType(MultipartBody.FORM)
-                        .addFormDataPart("idNumber", params[0])
-                        .build();
-
                 Request request = new Request.Builder()
                         .url(Server.getUrlApi(activity) + "FabiolaBook.php")
-                        .post(requestBody)
-                        .build();
-
+                        .post(new MultipartBody.Builder().setType(MultipartBody.FORM)
+                                .addFormDataPart("idNumber", params[0]).build()).build();
                 try (Response response = activity.mHttpClient.newCall(request).execute()) {
-                    if (response.body() != null) {
-                        return response.body().string();
-                    }
+                    if (response.body() != null) return response.body().string();
                 }
-            } catch (IOException e) {
-                Log.e(TAG, "Fabiola book request failed", e);
-            }
+            } catch (IOException e) { Log.e(TAG, "Fabiola book request failed", e); }
             return null;
         }
 
@@ -1006,55 +859,38 @@ public class SearchActivity extends AppCompatActivity {
         protected void onPostExecute(String jsonData) {
             SearchActivity activity = activityRef.get();
             if (activity == null) return;
-
             if (jsonData != null && !"RAS".equals(jsonData)) {
                 try {
-                    JSONArray jsonArray = new JSONArray(jsonData);
-                    activity.parseOnlineBooks(jsonArray);
+                    activity.parseOnlineBooks(new JSONArray(jsonData));
                     activity.mFabiolaBookAdapter = new FabiolaBookAdapter(activity.mOnlineBooks);
                     activity.setupRecyclerView(activity.mFabiolaBookAdapter);
                 } catch (JSONException e) {
                     Log.e(TAG, "JSON parsing error", e);
                     activity.showNoConnectionState("RANKING_FRAGMENT");
                 }
-            } else {
-                activity.showNoConnectionState("RANKING_FRAGMENT");
-            }
+            } else { activity.showNoConnectionState("RANKING_FRAGMENT"); }
         }
     }
 
     private static class CategoryInTask extends AsyncTask<String, Void, String> {
         private final WeakReference<SearchActivity> activityRef;
 
-        CategoryInTask(SearchActivity activity) {
-            this.activityRef = new WeakReference<>(activity);
-        }
+        CategoryInTask(SearchActivity activity) { this.activityRef = new WeakReference<>(activity); }
 
         @Override
         protected String doInBackground(String... params) {
             SearchActivity activity = activityRef.get();
             if (activity == null) return null;
-
             try {
-                RequestBody requestBody = new MultipartBody.Builder()
-                        .setType(MultipartBody.FORM)
-                        .addFormDataPart("idNumber", params[0])
-                        .addFormDataPart("categoryTitle", params[1])
-                        .build();
-
                 Request request = new Request.Builder()
                         .url(Server.getUrlApi(activity) + "CategoryIn.php")
-                        .post(requestBody)
-                        .build();
-
+                        .post(new MultipartBody.Builder().setType(MultipartBody.FORM)
+                                .addFormDataPart("idNumber", params[0])
+                                .addFormDataPart("categoryTitle", params[1]).build()).build();
                 try (Response response = activity.mHttpClient.newCall(request).execute()) {
-                    if (response.body() != null) {
-                        return response.body().string();
-                    }
+                    if (response.body() != null) return response.body().string();
                 }
-            } catch (IOException e) {
-                Log.e(TAG, "Category request failed", e);
-            }
+            } catch (IOException e) { Log.e(TAG, "Category request failed", e); }
             return null;
         }
 
@@ -1062,20 +898,16 @@ public class SearchActivity extends AppCompatActivity {
         protected void onPostExecute(String jsonData) {
             SearchActivity activity = activityRef.get();
             if (activity == null) return;
-
             if (jsonData != null && !"RAS".equals(jsonData)) {
                 try {
-                    JSONArray jsonArray = new JSONArray(jsonData);
-                    activity.parseOnlineBooks(jsonArray);
+                    activity.parseOnlineBooks(new JSONArray(jsonData));
                     activity.mOnlineBookAdapter = new OnlineBookAdapter(activity.mOnlineBooks);
                     activity.setupRecyclerView(activity.mOnlineBookAdapter);
                 } catch (JSONException e) {
                     Log.e(TAG, "JSON parsing error", e);
                     activity.showNoConnectionState("CATEGORY_ACTIVITY");
                 }
-            } else {
-                activity.showNoConnectionState("CATEGORY_ACTIVITY");
-            }
+            } else { activity.showNoConnectionState("CATEGORY_ACTIVITY"); }
         }
     }
 
@@ -1092,26 +924,15 @@ public class SearchActivity extends AppCompatActivity {
         protected String doInBackground(String... params) {
             SearchActivity activity = activityRef.get();
             if (activity == null) return null;
-
             try {
-                RequestBody requestBody = new MultipartBody.Builder()
-                        .setType(MultipartBody.FORM)
-                        .addFormDataPart("idUser", params[0])
-                        .build();
-
                 Request request = new Request.Builder()
                         .url(Server.getUrlApi(activity) + fileName)
-                        .post(requestBody)
-                        .build();
-
+                        .post(new MultipartBody.Builder().setType(MultipartBody.FORM)
+                                .addFormDataPart("idUser", params[0]).build()).build();
                 try (Response response = activity.mHttpClient.newCall(request).execute()) {
-                    if (response.body() != null) {
-                        return response.body().string();
-                    }
+                    if (response.body() != null) return response.body().string();
                 }
-            } catch (IOException e) {
-                Log.e(TAG, "Structure request failed", e);
-            }
+            } catch (IOException e) { Log.e(TAG, "Structure request failed", e); }
             return null;
         }
 
@@ -1119,19 +940,15 @@ public class SearchActivity extends AppCompatActivity {
         protected void onPostExecute(String jsonData) {
             SearchActivity activity = activityRef.get();
             if (activity == null) return;
-
             if (jsonData != null && !"RAS".equals(jsonData)) {
                 try {
-                    JSONArray jsonArray = new JSONArray(jsonData);
-                    activity.parseStructures(jsonArray, true);
+                    activity.parseStructures(new JSONArray(jsonData), true);
                     activity.setupRecyclerView(activity.mStructureAdapter);
                 } catch (JSONException e) {
                     Log.e(TAG, "JSON parsing error", e);
                     activity.showNoConnectionState("STRUCT_SEARCH");
                 }
-            } else {
-                activity.showNoConnectionState("STRUCT_SEARCH");
-            }
+            } else { activity.showNoConnectionState("STRUCT_SEARCH"); }
         }
     }
 
@@ -1148,26 +965,15 @@ public class SearchActivity extends AppCompatActivity {
         protected String doInBackground(String... params) {
             SearchActivity activity = activityRef.get();
             if (activity == null) return null;
-
             try {
-                RequestBody requestBody = new MultipartBody.Builder()
-                        .setType(MultipartBody.FORM)
-                        .addFormDataPart("idUser", params[0])
-                        .build();
-
                 Request request = new Request.Builder()
                         .url(Server.getUrlApi(activity) + fileName)
-                        .post(requestBody)
-                        .build();
-
+                        .post(new MultipartBody.Builder().setType(MultipartBody.FORM)
+                                .addFormDataPart("idUser", params[0]).build()).build();
                 try (Response response = activity.mHttpClient.newCall(request).execute()) {
-                    if (response.body() != null) {
-                        return response.body().string();
-                    }
+                    if (response.body() != null) return response.body().string();
                 }
-            } catch (IOException e) {
-                Log.e(TAG, "Structure request failed", e);
-            }
+            } catch (IOException e) { Log.e(TAG, "Structure request failed", e); }
             return null;
         }
 
@@ -1175,15 +981,11 @@ public class SearchActivity extends AppCompatActivity {
         protected void onPostExecute(String jsonData) {
             SearchActivity activity = activityRef.get();
             if (activity == null) return;
-
             if (jsonData != null && !"RAS".equals(jsonData)) {
                 try {
-                    JSONArray jsonArray = new JSONArray(jsonData);
-                    activity.parseStructures(jsonArray, false);
+                    activity.parseStructures(new JSONArray(jsonData), false);
                     activity.setupRecyclerView(activity.mStructureAdapter);
-                } catch (JSONException e) {
-                    Log.e(TAG, "JSON parsing error", e);
-                }
+                } catch (JSONException e) { Log.e(TAG, "JSON parsing error", e); }
             }
         }
     }
@@ -1192,66 +994,37 @@ public class SearchActivity extends AppCompatActivity {
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject obj = jsonArray.getJSONObject(i);
             String id = obj.getString("id");
-
-            if (!isAdmin && isStructureExists(mStructures, id)) {
-                continue;
-            }
-
-            mStructures.add(new Structure(
-                    id,
-                    obj.getString("logo"),
-                    obj.getString("nameStruct"),
-                    obj.getString("description"),
-                    isAdmin,
-                    obj.getString("banner"),
-                    obj.getString("author"),
-                    obj.getString("adhererNumber"),
-                    obj.getString("bookNumber"),
-                    obj.optString("isAdmin", "0")
-            ));
+            if (!isAdmin && isStructureExists(mStructures, id)) continue;
+            mStructures.add(new Structure(id, obj.getString("logo"), obj.getString("nameStruct"),
+                    obj.getString("description"), isAdmin, obj.getString("banner"),
+                    obj.getString("author"), obj.getString("adhererNumber"),
+                    obj.getString("bookNumber"), obj.optString("isAdmin", "0")));
         }
     }
 
     private boolean isStructureExists(ArrayList<Structure> structures, String id) {
-        for (Structure structure : structures) {
-            if (structure.getId().equals(id)) {
-                return true;
-            }
-        }
+        for (Structure s : structures) { if (s.getId().equals(id)) return true; }
         return false;
     }
 
     private static class AuthorTask extends AsyncTask<String, Void, String> {
         private final WeakReference<SearchActivity> activityRef;
 
-        AuthorTask(SearchActivity activity) {
-            this.activityRef = new WeakReference<>(activity);
-        }
+        AuthorTask(SearchActivity activity) { this.activityRef = new WeakReference<>(activity); }
 
         @Override
         protected String doInBackground(String... params) {
             SearchActivity activity = activityRef.get();
             if (activity == null) return null;
-
             try {
-                RequestBody requestBody = new MultipartBody.Builder()
-                        .setType(MultipartBody.FORM)
-                        .addFormDataPart("idUser", params[0])
-                        .build();
-
                 Request request = new Request.Builder()
                         .url(Server.getUrlApi(activity) + "Author.php")
-                        .post(requestBody)
-                        .build();
-
+                        .post(new MultipartBody.Builder().setType(MultipartBody.FORM)
+                                .addFormDataPart("idUser", params[0]).build()).build();
                 try (Response response = activity.mHttpClient.newCall(request).execute()) {
-                    if (response.body() != null) {
-                        return response.body().string();
-                    }
+                    if (response.body() != null) return response.body().string();
                 }
-            } catch (IOException e) {
-                Log.e(TAG, "Author request failed", e);
-            }
+            } catch (IOException e) { Log.e(TAG, "Author request failed", e); }
             return null;
         }
 
@@ -1259,22 +1032,16 @@ public class SearchActivity extends AppCompatActivity {
         protected void onPostExecute(String jsonData) {
             SearchActivity activity = activityRef.get();
             if (activity == null) return;
-
             if (jsonData != null && !"RAS".equals(jsonData)) {
                 try {
                     JSONArray jsonArray = new JSONArray(jsonData);
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject obj = jsonArray.getJSONObject(i);
                         activity.mAuthors.add(new Author(
-                                obj.getString("idAuthor"),
-                                obj.getString("name"),
-                                obj.getString("firstName"),
-                                obj.getString("profile"),
-                                obj.getString("profession"),
-                                obj.getString("call"),
-                                obj.getString("email"),
-                                obj.getString("whatsapp")
-                        ));
+                                obj.getString("idAuthor"), obj.getString("name"),
+                                obj.getString("firstName"), obj.getString("profile"),
+                                obj.getString("profession"), obj.getString("call"),
+                                obj.getString("email"), obj.getString("whatsapp")));
                     }
                     activity.mAuthorVerticaleAdapter = new AuthorVerticaleAdapter(activity.mAuthors);
                     activity.setupRecyclerView(activity.mAuthorVerticaleAdapter);
@@ -1282,9 +1049,17 @@ public class SearchActivity extends AppCompatActivity {
                     Log.e(TAG, "JSON parsing error", e);
                     activity.showNoConnectionState("AUTHOR_SEARCH");
                 }
-            } else {
-                activity.showNoConnectionState("AUTHOR_SEARCH");
-            }
+            } else { activity.showNoConnectionState("AUTHOR_SEARCH"); }
         }
+    }
+
+    // ==================== Cycle de vie ====================
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mShimmerAnimator != null) { mShimmerAnimator.cancel(); mShimmerAnimator = null; }
+        if (mArrowAnimator != null)   { mArrowAnimator.cancel();   mArrowAnimator = null;   }
+        unregisterAllReceivers();
     }
 }

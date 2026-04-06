@@ -1,26 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".controleur.activity.SearchActivity">
 
-    <include layout="@layout/toolbar_search" />
+    <include
+        android:id="@+id/relative_layout_toolbar_search"
+        layout="@layout/toolbar_search" />
 
-    <!-- ← AJOUT : SwipeRefreshLayout enveloppant le RecyclerView -->
+    <!-- SKELETON LOADING -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/skeleton_loading_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/relative_layout_toolbar_search"
+        android:visibility="visible">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <include layout="@layout/item_skeleton_book_vertical"/>
+            <include layout="@layout/item_skeleton_book_vertical"/>
+            <include layout="@layout/item_skeleton_book_vertical"/>
+            <include layout="@layout/item_skeleton_book_vertical"/>
+            <include layout="@layout/item_skeleton_book_vertical"/>
+            <include layout="@layout/item_skeleton_book_vertical"/>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- CONTENU PRINCIPAL -->
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh_search"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/relative_layout_toolbar_search">
+        android:layout_below="@id/relative_layout_toolbar_search">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view_activity_search"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:visibility="gone" />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <!-- NO CONNECTION — EN DERNIER = au-dessus de tout -->
+    <include
+        android:id="@+id/no_connection_container"
+        layout="@layout/item_no_connection"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/relative_layout_toolbar_search"
+        android:visibility="gone" />
 
 </RelativeLayout>
