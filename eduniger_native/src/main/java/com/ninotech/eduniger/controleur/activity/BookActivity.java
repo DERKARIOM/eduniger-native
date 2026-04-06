@@ -36,6 +36,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.ninotech.eduniger.R;
 import com.ninotech.eduniger.controleur.adapter.NoConnectionAdapter;
@@ -86,6 +87,7 @@ public class BookActivity extends AppCompatActivity {
 
     // Views
     private NestedScrollView mNestedScrollView;
+    private SwipeRefreshLayout mSwipeRefreshLayout;          // ← AJOUT
     private RecyclerView mCommentsRecyclerView;
     private RecyclerView mNoConnectionRecyclerView;
     private RelativeLayout mCommentRelativeLayout;
@@ -164,6 +166,7 @@ public class BookActivity extends AppCompatActivity {
         initializeViews();
         setupRecyclerViews();
         setupClickListeners();
+        setupSwipeRefresh();             // ← AJOUT
         registerBroadcastReceivers();
         loadBookData();
     }
@@ -182,6 +185,7 @@ public class BookActivity extends AppCompatActivity {
 
     private void initializeViews() {
         mNestedScrollView = findViewById(R.id.nested_scroll_view_activity_book);
+        mSwipeRefreshLayout = findViewById(R.id.swipe_refresh_book);    // ← AJOUT
         mCommentsRecyclerView = findViewById(R.id.recycler_view_activity_book_Comments);
         mNoConnectionRecyclerView = findViewById(R.id.recycler_view_activity_book_wait);
         mCommentRelativeLayout = findViewById(R.id.relative_layout_activity_book_comment);
@@ -265,6 +269,34 @@ public class BookActivity extends AppCompatActivity {
         findViewById(R.id.image_view_activity_book_add_comments).setOnClickListener(v -> sendComment());
     }
 
+    // ==================== SwipeRefresh ====================   ← AJOUT BLOC COMPLET
+
+    private void setupSwipeRefresh() {
+        mSwipeRefreshLayout.setColorSchemeResources(
+                R.color.purple_200,
+                android.R.color.holo_blue_light,
+                android.R.color.holo_orange_light
+        );
+
+        mSwipeRefreshLayout.setOnRefreshListener(() -> {
+            showLoadingState();
+            loadBookData();
+        });
+
+        // Désactiver le swipe quand on n'est pas en haut du scroll
+        mNestedScrollView.setOnScrollChangeListener(
+                (NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) ->
+                        mSwipeRefreshLayout.setEnabled(scrollY == 0));
+    }
+
+    private void stopRefreshing() {
+        if (mSwipeRefreshLayout != null && mSwipeRefreshLayout.isRefreshing()) {
+            mSwipeRefreshLayout.setRefreshing(false);
+        }
+    }
+
+    // ==================== BroadcastReceivers ====================
+
     private void registerBroadcastReceivers() {
         mFinishDownloadReceiver = new BroadcastReceiver() {
             @Override
@@ -339,7 +371,6 @@ public class BookActivity extends AppCompatActivity {
         if (buttonText.equals(getString(R.string.reservation_book))) {
             showReservationDialog();
         } else if (buttonText.equals(getString(R.string.cancel_reservation))) {
-            // Passer l'id de la réservation (à stocker lors de la création)
             new CancelReservationSyn().execute(mOnlineBook.getId());
         }
     }
@@ -545,6 +576,7 @@ public class BookActivity extends AppCompatActivity {
     // ==================== Book Data Processing (used by RecoveryBook) ====================
 
     void processBookData(String jsonData) {
+        stopRefreshing();                        // ← AJOUT
         mNoConnectionRecyclerView.setVisibility(View.GONE);
         mNestedScrollView.setVisibility(View.VISIBLE);
 
@@ -672,10 +704,6 @@ public class BookActivity extends AppCompatActivity {
 
     // ==================== AsyncTask Classes ====================
 
-    /**
-     * Récupère les données du livre depuis le serveur.
-     * Classe static avec WeakReference pour éviter les memory leaks.
-     */
     private static class RecoveryBook extends AsyncTask<String, Void, String> {
         private final WeakReference<BookActivity> activityRef;
 
@@ -1025,7 +1053,6 @@ public class BookActivity extends AppCompatActivity {
     private class CancelReservationSyn extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-            // params[0] = reservation id à supprimer
             String url = "https://server.eduniger.com/api/reservations/" + params[0];
 
             try {
@@ -1061,7 +1088,6 @@ public class BookActivity extends AppCompatActivity {
 
     private class Reservation extends AsyncTask<String, Void, String> {
 
-        // ✅ AJOUT : références aux vues pour réinitialiser l'état
         private final Button mSendButton;
         private final ProgressBar mProgressBar;
 
@@ -1087,7 +1113,6 @@ public class BookActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String jsonData) {
-            // ✅ AJOUT : cacher le loader dans tous les cas
             mProgressBar.setVisibility(View.INVISIBLE);
             mSendButton.setEnabled(true);
             mSendButton.setText("Envoyer");
@@ -1173,7 +1198,6 @@ public class BookActivity extends AppCompatActivity {
                     ? String.valueOf(timeLimitSpinner.getSelectedItemPosition() + 1)
                     : String.valueOf(-1);
 
-            // ✅ AJOUT : afficher le loader et bloquer le bouton
             Button sendButton = mReservationDialog.findViewById(R.id.button_dialog_reservation_send);
             ProgressBar progressBar = mReservationDialog.findViewById(R.id.progress_circularEvaluez);
             sendButton.setEnabled(false);
@@ -1273,6 +1297,7 @@ public class BookActivity extends AppCompatActivity {
     }
 
     void showNoConnectionError() {
+        stopRefreshing();                        // ← AJOUT
         mNestedScrollView.setVisibility(View.GONE);
         mNoConnectionRecyclerView.setVisibility(View.VISIBLE);
 
