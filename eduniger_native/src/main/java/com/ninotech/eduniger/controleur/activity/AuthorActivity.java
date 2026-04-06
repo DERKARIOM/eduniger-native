@@ -25,6 +25,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;  // ← AJOUT
 
 import com.ninotech.eduniger.R;
 import com.ninotech.eduniger.controleur.adapter.AuthorFormatBookAdapter;
@@ -66,6 +67,7 @@ public class AuthorActivity extends AppCompatActivity {
 
     // Views
     private NestedScrollView mNestedScrollView;
+    private SwipeRefreshLayout mSwipeRefreshLayout;           // ← AJOUT
     private RecyclerView mWaitRecyclerView;
     private RecyclerView mBooksRecyclerView;
     private RecyclerView mAuthorRecyclerView;
@@ -102,6 +104,7 @@ public class AuthorActivity extends AppCompatActivity {
         setupRecyclerViews();
         configureContactVisibility();
         setupClickListeners();
+        setupSwipeRefresh();              // ← AJOUT
         loadAuthorImage();
         registerBroadcastReceiver();
         loadAuthorData();
@@ -130,6 +133,7 @@ public class AuthorActivity extends AppCompatActivity {
     private void initializeViews() {
         mWaitRecyclerView = findViewById(R.id.recycler_view_activity_author_wait);
         mNestedScrollView = findViewById(R.id.nested_scroll_view_activity_author);
+        mSwipeRefreshLayout = findViewById(R.id.swipe_refresh_author);   // ← AJOUT
         mProfileImageView = findViewById(R.id.image_view_author_activity_profile);
         mUsernameTextView = findViewById(R.id.text_view_activity_author_username);
         mProfessionTextView = findViewById(R.id.text_view_activity_author_profession);
@@ -216,6 +220,34 @@ public class AuthorActivity extends AppCompatActivity {
         ));
     }
 
+    // ==================== SwipeRefresh ====================   ← AJOUT BLOC COMPLET
+
+    private void setupSwipeRefresh() {
+        mSwipeRefreshLayout.setColorSchemeResources(
+                R.color.purple_200,
+                android.R.color.holo_blue_light,
+                android.R.color.holo_orange_light
+        );
+
+        mSwipeRefreshLayout.setOnRefreshListener(() -> {
+            showLoadingState();
+            loadAuthorData();
+        });
+
+        // Désactiver le swipe quand on n'est pas en haut du scroll
+        mNestedScrollView.setOnScrollChangeListener(
+                (NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) ->
+                        mSwipeRefreshLayout.setEnabled(scrollY == 0));
+    }
+
+    private void stopRefreshing() {
+        if (mSwipeRefreshLayout != null && mSwipeRefreshLayout.isRefreshing()) {
+            mSwipeRefreshLayout.setRefreshing(false);
+        }
+    }
+
+    // ==================== Navigation ====================
+
     private void navigateToSearch() {
         Intent intent = new Intent(this, SearchActivity.class);
         intent.putExtra("search_key", "ONLINE_BOOK");
@@ -233,6 +265,8 @@ public class AuthorActivity extends AppCompatActivity {
                 .resize(384, 384)
                 .into(mProfileImageView);
     }
+
+    // ==================== BroadcastReceiver ====================
 
     private void registerBroadcastReceiver() {
         mNoConnectionReceiver = new BroadcastReceiver() {
@@ -304,6 +338,7 @@ public class AuthorActivity extends AppCompatActivity {
             BookStats stats = new BookStats();
 
             if (!RESPONSE_RAS.equals(jsonData)) {
+                stopRefreshing();                    // ← AJOUT
                 mWaitRecyclerView.setVisibility(View.GONE);
                 mNestedScrollView.setVisibility(View.VISIBLE);
                 mSearchEditText.setVisibility(View.VISIBLE);
@@ -551,6 +586,7 @@ public class AuthorActivity extends AppCompatActivity {
     }
 
     private void showNoConnectionError() {
+        stopRefreshing();                        // ← AJOUT
         List<Connection> list = new ArrayList<>();
         list.add(new Connection(getString(R.string.no_connection_available),
                 ACTION_AUTHOR, false));
