@@ -368,7 +368,7 @@ public class BookActivity extends AppCompatActivity {
         String bookId   = mOnlineBook.getId();
 
         new RecoveryBook(this).execute(baseUrl + "book.php", idNumber, bookId);
-        new IsReservationSyn().execute(baseUrl + "IsReservation.php", idNumber, bookId);
+        new IsReservationSyn().execute(baseUrl + "is_reservation.php", idNumber, bookId);
         new InsertViewSyn().execute(baseUrl + "InsertView.php", idNumber, bookId);
         new IsSubscribeBookSyn().execute(baseUrl + "IsSubscribeBook.php", idNumber, bookId);
         new IsLikeSyn().execute(baseUrl + "IsLike.php", idNumber, bookId);
@@ -831,24 +831,58 @@ public class BookActivity extends AppCompatActivity {
     }
 
     private class IsReservationSyn extends AsyncTask<String, Void, String> {
-        @Override protected String doInBackground(String... p) { return executePostRequest(p[0], createIdBookRequestBody(p[1], p[2])); }
-        @Override protected void onPostExecute(String jsonData) {
-            if (jsonData != null && !"ras".equals(jsonData)) {
-                try {
-                    JSONObject obj = new JSONObject(jsonData);
-                    String state = obj.getString("state"), treat = obj.getString("treat");
-                    if ("1".equals(state) && "1".equals(treat)) {
-                        mReservationButton.setText(R.string.cancel_reservation);
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                            mReservationButton.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(BookActivity.this, R.color.rouge)));
-                    } else if ("2".equals(state) && "1".equals(treat)) {
-                        mReservationButton.setText("En cours de consultation");
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            mReservationButton.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(BookActivity.this, R.color.whiteSombre)));
-                            mReservationButton.setEnabled(false);
-                        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            // Conversion POST → GET : paramètres passés en query string
+            String url = params[0] + "?idNumber=" + params[1] + "&idBook=" + params[2];
+            return executeGetRequest(url);
+        }
+
+        @Override
+        protected void onPostExecute(String jsonData) {
+            if (jsonData == null || RESPONSE_RAS.equals(jsonData)) return;
+
+            try {
+                JSONObject obj = new JSONObject(jsonData);
+
+                // Nouveau format : { "success": true, "data": { "state": X, "treat": X }, "message": "" }
+                if (!obj.optBoolean("success", false)) return;
+                JSONObject data  = obj.getJSONObject("data");
+                String     state = data.getString("state");
+                String     treat = data.getString("treat");
+                Log.e("kkkkkk","ok");
+                if ("1".equals(state) && "0".equals(treat)) {
+                    // Réservation active → bouton Annuler en rouge
+                    mReservationButton.setText(R.string.cancel_reservation);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                        mReservationButton.setBackgroundTintList(
+                                ColorStateList.valueOf(
+                                        ContextCompat.getColor(BookActivity.this, R.color.rouge)));
+
+                } else if ("2".equals(state) && "1".equals(treat)) {
+                    // Livre en cours de consultation → bouton désactivé
+                    mReservationButton.setText("Venez récupérer le livre");
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        mReservationButton.setBackgroundTintList(
+                                ColorStateList.valueOf(
+                                        ContextCompat.getColor(BookActivity.this, R.color.whiteSombre)));
+                        mReservationButton.setEnabled(false);
                     }
-                } catch (JSONException e) { Log.e(TAG, "Error parsing reservation status", e); }
+                }else if ("4".equals(state) && "1".equals(treat)) {
+                    // Livre en cours de consultation → bouton désactivé
+                    mReservationButton.setText("En cours de consultation");
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        mReservationButton.setBackgroundTintList(
+                                ColorStateList.valueOf(
+                                        ContextCompat.getColor(BookActivity.this, R.color.whiteSombre)));
+                        mReservationButton.setEnabled(false);
+                    }
+                }
+                // state: 5 → réservation annulée/expirée, aucun changement d'UI nécessaire
+
+            } catch (JSONException e) {
+                Log.e(TAG, "Error parsing reservation status", e);
             }
         }
     }
