@@ -1,6 +1,7 @@
 package com.ninotech.eduniger.controleur.activity;
 
 import android.Manifest;
+import android.animation.ValueAnimator;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +13,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -25,7 +27,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;  // ← AJOUT
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.ninotech.eduniger.R;
 import com.ninotech.eduniger.controleur.adapter.AuthorFormatBookAdapter;
@@ -67,8 +69,9 @@ public class AuthorActivity extends AppCompatActivity {
 
     // Views
     private NestedScrollView mNestedScrollView;
-    private SwipeRefreshLayout mSwipeRefreshLayout;           // ← AJOUT
-    private RecyclerView mWaitRecyclerView;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private View mSkeletonLoadingContainer;
+    private View mNoConnectionContainer;
     private RecyclerView mBooksRecyclerView;
     private RecyclerView mAuthorRecyclerView;
     private RecyclerView mAuthorFormatBookRecyclerView;
@@ -92,6 +95,8 @@ public class AuthorActivity extends AppCompatActivity {
     // Utils
     private OkHttpClient mHttpClient;
     private BroadcastReceiver mNoConnectionReceiver;
+    private ValueAnimator mShimmerAnimator;
+    private ValueAnimator mArrowAnimator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,10 +106,9 @@ public class AuthorActivity extends AppCompatActivity {
 
         initializeComponents();
         initializeViews();
-        setupRecyclerViews();
         configureContactVisibility();
         setupClickListeners();
-        setupSwipeRefresh();              // ← AJOUT
+        setupSwipeRefresh();
         loadAuthorImage();
         registerBroadcastReceiver();
         loadAuthorData();
@@ -131,24 +135,27 @@ public class AuthorActivity extends AppCompatActivity {
     }
 
     private void initializeViews() {
-        mWaitRecyclerView = findViewById(R.id.recycler_view_activity_author_wait);
-        mNestedScrollView = findViewById(R.id.nested_scroll_view_activity_author);
-        mSwipeRefreshLayout = findViewById(R.id.swipe_refresh_author);   // ← AJOUT
-        mProfileImageView = findViewById(R.id.image_view_author_activity_profile);
-        mUsernameTextView = findViewById(R.id.text_view_activity_author_username);
-        mProfessionTextView = findViewById(R.id.text_view_activity_author_profession);
-        mBooksRecyclerView = findViewById(R.id.recycler_view_activity_author_books);
-        mAuthorRecyclerView = findViewById(R.id.recycler_view_activity_author);
-        mBackImageView = findViewById(R.id.image_view_toolbar_search);
-        mSearchEditText = findViewById(R.id.edit_text_toolbar_search);
-        mContactsLinearLayout = findViewById(R.id.linear_layout_activity_author_contacts);
-        mAppelImageView = findViewById(R.id.image_view_activity_author_appel);
-        mEmailImageView = findViewById(R.id.image_view_activity_author_email);
-        mWhatsAppImageView = findViewById(R.id.image_view_activity_author_whatsapp);
+        mNestedScrollView         = findViewById(R.id.nested_scroll_view_activity_author);
+        mSwipeRefreshLayout       = findViewById(R.id.swipe_refresh_author);
+        mSkeletonLoadingContainer = findViewById(R.id.skeleton_loading_container);
+        mNoConnectionContainer    = findViewById(R.id.no_connection_container);
+        mProfileImageView         = findViewById(R.id.image_view_author_activity_profile);
+        mUsernameTextView         = findViewById(R.id.text_view_activity_author_username);
+        mProfessionTextView       = findViewById(R.id.text_view_activity_author_profession);
+        mBooksRecyclerView        = findViewById(R.id.recycler_view_activity_author_books);
+        mAuthorRecyclerView       = findViewById(R.id.recycler_view_activity_author);
+        mBackImageView            = findViewById(R.id.image_view_toolbar_search);
+        mSearchEditText           = findViewById(R.id.edit_text_toolbar_search);
+        mContactsLinearLayout     = findViewById(R.id.linear_layout_activity_author_contacts);
+        mAppelImageView           = findViewById(R.id.image_view_activity_author_appel);
+        mEmailImageView           = findViewById(R.id.image_view_activity_author_email);
+        mWhatsAppImageView        = findViewById(R.id.image_view_activity_author_whatsapp);
         mAuthorFormatBookRecyclerView = findViewById(R.id.recycler_view_activity_author_format_books);
 
         configureSearchField();
         updateAuthorInfo();
+        startSkeletonShimmer(mSkeletonLoadingContainer);
+        startArrowAnimation();
     }
 
     private void configureSearchField() {
@@ -163,64 +170,23 @@ public class AuthorActivity extends AppCompatActivity {
         mProfessionTextView.setText(mAuthor.getProfession());
     }
 
-    private void setupRecyclerViews() {
-        List<Connection> waitList = new ArrayList<>();
-        waitList.add(new Connection(getString(R.string.wait), null, true));
-
-        NoConnectionAdapter adapter = new NoConnectionAdapter(waitList);
-        mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mWaitRecyclerView.setAdapter(adapter);
-
-        mAuthorRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mAuthorRecyclerView.setAdapter(adapter);
-    }
-
     private void configureContactVisibility() {
         int hiddenCount = 0;
-
-        if ("null".equals(mAuthor.getCall())) {
-            mAppelImageView.setVisibility(View.GONE);
-            hiddenCount++;
-        }
-
-        if ("null".equals(mAuthor.getEmail())) {
-            mEmailImageView.setVisibility(View.GONE);
-            hiddenCount++;
-        }
-
-        if ("null".equals(mAuthor.getWhatsapp())) {
-            mWhatsAppImageView.setVisibility(View.GONE);
-            hiddenCount++;
-        }
-
-        if (hiddenCount == 3) {
-            mContactsLinearLayout.setVisibility(View.GONE);
-        }
+        if ("null".equals(mAuthor.getCall()))     { mAppelImageView.setVisibility(View.GONE);    hiddenCount++; }
+        if ("null".equals(mAuthor.getEmail()))    { mEmailImageView.setVisibility(View.GONE);    hiddenCount++; }
+        if ("null".equals(mAuthor.getWhatsapp())) { mWhatsAppImageView.setVisibility(View.GONE); hiddenCount++; }
+        if (hiddenCount == 3) mContactsLinearLayout.setVisibility(View.GONE);
     }
 
     private void setupClickListeners() {
         mBackImageView.setOnClickListener(v -> onBackPressed());
-
         mSearchEditText.setOnClickListener(v -> navigateToSearch());
-
-        mAppelImageView.setOnClickListener(v -> {
-            mNumberAuthor = mAuthor.getCall();
-            initiateCall(mNumberAuthor);
-        });
-
-        mEmailImageView.setOnClickListener(v -> sendEmail(
-                mAuthor.getEmail(),
-                "Sujet : ",
-                "Bonjour " + mAuthor.getName() + " " + mAuthor.getFirstName() + ","
-        ));
-
-        mWhatsAppImageView.setOnClickListener(v -> sendWhatsAppMessage(
-                mAuthor.getWhatsapp(),
-                "Bonjour " + mAuthor.getName() + ","
-        ));
+        mAppelImageView.setOnClickListener(v -> { mNumberAuthor = mAuthor.getCall(); initiateCall(mNumberAuthor); });
+        mEmailImageView.setOnClickListener(v -> sendEmail(mAuthor.getEmail(), "Sujet : ", "Bonjour " + mAuthor.getName() + " " + mAuthor.getFirstName() + ","));
+        mWhatsAppImageView.setOnClickListener(v -> sendWhatsAppMessage(mAuthor.getWhatsapp(), "Bonjour " + mAuthor.getName() + ","));
     }
 
-    // ==================== SwipeRefresh ====================   ← AJOUT BLOC COMPLET
+    // ==================== SwipeRefresh ====================
 
     private void setupSwipeRefresh() {
         mSwipeRefreshLayout.setColorSchemeResources(
@@ -230,11 +196,11 @@ public class AuthorActivity extends AppCompatActivity {
         );
 
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
+            mNoConnectionContainer.setVisibility(View.GONE);
             showLoadingState();
             loadAuthorData();
         });
 
-        // Désactiver le swipe quand on n'est pas en haut du scroll
         mNestedScrollView.setOnScrollChangeListener(
                 (NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) ->
                         mSwipeRefreshLayout.setEnabled(scrollY == 0));
@@ -244,6 +210,31 @@ public class AuthorActivity extends AppCompatActivity {
         if (mSwipeRefreshLayout != null && mSwipeRefreshLayout.isRefreshing()) {
             mSwipeRefreshLayout.setRefreshing(false);
         }
+    }
+
+    // ==================== États ====================
+
+    private void showLoadingState() {
+        mNestedScrollView.setVisibility(View.GONE);
+        mNoConnectionContainer.setVisibility(View.GONE);
+        mSkeletonLoadingContainer.setVisibility(View.VISIBLE);
+        startSkeletonShimmer(mSkeletonLoadingContainer);
+    }
+
+    private void showContentState() {
+        mSkeletonLoadingContainer.setVisibility(View.GONE);
+        stopSkeletonShimmer(mSkeletonLoadingContainer);
+        mNoConnectionContainer.setVisibility(View.GONE);
+        mNestedScrollView.setVisibility(View.VISIBLE);
+        mSearchEditText.setVisibility(View.VISIBLE);
+    }
+
+    private void showNoConnectionError() {
+        stopRefreshing();
+        stopSkeletonShimmer(mSkeletonLoadingContainer);
+        mSkeletonLoadingContainer.setVisibility(View.GONE);
+        mNestedScrollView.setVisibility(View.GONE);
+        mNoConnectionContainer.setVisibility(View.VISIBLE);
     }
 
     // ==================== Navigation ====================
@@ -273,7 +264,12 @@ public class AuthorActivity extends AppCompatActivity {
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (ACTION_AUTHOR.equals(intent.getAction())) {
-                    handleBroadcastReceived();
+                    try {
+                        showLoadingState();
+                        loadAuthorData();
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error handling broadcast", e);
+                    }
                 }
             }
         };
@@ -285,26 +281,8 @@ public class AuthorActivity extends AppCompatActivity {
         }
     }
 
-    private void handleBroadcastReceived() {
-        try {
-            showLoadingState();
-            loadAuthorData();
-        } catch (Exception e) {
-            Log.e(TAG, "Error handling broadcast", e);
-        }
-    }
-
-    private void showLoadingState() {
-        List<Connection> list = new ArrayList<>();
-        list.add(new Connection(getString(R.string.wait), ACTION_AUTHOR, true));
-
-        NoConnectionAdapter adapter = new NoConnectionAdapter(list);
-        mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mWaitRecyclerView.setAdapter(adapter);
-    }
-
     private void loadAuthorData() {
-        String baseUrl = Server.getUrlApi(this);
+        String baseUrl  = Server.getUrlApi(this);
         String idNumber = mSession.getIdNumber();
         String authorId = mAuthor.getIdNumber();
 
@@ -327,21 +305,16 @@ public class AuthorActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String jsonData) {
-            if (jsonData != null) {
-                processAuthorBooks(jsonData);
-            } else {
-                showNoConnectionError();
-            }
+            if (jsonData != null) processAuthorBooks(jsonData);
+            else showNoConnectionError();
         }
 
         private void processAuthorBooks(String jsonData) {
             BookStats stats = new BookStats();
 
             if (!RESPONSE_RAS.equals(jsonData)) {
-                stopRefreshing();                    // ← AJOUT
-                mWaitRecyclerView.setVisibility(View.GONE);
-                mNestedScrollView.setVisibility(View.VISIBLE);
-                mSearchEditText.setVisibility(View.VISIBLE);
+                stopRefreshing();
+                showContentState();
 
                 try {
                     JSONArray jsonArray = new JSONArray(jsonData);
@@ -349,7 +322,6 @@ public class AuthorActivity extends AppCompatActivity {
 
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject obj = jsonArray.getJSONObject(i);
-
                         OnlineBook book = new OnlineBook(
                                 obj.getString("idBook"),
                                 obj.getString("blanket"),
@@ -361,12 +333,14 @@ public class AuthorActivity extends AppCompatActivity {
                                 Integer.parseInt(obj.getString("numberLike")),
                                 Integer.parseInt(obj.getString("numberNoLike"))
                         );
-
                         mOnlineBookList.add(book);
                         stats.updateStats(book);
                     }
 
-                    updateBooksRecyclerView();
+                    HorizontaleAdapter adapter = new HorizontaleAdapter(mOnlineBookList);
+                    mBooksRecyclerView.setLayoutManager(
+                            new LinearLayoutManager(AuthorActivity.this, LinearLayoutManager.HORIZONTAL, false));
+                    mBooksRecyclerView.setAdapter(adapter);
 
                 } catch (JSONException e) {
                     Log.e(TAG, "Error parsing author books", e);
@@ -376,37 +350,11 @@ public class AuthorActivity extends AppCompatActivity {
             updateFormatBooksRecyclerView(stats);
         }
 
-        private void updateBooksRecyclerView() {
-            HorizontaleAdapter adapter = new HorizontaleAdapter(mOnlineBookList);
-            mBooksRecyclerView.setLayoutManager(
-                    new LinearLayoutManager(AuthorActivity.this,
-                            LinearLayoutManager.HORIZONTAL, false));
-            mBooksRecyclerView.setAdapter(adapter);
-        }
-
         private void updateFormatBooksRecyclerView(BookStats stats) {
             List<Library> libraryList = new ArrayList<>();
-            libraryList.add(new Library(
-                    1,
-                    R.drawable.fichier_pdf,
-                    "Mes livres électroniques",
-                    stats.electronic,
-                    mAuthor.getIdNumber()
-            ));
-            libraryList.add(new Library(
-                    2,
-                    R.drawable.audio,
-                    "Mes livres audios",
-                    stats.audio,
-                    mAuthor.getIdNumber()
-            ));
-            libraryList.add(new Library(
-                    3,
-                    R.drawable.books_emp,
-                    "Mes livres physiques",
-                    stats.physical,
-                    mAuthor.getIdNumber()
-            ));
+            libraryList.add(new Library(1, R.drawable.fichier_pdf, "Mes livres électroniques", stats.electronic, mAuthor.getIdNumber()));
+            libraryList.add(new Library(2, R.drawable.audio, "Mes livres audios", stats.audio, mAuthor.getIdNumber()));
+            libraryList.add(new Library(3, R.drawable.books_emp, "Mes livres physiques", stats.physical, mAuthor.getIdNumber()));
 
             AuthorFormatBookAdapter adapter = new AuthorFormatBookAdapter(libraryList);
             mAuthorFormatBookRecyclerView.setLayoutManager(new LinearLayoutManager(AuthorActivity.this));
@@ -426,11 +374,8 @@ public class AuthorActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String jsonData) {
-            if (jsonData != null) {
-                processSimilarAuthors(jsonData);
-            } else {
-                showAuthorLoadError();
-            }
+            if (jsonData != null) processSimilarAuthors(jsonData);
+            else showAuthorLoadError();
         }
 
         private void processSimilarAuthors(String jsonData) {
@@ -438,44 +383,30 @@ public class AuthorActivity extends AppCompatActivity {
                 try {
                     JSONArray jsonArray = new JSONArray(jsonData);
                     mAuthorArrayList.clear();
-
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject obj = jsonArray.getJSONObject(i);
                         mAuthorArrayList.add(new Author(
-                                obj.getString("idAuthor"),
-                                obj.getString("name"),
-                                obj.getString("firstName"),
-                                obj.getString("profile"),
-                                obj.getString("profession"),
-                                obj.getString("call"),
-                                obj.getString("email"),
-                                obj.getString("whatsapp")
+                                obj.getString("idAuthor"), obj.getString("name"),
+                                obj.getString("firstName"), obj.getString("profile"),
+                                obj.getString("profession"), obj.getString("call"),
+                                obj.getString("email"), obj.getString("whatsapp")
                         ));
                     }
-                } catch (JSONException e) {
-                    Log.e(TAG, "Error parsing similar authors", e);
-                }
+                } catch (JSONException e) { Log.e(TAG, "Error parsing similar authors", e); }
             }
 
-            updateAuthorsRecyclerView();
-        }
-
-        private void updateAuthorsRecyclerView() {
             AuthorHorizontaleAdapter adapter = new AuthorHorizontaleAdapter(mAuthorArrayList);
             mAuthorRecyclerView.setLayoutManager(
-                    new LinearLayoutManager(AuthorActivity.this,
-                            LinearLayoutManager.HORIZONTAL, false));
+                    new LinearLayoutManager(AuthorActivity.this, LinearLayoutManager.HORIZONTAL, false));
             mAuthorRecyclerView.setAdapter(adapter);
         }
 
         private void showAuthorLoadError() {
             List<Connection> list = new ArrayList<>();
-            list.add(new Connection(getString(R.string.no_connection_available),
-                    ACTION_AUTHOR, false));
+            list.add(new Connection(getString(R.string.no_connection_available), ACTION_AUTHOR, false));
             NoConnectionAdapter adapter = new NoConnectionAdapter(list);
             mAuthorRecyclerView.setLayoutManager(
-                    new LinearLayoutManager(AuthorActivity.this,
-                            LinearLayoutManager.HORIZONTAL, false));
+                    new LinearLayoutManager(AuthorActivity.this, LinearLayoutManager.HORIZONTAL, false));
             mAuthorRecyclerView.setAdapter(adapter);
         }
     }
@@ -483,147 +414,147 @@ public class AuthorActivity extends AppCompatActivity {
     // ==================== Contact Methods ====================
 
     private void initiateCall(String phoneNumber) {
-        if (phoneNumber == null || phoneNumber.isEmpty()) {
-            Toast.makeText(this, "Numéro invalide", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CALL_PERMISSION);
-        } else {
-            makeCall(phoneNumber);
-        }
+        if (phoneNumber == null || phoneNumber.isEmpty()) { Toast.makeText(this, "Numéro invalide", Toast.LENGTH_SHORT).show(); return; }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CALL_PERMISSION);
+        } else { makeCall(phoneNumber); }
     }
 
     private void makeCall(String phoneNumber) {
-        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phoneNumber));
-        startActivity(intent);
+        startActivity(new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phoneNumber)));
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
         if (requestCode == REQUEST_CALL_PERMISSION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                if (mNumberAuthor != null) {
-                    makeCall(mNumberAuthor);
-                }
-            } else {
-                Toast.makeText(this, "Permission d'appel refusée", Toast.LENGTH_SHORT).show();
-            }
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) { if (mNumberAuthor != null) makeCall(mNumberAuthor); }
+            else Toast.makeText(this, "Permission d'appel refusée", Toast.LENGTH_SHORT).show();
         }
     }
 
     private void sendEmail(String recipient, String subject, String message) {
-        Uri uri = Uri.parse("mailto:" + recipient);
-        Intent intent = new Intent(Intent.ACTION_SENDTO, uri);
+        Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + recipient));
         intent.putExtra(Intent.EXTRA_SUBJECT, subject);
         intent.putExtra(Intent.EXTRA_TEXT, message);
-
-        try {
-            startActivity(Intent.createChooser(intent, "Choisir une application de messagerie"));
-        } catch (android.content.ActivityNotFoundException e) {
-            Toast.makeText(this, "Aucune application email installée", Toast.LENGTH_SHORT).show();
-        }
+        try { startActivity(Intent.createChooser(intent, "Choisir une application de messagerie")); }
+        catch (android.content.ActivityNotFoundException e) { Toast.makeText(this, "Aucune application email installée", Toast.LENGTH_SHORT).show(); }
     }
 
     private void sendWhatsAppMessage(String phoneNumber, String message) {
         try {
             String url = "https://wa.me/" + phoneNumber + "?text=" + Uri.encode(message);
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-
-            if (isPackageInstalled(WHATSAPP_PACKAGE)) {
-                intent.setPackage(WHATSAPP_PACKAGE);
-            } else if (isPackageInstalled(WHATSAPP_BUSINESS_PACKAGE)) {
-                intent.setPackage(WHATSAPP_BUSINESS_PACKAGE);
-            } else {
-                Toast.makeText(this, "Aucune version de WhatsApp n'est installée",
-                        Toast.LENGTH_SHORT).show();
-                return;
-            }
-
+            if (isPackageInstalled(WHATSAPP_PACKAGE)) intent.setPackage(WHATSAPP_PACKAGE);
+            else if (isPackageInstalled(WHATSAPP_BUSINESS_PACKAGE)) intent.setPackage(WHATSAPP_BUSINESS_PACKAGE);
+            else { Toast.makeText(this, "Aucune version de WhatsApp n'est installée", Toast.LENGTH_SHORT).show(); return; }
             startActivity(intent);
-
-        } catch (Exception e) {
-            Toast.makeText(this, "Erreur lors de l'ouverture de WhatsApp",
-                    Toast.LENGTH_SHORT).show();
-        }
+        } catch (Exception e) { Toast.makeText(this, "Erreur lors de l'ouverture de WhatsApp", Toast.LENGTH_SHORT).show(); }
     }
 
     private boolean isPackageInstalled(String packageName) {
-        try {
-            getPackageManager().getPackageInfo(packageName, 0);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
+        try { getPackageManager().getPackageInfo(packageName, 0); return true; }
+        catch (Exception e) { return false; }
     }
 
     // ==================== Helper Methods ====================
 
     private String executePostRequest(String url, RequestBody requestBody) {
         try {
-            Request request = new Request.Builder()
-                    .url(url)
-                    .post(requestBody)
-                    .build();
-
+            Request request = new Request.Builder().url(url).post(requestBody).build();
             try (Response response = mHttpClient.newCall(request).execute()) {
-                if (response.body() != null) {
-                    return response.body().string();
-                }
+                if (response.body() != null) return response.body().string();
             }
-        } catch (IOException e) {
-            Log.e(TAG, "Network error: " + e.getMessage(), e);
-        } catch (Exception e) {
-            Log.e(TAG, "Unexpected error: " + e.getMessage(), e);
-        }
+        } catch (IOException e) { Log.e(TAG, "Network error: " + e.getMessage(), e); }
+        catch (Exception e) { Log.e(TAG, "Unexpected error: " + e.getMessage(), e); }
         return null;
     }
 
-    private void showNoConnectionError() {
-        stopRefreshing();                        // ← AJOUT
-        List<Connection> list = new ArrayList<>();
-        list.add(new Connection(getString(R.string.no_connection_available),
-                ACTION_AUTHOR, false));
-        NoConnectionAdapter adapter = new NoConnectionAdapter(list);
-        mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mWaitRecyclerView.setAdapter(adapter);
+    // ==================== Shimmer ====================
+
+    private void startSkeletonShimmer(View container) {
+        if (!(container instanceof ViewGroup)) return;
+        List<View> skeletonViews = new ArrayList<>();
+        collectSkeletonViews((ViewGroup) container, skeletonViews);
+
+        mShimmerAnimator = ValueAnimator.ofFloat(0f, 1f);
+        mShimmerAnimator.setDuration(1200);
+        mShimmerAnimator.setRepeatCount(ValueAnimator.INFINITE);
+        mShimmerAnimator.setRepeatMode(ValueAnimator.RESTART);
+        mShimmerAnimator.addUpdateListener(anim -> {
+            float fraction = (float) anim.getAnimatedValue();
+            float alpha = 0.4f + 0.6f * (float)(0.5 + 0.5 * Math.sin(fraction * 2 * Math.PI));
+            for (View v : skeletonViews) v.setAlpha(alpha);
+        });
+        mShimmerAnimator.start();
     }
+
+    private void stopSkeletonShimmer(View container) {
+        if (mShimmerAnimator != null) { mShimmerAnimator.cancel(); mShimmerAnimator = null; }
+        if (container instanceof ViewGroup) {
+            List<View> views = new ArrayList<>();
+            collectSkeletonViews((ViewGroup) container, views);
+            for (View v : views) v.setAlpha(1f);
+        }
+    }
+
+    private void collectSkeletonViews(ViewGroup parent, List<View> out) {
+        for (int i = 0; i < parent.getChildCount(); i++) {
+            View child = parent.getChildAt(i);
+            if (child instanceof ViewGroup) collectSkeletonViews((ViewGroup) child, out);
+            else out.add(child);
+        }
+    }
+
+    // ==================== Arrow Animation ====================
+
+    private void startArrowAnimation() {
+        if (mNoConnectionContainer == null) return;
+        View arrow1 = mNoConnectionContainer.findViewById(R.id.arrow_1);
+        View arrow2 = mNoConnectionContainer.findViewById(R.id.arrow_2);
+        View arrow3 = mNoConnectionContainer.findViewById(R.id.arrow_3);
+        if (arrow1 == null || arrow2 == null || arrow3 == null) return;
+
+        mArrowAnimator = ValueAnimator.ofFloat(0f, 1f);
+        mArrowAnimator.setDuration(1000);
+        mArrowAnimator.setRepeatCount(ValueAnimator.INFINITE);
+        mArrowAnimator.setRepeatMode(ValueAnimator.RESTART);
+        mArrowAnimator.setInterpolator(new android.view.animation.AccelerateDecelerateInterpolator());
+        mArrowAnimator.addUpdateListener(anim -> {
+            float f = (float) anim.getAnimatedValue();
+            float dp = getResources().getDisplayMetrics().density;
+            float t1 = bounce(f), t2 = bounce((f + 0.33f) % 1f), t3 = bounce((f + 0.66f) % 1f);
+            float max = 10f;
+            arrow1.setTranslationY(t1 * max * dp); arrow2.setTranslationY(t2 * max * dp); arrow3.setTranslationY(t3 * max * dp);
+            arrow1.setAlpha(0.25f + t1 * 0.3f); arrow2.setAlpha(0.55f + t2 * 0.25f); arrow3.setAlpha(0.85f + t3 * 0.15f);
+        });
+        mArrowAnimator.start();
+    }
+
+    private float bounce(float t) { return (float) Math.sin(t * Math.PI); }
+
+    // ==================== Cycle de vie ====================
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (mShimmerAnimator != null) { mShimmerAnimator.cancel(); mShimmerAnimator = null; }
+        if (mArrowAnimator != null)   { mArrowAnimator.cancel();   mArrowAnimator = null;   }
         if (mNoConnectionReceiver != null) {
-            try {
-                unregisterReceiver(mNoConnectionReceiver);
-            } catch (Exception e) {
-                Log.e(TAG, "Error unregistering receiver", e);
-            }
+            try { unregisterReceiver(mNoConnectionReceiver); }
+            catch (Exception e) { Log.e(TAG, "Error unregistering receiver", e); }
         }
     }
 
     // ==================== Helper Classes ====================
 
     private static class BookStats {
-        int electronic = 0;
-        int audio = 0;
-        int physical = 0;
+        int electronic = 0, audio = 0, physical = 0;
 
         void updateStats(OnlineBook book) {
-            if (!"null".equals(book.getElectronic())) {
-                electronic++;
-            }
-            if ("1".equals(book.getIsAudio())) {
-                audio++;
-            }
-            if ("1".equals(book.getIsPhysic())) {
-                physical++;
-            }
+            if (!"null".equals(book.getElectronic())) electronic++;
+            if ("1".equals(book.getIsAudio())) audio++;
+            if ("1".equals(book.getIsPhysic())) physical++;
         }
     }
 }

@@ -9,14 +9,126 @@
         android:id="@+id/include2"
         layout="@layout/toolbar_search" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view_activity_author_wait"
-        android:nestedScrollingEnabled="false"
-        android:layout_margin="10dp"
-        android:layout_centerInParent="true"
-        style="@style/wrap_content_all" />
+    <!-- SKELETON LOADING -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/skeleton_loading_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/include2"
+        android:visibility="visible">
 
-    <!-- ← AJOUT : SwipeRefreshLayout enveloppant le NestedScrollView -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Avatar -->
+            <View
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/skeleton_shape_circle"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Nom -->
+            <View
+                android:layout_width="180dp"
+                android:layout_height="18dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/skeleton_shape"
+                android:layout_marginBottom="8dp" />
+
+            <!-- Profession -->
+            <View
+                android:layout_width="220dp"
+                android:layout_height="13dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/skeleton_shape"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Icônes contacts -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:orientation="horizontal"
+                android:layout_marginBottom="16dp">
+                <View android:layout_width="28dp" android:layout_height="28dp"
+                    android:background="@drawable/skeleton_shape_circle"
+                    android:layout_marginStart="15dp" android:layout_marginEnd="15dp"/>
+                <View android:layout_width="28dp" android:layout_height="28dp"
+                    android:background="@drawable/skeleton_shape_circle"
+                    android:layout_marginStart="15dp" android:layout_marginEnd="15dp"/>
+                <View android:layout_width="28dp" android:layout_height="28dp"
+                    android:background="@drawable/skeleton_shape_circle"
+                    android:layout_marginStart="15dp" android:layout_marginEnd="15dp"/>
+            </LinearLayout>
+
+            <!-- Séparateur -->
+            <View android:layout_width="match_parent" android:layout_height="1dp"
+                android:background="@drawable/skeleton_shape"
+                android:layout_marginBottom="20dp"/>
+
+            <!-- Titre "Mes Livres" -->
+            <View
+                android:layout_width="100dp"
+                android:layout_height="14dp"
+                android:background="@drawable/skeleton_shape"
+                android:layout_marginBottom="14dp" />
+
+            <!-- Livres horizontaux -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="20dp">
+                <include layout="@layout/item_skeleton_book"/>
+                <include layout="@layout/item_skeleton_book"/>
+                <include layout="@layout/item_skeleton_book"/>
+                <include layout="@layout/item_skeleton_book"/>
+            </LinearLayout>
+
+            <!-- Séparateur -->
+            <View android:layout_width="match_parent" android:layout_height="1dp"
+                android:background="@drawable/skeleton_shape"
+                android:layout_marginBottom="16dp"/>
+
+            <!-- Format livres (3 lignes) -->
+            <include layout="@layout/item_skeleton_format_book"/>
+            <include layout="@layout/item_skeleton_format_book"/>
+            <include layout="@layout/item_skeleton_format_book"/>
+
+            <!-- Séparateur -->
+            <View android:layout_width="match_parent" android:layout_height="1dp"
+                android:background="@drawable/skeleton_shape"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="16dp"/>
+
+            <!-- Titre "Auteurs similaires" -->
+            <View
+                android:layout_width="160dp"
+                android:layout_height="14dp"
+                android:background="@drawable/skeleton_shape"
+                android:layout_marginBottom="14dp" />
+
+            <!-- Auteurs horizontaux -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="20dp">
+                <include layout="@layout/item_skeleton_author"/>
+                <include layout="@layout/item_skeleton_author"/>
+                <include layout="@layout/item_skeleton_author"/>
+                <include layout="@layout/item_skeleton_author"/>
+            </LinearLayout>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- CONTENU PRINCIPAL -->
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh_author"
         android:layout_width="match_parent"
@@ -178,5 +290,14 @@
         </androidx.core.widget.NestedScrollView>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <!-- NO CONNECTION — EN DERNIER = au-dessus de tout -->
+    <include
+        android:id="@+id/no_connection_container"
+        layout="@layout/item_no_connection"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/include2"
+        android:visibility="gone" />
 
 </RelativeLayout>
