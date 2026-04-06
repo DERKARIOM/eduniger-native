@@ -962,7 +962,7 @@ public class BookActivity extends AppCompatActivity {
             mSendButton.setText("Envoyer");
             if (jsonData != null) {
                 try {
-                    if ("Réservation créée".equals(new JSONObject(jsonData).getString("message"))) {
+                    if ("Réservation créée ".equals(new JSONObject(jsonData).getString("message"))) {
                         mReservationDialog.cancel();
                         showSuccessReservationDialog("Merci d'avoir réservé \"" + mTitleTextView.getText().toString() + "\" sur fabi; nous traitons votre demande et vous confirmerons la disponibilité bientôt.");
                         mReservationButton.setText(R.string.cancel_reservation);
@@ -1014,7 +1014,7 @@ public class BookActivity extends AppCompatActivity {
             mNbrJour = timeLimitSpinner.isEnabled() ? String.valueOf(timeLimitSpinner.getSelectedItemPosition() + 1) : String.valueOf(-1);
             Button sendButton = mReservationDialog.findViewById(R.id.button_dialog_reservation_send);
             ProgressBar progressBar = mReservationDialog.findViewById(R.id.progress_circularEvaluez);
-            sendButton.setEnabled(false); sendButton.setText("En cours..."); progressBar.setVisibility(View.VISIBLE);
+            sendButton.setEnabled(false); sendButton.setText(""); progressBar.setVisibility(View.VISIBLE);
             new Reservation(sendButton, progressBar).execute(Server.getUrlApi(this) + "Reservation.php", mSession.getIdNumber(), mOnlineBook.getId(), mNbrJour);
         }
     }
