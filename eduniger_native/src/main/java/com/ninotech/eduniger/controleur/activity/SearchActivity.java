@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;  // ← AJOUT
 
 import com.ninotech.eduniger.R;
 import com.ninotech.eduniger.controleur.adapter.*;
@@ -61,6 +62,7 @@ public class SearchActivity extends AppCompatActivity {
 
     // Views
     private RecyclerView mRecyclerView;
+    private SwipeRefreshLayout mSwipeRefreshLayout;           // ← AJOUT
     private EditText mSearchEditText;
     private ImageView mBackImageView;
 
@@ -110,6 +112,9 @@ public class SearchActivity extends AppCompatActivity {
     // Receivers
     private final Set<BroadcastReceiver> mRegisteredReceivers = new HashSet<>();
 
+    // ← AJOUT : sauvegarde du dernier intent pour le refresh
+    private Intent mCurrentIntent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,6 +124,7 @@ public class SearchActivity extends AppCompatActivity {
         initializeViews();
         initializeData();
         setupListeners();
+        setupSwipeRefresh();              // ← AJOUT
         handleSearchIntent(getIntent());
     }
 
@@ -130,6 +136,7 @@ public class SearchActivity extends AppCompatActivity {
 
     private void initializeViews() {
         mRecyclerView = findViewById(R.id.recycler_view_activity_search);
+        mSwipeRefreshLayout = findViewById(R.id.swipe_refresh_search);   // ← AJOUT
         mSearchEditText = findViewById(R.id.edit_text_toolbar_search);
         mBackImageView = findViewById(R.id.image_view_toolbar_search);
         mSearchEditText.requestFocus();
@@ -148,6 +155,31 @@ public class SearchActivity extends AppCompatActivity {
         mSearchEditText.addTextChangedListener(createSearchTextWatcher());
         registerBookRecoveryReceiver();
     }
+
+    // ==================== SwipeRefresh ====================   ← AJOUT BLOC COMPLET
+
+    private void setupSwipeRefresh() {
+        mSwipeRefreshLayout.setColorSchemeResources(
+                R.color.purple_200,
+                android.R.color.holo_blue_light,
+                android.R.color.holo_orange_light
+        );
+
+        mSwipeRefreshLayout.setOnRefreshListener(() -> {
+            showWaitingState();
+            if (mCurrentIntent != null) {
+                handleSearchIntent(mCurrentIntent);
+            }
+        });
+    }
+
+    private void stopRefreshing() {
+        if (mSwipeRefreshLayout != null && mSwipeRefreshLayout.isRefreshing()) {
+            mSwipeRefreshLayout.setRefreshing(false);
+        }
+    }
+
+    // ==================== BroadcastReceiver ====================
 
     private void registerBookRecoveryReceiver() {
         BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -235,6 +267,7 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private void handleSearchIntent(Intent intent) {
+        mCurrentIntent = intent;                 // ← AJOUT : mémoriser pour le refresh
         String searchKey = intent.getStringExtra("search_key");
         if (searchKey == null) return;
 
@@ -728,7 +761,6 @@ public class SearchActivity extends AppCompatActivity {
 
     private void filterSettings(String query) {
         mFilteredSettings.clear();
-        // Settings filter logic if needed
         mSettingAdapter.filterList(mFilteredSettings);
     }
 
@@ -771,6 +803,7 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView(RecyclerView.Adapter<?> adapter) {
+        stopRefreshing();                        // ← AJOUT
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(adapter);
     }

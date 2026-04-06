@@ -6,11 +6,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".controleur.activity.SearchActivity">
-    <include layout="@layout/toolbar_search"/>
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view_activity_search"
+
+    <include layout="@layout/toolbar_search" />
+
+    <!-- ← AJOUT : SwipeRefreshLayout enveloppant le RecyclerView -->
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh_search"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/relative_layout_toolbar_search"
-        />
+        android:layout_below="@+id/relative_layout_toolbar_search">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view_activity_search"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
 </RelativeLayout>
