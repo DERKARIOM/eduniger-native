@@ -539,7 +539,7 @@ public class BookActivity extends AppCompatActivity {
             isSubscribe = true;
         }
         mNumberSubscribeTextView.setText(String.valueOf(mOnlineBook.getNumberSubscribe()));
-        new InsertSubscribeBookSyn().execute(Server.getUrlApi(this) + "InsertSubscribeBook.php",
+        new InsertSubscribeBookSyn().execute(Server.getUrlApi(this) + "insert_subscribe_book.php",
                 mSession.getIdNumber(), mOnlineBook.getId());
     }
 
