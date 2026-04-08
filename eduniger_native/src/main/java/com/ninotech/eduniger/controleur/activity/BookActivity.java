@@ -369,7 +369,7 @@ public class BookActivity extends AppCompatActivity {
 
         new RecoveryBook(this).execute(baseUrl + "book.php", idNumber, bookId);
         new IsReservationSyn().execute(baseUrl + "is_reservation.php", idNumber, bookId);
-        new InsertViewSyn().execute(baseUrl + "InsertView.php", idNumber, bookId);
+        new InsertViewSyn().execute(baseUrl + "insert_view.php", idNumber, bookId);
         new IsSubscribeBookSyn().execute(baseUrl + "IsSubscribeBook.php", idNumber, bookId);
         new IsLikeSyn().execute(baseUrl + "IsLike.php", idNumber, bookId);
         new IsNoLikeSyn().execute(baseUrl + "IsNoLike.php", idNumber, bookId);
@@ -503,7 +503,7 @@ public class BookActivity extends AppCompatActivity {
             isLike = true;
         }
         mNumberLikeTextView.setText(String.valueOf(mOnlineBook.getNumberLikes()));
-        new InsertLikeSyn().execute(Server.getUrlApi(this) + "InsertLike.php",
+        new InsertLikeSyn().execute(Server.getUrlApi(this) + "insert_like.php",
                 mSession.getIdNumber(), mOnlineBook.getId());
     }
 
