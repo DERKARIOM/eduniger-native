@@ -524,7 +524,7 @@ public class BookActivity extends AppCompatActivity {
             isNoLike = true;
         }
         mNumberNoLikeTextView.setText(String.valueOf(mOnlineBook.getNumberNoLikes()));
-        new InsertNoLikeSyn().execute(Server.getUrlApi(this) + "InsertNoLike.php",
+        new InsertNoLikeSyn().execute(Server.getUrlApi(this) + "insert_no_like.php",
                 mSession.getIdNumber(), mOnlineBook.getId());
     }
 
