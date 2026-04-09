@@ -538,6 +538,7 @@ public class HomeFragment extends Fragment {
                             obj.getString("isPhysic"),
                             obj.getString("electronic"),
                             obj.getString("isAudio"),
+                            obj.getString("idStruct"),
                             numberLike,
                             numberLike
                     ));

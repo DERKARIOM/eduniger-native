@@ -22,6 +22,18 @@ public class OnlineBook extends Book {
       mNumberLikes = numberLikes;
       mNumberView = numberView;
    }
+
+    public OnlineBook(String id , String cover, String title , String category , String isPhysic, String electronic , String isAudio, String idStruct , int numberLikes , int numberView)
+    {
+        super(id,title,category);
+        mCover = cover;
+        mIsPhysic = isPhysic;
+        mElectronic = electronic;
+        mIsAudio = isAudio;
+        mIdStruct = idStruct;
+        mNumberLikes = numberLikes;
+        mNumberView = numberView;
+    }
    public void like()
    {
       mNumberLikes++;
@@ -165,4 +177,14 @@ public class OnlineBook extends Book {
    private int mNumberView;
    private String mSize;
    private String mNbrPage;
+
+    public String getIdStruct() {
+        return mIdStruct;
+    }
+
+    public void setIdStruct(String mIdStruct) {
+        this.mIdStruct = mIdStruct;
+    }
+
+    private String mIdStruct;
 }
