@@ -309,7 +309,7 @@ public class StructureActivity extends AppCompatActivity {
         String idNumber = mSession.getIdNumber();
         String structId = mStructure.getId();
 
-        new StructBookSyn().execute(baseUrl + "StructBook.php", idNumber, structId);
+        new StructBookSyn().execute(baseUrl + "struct_book.php", idNumber, structId);
         new CategorySyn().execute(baseUrl + "CategoryStrut.php", idNumber);
         new AuthorSyn().execute(baseUrl + "author_top.php", idNumber);
     }
@@ -526,6 +526,7 @@ public class StructureActivity extends AppCompatActivity {
                                 obj.getString("isPhysic"),
                                 obj.getString("electronic"),
                                 obj.getString("isAudio"),
+                                mStructure.getId(),
                                 numberLike,
                                 numberLike
                         ));
