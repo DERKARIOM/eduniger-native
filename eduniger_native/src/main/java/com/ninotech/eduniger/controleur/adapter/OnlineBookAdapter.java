@@ -101,11 +101,11 @@ public class OnlineBookAdapter extends RecyclerView.Adapter<OnlineBookAdapter.My
         }
         void display(OnlineBook onlineBook){
             Picasso.get()
-                    .load(Server.getUrlServer(itemView.getContext()) + "admin-api/storage/app/private/structures/1/blankets/" + onlineBook.getCover())
+                    .load(Server.getUrlServer(itemView.getContext()) + "admin-api/storage/app/private/structures/"+ onlineBook.getIdStruct() +"/blankets/"  + onlineBook.getCover())
                     .placeholder(R.drawable.img_wait_cover_book)
                     .error(R.drawable.img_wait_cover_book)
                     .transform(new RoundedTransformation(15,4))
-                    .resize(178,284)
+                    .resize(260,394)
                     .into(mBlanketImageView);
             mTitleTextView.setText(onlineBook.getTitle());
             mCategoryTextView.setText(onlineBook.getCategory());

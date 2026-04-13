@@ -284,6 +284,7 @@ public class BooksFragment extends Fragment {
                                 obj.getString("isPhysic"),
                                 obj.getString("electronic"),
                                 obj.getString("isAudio"),
+                                obj.getString("idStructures"),
                                 Integer.parseInt(obj.getString("numberLike")),
                                 Integer.parseInt(obj.getString("numberView"))
                         ));
