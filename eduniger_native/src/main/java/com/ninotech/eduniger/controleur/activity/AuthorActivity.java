@@ -286,7 +286,7 @@ public class AuthorActivity extends AppCompatActivity {
         String idNumber = mSession.getIdNumber();
         String authorId = mAuthor.getIdNumber();
 
-        new AuthorBookSyn().execute(baseUrl + "AuthorBook.php", idNumber, authorId);
+        new AuthorBookSyn().execute(baseUrl + "author_book.php", idNumber, authorId);
         new AuthorSyn().execute(baseUrl + "AuthorSimular.php", authorId);
     }
 
@@ -330,6 +330,7 @@ public class AuthorActivity extends AppCompatActivity {
                                 obj.getString("isPhysic"),
                                 obj.getString("electronic"),
                                 obj.getString("isAudio"),
+                                obj.getString("idStruct"),
                                 Integer.parseInt(obj.getString("numberLike")),
                                 Integer.parseInt(obj.getString("numberNoLike"))
                         );
