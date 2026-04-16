@@ -42,7 +42,7 @@ public class ChatAiActivity extends AppCompatActivity {
     // ─── Vues ─────────────────────────────────────────────────────────────────
     private RecyclerView   recyclerView;
     private EditText       etMessage;
-    private ImageButton    btnSend;
+    private ImageButton    btnSend,btnBack;
     private View           layoutTyping;   // indicateur « ... »
 
     // ─── Données ──────────────────────────────────────────────────────────────
@@ -75,6 +75,7 @@ public class ChatAiActivity extends AppCompatActivity {
         recyclerView  = findViewById(R.id.recyclerViewMessages);
         etMessage     = findViewById(R.id.etMessage);
         btnSend       = findViewById(R.id.btnSend);
+        btnBack       = findViewById(R.id.btnBack);
         layoutTyping  = findViewById(R.id.layoutTyping);
     }
 
@@ -84,6 +85,12 @@ public class ChatAiActivity extends AppCompatActivity {
         lm.setStackFromEnd(true);
         recyclerView.setLayoutManager(lm);
         recyclerView.setAdapter(adapter);
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
     }
 
     private void setupListeners() {

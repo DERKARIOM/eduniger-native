@@ -16,6 +16,7 @@
         android:layout_marginEnd="10dp"
         android:layout_marginTop="4dp"
         android:src="@drawable/ia_new"
+        android:visibility="gone"
         android:tint="#FFFFFF"
         android:contentDescription="Eduna" />
 

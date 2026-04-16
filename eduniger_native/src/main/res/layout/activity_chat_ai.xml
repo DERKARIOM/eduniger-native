@@ -21,9 +21,9 @@
 
         <!-- Bouton retour / menu -->
         <ImageButton
-            android:id="@+id/btnMenu"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:id="@+id/btnBack"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
             android:background="@drawable/bg_bottom_nav"
             android:contentDescription="Menu"
             android:src="@drawable/vector_back"
@@ -42,12 +42,12 @@
 
         <!-- Bouton nouvelle conversation -->
         <ImageButton
-            android:id="@+id/btnNewChat"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:id="@+id/btnMenu"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
             android:background="@drawable/bg_bottom_nav"
             android:contentDescription="Nouvelle conversation"
-            android:src="@drawable/ic_ia"
+            android:src="@drawable/ic_menu"
             android:tint="#FFFFFF" />
 
     </LinearLayout>
@@ -132,8 +132,8 @@
         <!-- Bouton pièce jointe (optionnel) -->
         <ImageButton
             android:id="@+id/btnAttach"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:background="@android:color/transparent"
             android:contentDescription="Joindre"
             android:src="@drawable/vector_white_sombre_add"
