@@ -325,7 +325,7 @@ public class SearchActivity extends AppCompatActivity {
                 idStruct = intent.getStringExtra("id_struct_key");
                 searchStructBook(idStruct); break;
             case "AUTHOR_ACTIVITY":
-                searchAuthorBook("AuthorBook.php", intent.getStringExtra("id_author_key")); break;
+                searchAuthorBook("author_book.php", intent.getStringExtra("id_author_key")); break;
             case "AUTHOR_FORMAT_BOOK_PDF_ADAPTER":
                 searchAuthorBook("AuthorPDFBook.php", intent.getStringExtra("id_author_key")); break;
             case "AUTHOR_FORMAT_BOOK_AUDIO_ADAPTER":
@@ -357,7 +357,7 @@ public class SearchActivity extends AppCompatActivity {
     private void searchAuthorBook(String fileName, String idAuthor) {
         registerRefreshReceiver("AUTHOR_SEARCH", () ->
                 new NetworkTask<>(this, fileName).execute(mSession.getIdNumber(), idAuthor));
-        new NetworkTask<OnlineBook>(this, fileName).execute(mSession.getIdNumber(), idAuthor);
+        new NetworkTask<OnlineBook>(this, fileName).execute(mSession.getIdNumber(), idAuthor,idAuthor);
     }
 
     private void searchStructCategorie(String fileName, String idNumber) {
@@ -827,7 +827,7 @@ public class SearchActivity extends AppCompatActivity {
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject obj = jsonArray.getJSONObject(i);
             switch (onlineBookKey){
-                case "MAIN_ACTIVITY":
+                case "MAIN_ACTIVITY","AUTHOR_ACTIVITY":
                     mOnlineBooks.add(new OnlineBook(
                             obj.getString("idBook"), obj.getString("blanket"), obj.getString("bookTitle"),
                             obj.optString("nameStruct", "") + (obj.has("categoryTitle") ? " : " + obj.getString("categoryTitle") : obj.getString("categoryTitle")),
