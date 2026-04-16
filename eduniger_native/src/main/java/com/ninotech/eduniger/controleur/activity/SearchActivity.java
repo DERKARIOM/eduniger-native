@@ -121,6 +121,8 @@ public class SearchActivity extends AppCompatActivity {
     private Intent mCurrentIntent;
     private ValueAnimator mShimmerAnimator;
     private ValueAnimator mArrowAnimator;
+    private String onlineBookKey;
+    private String idStruct;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -311,7 +313,7 @@ public class SearchActivity extends AppCompatActivity {
         initializeOnlineBookLists();
         showWaitingState();
 
-        String onlineBookKey = intent.getStringExtra("online_book_key");
+        onlineBookKey = intent.getStringExtra("online_book_key");
         if (onlineBookKey == null) return;
 
         switch (onlineBookKey) {
@@ -320,7 +322,8 @@ public class SearchActivity extends AppCompatActivity {
             case "CATEGORY_ACTIVITY":
                 onLineBookSwitchCategory(intent.getStringExtra("title_category")); break;
             case "STRUCTURE_ACTIVITY":
-                searchStructBook(intent.getStringExtra("id_struct_key")); break;
+                idStruct = intent.getStringExtra("id_struct_key");
+                searchStructBook(idStruct); break;
             case "AUTHOR_ACTIVITY":
                 searchAuthorBook("AuthorBook.php", intent.getStringExtra("id_author_key")); break;
             case "AUTHOR_FORMAT_BOOK_PDF_ADAPTER":
@@ -341,8 +344,8 @@ public class SearchActivity extends AppCompatActivity {
 
     private void searchOnLineBook() {
         registerRefreshReceiver("BOOKS_SEARCH", () ->
-                new NetworkTask<>(this, "Ranking.php").execute(mSession.getIdNumber()));
-        new NetworkTask<OnlineBook>(this, "Ranking.php").execute(mSession.getIdNumber());
+                new NetworkTask<>(this, "ranking.php").execute(mSession.getIdNumber()));
+        new NetworkTask<OnlineBook>(this, "ranking.php").execute(mSession.getIdNumber());
     }
 
     private void searchStructBook(String idStruct) {
@@ -772,7 +775,6 @@ public class SearchActivity extends AppCompatActivity {
     private static class NetworkTask<T> extends AsyncTask<String, Void, String> {
         private final WeakReference<SearchActivity> activityRef;
         private final String fileName;
-
         NetworkTask(SearchActivity activity, String fileName) {
             this.activityRef = new WeakReference<>(activity);
             this.fileName = fileName;
@@ -824,13 +826,33 @@ public class SearchActivity extends AppCompatActivity {
     private void parseOnlineBooks(JSONArray jsonArray) throws JSONException {
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject obj = jsonArray.getJSONObject(i);
-            mOnlineBooks.add(new OnlineBook(
-                    obj.getString("idBook"), obj.getString("blanket"), obj.getString("bookTitle"),
-                    obj.optString("nameStruct", "") + (obj.has("categoryTitle") ? " : " + obj.getString("categoryTitle") : obj.getString("categoryTitle")),
-                    obj.getString("isPhysic"), obj.getString("electronic"), obj.getString("isAudio"),
-                    obj.optInt("numberLike", 0),
-                    obj.optInt("numberView", obj.optInt("numberNoLike", 0))
-            ));
+            switch (onlineBookKey){
+                case "MAIN_ACTIVITY":
+                    mOnlineBooks.add(new OnlineBook(
+                            obj.getString("idBook"), obj.getString("blanket"), obj.getString("bookTitle"),
+                            obj.optString("nameStruct", "") + (obj.has("categoryTitle") ? " : " + obj.getString("categoryTitle") : obj.getString("categoryTitle")),
+                            obj.getString("isPhysic"),
+                            obj.getString("electronic"),
+                            obj.getString("isAudio"),
+                            obj.getString("idStruct"),
+                            obj.optInt("numberLike", 0),
+                            obj.optInt("numberView", obj.optInt("numberNoLike", 0))
+                    ));
+                    break;
+                default:
+                    mOnlineBooks.add(new OnlineBook(
+                            obj.getString("idBook"), obj.getString("blanket"), obj.getString("bookTitle"),
+                            obj.optString("nameStruct", "") + (obj.has("categoryTitle") ? " : " + obj.getString("categoryTitle") : obj.getString("categoryTitle")),
+                            obj.getString("isPhysic"),
+                            obj.getString("electronic"),
+                            obj.getString("isAudio"),
+                            idStruct,
+                            obj.optInt("numberLike", 0),
+                            obj.optInt("numberView", obj.optInt("numberNoLike", 0))
+                    ));
+                    break;
+
+            }
         }
     }
 
