@@ -56,6 +56,7 @@ public class ChatAiActivity extends AppCompatActivity {
     private String      sessionId;      // UUID envoyé à l'API
     private ChatSession currentSession; // ligne SQLite correspondante
     private boolean     sessionSaved;   // true dès que la session est en base
+    private View layoutEmptyState;
 
     // ─────────────────────────────────────────────────────────────────────────
     @Override
@@ -81,11 +82,7 @@ public class ChatAiActivity extends AppCompatActivity {
         initViews();
         setupRecyclerView();
         setupListeners();
-
-        if (!sessionSaved) {
-            // Message de bienvenue uniquement pour une nouvelle conversation
-            addBotMessage("Bonjour ! Comment puis-je t'aider aujourd'hui ?");
-        }
+        updateEmptyState();
     }
 
     // ─── Initialisation ───────────────────────────────────────────────────────
@@ -98,6 +95,12 @@ public class ChatAiActivity extends AppCompatActivity {
         btnBack      = findViewById(R.id.btnBack);
         btnMenu      = findViewById(R.id.btnMenu);
         layoutTyping = findViewById(R.id.layoutTyping);
+        layoutEmptyState = findViewById(R.id.layoutEmptyState);
+    }
+    private void updateEmptyState() {
+        boolean isEmpty = messages.isEmpty();
+        layoutEmptyState.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
+        recyclerView.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
     }
 
     private void setupRecyclerView() {
@@ -106,6 +109,7 @@ public class ChatAiActivity extends AppCompatActivity {
         lm.setStackFromEnd(true);
         recyclerView.setLayoutManager(lm);
         recyclerView.setAdapter(adapter);
+        updateEmptyState();
     }
 
     private void setupListeners() {
@@ -199,19 +203,22 @@ public class ChatAiActivity extends AppCompatActivity {
 
     private void addUserMessage(String text) {
         Message msg = new Message(text, Message.TYPE_USER);
-        persistMessage(msg);          // ← sauvegarde SQLite
+        persistMessage(msg);
         messages.add(msg);
         adapter.notifyItemInserted(messages.size() - 1);
         recyclerView.scrollToPosition(messages.size() - 1);
+        updateEmptyState(); // ← ajouter
     }
 
     private void addBotMessage(String text) {
         Message msg = new Message(text, Message.TYPE_BOT);
-        persistMessage(msg);          // ← sauvegarde SQLite
+        persistMessage(msg);
         messages.add(msg);
         adapter.notifyItemInserted(messages.size() - 1);
         recyclerView.scrollToPosition(messages.size() - 1);
+        updateEmptyState(); // ← ajouter
     }
+
 
     // ─── Persistance SQLite ───────────────────────────────────────────────────
 
@@ -247,7 +254,6 @@ public class ChatAiActivity extends AppCompatActivity {
      */
     private void openHistory() {
         ChatHistoryBottomSheet sheet = new ChatHistoryBottomSheet(session -> {
-            // L'utilisateur a tapé sur une session → on la charge
             messages.clear();
             List<Message> saved = dbHelper.getMessagesForSession(session.getId());
             messages.addAll(saved);
@@ -257,6 +263,8 @@ public class ChatAiActivity extends AppCompatActivity {
             currentSession = session;
             sessionId      = session.getSessionUuid();
             sessionSaved   = true;
+
+            updateEmptyState(); // ← ajouter cette ligne
         });
         sheet.show(getSupportFragmentManager(), "history");
     }
