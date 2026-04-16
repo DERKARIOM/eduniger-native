@@ -317,7 +317,7 @@ public class SearchActivity extends AppCompatActivity {
         if (onlineBookKey == null) return;
 
         switch (onlineBookKey) {
-            case "MAIN_ACTIVITY":
+            case "MAIN_ACTIVITY","CHAT_AI_ACTIVITY":
                 searchOnLineBook(); break;
             case "CATEGORY_ACTIVITY":
                 onLineBookSwitchCategory(intent.getStringExtra("title_category")); break;
@@ -835,6 +835,19 @@ public class SearchActivity extends AppCompatActivity {
                             obj.getString("electronic"),
                             obj.getString("isAudio"),
                             obj.getString("idStruct"),
+                            obj.optInt("numberLike", 0),
+                            obj.optInt("numberView", obj.optInt("numberNoLike", 0))
+                    ));
+                    break;
+                case "CHAT_AI_ACTIVITY":
+                    mOnlineBooks.add(new OnlineBook(
+                            obj.getString("idBook"), obj.getString("blanket"), obj.getString("bookTitle"),
+                            obj.optString("nameStruct", "") + (obj.has("categoryTitle") ? " : " + obj.getString("categoryTitle") : obj.getString("categoryTitle")),
+                            obj.getString("isPhysic"),
+                            obj.getString("electronic"),
+                            obj.getString("isAudio"),
+                            obj.getString("idStruct"),
+                            "ACTION_1",
                             obj.optInt("numberLike", 0),
                             obj.optInt("numberView", obj.optInt("numberNoLike", 0))
                     ));

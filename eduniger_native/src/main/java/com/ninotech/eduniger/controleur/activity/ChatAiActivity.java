@@ -129,7 +129,7 @@ public class ChatAiActivity extends AppCompatActivity {
         btnAction1.setOnClickListener(v -> {
             Intent intent = new Intent(this, SearchActivity.class);
             intent.putExtra("search_key", "ONLINE_BOOK");
-            intent.putExtra("online_book_key", "MAIN_ACTIVITY");
+            intent.putExtra("online_book_key", "CHAT_AI_ACTIVITY");
             startActivityForResult(intent, 1001);
         });
         btnAction2.setOnClickListener(v -> Toast.makeText(this, "Action 2", Toast.LENGTH_SHORT).show());

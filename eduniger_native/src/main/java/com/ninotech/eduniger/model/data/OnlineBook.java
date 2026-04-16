@@ -34,6 +34,18 @@ public class OnlineBook extends Book {
         mNumberLikes = numberLikes;
         mNumberView = numberView;
     }
+    public OnlineBook(String id , String cover, String title , String category , String isPhysic, String electronic , String isAudio, String idStruct, String onClickType , int numberLikes , int numberView)
+    {
+        super(id,title,category);
+        mCover = cover;
+        mIsPhysic = isPhysic;
+        mElectronic = electronic;
+        mIsAudio = isAudio;
+        this.onClickType = onClickType;
+        mIdStruct = idStruct;
+        mNumberLikes = numberLikes;
+        mNumberView = numberView;
+    }
    public void like()
    {
       mNumberLikes++;
@@ -187,4 +199,14 @@ public class OnlineBook extends Book {
     }
 
     private String mIdStruct;
+
+    public String getOnClickType() {
+        return onClickType;
+    }
+
+    public void setOnClickType(String onClickType) {
+        this.onClickType = onClickType;
+    }
+
+    private String onClickType;
 }

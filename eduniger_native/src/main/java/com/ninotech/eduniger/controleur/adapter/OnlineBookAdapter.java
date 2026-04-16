@@ -121,15 +121,22 @@ public class OnlineBookAdapter extends RecyclerView.Adapter<OnlineBookAdapter.My
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intentBook = new Intent(itemView.getContext(), BookActivity.class);
-                    intentBook.putExtra("intent_adapter_book_id", onlineBook.getId());
-                    itemView.getContext().startActivity(intentBook);
-
-                    // Dans le onClick de ton OnlineBookAdapter (ou via setOnItemClickListener) :
-//                    Intent result = new Intent();
-//                    result.putExtra("book_title", onlineBook.getTitle()); // adapte getTitle() à ton modèle
-//                    ((Activity) itemView.getContext()).setResult(Activity.RESULT_OK, result);
-//                    ((Activity) itemView.getContext()).finish();
+                    if(onlineBook.getOnClickType() == null)
+                    {
+                        Intent intentBook = new Intent(itemView.getContext(), BookActivity.class);
+                        intentBook.putExtra("intent_adapter_book_id", onlineBook.getId());
+                        itemView.getContext().startActivity(intentBook);
+                    }
+                    else
+                    {
+                        if(onlineBook.getOnClickType().equals("ACTION_1"))
+                        {
+                            Intent result = new Intent();
+                            result.putExtra("book_title", onlineBook.getTitle()); // adapte getTitle() à ton modèle
+                            ((Activity) itemView.getContext()).setResult(Activity.RESULT_OK, result);
+                            ((Activity) itemView.getContext()).finish();
+                        }
+                    }
                 }
             });
         }
