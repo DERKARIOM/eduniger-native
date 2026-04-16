@@ -1,11 +1,14 @@
 package com.ninotech.eduniger.controleur.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -57,6 +60,7 @@ public class ChatAiActivity extends AppCompatActivity {
     private ChatSession currentSession; // ligne SQLite correspondante
     private boolean     sessionSaved;   // true dès que la session est en base
     private View layoutEmptyState;
+    private LinearLayout btnAction1, btnAction2, btnAction3, btnAction4;
 
     // ─────────────────────────────────────────────────────────────────────────
     @Override
@@ -96,6 +100,10 @@ public class ChatAiActivity extends AppCompatActivity {
         btnMenu      = findViewById(R.id.btnMenu);
         layoutTyping = findViewById(R.id.layoutTyping);
         layoutEmptyState = findViewById(R.id.layoutEmptyState);
+        btnAction1 = findViewById(R.id.action1);
+        btnAction2 = findViewById(R.id.action2);
+        btnAction3 = findViewById(R.id.action3);
+        btnAction4 = findViewById(R.id.action4);
     }
     private void updateEmptyState() {
         boolean isEmpty = messages.isEmpty();
@@ -118,6 +126,15 @@ public class ChatAiActivity extends AppCompatActivity {
 
         // Bouton menu → ouvre l'historique des discussions
         btnMenu.setOnClickListener(v -> openHistory());
+        btnAction1.setOnClickListener(v -> {
+            Intent intent = new Intent(this, SearchActivity.class);
+            intent.putExtra("search_key", "ONLINE_BOOK");
+            intent.putExtra("online_book_key", "MAIN_ACTIVITY");
+            startActivityForResult(intent, 1001);
+        });
+        btnAction2.setOnClickListener(v -> Toast.makeText(this, "Action 2", Toast.LENGTH_SHORT).show());
+        btnAction3.setOnClickListener(v -> Toast.makeText(this, "Action 3", Toast.LENGTH_SHORT).show());
+        btnAction4.setOnClickListener(v -> Toast.makeText(this, "Action 4", Toast.LENGTH_SHORT).show());
     }
 
     // ─── Reprise d'une session existante ──────────────────────────────────────
@@ -277,5 +294,18 @@ public class ChatAiActivity extends AppCompatActivity {
 
     private String generateSessionId() {
         return UUID.randomUUID().toString();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1001 && resultCode == RESULT_OK && data != null) {
+            String bookTitle = data.getStringExtra("book_title");
+            if (bookTitle != null) {
+                String query = "Explique moi ce livre : " + bookTitle;
+                etMessage.setText(query);
+                sendMessage();
+            }
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.ninotech.eduniger.controleur.adapter;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -123,6 +124,12 @@ public class OnlineBookAdapter extends RecyclerView.Adapter<OnlineBookAdapter.My
                     Intent intentBook = new Intent(itemView.getContext(), BookActivity.class);
                     intentBook.putExtra("intent_adapter_book_id", onlineBook.getId());
                     itemView.getContext().startActivity(intentBook);
+
+                    // Dans le onClick de ton OnlineBookAdapter (ou via setOnItemClickListener) :
+//                    Intent result = new Intent();
+//                    result.putExtra("book_title", onlineBook.getTitle()); // adapte getTitle() à ton modèle
+//                    ((Activity) itemView.getContext()).setResult(Activity.RESULT_OK, result);
+//                    ((Activity) itemView.getContext()).finish();
                 }
             });
         }
