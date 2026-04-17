@@ -43,9 +43,9 @@ import com.ninotech.eduniger.controleur.fragment.LibraryFragment;
 import com.ninotech.eduniger.controleur.fragment.StructureFragment;
 import com.ninotech.eduniger.model.data.Account;
 import com.ninotech.eduniger.model.data.Initialization;
-import com.ninotech.eduniger.model.data.NotifNumber;
 import com.ninotech.eduniger.model.data.Themes;
 import com.ninotech.eduniger.model.table.DigitalPrintTable;
+import com.ninotech.eduniger.model.table.NotificationTable;
 import com.ninotech.eduniger.model.table.Session;
 import com.ninotech.eduniger.model.table.UserTable;
 import com.ninotech.eduniger.model.worker.NetworkCheckWorker;
@@ -54,32 +54,37 @@ import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String TAG = "MainActivity";
+    private static final String TAG               = "MainActivity";
     private static final String ACTION_UPDATE_BADGE = "ACTION_UPDATE_NOTIFICATION_BADGE";
-    private static final String THEME_NOT_NIGHT = "notNight";
-    private static final String THEME_NIGHT = "night";
-    private static final String EXTRA_HORS_LINE = "HORS_LINE";
-    private static final String HORS_LINE_ON = "ON";
-    private static final int PERMISSION_REQUEST_CODE = 101;
+    private static final String THEME_NOT_NIGHT   = "notNight";
+    private static final String THEME_NIGHT       = "night";
+    private static final String EXTRA_HORS_LINE   = "HORS_LINE";
+    private static final String HORS_LINE_ON      = "ON";
+    private static final int    PERMISSION_REQUEST_CODE = 101;
 
     // Views
     private BottomNavigationView mBottomNavigationView;
-    private EditText mEditText;
-    private ImageView mProfileImageView;
-    private TextView mBadgeTextView;
+    private EditText             mEditText;
+    private ImageView            mProfileImageView;
+    private TextView             mBadgeTextView;
 
     // Fragments
     private Fragment mFragmentHome;
     private Fragment mFragmentStructure;
     private Fragment mFragmentLibrary;
     private Fragment mActiveFragment;
+    private Fragment mFragmentBookStore;
 
     // Data
-    private Account mAccount;
-    private DigitalPrintTable mDigitalPrintTable;
-    private BroadcastReceiver mUpdateBadgeReceiver;
-    private Fragment mFragmentBookStore;
+    private Account              mAccount;
+    private DigitalPrintTable    mDigitalPrintTable;
+    private BroadcastReceiver    mUpdateBadgeReceiver;
+
     private com.google.android.material.floatingactionbutton.FloatingActionButton mFabAiAssistant;
+
+    // ================================================================
+    // CYCLE DE VIE
+    // ================================================================
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,28 +110,27 @@ public class MainActivity extends AppCompatActivity {
         startNetworkWorker();
     }
 
-    private void applyGlassmorphism() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            View backgroundView = findViewById(R.id.backgroundView);
-            if (backgroundView != null) {
-                RenderEffect blurEffect = RenderEffect.createBlurEffect(
-                        80f, 80f, Shader.TileMode.CLAMP);
-                backgroundView.setRenderEffect(blurEffect);
-            }
-        } else {
-            // Fallback API < 31
-            View backgroundView = findViewById(R.id.backgroundView);
-            if (backgroundView != null) {
-                backgroundView.getBackground().setAlpha(180);
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mUpdateBadgeReceiver != null) {
+            try {
+                unregisterReceiver(mUpdateBadgeReceiver);
+            } catch (Exception e) {
+                Log.e(TAG, "Error unregistering receiver", e);
             }
         }
     }
+
+    // ================================================================
+    // INITIALISATION
+    // ================================================================
 
     private void initializeApp() {
         configureStrictMode();
         applyTheme();
         new Initialization(this).onCreate(this);
-        mAccount = new Account();
+        mAccount           = new Account();
         mDigitalPrintTable = new DigitalPrintTable(this);
     }
 
@@ -148,6 +152,26 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void applyGlassmorphism() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            View backgroundView = findViewById(R.id.backgroundView);
+            if (backgroundView != null) {
+                RenderEffect blurEffect = RenderEffect.createBlurEffect(
+                        80f, 80f, Shader.TileMode.CLAMP);
+                backgroundView.setRenderEffect(blurEffect);
+            }
+        } else {
+            View backgroundView = findViewById(R.id.backgroundView);
+            if (backgroundView != null) {
+                backgroundView.getBackground().setAlpha(180);
+            }
+        }
+    }
+
+    // ================================================================
+    // SESSION
+    // ================================================================
+
     private boolean checkSession() {
         return mAccount.isSession(this);
     }
@@ -158,11 +182,15 @@ public class MainActivity extends AppCompatActivity {
         finish();
     }
 
+    // ================================================================
+    // VUES
+    // ================================================================
+
     private void initializeViews() {
         mBottomNavigationView = findViewById(R.id.bottom_navigation_main);
-        mEditText = findViewById(R.id.edit_text_toolbar_search);
-        mProfileImageView = findViewById(R.id.image_view_toolbar_main_profile);
-        mFabAiAssistant       = findViewById(R.id.fab_ai_assistant);  // ← nouveau
+        mEditText             = findViewById(R.id.edit_text_toolbar_search);
+        mProfileImageView     = findViewById(R.id.image_view_toolbar_main_profile);
+        mFabAiAssistant       = findViewById(R.id.fab_ai_assistant);
 
         mEditText.setOnClickListener(v -> navigateToSearch());
         mFabAiAssistant.setOnClickListener(v -> navigateToChatBot());
@@ -170,7 +198,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void navigateToChatBot() {
-        //Toast.makeText(this, "Eduna", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(this, ChatAiActivity.class);
         startActivity(intent);
     }
@@ -181,6 +208,10 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("online_book_key", "MAIN_ACTIVITY");
         startActivity(intent);
     }
+
+    // ================================================================
+    // TOOLBAR
+    // ================================================================
 
     private void setupToolbar() {
         Toolbar toolbar = findViewById(R.id.toolbar_search);
@@ -232,9 +263,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void loadUserProfile() {
         try {
-            Session session = new Session(this);
+            Session   session   = new Session(this);
             UserTable userTable = new UserTable(this);
-            Cursor cursor = userTable.getData(session.getIdNumber());
+            Cursor    cursor    = userTable.getData(session.getIdNumber());
 
             if (cursor != null && cursor.moveToFirst()) {
                 byte[] photoBytes = cursor.getBlob(6);
@@ -251,13 +282,31 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // ================================================================
+    // BADGE DE NOTIFICATION
+    // ================================================================
+
     private void setupNotificationBadge() {
-        Toolbar toolbar = findViewById(R.id.toolbar_search);
-        View actionView = toolbar.getMenu().getItem(1).getActionView();
-        mBadgeTextView = actionView.findViewById(R.id.badge);
+        Toolbar toolbar    = findViewById(R.id.toolbar_search);
+        View    actionView = toolbar.getMenu().getItem(1).getActionView();
+        mBadgeTextView     = actionView.findViewById(R.id.badge);
 
-        updateBadgeCount(NotifNumber.getLastKnownLocation(this));
+        // Comptage initial depuis la BDD locale
+        int initialCount = 0;
+        try {
+            Session           session    = new Session(this);
+            NotificationTable notifTable = new NotificationTable(this);
+            Cursor            cursor     = notifTable.getData(session.getIdNumber());
+            if (cursor != null) {
+                initialCount = cursor.getCount();
+                cursor.close();
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Erreur comptage initial badge", e);
+        }
+        updateBadgeCount(initialCount);
 
+        // Clic sur la cloche : masque le badge et ouvre les notifications
         actionView.setOnClickListener(v -> {
             mBadgeTextView.setVisibility(View.GONE);
             navigateToNotifications();
@@ -287,46 +336,47 @@ public class MainActivity extends AppCompatActivity {
         };
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            registerReceiver(mUpdateBadgeReceiver,
+            registerReceiver(
+                    mUpdateBadgeReceiver,
                     new IntentFilter(ACTION_UPDATE_BADGE),
-                    Context.RECEIVER_EXPORTED);
+                    Context.RECEIVER_EXPORTED
+            );
         }
     }
 
-    // ==================== Navigation par fragments (hide/show) ====================
+    // ================================================================
+    // NAVIGATION PAR FRAGMENTS (hide / show)
+    // ================================================================
 
     private void setupNavigation() {
-        // Créer les fragments une seule fois
-        mFragmentHome    = new HomeFragment();
+        mFragmentHome      = new HomeFragment();
         mFragmentBookStore = new BookStoreFragment();
         mFragmentStructure = new StructureFragment();
-        mFragmentLibrary = new LibraryFragment();
+        mFragmentLibrary   = new LibraryFragment();
 
-        // Les ajouter tous les 3, cacher chat et library
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.nav_host_fragment_activity_main, mFragmentLibrary, "library").hide(mFragmentLibrary)
+                .add(R.id.nav_host_fragment_activity_main, mFragmentLibrary,   "library").hide(mFragmentLibrary)
                 .add(R.id.nav_host_fragment_activity_main, mFragmentBookStore, "bookstore").hide(mFragmentBookStore)
-                .add(R.id.nav_host_fragment_activity_main, mFragmentStructure,    "chat").hide(mFragmentStructure)
-                .add(R.id.nav_host_fragment_activity_main, mFragmentHome,    "home")
+                .add(R.id.nav_host_fragment_activity_main, mFragmentStructure, "chat").hide(mFragmentStructure)
+                .add(R.id.nav_host_fragment_activity_main, mFragmentHome,      "home")
                 .commit();
 
         mActiveFragment = mFragmentHome;
 
-        // Gérer le mode hors-ligne : démarrer sur Library
+        // Mode hors-ligne : démarrer sur Library
         String horsLine = getIntent().getStringExtra(EXTRA_HORS_LINE);
         if (HORS_LINE_ON.equals(horsLine)) {
             showFragment(mFragmentLibrary);
             mBottomNavigationView.setSelectedItemId(R.id.navigation_library);
         }
 
-        // Écouter les clics sur la barre de navigation
         mBottomNavigationView.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
             if (id == R.id.navigation_home) {
                 showFragment(mFragmentHome);
-            } else if (id == R.id.navigation_structure) {  // ← remplacez par le bon ID
+            } else if (id == R.id.navigation_structure) {
                 showFragment(mFragmentBookStore);
-            } else if (id == R.id.navigation_suggestion) {        // ← remplacez par le bon ID
+            } else if (id == R.id.navigation_suggestion) {
                 showFragment(mFragmentStructure);
             } else if (id == R.id.navigation_library) {
                 showFragment(mFragmentLibrary);
@@ -344,18 +394,22 @@ public class MainActivity extends AppCompatActivity {
         mActiveFragment = target;
     }
 
-    // ==================== Deep link ====================
+    // ================================================================
+    // DEEP LINK
+    // ================================================================
 
     private void handleDeepLink() {
         Uri data = getIntent().getData();
         if (data != null) {
-            String id = data.getQueryParameter("id");
+            String id   = data.getQueryParameter("id");
             String name = data.getQueryParameter("name");
             Log.d(TAG, "Deep link received - ID: " + id + ", Name: " + name);
         }
     }
 
-    // ==================== Digital print ====================
+    // ================================================================
+    // DIGITAL PRINT
+    // ================================================================
 
     private void checkDigitalPrint() {
         try {
@@ -371,7 +425,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // ==================== Permissions ====================
+    // ================================================================
+    // PERMISSIONS
+    // ================================================================
 
     private void requestPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -387,7 +443,22 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // ==================== Worker réseau ====================
+    private void requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ActivityCompat.checkSelfPermission(this,
+                    android.Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{android.Manifest.permission.POST_NOTIFICATIONS},
+                        PERMISSION_REQUEST_CODE
+                );
+            }
+        }
+    }
+
+    // ================================================================
+    // WORKER RÉSEAU
+    // ================================================================
 
     private void startNetworkWorker() {
         OneTimeWorkRequest networkCheckRequest =
@@ -395,21 +466,9 @@ public class MainActivity extends AppCompatActivity {
         WorkManager.getInstance(this).enqueue(networkCheckRequest);
     }
 
-    // Dans onCreate() de MainActivity
-    private void requestNotificationPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ActivityCompat.checkSelfPermission(this,
-                    android.Manifest.permission.POST_NOTIFICATIONS)
-                    != PackageManager.PERMISSION_GRANTED) {
-
-                ActivityCompat.requestPermissions(this,
-                        new String[]{android.Manifest.permission.POST_NOTIFICATIONS},
-                        101
-                );
-            }
-        }
-    }
-    // ==================== Menu ====================
+    // ================================================================
+    // MENU
+    // ================================================================
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -421,7 +480,9 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    // ==================== Utilitaires ====================
+    // ================================================================
+    // UTILITAIRES
+    // ================================================================
 
     private boolean isConnectedToInternet() {
         ConnectivityManager connectivityManager =
@@ -443,19 +504,5 @@ public class MainActivity extends AppCompatActivity {
 
     public void setEditText(EditText editText) {
         mEditText = editText;
-    }
-
-    // ==================== Cycle de vie ====================
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (mUpdateBadgeReceiver != null) {
-            try {
-                unregisterReceiver(mUpdateBadgeReceiver);
-            } catch (Exception e) {
-                Log.e(TAG, "Error unregistering receiver", e);
-            }
-        }
     }
 }

@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.media.RingtoneManager;
 import android.os.Build;
 import android.util.Log;
@@ -32,6 +33,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -43,6 +47,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private static final String TAG        = "FCMService";
     private static final String CHANNEL_ID = "eduniger_channel";
+    private static final String ACTION_UPDATE_BADGE = "ACTION_UPDATE_NOTIFICATION_BADGE";
 
     // ================================================================
     // TOKEN RENOUVELÉ PAR FIREBASE
@@ -87,7 +92,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Log.d(TAG, "Notification reçue — type: " + type + " | extraData: " + extraData);
 
         createNotificationChannel();
-        // ✅ type = "5" → synchroniser les loands non vus
+
+        // type = "5" → synchroniser les loands non vus
         if ("5".equals(type)) {
             syncUnreadLoands(title, message);
         } else {
@@ -149,7 +155,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     return;
                 }
 
-                JSONArray data      = jsonObject.getJSONArray("data");
+                JSONArray data        = jsonObject.getJSONArray("data");
                 LoandTable loandTable = new LoandTable(getApplicationContext());
                 DownloadFile downloader = new DownloadFile(getApplicationContext());
 
@@ -175,13 +181,13 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                             localCoverPath = downloader.start(
                                     coverUrl,
                                     bookCover,
-                                    null // pas de progress bar en background
+                                    null
                             );
                             Log.d(TAG, "Couverture téléchargée : " + localCoverPath);
 
                         } catch (Exception e) {
                             Log.e(TAG, "Erreur téléchargement couverture : " + e.getMessage());
-                            localCoverPath = bookCover; // fallback : nom du fichier
+                            localCoverPath = bookCover;
                         }
                     }
 
@@ -275,26 +281,58 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             }
         }
 
-        // ✅ AJOUT : sauvegarde en base locale
+        // ================================================================
+        // SAUVEGARDE EN BASE LOCALE + MISE À JOUR DU BADGE
+        // ================================================================
         try {
             Session session = new Session(getApplicationContext());
             String idNumber = session.getIdNumber();
+
             if (idNumber != null && !idNumber.isEmpty() && !"null".equals(idNumber)) {
-                String date = new java.text.SimpleDateFormat(
-                        "yyyy-MM-dd HH:mm:ss",
-                        java.util.Locale.getDefault()
-                ).format(new java.util.Date());
+                String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+                        .format(new Date());
 
                 NotificationTable notifTable = new NotificationTable(getApplicationContext());
                 notifTable.insert(idNumber, title, date, message, null, extraData, type);
                 Log.d(TAG, "Notification sauvegardée en local");
+
+                // Compter toutes les notifications et envoyer le broadcast
+                int badgeCount = countNotifications(notifTable, idNumber);
+                sendBadgeBroadcast(badgeCount);
             }
         } catch (Exception e) {
             Log.e(TAG, "Erreur sauvegarde notification locale : " + e.getMessage());
         }
-        // ✅ FIN AJOUT
+        // ================================================================
 
         notificationManager.notify((int) System.currentTimeMillis(), builder.build());
+    }
+
+    // ================================================================
+    // COMPTER LES NOTIFICATIONS EN BASE LOCALE
+    // ================================================================
+
+    private int countNotifications(NotificationTable table, String idNumber) {
+        try {
+            Cursor cursor = table.getData(idNumber);
+            int count = (cursor != null) ? cursor.getCount() : 0;
+            if (cursor != null) cursor.close();
+            return count;
+        } catch (Exception e) {
+            Log.e(TAG, "Erreur comptage notifications : " + e.getMessage());
+            return 0;
+        }
+    }
+
+    // ================================================================
+    // ENVOI DU BROADCAST POUR METTRE À JOUR LE BADGE
+    // ================================================================
+
+    private void sendBadgeBroadcast(int count) {
+        Intent badgeIntent = new Intent(ACTION_UPDATE_BADGE);
+        badgeIntent.putExtra("number", count);
+        sendBroadcast(badgeIntent);
+        Log.d(TAG, "Broadcast badge envoyé : count=" + count);
     }
 
     // ================================================================
@@ -302,14 +340,13 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     // ================================================================
 
     private Intent buildIntentByType(String type, String extraData) {
-        Intent intent = null;
+        Intent intent;
         switch (type) {
             case "2":
                 intent = new Intent(this, BookActivity.class);
                 intent.putExtra("intent_adapter_book_id", extraData);
                 break;
             case "loand":
-                // Ouvrir ContainerActivity sur l'onglet loands (id=3)
                 intent = new Intent(this, ContainerActivity.class);
                 intent.putExtra("id", 3);
                 break;
