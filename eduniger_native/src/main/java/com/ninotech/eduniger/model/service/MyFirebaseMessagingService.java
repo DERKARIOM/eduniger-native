@@ -23,6 +23,7 @@ import com.ninotech.eduniger.controleur.activity.NotificationActivity;
 import com.ninotech.eduniger.model.data.DownloadFile;
 import com.ninotech.eduniger.model.data.Server;
 import com.ninotech.eduniger.model.table.LoandTable;
+import com.ninotech.eduniger.model.table.NotificationTable;
 import com.ninotech.eduniger.model.table.Session;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -273,6 +274,25 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 return;
             }
         }
+
+        // ✅ AJOUT : sauvegarde en base locale
+        try {
+            Session session = new Session(getApplicationContext());
+            String idNumber = session.getIdNumber();
+            if (idNumber != null && !idNumber.isEmpty() && !"null".equals(idNumber)) {
+                String date = new java.text.SimpleDateFormat(
+                        "yyyy-MM-dd HH:mm:ss",
+                        java.util.Locale.getDefault()
+                ).format(new java.util.Date());
+
+                NotificationTable notifTable = new NotificationTable(getApplicationContext());
+                notifTable.insert(idNumber, title, date, message, null, extraData, type);
+                Log.d(TAG, "Notification sauvegardée en local");
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Erreur sauvegarde notification locale : " + e.getMessage());
+        }
+        // ✅ FIN AJOUT
 
         notificationManager.notify((int) System.currentTimeMillis(), builder.build());
     }
