@@ -1,51 +1,64 @@
 package com.ninotech.eduniger.model.data;
 
 public class Category {
-    public Category(String cover, String title)
-    {
-        mCover = cover;
-        mTitle = title;
-        mNameStruct = null;
-    }
-    public Category(String cover, String title , String nameStruct)
-    {
-        mCover = cover;
-        mTitle = title;
-        mNameStruct = nameStruct;
-    }
-    public String getId() {
-        return mId;
+
+    // ==================== Constructeurs existants (inchangés) ====================
+
+    public Category(String cover, String title) {
+        mCover           = cover;
+        mTitle           = title;
+        mNameStruct      = null;
+        mDate            = null;
+        mNumberSubscribe = 0;
     }
 
-    public void setId(String id) {
-        mId = id;
+    public Category(String cover, String title, String nameStruct) {
+        mCover           = cover;
+        mTitle           = title;
+        mNameStruct      = nameStruct;
+        mDate            = null;
+        mNumberSubscribe = 0;
     }
 
-    public String getTitle() {
-        return mTitle;
+    // ==================== Nouveau constructeur complet (API) ====================
+
+    public Category(String id, String cover, String title, String date, int numberSubscribe) {
+        mId              = id;
+        mCover           = cover;
+        mTitle           = title;
+        mNameStruct      = null;
+        mDate            = date;
+        mNumberSubscribe = numberSubscribe;
     }
 
-    public void setTitle(String title) {
-        mTitle = title;
-    }
+    // ==================== Getters / Setters existants (inchangés) ====================
 
-    public String getCover() {
-        return mCover;
-    }
+    public String getId() { return mId; }
+    public void setId(String id) { mId = id; }
 
-    public void setCover(String cover) {
-        mCover = cover;
-    }
-    public String getNameStruct() {
-        return mNameStruct;
-    }
+    public String getTitle() { return mTitle; }
+    public void setTitle(String title) { mTitle = title; }
 
-    public void setNameStruct(String mNameStruct) {
-        this.mNameStruct = mNameStruct;
-    }
+    public String getCover() { return mCover; }
+    public void setCover(String cover) { mCover = cover; }
+
+    public String getNameStruct() { return mNameStruct; }
+    public void setNameStruct(String mNameStruct) { this.mNameStruct = mNameStruct; }
+
+    // ==================== Nouveaux getters / Setters ====================
+
+    public String getDate() { return mDate; }
+    public void setDate(String date) { mDate = date; }
+
+    public int getNumberSubscribe() { return mNumberSubscribe; }
+    public void setNumberSubscribe(int numberSubscribe) { mNumberSubscribe = numberSubscribe; }
+
+    // ==================== Champs ====================
 
     private String mId;
     private String mTitle;
     private String mCover;
     private String mNameStruct;
+    private String mDate;
+    private int    mNumberSubscribe;
 }

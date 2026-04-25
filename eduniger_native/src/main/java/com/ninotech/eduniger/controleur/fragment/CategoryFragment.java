@@ -171,10 +171,12 @@ public class CategoryFragment extends Fragment {
 
     private void loadCategoryData() {
         new CategorySyn().execute(
-                Server.getUrlApi(requireContext()) + "Category.php",
+                Server.getUrlApi(requireContext()) + "category.php",
                 mSession.getIdNumber()
         );
     }
+
+    // ==================== AsyncTask ====================
 
     // ==================== AsyncTask ====================
 
@@ -189,56 +191,78 @@ public class CategoryFragment extends Fragment {
             if (!isAdded()) return;
             stopRefreshing();
 
-            if (jsonData != null) {
-                processCategoryData(jsonData);
+            // ✅ Vérifier aussi que la réponse n'est pas vide
+            if (jsonData != null && !jsonData.trim().isEmpty()) {
+                processCategoryData(jsonData.trim());
             } else {
                 showNoConnectionError();
             }
         }
 
         private void processCategoryData(String jsonData) {
-            showContentState();
+            if (RESPONSE_RAS.equals(jsonData)) {
+                showContentState();
+                return;
+            }
 
-            if (!RESPONSE_RAS.equals(jsonData)) {
-                try {
-                    JSONArray jsonArray = new JSONArray(jsonData);
-                    mCategoryList.clear();
+            // ✅ Vérifier que c'est bien un tableau JSON avant de parser
+            if (!jsonData.startsWith("[")) {
+                Log.e(TAG, "Unexpected response format: " + jsonData);
+                showNoConnectionError();
+                return;
+            }
 
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject obj = jsonArray.getJSONObject(i);
-                        mCategoryList.add(new Category(
-                                obj.getString("blanket"),
-                                obj.getString("title")
-                        ));
-                    }
+            try {
+                showContentState();
+                JSONArray jsonArray = new JSONArray(jsonData);
+                mCategoryList.clear();
 
-                    CategoryAdapter adapter = new CategoryAdapter(mCategoryList);
-                    mCategoryRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-                    mCategoryRecyclerView.setAdapter(adapter);
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject obj = jsonArray.getJSONObject(i);
 
-                } catch (JSONException e) {
-                    Log.e(TAG, "Error parsing category data", e);
+                    String idCategory      = obj.optString("idCategory", "");
+                    String title           = obj.optString("title", obj.optString("1", ""));
+                    String blanket         = obj.optString("blanket", obj.optString("2", ""));
+                    String date            = obj.optString("date",  obj.optString("3", ""));
+                    int    numberSubscribe = obj.optInt("numberSubscribe", obj.optInt("4", 0));
+
+                    mCategoryList.add(new Category(
+                            idCategory,
+                            blanket,
+                            title,
+                            date,
+                            numberSubscribe
+                    ));
                 }
+
+                CategoryAdapter adapter = new CategoryAdapter(mCategoryList);
+                mCategoryRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+                mCategoryRecyclerView.setAdapter(adapter);
+
+            } catch (JSONException e) {
+                Log.e(TAG, "Error parsing category data", e);
+                showNoConnectionError();
             }
         }
     }
 
-    // ==================== Helper Methods ====================
+// ==================== Helper Methods ====================
 
     private String executePostRequest(String url, String idNumber) {
         try {
-            RequestBody requestBody = new MultipartBody.Builder()
-                    .setType(MultipartBody.FORM)
-                    .addFormDataPart("idNumber", idNumber)
-                    .build();
+            String fullUrl = url + "?id_number=" + idNumber;
 
             Request request = new Request.Builder()
-                    .url(url)
-                    .post(requestBody)
+                    .url(fullUrl)
+                    .get()
                     .build();
 
             try (Response response = mHttpClient.newCall(request).execute()) {
-                if (response.body() != null) return response.body().string();
+                if (response.body() != null) {
+                    String body = response.body().string().trim();
+                    Log.d(TAG, "Server response: " + body);
+                    return body.isEmpty() ? null : body;
+                }
             }
         } catch (IOException e) {
             Log.e(TAG, "Network error: " + e.getMessage(), e);
