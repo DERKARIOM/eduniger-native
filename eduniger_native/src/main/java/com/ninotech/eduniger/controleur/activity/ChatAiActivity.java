@@ -199,22 +199,38 @@ public class ChatAiActivity extends AppCompatActivity {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                String rawBody = response.body() != null ? response.body().string() : "";
+                // ── Erreur HTTP (4xx, 5xx, pas de corps) ──────────────────────────
+                if (!response.isSuccessful() || response.body() == null) {
+                    runOnUiThread(() -> {
+                        showTyping(false);
+                        etMessage.setText(text);
+                        etMessage.setSelection(text.length());
+                        showModernToast("Il y'a un souci, vérifiez votre connexion et réessayez");
+                    });
+                    return;
+                }
+
+                String rawBody = response.body().string();
                 runOnUiThread(() -> {
                     showTyping(false);
                     try {
                         JSONObject json = new JSONObject(rawBody);
                         if (json.optBoolean("success", false)) {
-                            // ── Succès : on valide le message utilisateur maintenant ──
+                            String botResponse = json.getString("response");
+
+                            // ── Détecter les erreurs déguisées en succès ──────────────────
+                            if (botResponse.startsWith("Erreur") || botResponse.startsWith("Error")) {
+                                etMessage.setText(text);
+                                etMessage.setSelection(text.length());
+                                showModernToast("Il y'a un souci, vérifiez votre connexion et réessayez");
+                                return;
+                            }
+
                             addUserMessage(text);
                             if (json.has("session_id")) {
                                 sessionId = json.getString("session_id");
                             }
-                            addBotMessage(json.getString("response"));
-                        } else {
-                            etMessage.setText(text);
-                            etMessage.setSelection(text.length());
-                            showModernToast("Il y'a un souci, vérifiez votre connexion et réessayez");
+                            addBotMessage(botResponse);
                         }
                     } catch (Exception e) {
                         etMessage.setText(text);
