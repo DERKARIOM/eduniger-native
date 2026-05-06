@@ -48,6 +48,8 @@ public class ChatAiActivity extends AppCompatActivity {
     private EditText     etMessage;
     private ImageButton  btnSend, btnBack, btnMenu;
     private View         layoutTyping;
+    private View typingDot1, typingDot2, typingDot3;
+    private android.animation.AnimatorSet typingAnimatorSet;
 
     // ─── Données ──────────────────────────────────────────────────────────────
     private MessageAdapter     adapter;
@@ -99,6 +101,9 @@ public class ChatAiActivity extends AppCompatActivity {
         btnBack      = findViewById(R.id.btnBack);
         btnMenu      = findViewById(R.id.btnMenu);
         layoutTyping = findViewById(R.id.layoutTyping);
+        typingDot1 = findViewById(R.id.typing_dot_1);
+        typingDot2 = findViewById(R.id.typing_dot_2);
+        typingDot3 = findViewById(R.id.typing_dot_3);
         layoutEmptyState = findViewById(R.id.layoutEmptyState);
         btnAction1 = findViewById(R.id.action1);
         btnAction2 = findViewById(R.id.action2);
@@ -290,6 +295,41 @@ public class ChatAiActivity extends AppCompatActivity {
 
     private void showTyping(boolean show) {
         layoutTyping.setVisibility(show ? View.VISIBLE : View.GONE);
+        if (show) startTypingAnimation();
+        else      stopTypingAnimation();
+    }
+
+    private void startTypingAnimation() {
+        if (typingDot1 == null || typingDot2 == null || typingDot3 == null) return;
+        stopTypingAnimation();
+
+        android.animation.ObjectAnimator a1 = buildDotAnimator(typingDot1, 0);
+        android.animation.ObjectAnimator a2 = buildDotAnimator(typingDot2, 150);
+        android.animation.ObjectAnimator a3 = buildDotAnimator(typingDot3, 300);
+
+        typingAnimatorSet = new android.animation.AnimatorSet();
+        typingAnimatorSet.playTogether(a1, a2, a3);
+        typingAnimatorSet.start();
+    }
+
+    private void stopTypingAnimation() {
+        if (typingAnimatorSet != null) {
+            typingAnimatorSet.cancel();
+            typingAnimatorSet = null;
+        }
+        if (typingDot1 != null) typingDot1.setTranslationY(0f);
+        if (typingDot2 != null) typingDot2.setTranslationY(0f);
+        if (typingDot3 != null) typingDot3.setTranslationY(0f);
+    }
+
+    private android.animation.ObjectAnimator buildDotAnimator(View dot, int startDelay) {
+        android.animation.ObjectAnimator anim =
+                android.animation.ObjectAnimator.ofFloat(dot, "translationY", 0f, -8f, 0f);
+        anim.setDuration(600);
+        anim.setStartDelay(startDelay);
+        anim.setRepeatCount(android.animation.ObjectAnimator.INFINITE);
+        anim.setInterpolator(new android.view.animation.AccelerateDecelerateInterpolator());
+        return anim;
     }
 
     private String generateSessionId() {

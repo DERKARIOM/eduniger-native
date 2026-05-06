@@ -1,0 +1,10 @@
+<shape xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    tools:ignore="ExtraText">
+    <solid android:color="@color/sombre"/>
+    <corners
+        android:topLeftRadius="12dp"
+        android:topRightRadius="12dp"
+        android:bottomLeftRadius="3dp"/>   <!-- coin bas-gauche en pointe -->
+    android:bottomRightRadius="12dp"/>
+</shape>

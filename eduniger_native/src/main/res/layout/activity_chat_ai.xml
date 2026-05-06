@@ -179,6 +179,7 @@
         app:layout_constraintTop_toBottomOf="@id/divider" />
 
     <!-- ══════════════════════ INDICATEUR FRAPPE ══════════════ -->
+
     <LinearLayout
         android:id="@+id/layoutTyping"
         android:layout_width="wrap_content"
@@ -194,26 +195,13 @@
         app:layout_constraintBottom_toTopOf="@id/layoutInput"
         app:layout_constraintStart_toStartOf="parent">
 
-        <!-- Trois petits points animés -->
-        <View
-            android:layout_width="6dp"
-            android:layout_height="6dp"
-            android:layout_marginEnd="3dp"
-            android:background="@drawable/bg_dot"
-            android:alpha="0.4" />
-
-        <View
-            android:layout_width="6dp"
-            android:layout_height="6dp"
-            android:layout_marginEnd="3dp"
-            android:background="@drawable/bg_dot"
-            android:alpha="0.7" />
-
-        <View
-            android:layout_width="6dp"
-            android:layout_height="6dp"
-            android:background="@drawable/bg_dot" />
-
+        <!-- Trois points animés (typing) -->
+        <View android:id="@+id/typing_dot_1" android:layout_width="7dp" android:layout_height="7dp"
+            android:layout_marginEnd="3dp" android:layout_marginTop="2dp" android:background="@drawable/circle_typing_dot"/>
+        <View android:id="@+id/typing_dot_2" android:layout_width="7dp" android:layout_height="7dp"
+            android:layout_marginEnd="3dp" android:layout_marginTop="2dp" android:background="@drawable/circle_typing_dot"/>
+        <View android:id="@+id/typing_dot_3" android:layout_marginTop="2dp" android:layout_width="7dp" android:layout_height="7dp"
+            android:background="@drawable/circle_typing_dot"/>
     </LinearLayout>
 
     <!-- ══════════════════════ BARRE DE SAISIE ══════════════════ -->
