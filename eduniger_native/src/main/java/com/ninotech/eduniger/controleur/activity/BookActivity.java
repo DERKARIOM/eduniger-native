@@ -591,6 +591,7 @@ public class BookActivity extends AppCompatActivity {
         mOnlineBook.setNumberSubscribe(Integer.parseInt(obj.getString("numberSubscribe")));
         mOnlineBook.setNumberView(Integer.parseInt(obj.getString("numberView")));
         mOnlineBook.setAuthor(obj.getString("firstName") + " " + obj.getString("name"));
+        mOnlineBook.setIdStruct(obj.getString("idStructures"));
 
         mCategory = new Category(obj.getString("categoryBlanket"), obj.getString("categoryTitle"));
         mAuthor = new Author(obj.getString("idAuthor"), obj.getString("name"),
@@ -607,7 +608,7 @@ public class BookActivity extends AppCompatActivity {
     private void loadBookCoverImage() {
         Picasso.get()
                 .load(Server.getUrlServer(BookActivity.this) +
-                        "admin-api/storage/app/private/structures/1/blankets/" + mOnlineBook.getCover())
+                        "admin-api/storage/app/private/structures/" + mOnlineBook.getIdStruct() + "/blankets/" + mOnlineBook.getCover())
                 .placeholder(R.drawable.img_wait_cover_book)
                 .error(R.drawable.img_wait_cover_book)
                 .transform(new RoundedTransformation(15, 4))

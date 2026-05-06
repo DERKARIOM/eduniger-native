@@ -457,7 +457,7 @@ public class StructureActivity extends AppCompatActivity {
     private void loadStructureImages() {
         Picasso.get()
                 .load(Server.getUrlServer(this) +
-                        "admin-api/storage/app/private/structures/1/banners/" + mStructure.getBanner())
+                        "admin-api/storage/app/private/structures/" + mStructure.getId() + "/banners/" + mStructure.getBanner())
                 .transform(new RoundedTransformation(200, 10))
                 .resize(6200, 2222)
                 .placeholder(R.drawable.img_wait_banner)
@@ -468,7 +468,7 @@ public class StructureActivity extends AppCompatActivity {
 
         Picasso.get()
                 .load(Server.getUrlServer(this) +
-                        "admin-api/storage/app/private/structures/1/logos/" + mStructure.getCover())
+                        "admin-api/storage/app/private/structures/" + mStructure.getId() + "/logos/" + mStructure.getCover())
                 .placeholder(R.drawable.img_wait_struct)
                 .error(R.drawable.img_default_book)
                 .transform(new RoundedTransformation(1000, 4))

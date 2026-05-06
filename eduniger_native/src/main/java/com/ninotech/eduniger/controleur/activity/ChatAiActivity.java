@@ -229,11 +229,11 @@ public class ChatAiActivity extends AppCompatActivity {
 
     private void addBotMessage(String text) {
         Message msg = new Message(text, Message.TYPE_BOT);
-        persistMessage(msg);
+        persistMessage(msg);          // persiste le texte COMPLET en base
         messages.add(msg);
         adapter.notifyItemInserted(messages.size() - 1);
-        recyclerView.scrollToPosition(messages.size() - 1);
-        updateEmptyState(); // ← ajouter
+        updateEmptyState();
+        adapter.animateLastBotMessage(msg); // ← déclenche le typewriter
     }
 
 
