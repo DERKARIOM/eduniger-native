@@ -131,7 +131,7 @@ public class CategoryActivity extends AppCompatActivity {
                         mWaitRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                         mWaitRecyclerView.setAdapter(noConnectionAdapter);
                         new CategoryInSyn().execute(
-                                Server.getUrlApi(getApplicationContext()) + "CategoryIn.php",
+                                Server.getUrlApi(getApplicationContext()) + "category_in.php",
                                 mSession.getIdNumber(),
                                 mCategorie);
                     } catch (Exception e) {
@@ -149,7 +149,7 @@ public class CategoryActivity extends AppCompatActivity {
         // Chargement initial — inchangé
         if (mNameStruct == null) {
             new CategoryInSyn().execute(
-                    Server.getUrlApi(getApplicationContext()) + "CategoryIn.php",
+                    Server.getUrlApi(getApplicationContext()) + "category_in.php",
                     mSession.getIdNumber(),
                     mCategorie);
         } else {
@@ -171,7 +171,7 @@ public class CategoryActivity extends AppCompatActivity {
             mList.clear();
             if (mNameStruct == null) {
                 new CategoryInSyn().execute(
-                        Server.getUrlApi(getApplicationContext()) + "CategoryIn.php",
+                        Server.getUrlApi(getApplicationContext()) + "category_in.php",
                         mSession.getIdNumber(),
                         mCategorie);
             } else {
@@ -199,14 +199,10 @@ public class CategoryActivity extends AppCompatActivity {
         protected String doInBackground(String... params) {
             try {
                 OkHttpClient client = new OkHttpClient();
-                RequestBody requestBody = new MultipartBody.Builder()
-                        .setType(MultipartBody.FORM)
-                        .addFormDataPart("idNumber", params[1])
-                        .addFormDataPart("categoryTitle", params[2])
-                        .build();
+                String url = params[0] + "?idNumber=" + params[1] + "&categoryTitle=" + params[2];
                 Request request = new Request.Builder()
-                        .url(params[0])
-                        .post(requestBody)
+                        .url(url)
+                        .get()
                         .build();
                 try {
                     Response response = client.newCall(request).execute();
@@ -219,7 +215,6 @@ public class CategoryActivity extends AppCompatActivity {
             }
             return null;
         }
-
         @Override
         protected void onPostExecute(String jsonData) {
             // ← Arrêter le SwipeRefresh dans tous les cas
@@ -246,6 +241,7 @@ public class CategoryActivity extends AppCompatActivity {
                                     jsonArray.getJSONObject(i).getString("isPhysic"),
                                     jsonArray.getJSONObject(i).getString("electronic"),
                                     jsonArray.getJSONObject(i).getString("isAudio"),
+                                    jsonArray.getJSONObject(i).getString("idStruct"),
                                     Integer.parseInt(jsonArray.getJSONObject(i).getString("numberLike")),
                                     Integer.parseInt(jsonArray.getJSONObject(i).getString("numberView"))
                             ));
