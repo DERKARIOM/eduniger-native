@@ -275,4 +275,8 @@
     <string name="tab_text_2">Tab 2</string>
     <string name="changer_de_serveur">Changer de serveur 1</string>
     <string name="ip_eduna">http://78.46.46.154</string>
+    <string name="attach_camera">Expliquer un livre</string>
+    <string name="attach_photos">Résumer un livre</string>
+    <string name="attach_fichiers">Poser une question</string>
+    <string name="attach_videos">Suprends-moi</string>
 </resources>

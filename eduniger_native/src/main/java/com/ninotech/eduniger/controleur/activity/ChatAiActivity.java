@@ -109,7 +109,148 @@ public class ChatAiActivity extends AppCompatActivity {
         btnAction2 = findViewById(R.id.action2);
         btnAction3 = findViewById(R.id.action3);
         btnAction4 = findViewById(R.id.action4);
+        findViewById(R.id.btnAttach).setOnClickListener(v -> showAttachMenu());
     }
+
+    private void showAttachMenu() {
+        // ── Root BottomSheet ─────────────────────────────────────────────
+        android.widget.LinearLayout root = new android.widget.LinearLayout(this);
+        root.setOrientation(android.widget.LinearLayout.VERTICAL);
+        root.setPadding(dp(16), dp(20), dp(16), dp(36));
+
+        android.graphics.drawable.GradientDrawable sheetBg =
+                new android.graphics.drawable.GradientDrawable();
+        sheetBg.setCornerRadii(new float[]{
+                dp(24), dp(24), dp(24), dp(24), 0, 0, 0, 0 // coins haut arrondis
+        });
+        sheetBg.setColor(android.graphics.Color.parseColor("#1C1C1E"));
+        root.setBackground(sheetBg);
+
+        // ── Items ────────────────────────────────────────────────────────
+        int[][] items = {
+                { android.R.drawable.ic_menu_camera,      R.string.attach_camera   },
+                { android.R.drawable.ic_menu_gallery,     R.string.attach_photos   },
+                { android.R.drawable.ic_menu_add,         R.string.attach_fichiers },
+                { android.R.drawable.ic_media_play,       R.string.attach_videos   },
+        };
+        String[] labels = { "Expliquer un livre", "Résumer un livre", "Poser une question", "Surprends-moi" };
+        int[] icons = {
+                R.drawable.books_emp,
+                R.drawable.books_emp,
+                R.drawable.books_emp,
+                R.drawable.books_emp
+        };
+
+        com.google.android.material.bottomsheet.BottomSheetDialog sheet =
+                new com.google.android.material.bottomsheet.BottomSheetDialog(this);
+
+        for (int i = 0; i < labels.length; i++) {
+            android.widget.LinearLayout row = new android.widget.LinearLayout(this);
+            row.setOrientation(android.widget.LinearLayout.HORIZONTAL);
+            row.setGravity(android.view.Gravity.CENTER_VERTICAL);
+            row.setPadding(dp(8), dp(14), dp(8), dp(14));
+
+            // Icône ronde
+            android.widget.FrameLayout iconContainer = new android.widget.FrameLayout(this);
+            android.widget.LinearLayout.LayoutParams containerLp =
+                    new android.widget.LinearLayout.LayoutParams(dp(52), dp(52));
+            containerLp.rightMargin = dp(16);
+            iconContainer.setLayoutParams(containerLp);
+
+            android.graphics.drawable.GradientDrawable iconBg =
+                    new android.graphics.drawable.GradientDrawable();
+            iconBg.setShape(android.graphics.drawable.GradientDrawable.OVAL);
+            iconBg.setColor(android.graphics.Color.parseColor("#2C2C2E"));
+            iconContainer.setBackground(iconBg);
+
+            android.widget.ImageView iv = new android.widget.ImageView(this);
+            android.widget.FrameLayout.LayoutParams ivLp =
+                    new android.widget.FrameLayout.LayoutParams(dp(24), dp(24));
+            ivLp.gravity = android.view.Gravity.CENTER;
+            iv.setLayoutParams(ivLp);
+            iv.setImageResource(icons[i]);
+            iv.setColorFilter(android.graphics.Color.WHITE,
+                    android.graphics.PorterDuff.Mode.SRC_IN);
+            iconContainer.addView(iv);
+            row.addView(iconContainer);
+
+            // Label
+            android.widget.TextView tv = new android.widget.TextView(this);
+            tv.setText(labels[i]);
+            tv.setTextColor(android.graphics.Color.WHITE);
+            tv.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, 16f);
+            tv.setTypeface(null, android.graphics.Typeface.BOLD);
+            row.addView(tv, new android.widget.LinearLayout.LayoutParams(
+                    android.widget.LinearLayout.LayoutParams.WRAP_CONTENT,
+                    android.widget.LinearLayout.LayoutParams.WRAP_CONTENT));
+
+            root.addView(row);
+
+            // Séparateur (sauf dernier)
+            if (i < labels.length - 1) {
+                android.view.View sep = new android.view.View(this);
+                sep.setBackgroundColor(android.graphics.Color.parseColor("#2C2C2E"));
+                android.widget.LinearLayout.LayoutParams sepLp =
+                        new android.widget.LinearLayout.LayoutParams(
+                                android.widget.LinearLayout.LayoutParams.MATCH_PARENT, dp(1));
+                sepLp.leftMargin  = dp(68); // aligner avec le texte
+                root.addView(sep, sepLp);
+            }
+
+            final int index = i;
+            row.setOnClickListener(v -> {
+                sheet.dismiss();
+                switch (index) {
+                    case 0:
+                        Intent intent = new Intent(this, SearchActivity.class);
+                        intent.putExtra("search_key", "ONLINE_BOOK");
+                        intent.putExtra("online_book_key", "CHAT_AI_ACTIVITY");
+                        startActivityForResult(intent, 1001);
+                        break;
+                    case 1: /* Photos */   pickImage();  break;
+                    case 2: /* Fichiers */ pickFile();   break;
+                    case 3: /* Vidéos */   pickVideo();  break;
+                }
+            });
+        }
+
+        sheet.setContentView(root);
+
+        if (sheet.getWindow() != null) {
+            sheet.getWindow().findViewById(
+                            com.google.android.material.R.id.design_bottom_sheet)
+                    .setBackgroundResource(android.R.color.transparent);
+        }
+
+        com.google.android.material.bottomsheet.BottomSheetBehavior<?> behavior =
+                com.google.android.material.bottomsheet.BottomSheetBehavior.from(
+                        (android.view.View) root.getParent());
+        behavior.setState(
+                com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED);
+        behavior.setSkipCollapsed(true);
+
+        sheet.show();
+    }
+
+    private void pickImage() {
+        startActivityForResult(
+                new Intent(Intent.ACTION_PICK,
+                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI), 2001);
+    }
+
+    private void pickFile() {
+        Intent i = new Intent(Intent.ACTION_GET_CONTENT);
+        i.setType("*/*");
+        i.addCategory(Intent.CATEGORY_OPENABLE);
+        startActivityForResult(Intent.createChooser(i, "Choisir"), 2002);
+    }
+
+    private void pickVideo() {
+        Intent i = new Intent(Intent.ACTION_PICK);
+        i.setType("video/*");
+        startActivityForResult(i, 2003);
+    }
+
     private void updateEmptyState() {
         boolean isEmpty = messages.isEmpty();
         layoutEmptyState.setVisibility(isEmpty ? View.VISIBLE : View.GONE);

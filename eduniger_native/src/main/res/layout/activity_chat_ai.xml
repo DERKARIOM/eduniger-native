@@ -223,7 +223,7 @@
             android:id="@+id/btnAttach"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:background="@android:color/transparent"
+            android:background="@drawable/bg_bottom_nav"
             android:contentDescription="Joindre"
             android:src="@drawable/vector_white_sombre_add"
             android:tint="#888888" />
