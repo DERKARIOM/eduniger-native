@@ -169,14 +169,12 @@ public class ChatAiActivity extends AppCompatActivity {
         String text = etMessage.getText().toString().trim();
         if (TextUtils.isEmpty(text)) return;
 
-        // 1. Afficher + persister le message utilisateur
-        addUserMessage(text);
+        // Vider l'EditText immédiatement (UX fluide)
         etMessage.setText("");
 
-        // 2. Afficher l'indicateur de frappe
+        // Afficher l'indicateur de frappe
         showTyping(true);
 
-        // 3. Appel réseau
         FormBody.Builder fb = new FormBody.Builder()
                 .add("id_number", ID_NUMBER)
                 .add("request",   text)
@@ -193,7 +191,9 @@ public class ChatAiActivity extends AppCompatActivity {
             public void onFailure(Call call, IOException e) {
                 runOnUiThread(() -> {
                     showTyping(false);
-                    addBotMessage("Erreur réseau : " + e.getMessage());
+                    etMessage.setText(text);
+                    etMessage.setSelection(text.length());
+                    showModernToast("Il y'a un souci, vérifiez votre connexion et réessayez");
                 });
             }
 
@@ -205,20 +205,73 @@ public class ChatAiActivity extends AppCompatActivity {
                     try {
                         JSONObject json = new JSONObject(rawBody);
                         if (json.optBoolean("success", false)) {
+                            // ── Succès : on valide le message utilisateur maintenant ──
+                            addUserMessage(text);
                             if (json.has("session_id")) {
                                 sessionId = json.getString("session_id");
                             }
-                            String botResponse = json.getString("response");
-                            addBotMessage(botResponse);
+                            addBotMessage(json.getString("response"));
                         } else {
-                            addBotMessage("Désolé, une erreur s'est produite.");
+                            etMessage.setText(text);
+                            etMessage.setSelection(text.length());
+                            showModernToast("Il y'a un souci, vérifiez votre connexion et réessayez");
                         }
                     } catch (Exception e) {
-                        addBotMessage("Réponse invalide du serveur.");
+                        etMessage.setText(text);
+                        etMessage.setSelection(text.length());
+                        showModernToast("Il y'a un souci, vérifiez votre connexion et réessayez");
                     }
                 });
             }
         });
+    }
+
+    private void showModernToast(String message) {
+        android.view.LayoutInflater inflater = getLayoutInflater();
+
+        // Container
+        android.widget.LinearLayout layout = new android.widget.LinearLayout(this);
+        layout.setOrientation(android.widget.LinearLayout.HORIZONTAL);
+        layout.setGravity(android.view.Gravity.CENTER_VERTICAL);
+        layout.setPadding(dp(16), dp(14), dp(20), dp(14));
+
+        android.graphics.drawable.GradientDrawable bg =
+                new android.graphics.drawable.GradientDrawable();
+        bg.setCornerRadius(dp(50));
+        bg.setColor(android.graphics.Color.parseColor("#1E1E1E"));
+        layout.setBackground(bg);
+
+        // Icône warning
+        android.widget.ImageView icon = new android.widget.ImageView(this);
+        icon.setImageResource(android.R.drawable.ic_dialog_alert);
+        icon.setColorFilter(android.graphics.Color.parseColor("#FFA500"),
+                android.graphics.PorterDuff.Mode.SRC_IN);
+        android.widget.LinearLayout.LayoutParams iconLp =
+                new android.widget.LinearLayout.LayoutParams(dp(18), dp(18));
+        iconLp.rightMargin = dp(10);
+        layout.addView(icon, iconLp);
+
+        // Texte
+        android.widget.TextView tv = new android.widget.TextView(this);
+        tv.setText(message);
+        tv.setTextColor(android.graphics.Color.WHITE);
+        tv.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, 13f);
+        layout.addView(tv, new android.widget.LinearLayout.LayoutParams(
+                android.widget.LinearLayout.LayoutParams.WRAP_CONTENT,
+                android.widget.LinearLayout.LayoutParams.WRAP_CONTENT));
+
+        Toast toast = new Toast(getApplicationContext());
+        toast.setDuration(Toast.LENGTH_LONG);
+        toast.setView(layout);
+        toast.setGravity(android.view.Gravity.TOP | android.view.Gravity.CENTER_HORIZONTAL,
+                0, dp(80));
+        toast.show();
+    }
+
+    private int dp(float v) {
+        return Math.round(android.util.TypedValue.applyDimension(
+                android.util.TypedValue.COMPLEX_UNIT_DIP, v,
+                getResources().getDisplayMetrics()));
     }
 
     // ─── Helpers messages ─────────────────────────────────────────────────────
