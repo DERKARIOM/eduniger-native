@@ -242,10 +242,14 @@ public class ChatBotFragment extends Fragment {
                 mArm.getId(), String.valueOf(mArm.getNumberOfDays()));
     }
 
-    private void sendToEduna(String message) {
-        String url = Server.getUrlServer(getContext()) + "/ai/ask_eduna.php";
-        new EdunaTask(this).execute(url, mSession.getIdNumber(), message);
-    }
+//    private void sendToEduna(String message) {
+//        String url = Server.getUrlServer(getContext()) + "/ai/ask_eduna.php";
+//        new EdunaTask(this).execute(url, mSession.getIdNumber(), message);
+//    }
+        private void sendToEduna(String message) {
+            // ✅ Remplace l'ancien appel PHP par Gemma 4
+            new GemmaTask(this).execute(message);
+        }
 
     private void handleReservationResponse(String response) {
         if (response == null) return;
@@ -365,39 +369,57 @@ public class ChatBotFragment extends Fragment {
         }
     }
 
-    private static class EdunaTask extends AsyncTask<String, Void, String> {
+    // ============================================================
+// ✅ NOUVEAU — GemmaTask remplace EdunaTask
+// ============================================================
+    private static class GemmaTask extends AsyncTask<String, Void, String> {
         private final WeakReference<ChatBotFragment> fragmentRef;
 
-        EdunaTask(ChatBotFragment fragment) {
+        // ✅ URL ngrok de ton API Kaggle
+        private static final String GEMMA_URL = "https://lent-napkin-clergyman.ngrok-free.dev/ask/text";
+
+        GemmaTask(ChatBotFragment fragment) {
             this.fragmentRef = new WeakReference<>(fragment);
         }
 
         @Override
         protected String doInBackground(String... params) {
             ChatBotFragment fragment = fragmentRef.get();
-            if (fragment == null || fragment.mHttpClient == null) return null;
+            if (fragment == null) return null;
+
+            String message = params[0];
 
             try {
-                RequestBody requestBody = new MultipartBody.Builder()
-                        .setType(MultipartBody.FORM)
-                        .addFormDataPart("id_number", params[1])
-                        .addFormDataPart("request", params[2])
+                // ✅ Construire le JSON
+                JSONObject json = new JSONObject();
+                json.put("question", message);
+
+                OkHttpClient client = new OkHttpClient.Builder()
+                        .connectTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
+                        .readTimeout(180,   java.util.concurrent.TimeUnit.SECONDS)
+                        .writeTimeout(60,   java.util.concurrent.TimeUnit.SECONDS)
                         .build();
+
+                // ✅ Correction : MediaType d'abord, contenu ensuite
+                RequestBody body = RequestBody.create(
+                        okhttp3.MediaType.parse("application/json; charset=utf-8"),
+                        json.toString()
+                );
 
                 Request request = new Request.Builder()
-                        .url(params[0])
-                        .post(requestBody)
+                        .url(GEMMA_URL)
+                        .post(body)
+                        .addHeader("ngrok-skip-browser-warning", "true") // ✅ bypass page ngrok
+                        .addHeader("User-Agent", "EduNigerApp/1.0")
                         .build();
 
-                try (Response response = fragment.mHttpClient.newCall(request).execute()) {
+                try (Response response = client.newCall(request).execute()) {
                     if (response.body() != null) {
                         return response.body().string();
                     }
-                } catch (IOException e) {
-                    Log.e(TAG, "Eduna request failed", e);
                 }
             } catch (Exception e) {
-                Log.e(TAG, "Unexpected error in Eduna request", e);
+                Log.e(TAG, "Gemma request failed", e);
             }
             return null;
         }
@@ -405,9 +427,10 @@ public class ChatBotFragment extends Fragment {
         @Override
         protected void onPostExecute(String result) {
             ChatBotFragment fragment = fragmentRef.get();
-            if (fragment != null) {
-                fragment.handleEdunaResponse(result);
-            }
+            if (fragment == null) return;
+
+            // ✅ Réutilise handleEdunaResponse — même format JSON {"status":"ok","response":"..."}
+            fragment.handleEdunaResponse(result);
         }
     }
 }
