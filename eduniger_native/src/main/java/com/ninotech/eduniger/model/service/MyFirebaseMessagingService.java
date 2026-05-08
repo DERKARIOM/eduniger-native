@@ -74,26 +74,27 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
-        String title   = "";
-        String message = "";
+        // Payload data-only → lire title et body depuis getData()
+        // Fallback sur getNotification() pour compatibilité ascendante
+        String title = remoteMessage.getData().get("title") != null
+                ? remoteMessage.getData().get("title")
+                : (remoteMessage.getNotification() != null && remoteMessage.getNotification().getTitle() != null
+                ? remoteMessage.getNotification().getTitle() : "");
 
-        if (remoteMessage.getNotification() != null) {
-            title   = remoteMessage.getNotification().getTitle()  != null
-                    ? remoteMessage.getNotification().getTitle()  : "";
-            message = remoteMessage.getNotification().getBody()   != null
-                    ? remoteMessage.getNotification().getBody()   : "";
-        }
+        String message = remoteMessage.getData().get("body") != null
+                ? remoteMessage.getData().get("body")
+                : (remoteMessage.getNotification() != null && remoteMessage.getNotification().getBody() != null
+                ? remoteMessage.getNotification().getBody() : "");
 
         String type      = remoteMessage.getData().get("type")      != null
                 ? remoteMessage.getData().get("type")      : "";
         String extraData = remoteMessage.getData().get("extraData") != null
                 ? remoteMessage.getData().get("extraData") : "";
 
-        Log.d(TAG, "Notification reçue — type: " + type + " | extraData: " + extraData);
+        Log.d(TAG, "Notification reçue — type: " + type + " | title: " + title + " | message: " + message);
 
         createNotificationChannel();
 
-        // type = "5" → synchroniser les loands non vus
         if ("5".equals(type)) {
             syncUnreadLoands(title, message);
         } else {
