@@ -1,5 +1,6 @@
 package com.ninotech.eduniger.controleur.activity;
-
+import android.util.Log;
+import java.util.concurrent.TimeUnit;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -38,10 +39,11 @@ import okhttp3.Response;
 
 public class ChatAiActivity extends AppCompatActivity {
 
-    // ─── Constantes ───────────────────────────────────────────────────────────
-    private static final String API_URL   = "http://78.46.46.154/eduniger/ai/eduna_unified.php";
-    private static final String ACTION    = "ask_about_book";
-    private static final String ID_NUMBER = "94961793";
+    // ─── Constantes ───────────────────────────────────────────────────────────// ─── Constantes (Mise à jour pour Gemma 4 / FastAPI) ──────────────────────────
+    /// / ⚠️ Remplace par l'URL affichée dans ton log Kaggle
+    private static final String API_BASE_URL = "https://lent-napkin-clergyman.ngrok-free.dev";
+    private static final String API_URL      = API_BASE_URL + "/ask/text";
+    private static final String ID_NUMBER    = "94961793"; // Optionnel avec la nouvelle API
 
     // ─── Vues ─────────────────────────────────────────────────────────────────
     private RecyclerView recyclerView;
@@ -70,7 +72,12 @@ public class ChatAiActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_ai);
 
-        httpClient = new OkHttpClient();
+        // Importez java.util.concurrent.TimeUnit en haut du fichier
+        httpClient = new OkHttpClient.Builder()
+                .connectTimeout(60, TimeUnit.SECONDS) // 1 min pour trouver le serveur
+                .writeTimeout(60, TimeUnit.SECONDS)   // 1 min pour envoyer la question
+                .readTimeout(90, TimeUnit.SECONDS)    // 1 min 30 pour attendre la réponse de l'IA
+                .build();
         dbHelper   = ChatDatabaseHelper.getInstance(this);
 
         // Vérifie si on reprend une session existante (passée par Intent)
@@ -310,77 +317,72 @@ public class ChatAiActivity extends AppCompatActivity {
         String text = etMessage.getText().toString().trim();
         if (TextUtils.isEmpty(text)) return;
 
-        // Vider l'EditText immédiatement (UX fluide)
         etMessage.setText("");
-
-        // Afficher l'indicateur de frappe
         showTyping(true);
 
-        FormBody.Builder fb = new FormBody.Builder()
-                .add("id_number", ID_NUMBER)
-                .add("request",   text)
-                .add("action",    ACTION);
-        if (sessionId != null) fb.add("session_id", sessionId);
+        try {
+            // 1. Préparation du JSON pour FastAPI
+            JSONObject jsonParam = new JSONObject();
+            jsonParam.put("question", text);
 
-        Request request = new Request.Builder()
-                .url(API_URL)
-                .post(fb.build())
-                .build();
+            // 2. Création du corps de requête en JSON
+            // 1. Utilisez "parse" au lieu de "get"
+            okhttp3.MediaType mediaType = okhttp3.MediaType.parse("application/json; charset=utf-8");
 
-        httpClient.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                runOnUiThread(() -> {
-                    showTyping(false);
-                    etMessage.setText(text);
-                    etMessage.setSelection(text.length());
-                    showModernToast("Il y'a un souci, vérifiez votre connexion et réessayez");
-                });
-            }
+// 2. Inversez les paramètres : le MediaType doit être en PREMIER
+            okhttp3.RequestBody body = okhttp3.RequestBody.create(mediaType, jsonParam.toString());
 
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                // ── Erreur HTTP (4xx, 5xx, pas de corps) ──────────────────────────
-                if (!response.isSuccessful() || response.body() == null) {
+            // 3. Construction de la requête avec le header ngrok
+            Request request = new Request.Builder()
+                    .url(API_URL)
+                    .post(body)
+                    .addHeader("ngrok-skip-browser-warning", "true") // Indispensable pour ngrok
+                    .build();
+
+            httpClient.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
                     runOnUiThread(() -> {
                         showTyping(false);
                         etMessage.setText(text);
-                        etMessage.setSelection(text.length());
-                        showModernToast("Il y'a un souci, vérifiez votre connexion et réessayez");
+                        showModernToast("Connexion au serveur Gemma impossible");
                     });
-                    return;
                 }
 
-                String rawBody = response.body().string();
-                runOnUiThread(() -> {
-                    showTyping(false);
-                    try {
-                        JSONObject json = new JSONObject(rawBody);
-                        if (json.optBoolean("success", false)) {
-                            String botResponse = json.getString("response");
-
-                            // ── Détecter les erreurs déguisées en succès ──────────────────
-                            if (botResponse.startsWith("Erreur") || botResponse.startsWith("Error")) {
-                                etMessage.setText(text);
-                                etMessage.setSelection(text.length());
-                                showModernToast("Il y'a un souci, vérifiez votre connexion et réessayez");
-                                return;
-                            }
-
-                            addUserMessage(text);
-                            if (json.has("session_id")) {
-                                sessionId = json.getString("session_id");
-                            }
-                            addBotMessage(botResponse);
-                        }
-                    } catch (Exception e) {
-                        etMessage.setText(text);
-                        etMessage.setSelection(text.length());
-                        showModernToast("Il y'a un souci, vérifiez votre connexion et réessayez");
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    if (!response.isSuccessful() || response.body() == null) {
+                        runOnUiThread(() -> {
+                            showTyping(false);
+                            showModernToast("Le serveur est occupé (GPU saturé)");
+                        });
+                        return;
                     }
-                });
-            }
-        });
+
+                    String rawBody = response.body().string();
+                    runOnUiThread(() -> {
+                        showTyping(false);
+                        try {
+                            JSONObject json = new JSONObject(rawBody);
+                            // FastAPI renvoie "status": "ok"
+                            if ("ok".equals(json.optString("status"))) {
+                                String botResponse = json.getString("response");
+
+                                addUserMessage(text);
+                                addBotMessage(botResponse);
+                            } else {
+                                showModernToast("Erreur IA: " + json.optString("message"));
+                            }
+                        } catch (Exception e) {
+                            showModernToast("Erreur de lecture de la réponse");
+                        }
+                    });
+                }
+            });
+        } catch (Exception e) {
+            showTyping(false);
+            Log.e("ChatAi", "JSON Error", e);
+        }
     }
 
     private void showModernToast(String message) {
