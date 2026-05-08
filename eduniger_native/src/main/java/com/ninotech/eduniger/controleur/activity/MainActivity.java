@@ -296,11 +296,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             Session           session    = new Session(this);
             NotificationTable notifTable = new NotificationTable(this);
-            Cursor            cursor     = notifTable.getData(session.getIdNumber());
-            if (cursor != null) {
-                initialCount = cursor.getCount();
-                cursor.close();
-            }
+            initialCount = notifTable.getUnreadCount(session.getIdNumber());
         } catch (Exception e) {
             Log.e(TAG, "Erreur comptage initial badge", e);
         }

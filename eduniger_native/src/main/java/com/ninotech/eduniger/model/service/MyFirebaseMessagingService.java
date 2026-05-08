@@ -297,7 +297,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 Log.d(TAG, "Notification sauvegardée en local");
 
                 // Compter toutes les notifications et envoyer le broadcast
-                int badgeCount = countNotifications(notifTable, idNumber);
+                int badgeCount = notifTable.getUnreadCount(idNumber);
                 sendBadgeBroadcast(badgeCount);
             }
         } catch (Exception e) {
@@ -312,17 +312,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     // COMPTER LES NOTIFICATIONS EN BASE LOCALE
     // ================================================================
 
-    private int countNotifications(NotificationTable table, String idNumber) {
-        try {
-            Cursor cursor = table.getData(idNumber);
-            int count = (cursor != null) ? cursor.getCount() : 0;
-            if (cursor != null) cursor.close();
-            return count;
-        } catch (Exception e) {
-            Log.e(TAG, "Erreur comptage notifications : " + e.getMessage());
-            return 0;
-        }
-    }
 
     // ================================================================
     // ENVOI DU BROADCAST POUR METTRE À JOUR LE BADGE

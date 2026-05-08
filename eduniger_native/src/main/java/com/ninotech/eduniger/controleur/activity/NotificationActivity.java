@@ -59,6 +59,13 @@ public class NotificationActivity extends AppCompatActivity {
         mNotificationTable = new NotificationTable(this);
         mNotifications = new ArrayList<Notification>();
         NotifNumber.saveLocation(getApplicationContext(),0);
+        // Marquer toutes les notifications comme lues
+        mNotificationTable.markAllAsRead(mSession.getIdNumber());
+
+        // Remettre le badge à 0 via broadcast
+        Intent badgeIntent = new Intent("ACTION_UPDATE_NOTIFICATION_BADGE");
+        badgeIntent.putExtra("number", 0);
+        sendBroadcast(badgeIntent);
         Cursor cursor = mNotificationTable.getData(mSession.getIdNumber());
         cursor.moveToFirst();
         try {
