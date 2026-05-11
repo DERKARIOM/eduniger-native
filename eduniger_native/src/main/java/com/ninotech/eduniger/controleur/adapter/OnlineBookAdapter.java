@@ -129,10 +129,12 @@ public class OnlineBookAdapter extends RecyclerView.Adapter<OnlineBookAdapter.My
                     }
                     else
                     {
-                        if(onlineBook.getOnClickType().equals("ACTION_1"))
-                        {
+                        // Dans MyViewHolder.display(), bloc ACTION_1
+                        if (onlineBook.getOnClickType().equals("ACTION_1")) {
                             Intent result = new Intent();
-                            result.putExtra("book_title", onlineBook.getTitle()); // adapte getTitle() à ton modèle
+                            result.putExtra("book_title",    onlineBook.getTitle());
+                            result.putExtra("book_cover",    onlineBook.getCover());    // ← AJOUT
+                            result.putExtra("book_id_struct", onlineBook.getIdStruct()); // ← AJOUT
                             ((Activity) itemView.getContext()).setResult(Activity.RESULT_OK, result);
                             ((Activity) itemView.getContext()).finish();
                         }

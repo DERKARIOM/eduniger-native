@@ -5,11 +5,12 @@ public class Message {
     public static final int TYPE_USER = 0;
     public static final int TYPE_BOT  = 1;
 
-    private long   id;          // rowid SQLite (0 = pas encore persisté)
-    private long   sessionDbId; // FK → ChatSession.id
+    private long   id;
+    private long   sessionDbId;
     private String text;
     private int    type;
     private long   timestamp;
+    private String coverUrl; // ← AJOUT : URL complète de la couverture (null si absent)
 
     // ── Constructeur utilisé à l'affichage (en mémoire) ──────────────────────
     public Message(String text, int type) {
@@ -27,19 +28,19 @@ public class Message {
         this.timestamp   = timestamp;
     }
 
-    // ── Getters / Setters ─────────────────────────────────────────────────────
-    public long   getId()          { return id; }
-    public void   setId(long id)   { this.id = id; }
-
+    // ── Getters / Setters existants ───────────────────────────────────────────
+    public long   getId()                        { return id; }
+    public void   setId(long id)                 { this.id = id; }
     public long   getSessionDbId()               { return sessionDbId; }
-    public void   setSessionDbId(long sessionDbId) { this.sessionDbId = sessionDbId; }
+    public void   setSessionDbId(long v)         { this.sessionDbId = v; }
+    public String getText()                      { return text; }
+    public void   setText(String text)           { this.text = text; }
+    public int    getType()                      { return type; }
+    public void   setType(int type)              { this.type = type; }
+    public long   getTimestamp()                 { return timestamp; }
+    public void   setTimestamp(long ts)          { this.timestamp = ts; }
 
-    public String getText()              { return text; }
-    public void   setText(String text)   { this.text = text; }
-
-    public int    getType()              { return type; }
-    public void   setType(int type)      { this.type = type; }
-
-    public long   getTimestamp()         { return timestamp; }
-    public void   setTimestamp(long ts)  { this.timestamp = ts; }
+    // ── AJOUT ─────────────────────────────────────────────────────────────────
+    public String getCoverUrl()                  { return coverUrl; }
+    public void   setCoverUrl(String coverUrl)   { this.coverUrl = coverUrl; }
 }

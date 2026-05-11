@@ -5,32 +5,31 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.eduniger.R;
+import com.ninotech.eduniger.controleur.animation.RoundedTransformation;
 import com.ninotech.eduniger.model.data.Message;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder> {
 
-    // Délai entre chaque caractère (ms) — ajuste selon le goût
-    private static final long CHAR_DELAY_MS  = 30;  // ~60 fps
-    private static final int  CHARS_PER_TICK = 20;   // 3 caractères/tick ≈ ~180 chars/s
+    private static final long CHAR_DELAY_MS  = 30;
+    private static final int  CHARS_PER_TICK = 20;
 
     private final List<Message> messages;
-
-    // Référence au RecyclerView parent pour le scroll auto
     private RecyclerView recyclerView;
 
     public MessageAdapter(List<Message> messages) {
         this.messages = messages;
     }
 
-    // ─── Attacher / détacher le RV ────────────────────────────────────────────
     @Override
     public void onAttachedToRecyclerView(@NonNull RecyclerView rv) {
         super.onAttachedToRecyclerView(rv);
@@ -43,13 +42,11 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         this.recyclerView = null;
     }
 
-    // ─── Types de vues ────────────────────────────────────────────────────────
     @Override
     public int getItemViewType(int position) {
-        return messages.get(position).getType(); // 0 = USER, 1 = BOT
+        return messages.get(position).getType();
     }
 
-    // ─── Inflation ────────────────────────────────────────────────────────────
     @NonNull
     @Override
     public MessageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -57,100 +54,94 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
                 ? R.layout.item_message_user
                 : R.layout.item_message_bot;
         View view = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
-        return new MessageViewHolder(view);
+        return new MessageViewHolder(view, viewType);
     }
 
-    // ─── Binding ──────────────────────────────────────────────────────────────
     @Override
     public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
         Message msg = messages.get(position);
-        // Le texte final est TOUJOURS affiché tel quel au bind (scroll, recycle, etc.)
-        // L'animation n'est déclenchée qu'explicitement via addBotMessageAnimated()
         holder.tvMessage.setText(msg.getText());
-        holder.cancelAnimation(); // stoppe toute animation résiduelle en cas de recycle
+        holder.cancelAnimation();
+
+        // ── AJOUT : affichage de la couverture pour les messages USER ─────────
+        if (holder.ivBookCover != null) {
+            String coverUrl = msg.getCoverUrl();
+            if (coverUrl != null && !coverUrl.isEmpty()) {
+                holder.ivBookCover.setVisibility(View.VISIBLE);
+                Picasso.get()
+                        .load(coverUrl)
+                        .placeholder(R.drawable.img_wait_cover_book)
+                        .error(R.drawable.img_wait_cover_book)
+                        .transform(new RoundedTransformation(15, 4))
+                        .resize(160, 240)
+                        .centerCrop()
+                        .into(holder.ivBookCover);
+            } else {
+                holder.ivBookCover.setVisibility(View.GONE);
+                Picasso.get().cancelRequest(holder.ivBookCover); // nettoyage recycle
+            }
+        }
+        // ─────────────────────────────────────────────────────────────────────
     }
 
     @Override
     public int getItemCount() { return messages.size(); }
 
-    // ─── API publique ─────────────────────────────────────────────────────────
-
-    /**
-     * Ajoute un message bot et démarre l'animation typewriter sur son ViewHolder.
-     * À appeler depuis le UI thread.
-     *
-     * @param message L'objet Message déjà ajouté à la liste {@code messages}
-     *                et inséré via notifyItemInserted AVANT d'appeler cette méthode.
-     */
     public void animateLastBotMessage(Message message) {
         if (recyclerView == null) return;
-
         int position = messages.size() - 1;
-
-        // On scroll d'abord pour que le VH soit créé/visible
         recyclerView.scrollToPosition(position);
-
-        // Petit délai pour laisser le layout passer avant de récupérer le VH
         recyclerView.post(() -> {
             RecyclerView.ViewHolder vh = recyclerView.findViewHolderForAdapterPosition(position);
             if (vh instanceof MessageViewHolder) {
                 MessageViewHolder botVH = (MessageViewHolder) vh;
                 botVH.animateText(message.getText(), recyclerView, position);
             }
-            // Sinon le texte complet est déjà affiché par onBindViewHolder → pas de perte
         });
     }
 
     // ─── ViewHolder ───────────────────────────────────────────────────────────
     static class MessageViewHolder extends RecyclerView.ViewHolder {
 
-        TextView tvMessage;
+        TextView  tvMessage;
+        ImageView ivBookCover; // ← AJOUT (null pour TYPE_BOT)
 
-        // État de l'animation en cours
         private Handler  animHandler;
         private Runnable animRunnable;
         private boolean  animating = false;
 
-        MessageViewHolder(@NonNull View itemView) {
+        MessageViewHolder(@NonNull View itemView, int viewType) {
             super(itemView);
-            tvMessage = itemView.findViewById(R.id.tvMessage);
+            tvMessage   = itemView.findViewById(R.id.tvMessage);
+            // ── AJOUT : ivBookCover n'existe que dans item_message_user ───────
+            ivBookCover = (viewType == Message.TYPE_USER)
+                    ? itemView.findViewById(R.id.ivBookCover)
+                    : null;
         }
 
-        /**
-         * Lance l'animation typewriter caractère par caractère.
-         */
         void animateText(String fullText, RecyclerView rv, int position) {
-            cancelAnimation(); // sécurité : annule toute animation précédente
-
-            tvMessage.setText(""); // repart de zéro
+            cancelAnimation();
+            tvMessage.setText("");
             animating   = true;
             animHandler = new Handler(Looper.getMainLooper());
-
             final int[] index = {0};
-
             animRunnable = new Runnable() {
                 @Override
                 public void run() {
                     if (!animating) return;
-
                     if (index[0] <= fullText.length()) {
-                        // Avancer de CHARS_PER_TICK caractères par tick
                         index[0] = Math.min(index[0] + CHARS_PER_TICK, fullText.length());
                         tvMessage.setText(fullText.substring(0, index[0]));
-
-                        // Scroll fluide à chaque tick
                         if (rv != null) rv.scrollToPosition(position);
-
                         animHandler.postDelayed(this, CHAR_DELAY_MS);
                     } else {
-                        animating = false; // terminé
+                        animating = false;
                     }
                 }
             };
             animHandler.post(animRunnable);
         }
 
-        /** Stoppe proprement l'animation (recycle, navigation, etc.) */
         void cancelAnimation() {
             animating = false;
             if (animHandler != null && animRunnable != null) {

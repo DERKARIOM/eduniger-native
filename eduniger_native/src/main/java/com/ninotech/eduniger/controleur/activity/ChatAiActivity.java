@@ -550,12 +550,105 @@ public class ChatAiActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1001 && resultCode == RESULT_OK && data != null) {
-            String bookTitle = data.getStringExtra("book_title");
+            String bookTitle    = data.getStringExtra("book_title");
+            String bookCover    = data.getStringExtra("book_cover");    // ← AJOUT
+            String bookIdStruct = data.getStringExtra("book_id_struct"); // ← AJOUT
+
             if (bookTitle != null) {
+                // Construire l'URL complète de la couverture
+                String coverUrl = null;                                  // ← AJOUT
+                if (bookCover != null && bookIdStruct != null) {        // ← AJOUT
+                    coverUrl = com.ninotech.eduniger.model.data.Server  // ← AJOUT
+                            .getUrlServer(this)                          // ← AJOUT
+                            + "admin-api/storage/app/private/structures/"// ← AJOUT
+                            + bookIdStruct + "/blankets/" + bookCover;   // ← AJOUT
+                }                                                        // ← AJOUT
+
                 String query = "Explique moi ce livre : " + bookTitle;
                 etMessage.setText(query);
-                sendMessage();
+                sendMessageWithCover(coverUrl);                         // ← MODIFIÉ
             }
         }
+    }
+
+    private void sendMessageWithCover(String coverUrl) {
+        String text = etMessage.getText().toString().trim();
+        if (android.text.TextUtils.isEmpty(text)) return;
+
+        etMessage.setText("");
+        showTyping(true);
+
+        org.json.JSONObject bodyJson = null; // non utilisé, on garde FormBody
+        okhttp3.FormBody.Builder fb = new okhttp3.FormBody.Builder()
+                .add("id_number", ID_NUMBER)
+                .add("request",   text)
+                .add("action",    ACTION);
+        if (sessionId != null) fb.add("session_id", sessionId);
+
+        okhttp3.Request request = new okhttp3.Request.Builder()
+                .url(API_URL)
+                .post(fb.build())
+                .build();
+
+        httpClient.newCall(request).enqueue(new okhttp3.Callback() {
+            @Override
+            public void onFailure(okhttp3.Call call, java.io.IOException e) {
+                runOnUiThread(() -> {
+                    showTyping(false);
+                    etMessage.setText(text);
+                    etMessage.setSelection(text.length());
+                    showModernToast("Il y'a un souci, vérifiez votre connexion et réessayez");
+                });
+            }
+
+            @Override
+            public void onResponse(okhttp3.Call call, okhttp3.Response response)
+                    throws java.io.IOException {
+                if (!response.isSuccessful() || response.body() == null) {
+                    runOnUiThread(() -> {
+                        showTyping(false);
+                        etMessage.setText(text);
+                        etMessage.setSelection(text.length());
+                        showModernToast("Il y'a un souci, vérifiez votre connexion et réessayez");
+                    });
+                    return;
+                }
+                String rawBody = response.body().string();
+                runOnUiThread(() -> {
+                    showTyping(false);
+                    try {
+                        org.json.JSONObject json = new org.json.JSONObject(rawBody);
+                        if (json.optBoolean("success", false)) {
+                            String botResponse = json.getString("response");
+                            if (botResponse.startsWith("Erreur") || botResponse.startsWith("Error")) {
+                                etMessage.setText(text);
+                                etMessage.setSelection(text.length());
+                                showModernToast("Il y'a un souci, vérifiez votre connexion et réessayez");
+                                return;
+                            }
+                            addUserMessageWithCover(text, coverUrl); // ← AJOUT
+                            if (json.has("session_id")) {
+                                sessionId = json.getString("session_id");
+                            }
+                            addBotMessage(botResponse);
+                        }
+                    } catch (Exception e) {
+                        etMessage.setText(text);
+                        etMessage.setSelection(text.length());
+                        showModernToast("Il y'a un souci, vérifiez votre connexion et réessayez");
+                    }
+                });
+            }
+        });
+    }
+
+    private void addUserMessageWithCover(String text, String coverUrl) {
+        Message msg = new Message(text, Message.TYPE_USER);
+        if (coverUrl != null) msg.setCoverUrl(coverUrl); // ← AJOUT
+        persistMessage(msg);
+        messages.add(msg);
+        adapter.notifyItemInserted(messages.size() - 1);
+        recyclerView.scrollToPosition(messages.size() - 1);
+        updateEmptyState();
     }
 }
