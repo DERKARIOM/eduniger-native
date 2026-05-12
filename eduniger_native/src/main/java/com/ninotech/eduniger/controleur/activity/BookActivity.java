@@ -453,7 +453,7 @@ public class BookActivity extends AppCompatActivity {
                 mCategory.getCover(), mAuthor.getProfile(), mTones.getAudio(),
                 mSession.getIdNumber(), mOnlineBook.getId(),
                 mOnlineBook.getDescription(), mOnlineBook.getAuthor(),
-                mOnlineBook.getCategory(), mOnlineBook.getTitle(), mTones.getDuration()
+                mOnlineBook.getCategory(), mOnlineBook.getTitle(), mTones.getDuration(),mOnlineBook.getCover()
         });
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) startForegroundService(intent);
     }
