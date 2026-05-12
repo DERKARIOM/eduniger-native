@@ -40,10 +40,10 @@ import okhttp3.Response;
 public class ChatAiActivity extends AppCompatActivity {
 
     // ─── Constantes ───────────────────────────────────────────────────────────// ─── Constantes (Mise à jour pour Gemma 4 / FastAPI) ──────────────────────────
-    /// / ⚠️ Remplace par l'URL affichée dans ton log Kaggle
-    private static final String API_BASE_URL = "https://lent-napkin-clergyman.ngrok-free.dev";
-    private static final String API_URL      = API_BASE_URL + "/ask/text";
-    private static final String ID_NUMBER    = "94961793"; // Optionnel avec la nouvelle API
+    private static final String API_URL   = "http://78.46.46.154/eduniger/ai/eduna_gemma3.php";
+    private static final String ID_NUMBER = "94961793";
+    private String selectedBookId    = null;
+    private String selectedBookTitle = null;
 
     // ─── Vues ─────────────────────────────────────────────────────────────────
     private RecyclerView recyclerView;
@@ -320,69 +320,90 @@ public class ChatAiActivity extends AppCompatActivity {
         etMessage.setText("");
         showTyping(true);
 
-        try {
-            // 1. Préparation du JSON pour FastAPI
-            JSONObject jsonParam = new JSONObject();
-            jsonParam.put("question", text);
+        FormBody.Builder fb = new FormBody.Builder()
+                .add("id_number", ID_NUMBER)
+                .add("request",   text)
+                .add("action",    "ask_about_book");
 
-            // 2. Création du corps de requête en JSON
-            // 1. Utilisez "parse" au lieu de "get"
-            okhttp3.MediaType mediaType = okhttp3.MediaType.parse("application/json; charset=utf-8");
+        // Livre sélectionné
+        if (selectedBookId != null) {
+            fb.add("id_book", selectedBookId);
+        }
+        if (sessionId != null) {
+            fb.add("session_id", sessionId);
+        }
 
-// 2. Inversez les paramètres : le MediaType doit être en PREMIER
-            okhttp3.RequestBody body = okhttp3.RequestBody.create(mediaType, jsonParam.toString());
+        Request request = new Request.Builder()
+                .url(API_URL)
+                .post(fb.build())
+                .build();
 
-            // 3. Construction de la requête avec le header ngrok
-            Request request = new Request.Builder()
-                    .url(API_URL)
-                    .post(body)
-                    .addHeader("ngrok-skip-browser-warning", "true") // Indispensable pour ngrok
-                    .build();
+        httpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                runOnUiThread(() -> {
+                    showTyping(false);
+                    etMessage.setText(text);
+                    showModernToast("Connexion impossible — vérifiez votre connexion");
+                });
+            }
 
-            httpClient.newCall(request).enqueue(new Callback() {
-                @Override
-                public void onFailure(Call call, IOException e) {
-                    runOnUiThread(() -> {
-                        showTyping(false);
-                        etMessage.setText(text);
-                        showModernToast("Connexion au serveur Gemma impossible");
-                    });
-                }
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (!response.isSuccessful() || response.body() == null) {
 
-                @Override
-                public void onResponse(Call call, Response response) throws IOException {
-                    if (!response.isSuccessful() || response.body() == null) {
-                        runOnUiThread(() -> {
-                            showTyping(false);
-                            showModernToast("Le serveur est occupé (GPU saturé)");
-                        });
-                        return;
+                    String errorBody = "";
+
+                    try {
+                        if (response.body() != null) {
+                            errorBody = response.body().string();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
 
-                    String rawBody = response.body().string();
+                    Log.e("ChatAi",
+                            "HTTP CODE: " + response.code()
+                                    + " | BODY: " + errorBody);
+
                     runOnUiThread(() -> {
                         showTyping(false);
-                        try {
-                            JSONObject json = new JSONObject(rawBody);
-                            // FastAPI renvoie "status": "ok"
-                            if ("ok".equals(json.optString("status"))) {
-                                String botResponse = json.getString("response");
-
-                                addUserMessage(text);
-                                addBotMessage(botResponse);
-                            } else {
-                                showModernToast("Erreur IA: " + json.optString("message"));
-                            }
-                        } catch (Exception e) {
-                            showModernToast("Erreur de lecture de la réponse");
-                        }
+                        showModernToast("Erreur HTTP: " + response.code());
                     });
+
+                    return;
                 }
-            });
-        } catch (Exception e) {
-            showTyping(false);
-            Log.e("ChatAi", "JSON Error", e);
-        }
+
+                String rawBody = response.body().string();
+                Log.d("ChatAi", "RAW: " + rawBody);
+
+                runOnUiThread(() -> {
+                    showTyping(false);
+                    try {
+                        JSONObject json = new JSONObject(rawBody);
+                        if (json.optBoolean("success", false)) {
+                            String botResponse = json.optString("response", "");
+                            if (botResponse.isEmpty()) {
+                                showModernToast("Réponse vide");
+                                return;
+                            }
+                            addUserMessage(text);
+                            if (json.has("session_id")) {
+                                sessionId = json.getString("session_id");
+                            }
+                            addBotMessage(botResponse);
+                        } else {
+                            String err = json.optString("error", json.optString("message", "Erreur inconnue"));
+                            Log.e("ChatAi", "Erreur serveur: " + err);
+                            showModernToast("Erreur: " + err);
+                        }
+                    } catch (Exception e) {
+                        Log.e("ChatAi", "Parse error: " + e.getMessage() + " | body: " + rawBody);
+                        showModernToast("Erreur de lecture");
+                    }
+                });
+            }
+        });
     }
 
     private void showModernToast(String message) {
@@ -549,14 +570,31 @@ public class ChatAiActivity extends AppCompatActivity {
     }
 
     @Override
+    // Dans onActivityResult — ajoute ces logs
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1001 && resultCode == RESULT_OK && data != null) {
+
             String bookTitle = data.getStringExtra("book_title");
+            String bookId    = data.getStringExtra("book_id");
+
+            // ✅ LOG — voir ce que SearchActivity envoie
+            Log.d("ChatAi", "book_title = " + bookTitle);
+            Log.d("ChatAi", "book_id    = " + bookId);
+
+
+            // Lister tous les extras disponibles
+            if (data.getExtras() != null) {
+                for (String key : data.getExtras().keySet()) {
+                    Log.d("ChatAi", "Extra → " + key + " = " + data.getExtras().get(key));
+                }
+            }
+
             if (bookTitle != null) {
-                String query = "Explique moi ce livre : " + bookTitle;
-                etMessage.setText(query);
-                sendMessage();
+                selectedBookTitle = bookTitle;
+                selectedBookId    = bookId;
+
+                addBotMessage("📚 Livre : **" + bookTitle + "** (id=" + bookId + ")\nPosez votre question !");
             }
         }
     }
