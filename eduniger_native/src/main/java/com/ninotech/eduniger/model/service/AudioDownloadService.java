@@ -69,6 +69,11 @@ public class AudioDownloadService extends Service {
     private void updateProgress(int progress) {
         notificationBuilder.setProgress(100, progress, false).setContentText("Progression : " + progress + "%");
         notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
+
+        // ← AJOUT
+        Intent progressIntent = new Intent("ACTION_AUDIO_DOWNLOAD_PROGRESS");
+        progressIntent.putExtra("progress", progress);
+        sendBroadcast(progressIntent);
     }
 
     private void createNotificationChannel() {

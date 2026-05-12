@@ -125,7 +125,11 @@ public class BookActivity extends AppCompatActivity {
     private LinearLayout mMaxTimeLinearLayout;
     private LinearLayout mPdfSizeLinearLayout;
     private LinearLayout mNbrPageLinearLayout;
-    private ProgressBar downloadAudioProgressBar;
+   // private ProgressBar downloadAudioProgressBar;
+    private LinearLayout mAudioDownloadProgressContainer;
+    private ProgressBar  mAudioDownloadProgressBar;
+    private TextView     mAudioDownloadPercentText;
+    private BroadcastReceiver mAudioProgressReceiver;
     private ProgressBar downloadPdfProgressBar;
     private ProgressBar mWaitPlayerProgressBar;
 
@@ -188,6 +192,10 @@ public class BookActivity extends AppCompatActivity {
     }
 
     private void initializeViews() {
+        mAudioDownloadProgressContainer = findViewById(R.id.audio_download_progress_container);
+        mAudioDownloadProgressBar       = findViewById(R.id.audio_download_progress_bar);
+        mAudioDownloadPercentText       = findViewById(R.id.audio_download_percent_text);
+        mAudioDownloadPercentText       = findViewById(R.id.audio_download_percent_text);
         mNestedScrollView         = findViewById(R.id.nested_scroll_view_activity_book);
         mSwipeRefreshLayout       = findViewById(R.id.swipe_refresh_book);
         mSkeletonLoadingContainer = findViewById(R.id.skeleton_loading_container);
@@ -217,7 +225,6 @@ public class BookActivity extends AppCompatActivity {
         mElectronicLinearLayout   = findViewById(R.id.linear_layout_activity_book_electronic);
         mBackImageView            = findViewById(R.id.image_view_toolbar_book);
         mNameAuthor               = findViewById(R.id.text_view_adapter_book_simple_author_name);
-        downloadAudioProgressBar  = findViewById(R.id.progress_bar_download_audio);
         downloadPdfProgressBar    = findViewById(R.id.progress_bar_download_pdf);
         mWaitPlayerProgressBar    = findViewById(R.id.progress_bar_activity_book_wait_player);
         mAudioSizeLinearLayout    = findViewById(R.id.linear_layout_activity_book_audio_size);
@@ -340,20 +347,33 @@ public class BookActivity extends AppCompatActivity {
                 }
             }
         };
+        mAudioProgressReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                int progress = intent.getIntExtra("progress", 0);
+                mAudioDownloadProgressBar.setProgress(progress);
+                mAudioDownloadPercentText.setText(progress + "%");
+            }
+        };
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             registerReceiver(mFinishDownloadReceiver,
                     new IntentFilter(ACTION_FINISH_DOWNLOAD), Context.RECEIVER_EXPORTED);
             registerReceiver(mNoConnectionReceiver,
                     new IntentFilter(ACTION_BOOK), Context.RECEIVER_EXPORTED);
+            registerReceiver(mAudioProgressReceiver,
+                    new IntentFilter("ACTION_AUDIO_DOWNLOAD_PROGRESS"),
+                    Context.RECEIVER_EXPORTED);
         }
     }
 
     private void handleDownloadFinished(Intent intent) {
         String format = intent.getStringExtra("format");
         if ("audio".equals(format)) {
+            mAudioDownloadProgressContainer.setVisibility(View.GONE);
+            audioButton.setVisibility(View.VISIBLE);
             audioButton.setText("Lire");
-            downloadAudioProgressBar.setVisibility(View.GONE);
+            // ligne downloadAudioProgressBar → supprimer
         } else if ("pdf".equals(format)) {
             mSourcePdf = mElectronicTable.getPdf(mOnlineBook.getId());
             downloadPDFButton.setText("Ouvrir");
@@ -438,8 +458,10 @@ public class BookActivity extends AppCompatActivity {
     private void handleAudioClick() {
         String buttonText = audioButton.getText().toString();
         if ("Format Audio".equals(buttonText)) {
-            audioButton.setText("En Cours...");
-            downloadAudioProgressBar.setVisibility(View.GONE);
+            audioButton.setVisibility(View.GONE);
+            mAudioDownloadProgressContainer.setVisibility(View.VISIBLE);
+            mAudioDownloadProgressBar.setProgress(0);
+            mAudioDownloadPercentText.setText("0%");
             startAudioDownloadService();
         } else if ("Lire".equals(buttonText)) {
             navigateToAudioPlayer();
@@ -1160,5 +1182,8 @@ public class BookActivity extends AppCompatActivity {
             if (mFinishDownloadReceiver != null) unregisterReceiver(mFinishDownloadReceiver);
             if (mNoConnectionReceiver != null) unregisterReceiver(mNoConnectionReceiver);
         } catch (Exception e) { Log.e(TAG, "Error unregistering receivers", e); }
+        try {
+            if (mAudioProgressReceiver != null) unregisterReceiver(mAudioProgressReceiver);
+        } catch (Exception e) { Log.e(TAG, "Error unregistering audio progress receiver", e); }
     }
 }
