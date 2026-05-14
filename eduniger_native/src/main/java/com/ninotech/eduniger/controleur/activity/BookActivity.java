@@ -130,7 +130,10 @@ public class BookActivity extends AppCompatActivity {
     private ProgressBar  mAudioDownloadProgressBar;
     private TextView     mAudioDownloadPercentText;
     private BroadcastReceiver mAudioProgressReceiver;
-    private ProgressBar downloadPdfProgressBar;
+    private LinearLayout mPdfDownloadProgressContainer;
+    private ProgressBar  mPdfDownloadProgressBar;
+    private TextView     mPdfDownloadPercentText;
+    private BroadcastReceiver mPdfProgressReceiver;
     private ProgressBar mWaitPlayerProgressBar;
 
     // Data
@@ -225,7 +228,9 @@ public class BookActivity extends AppCompatActivity {
         mElectronicLinearLayout   = findViewById(R.id.linear_layout_activity_book_electronic);
         mBackImageView            = findViewById(R.id.image_view_toolbar_book);
         mNameAuthor               = findViewById(R.id.text_view_adapter_book_simple_author_name);
-        downloadPdfProgressBar    = findViewById(R.id.progress_bar_download_pdf);
+        mPdfDownloadProgressContainer = findViewById(R.id.pdf_download_progress_container);
+        mPdfDownloadProgressBar       = findViewById(R.id.pdf_download_progress_bar);
+        mPdfDownloadPercentText       = findViewById(R.id.pdf_download_percent_text);
         mWaitPlayerProgressBar    = findViewById(R.id.progress_bar_activity_book_wait_player);
         mAudioSizeLinearLayout    = findViewById(R.id.linear_layout_activity_book_audio_size);
         mAudioSizeTextView        = findViewById(R.id.text_view_activity_book_audio_size);
@@ -356,6 +361,20 @@ public class BookActivity extends AppCompatActivity {
             }
         };
 
+        mPdfProgressReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                int progress = intent.getIntExtra("progress", 0);
+                mPdfDownloadProgressBar.setProgress(progress);
+                mPdfDownloadPercentText.setText(progress + "%");
+            }
+        };
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            registerReceiver(mPdfProgressReceiver,
+                    new IntentFilter("ACTION_PDF_DOWNLOAD_PROGRESS"),
+                    Context.RECEIVER_EXPORTED);
+        }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             registerReceiver(mFinishDownloadReceiver,
                     new IntentFilter(ACTION_FINISH_DOWNLOAD), Context.RECEIVER_EXPORTED);
@@ -376,8 +395,9 @@ public class BookActivity extends AppCompatActivity {
             // ligne downloadAudioProgressBar → supprimer
         } else if ("pdf".equals(format)) {
             mSourcePdf = mElectronicTable.getPdf(mOnlineBook.getId());
+            mPdfDownloadProgressContainer.setVisibility(View.GONE);
+            downloadPDFButton.setVisibility(View.VISIBLE);
             downloadPDFButton.setText("Ouvrir");
-            downloadPdfProgressBar.setVisibility(View.GONE);
         }
         Toast.makeText(this, mOnlineBook.getTitle() + " Téléchargé avec succès", Toast.LENGTH_SHORT).show();
     }
@@ -428,7 +448,10 @@ public class BookActivity extends AppCompatActivity {
     private void handlePdfDownload() {
         String buttonText = downloadPDFButton.getText().toString();
         if ("Format PDF".equals(buttonText)) {
-            downloadPDFButton.setText("En Cours...");
+            downloadPDFButton.setVisibility(View.GONE);
+            mPdfDownloadProgressContainer.setVisibility(View.VISIBLE);
+            mPdfDownloadProgressBar.setProgress(0);
+            mPdfDownloadPercentText.setText("0%");
             Toast.makeText(this, "Téléchargement démarré", Toast.LENGTH_SHORT).show();
             startPdfDownloadService();
         } else if ("Ouvrir".equals(buttonText)) {
@@ -1185,5 +1208,8 @@ public class BookActivity extends AppCompatActivity {
         try {
             if (mAudioProgressReceiver != null) unregisterReceiver(mAudioProgressReceiver);
         } catch (Exception e) { Log.e(TAG, "Error unregistering audio progress receiver", e); }
+        try {
+            if (mPdfProgressReceiver != null) unregisterReceiver(mPdfProgressReceiver);
+        } catch (Exception e) { Log.e(TAG, "Error unregistering pdf progress receiver", e); }
     }
 }
