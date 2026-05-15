@@ -11,23 +11,93 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <!-- Barre d'outils secondaire : toggle mode + saisie page -->
+        <LinearLayout
+            android:id="@+id/toolbarSecondary"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_alignParentTop="true"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:background="?attr/colorSurface"
+            android:elevation="4dp">
+
+            <!-- Toggle mode vertical / page -->
+            <ImageButton
+                android:id="@+id/btnToggleMode"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@android:drawable/ic_dialog_dialer"
+                android:contentDescription="Basculer mode lecture"
+                android:scaleType="fitCenter"/>
+
+            <TextView
+                android:id="@+id/textViewMode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mode page"
+                android:textSize="12sp"
+                android:textColor="@android:color/darker_gray"
+                android:layout_marginStart="4dp"/>
+
+            <Space android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
+
+            <!-- Saisie numéro de page -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Page"
+                android:textSize="12sp"
+                android:textColor="@android:color/darker_gray"
+                android:layout_marginEnd="6dp"/>
+
+            <EditText
+                android:id="@+id/editTextPageNumber"
+                android:layout_width="50dp"
+                android:layout_height="30dp"
+                android:inputType="number"
+                android:textSize="13sp"
+                android:textAlignment="center"
+                android:gravity="center"
+                android:background="@android:drawable/edit_text"
+                android:padding="2dp"
+                android:imeOptions="actionGo"
+                android:singleLine="true"
+                android:hint="1"
+                android:contentDescription="Numéro de page"/>
+
+            <TextView
+                android:id="@+id/textViewTotalPages"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="/ 1"
+                android:textSize="12sp"
+                android:textColor="@android:color/darker_gray"
+                android:layout_marginStart="6dp"/>
+
+        </LinearLayout>
+
         <!-- Zone d'affichage du PDF avec support du swipe -->
         <FrameLayout
             android:id="@+id/pdfContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_below="@+id/toolbarSecondary"
             android:layout_above="@+id/controlLayout">
 
-            <!-- ScrollView pour zoom vertical -->
+            <!-- ===== MODE PAGE : ScrollView imbriqués ===== -->
             <ScrollView
                 android:id="@+id/scrollViewVertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_margin="-10dp"
                 android:fillViewport="true"
                 android:scrollbars="none">
 
-                <!-- HorizontalScrollView pour zoom horizontal -->
                 <HorizontalScrollView
                     android:id="@+id/scrollViewHorizontal"
                     android:layout_width="wrap_content"
@@ -35,22 +105,40 @@
                     android:fillViewport="true"
                     android:scrollbars="none">
 
-                    <!-- ImageView pour afficher la page PDF -->
                     <ImageView
                         android:id="@+id/imageViewPdf"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
                         android:adjustViewBounds="true"
-
                         android:scaleType="fitCenter"
                         android:visibility="gone"/>
 
                 </HorizontalScrollView>
+            </ScrollView>
+
+            <!-- ===== MODE VERTICAL : toutes les pages empilées ===== -->
+            <ScrollView
+                android:id="@+id/scrollViewAllPages"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fillViewport="false"
+                android:scrollbars="vertical"
+                android:visibility="gone"
+                android:background="#525659">
+
+                <LinearLayout
+                    android:id="@+id/containerAllPages"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:padding="12dp"
+                    android:divider="@null"/>
 
             </ScrollView>
 
-            <!-- Message de swipe pour A5 -->
+            <!-- Message de swipe -->
             <TextView
                 android:id="@+id/textViewSwipeHint"
                 android:layout_width="wrap_content"
@@ -96,7 +184,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:orientation="vertical"
-           style="@style/pdf_controle"
+            style="@style/pdf_controle"
             android:elevation="8dp"
             android:padding="12dp">
 
@@ -143,8 +231,7 @@
                         android:layout_height="50dp"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:src="@android:drawable/ic_media_previous"
-                        android:contentDescription="Page précédente"
-                        />
+                        android:contentDescription="Page précédente"/>
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -170,8 +257,7 @@
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:src="@android:drawable/ic_menu_zoom"
                         android:contentDescription="Dézoomer"
-                        android:rotation="180"
-                        />
+                        android:rotation="180"/>
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -196,8 +282,7 @@
                         android:layout_height="50dp"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:src="@android:drawable/ic_menu_zoom"
-                        android:contentDescription="Zoomer"
-                        />
+                        android:contentDescription="Zoomer"/>
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -222,8 +307,7 @@
                         android:layout_height="50dp"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:src="@android:drawable/ic_media_next"
-                        android:contentDescription="Page suivante"
-                        />
+                        android:contentDescription="Page suivante"/>
 
                     <TextView
                         android:layout_width="wrap_content"
