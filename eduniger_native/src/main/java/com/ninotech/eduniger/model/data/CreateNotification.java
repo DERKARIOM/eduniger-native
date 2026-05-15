@@ -27,8 +27,10 @@ import java.io.File;
 public class CreateNotification {
     public static final String CHANNEL_ID = "channel1";
     public static final String ACTION_PREVIOUS = "actionprevious";
-    public static final String ACTION_PLAY = "actionplay";
-    public static final String ACTION_NEXT = "actionnext";
+    public static final String ACTION_PLAY    = "actionplay";
+    public static final String ACTION_NEXT    = "actionnext";
+    public static final String ACTION_LOVE    = "actionlove";
+    public static final String ACTION_CLOSE   = "actionclose";
 
     public static Notification notification;
 
@@ -39,9 +41,10 @@ public class CreateNotification {
             NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context);
             MediaSession mediaSession = new MediaSession(context, "tag");
 
-            // Vérifier la permission sur Android 13+
+            // Permission POST_NOTIFICATIONS (Android 13+)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
+                        != PackageManager.PERMISSION_GRANTED) {
                     return;
                 }
             }
@@ -49,43 +52,47 @@ public class CreateNotification {
             // ── Pochette ────────────────────────────────────────────────────────
             Bitmap coverBitmap = loadCoverBitmap(context, track);
 
-            // ── Tap sur la notification → rouvrir AudioPlayerActivity ───────────
+            // ── Tap sur la notification → AudioPlayerActivity ───────────────────
             Intent openIntent = new Intent(context, AudioPlayerActivity.class);
             openIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             PendingIntent contentPendingIntent = PendingIntent.getActivity(
-                    context,
-                    0,
-                    openIntent,
-                    PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT
-            );
-
-            // ── Bouton Précédent ────────────────────────────────────────────────
-            PendingIntent pendingIntentPrevious = null;
-            int drv_previous = 0;
-            if (pos != 0) {
-                Intent intentPrevious = new Intent(context, NotificationActionService.class)
-                        .setAction(ACTION_PREVIOUS);
-                pendingIntentPrevious = PendingIntent.getBroadcast(context, 0, intentPrevious,
-                        PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
-                drv_previous = R.drawable.vector_black2_audio_player_back;
-            }
-
-            // ── Bouton Play/Pause ───────────────────────────────────────────────
-            Intent intentPlay = new Intent(context, NotificationActionService.class)
-                    .setAction(ACTION_PLAY);
-            PendingIntent pendingIntentPlay = PendingIntent.getBroadcast(context, 0, intentPlay,
+                    context, 0, openIntent,
                     PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
-            // ── Bouton Suivant ──────────────────────────────────────────────────
-            PendingIntent pendingIntentNext = null;
-            int drv_next = 0;
-            if (pos != size) {
-                Intent intentNext = new Intent(context, NotificationActionService.class)
-                        .setAction(ACTION_NEXT);
-                pendingIntentNext = PendingIntent.getBroadcast(context, 0, intentNext,
-                        PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
-                drv_next = R.drawable.vector_black2_audio_player_next;
-            }
+            // ── Action 0 : ❤️ Favori ───────────────────────────────────────────
+            Intent intentLove = new Intent(context, NotificationActionService.class)
+                    .setAction(ACTION_LOVE);
+            PendingIntent pendingIntentLove = PendingIntent.getBroadcast(
+                    context, 0, intentLove,
+                    PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+
+            // ── Action 1 : ⏮ Précédent ────────────────────────────────────────
+            Intent intentPrevious = new Intent(context, NotificationActionService.class)
+                    .setAction(ACTION_PREVIOUS);
+            PendingIntent pendingIntentPrevious = PendingIntent.getBroadcast(
+                    context, 1, intentPrevious,
+                    PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+
+            // ── Action 2 : ▶/⏸ Lecture ────────────────────────────────────────
+            Intent intentPlay = new Intent(context, NotificationActionService.class)
+                    .setAction(ACTION_PLAY);
+            PendingIntent pendingIntentPlay = PendingIntent.getBroadcast(
+                    context, 2, intentPlay,
+                    PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+
+            // ── Action 3 : ⏭ Suivant ──────────────────────────────────────────
+            Intent intentNext = new Intent(context, NotificationActionService.class)
+                    .setAction(ACTION_NEXT);
+            PendingIntent pendingIntentNext = PendingIntent.getBroadcast(
+                    context, 3, intentNext,
+                    PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+
+            // ── Action 4 : ✕ Fermer ───────────────────────────────────────────
+            Intent intentClose = new Intent(context, NotificationActionService.class)
+                    .setAction(ACTION_CLOSE);
+            PendingIntent pendingIntentClose = PendingIntent.getBroadcast(
+                    context, 4, intentClose,
+                    PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
             // ── Construire la notification ──────────────────────────────────────
             notification = new NotificationCompat.Builder(context, CHANNEL_ID)
@@ -93,15 +100,18 @@ public class CreateNotification {
                     .setContentTitle(track.getTitle())
                     .setContentText(track.getArtist())
                     .setLargeIcon(coverBitmap)
-                    .setContentIntent(contentPendingIntent)       // ← tap → AudioPlayerActivity
-                    .setAutoCancel(false)                         // ← ne pas effacer au tap
+                    .setContentIntent(contentPendingIntent)
+                    .setAutoCancel(false)
                     .setOnlyAlertOnce(true)
                     .setShowWhen(false)
-                    .addAction(drv_previous, "Précédent", pendingIntentPrevious)
-                    .addAction(playbutton, "Lecture", pendingIntentPlay)
-                    .addAction(drv_next, "Suivant", pendingIntentNext)
+                    // ordre : ❤️  ⏮  ▶/⏸  ⏭  ✕
+                    .addAction(R.drawable.vector_black2_favorite,          "Favori",    pendingIntentLove)
+                    .addAction(R.drawable.vector_black2_audio_player_back, "Précédent", pendingIntentPrevious)
+                    .addAction(playbutton,                                  "Lecture",   pendingIntentPlay)
+                    .addAction(R.drawable.vector_black2_audio_player_next, "Suivant",   pendingIntentNext)
+                    .addAction(android.R.drawable.ic_menu_close_clear_cancel, "Fermer", pendingIntentClose)
                     .setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
-                            .setShowActionsInCompactView(0, 1, 2)
+                            .setShowActionsInCompactView(0, 1, 2, 3, 4)
                             .setMediaSession(MediaSessionCompat.Token.fromToken(
                                     mediaSession.getSessionToken())))
                     .setPriority(NotificationCompat.PRIORITY_LOW)
@@ -111,6 +121,7 @@ public class CreateNotification {
         }
     }
 
+    // ── Charger la pochette depuis le fichier local ─────────────────────────
     private static Bitmap loadCoverBitmap(Context context, Track track) {
         String coverPath = track.getCover();
         if (coverPath != null && !coverPath.isEmpty()) {
@@ -130,11 +141,11 @@ public class CreateNotification {
 
     private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
         int height = options.outHeight;
-        int width = options.outWidth;
+        int width  = options.outWidth;
         int inSampleSize = 1;
         if (height > reqHeight || width > reqWidth) {
             int halfHeight = height / 2;
-            int halfWidth = width / 2;
+            int halfWidth  = width  / 2;
             while ((halfHeight / inSampleSize) >= reqHeight
                     && (halfWidth / inSampleSize) >= reqWidth) {
                 inSampleSize *= 2;
@@ -148,10 +159,7 @@ public class CreateNotification {
             NotificationManager notificationManager =
                     (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
             NotificationChannel channel = new NotificationChannel(
-                    CHANNEL_ID,
-                    "Audio Player",
-                    NotificationManager.IMPORTANCE_LOW
-            );
+                    CHANNEL_ID, "Audio Player", NotificationManager.IMPORTANCE_LOW);
             channel.setDescription("Canal pour la lecture audio");
             notificationManager.createNotificationChannel(channel);
         }
