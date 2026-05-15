@@ -4,99 +4,30 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    android:background="@android:color/white">
+    android:fitsSystemWindows="false"
+    android:background="#0D0D0D">
 
     <RelativeLayout
+        android:id="@+id/rootLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="#0D0D0D">
 
-        <!-- Barre d'outils secondaire : toggle mode + saisie page -->
-        <LinearLayout
-            android:id="@+id/toolbarSecondary"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_alignParentTop="true"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
-            android:background="?attr/colorSurface"
-            android:elevation="4dp">
-
-            <!-- Toggle mode vertical / page -->
-            <ImageButton
-                android:id="@+id/btnToggleMode"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@android:drawable/ic_dialog_dialer"
-                android:contentDescription="Basculer mode lecture"
-                android:scaleType="fitCenter"/>
-
-            <TextView
-                android:id="@+id/textViewMode"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Mode page"
-                android:textSize="12sp"
-                android:textColor="@android:color/darker_gray"
-                android:layout_marginStart="4dp"/>
-
-            <Space android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"/>
-
-            <!-- Saisie numéro de page -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Page"
-                android:textSize="12sp"
-                android:textColor="@android:color/darker_gray"
-                android:layout_marginEnd="6dp"/>
-
-            <EditText
-                android:id="@+id/editTextPageNumber"
-                android:layout_width="50dp"
-                android:layout_height="30dp"
-                android:inputType="number"
-                android:textSize="13sp"
-                android:textAlignment="center"
-                android:gravity="center"
-                android:background="@android:drawable/edit_text"
-                android:padding="2dp"
-                android:imeOptions="actionGo"
-                android:singleLine="true"
-                android:hint="1"
-                android:contentDescription="Numéro de page"/>
-
-            <TextView
-                android:id="@+id/textViewTotalPages"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="/ 1"
-                android:textSize="12sp"
-                android:textColor="@android:color/darker_gray"
-                android:layout_marginStart="6dp"/>
-
-        </LinearLayout>
-
-        <!-- Zone d'affichage du PDF avec support du swipe -->
+        <!-- ===== ZONE PDF (plein écran) ===== -->
         <FrameLayout
             android:id="@+id/pdfContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/toolbarSecondary"
-            android:layout_above="@+id/controlLayout">
+            android:background="#0D0D0D">
 
-            <!-- ===== MODE PAGE : ScrollView imbriqués ===== -->
+            <!-- MODE PAGE : ScrollViews imbriqués -->
             <ScrollView
                 android:id="@+id/scrollViewVertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:fillViewport="true"
-                android:scrollbars="none">
+                android:scrollbars="none"
+                android:background="#0D0D0D">
 
                 <HorizontalScrollView
                     android:id="@+id/scrollViewHorizontal"
@@ -117,7 +48,7 @@
                 </HorizontalScrollView>
             </ScrollView>
 
-            <!-- ===== MODE VERTICAL : toutes les pages empilées ===== -->
+            <!-- MODE VERTICAL : toutes les pages empilées -->
             <ScrollView
                 android:id="@+id/scrollViewAllPages"
                 android:layout_width="match_parent"
@@ -125,7 +56,7 @@
                 android:fillViewport="false"
                 android:scrollbars="vertical"
                 android:visibility="gone"
-                android:background="#525659">
+                android:background="#0D0D0D">
 
                 <LinearLayout
                     android:id="@+id/containerAllPages"
@@ -133,204 +64,316 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:gravity="center_horizontal"
-                    android:padding="12dp"
-                    android:divider="@null"/>
+                    android:padding="12dp"/>
 
             </ScrollView>
 
-            <!-- Message de swipe -->
-            <TextView
-                android:id="@+id/textViewSwipeHint"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="⬅️ Swipez pour naviguer ➡️"
-                android:textSize="16sp"
-                android:textColor="@android:color/darker_gray"
-                android:background="#33000000"
-                android:padding="16dp"
-                android:visibility="gone"
-                android:alpha="0.7"/>
-
         </FrameLayout>
 
-        <!-- Barre de progression centrée -->
+        <!-- ===== BARRE DU HAUT (overlay semi-transparent) ===== -->
+        <LinearLayout
+            android:id="@+id/toolbarSecondary"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_alignParentTop="true"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:background="#CC0D0D0D"
+            android:elevation="8dp">
+
+            <!-- Bouton plein écran -->
+            <ImageButton
+                android:id="@+id/btnFullscreen"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:background="@color/transparent"
+                android:src="@android:drawable/ic_menu_view"
+                android:contentDescription="Plein écran"
+                android:scaleType="fitCenter"
+                android:padding="10dp"/>
+
+            <!-- Séparateur vertical -->
+            <View
+                android:layout_width="1dp"
+                android:layout_height="24dp"
+                android:background="#33FFFFFF"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"/>
+
+            <!-- Bouton toggle mode -->
+            <ImageButton
+                android:id="@+id/btnToggleMode"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:background="@color/transparent"
+                android:src="@android:drawable/ic_dialog_dialer"
+                android:contentDescription="Basculer mode lecture"
+                android:scaleType="fitCenter"
+                android:padding="10dp"/>
+
+            <TextView
+                android:id="@+id/textViewMode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mode page"
+                android:textSize="11sp"
+                android:textColor="#99FFFFFF"
+                android:layout_marginStart="2dp"
+                android:fontFamily="sans-serif-medium"/>
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
+
+            <!-- Saisie numéro de page -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="#1AFFFFFF"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp">
+
+                <EditText
+                    android:id="@+id/editTextPageNumber"
+                    android:layout_width="36dp"
+                    android:layout_height="32dp"
+                    android:inputType="number"
+                    android:textSize="13sp"
+                    android:textColor="#FFFFFF"
+                    android:textAlignment="center"
+                    android:gravity="center"
+                    android:background="@null"
+                    android:padding="0dp"
+                    android:imeOptions="actionGo"
+                    android:singleLine="true"
+                    android:hint="1"
+                    android:fontFamily="sans-serif-medium"
+                    android:contentDescription="Numéro de page"/>
+
+                <TextView
+                    android:id="@+id/textViewTotalPages"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="/ 1"
+                    android:textSize="13sp"
+                    android:textColor="#99FFFFFF"
+                    android:layout_marginStart="2dp"
+                    android:fontFamily="sans-serif"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- ===== BARRE DE PROGRESSION (fine, sous la toolbar) ===== -->
         <ProgressBar
-            android:id="@+id/progressBar"
-            style="?android:attr/progressBarStyleLarge"
+            android:id="@+id/progressBarPage"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="56dp"
+            android:progress="0"
+            android:max="100"
+            android:progressTint="#E8C84A"
+            android:progressBackgroundTint="#22FFFFFF"
+            android:elevation="8dp"/>
+
+        <!-- ===== CHARGEMENT ===== -->
+        <LinearLayout
+            android:id="@+id/loadingLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:indeterminate="true"
-            android:visibility="gone"/>
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="24dp"
+            android:background="#CC1A1A1A"
+            android:visibility="gone">
 
-        <!-- Texte de chargement -->
-        <TextView
-            android:id="@+id/textViewLoading"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/progressBar"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="16dp"
-            android:text="Chargement du PDF..."
-            android:textSize="14sp"
-            android:textColor="@android:color/darker_gray"
-            android:visibility="gone"/>
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:indeterminate="true"
+                android:indeterminateTint="#E8C84A"/>
 
-        <!-- Contrôles de navigation (bas de l'écran) -->
+            <TextView
+                android:id="@+id/textViewLoading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Chargement du PDF..."
+                android:textSize="13sp"
+                android:textColor="#CCFFFFFF"
+                android:fontFamily="sans-serif"/>
+
+        </LinearLayout>
+
+        <!-- ===== CONTRÔLES DU BAS (overlay) ===== -->
         <LinearLayout
             android:id="@+id/controlLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:orientation="vertical"
-            style="@style/pdf_controle"
+            android:background="#CC0D0D0D"
             android:elevation="8dp"
-            android:padding="12dp">
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="16dp">
 
-            <!-- Info page avec style amélioré -->
-            <TextView
-                android:id="@+id/textViewPageInfo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Page 1 / 1"
-                android:textAlignment="center"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:paddingBottom="12dp"/>
-
-            <!-- Barre de progression de page -->
-            <ProgressBar
-                android:id="@+id/progressBarPage"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="match_parent"
-                android:layout_height="4dp"
-                android:layout_marginBottom="12dp"
-                android:progress="0"
-                android:max="100"/>
-
-            <!-- Boutons de contrôle -->
+            <!-- Info page + zoom centré -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:gravity="center"
-                android:weightSum="4">
+                android:gravity="center_vertical"
+                android:layout_marginBottom="12dp">
 
-                <!-- Bouton Précédent -->
-                <LinearLayout
+                <TextView
+                    android:id="@+id/textViewPageInfo"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Page 1 / 1"
+                    android:textSize="13sp"
+                    android:textColor="#CCFFFFFF"
+                    android:fontFamily="sans-serif"/>
+
+                <TextView
+                    android:id="@+id/textViewSwipeHint"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="⬅  Swipez  ➡"
+                    android:textSize="11sp"
+                    android:textColor="#66FFFFFF"
+                    android:visibility="gone"/>
+
+                <TextView
+                    android:id="@+id/textViewZoomLevel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="100%"
+                    android:textSize="13sp"
+                    android:textColor="#E8C84A"
+                    android:fontFamily="sans-serif-medium"/>
+
+            </LinearLayout>
+
+            <!-- Boutons de navigation -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:weightSum="5">
+
+                <!-- Précédent -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:orientation="vertical"
                     android:gravity="center">
 
                     <ImageButton
                         android:id="@+id/btnPrevious"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="@color/transparent"
                         android:src="@android:drawable/ic_media_previous"
-                        android:contentDescription="Page précédente"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Précédent"
-                        android:textSize="10sp"
-                        android:textColor="@android:color/darker_gray"/>
+                        android:contentDescription="Page précédente"
+                        android:padding="10dp"/>
 
                 </LinearLayout>
 
-                <!-- Bouton Zoom Out -->
+                <!-- Zoom Out -->
                 <LinearLayout
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:orientation="vertical"
                     android:gravity="center">
 
                     <ImageButton
                         android:id="@+id/btnZoomOut"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="@color/transparent"
                         android:src="@android:drawable/ic_menu_zoom"
                         android:contentDescription="Dézoomer"
-                        android:rotation="180"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Zoom -"
-                        android:textSize="10sp"
-                        android:textColor="@android:color/darker_gray"/>
+                        android:rotation="180"
+                        android:padding="10dp"/>
 
                 </LinearLayout>
 
-                <!-- Bouton Zoom In -->
+                <!-- Bouton central plein écran (raccourci) -->
                 <LinearLayout
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <ImageButton
+                        android:id="@+id/btnFullscreenCenter"
+                        android:layout_width="52dp"
+                        android:layout_height="52dp"
+                        android:background="@color/transparent"
+                        android:src="@android:drawable/ic_menu_view"
+                        android:contentDescription="Plein écran"
+                        android:padding="12dp"/>
+
+                </LinearLayout>
+
+                <!-- Zoom In -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:orientation="vertical"
                     android:gravity="center">
 
                     <ImageButton
                         android:id="@+id/btnZoomIn"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="@color/transparent"
                         android:src="@android:drawable/ic_menu_zoom"
-                        android:contentDescription="Zoomer"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Zoom +"
-                        android:textSize="10sp"
-                        android:textColor="@android:color/darker_gray"/>
+                        android:contentDescription="Zoomer"
+                        android:padding="10dp"/>
 
                 </LinearLayout>
 
-                <!-- Bouton Suivant -->
+                <!-- Suivant -->
                 <LinearLayout
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:orientation="vertical"
                     android:gravity="center">
 
                     <ImageButton
                         android:id="@+id/btnNext"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="@color/transparent"
                         android:src="@android:drawable/ic_media_next"
-                        android:contentDescription="Page suivante"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Suivant"
-                        android:textSize="10sp"
-                        android:textColor="@android:color/darker_gray"/>
+                        android:contentDescription="Page suivante"
+                        android:padding="10dp"/>
 
                 </LinearLayout>
 
             </LinearLayout>
-
-            <!-- Niveau de zoom -->
-            <TextView
-                android:id="@+id/textViewZoomLevel"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Zoom: 100%"
-                android:textAlignment="center"
-                android:textSize="10sp"
-                android:layout_margin="6dp"
-                android:textColor="@android:color/darker_gray"
-                android:paddingTop="8dp"/>
 
         </LinearLayout>
 
