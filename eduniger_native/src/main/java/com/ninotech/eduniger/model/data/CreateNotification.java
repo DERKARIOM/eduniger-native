@@ -19,6 +19,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import com.ninotech.eduniger.R;
+import com.ninotech.eduniger.controleur.activity.AudioPlayerActivity;
 import com.ninotech.eduniger.model.service.NotificationActionService;
 
 import java.io.File;
@@ -45,8 +46,18 @@ public class CreateNotification {
                 }
             }
 
-            // ── Charger la vraie pochette depuis le chemin fichier ──────────────
+            // ── Pochette ────────────────────────────────────────────────────────
             Bitmap coverBitmap = loadCoverBitmap(context, track);
+
+            // ── Tap sur la notification → rouvrir AudioPlayerActivity ───────────
+            Intent openIntent = new Intent(context, AudioPlayerActivity.class);
+            openIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            PendingIntent contentPendingIntent = PendingIntent.getActivity(
+                    context,
+                    0,
+                    openIntent,
+                    PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT
+            );
 
             // ── Bouton Précédent ────────────────────────────────────────────────
             PendingIntent pendingIntentPrevious = null;
@@ -81,7 +92,9 @@ public class CreateNotification {
                     .setSmallIcon(R.mipmap.ic_v2)
                     .setContentTitle(track.getTitle())
                     .setContentText(track.getArtist())
-                    .setLargeIcon(coverBitmap)          // ← vraie pochette
+                    .setLargeIcon(coverBitmap)
+                    .setContentIntent(contentPendingIntent)       // ← tap → AudioPlayerActivity
+                    .setAutoCancel(false)                         // ← ne pas effacer au tap
                     .setOnlyAlertOnce(true)
                     .setShowWhen(false)
                     .addAction(drv_previous, "Précédent", pendingIntentPrevious)
@@ -98,14 +111,11 @@ public class CreateNotification {
         }
     }
 
-    // ── Charger la pochette : chemin fichier en priorité, fallback drawable ──
     private static Bitmap loadCoverBitmap(Context context, Track track) {
-        // 1. Essayer le chemin fichier (cover stockée localement)
         String coverPath = track.getCover();
         if (coverPath != null && !coverPath.isEmpty()) {
             File file = new File(coverPath);
             if (file.exists()) {
-                // Décoder en taille réduite pour la notification (256×256 suffit)
                 BitmapFactory.Options options = new BitmapFactory.Options();
                 options.inJustDecodeBounds = true;
                 BitmapFactory.decodeFile(coverPath, options);
@@ -115,7 +125,6 @@ public class CreateNotification {
                 if (bmp != null) return bmp;
             }
         }
-        // 2. Fallback : drawable générique
         return BitmapFactory.decodeResource(context.getResources(), R.drawable.img_wait_cover_book);
     }
 
