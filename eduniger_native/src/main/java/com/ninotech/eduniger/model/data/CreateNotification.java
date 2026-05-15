@@ -1,4 +1,5 @@
 package com.ninotech.eduniger.model.data;
+
 import android.Manifest;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -20,6 +21,8 @@ import androidx.core.app.NotificationManagerCompat;
 import com.ninotech.eduniger.R;
 import com.ninotech.eduniger.model.service.NotificationActionService;
 
+import java.io.File;
+
 public class CreateNotification {
     public static final String CHANNEL_ID = "channel1";
     public static final String ACTION_PREVIOUS = "actionprevious";
@@ -34,50 +37,60 @@ public class CreateNotification {
 
             NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context);
             MediaSession mediaSession = new MediaSession(context, "tag");
-            Bitmap icon = BitmapFactory.decodeResource(context.getResources(), track.getImage());
 
             // Vérifier la permission sur Android 13+
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // API 33+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
                     return;
                 }
             }
 
+            // ── Charger la vraie pochette depuis le chemin fichier ──────────────
+            Bitmap coverBitmap = loadCoverBitmap(context, track);
+
+            // ── Bouton Précédent ────────────────────────────────────────────────
             PendingIntent pendingIntentPrevious = null;
             int drv_previous = 0;
             if (pos != 0) {
                 Intent intentPrevious = new Intent(context, NotificationActionService.class)
                         .setAction(ACTION_PREVIOUS);
-                pendingIntentPrevious = PendingIntent.getBroadcast(context, 0, intentPrevious, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+                pendingIntentPrevious = PendingIntent.getBroadcast(context, 0, intentPrevious,
+                        PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
                 drv_previous = R.drawable.vector_black2_audio_player_back;
             }
 
+            // ── Bouton Play/Pause ───────────────────────────────────────────────
             Intent intentPlay = new Intent(context, NotificationActionService.class)
                     .setAction(ACTION_PLAY);
-            PendingIntent pendingIntentPlay = PendingIntent.getBroadcast(context, 0, intentPlay, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent pendingIntentPlay = PendingIntent.getBroadcast(context, 0, intentPlay,
+                    PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
+            // ── Bouton Suivant ──────────────────────────────────────────────────
             PendingIntent pendingIntentNext = null;
             int drv_next = 0;
             if (pos != size) {
                 Intent intentNext = new Intent(context, NotificationActionService.class)
                         .setAction(ACTION_NEXT);
-                pendingIntentNext = PendingIntent.getBroadcast(context, 0, intentNext, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+                pendingIntentNext = PendingIntent.getBroadcast(context, 0, intentNext,
+                        PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
                 drv_next = R.drawable.vector_black2_audio_player_next;
             }
 
+            // ── Construire la notification ──────────────────────────────────────
             notification = new NotificationCompat.Builder(context, CHANNEL_ID)
                     .setSmallIcon(R.mipmap.ic_v2)
                     .setContentTitle(track.getTitle())
                     .setContentText(track.getArtist())
-                    .setLargeIcon(icon)
+                    .setLargeIcon(coverBitmap)          // ← vraie pochette
                     .setOnlyAlertOnce(true)
                     .setShowWhen(false)
-                    .addAction(drv_previous, "Previous", pendingIntentPrevious)
-                    .addAction(playbutton, "Play", pendingIntentPlay)
-                    .addAction(drv_next, "Next", pendingIntentNext)
+                    .addAction(drv_previous, "Précédent", pendingIntentPrevious)
+                    .addAction(playbutton, "Lecture", pendingIntentPlay)
+                    .addAction(drv_next, "Suivant", pendingIntentNext)
                     .setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
                             .setShowActionsInCompactView(0, 1, 2)
-                            .setMediaSession(MediaSessionCompat.Token.fromToken(mediaSession.getSessionToken())))
+                            .setMediaSession(MediaSessionCompat.Token.fromToken(
+                                    mediaSession.getSessionToken())))
                     .setPriority(NotificationCompat.PRIORITY_LOW)
                     .build();
 
@@ -85,9 +98,46 @@ public class CreateNotification {
         }
     }
 
+    // ── Charger la pochette : chemin fichier en priorité, fallback drawable ──
+    private static Bitmap loadCoverBitmap(Context context, Track track) {
+        // 1. Essayer le chemin fichier (cover stockée localement)
+        String coverPath = track.getCover();
+        if (coverPath != null && !coverPath.isEmpty()) {
+            File file = new File(coverPath);
+            if (file.exists()) {
+                // Décoder en taille réduite pour la notification (256×256 suffit)
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inJustDecodeBounds = true;
+                BitmapFactory.decodeFile(coverPath, options);
+                options.inSampleSize = calculateInSampleSize(options, 256, 256);
+                options.inJustDecodeBounds = false;
+                Bitmap bmp = BitmapFactory.decodeFile(coverPath, options);
+                if (bmp != null) return bmp;
+            }
+        }
+        // 2. Fallback : drawable générique
+        return BitmapFactory.decodeResource(context.getResources(), R.drawable.img_wait_cover_book);
+    }
+
+    private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        int height = options.outHeight;
+        int width = options.outWidth;
+        int inSampleSize = 1;
+        if (height > reqHeight || width > reqWidth) {
+            int halfHeight = height / 2;
+            int halfWidth = width / 2;
+            while ((halfHeight / inSampleSize) >= reqHeight
+                    && (halfWidth / inSampleSize) >= reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+        return inSampleSize;
+    }
+
     public static void createNotificationChannel(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            NotificationManager notificationManager =
+                    (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
             NotificationChannel channel = new NotificationChannel(
                     CHANNEL_ID,
                     "Audio Player",
