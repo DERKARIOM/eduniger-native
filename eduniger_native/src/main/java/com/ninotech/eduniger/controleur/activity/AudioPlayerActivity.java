@@ -17,6 +17,9 @@ import android.media.audiofx.Equalizer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.media.MediaMetadataCompat;
+import android.support.v4.media.session.MediaSessionCompat;
+import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
@@ -57,6 +60,9 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
     private static final String LIST_SOURCE_AUTHOR = "author";
     private static final int PERMISSION_REQUEST_CODE = 101;
     private static final int AUTO_NEXT_THRESHOLD_MS = 3000;
+
+    // ── MediaSession persistante ─────────────────────────────────────────────
+    private MediaSessionCompat mMediaSession;
 
     // Views
     private TextView mTitleTextView;
@@ -112,15 +118,16 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
         setupNotifications();
         startPlaybackThread();
     }
+
     private void applyDarkTheme() {
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(Color.parseColor("#0D1318"));
-        // Icônes de status bar claires (blanches) sur fond sombre
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             window.getDecorView().setSystemUiVisibility(0);
         }
     }
+
     private void initializeComponents() {
         applyDarkTheme();
         mSession = new Session(this);
@@ -186,24 +193,18 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
     }
 
     private void togglePlayPause() {
-        if (mIsPlaying) {
-            onTrackPause();
-        } else {
-            onTrackPlay();
-        }
+        if (mIsPlaying) onTrackPause();
+        else onTrackPlay();
     }
 
     private void replayTrack() {
-        if (mMediaPlayer != null) {
-            mMediaPlayer.seekTo(0);
-        }
+        if (mMediaPlayer != null) mMediaPlayer.seekTo(0);
     }
 
     private void showVolumeControl() {
         AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-        if (audioManager != null) {
+        if (audioManager != null)
             audioManager.adjustVolume(AudioManager.ADJUST_SAME, AudioManager.FLAG_SHOW_UI);
-        }
     }
 
     private void openEqualizer() {
@@ -232,42 +233,26 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
         startActivity(intent);
     }
 
-    private void toggleFavorite() {
-        Toast.makeText(this, "Ajouté aux favoris", Toast.LENGTH_SHORT).show();
-    }
+    private void toggleFavorite()  { Toast.makeText(this, "Ajouté aux favoris",  Toast.LENGTH_SHORT).show(); }
+    private void addToPlaylist()   { Toast.makeText(this, "Ajouté à la playlist", Toast.LENGTH_SHORT).show(); }
+    private void toggleRandom()    { Toast.makeText(this, "Mode aléatoire",       Toast.LENGTH_SHORT).show(); }
+    private void toggleAutoPlay()  { Toast.makeText(this, "Lecture automatique",  Toast.LENGTH_SHORT).show(); }
 
-    private void addToPlaylist() {
-        Toast.makeText(this, "Ajouté à la playlist", Toast.LENGTH_SHORT).show();
-    }
-
-    private void toggleRandom() {
-        Toast.makeText(this, "Mode aléatoire", Toast.LENGTH_SHORT).show();
-    }
-
-    private void toggleAutoPlay() {
-        Toast.makeText(this, "Lecture automatique", Toast.LENGTH_SHORT).show();
-    }
-
-    private void loadTracks() {
-        registerPlaylistReceiver();
-    }
+    private void loadTracks() { registerPlaylistReceiver(); }
 
     private void registerPlaylistReceiver() {
         mPlaylistReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if (ACTION_SELECT_PLAYER.equals(intent.getAction())) {
+                if (ACTION_SELECT_PLAYER.equals(intent.getAction()))
                     handlePlaylistSelection(intent);
-                }
             }
         };
-
         IntentFilter filter = new IntentFilter(ACTION_SELECT_PLAYER);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
             registerReceiver(mPlaylistReceiver, filter, Context.RECEIVER_EXPORTED);
-        } else {
+        else
             registerReceiver(mPlaylistReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
-        }
     }
 
     private void handlePlaylistSelection(Intent intent) {
@@ -304,24 +289,14 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
     }
 
     private void setupNotifications() {
+        // ── MediaSession créée UNE SEULE FOIS ───────────────────────────────
+        mMediaSession = new MediaSessionCompat(this, "EduNigerPlayer");
+        mMediaSession.setActive(true);
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            createNotificationChannel();
+            CreateNotification.createNotificationChannel(this);
             registerPlaybackReceiver();
             startService(new Intent(this, OnClearFromRecentService.class));
-        }
-    }
-
-    private void createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(
-                    CreateNotification.CHANNEL_ID,
-                    "Lecteur Audio Fabi",
-                    NotificationManager.IMPORTANCE_LOW
-            );
-            mNotificationManager = getSystemService(NotificationManager.class);
-            if (mNotificationManager != null) {
-                mNotificationManager.createNotificationChannel(channel);
-            }
         }
     }
 
@@ -334,42 +309,28 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
                 handlePlaybackAction(action);
             }
         };
-
         IntentFilter filter = new IntentFilter(ACTION_TRACKS);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
             registerReceiver(mPlaybackReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
-        } else {
+        else
             registerReceiver(mPlaybackReceiver, filter);
-        }
     }
 
     private void handlePlaybackAction(String action) {
         if (action == null) return;
-
         switch (action) {
-            case CreateNotification.ACTION_PREVIOUS:
-                onTrackPrevious();
-                break;
-            case CreateNotification.ACTION_NEXT:
-                onTrackNext();
-                break;
-            case CreateNotification.ACTION_PLAY:
-                togglePlayPause();
-                break;
+            case CreateNotification.ACTION_PREVIOUS: onTrackPrevious();  break;
+            case CreateNotification.ACTION_NEXT:     onTrackNext();      break;
+            case CreateNotification.ACTION_PLAY:     togglePlayPause();  break;
         }
     }
 
     private void startPlaybackThread() {
         mUpdateThread = new Thread(() -> {
             while (mMediaPlayer != null && !Thread.currentThread().isInterrupted()) {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    break;
-                }
-
-                mHandler.post(() -> updatePlaybackInfo());
+                try { Thread.sleep(1000); }
+                catch (InterruptedException e) { Thread.currentThread().interrupt(); break; }
+                mHandler.post(this::updatePlaybackInfo);
             }
         });
         mUpdateThread.start();
@@ -378,20 +339,20 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
     private void updatePlaybackInfo() {
         if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
             int currentTime = mMediaPlayer.getCurrentPosition();
-            int duration = mMediaPlayer.getDuration();
+            int duration    = mMediaPlayer.getDuration();
 
             mSeekBar.setProgress(currentTime);
             mDurationCurrentTextView.setText(formatDuration(currentTime));
             mDurationTotalTextView.setText(formatDuration(duration - currentTime));
 
-            // Auto-next when track is almost finished
-            if (duration - currentTime <= AUTO_NEXT_THRESHOLD_MS) {
-                onTrackNext();
-            }
+            // Synchroniser la seekbar de la notification chaque seconde
+            updateNotification(R.drawable.vector_black3_pause);
+
+            if (duration - currentTime <= AUTO_NEXT_THRESHOLD_MS) onTrackNext();
         }
     }
 
-    // ==================== Playable Interface Implementation ====================
+    // ==================== Playable ====================
 
     @Override
     public void onTrackPlay() {
@@ -399,7 +360,7 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
             mMediaPlayer.start();
             mIsPlaying = true;
             mPlayImageView.setImageResource(R.drawable.vector_black3_play);
-            mPlayImageView.setColorFilter(Color.BLACK);        // ← icône noire sur cercle blanc
+            mPlayImageView.setColorFilter(Color.BLACK);
             updateNotification(R.drawable.vector_black3_pause);
         }
     }
@@ -410,7 +371,7 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
             mMediaPlayer.pause();
             mIsPlaying = false;
             mPlayImageView.setImageResource(R.drawable.vector_black3_pause);
-            mPlayImageView.setColorFilter(Color.BLACK);        // ← icône noire sur cercle blanc
+            mPlayImageView.setColorFilter(Color.BLACK);
             updateNotification(R.drawable.vector_black3_play);
         }
     }
@@ -418,28 +379,21 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
     @Override
     public void onTrackPrevious() {
         if (mTracks.isEmpty()) return;
-
         releaseMediaPlayer();
-
         mPosition = (mPosition == 0) ? mTracks.size() - 1 : mPosition - 1;
-
         prepareAndPlayTrack();
     }
 
     @Override
     public void onTrackNext() {
         if (mTracks.isEmpty()) return;
-
         releaseMediaPlayer();
-
         mPosition = (mPosition == mTracks.size() - 1) ? 0 : mPosition + 1;
-
         prepareAndPlayTrack();
     }
 
     private void prepareAndPlayTrack() {
         updateTrackInfo();
-
         try {
             mMediaPlayer = new MediaPlayer();
             mMediaPlayer.setDataSource(mTracks.get(mPosition).getAudio());
@@ -454,9 +408,7 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
 
     private void releaseMediaPlayer() {
         if (mMediaPlayer != null) {
-            if (mMediaPlayer.isPlaying()) {
-                mMediaPlayer.stop();
-            }
+            if (mMediaPlayer.isPlaying()) mMediaPlayer.stop();
             mMediaPlayer.reset();
             mMediaPlayer.release();
             mMediaPlayer = null;
@@ -469,16 +421,14 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
         prepareAndPlayTrack();
     }
 
-    // ==================== Helper Methods ====================
+    // ==================== Helpers ====================
 
     private void updateTrackInfo() {
         if (mTracks.isEmpty() || mPosition >= mTracks.size()) return;
-
         Track track = mTracks.get(mPosition);
         mTitleTextView.setText(track.getTitle());
         mAuthorTextView.setText(track.getArtist());
         mDurationTotalTextView.setText(track.getTime());
-
         loadTrackCover(track.getCover());
     }
 
@@ -488,19 +438,53 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
                 .load(file)
                 .placeholder(R.drawable.img_wait_cover_book)
                 .error(R.drawable.img_wait_cover_book)
-                .transform(new RoundedTransformation(20, 4))  // rayon plus arrondi
-                .resize(600, 600)                              // carré pour le nouveau layout
+                .transform(new RoundedTransformation(20, 4))
+                .resize(600, 600)
                 .centerCrop()
                 .into(mCoverImageView);
     }
 
     private void updateNotification(int playPauseIcon) {
+        if (mMediaSession == null || mTracks.isEmpty()) return;
+
+        Track track    = mTracks.get(mPosition);
+        long duration  = (mMediaPlayer != null) ? mMediaPlayer.getDuration()        : 0L;
+        long position  = (mMediaPlayer != null) ? mMediaPlayer.getCurrentPosition() : 0L;
+        float speed    = mIsPlaying ? 1.0f : 0.0f;
+
+        // ── 1. MediaMetadata : donne la DURÉE TOTALE au système ─────────────
+        //    Sans ça, le système ne sait pas où placer le curseur
+        MediaMetadataCompat metadata = new MediaMetadataCompat.Builder()
+                .putString(MediaMetadataCompat.METADATA_KEY_TITLE,  track.getTitle())
+                .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, track.getArtist())
+                .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, duration) // ← clé manquante
+                .build();
+        mMediaSession.setMetadata(metadata);
+
+        // ── 2. PlaybackState : position courante + vitesse ───────────────────
+        PlaybackStateCompat state = new PlaybackStateCompat.Builder()
+                .setActions(
+                        PlaybackStateCompat.ACTION_PLAY
+                                | PlaybackStateCompat.ACTION_PAUSE
+                                | PlaybackStateCompat.ACTION_SKIP_TO_NEXT
+                                | PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS
+                                | PlaybackStateCompat.ACTION_SEEK_TO)
+                .setState(
+                        mIsPlaying ? PlaybackStateCompat.STATE_PLAYING
+                                : PlaybackStateCompat.STATE_PAUSED,
+                        position,  // position en ms
+                        speed)     // 1.0 = avance en temps réel, 0.0 = pause
+                .build();
+        mMediaSession.setPlaybackState(state);
+
+        // ── 3. Notification avec le token de la session persistante ──────────
         CreateNotification.createNotification(
                 this,
-                mTracks.get(mPosition),
+                track,
                 playPauseIcon,
                 mPosition,
-                mTracks.size() - 1
+                mTracks.size() - 1,
+                mMediaSession.getSessionToken()
         );
     }
 
@@ -520,16 +504,10 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
                 cursor = audioTable.getData(mSession.getIdNumber());
                 break;
             case LIST_SOURCE_CATEGORY:
-                cursor = audioTable.getDataC(
-                        mSession.getIdNumber(),
-                        getIntent().getStringExtra("type")
-                );
+                cursor = audioTable.getDataC(mSession.getIdNumber(), getIntent().getStringExtra("type"));
                 break;
             case LIST_SOURCE_AUTHOR:
-                cursor = audioTable.getDataA(
-                        mSession.getIdNumber(),
-                        getIntent().getStringExtra("type")
-                );
+                cursor = audioTable.getDataA(mSession.getIdNumber(), getIntent().getStringExtra("type"));
                 break;
         }
 
@@ -537,21 +515,17 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
             int index = 0;
             do {
                 mTracks.add(new Track(
-                        cursor.getString(2),  // idBook
-                        cursor.getString(5),  // audio path
-                        cursor.getString(8),  // title
-                        cursor.getString(4),  // artist
-                        cursor.getString(6),  // cover
-                        cursor.getString(11), // time
+                        cursor.getString(2),
+                        cursor.getString(5),
+                        cursor.getString(8),
+                        cursor.getString(4),
+                        cursor.getString(6),
+                        cursor.getString(11),
                         R.id.relative_layout_activity_declaration_img
                 ));
-
-                if (cursor.getString(2).equals(idBook)) {
-                    mPosition = index;
-                }
+                if (cursor.getString(2).equals(idBook)) mPosition = index;
                 index++;
             } while (cursor.moveToNext());
-
             cursor.close();
         }
     }
@@ -560,29 +534,22 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
     protected void onDestroy() {
         super.onDestroy();
 
-        // Stop and clear notification
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && mNotificationManager != null) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && mNotificationManager != null)
             mNotificationManager.cancelAll();
-        }
 
-        // Unregister receivers
         try {
-            if (mPlaybackReceiver != null) {
-                unregisterReceiver(mPlaybackReceiver);
-            }
-            if (mPlaylistReceiver != null) {
-                unregisterReceiver(mPlaylistReceiver);
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Error unregistering receivers", e);
+            if (mPlaybackReceiver != null)  unregisterReceiver(mPlaybackReceiver);
+            if (mPlaylistReceiver != null)  unregisterReceiver(mPlaylistReceiver);
+        } catch (Exception e) { Log.e(TAG, "Error unregistering receivers", e); }
+
+        if (mUpdateThread != null && mUpdateThread.isAlive()) mUpdateThread.interrupt();
+
+        if (mMediaSession != null) {
+            mMediaSession.setActive(false);
+            mMediaSession.release();
+            mMediaSession = null;
         }
 
-        // Stop update thread
-        if (mUpdateThread != null && mUpdateThread.isAlive()) {
-            mUpdateThread.interrupt();
-        }
-
-        // Release media player
         releaseMediaPlayer();
     }
 }
