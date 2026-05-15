@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.audiofx.Equalizer;
@@ -17,6 +18,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -109,8 +112,17 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
         setupNotifications();
         startPlaybackThread();
     }
-
+    private void applyDarkTheme() {
+        Window window = getWindow();
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setStatusBarColor(Color.parseColor("#0D1318"));
+        // Icônes de status bar claires (blanches) sur fond sombre
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            window.getDecorView().setSystemUiVisibility(0);
+        }
+    }
     private void initializeComponents() {
+        applyDarkTheme();
         mSession = new Session(this);
         mHandler = new Handler();
         mTracks = new ArrayList<>();
@@ -387,7 +399,8 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
             mMediaPlayer.start();
             mIsPlaying = true;
             mPlayImageView.setImageResource(R.drawable.vector_black3_play);
-            updateNotification(R.drawable.vector_black3_play);
+            mPlayImageView.setColorFilter(Color.BLACK);        // ← icône noire sur cercle blanc
+            updateNotification(R.drawable.vector_black3_pause);
         }
     }
 
@@ -397,7 +410,8 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
             mMediaPlayer.pause();
             mIsPlaying = false;
             mPlayImageView.setImageResource(R.drawable.vector_black3_pause);
-            updateNotification(R.drawable.vector_black3_pause);
+            mPlayImageView.setColorFilter(Color.BLACK);        // ← icône noire sur cercle blanc
+            updateNotification(R.drawable.vector_black3_play);
         }
     }
 
@@ -474,8 +488,9 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
                 .load(file)
                 .placeholder(R.drawable.img_wait_cover_book)
                 .error(R.drawable.img_wait_cover_book)
-                .transform(new RoundedTransformation(15, 4))
-                .resize(356, 568)
+                .transform(new RoundedTransformation(20, 4))  // rayon plus arrondi
+                .resize(600, 600)                              // carré pour le nouveau layout
+                .centerCrop()
                 .into(mCoverImageView);
     }
 
