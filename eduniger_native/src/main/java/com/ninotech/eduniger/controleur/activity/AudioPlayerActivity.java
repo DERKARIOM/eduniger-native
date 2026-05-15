@@ -64,15 +64,22 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable,
         @Override
         public void onServiceConnected(ComponentName name, IBinder binder) {
             mService = ((AudioPlayerService.AudioBinder) binder).getService();
-            mBound   = true;
+            mBound = true;
             mService.setCallback(AudioPlayerActivity.this);
 
-            // Passer les tracks au Service et démarrer si premier lancement
-            if (!mService.isPlaying()) {
+            // Retour via notification : mTracks est vide, on récupère depuis le Service
+            if (mTracks.isEmpty()) {
+                List<Track> serviceTracks = mService.getTracks();
+                if (serviceTracks != null && !serviceTracks.isEmpty()) {
+                    mTracks = serviceTracks;
+                }
+            }
+
+            if (mTracks.isEmpty() || !mService.isPlaying()) {
                 mService.setTracks(mTracks, mPosition);
                 mService.prepareAndPlay();
             }
-            // Synchroniser l'UI avec l'état du Service (si on revient sur l'activity)
+
             syncUiWithService();
         }
         @Override
@@ -80,6 +87,14 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable,
             mBound = false;
         }
     };
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent); // mettre à jour l'intent courant
+        // Synchroniser l'UI si le Service est déjà lié
+        if (mBound) syncUiWithService();
+    }
 
     // Views
     private TextView  mTitleTextView;
@@ -290,7 +305,13 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable,
     // ── Helpers ───────────────────────────────────────────────────────────────
 
     private void syncUiWithService() {
-        if (!mBound) return;
+        if (!mBound || mService == null) return;
+
+        // Si mTracks est vide mais le Service a des tracks, on les récupère
+        if (mTracks.isEmpty() && mService.getTracks() != null) {
+            mTracks = mService.getTracks();
+        }
+
         mPosition = mService.getPosition();
         updateTrackInfo();
         mSeekBar.setMax(mService.getDurationMs());
@@ -378,6 +399,9 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable,
     }
 
     private void populateTracks(String idBook, String listSource) {
+        // ← Garder si le Service a déjà les tracks (retour via notification)
+        if (listSource == null) return;
+
         AudioTable audioTable = new AudioTable(this);
         Cursor cursor = null;
         switch (listSource) {
@@ -387,6 +411,7 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable,
                 cursor = audioTable.getDataC(mSession.getIdNumber(), getIntent().getStringExtra("type")); break;
             case LIST_SOURCE_AUTHOR:
                 cursor = audioTable.getDataA(mSession.getIdNumber(), getIntent().getStringExtra("type")); break;
+            default: return; // ← sécurité pour toute valeur inattendue
         }
         if (cursor != null && cursor.moveToFirst()) {
             int index = 0;
@@ -395,7 +420,7 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable,
                         cursor.getString(2), cursor.getString(5), cursor.getString(8),
                         cursor.getString(4), cursor.getString(6), cursor.getString(11),
                         R.id.relative_layout_activity_declaration_img));
-                if (cursor.getString(2).equals(idBook)) mPosition = index;
+                if (idBook != null && cursor.getString(2).equals(idBook)) mPosition = index;
                 index++;
             } while (cursor.moveToNext());
             cursor.close();

@@ -144,7 +144,7 @@ public class AudioPlayerService extends Service {
             Log.e(TAG, "Error preparing track", e);
         }
     }
-
+    public List<Track> getTracks() { return mTracks; }
     public boolean isPlaying()    { return mIsPlaying; }
     public int     getPosition()  { return mPosition; }
     public int     getCurrentMs() { return mMediaPlayer != null ? mMediaPlayer.getCurrentPosition() : 0; }
