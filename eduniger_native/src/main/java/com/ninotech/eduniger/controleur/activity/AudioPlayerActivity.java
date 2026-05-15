@@ -346,7 +346,7 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
             mDurationTotalTextView.setText(formatDuration(duration - currentTime));
 
             // Synchroniser la seekbar de la notification chaque seconde
-            updateNotification(R.drawable.vector_black3_pause);
+            updateNotification(R.drawable.vector_black3_play);
 
             if (duration - currentTime <= AUTO_NEXT_THRESHOLD_MS) onTrackNext();
         }
@@ -361,7 +361,7 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
             mIsPlaying = true;
             mPlayImageView.setImageResource(R.drawable.vector_black3_play);
             mPlayImageView.setColorFilter(Color.BLACK);
-            updateNotification(R.drawable.vector_black3_pause);
+            updateNotification(R.drawable.vector_black3_play);   // ← lecture en cours → icône play
         }
     }
 
@@ -372,7 +372,7 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
             mIsPlaying = false;
             mPlayImageView.setImageResource(R.drawable.vector_black3_pause);
             mPlayImageView.setColorFilter(Color.BLACK);
-            updateNotification(R.drawable.vector_black3_play);
+            updateNotification(R.drawable.vector_black3_pause);  // ← en pause → icône pause
         }
     }
 
