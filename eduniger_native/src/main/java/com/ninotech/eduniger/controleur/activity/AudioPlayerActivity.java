@@ -2,24 +2,21 @@ package com.ninotech.eduniger.controleur.activity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.media.audiofx.Equalizer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.media.MediaMetadataCompat;
-import android.support.v4.media.session.MediaSessionCompat;
-import android.support.v4.media.session.PlaybackStateCompat;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
@@ -36,39 +33,59 @@ import androidx.core.content.ContextCompat;
 import com.ninotech.eduniger.Playable;
 import com.ninotech.eduniger.R;
 import com.ninotech.eduniger.controleur.animation.RoundedTransformation;
-import com.ninotech.eduniger.model.data.CreateNotification;
 import com.ninotech.eduniger.model.data.Track;
+import com.ninotech.eduniger.model.service.AudioPlayerService;
 import com.ninotech.eduniger.model.service.OnClearFromRecentService;
 import com.ninotech.eduniger.model.table.AudioTable;
 import com.ninotech.eduniger.model.table.Session;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-public class AudioPlayerActivity extends AppCompatActivity implements Playable {
+public class AudioPlayerActivity extends AppCompatActivity implements Playable,
+        AudioPlayerService.PlayerCallback {
 
     private static final String TAG = "AudioPlayerActivity";
     private static final String ACTION_SELECT_PLAYER = "SELECT_LIST_PLAYER";
-    private static final String ACTION_TRACKS = "TRACKS_TRACKS";
-    private static final String LIST_SOURCE_ALL = "all";
+    private static final String LIST_SOURCE_ALL      = "all";
     private static final String LIST_SOURCE_CATEGORY = "category";
-    private static final String LIST_SOURCE_AUTHOR = "author";
-    private static final int PERMISSION_REQUEST_CODE = 101;
-    private static final int AUTO_NEXT_THRESHOLD_MS = 3000;
+    private static final String LIST_SOURCE_AUTHOR   = "author";
+    private static final int    PERMISSION_REQUEST_CODE = 101;
 
-    // ── MediaSession persistante ─────────────────────────────────────────────
-    private MediaSessionCompat mMediaSession;
+    // ── Service ───────────────────────────────────────────────────────────────
+    private AudioPlayerService mService;
+    private boolean            mBound = false;
+
+    private final ServiceConnection mConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder binder) {
+            mService = ((AudioPlayerService.AudioBinder) binder).getService();
+            mBound   = true;
+            mService.setCallback(AudioPlayerActivity.this);
+
+            // Passer les tracks au Service et démarrer si premier lancement
+            if (!mService.isPlaying()) {
+                mService.setTracks(mTracks, mPosition);
+                mService.prepareAndPlay();
+            }
+            // Synchroniser l'UI avec l'état du Service (si on revient sur l'activity)
+            syncUiWithService();
+        }
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mBound = false;
+        }
+    };
 
     // Views
-    private TextView mTitleTextView;
-    private TextView mAuthorTextView;
-    private TextView mDurationTotalTextView;
-    private TextView mDurationCurrentTextView;
+    private TextView  mTitleTextView;
+    private TextView  mAuthorTextView;
+    private TextView  mDurationTotalTextView;
+    private TextView  mDurationCurrentTextView;
     private ImageView mCoverImageView;
     private ImageView mPlayImageView;
     private ImageView mBackImageView;
@@ -82,24 +99,22 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
     private ImageView mBackPlayImageView;
     private ImageView mNextPlayImageView;
     private ImageView mAutoPlayImageView;
-    private SeekBar mSeekBar;
-
-    // Media
-    private MediaPlayer mMediaPlayer;
-    private Handler mHandler;
-    private Thread mUpdateThread;
+    private SeekBar   mSeekBar;
 
     // Data
     private List<Track> mTracks;
-    private Session mSession;
-    private int mPosition = 0;
-    private boolean mIsPlaying = false;
-    private String mListSource;
+    private Session     mSession;
+    private int         mPosition  = 0;
+    private String      mListSource;
 
-    // Notification
-    private NotificationManager mNotificationManager;
-    private BroadcastReceiver mPlaybackReceiver;
+    // Thread UI
+    private Handler mHandler;
+    private Thread  mUpdateThread;
+
+    // BroadcastReceiver playlist
     private BroadcastReceiver mPlaylistReceiver;
+
+    // ── Lifecycle ─────────────────────────────────────────────────────────────
 
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @Override
@@ -108,59 +123,70 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
         setContentView(R.layout.activity_audio_player);
         Objects.requireNonNull(getSupportActionBar()).hide();
 
-        initializeComponents();
+        applyDarkTheme();
+        initializeData();
         initializeViews();
         setupSeekBar();
         setupClickListeners();
-        loadTracks();
-        setupMediaPlayer();
-        requestPermissions();
-        setupNotifications();
-        startPlaybackThread();
+        registerPlaylistReceiver();
+        requestNotificationPermission();
+        startAndBindService();
+        startProgressThread();
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mUpdateThread != null) mUpdateThread.interrupt();
+        try { if (mPlaylistReceiver != null) unregisterReceiver(mPlaylistReceiver); }
+        catch (Exception e) { Log.e(TAG, "unregister error", e); }
+        if (mBound) {
+            mService.setCallback(null); // détacher le callback, le Service continue
+            unbindService(mConnection);
+            mBound = false;
+        }
+    }
+
+    // ── Setup ─────────────────────────────────────────────────────────────────
 
     private void applyDarkTheme() {
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(Color.parseColor("#0D1318"));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
             window.getDecorView().setSystemUiVisibility(0);
-        }
     }
 
-    private void initializeComponents() {
-        applyDarkTheme();
-        mSession = new Session(this);
-        mHandler = new Handler();
-        mTracks = new ArrayList<>();
+    private void initializeData() {
+        mSession  = new Session(this);
+        mHandler  = new Handler();
+        mTracks   = new ArrayList<>();
 
         Intent intent = getIntent();
         String idBook = intent.getStringExtra("key_adapter_audio_book_id");
-        mListSource = intent.getStringExtra("list_audio_source");
-
+        mListSource   = intent.getStringExtra("list_audio_source");
         populateTracks(idBook, mListSource);
     }
 
     private void initializeViews() {
-        mTitleTextView = findViewById(R.id.text_view_activity_audio_player_title);
-        mAuthorTextView = findViewById(R.id.text_view_activity_audio_player_author);
-        mDurationTotalTextView = findViewById(R.id.text_view_activity_audio_player_duration_total);
-        mDurationCurrentTextView = findViewById(R.id.text_view_activity_audio_player_duration_current);
-        mCoverImageView = findViewById(R.id.image_view_activity_audio_player_cover);
-        mPlayImageView = findViewById(R.id.image_view_activity_audio_player_play);
-        mReplayImageView = findViewById(R.id.image_view_activity_audio_player_replay);
-        mVolumeImageView = findViewById(R.id.image_view_activity_audio_player_volume);
-        mSeekBar = findViewById(R.id.seek_bar_activity_audio_player);
-        mBackImageView = findViewById(R.id.image_view_activity_audio_player_back);
-        mTonesImageView = findViewById(R.id.image_view_activity_audio_player_tones);
-        mPlayListImageView = findViewById(R.id.image_view_activity_audio_player_list);
-        mLoveImageView = findViewById(R.id.image_view_activity_audio_player_love);
-        mAddImageView = findViewById(R.id.image_view_activity_audio_player_add);
-        mRandomImageView = findViewById(R.id.image_view_activity_audio_player_random);
-        mBackPlayImageView = findViewById(R.id.image_view_activity_audio_player_back_player);
-        mNextPlayImageView = findViewById(R.id.image_view_activity_audio_player_next_play);
-        mAutoPlayImageView = findViewById(R.id.image_view_activity_audio_player_auto_play);
-
+        mTitleTextView          = findViewById(R.id.text_view_activity_audio_player_title);
+        mAuthorTextView         = findViewById(R.id.text_view_activity_audio_player_author);
+        mDurationTotalTextView  = findViewById(R.id.text_view_activity_audio_player_duration_total);
+        mDurationCurrentTextView= findViewById(R.id.text_view_activity_audio_player_duration_current);
+        mCoverImageView         = findViewById(R.id.image_view_activity_audio_player_cover);
+        mPlayImageView          = findViewById(R.id.image_view_activity_audio_player_play);
+        mReplayImageView        = findViewById(R.id.image_view_activity_audio_player_replay);
+        mVolumeImageView        = findViewById(R.id.image_view_activity_audio_player_volume);
+        mSeekBar                = findViewById(R.id.seek_bar_activity_audio_player);
+        mBackImageView          = findViewById(R.id.image_view_activity_audio_player_back);
+        mTonesImageView         = findViewById(R.id.image_view_activity_audio_player_tones);
+        mPlayListImageView      = findViewById(R.id.image_view_activity_audio_player_list);
+        mLoveImageView          = findViewById(R.id.image_view_activity_audio_player_love);
+        mAddImageView           = findViewById(R.id.image_view_activity_audio_player_add);
+        mRandomImageView        = findViewById(R.id.image_view_activity_audio_player_random);
+        mBackPlayImageView      = findViewById(R.id.image_view_activity_audio_player_back_player);
+        mNextPlayImageView      = findViewById(R.id.image_view_activity_audio_player_next_play);
+        mAutoPlayImageView      = findViewById(R.id.image_view_activity_audio_player_auto_play);
         updateTrackInfo();
     }
 
@@ -168,9 +194,7 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
         mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (fromUser && mMediaPlayer != null) {
-                    mMediaPlayer.seekTo(progress);
-                }
+                if (fromUser && mBound) mService.seekTo(progress);
             }
             @Override public void onStartTrackingTouch(SeekBar seekBar) {}
             @Override public void onStopTrackingTouch(SeekBar seekBar) {}
@@ -179,105 +203,40 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
 
     private void setupClickListeners() {
         mBackImageView.setOnClickListener(v -> onBackPressed());
-        mPlayImageView.setOnClickListener(v -> togglePlayPause());
+        mPlayImageView.setOnClickListener(v -> { if (mBound) mService.togglePlayPause(); });
         mBackPlayImageView.setOnClickListener(v -> onTrackPrevious());
         mNextPlayImageView.setOnClickListener(v -> onTrackNext());
-        mReplayImageView.setOnClickListener(v -> replayTrack());
+        mReplayImageView.setOnClickListener(v -> { if (mBound) mService.seekTo(0); });
         mVolumeImageView.setOnClickListener(v -> showVolumeControl());
         mTonesImageView.setOnClickListener(v -> openEqualizer());
         mPlayListImageView.setOnClickListener(v -> openPlaylist());
-        mLoveImageView.setOnClickListener(v -> toggleFavorite());
-        mAddImageView.setOnClickListener(v -> addToPlaylist());
-        mRandomImageView.setOnClickListener(v -> toggleRandom());
-        mAutoPlayImageView.setOnClickListener(v -> toggleAutoPlay());
+        mLoveImageView.setOnClickListener(v -> Toast.makeText(this, "Ajouté aux favoris",   Toast.LENGTH_SHORT).show());
+        mAddImageView.setOnClickListener(v ->  Toast.makeText(this, "Ajouté à la playlist", Toast.LENGTH_SHORT).show());
+        mRandomImageView.setOnClickListener(v -> Toast.makeText(this, "Mode aléatoire",     Toast.LENGTH_SHORT).show());
+        mAutoPlayImageView.setOnClickListener(v -> Toast.makeText(this, "Lecture automatique", Toast.LENGTH_SHORT).show());
     }
 
-    private void togglePlayPause() {
-        if (mIsPlaying) onTrackPause();
-        else onTrackPlay();
-    }
-
-    private void replayTrack() {
-        if (mMediaPlayer != null) mMediaPlayer.seekTo(0);
-    }
-
-    private void showVolumeControl() {
-        AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-        if (audioManager != null)
-            audioManager.adjustVolume(AudioManager.ADJUST_SAME, AudioManager.FLAG_SHOW_UI);
-    }
-
-    private void openEqualizer() {
-        try {
-            Intent intent = new Intent(Intent.ACTION_MAIN);
-            intent.setClassName("com.android.settings", "com.android.settings.SoundSettings");
-            startActivity(intent);
-        } catch (Exception e) {
-            try {
-                Intent intent = new Intent(Equalizer.ACTION_OPEN_AUDIO_EFFECT_CONTROL_SESSION);
-                intent.putExtra(Equalizer.EXTRA_AUDIO_SESSION, 0);
-                intent.putExtra(Equalizer.EXTRA_PACKAGE_NAME, getPackageName());
-                startActivity(intent);
-            } catch (Exception ex) {
-                Toast.makeText(this, "Égaliseur non disponible", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-    private void openPlaylist() {
-        Intent intent = new Intent(this, ListPlayerActivity.class);
-        intent.putExtra("id", 6);
-        intent.putExtra("audio", mTracks.get(mPosition).getAudio());
-        intent.putExtra("list_audio_source", mListSource);
-        intent.putExtra("type", getIntent().getStringExtra("type"));
-        startActivity(intent);
-    }
-
-    private void toggleFavorite()  { Toast.makeText(this, "Ajouté aux favoris",  Toast.LENGTH_SHORT).show(); }
-    private void addToPlaylist()   { Toast.makeText(this, "Ajouté à la playlist", Toast.LENGTH_SHORT).show(); }
-    private void toggleRandom()    { Toast.makeText(this, "Mode aléatoire",       Toast.LENGTH_SHORT).show(); }
-    private void toggleAutoPlay()  { Toast.makeText(this, "Lecture automatique",  Toast.LENGTH_SHORT).show(); }
-
-    private void loadTracks() { registerPlaylistReceiver(); }
-
-    private void registerPlaylistReceiver() {
-        mPlaylistReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if (ACTION_SELECT_PLAYER.equals(intent.getAction()))
-                    handlePlaylistSelection(intent);
-            }
-        };
-        IntentFilter filter = new IntentFilter(ACTION_SELECT_PLAYER);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
-            registerReceiver(mPlaylistReceiver, filter, Context.RECEIVER_EXPORTED);
+    private void startAndBindService() {
+        Intent serviceIntent = new Intent(this, AudioPlayerService.class);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            startForegroundService(serviceIntent);
         else
-            registerReceiver(mPlaylistReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
+            startService(serviceIntent);
+        bindService(serviceIntent, mConnection, Context.BIND_AUTO_CREATE);
     }
 
-    private void handlePlaylistSelection(Intent intent) {
-        int position = intent.getIntExtra("position", 0);
-        Intent audioIntent = new Intent(this, AudioPlayerActivity.class);
-        audioIntent.putExtra("key_adapter_audio_book_id", mTracks.get(position).getIdBook());
-        audioIntent.putExtra("list_audio_source", mListSource);
-        startActivity(audioIntent);
-        finish();
+    private void startProgressThread() {
+        mUpdateThread = new Thread(() -> {
+            while (!Thread.currentThread().isInterrupted()) {
+                try { Thread.sleep(1000); }
+                catch (InterruptedException e) { Thread.currentThread().interrupt(); break; }
+                if (mBound) mHandler.post(() -> mService.tickProgress());
+            }
+        });
+        mUpdateThread.start();
     }
 
-    private void setupMediaPlayer() {
-        try {
-            mMediaPlayer = new MediaPlayer();
-            mMediaPlayer.setDataSource(mTracks.get(mPosition).getAudio());
-            mMediaPlayer.prepare();
-            mSeekBar.setMax(mMediaPlayer.getDuration());
-            onTrackPlay();
-        } catch (IOException e) {
-            Log.e(TAG, "Error setting up MediaPlayer", e);
-            Toast.makeText(this, "Erreur lors du chargement de l'audio", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void requestPermissions() {
+    private void requestNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
                     != PackageManager.PERMISSION_GRANTED) {
@@ -288,140 +247,56 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
         }
     }
 
-    private void setupNotifications() {
-        // ── MediaSession créée UNE SEULE FOIS ───────────────────────────────
-        mMediaSession = new MediaSessionCompat(this, "EduNigerPlayer");
-        mMediaSession.setActive(true);
+    // ── PlayerCallback (appelé depuis AudioPlayerService sur le main thread) ──
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CreateNotification.createNotificationChannel(this);
-            registerPlaybackReceiver();
-            startService(new Intent(this, OnClearFromRecentService.class));
-        }
-    }
-
-    @SuppressLint("UnspecifiedRegisterReceiverFlag")
-    private void registerPlaybackReceiver() {
-        mPlaybackReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                String action = intent.getExtras().getString("actionname");
-                handlePlaybackAction(action);
+    @Override
+    public void onPlaybackStateChanged(boolean isPlaying) {
+        runOnUiThread(() -> {
+            if (isPlaying) {
+                mPlayImageView.setImageResource(R.drawable.vector_black3_play);
+            } else {
+                mPlayImageView.setImageResource(R.drawable.vector_black3_pause);
             }
-        };
-        IntentFilter filter = new IntentFilter(ACTION_TRACKS);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
-            registerReceiver(mPlaybackReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
-        else
-            registerReceiver(mPlaybackReceiver, filter);
-    }
-
-    private void handlePlaybackAction(String action) {
-        if (action == null) return;
-        switch (action) {
-            case CreateNotification.ACTION_PREVIOUS: onTrackPrevious();  break;
-            case CreateNotification.ACTION_NEXT:     onTrackNext();      break;
-            case CreateNotification.ACTION_PLAY:     togglePlayPause();  break;
-        }
-    }
-
-    private void startPlaybackThread() {
-        mUpdateThread = new Thread(() -> {
-            while (mMediaPlayer != null && !Thread.currentThread().isInterrupted()) {
-                try { Thread.sleep(1000); }
-                catch (InterruptedException e) { Thread.currentThread().interrupt(); break; }
-                mHandler.post(this::updatePlaybackInfo);
-            }
+            mPlayImageView.setColorFilter(Color.BLACK);
         });
-        mUpdateThread.start();
-    }
-
-    private void updatePlaybackInfo() {
-        if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
-            int currentTime = mMediaPlayer.getCurrentPosition();
-            int duration    = mMediaPlayer.getDuration();
-
-            mSeekBar.setProgress(currentTime);
-            mDurationCurrentTextView.setText(formatDuration(currentTime));
-            mDurationTotalTextView.setText(formatDuration(duration - currentTime));
-
-            // Synchroniser la seekbar de la notification chaque seconde
-            updateNotification(R.drawable.vector_black3_play);
-
-            if (duration - currentTime <= AUTO_NEXT_THRESHOLD_MS) onTrackNext();
-        }
-    }
-
-    // ==================== Playable ====================
-
-    @Override
-    public void onTrackPlay() {
-        if (mMediaPlayer != null) {
-            mMediaPlayer.start();
-            mIsPlaying = true;
-            mPlayImageView.setImageResource(R.drawable.vector_black3_play);
-            mPlayImageView.setColorFilter(Color.BLACK);
-            updateNotification(R.drawable.vector_black3_play);   // ← lecture en cours → icône play
-        }
     }
 
     @Override
-    public void onTrackPause() {
-        if (mMediaPlayer != null) {
-            mMediaPlayer.pause();
-            mIsPlaying = false;
-            mPlayImageView.setImageResource(R.drawable.vector_black3_pause);
-            mPlayImageView.setColorFilter(Color.BLACK);
-            updateNotification(R.drawable.vector_black3_pause);  // ← en pause → icône pause
-        }
+    public void onTrackChanged(int position) {
+        runOnUiThread(() -> {
+            mPosition = position;
+            updateTrackInfo();
+            if (mBound) mSeekBar.setMax(mService.getDurationMs());
+        });
     }
 
     @Override
-    public void onTrackPrevious() {
-        if (mTracks.isEmpty()) return;
-        releaseMediaPlayer();
-        mPosition = (mPosition == 0) ? mTracks.size() - 1 : mPosition - 1;
-        prepareAndPlayTrack();
+    public void onProgressChanged(int currentMs, int durationMs) {
+        runOnUiThread(() -> {
+            mSeekBar.setMax(durationMs);
+            mSeekBar.setProgress(currentMs);
+            mDurationCurrentTextView.setText(formatDuration(currentMs));
+            mDurationTotalTextView.setText(formatDuration(durationMs - currentMs));
+        });
     }
 
-    @Override
-    public void onTrackNext() {
-        if (mTracks.isEmpty()) return;
-        releaseMediaPlayer();
-        mPosition = (mPosition == mTracks.size() - 1) ? 0 : mPosition + 1;
-        prepareAndPlayTrack();
-    }
+    // ── Playable interface ────────────────────────────────────────────────────
 
-    private void prepareAndPlayTrack() {
+    @Override public void onTrackPlay()     { if (mBound) mService.play(); }
+    @Override public void onTrackPause()    { if (mBound) mService.pause(); }
+    @Override public void onTrackPrevious() { if (mBound) mService.previous(); }
+    @Override public void onTrackNext()     { if (mBound) mService.next(); }
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
+
+    private void syncUiWithService() {
+        if (!mBound) return;
+        mPosition = mService.getPosition();
         updateTrackInfo();
-        try {
-            mMediaPlayer = new MediaPlayer();
-            mMediaPlayer.setDataSource(mTracks.get(mPosition).getAudio());
-            mMediaPlayer.prepare();
-            mSeekBar.setMax(mMediaPlayer.getDuration());
-            onTrackPlay();
-        } catch (IOException e) {
-            Log.e(TAG, "Error preparing track", e);
-            Toast.makeText(this, "Erreur lors du chargement de la piste", Toast.LENGTH_SHORT).show();
-        }
+        mSeekBar.setMax(mService.getDurationMs());
+        mSeekBar.setProgress(mService.getCurrentMs());
+        onPlaybackStateChanged(mService.isPlaying());
     }
-
-    private void releaseMediaPlayer() {
-        if (mMediaPlayer != null) {
-            if (mMediaPlayer.isPlaying()) mMediaPlayer.stop();
-            mMediaPlayer.reset();
-            mMediaPlayer.release();
-            mMediaPlayer = null;
-        }
-    }
-
-    public void onTrackPlayPosition(int position) {
-        releaseMediaPlayer();
-        mPosition = position;
-        prepareAndPlayTrack();
-    }
-
-    // ==================== Helpers ====================
 
     private void updateTrackInfo() {
         if (mTracks.isEmpty() || mPosition >= mTracks.size()) return;
@@ -444,48 +319,55 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
                 .into(mCoverImageView);
     }
 
-    private void updateNotification(int playPauseIcon) {
-        if (mMediaSession == null || mTracks.isEmpty()) return;
+    private void showVolumeControl() {
+        AudioManager am = (AudioManager) getSystemService(AUDIO_SERVICE);
+        if (am != null) am.adjustVolume(AudioManager.ADJUST_SAME, AudioManager.FLAG_SHOW_UI);
+    }
 
-        Track track    = mTracks.get(mPosition);
-        long duration  = (mMediaPlayer != null) ? mMediaPlayer.getDuration()        : 0L;
-        long position  = (mMediaPlayer != null) ? mMediaPlayer.getCurrentPosition() : 0L;
-        float speed    = mIsPlaying ? 1.0f : 0.0f;
+    private void openEqualizer() {
+        try {
+            Intent i = new Intent(Intent.ACTION_MAIN);
+            i.setClassName("com.android.settings", "com.android.settings.SoundSettings");
+            startActivity(i);
+        } catch (Exception e) {
+            try {
+                Intent i = new Intent(Equalizer.ACTION_OPEN_AUDIO_EFFECT_CONTROL_SESSION);
+                i.putExtra(Equalizer.EXTRA_AUDIO_SESSION, 0);
+                i.putExtra(Equalizer.EXTRA_PACKAGE_NAME, getPackageName());
+                startActivity(i);
+            } catch (Exception ex) {
+                Toast.makeText(this, "Égaliseur non disponible", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
 
-        // ── 1. MediaMetadata : donne la DURÉE TOTALE au système ─────────────
-        //    Sans ça, le système ne sait pas où placer le curseur
-        MediaMetadataCompat metadata = new MediaMetadataCompat.Builder()
-                .putString(MediaMetadataCompat.METADATA_KEY_TITLE,  track.getTitle())
-                .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, track.getArtist())
-                .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, duration) // ← clé manquante
-                .build();
-        mMediaSession.setMetadata(metadata);
+    private void openPlaylist() {
+        Intent intent = new Intent(this, ListPlayerActivity.class);
+        intent.putExtra("id", 6);
+        intent.putExtra("audio", mTracks.get(mPosition).getAudio());
+        intent.putExtra("list_audio_source", mListSource);
+        intent.putExtra("type", getIntent().getStringExtra("type"));
+        startActivity(intent);
+    }
 
-        // ── 2. PlaybackState : position courante + vitesse ───────────────────
-        PlaybackStateCompat state = new PlaybackStateCompat.Builder()
-                .setActions(
-                        PlaybackStateCompat.ACTION_PLAY
-                                | PlaybackStateCompat.ACTION_PAUSE
-                                | PlaybackStateCompat.ACTION_SKIP_TO_NEXT
-                                | PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS
-                                | PlaybackStateCompat.ACTION_SEEK_TO)
-                .setState(
-                        mIsPlaying ? PlaybackStateCompat.STATE_PLAYING
-                                : PlaybackStateCompat.STATE_PAUSED,
-                        position,  // position en ms
-                        speed)     // 1.0 = avance en temps réel, 0.0 = pause
-                .build();
-        mMediaSession.setPlaybackState(state);
-
-        // ── 3. Notification avec le token de la session persistante ──────────
-        CreateNotification.createNotification(
-                this,
-                track,
-                playPauseIcon,
-                mPosition,
-                mTracks.size() - 1,
-                mMediaSession.getSessionToken()
-        );
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
+    private void registerPlaylistReceiver() {
+        mPlaylistReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (!ACTION_SELECT_PLAYER.equals(intent.getAction())) return;
+                int pos = intent.getIntExtra("position", 0);
+                if (mBound) {
+                    mService.setTracks(mTracks, pos);
+                    mService.prepareAndPlay();
+                }
+            }
+        };
+        IntentFilter filter = new IntentFilter(ACTION_SELECT_PLAYER);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+            registerReceiver(mPlaylistReceiver, filter, Context.RECEIVER_EXPORTED);
+        else
+            registerReceiver(mPlaylistReceiver, filter);
     }
 
     private String formatDuration(int durationMs) {
@@ -498,58 +380,25 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable {
     private void populateTracks(String idBook, String listSource) {
         AudioTable audioTable = new AudioTable(this);
         Cursor cursor = null;
-
         switch (listSource) {
             case LIST_SOURCE_ALL:
-                cursor = audioTable.getData(mSession.getIdNumber());
-                break;
+                cursor = audioTable.getData(mSession.getIdNumber()); break;
             case LIST_SOURCE_CATEGORY:
-                cursor = audioTable.getDataC(mSession.getIdNumber(), getIntent().getStringExtra("type"));
-                break;
+                cursor = audioTable.getDataC(mSession.getIdNumber(), getIntent().getStringExtra("type")); break;
             case LIST_SOURCE_AUTHOR:
-                cursor = audioTable.getDataA(mSession.getIdNumber(), getIntent().getStringExtra("type"));
-                break;
+                cursor = audioTable.getDataA(mSession.getIdNumber(), getIntent().getStringExtra("type")); break;
         }
-
         if (cursor != null && cursor.moveToFirst()) {
             int index = 0;
             do {
                 mTracks.add(new Track(
-                        cursor.getString(2),
-                        cursor.getString(5),
-                        cursor.getString(8),
-                        cursor.getString(4),
-                        cursor.getString(6),
-                        cursor.getString(11),
-                        R.id.relative_layout_activity_declaration_img
-                ));
+                        cursor.getString(2), cursor.getString(5), cursor.getString(8),
+                        cursor.getString(4), cursor.getString(6), cursor.getString(11),
+                        R.id.relative_layout_activity_declaration_img));
                 if (cursor.getString(2).equals(idBook)) mPosition = index;
                 index++;
             } while (cursor.moveToNext());
             cursor.close();
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && mNotificationManager != null)
-            mNotificationManager.cancelAll();
-
-        try {
-            if (mPlaybackReceiver != null)  unregisterReceiver(mPlaybackReceiver);
-            if (mPlaylistReceiver != null)  unregisterReceiver(mPlaylistReceiver);
-        } catch (Exception e) { Log.e(TAG, "Error unregistering receivers", e); }
-
-        if (mUpdateThread != null && mUpdateThread.isAlive()) mUpdateThread.interrupt();
-
-        if (mMediaSession != null) {
-            mMediaSession.setActive(false);
-            mMediaSession.release();
-            mMediaSession = null;
-        }
-
-        releaseMediaPlayer();
     }
 }

@@ -242,6 +242,8 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service> <!-- ==================== Services Audio ==================== -->
+        <service android:name=".model.service.AudioPlayerService"
+            android:foregroundServiceType="mediaPlayback" />
         <service
             android:name=".model.service.AudioService"
             android:exported="false"
