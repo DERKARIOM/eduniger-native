@@ -129,11 +129,18 @@ public class OnlineBookAdapter extends RecyclerView.Adapter<OnlineBookAdapter.My
                     }
                     else
                     {
-                        if(onlineBook.getOnClickType().equals("ACTION_1"))
-                        {
+                        // Dans display() — remplace le bloc ACTION_1
+                        if (onlineBook.getOnClickType().equals("ACTION_1")) {
                             Intent result = new Intent();
                             result.putExtra("book_title", onlineBook.getTitle());
-                            result.putExtra("book_id",    onlineBook.getId());// adapte getTitle() à ton modèle
+                            result.putExtra("book_id",    onlineBook.getId());
+
+                            // ✅ Retransmettre l'action depuis l'Intent de SearchActivity
+                            String action = ((Activity) itemView.getContext())
+                                    .getIntent()
+                                    .getStringExtra("online_book_action");
+                            result.putExtra("online_book_action", action);
+
                             ((Activity) itemView.getContext()).setResult(Activity.RESULT_OK, result);
                             ((Activity) itemView.getContext()).finish();
                         }

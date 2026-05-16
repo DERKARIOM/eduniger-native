@@ -7,6 +7,8 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+
+
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -208,14 +210,30 @@ public class ChatAiActivity extends AppCompatActivity {
             row.setOnClickListener(v -> {
                 sheet.dismiss();
                 switch (index) {
-                    case 0:
+                    case 0:  // "Expliquer un livre"
                         Intent intent = new Intent(this, SearchActivity.class);
                         intent.putExtra("search_key", "ONLINE_BOOK");
                         intent.putExtra("online_book_key", "CHAT_AI_ACTIVITY");
+                        intent.putExtra("online_book_action", "explain");   // ✅ action
                         startActivityForResult(intent, 1001);
                         break;
-                    case 1: /* Photos */   pickImage();  break;
+
+                    case 1:  // "Résumer un livre" — si tu veux l'auto-envoyer aussi
+                        Intent intent2 = new Intent(this, SearchActivity.class);
+                        intent2.putExtra("search_key", "ONLINE_BOOK");
+                        intent2.putExtra("online_book_key", "CHAT_AI_ACTIVITY");
+                        intent2.putExtra("online_book_action", "summarize"); // ✅ action
+                        startActivityForResult(intent2, 1001);
+                        break;
+//                    case 0:
+//                        Intent intent = new Intent(this, SearchActivity.class);
+//                        intent.putExtra("search_key", "ONLINE_BOOK");
+//                        intent.putExtra("online_book_key", "CHAT_AI_ACTIVITY");
+//                        startActivityForResult(intent, 1001);
+//                        break;
+//                    case 1: /* Photos */   pickImage();  break;
                     case 2: /* Fichiers */ pickFile();   break;
+
                     case 3: /* Vidéos */   pickVideo();  break;
                 }
             });
@@ -467,11 +485,17 @@ public class ChatAiActivity extends AppCompatActivity {
 
     private void addBotMessage(String text) {
         Message msg = new Message(text, Message.TYPE_BOT);
-        persistMessage(msg);          // persiste le texte COMPLET en base
+        persistMessage(msg);
         messages.add(msg);
         adapter.notifyItemInserted(messages.size() - 1);
         updateEmptyState();
-        adapter.animateLastBotMessage(msg); // ← déclenche le typewriter
+
+        // ✅ Scroll APRÈS l'insertion, pas pendant l'animation
+        recyclerView.post(() ->
+                recyclerView.smoothScrollToPosition(messages.size() - 1)
+        );
+
+        adapter.animateLastBotMessage(msg);
     }
 
 
@@ -570,7 +594,6 @@ public class ChatAiActivity extends AppCompatActivity {
     }
 
     @Override
-    // Dans onActivityResult — ajoute ces logs
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1001 && resultCode == RESULT_OK && data != null) {
@@ -578,12 +601,9 @@ public class ChatAiActivity extends AppCompatActivity {
             String bookTitle = data.getStringExtra("book_title");
             String bookId    = data.getStringExtra("book_id");
 
-            // ✅ LOG — voir ce que SearchActivity envoie
             Log.d("ChatAi", "book_title = " + bookTitle);
             Log.d("ChatAi", "book_id    = " + bookId);
 
-
-            // Lister tous les extras disponibles
             if (data.getExtras() != null) {
                 for (String key : data.getExtras().keySet()) {
                     Log.d("ChatAi", "Extra → " + key + " = " + data.getExtras().get(key));
@@ -594,8 +614,71 @@ public class ChatAiActivity extends AppCompatActivity {
                 selectedBookTitle = bookTitle;
                 selectedBookId    = bookId;
 
-                addBotMessage("📚 Livre : **" + bookTitle + "** (id=" + bookId + ")\nPosez votre question !");
+                // ✅ Auto-envoyer directement selon l'action choisie
+                String action = data.getStringExtra("online_book_action");
+
+                if ("explain".equals(action)) {
+                    // "Expliquer un livre" → envoie directement
+                    addUserMessage("Explique moi ce livre : " + bookTitle);
+                    sendBookRequest("Explique ce livre en détail : thèmes, résumé, auteur.");
+                } else if ("summarize".equals(action)) {
+                    // "Résumer un livre" → envoie directement
+                    addUserMessage("Résume ce livre : " + bookTitle);
+                    sendBookRequest("Fais un résumé complet de ce livre.");
+                } else {
+                    // Sélection simple — attendre la question de l'utilisateur
+                    addBotMessage("📚 **" + bookTitle + "** chargé.\nQue voulez-vous savoir ?");
+                }
             }
         }
+    }
+    private void sendBookRequest(String question) {
+        showTyping(true);
+
+        FormBody.Builder fb = new FormBody.Builder()
+                .add("id_number", ID_NUMBER)
+                .add("id_user",   ID_NUMBER)
+                .add("request",   question)
+                .add("message",   question)
+                .add("action",    "ask_about_book");
+
+        if (selectedBookId != null) fb.add("id_book", selectedBookId);
+        if (sessionId != null)      fb.add("session_id", sessionId);
+
+        Request request = new Request.Builder()
+                .url(API_URL)
+                .post(fb.build())
+                .build();
+
+        httpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                runOnUiThread(() -> {
+                    showTyping(false);
+                    showModernToast("Connexion impossible");
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String rawBody = response.body() != null ? response.body().string() : "";
+                Log.d("ChatAi", "BookRequest RAW: " + rawBody);
+                runOnUiThread(() -> {
+                    showTyping(false);
+                    try {
+                        JSONObject json = new JSONObject(rawBody);
+                        if (json.optBoolean("success", false)) {
+                            String botResponse = json.optString("response", "");
+                            if (json.has("session_id")) sessionId = json.getString("session_id");
+                            if (!botResponse.isEmpty()) addBotMessage(botResponse);
+                        } else {
+                            showModernToast("Erreur : " + json.optString("error", "Inconnue"));
+                        }
+                    } catch (Exception e) {
+                        showModernToast("Erreur de lecture");
+                    }
+                });
+            }
+        });
     }
 }
