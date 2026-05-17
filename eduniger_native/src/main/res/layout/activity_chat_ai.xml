@@ -27,7 +27,7 @@
             android:background="@drawable/bg_bottom_nav"
             android:contentDescription="Menu"
             android:src="@drawable/vector_back"
-            android:tint="#FFFFFF" />
+            app:tint="#FFFFFF" />
 
         <!-- Titre centré -->
         <TextView
@@ -90,16 +90,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:columnCount="2"
-            android:rowCount="2"
+            android:rowCount="3"
             android:useDefaultMargins="false">
 
-            <!-- Suggestion 1 -->
+            <!-- Action 1 — Expliquer un livre -->
             <LinearLayout
                 android:id="@+id/action1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
-                android:layout_margin="10dp"
+                android:layout_margin="6dp"
                 android:background="@drawable/bg_bottom_nav"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
@@ -110,13 +110,13 @@
                     android:text="Expliquer un livre" android:textColor="#AAAAAA" android:textSize="12sp"/>
             </LinearLayout>
 
-            <!-- Suggestion 2 -->
+            <!-- Action 2 — Résumer un livre -->
             <LinearLayout
                 android:id="@+id/action2"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
-                android:layout_margin="5dp"
+                android:layout_margin="6dp"
                 android:background="@drawable/bg_bottom_nav"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
@@ -127,13 +127,13 @@
                     android:text="Résumer un livre" android:textColor="#AAAAAA" android:textSize="12sp"/>
             </LinearLayout>
 
-            <!-- Suggestion 3 -->
+            <!-- Action 3 — Poser une question -->
             <LinearLayout
                 android:id="@+id/action3"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
-                android:layout_margin="10dp"
+                android:layout_margin="6dp"
                 android:background="@drawable/bg_bottom_nav"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
@@ -144,13 +144,13 @@
                     android:text="Poser une question" android:textColor="#AAAAAA" android:textSize="12sp"/>
             </LinearLayout>
 
-            <!-- Suggestion 4 -->
+            <!-- Action 4 — Visualiser une image -->
             <LinearLayout
                 android:id="@+id/action4"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
-                android:layout_margin="10dp"
+                android:layout_margin="6dp"
                 android:background="@drawable/bg_bottom_nav"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
@@ -158,7 +158,25 @@
                 <ImageView android:layout_width="15dp" android:layout_height="15dp"
                     android:src="@drawable/books_emp" android:layout_marginEnd="8dp"/>
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="Surprends-moi" android:textColor="#AAAAAA" android:textSize="12sp"/>
+                    android:text="Visualiser une image" android:textColor="#AAAAAA" android:textSize="12sp"/>
+            </LinearLayout>
+
+            <!-- Action 5 — Transcrire un audio (centré sur toute la largeur) -->
+            <LinearLayout
+                android:id="@+id/action5"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnSpan="2"
+                android:layout_columnWeight="1"
+                android:layout_margin="6dp"
+                android:background="@drawable/bg_bottom_nav"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:padding="12dp">
+                <ImageView android:layout_width="15dp" android:layout_height="15dp"
+                    android:src="@drawable/books_emp" android:layout_marginEnd="8dp"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Transcrire un audio" android:textColor="#AAAAAA" android:textSize="12sp"/>
             </LinearLayout>
 
         </GridLayout>
@@ -226,7 +244,7 @@
             android:background="@drawable/bg_bottom_nav"
             android:contentDescription="Joindre"
             android:src="@drawable/vector_white_sombre_add"
-            android:tint="#888888" />
+            app:tint="#888888" />
 
         <!-- Champ de texte -->
         <EditText
@@ -252,7 +270,7 @@
             android:background="@drawable/bg_send_button"
             android:contentDescription="Envoyer"
             android:src="@drawable/vector_white_send"
-            android:tint="#000000" />
+            app:tint="#000000" />
 
     </LinearLayout>
 

@@ -43,6 +43,7 @@ public class ChatAiActivity extends AppCompatActivity {
 
     // ─── Constantes ───────────────────────────────────────────────────────────// ─── Constantes (Mise à jour pour Gemma 4 / FastAPI) ──────────────────────────
     private static final String API_URL   = "http://78.46.46.154/eduniger/ai/eduna_gemma3.php";
+    private static final String KAGGLE_URL = "https://lent-napkin-clergyman.ngrok-free.dev";
     private static final String ID_NUMBER = "94961793";
     private String selectedBookId    = null;
     private String selectedBookTitle = null;
@@ -66,7 +67,7 @@ public class ChatAiActivity extends AppCompatActivity {
     private ChatSession currentSession; // ligne SQLite correspondante
     private boolean     sessionSaved;   // true dès que la session est en base
     private View layoutEmptyState;
-    private LinearLayout btnAction1, btnAction2, btnAction3, btnAction4;
+    private LinearLayout btnAction1, btnAction2, btnAction3, btnAction4, btnAction5;
 
     // ─────────────────────────────────────────────────────────────────────────
     @Override
@@ -118,6 +119,7 @@ public class ChatAiActivity extends AppCompatActivity {
         btnAction2 = findViewById(R.id.action2);
         btnAction3 = findViewById(R.id.action3);
         btnAction4 = findViewById(R.id.action4);
+        btnAction5 = findViewById(R.id.action5);
         findViewById(R.id.btnAttach).setOnClickListener(v -> showAttachMenu());
     }
 
@@ -142,8 +144,14 @@ public class ChatAiActivity extends AppCompatActivity {
                 { android.R.drawable.ic_menu_add,         R.string.attach_fichiers },
                 { android.R.drawable.ic_media_play,       R.string.attach_videos   },
         };
-        String[] labels = { "Expliquer un livre", "Résumer un livre", "Poser une question", "Surprends-moi" };
-        int[] icons = {
+// ─── Labels — 5 actions ──────────────────────────────────────────────────
+        String[] labels = {
+                "Expliquer un livre",       // case 0
+                "Résumer un livre",         // case 1
+                "Poser une question",       // case 2
+                "Visualiser une image",     // case 3
+                "Transcrire un audio"       // case 4
+        };        int[] icons = {
                 R.drawable.books_emp,
                 R.drawable.books_emp,
                 R.drawable.books_emp,
@@ -210,31 +218,44 @@ public class ChatAiActivity extends AppCompatActivity {
             row.setOnClickListener(v -> {
                 sheet.dismiss();
                 switch (index) {
-                    case 0:  // "Expliquer un livre"
-                        Intent intent = new Intent(this, SearchActivity.class);
-                        intent.putExtra("search_key", "ONLINE_BOOK");
-                        intent.putExtra("online_book_key", "CHAT_AI_ACTIVITY");
-                        intent.putExtra("online_book_action", "explain");   // ✅ action
-                        startActivityForResult(intent, 1001);
+                    // ─── Switch dans showAttachMenu ──────────────────────────────────────────
+                    case 0:  // Expliquer un livre
+                        Intent i0 = new Intent(this, SearchActivity.class);
+                        i0.putExtra("search_key",         "ONLINE_BOOK");
+                        i0.putExtra("online_book_key",    "CHAT_AI_ACTIVITY");
+                        i0.putExtra("online_book_action", "explain");
+                        startActivityForResult(i0, 1001);
                         break;
 
-                    case 1:  // "Résumer un livre" — si tu veux l'auto-envoyer aussi
-                        Intent intent2 = new Intent(this, SearchActivity.class);
-                        intent2.putExtra("search_key", "ONLINE_BOOK");
-                        intent2.putExtra("online_book_key", "CHAT_AI_ACTIVITY");
-                        intent2.putExtra("online_book_action", "summarize"); // ✅ action
-                        startActivityForResult(intent2, 1001);
+                    case 1:  // Résumer un livre
+                        Intent i1 = new Intent(this, SearchActivity.class);
+                        i1.putExtra("search_key",         "ONLINE_BOOK");
+                        i1.putExtra("online_book_key",    "CHAT_AI_ACTIVITY");
+                        i1.putExtra("online_book_action", "summarize");
+                        startActivityForResult(i1, 1001);
                         break;
-//                    case 0:
-//                        Intent intent = new Intent(this, SearchActivity.class);
-//                        intent.putExtra("search_key", "ONLINE_BOOK");
-//                        intent.putExtra("online_book_key", "CHAT_AI_ACTIVITY");
-//                        startActivityForResult(intent, 1001);
-//                        break;
-//                    case 1: /* Photos */   pickImage();  break;
-                    case 2: /* Fichiers */ pickFile();   break;
 
-                    case 3: /* Vidéos */   pickVideo();  break;
+                    case 2:  // Poser une question sur un livre
+                        Intent i2 = new Intent(this, SearchActivity.class);
+                        i2.putExtra("search_key",         "ONLINE_BOOK");
+                        i2.putExtra("online_book_key",    "CHAT_AI_ACTIVITY");
+                        i2.putExtra("online_book_action", "question");
+                        startActivityForResult(i2, 1001);
+                        break;
+
+                    case 3:  // Visualiser une image — galerie téléphone
+                        startActivityForResult(
+                                new Intent(Intent.ACTION_PICK,
+                                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI), 2001);
+                        break;
+
+                    case 4:  // Transcrire un audio — depuis EduNiger
+                        Intent i4 = new Intent(this, SearchActivity.class);
+                        i4.putExtra("search_key",         "ONLINE_BOOK");
+                        i4.putExtra("online_book_key",    "CHAT_AI_ACTIVITY");
+                        i4.putExtra("online_book_action", "audio");
+                        startActivityForResult(i4, 1001);
+                        break;
                 }
             });
         }
@@ -291,21 +312,49 @@ public class ChatAiActivity extends AppCompatActivity {
         updateEmptyState();
     }
 
+    // ─── setupListeners — 5 boutons ──────────────────────────────────────────
     private void setupListeners() {
         btnBack.setOnClickListener(v -> onBackPressed());
         btnSend.setOnClickListener(v -> sendMessage());
-
-        // Bouton menu → ouvre l'historique des discussions
         btnMenu.setOnClickListener(v -> openHistory());
+
         btnAction1.setOnClickListener(v -> {
             Intent intent = new Intent(this, SearchActivity.class);
-            intent.putExtra("search_key", "ONLINE_BOOK");
-            intent.putExtra("online_book_key", "CHAT_AI_ACTIVITY");
+            intent.putExtra("search_key",         "ONLINE_BOOK");
+            intent.putExtra("online_book_key",    "CHAT_AI_ACTIVITY");
+            intent.putExtra("online_book_action", "explain");
             startActivityForResult(intent, 1001);
         });
-        btnAction2.setOnClickListener(v -> Toast.makeText(this, "Action 2", Toast.LENGTH_SHORT).show());
-        btnAction3.setOnClickListener(v -> Toast.makeText(this, "Action 3", Toast.LENGTH_SHORT).show());
-        btnAction4.setOnClickListener(v -> Toast.makeText(this, "Action 4", Toast.LENGTH_SHORT).show());
+
+        btnAction2.setOnClickListener(v -> {
+            Intent intent = new Intent(this, SearchActivity.class);
+            intent.putExtra("search_key",         "ONLINE_BOOK");
+            intent.putExtra("online_book_key",    "CHAT_AI_ACTIVITY");
+            intent.putExtra("online_book_action", "summarize");
+            startActivityForResult(intent, 1001);
+        });
+
+        btnAction3.setOnClickListener(v -> {
+            Intent intent = new Intent(this, SearchActivity.class);
+            intent.putExtra("search_key",         "ONLINE_BOOK");
+            intent.putExtra("online_book_key",    "CHAT_AI_ACTIVITY");
+            intent.putExtra("online_book_action", "question");
+            startActivityForResult(intent, 1001);
+        });
+
+        btnAction4.setOnClickListener(v -> {
+            // Galerie pour image
+            startActivityForResult(
+                    new Intent(Intent.ACTION_PICK,
+                            android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI), 2001);
+        });
+        btnAction5.setOnClickListener(v -> {
+            Intent intent = new Intent(this, SearchActivity.class);
+            intent.putExtra("search_key",         "ONLINE_BOOK");
+            intent.putExtra("online_book_key",    "CHAT_AI_ACTIVITY");
+            intent.putExtra("online_book_action", "audio");
+            startActivityForResult(intent, 1001);
+        });
     }
 
     // ─── Reprise d'une session existante ──────────────────────────────────────
@@ -593,61 +642,190 @@ public class ChatAiActivity extends AppCompatActivity {
         return UUID.randomUUID().toString();
     }
 
+    // ─── onActivityResult complet ────────────────────────────────────────────
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1001 && resultCode == RESULT_OK && data != null) {
 
+        // ─── Livre / Audio depuis EduNiger ───────────────────────────────
+        if (requestCode == 1001 && resultCode == RESULT_OK && data != null) {
             String bookTitle = data.getStringExtra("book_title");
             String bookId    = data.getStringExtra("book_id");
+            String action    = data.getStringExtra("online_book_action");
 
             Log.d("ChatAi", "book_title = " + bookTitle);
             Log.d("ChatAi", "book_id    = " + bookId);
-
-            if (data.getExtras() != null) {
-                for (String key : data.getExtras().keySet()) {
-                    Log.d("ChatAi", "Extra → " + key + " = " + data.getExtras().get(key));
-                }
-            }
+            Log.d("ChatAi", "action     = " + action);
 
             if (bookTitle != null) {
                 selectedBookTitle = bookTitle;
                 selectedBookId    = bookId;
 
-                // ✅ Auto-envoyer directement selon l'action choisie
-                String action = data.getStringExtra("online_book_action");
-
                 if ("explain".equals(action)) {
-                    // "Expliquer un livre" → envoie directement
                     addUserMessage("Explique moi ce livre : " + bookTitle);
-                    sendBookRequest("Explique ce livre en détail : thèmes, résumé, auteur.");
+                    sendBookRequest("Explique en détail le livre \"" + bookTitle + "\". "
+                            + "Présente les thèmes principaux, les personnages, "
+                            + "le résumé et ce qu'on peut retenir.");
+
                 } else if ("summarize".equals(action)) {
-                    // "Résumer un livre" → envoie directement
                     addUserMessage("Résume ce livre : " + bookTitle);
-                    sendBookRequest("Fais un résumé complet de ce livre.");
+                    sendBookRequest("Fais un résumé complet du livre \"" + bookTitle + "\". "
+                            + "Présente l'histoire, les personnages clés, "
+                            + "les thèmes et les points essentiels.");
+
+                } else if ("question".equals(action)) {
+                    // ✅ Livre chargé — l'utilisateur pose sa propre question
+                    addBotMessage("📚 **" + bookTitle + "** chargé.\n"
+                            + "Posez votre question sur ce livre !");
+
+                } else if ("audio".equals(action)) {
+                    // ✅ Audio depuis EduNiger — envoyer directement à Kaggle
+                    addUserMessage("🎙️ Audio : " + bookTitle);
+                    showTyping(true);
+                    sendAudioFromEduNiger(bookId, bookTitle);
+
                 } else {
-                    // Sélection simple — attendre la question de l'utilisateur
-                    addBotMessage("📚 **" + bookTitle + "** chargé.\nQue voulez-vous savoir ?");
+                    addBotMessage("📚 **" + bookTitle + "** chargé.\n"
+                            + "Que voulez-vous savoir ?");
                 }
             }
         }
+
+        // ─── Image depuis galerie téléphone ──────────────────────────────
+        if (requestCode == 2001 && resultCode == RESULT_OK && data != null) {
+            android.net.Uri imageUri = data.getData();
+            if (imageUri != null) {
+                addUserMessage("🖼️ Image envoyée pour analyse.");
+                showTyping(true);
+                sendImageToKaggle(imageUri);
+            }
+        }
+    }
+
+    // ─── Envoyer image à Kaggle ──────────────────────────────────────────────
+    private void sendImageToKaggle(android.net.Uri imageUri) {
+        new Thread(() -> {
+            try {
+                java.io.InputStream      is  = getContentResolver().openInputStream(imageUri);
+                java.io.File             tmp = new java.io.File(getCacheDir(),
+                        "img_" + System.currentTimeMillis() + ".jpg");
+                java.io.FileOutputStream fos = new java.io.FileOutputStream(tmp);
+                byte[] buf = new byte[4096]; int len;
+                while ((len = is.read(buf)) != -1) fos.write(buf, 0, len);
+                fos.close(); is.close();
+
+                byte[] bytes = java.nio.file.Files.readAllBytes(tmp.toPath());
+                String b64   = android.util.Base64.encodeToString(bytes,
+                        android.util.Base64.NO_WRAP);
+
+                org.json.JSONObject json = new org.json.JSONObject();
+                json.put("image_base64", b64);
+                json.put("question", "Décris et analyse cette image en détail.");
+
+                okhttp3.RequestBody body = okhttp3.RequestBody.create(
+                        okhttp3.MediaType.parse("application/json"),
+                        json.toString());
+
+                okhttp3.Request request = new okhttp3.Request.Builder()
+                        .url(KAGGLE_URL + "/ask/image")
+                        .post(body)
+                        .addHeader("ngrok-skip-browser-warning", "true")
+                        .addHeader("User-Agent", "EduNigerApp/1.0")
+                        .build();
+
+                okhttp3.Response response = httpClient.newCall(request).execute();
+                String rawBody = response.body() != null ? response.body().string() : "";
+                Log.d("ChatAi", "Image RAW: " + rawBody);
+
+                runOnUiThread(() -> {
+                    showTyping(false);
+                    try {
+                        org.json.JSONObject result = new org.json.JSONObject(rawBody);
+                        if ("ok".equals(result.optString("status"))) {
+                            addBotMessage(result.getString("response"));
+                        } else {
+                            showModernToast("Erreur image : " + result.optString("message"));
+                        }
+                    } catch (Exception e) {
+                        showModernToast("Erreur de lecture");
+                    }
+                });
+
+            } catch (Exception e) {
+                Log.e("ChatAi", "Image error: " + e.getMessage());
+                runOnUiThread(() -> {
+                    showTyping(false);
+                    showModernToast("Erreur envoi image");
+                });
+            }
+        }).start();
+    }
+
+    // ─── Envoyer audio depuis EduNiger à Kaggle via PHP ──────────────────────
+    private void sendAudioFromEduNiger(String audioId, String audioTitle) {
+        // Le PHP récupère l'audio depuis la BDD et l'envoie à Kaggle
+        new Thread(() -> {
+            try {
+                okhttp3.RequestBody body = new okhttp3.FormBody.Builder()
+                        .add("id_number", ID_NUMBER)
+                        .add("id_user",   ID_NUMBER)
+                        .add("id_book",   audioId != null ? audioId : "")
+                        .add("request",   "Transcris et résume cet audio : " + audioTitle)
+                        .add("message",   "Transcris et résume cet audio : " + audioTitle)
+                        .add("action",    "transcribe_audio")
+                        .add("session_id", sessionId != null ? sessionId : "")
+                        .build();
+
+                okhttp3.Request request = new okhttp3.Request.Builder()
+                        .url(API_URL)
+                        .post(body)
+                        .build();
+
+                okhttp3.Response response = httpClient.newCall(request).execute();
+                String rawBody = response.body() != null ? response.body().string() : "";
+                Log.d("ChatAi", "Audio EduNiger RAW: " + rawBody);
+
+                runOnUiThread(() -> {
+                    showTyping(false);
+                    try {
+                        org.json.JSONObject json = new org.json.JSONObject(rawBody);
+                        if (json.optBoolean("success", false)) {
+                            String botResponse = json.optString("response", "");
+                            if (json.has("session_id")) sessionId = json.getString("session_id");
+                            if (!botResponse.isEmpty()) addBotMessage(botResponse);
+                        } else {
+                            showModernToast("Erreur : " + json.optString("error", "Inconnue"));
+                        }
+                    } catch (Exception e) {
+                        showModernToast("Erreur de lecture");
+                    }
+                });
+
+            } catch (Exception e) {
+                Log.e("ChatAi", "Audio EduNiger error: " + e.getMessage());
+                runOnUiThread(() -> {
+                    showTyping(false);
+                    showModernToast("Erreur audio");
+                });
+            }
+        }).start();
     }
     private void sendBookRequest(String question) {
         showTyping(true);
 
-        FormBody.Builder fb = new FormBody.Builder()
+        FormBody body = new FormBody.Builder()
                 .add("id_number", ID_NUMBER)
                 .add("id_user",   ID_NUMBER)
                 .add("request",   question)
                 .add("message",   question)
-                .add("action",    "ask_about_book");
-
-        if (selectedBookId != null) fb.add("id_book", selectedBookId);
-        if (sessionId != null)      fb.add("session_id", sessionId);
+                .add("action",    "ask_about_book")
+                .add("id_book",   selectedBookId  != null ? selectedBookId  : "")
+                .add("session_id", sessionId      != null ? sessionId       : "")
+                .build();
 
         Request request = new Request.Builder()
                 .url(API_URL)
-                .post(fb.build())
+                .post(body)
                 .build();
 
         httpClient.newCall(request).enqueue(new Callback() {
@@ -675,6 +853,7 @@ public class ChatAiActivity extends AppCompatActivity {
                             showModernToast("Erreur : " + json.optString("error", "Inconnue"));
                         }
                     } catch (Exception e) {
+                        Log.e("ChatAi", "Parse error: " + e.getMessage());
                         showModernToast("Erreur de lecture");
                     }
                 });

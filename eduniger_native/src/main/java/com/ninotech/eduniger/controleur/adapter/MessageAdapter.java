@@ -87,18 +87,16 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
         int position = messages.size() - 1;
 
-        // On scroll d'abord pour que le VH soit créé/visible
-        recyclerView.scrollToPosition(position);
+        // ✅ smoothScroll au lieu de scrollToPosition (moins brutal)
+        recyclerView.smoothScrollToPosition(position);
 
-        // Petit délai pour laisser le layout passer avant de récupérer le VH
-        recyclerView.post(() -> {
+        recyclerView.postDelayed(() -> {  // ✅ postDelayed au lieu de post
             RecyclerView.ViewHolder vh = recyclerView.findViewHolderForAdapterPosition(position);
             if (vh instanceof MessageViewHolder) {
                 MessageViewHolder botVH = (MessageViewHolder) vh;
                 botVH.animateText(message.getText(), recyclerView, position);
             }
-            // Sinon le texte complet est déjà affiché par onBindViewHolder → pas de perte
-        });
+        }, 150);  // ✅ 150ms pour laisser le scroll se terminer
     }
 
     // ─── ViewHolder ───────────────────────────────────────────────────────────
@@ -119,35 +117,59 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         /**
          * Lance l'animation typewriter caractère par caractère.
          */
+        // ─── Remplace animateText() dans MessageViewHolder ───────────────────────────
         void animateText(String fullText, RecyclerView rv, int position) {
-            cancelAnimation(); // sécurité : annule toute animation précédente
+            cancelAnimation();
 
-            tvMessage.setText(""); // repart de zéro
+            tvMessage.setText("");
             animating   = true;
             animHandler = new Handler(Looper.getMainLooper());
 
-            final int[] index = {0};
+            final int[]     index          = {0};
+            final boolean[] userScrolled   = {false};  // ✅ détecter si l'user scroll manuellement
+
+            // ✅ Écouter le scroll de l'utilisateur
+            RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrollStateChanged(@NonNull RecyclerView rv, int newState) {
+                    if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+                        userScrolled[0] = true;  // l'user a scrollé → on arrête le scroll auto
+                    }
+                }
+            };
+            if (rv != null) rv.addOnScrollListener(scrollListener);
 
             animRunnable = new Runnable() {
                 @Override
                 public void run() {
-                    if (!animating) return;
+                    if (!animating) {
+                        if (rv != null) rv.removeOnScrollListener(scrollListener);
+                        return;
+                    }
 
                     if (index[0] <= fullText.length()) {
-                        // Avancer de CHARS_PER_TICK caractères par tick
                         index[0] = Math.min(index[0] + CHARS_PER_TICK, fullText.length());
                         tvMessage.setText(fullText.substring(0, index[0]));
 
-                        // Scroll fluide à chaque tick
-                        if (rv != null) rv.scrollToPosition(position);
+                        // ✅ Scroll uniquement si l'user n'a pas scrollé manuellement
+                        if (rv != null && !userScrolled[0]) {
+                            rv.smoothScrollToPosition(position); // ✅ smooth au lieu de brutal
+                        }
 
                         animHandler.postDelayed(this, CHAR_DELAY_MS);
                     } else {
-                        animating = false; // terminé
+                        animating = false;
+                        if (rv != null) {
+                            rv.removeOnScrollListener(scrollListener);
+                            // ✅ Scroll final une seule fois
+                            if (!userScrolled[0]) rv.smoothScrollToPosition(position);
+                        }
                     }
                 }
             };
-            animHandler.post(animRunnable);
+
+            // ✅ Délai initial pour laisser le layout se stabiliser
+            animHandler.postDelayed(animRunnable, 100);
         }
 
         /** Stoppe proprement l'animation (recycle, navigation, etc.) */
