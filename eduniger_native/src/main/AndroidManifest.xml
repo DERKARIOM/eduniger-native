@@ -265,6 +265,11 @@
             android:exported="false"
             android:foregroundServiceType="dataSync"
             android:stopWithTask="false" /> <!-- ==================== Broadcast Receivers ==================== -->
+        <service
+            android:name=".controleur.service.Audiotranscriptionservice"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
         <receiver
             android:name=".model.service.AudioReceiver"
             android:enabled="true"

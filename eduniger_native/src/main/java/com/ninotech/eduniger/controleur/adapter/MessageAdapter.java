@@ -13,17 +13,21 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.ninotech.eduniger.R;
 import com.ninotech.eduniger.model.data.Message;
 
+import io.noties.markwon.Markwon;
+import io.noties.markwon.ext.strikethrough.StrikethroughPlugin;
+import io.noties.markwon.ext.tables.TablePlugin;
+import io.noties.markwon.html.HtmlPlugin;
+
 import java.util.List;
 
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder> {
 
-    // Délai entre chaque caractère (ms) — ajuste selon le goût
-    private static final long CHAR_DELAY_MS  = 30;  // ~60 fps
-    private static final int  CHARS_PER_TICK = 20;   // 3 caractères/tick ≈ ~180 chars/s
+    private static final long CHAR_DELAY_MS  = 30;
+    private static final int  CHARS_PER_TICK = 20;
 
     private final List<Message> messages;
+    private Markwon markwon;  // instance Markwon partagée dans l'adapter
 
-    // Référence au RecyclerView parent pour le scroll auto
     private RecyclerView recyclerView;
 
     public MessageAdapter(List<Message> messages) {
@@ -31,10 +35,18 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     }
 
     // ─── Attacher / détacher le RV ────────────────────────────────────────────
+
     @Override
     public void onAttachedToRecyclerView(@NonNull RecyclerView rv) {
         super.onAttachedToRecyclerView(rv);
         this.recyclerView = rv;
+
+        // Initialiser Markwon une seule fois avec le contexte du RV
+        this.markwon = Markwon.builder(rv.getContext())
+                .usePlugin(StrikethroughPlugin.create())
+                .usePlugin(TablePlugin.create(rv.getContext()))
+                .usePlugin(HtmlPlugin.create())
+                .build();
     }
 
     @Override
@@ -44,12 +56,14 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     }
 
     // ─── Types de vues ────────────────────────────────────────────────────────
+
     @Override
     public int getItemViewType(int position) {
-        return messages.get(position).getType(); // 0 = USER, 1 = BOT
+        return messages.get(position).getType();
     }
 
     // ─── Inflation ────────────────────────────────────────────────────────────
+
     @NonNull
     @Override
     public MessageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -61,13 +75,19 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     }
 
     // ─── Binding ──────────────────────────────────────────────────────────────
+
     @Override
     public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
         Message msg = messages.get(position);
-        // Le texte final est TOUJOURS affiché tel quel au bind (scroll, recycle, etc.)
-        // L'animation n'est déclenchée qu'explicitement via addBotMessageAnimated()
-        holder.tvMessage.setText(msg.getText());
-        holder.cancelAnimation(); // stoppe toute animation résiduelle en cas de recycle
+        holder.cancelAnimation();
+
+        if (msg.getType() == Message.TYPE_BOT && markwon != null) {
+            // ✅ Messages bot → rendu Markdown complet
+            markwon.setMarkdown(holder.tvMessage, msg.getText());
+        } else {
+            // Messages user → texte brut
+            holder.tvMessage.setText(msg.getText());
+        }
     }
 
     @Override
@@ -75,36 +95,27 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
     // ─── API publique ─────────────────────────────────────────────────────────
 
-    /**
-     * Ajoute un message bot et démarre l'animation typewriter sur son ViewHolder.
-     * À appeler depuis le UI thread.
-     *
-     * @param message L'objet Message déjà ajouté à la liste {@code messages}
-     *                et inséré via notifyItemInserted AVANT d'appeler cette méthode.
-     */
     public void animateLastBotMessage(Message message) {
         if (recyclerView == null) return;
 
         int position = messages.size() - 1;
-
-        // ✅ smoothScroll au lieu de scrollToPosition (moins brutal)
         recyclerView.smoothScrollToPosition(position);
 
-        recyclerView.postDelayed(() -> {  // ✅ postDelayed au lieu de post
+        recyclerView.postDelayed(() -> {
             RecyclerView.ViewHolder vh = recyclerView.findViewHolderForAdapterPosition(position);
             if (vh instanceof MessageViewHolder) {
                 MessageViewHolder botVH = (MessageViewHolder) vh;
-                botVH.animateText(message.getText(), recyclerView, position);
+                botVH.animateText(message.getText(), recyclerView, position, markwon);
             }
-        }, 150);  // ✅ 150ms pour laisser le scroll se terminer
+        }, 150);
     }
 
     // ─── ViewHolder ───────────────────────────────────────────────────────────
+
     static class MessageViewHolder extends RecyclerView.ViewHolder {
 
         TextView tvMessage;
 
-        // État de l'animation en cours
         private Handler  animHandler;
         private Runnable animRunnable;
         private boolean  animating = false;
@@ -114,26 +125,21 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             tvMessage = itemView.findViewById(R.id.tvMessage);
         }
 
-        /**
-         * Lance l'animation typewriter caractère par caractère.
-         */
-        // ─── Remplace animateText() dans MessageViewHolder ───────────────────────────
-        void animateText(String fullText, RecyclerView rv, int position) {
+        void animateText(String fullText, RecyclerView rv, int position, Markwon markwon) {
             cancelAnimation();
 
             tvMessage.setText("");
             animating   = true;
             animHandler = new Handler(Looper.getMainLooper());
 
-            final int[]     index          = {0};
-            final boolean[] userScrolled   = {false};  // ✅ détecter si l'user scroll manuellement
+            final int[]     index        = {0};
+            final boolean[] userScrolled = {false};
 
-            // ✅ Écouter le scroll de l'utilisateur
             RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
                 @Override
-                public void onScrollStateChanged(@NonNull RecyclerView rv, int newState) {
+                public void onScrollStateChanged(@NonNull RecyclerView rv2, int newState) {
                     if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
-                        userScrolled[0] = true;  // l'user a scrollé → on arrête le scroll auto
+                        userScrolled[0] = true;
                     }
                 }
             };
@@ -149,30 +155,40 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
                     if (index[0] <= fullText.length()) {
                         index[0] = Math.min(index[0] + CHARS_PER_TICK, fullText.length());
-                        tvMessage.setText(fullText.substring(0, index[0]));
+                        String chunk = fullText.substring(0, index[0]);
 
-                        // ✅ Scroll uniquement si l'user n'a pas scrollé manuellement
+                        // ✅ Markwon appliqué à CHAQUE tick (pas de texte brut visible)
+                        if (markwon != null) {
+                            markwon.setMarkdown(tvMessage, chunk);
+                        } else {
+                            tvMessage.setText(chunk);
+                        }
+
                         if (rv != null && !userScrolled[0]) {
-                            rv.smoothScrollToPosition(position); // ✅ smooth au lieu de brutal
+                            rv.smoothScrollToPosition(position);
                         }
 
                         animHandler.postDelayed(this, CHAR_DELAY_MS);
+
                     } else {
+                        // ✅ Rendu final propre
                         animating = false;
+                        if (markwon != null) {
+                            markwon.setMarkdown(tvMessage, fullText);
+                        } else {
+                            tvMessage.setText(fullText);
+                        }
                         if (rv != null) {
                             rv.removeOnScrollListener(scrollListener);
-                            // ✅ Scroll final une seule fois
                             if (!userScrolled[0]) rv.smoothScrollToPosition(position);
                         }
                     }
                 }
             };
 
-            // ✅ Délai initial pour laisser le layout se stabiliser
             animHandler.postDelayed(animRunnable, 100);
         }
 
-        /** Stoppe proprement l'animation (recycle, navigation, etc.) */
         void cancelAnimation() {
             animating = false;
             if (animHandler != null && animRunnable != null) {
