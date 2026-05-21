@@ -1,54 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="5dp">
+    android:paddingStart="16dp"
+    android:paddingEnd="8dp"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp"
+    android:background="?attr/selectableItemBackground">
 
+    <!-- Cover image carrée -->
     <ImageView
         android:id="@+id/image_view_adapter_book_audio_blanket"
-        android:layout_width="100dp"
-        android:layout_height="80dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
-        android:elevation="2dp"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:scaleType="centerCrop"
         android:src="@mipmap/ic_fabi_round"
         android:contentDescription="@string/todo" />
-    <RelativeLayout
-        android:id="@+id/info_livre"
-        style="@style/wrap_content_all"
-        android:layout_toEndOf="@+id/image_view_adapter_book_audio_blanket"
-        android:layout_centerVertical="true">
+
+    <!-- Drag handle à droite -->
+    <ImageView
+        android:id="@+id/image_view_adapter_book_audio_drag_handle"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/ic_drag_handle"
+        android:scaleType="center"
+        android:contentDescription="Réorganiser"
+        android:alpha="0.6" />
+
+    <!-- Zone texte entre cover et drag handle -->
+    <LinearLayout
+        android:id="@+id/layout_adapter_book_audio_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/image_view_adapter_book_audio_blanket"
+        android:layout_toStartOf="@id/image_view_adapter_book_audio_drag_handle"
+        android:layout_centerVertical="true"
+        android:orientation="vertical"
+        android:paddingStart="12dp"
+        android:paddingEnd="8dp">
+
+        <!-- Titre -->
         <TextView
             android:id="@+id/text_view_adapter_book_audio_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Titre du livre"
-            android:layout_margin="5dp"
-            android:textSize="@dimen/size_title"
+            android:textSize="15sp"
             android:textStyle="bold"
-            />
+            android:textColor="@color/white"
+            android:maxLines="1"
+            android:ellipsize="end" />
+
+        <!-- Auteur - Album -->
         <TextView
             android:id="@+id/text_view_adapter_book_audio_author"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:layout_below="@id/text_view_adapter_book_audio_title"
-            android:text="Auteur du livre"
-            android:textSize="@dimen/size_sub_title"
-            />
+            android:layout_marginTop="2dp"
+            android:text="Par Auteur - Album"
+            android:textSize="13sp"
+            android:textColor="#AAAAAA"
+            android:maxLines="1"
+            android:ellipsize="end" />
+
+        <!-- Durée -->
         <TextView
             android:id="@+id/text_view_adapter_book_audio_duration"
-            android:layout_margin="5dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
             android:text="30:15"
-            android:layout_below="@id/text_view_adapter_book_audio_author"
-            android:textSize="@dimen/size_sub_title"
-            android:layout_centerVertical="true"/>
+            android:textSize="12sp"
+            android:textColor="#666666" />
 
-    </RelativeLayout>
+        <!-- Badge EXPLICIT -->
+        <TextView
+            android:id="@+id/text_view_adapter_book_audio_explicit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="EXPLICIT"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            android:textColor="#AAAAAA"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:paddingTop="1dp"
+            android:paddingBottom="1dp"
+            android:background="@drawable/bg_explicit_badge"
+            android:visibility="gone" />
+
+    </LinearLayout>
 
 </RelativeLayout>
