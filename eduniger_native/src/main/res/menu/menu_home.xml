@@ -4,6 +4,7 @@
 
     <item
         android:id="@+id/idRecherhe"
+        android:visible="false"
         android:title="Actualiser" />
 
     <item
@@ -14,9 +15,11 @@
         app:showAsAction="always"/>
     <item
         android:id="@+id/setting"
+        android:visible="false"
         android:title="Paramètres" />
 
     <item
         android:id="@+id/deconnect"
+        android:visible="false"
         android:title="Déconnecter" />
 </menu>
