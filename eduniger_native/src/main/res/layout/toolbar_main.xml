@@ -37,11 +37,11 @@
         android:selectAllOnFocus="false" />
     <ImageView
         android:id="@+id/image_view_toolbar_main_profile"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
         android:layout_margin="10dp"
         android:layout_centerVertical="true"
-        android:src="@drawable/user"
+        android:src="@drawable/ic_ia"
         android:layout_alignParentEnd="true"
         />
 </RelativeLayout>

@@ -13,9 +13,9 @@
     <item
         android:id="@+id/navigation_suggestion"
         android:icon="@drawable/ic_structure"
-        android:title="Eduna" />
+        android:title="Actus" />
     <item
         android:id="@+id/navigation_library"
-        android:icon="@drawable/bibliotheque_new"
-        android:title="Bibliothèque" />
+        android:icon="@drawable/ic_wait_profile"
+        android:title="Compte" />
 </menu>

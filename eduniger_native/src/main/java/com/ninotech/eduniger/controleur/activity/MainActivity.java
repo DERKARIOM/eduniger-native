@@ -267,13 +267,46 @@ public class MainActivity extends AppCompatActivity {
             UserTable userTable = new UserTable(this);
             Cursor    cursor    = userTable.getData(session.getIdNumber());
 
+            Log.d(TAG, "Cursor: " + cursor + " | moveToFirst: " + (cursor != null && cursor.moveToFirst()));
+
             if (cursor != null && cursor.moveToFirst()) {
                 byte[] photoBytes = cursor.getBlob(6);
+                Log.d(TAG, "photoBytes: " + (photoBytes != null ? photoBytes.length + " bytes" : "NULL"));
+
                 if (photoBytes != null) {
+                    // Toolbar (inchangé)
                     Glide.with(this)
                             .load(photoBytes)
                             .apply(RequestOptions.circleCropTransform())
                             .into(mProfileImageView);
+
+                    // Test sans Glide — chargement direct du Bitmap
+                    // 2. Photo dans l'onglet Bibliothèque (icône circulaire)
+                    android.graphics.Bitmap bmp = android.graphics.BitmapFactory
+                            .decodeByteArray(photoBytes, 0, photoBytes.length);
+
+                    if (bmp != null) {
+                        int size = (int) (getResources().getDisplayMetrics().density * 28);
+
+                        android.graphics.Bitmap scaled = android.graphics.Bitmap.createScaledBitmap(bmp, size, size, true);
+
+                        android.graphics.Bitmap circleBmp = android.graphics.Bitmap.createBitmap(size, size, android.graphics.Bitmap.Config.ARGB_8888);
+                        android.graphics.Canvas canvas = new android.graphics.Canvas(circleBmp);
+                        android.graphics.Paint paint = new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
+                        canvas.drawCircle(size / 2f, size / 2f, size / 2f, paint);
+                        paint.setXfermode(new android.graphics.PorterDuffXfermode(android.graphics.PorterDuff.Mode.SRC_IN));
+                        canvas.drawBitmap(scaled, 0, 0, paint);
+
+                        android.graphics.drawable.BitmapDrawable drawable =
+                                new android.graphics.drawable.BitmapDrawable(getResources(), circleBmp);
+
+                        mBottomNavigationView.getMenu()
+                                .findItem(R.id.navigation_library)
+                                .setIcon(drawable);
+
+                        // ✅ Désactiver le tint coloré du BottomNavigationView
+                        mBottomNavigationView.setItemIconTintList(null);
+                    }
                 }
                 cursor.close();
             }
