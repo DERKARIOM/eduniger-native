@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/swipe_refresh_library"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -13,110 +13,511 @@
         android:layout_height="match_parent"
         android:layout_marginBottom="70dp">
 
-        <RelativeLayout
-            android:layout_margin="10dp"
-            android:id="@+id/relative_layout_fragment_library_profile"
-            android:layout_width="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="24dp">
 
-            <FrameLayout
-                android:id="@+id/frame_layout_structure_activity_profile"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:padding="10dp">
+<!--            &lt;!&ndash; ===== HEADER ===== &ndash;&gt;-->
+<!--            <RelativeLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:paddingStart="16dp"-->
+<!--                android:paddingEnd="16dp"-->
+<!--                android:paddingTop="8dp"-->
+<!--                android:paddingBottom="12dp">-->
 
-                <ImageView
-                    android:id="@+id/image_view_structure_activity_profile"
-                    android:layout_width="110dp"
-                    android:layout_height="110dp"
-                    android:layout_centerHorizontal="true"
-                    android:src="@drawable/user" />
+<!--                <TextView-->
+<!--                    android:id="@+id/text_view_library_title"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_centerVertical="true"-->
+<!--                    android:text="Mon compte"-->
+<!--                    android:textSize="22sp"-->
+<!--                    android:textStyle="bold"-->
+<!--                    android:textColor="?attr/colorOnBackground" />-->
 
-                <ImageView
-                    android:id="@+id/fabChangePhoto"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:layout_gravity="bottom|end"
-                    android:elevation="1dp"
-                    android:layout_marginBottom="5dp"
-                    android:layout_marginTop="80dp"
-                    android:layout_marginStart="50dp"
-                    android:contentDescription="photo"
-                    android:padding="5dp"
-                    android:background="@drawable/forme_white_radius_1000dp"
-                    app:srcCompat="@drawable/vector_black3_photo" />
+<!--                <LinearLayout-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_alignParentEnd="true"-->
+<!--                    android:layout_centerVertical="true"-->
+<!--                    android:orientation="horizontal"-->
+<!--                    android:gravity="center_vertical">-->
 
-            </FrameLayout>
+<!--                    <ImageView-->
+<!--                        android:id="@+id/iv_header_qr"-->
+<!--                        android:layout_width="26dp"-->
+<!--                        android:layout_height="26dp"-->
+<!--                        android:layout_marginEnd="12dp"-->
+<!--                        android:src="@drawable/vector_black3_photo"-->
+<!--                        android:contentDescription="QR Code" />-->
 
-            <LinearLayout
-                android:id="@+id/linear_layout_fragment_library_profile"
-                android:layout_margin="10dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/frame_layout_structure_activity_profile"
-                android:layout_centerHorizontal="true"
-                android:orientation="vertical">
+<!--                    <ImageView-->
+<!--                        android:id="@+id/iv_header_profile"-->
+<!--                        android:layout_width="26dp"-->
+<!--                        android:layout_height="26dp"-->
+<!--                        android:src="@drawable/user"-->
+<!--                        android:contentDescription="Profil" />-->
+<!--                </LinearLayout>-->
+<!--            </RelativeLayout>-->
 
-                <TextView
-                    android:id="@+id/text_view_fragment_library_username"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textStyle="bold"
-                    android:textSize="20dp" />
-
-                <TextView
-                    android:id="@+id/text_view_fragment_library_email"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="2023-2024-Master-1-IFA" />
-
-            </LinearLayout>
-
-            <View
-                android:id="@+id/view_fragment_library_1"
-                android:layout_marginTop="10dp"
+            <!-- ===== CARTE PROFIL ===== -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/card_view_profile"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/separator"
-                android:layout_below="@+id/linear_layout_fragment_library_profile" />
+                android:layout_height="wrap_content"
+                android:layout_marginStart="14dp"
+                android:layout_marginEnd="14dp"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="@color/card_background">
 
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp">
+
+                    <FrameLayout
+                        android:id="@+id/frame_layout_structure_activity_profile"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true">
+
+                        <ImageView
+                            android:id="@+id/image_view_structure_activity_profile"
+                            android:layout_width="62dp"
+                            android:layout_height="62dp"
+                            android:src="@drawable/user"
+                            android:scaleType="centerCrop" />
+
+                        <ImageView
+                            android:id="@+id/fabChangePhoto"
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:layout_gravity="bottom|end"
+                            android:background="@drawable/forme_white_radius_1000dp"
+                            android:padding="4dp"
+                            app:srcCompat="@drawable/vector_black3_photo"
+                            android:contentDescription="Changer photo" />
+                    </FrameLayout>
+
+                    <LinearLayout
+                        android:id="@+id/ll_profile_info"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_toEndOf="@id/frame_layout_structure_activity_profile"
+                        android:layout_toStartOf="@+id/btn_refresh_profile"
+                        android:layout_centerVertical="true"
+                        android:orientation="vertical"
+                        android:layout_marginStart="14dp">
+
+                        <TextView
+                            android:id="@+id/text_view_fragment_library_username"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textColor="?attr/colorOnBackground" />
+
+                        <TextView
+                            android:id="@+id/text_view_fragment_library_handle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="13sp"
+                            android:textColor="@color/purple_200"
+                            android:layout_marginTop="2dp" />
+
+                        <TextView
+                            android:id="@+id/text_view_fragment_library_email"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="12sp"
+                            android:textColor="@color/separator"
+                            android:layout_marginTop="2dp" />
+                    </LinearLayout>
+
+                    <ImageView
+                        android:id="@+id/btn_refresh_profile"
+                        android:layout_width="38dp"
+                        android:layout_height="38dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/forme_white_radius_1000dp"
+                        android:padding="8dp"
+                        android:src="@drawable/vector_black3_photo"
+                        android:contentDescription="Actualiser" />
+                </RelativeLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- ===== SECTION : MON COMPTE ===== -->
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="14dp"
+                android:layout_marginEnd="14dp"
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="@color/card_background">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <!-- Ma liste -->
+                    <RelativeLayout
+                        android:id="@+id/row_ma_liste"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true">
+                        <ImageView android:id="@+id/ic_ma_liste" android:layout_width="36dp" android:layout_height="36dp" android:layout_centerVertical="true" android:background="@drawable/bg_bottom_nav" android:padding="8dp" android:src="@drawable/vector_black3_photo" android:contentDescription="Ma liste" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_toEndOf="@id/ic_ma_liste" android:layout_centerVertical="true" android:layout_marginStart="12dp" android:text="Ma liste" android:textSize="15sp" android:textColor="?attr/colorOnBackground" />
+                        <ImageView android:layout_width="16dp" android:layout_height="16dp" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:src="@drawable/vector_black3_photo" android:contentDescription="Aller" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="18dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginEnd="18dp"
+                            android:layout_marginBottom="8dp"
+                            android:text="MON COMPTE"
+                            android:textColor="@color/separator"
+                            android:textSize="11sp" />
+                    </RelativeLayout>
+                    <View android:layout_width="match_parent" android:layout_height="0.5dp" android:background="@color/separator" android:layout_marginStart="16dp" android:layout_marginEnd="16dp"/>
+
+                    <!-- Mes publications -->
+                    <RelativeLayout
+                        android:id="@+id/row_publications"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true">
+                        <ImageView android:id="@+id/ic_publications" android:layout_width="36dp" android:layout_height="36dp" android:layout_centerVertical="true" android:background="@drawable/bg_bottom_nav" android:padding="8dp" android:src="@drawable/vector_black3_photo" android:contentDescription="Publications" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_toEndOf="@id/ic_publications" android:layout_centerVertical="true" android:layout_marginStart="12dp" android:text="Mes publications" android:textSize="15sp" android:textColor="?attr/colorOnBackground" />
+                        <ImageView android:layout_width="16dp" android:layout_height="16dp" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:src="@drawable/vector_black3_photo" android:contentDescription="Aller" />
+                    </RelativeLayout>
+                    <View android:layout_width="match_parent" android:layout_height="0.5dp" android:background="@color/separator" android:layout_marginStart="16dp" android:layout_marginEnd="16dp"/>
+
+                    <!-- Centres d'intérêt -->
+                    <RelativeLayout
+                        android:id="@+id/row_centres_interet"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true">
+                        <ImageView android:id="@+id/ic_centres" android:layout_width="36dp" android:layout_height="36dp" android:layout_centerVertical="true" android:background="@drawable/bg_bottom_nav" android:padding="8dp" android:src="@drawable/vector_black3_photo" android:contentDescription="Centres" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_toEndOf="@id/ic_centres" android:layout_centerVertical="true" android:layout_marginStart="12dp" android:text="Centres d'intérêt" android:textSize="15sp" android:textColor="?attr/colorOnBackground" />
+                        <ImageView android:layout_width="16dp" android:layout_height="16dp" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:src="@drawable/vector_black3_photo" android:contentDescription="Aller" />
+                    </RelativeLayout>
+                    <View android:layout_width="match_parent" android:layout_height="0.5dp" android:background="@color/separator" android:layout_marginStart="16dp" android:layout_marginEnd="16dp"/>
+
+                    <!-- Paramètres du compte -->
+                    <RelativeLayout
+                        android:id="@+id/row_parametres_compte"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true">
+                        <ImageView android:id="@+id/ic_param_compte" android:layout_width="36dp" android:layout_height="36dp" android:layout_centerVertical="true" android:background="@drawable/bg_bottom_nav" android:padding="8dp" android:src="@drawable/vector_black3_photo" android:contentDescription="Paramètres" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_toEndOf="@id/ic_param_compte" android:layout_centerVertical="true" android:layout_marginStart="12dp" android:text="Paramètres du compte" android:textSize="15sp" android:textColor="?attr/colorOnBackground" />
+                        <ImageView android:layout_width="16dp" android:layout_height="16dp" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:src="@drawable/vector_black3_photo" android:contentDescription="Aller" />
+                    </RelativeLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- ===== SECTION : MA BIBLIOTHÈQUE ===== -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="18dp"
+                android:layout_marginEnd="18dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
+                android:text="MA BIBLIOTHÈQUE"
+                android:textSize="11sp"
+                android:textColor="@color/separator" />
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="14dp"
+                android:layout_marginEnd="14dp"
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                android:background="@drawable/bg_bottom_nav">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_view_electronic_fragment_media"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false" />
+            </androidx.cardview.widget.CardView>
+
+            <!-- ===== SECTION : RÉCEMMENT LUS ===== -->
             <TextView
                 android:id="@+id/text_view_fragment_library_recent_read_book"
-                style="@style/wrap_content_all"
-                android:layout_below="@+id/view_fragment_library_1"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="20dp"
-                android:text="@string/recent_read"
-                android:textStyle="bold"
-                android:textSize="@dimen/size_title" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="18dp"
+                android:layout_marginEnd="18dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
+                android:text="RÉCEMMENT LUS"
+                android:textSize="11sp"
+                android:textColor="@color/separator" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_view_electronic_fragment_recent"
-                android:layout_below="@+id/text_view_fragment_library_recent_read_book"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:clipToPadding="false"
+                android:nestedScrollingEnabled="false" />
 
             <View
                 android:id="@+id/view_fragment_library_2"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="20dp"
-                android:background="@color/separator"
-                android:layout_below="@+id/recycler_view_electronic_fragment_recent" />
+                android:layout_height="0dp" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_view_electronic_fragment_media"
-                android:layout_below="@+id/view_fragment_library_2"
+            <!-- ===== SECTION : PARAMÈTRES ===== -->
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp" />
+                android:layout_marginStart="18dp"
+                android:layout_marginEnd="18dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
+                android:text="PARAMÈTRES"
+                android:textSize="11sp"
+                android:textColor="@color/separator" />
 
-        </RelativeLayout>
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="14dp"
+                android:layout_marginEnd="14dp"
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="@color/card_background">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <!-- Apparence -->
+                    <RelativeLayout
+                        android:id="@+id/row_apparence"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true">
+                        <ImageView android:id="@+id/ic_apparence" android:layout_width="36dp" android:layout_height="36dp" android:layout_centerVertical="true" android:background="@drawable/bg_bottom_nav" android:padding="8dp" android:src="@drawable/vector_black3_photo" android:contentDescription="Apparence" />
+                        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_toEndOf="@id/ic_apparence" android:layout_centerVertical="true" android:layout_marginStart="12dp" android:orientation="vertical">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Apparence" android:textSize="15sp" android:textColor="?attr/colorOnBackground" />
+                            <TextView android:id="@+id/tv_current_theme" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Thème appliqué" android:textSize="12sp" android:textColor="@color/separator" />
+                        </LinearLayout>
+                        <ImageView android:layout_width="16dp" android:layout_height="16dp" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:src="@drawable/vector_black3_photo" android:contentDescription="Aller" />
+                    </RelativeLayout>
+                    <View android:layout_width="match_parent" android:layout_height="0.5dp" android:background="@color/separator" android:layout_marginStart="16dp" android:layout_marginEnd="16dp"/>
+
+                    <!-- Langue -->
+                    <RelativeLayout
+                        android:id="@+id/row_langue"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true">
+                        <ImageView android:id="@+id/ic_langue" android:layout_width="36dp" android:layout_height="36dp" android:layout_centerVertical="true" android:background="@drawable/bg_bottom_nav" android:padding="8dp" android:src="@drawable/vector_black3_photo" android:contentDescription="Langue" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_toEndOf="@id/ic_langue" android:layout_centerVertical="true" android:layout_marginStart="12dp" android:text="Changer de langue" android:textSize="15sp" android:textColor="?attr/colorOnBackground" />
+                        <ImageView android:layout_width="16dp" android:layout_height="16dp" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:src="@drawable/vector_black3_photo" android:contentDescription="Aller" />
+                    </RelativeLayout>
+                    <View android:layout_width="match_parent" android:layout_height="0.5dp" android:background="@color/separator" android:layout_marginStart="16dp" android:layout_marginEnd="16dp"/>
+
+                    <!-- Stockage -->
+                    <RelativeLayout
+                        android:id="@+id/row_stockage"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true">
+                        <ImageView android:id="@+id/ic_stockage" android:layout_width="36dp" android:layout_height="36dp" android:layout_centerVertical="true" android:background="@drawable/bg_bottom_nav" android:padding="8dp" android:src="@drawable/vector_black3_photo" android:contentDescription="Stockage" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_toEndOf="@id/ic_stockage" android:layout_centerVertical="true" android:layout_marginStart="12dp" android:text="Gérer le stockage" android:textSize="15sp" android:textColor="?attr/colorOnBackground" />
+                        <ImageView android:layout_width="16dp" android:layout_height="16dp" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:src="@drawable/vector_black3_photo" android:contentDescription="Aller" />
+                    </RelativeLayout>
+                    <View android:layout_width="match_parent" android:layout_height="0.5dp" android:background="@color/separator" android:layout_marginStart="16dp" android:layout_marginEnd="16dp"/>
+
+                    <!-- Serveur -->
+                    <RelativeLayout
+                        android:id="@+id/row_serveur"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true">
+                        <ImageView android:id="@+id/ic_serveur" android:layout_width="36dp" android:layout_height="36dp" android:layout_centerVertical="true" android:background="@drawable/bg_bottom_nav" android:padding="8dp" android:src="@drawable/vector_black3_photo" android:contentDescription="Serveur" />
+                        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_toEndOf="@id/ic_serveur" android:layout_centerVertical="true" android:layout_marginStart="12dp" android:orientation="vertical">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Serveur connecté" android:textSize="15sp" android:textColor="?attr/colorOnBackground" />
+                            <TextView android:id="@+id/tv_server_status" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Connexion active" android:textSize="12sp" android:textColor="@color/separator" />
+                        </LinearLayout>
+                        <View android:id="@+id/dot_server_status" android:layout_width="8dp" android:layout_height="8dp" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:layout_marginEnd="4dp" android:background="@drawable/forme_white_radius_1000dp" />
+                    </RelativeLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- ===== SECTION : AUTRES OPTIONS ===== -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="18dp"
+                android:layout_marginEnd="18dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
+                android:text="AUTRES OPTIONS"
+                android:textSize="11sp"
+                android:textColor="@color/separator" />
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="14dp"
+                android:layout_marginEnd="14dp"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="@color/card_background">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <RelativeLayout android:id="@+id/row_aide" android:layout_width="match_parent" android:layout_height="56dp" android:paddingStart="16dp" android:paddingEnd="16dp" android:background="?attr/selectableItemBackground" android:clickable="true" android:focusable="true">
+                        <ImageView android:id="@+id/ic_aide" android:layout_width="36dp" android:layout_height="36dp" android:layout_centerVertical="true" android:background="@drawable/bg_bottom_nav" android:padding="8dp" android:src="@drawable/vector_black3_photo" android:contentDescription="Aide" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_toEndOf="@id/ic_aide" android:layout_centerVertical="true" android:layout_marginStart="12dp" android:text="Pages d'aide" android:textSize="15sp" android:textColor="?attr/colorOnBackground" />
+                        <ImageView android:layout_width="16dp" android:layout_height="16dp" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:src="@drawable/vector_black3_photo" android:contentDescription="Aller" />
+                    </RelativeLayout>
+                    <View android:layout_width="match_parent" android:layout_height="0.5dp" android:background="@color/separator" android:layout_marginStart="16dp" android:layout_marginEnd="16dp"/>
+
+                    <RelativeLayout android:id="@+id/row_suggestion" android:layout_width="match_parent" android:layout_height="56dp" android:paddingStart="16dp" android:paddingEnd="16dp" android:background="?attr/selectableItemBackground" android:clickable="true" android:focusable="true">
+                        <ImageView android:id="@+id/ic_suggestion" android:layout_width="36dp" android:layout_height="36dp" android:layout_centerVertical="true" android:background="@drawable/bg_bottom_nav" android:padding="8dp" android:src="@drawable/vector_black3_message" android:contentDescription="Suggestion" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_toEndOf="@id/ic_suggestion" android:layout_centerVertical="true" android:layout_marginStart="12dp" android:text="@string/send_suggestion" android:textSize="15sp" android:textColor="?attr/colorOnBackground" />
+                        <ImageView android:layout_width="16dp" android:layout_height="16dp" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:src="@drawable/vector_black3_photo" android:contentDescription="Aller" />
+                    </RelativeLayout>
+                    <View android:layout_width="match_parent" android:layout_height="0.5dp" android:background="@color/separator" android:layout_marginStart="16dp" android:layout_marginEnd="16dp"/>
+
+                    <RelativeLayout android:id="@+id/row_evaluer" android:layout_width="match_parent" android:layout_height="56dp" android:paddingStart="16dp" android:paddingEnd="16dp" android:background="?attr/selectableItemBackground" android:clickable="true" android:focusable="true">
+                        <ImageView android:id="@+id/ic_evaluer" android:layout_width="36dp" android:layout_height="36dp" android:layout_centerVertical="true" android:background="@drawable/bg_bottom_nav" android:padding="8dp" android:src="@drawable/vector_black3_grade" android:contentDescription="Évaluer" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_toEndOf="@id/ic_evaluer" android:layout_centerVertical="true" android:layout_marginStart="12dp" android:text="@string/evaluate_us" android:textSize="15sp" android:textColor="?attr/colorOnBackground" />
+                        <ImageView android:layout_width="16dp" android:layout_height="16dp" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:src="@drawable/vector_black3_photo" android:contentDescription="Aller" />
+                    </RelativeLayout>
+                    <View android:layout_width="match_parent" android:layout_height="0.5dp" android:background="@color/separator" android:layout_marginStart="16dp" android:layout_marginEnd="16dp"/>
+
+                    <RelativeLayout android:id="@+id/row_contact" android:layout_width="match_parent" android:layout_height="56dp" android:paddingStart="16dp" android:paddingEnd="16dp" android:background="?attr/selectableItemBackground" android:clickable="true" android:focusable="true">
+                        <ImageView android:id="@+id/ic_contact" android:layout_width="36dp" android:layout_height="36dp" android:layout_centerVertical="true" android:background="@drawable/bg_bottom_nav" android:padding="8dp" android:src="@drawable/vector_purple_200_phone" android:contentDescription="Contact" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_toEndOf="@id/ic_contact" android:layout_centerVertical="true" android:layout_marginStart="12dp" android:text="Contactez-nous" android:textSize="15sp" android:textColor="?attr/colorOnBackground" />
+                        <ImageView android:layout_width="16dp" android:layout_height="16dp" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:src="@drawable/vector_black3_photo" android:contentDescription="Aller" />
+                    </RelativeLayout>
+                    <View android:layout_width="match_parent" android:layout_height="0.5dp" android:background="@color/separator" android:layout_marginStart="16dp" android:layout_marginEnd="16dp"/>
+
+                    <RelativeLayout android:id="@+id/row_how_it_works" android:layout_width="match_parent" android:layout_height="56dp" android:paddingStart="16dp" android:paddingEnd="16dp" android:background="?attr/selectableItemBackground" android:clickable="true" android:focusable="true">
+                        <ImageView android:id="@+id/ic_video" android:layout_width="36dp" android:layout_height="36dp" android:layout_centerVertical="true" android:background="@drawable/bg_bottom_nav" android:padding="8dp" android:src="@drawable/vector_black3_video" android:contentDescription="Vidéo" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_toEndOf="@id/ic_video" android:layout_centerVertical="true" android:layout_marginStart="12dp" android:text="@string/how_it_works" android:textSize="15sp" android:textColor="?attr/colorOnBackground" />
+                        <ImageView android:layout_width="16dp" android:layout_height="16dp" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:src="@drawable/vector_black3_photo" android:contentDescription="Aller" />
+                    </RelativeLayout>
+                    <View android:layout_width="match_parent" android:layout_height="0.5dp" android:background="@color/separator" android:layout_marginStart="16dp" android:layout_marginEnd="16dp"/>
+
+                    <RelativeLayout android:id="@+id/row_quoi_de_neuf" android:layout_width="match_parent" android:layout_height="56dp" android:paddingStart="16dp" android:paddingEnd="16dp" android:background="?attr/selectableItemBackground" android:clickable="true" android:focusable="true">
+                        <ImageView android:id="@+id/ic_new" android:layout_width="36dp" android:layout_height="36dp" android:layout_centerVertical="true" android:background="@drawable/bg_bottom_nav" android:padding="8dp" android:src="@drawable/vector_new" android:contentDescription="Nouveautés" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_toEndOf="@id/ic_new" android:layout_centerVertical="true" android:layout_marginStart="12dp" android:text="Quoi de neuf ?" android:textSize="15sp" android:textColor="?attr/colorOnBackground" />
+                        <ImageView android:layout_width="16dp" android:layout_height="16dp" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:src="@drawable/vector_black3_photo" android:contentDescription="Aller" />
+                    </RelativeLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- ===== BOUTON SE DÉCONNECTER ===== -->
+            <RelativeLayout
+                android:id="@+id/btn_logout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="14dp"
+                android:layout_marginEnd="14dp"
+                android:layout_marginBottom="12dp"
+                android:background="@drawable/bg_bottom_nav"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="15dp">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginEnd="8dp"
+                        android:src="@drawable/vector_black3_photo"
+                        android:contentDescription="Déconnexion" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Se déconnecter"
+                        android:textColor="#E74C3C"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <!-- Version -->
+            <TextView
+                android:id="@+id/tv_version"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textSize="12sp"
+                android:textColor="@color/separator"
+                android:paddingBottom="8dp" />
+
+        </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
