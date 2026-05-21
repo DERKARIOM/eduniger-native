@@ -153,12 +153,12 @@
 
             <!-- Love button aligned to end -->
             <ImageView
-                android:id="@+id/image_view_activity_audio_player_love"
+                android:id="@+id/image_view_activity_audio_player_list"
                 android:layout_width="28dp"
                 android:layout_height="28dp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:background="@drawable/vector_black2_favorite"
+                android:background="@drawable/vector_white_queue_music_24"
                 android:contentDescription="@string/todo" />
 
             <!-- Add / list hidden but still accessible -->
@@ -168,14 +168,6 @@
                 android:layout_height="0dp"
                 android:visibility="gone"
                 android:background="@drawable/vector_black2_add_24"
-                android:contentDescription="@string/todo" />
-
-            <ImageView
-                android:id="@+id/image_view_activity_audio_player_list"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:visibility="gone"
-                android:background="@drawable/vector_black2_queue_music_24"
                 android:contentDescription="@string/todo" />
         </RelativeLayout>
 

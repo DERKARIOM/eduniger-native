@@ -703,13 +703,13 @@ public class BookActivity extends AppCompatActivity {
             mSourcePdf = mElectronicTable.isExist(mSession.getIdNumber(), mOnlineBook.getId());
             if (!"false".equals(mSourcePdf)) downloadPDFButton.setText("Ouvrir");
 
-            if (!"null".equals(mOnlineBook.getSize())) {
-                mPdfSizeTextView.setText(mOnlineBook.getSize());
-                mPdfSizeLinearLayout.setVisibility(View.VISIBLE);
-            } else {
-                downloadPDFButton.setEnabled(false);
-                downloadPDFButton.setText("Bientôt");
-            }
+//            if (!"null".equals(mOnlineBook.getSize())) {
+//                mPdfSizeTextView.setText(mOnlineBook.getSize());
+//                mPdfSizeLinearLayout.setVisibility(View.VISIBLE);
+//            } else {
+//                downloadPDFButton.setEnabled(false);
+//                downloadPDFButton.setText("Bientôt");
+//            }
 
             if (!"null".equals(mOnlineBook.getNbrPage())) {
                 mNbrPageTextView.setText(mOnlineBook.getNbrPage());
@@ -812,8 +812,7 @@ public class BookActivity extends AppCompatActivity {
                     if (i == 0) mTones = new Tones(0, obj.getString("audio"), obj.getString("size"), obj.getString("maxTime"));
                 }
                 if (!"null".equals(mTones.getSize())) { mAudioSizeTextView.setText(mTones.getSize()); mAudioSizeLinearLayout.setVisibility(View.VISIBLE); }
-                if (!"null".equals(mTones.getDuration())) { audioButton.setEnabled(true); mMaxTimeTextView.setText(mTones.getDuration()); mMaxTimeLinearLayout.setVisibility(View.VISIBLE); }
-                else { audioButton.setEnabled(false); audioButton.setText("Bientôt"); }
+                 audioButton.setEnabled(true); mMaxTimeTextView.setText(mTones.getDuration()); mMaxTimeLinearLayout.setVisibility(View.VISIBLE);
             } catch (JSONException e) { Log.e(TAG, "Error parsing tones", e); }
         }
 

@@ -108,7 +108,6 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable,
     private ImageView mVolumeImageView;
     private ImageView mTonesImageView;
     private ImageView mPlayListImageView;
-    private ImageView mLoveImageView;
     private ImageView mAddImageView;
     private ImageView mRandomImageView;
     private ImageView mBackPlayImageView;
@@ -196,7 +195,6 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable,
         mBackImageView          = findViewById(R.id.image_view_activity_audio_player_back);
         mTonesImageView         = findViewById(R.id.image_view_activity_audio_player_tones);
         mPlayListImageView      = findViewById(R.id.image_view_activity_audio_player_list);
-        mLoveImageView          = findViewById(R.id.image_view_activity_audio_player_love);
         mAddImageView           = findViewById(R.id.image_view_activity_audio_player_add);
         mRandomImageView        = findViewById(R.id.image_view_activity_audio_player_random);
         mBackPlayImageView      = findViewById(R.id.image_view_activity_audio_player_back_player);
@@ -225,7 +223,6 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable,
         mVolumeImageView.setOnClickListener(v -> showVolumeControl());
         mTonesImageView.setOnClickListener(v -> openEqualizer());
         mPlayListImageView.setOnClickListener(v -> openPlaylist());
-        mLoveImageView.setOnClickListener(v -> Toast.makeText(this, "Ajouté aux favoris",   Toast.LENGTH_SHORT).show());
         mAddImageView.setOnClickListener(v ->  Toast.makeText(this, "Ajouté à la playlist", Toast.LENGTH_SHORT).show());
         mRandomImageView.setOnClickListener(v -> Toast.makeText(this, "Mode aléatoire",     Toast.LENGTH_SHORT).show());
         mAutoPlayImageView.setOnClickListener(v -> Toast.makeText(this, "Lecture automatique", Toast.LENGTH_SHORT).show());
