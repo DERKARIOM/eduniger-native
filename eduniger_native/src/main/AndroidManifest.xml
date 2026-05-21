@@ -55,6 +55,7 @@
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".controleur.activity.PdfBoxViewerActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar"
             android:exported="false" /> <!-- ==================== Activité Principale ==================== -->
         <activity
             android:name=".controleur.activity.MainActivity"

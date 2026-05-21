@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.RenderEffect;
+import android.graphics.Shader;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.pdf.PdfRenderer;
 import android.os.AsyncTask;
@@ -85,7 +87,7 @@ public class PdfBoxViewerActivity extends AppCompatActivity {
     private ImageButton btnFullscreenCenter;
 
     // ── État ─────────────────────────────────────────────────────────────────
-    private boolean isVerticalMode  = false;
+    private boolean isVerticalMode  = true;
     private boolean isFullscreen    = false;
     private boolean uiVisible       = true;
 
@@ -467,19 +469,13 @@ public class PdfBoxViewerActivity extends AppCompatActivity {
 
         setupScrollViews();
 
-        // Tap sur le PDF : toggle UI en plein écran
-        if (pdfContainer != null) {
-            pdfContainer.setOnClickListener(v -> {
-                if (isFullscreen) {
-                    if (uiVisible) {
-                        autoHideHandler.removeCallbacks(autoHideRunnable);
-                        hideSystemAndAppUI();
-                    } else {
-                        showAppUI();
-                    }
-                }
-            });
-        }
+        // Mode vertical par défaut : afficher scrollViewAllPages, cacher scrollViewVertical
+        if (textViewMode       != null) textViewMode.setText("Vertical");
+        if (scrollViewVertical != null) scrollViewVertical.setVisibility(View.GONE);
+        if (scrollViewAllPages != null) scrollViewAllPages.setVisibility(View.VISIBLE);
+        if (btnZoomIn  != null) { btnZoomIn.setEnabled(false);  btnZoomIn.setAlpha(0.3f); }
+        if (btnZoomOut != null) { btnZoomOut.setEnabled(false); btnZoomOut.setAlpha(0.3f); }
+        if (textViewSwipeHint != null) textViewSwipeHint.setVisibility(View.GONE);
 
         Log.d(TAG, "initViews() terminé");
     }
@@ -604,6 +600,12 @@ public class PdfBoxViewerActivity extends AppCompatActivity {
             @Override public boolean onDown(MotionEvent e) { return true; }
 
             @Override
+            public boolean onSingleTapConfirmed(MotionEvent e) {
+                toggleFullscreen();
+                return true;
+            }
+
+            @Override
             public boolean onDoubleTap(MotionEvent e) {
                 if (isVerticalMode) return false;
                 if (zoomLevel > 1.0f) { zoomLevel = 1.0f; resetScrollPosition(); }
@@ -614,17 +616,24 @@ public class PdfBoxViewerActivity extends AppCompatActivity {
             }
         });
 
+        // Attacher le GestureDetector sur les deux ScrollViews
+        View.OnTouchListener gestureListener = (v, event) -> {
+            gestureDetector.onTouchEvent(event);
+            return false; // false = laisser le scroll natif fonctionner
+        };
+
+        if (scrollViewAllPages != null) {
+            scrollViewAllPages.setOnTouchListener(gestureListener);
+        }
+        if (scrollViewVertical != null) {
+            scrollViewVertical.setOnTouchListener(gestureListener);
+        }
         if (pdfContainer != null) {
-            pdfContainer.setOnTouchListener((v, event) -> {
-                gestureDetector.onTouchEvent(event);
-                // Propager le click aussi pour le toggle UI
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    v.performClick();
-                }
-                return false;
-            });
+            pdfContainer.setOnTouchListener(gestureListener);
         }
     }
+
+
 
     private void resetScrollPosition() {
         if (scrollViewVertical   != null) scrollViewVertical.scrollTo(0, 0);
@@ -878,7 +887,11 @@ public class PdfBoxViewerActivity extends AppCompatActivity {
                         if (textViewSwipeHint != null) textViewSwipeHint.setVisibility(View.GONE);
                     }, 3000);
                 }
-                renderPage(0);
+                if (isVerticalMode) {
+                    new RenderAllPagesTask().execute();
+                } else {
+                    renderPage(0);
+                }
             } else {
                 Log.e(TAG, "Échec chargement PDF → " + errorReason);
                 Toast.makeText(PdfBoxViewerActivity.this, "Erreur lors du chargement du PDF", Toast.LENGTH_LONG).show();
