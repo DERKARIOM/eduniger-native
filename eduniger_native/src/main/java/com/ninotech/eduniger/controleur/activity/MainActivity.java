@@ -21,7 +21,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -65,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
     // Views
     private BottomNavigationView mBottomNavigationView;
     private EditText             mEditText;
-    private ImageView            mProfileImageView;
+    private ImageView mEdunaImageView;
     private TextView             mBadgeTextView;
 
     // Fragments
@@ -80,7 +79,6 @@ public class MainActivity extends AppCompatActivity {
     private DigitalPrintTable    mDigitalPrintTable;
     private BroadcastReceiver    mUpdateBadgeReceiver;
 
-    //private com.google.android.material.floatingactionbutton.FloatingActionButton mFabAiAssistant;
 
     // ================================================================
     // CYCLE DE VIE
@@ -189,11 +187,11 @@ public class MainActivity extends AppCompatActivity {
     private void initializeViews() {
         mBottomNavigationView = findViewById(R.id.bottom_navigation_main);
         mEditText             = findViewById(R.id.edit_text_toolbar_search);
-        mProfileImageView     = findViewById(R.id.image_view_toolbar_main_profile);
-       // mFabAiAssistant       = findViewById(R.id.fab_ai_assistant);
+        mEdunaImageView = findViewById(R.id.image_view_toolbar_main_eduna);
 
         mEditText.setOnClickListener(v -> navigateToSearch());
-       // mFabAiAssistant.setOnClickListener(v -> navigateToChatBot());
+
+        mEdunaImageView.setOnClickListener(v -> navigateToChatBot());
         requestNotificationPermission();
     }
 
@@ -274,12 +272,6 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "photoBytes: " + (photoBytes != null ? photoBytes.length + " bytes" : "NULL"));
 
                 if (photoBytes != null) {
-                    // Toolbar (inchangé)
-                    Glide.with(this)
-                            .load(photoBytes)
-                            .apply(RequestOptions.circleCropTransform())
-                            .into(mProfileImageView);
-
                     // Test sans Glide — chargement direct du Bitmap
                     // 2. Photo dans l'onglet Bibliothèque (icône circulaire)
                     android.graphics.Bitmap bmp = android.graphics.BitmapFactory
