@@ -9,55 +9,28 @@
 
     <include layout="@layout/toolbar_main"/>
 
+    <!-- FrameLayout qui contient TOUT : fragment + navbar flottante -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/relative_layout_toolbar_search">
 
-        <!-- Fragment principal -->
+        <!-- Le fragment prend tout l'espace, y compris derrière la navbar -->
         <FrameLayout
             android:id="@+id/nav_host_fragment_activity_main"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <!-- Fond glassmorphism de la navbar -->
-        <View
-            android:id="@+id/backgroundView"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_marginStart="60dp"
-            android:layout_marginEnd="100dp"
-            android:layout_gravity="bottom|center_horizontal"
-            android:layout_marginBottom="15dp"
-            android:background="@drawable/bg_bottom_nav"
-            android:minWidth="220dp" />
-
-        <!-- Navbar flottante -->
+        <!-- Navbar par-dessus, fond transparent -->
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_navigation_main"
             android:layout_width="wrap_content"
-            style="@style/botton_navigation2"
+            style="@style/botton_navigation"
             android:elevation="20dp"
-            android:layout_height="45dp"
-            android:layout_gravity="bottom|right"
-            android:layout_marginBottom="15dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
             app:menu="@menu/menu_bottom" />
 
-        <!-- Bouton flottant IA -->
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab_ai_assistant"
-            android:layout_width="55dp"
-            android:layout_height="55dp"
-            android:layout_gravity="bottom|end"
-            android:layout_marginEnd="20dp"
-            android:layout_marginBottom="10dp"
-            android:elevation="25dp"
-            android:contentDescription="Assistant IA"
-            app:srcCompat="@drawable/ia_new"
-            app:fabSize="normal"
-            android:background="@drawable/bg_bottom_nav"
-            app:tint="@android:color/white"
-            app:rippleColor="@android:color/white" />
-
     </FrameLayout>
+
 </RelativeLayout>

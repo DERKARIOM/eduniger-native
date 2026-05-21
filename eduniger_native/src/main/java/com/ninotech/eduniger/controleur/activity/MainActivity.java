@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
     private DigitalPrintTable    mDigitalPrintTable;
     private BroadcastReceiver    mUpdateBadgeReceiver;
 
-    private com.google.android.material.floatingactionbutton.FloatingActionButton mFabAiAssistant;
+    //private com.google.android.material.floatingactionbutton.FloatingActionButton mFabAiAssistant;
 
     // ================================================================
     // CYCLE DE VIE
@@ -190,10 +190,10 @@ public class MainActivity extends AppCompatActivity {
         mBottomNavigationView = findViewById(R.id.bottom_navigation_main);
         mEditText             = findViewById(R.id.edit_text_toolbar_search);
         mProfileImageView     = findViewById(R.id.image_view_toolbar_main_profile);
-        mFabAiAssistant       = findViewById(R.id.fab_ai_assistant);
+       // mFabAiAssistant       = findViewById(R.id.fab_ai_assistant);
 
         mEditText.setOnClickListener(v -> navigateToSearch());
-        mFabAiAssistant.setOnClickListener(v -> navigateToChatBot());
+       // mFabAiAssistant.setOnClickListener(v -> navigateToChatBot());
         requestNotificationPermission();
     }
 
