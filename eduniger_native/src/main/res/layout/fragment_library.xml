@@ -64,16 +64,17 @@
 <!--            </RelativeLayout>-->
 
             <!-- ===== CARTE PROFIL ===== -->
-            <androidx.cardview.widget.CardView
+            <FrameLayout
                 android:id="@+id/card_view_profile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="14dp"
                 android:layout_marginEnd="14dp"
+                android:layout_marginTop="15dp"
                 android:layout_marginBottom="16dp"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="0dp"
-                app:cardBackgroundColor="@color/card_background">
+               android:background="@drawable/bg_bottom_nav2">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -123,14 +124,6 @@
                             android:textColor="?attr/colorOnBackground" />
 
                         <TextView
-                            android:id="@+id/text_view_fragment_library_handle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textSize="13sp"
-                            android:textColor="@color/purple_200"
-                            android:layout_marginTop="2dp" />
-
-                        <TextView
                             android:id="@+id/text_view_fragment_library_email"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -147,11 +140,34 @@
                         android:layout_centerVertical="true"
                         android:background="@drawable/forme_white_radius_1000dp"
                         android:padding="8dp"
-                        android:src="@drawable/vector_black3_photo"
+                        android:src="@drawable/ic_logout"
                         android:contentDescription="Actualiser" />
                 </RelativeLayout>
-            </androidx.cardview.widget.CardView>
+            </FrameLayout>
 
+            <TextView
+                android:id="@+id/text_view_fragment_library_recent_read_book"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="18dp"
+                android:layout_marginEnd="18dp"
+                android:layout_marginBottom="8dp"
+                android:visibility="gone"
+                android:layout_marginTop="8dp"
+                android:text="RÉCEMMENT LUS"
+                android:textSize="11sp"
+                android:textColor="@color/separator" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view_electronic_fragment_recent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:visibility="gone"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:clipToPadding="false"
+                android:nestedScrollingEnabled="false" />
             <!-- ===== SECTION : MON COMPTE ===== -->
 
             <androidx.cardview.widget.CardView
@@ -161,6 +177,7 @@
                 android:layout_marginEnd="14dp"
                 android:layout_marginBottom="12dp"
                 app:cardCornerRadius="16dp"
+                android:visibility="gone"
                 app:cardElevation="0dp"
                 app:cardBackgroundColor="@color/card_background">
 
@@ -257,7 +274,7 @@
                 android:textSize="11sp"
                 android:textColor="@color/separator" />
 
-            <androidx.cardview.widget.CardView
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="14dp"
@@ -265,37 +282,16 @@
                 android:layout_marginBottom="12dp"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="0dp"
-                android:background="@drawable/bg_bottom_nav">
+                android:background="@drawable/bg_bottom_nav2">
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recycler_view_electronic_fragment_media"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:nestedScrollingEnabled="false" />
-            </androidx.cardview.widget.CardView>
+            </FrameLayout>
 
             <!-- ===== SECTION : RÉCEMMENT LUS ===== -->
-            <TextView
-                android:id="@+id/text_view_fragment_library_recent_read_book"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="18dp"
-                android:layout_marginEnd="18dp"
-                android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp"
-                android:text="RÉCEMMENT LUS"
-                android:textSize="11sp"
-                android:textColor="@color/separator" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_view_electronic_fragment_recent"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:paddingStart="14dp"
-                android:paddingEnd="14dp"
-                android:clipToPadding="false"
-                android:nestedScrollingEnabled="false" />
 
             <View
                 android:id="@+id/view_fragment_library_2"
@@ -314,7 +310,7 @@
                 android:textSize="11sp"
                 android:textColor="@color/separator" />
 
-            <androidx.cardview.widget.CardView
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="14dp"
@@ -322,7 +318,7 @@
                 android:layout_marginBottom="12dp"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="0dp"
-                app:cardBackgroundColor="@color/card_background">
+                android:background="@drawable/bg_bottom_nav2">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -334,71 +330,68 @@
                         android:id="@+id/row_apparence"
                         android:layout_width="match_parent"
                         android:layout_height="56dp"
-                        android:paddingStart="16dp"
+                        android:paddingStart="6dp"
                         android:paddingEnd="16dp"
                         android:background="?attr/selectableItemBackground"
                         android:clickable="true"
                         android:focusable="true">
-                        <ImageView android:id="@+id/ic_apparence" android:layout_width="36dp" android:layout_height="36dp" android:layout_centerVertical="true" android:background="@drawable/bg_bottom_nav" android:padding="8dp" android:src="@drawable/vector_black3_photo" android:contentDescription="Apparence" />
+                        <ImageView android:id="@+id/ic_apparence" android:layout_width="36dp" android:layout_height="36dp" android:layout_centerVertical="true" android:padding="8dp" android:src="@drawable/vector_white_sombre_mode_night" android:contentDescription="Apparence" />
                         <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_toEndOf="@id/ic_apparence" android:layout_centerVertical="true" android:layout_marginStart="12dp" android:orientation="vertical">
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Apparence" android:textSize="15sp" android:textColor="?attr/colorOnBackground" />
-                            <TextView android:id="@+id/tv_current_theme" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Thème appliqué" android:textSize="12sp" android:textColor="@color/separator" />
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Théme appliqué" android:textSize="15sp" android:textColor="?attr/colorOnBackground" />
+                            <TextView android:id="@+id/tv_current_theme" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Mode Systémes" android:textSize="12sp" android:textColor="@color/separator" android:layout_marginTop="5dp" />
                         </LinearLayout>
-                        <ImageView android:layout_width="16dp" android:layout_height="16dp" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:src="@drawable/vector_black3_photo" android:contentDescription="Aller" />
                     </RelativeLayout>
-                    <View android:layout_width="match_parent" android:layout_height="0.5dp" android:background="@color/separator" android:layout_marginStart="16dp" android:layout_marginEnd="16dp"/>
+                    <View android:layout_width="match_parent" android:layout_height="0.5dp" android:background="@color/separator" android:layout_marginTop="5dp" android:layout_marginStart="16dp" android:layout_marginEnd="16dp"/>
 
                     <!-- Langue -->
                     <RelativeLayout
                         android:id="@+id/row_langue"
                         android:layout_width="match_parent"
                         android:layout_height="56dp"
-                        android:paddingStart="16dp"
+                        android:paddingStart="6dp"
                         android:paddingEnd="16dp"
                         android:background="?attr/selectableItemBackground"
                         android:clickable="true"
                         android:focusable="true">
-                        <ImageView android:id="@+id/ic_langue" android:layout_width="36dp" android:layout_height="36dp" android:layout_centerVertical="true" android:background="@drawable/bg_bottom_nav" android:padding="8dp" android:src="@drawable/vector_black3_photo" android:contentDescription="Langue" />
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_toEndOf="@id/ic_langue" android:layout_centerVertical="true" android:layout_marginStart="12dp" android:text="Changer de langue" android:textSize="15sp" android:textColor="?attr/colorOnBackground" />
-                        <ImageView android:layout_width="16dp" android:layout_height="16dp" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:src="@drawable/vector_black3_photo" android:contentDescription="Aller" />
+                        <ImageView android:id="@+id/ic_langue" android:layout_width="36dp" android:layout_height="36dp" android:layout_centerVertical="true" android:padding="8dp" android:src="@drawable/vector_white_sombre_print_digital" android:contentDescription="Langue" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_toEndOf="@id/ic_langue" android:layout_centerVertical="true" android:layout_marginStart="12dp" android:text="Empreinte digitale" android:textSize="15sp" android:textColor="?attr/colorOnBackground" />
                     </RelativeLayout>
-                    <View android:layout_width="match_parent" android:layout_height="0.5dp" android:background="@color/separator" android:layout_marginStart="16dp" android:layout_marginEnd="16dp"/>
+                    <View android:layout_width="match_parent" android:layout_marginTop="5dp" android:layout_height="0.5dp" android:background="@color/separator" android:layout_marginStart="16dp" android:layout_marginEnd="16dp"/>
 
                     <!-- Stockage -->
                     <RelativeLayout
                         android:id="@+id/row_stockage"
                         android:layout_width="match_parent"
                         android:layout_height="56dp"
-                        android:paddingStart="16dp"
+                        android:paddingStart="8dp"
                         android:paddingEnd="16dp"
                         android:background="?attr/selectableItemBackground"
                         android:clickable="true"
                         android:focusable="true">
-                        <ImageView android:id="@+id/ic_stockage" android:layout_width="36dp" android:layout_height="36dp" android:layout_centerVertical="true" android:background="@drawable/bg_bottom_nav" android:padding="8dp" android:src="@drawable/vector_black3_photo" android:contentDescription="Stockage" />
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_toEndOf="@id/ic_stockage" android:layout_centerVertical="true" android:layout_marginStart="12dp" android:text="Gérer le stockage" android:textSize="15sp" android:textColor="?attr/colorOnBackground" />
-                        <ImageView android:layout_width="16dp" android:layout_height="16dp" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:src="@drawable/vector_black3_photo" android:contentDescription="Aller" />
+                        <ImageView android:id="@+id/ic_stockage" android:layout_width="36dp" android:layout_height="36dp" android:layout_centerVertical="true"  android:padding="8dp" android:src="@drawable/ic_wait_profile" android:contentDescription="Stockage" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_toEndOf="@id/ic_stockage" android:layout_centerVertical="true" android:layout_marginStart="12dp" android:text="Gérer le compte" android:textSize="15sp" android:textColor="?attr/colorOnBackground" />
                     </RelativeLayout>
-                    <View android:layout_width="match_parent" android:layout_height="0.5dp" android:background="@color/separator" android:layout_marginStart="16dp" android:layout_marginEnd="16dp"/>
+                    <View android:layout_width="match_parent" android:layout_marginBottom="5dp" android:layout_marginTop="5dp" android:layout_height="0.5dp" android:background="@color/separator" android:layout_marginStart="16dp" android:layout_marginEnd="16dp"/>
 
                     <!-- Serveur -->
                     <RelativeLayout
                         android:id="@+id/row_serveur"
                         android:layout_width="match_parent"
                         android:layout_height="56dp"
-                        android:paddingStart="16dp"
+                        android:paddingStart="8dp"
                         android:paddingEnd="16dp"
                         android:background="?attr/selectableItemBackground"
                         android:clickable="true"
                         android:focusable="true">
-                        <ImageView android:id="@+id/ic_serveur" android:layout_width="36dp" android:layout_height="36dp" android:layout_centerVertical="true" android:background="@drawable/bg_bottom_nav" android:padding="8dp" android:src="@drawable/vector_black3_photo" android:contentDescription="Serveur" />
+                        <ImageView android:id="@+id/ic_serveur" android:layout_width="36dp" android:layout_height="36dp" android:layout_centerVertical="true" android:padding="8dp" android:src="@drawable/vector_white_sombre_phone_connected" android:contentDescription="Serveur" />
                         <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_toEndOf="@id/ic_serveur" android:layout_centerVertical="true" android:layout_marginStart="12dp" android:orientation="vertical">
                             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Serveur connecté" android:textSize="15sp" android:textColor="?attr/colorOnBackground" />
-                            <TextView android:id="@+id/tv_server_status" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Connexion active" android:textSize="12sp" android:textColor="@color/separator" />
+                            <TextView android:id="@+id/tv_server_status" android:layout_width="wrap_content" android:layout_marginTop="5dp" android:layout_height="wrap_content" android:text="Connexion active" android:textSize="12sp" android:textColor="@color/separator" />
                         </LinearLayout>
-                        <View android:id="@+id/dot_server_status" android:layout_width="8dp" android:layout_height="8dp" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:layout_marginEnd="4dp" android:background="@drawable/forme_white_radius_1000dp" />
+                        <View android:id="@+id/dot_server_status" android:layout_width="8dp" android:layout_height="8dp" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:layout_marginEnd="4dp" android:background="@drawable/bg_avatar_bot" />
                     </RelativeLayout>
                 </LinearLayout>
-            </androidx.cardview.widget.CardView>
+            </FrameLayout>
 
             <!-- ===== SECTION : AUTRES OPTIONS ===== -->
             <TextView
@@ -412,7 +405,7 @@
                 android:textSize="11sp"
                 android:textColor="@color/separator" />
 
-            <androidx.cardview.widget.CardView
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="14dp"
@@ -420,92 +413,43 @@
                 android:layout_marginBottom="16dp"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="0dp"
-                app:cardBackgroundColor="@color/card_background">
+                android:background="@drawable/bg_bottom_nav2">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <RelativeLayout android:id="@+id/row_aide" android:layout_width="match_parent" android:layout_height="56dp" android:paddingStart="16dp" android:paddingEnd="16dp" android:background="?attr/selectableItemBackground" android:clickable="true" android:focusable="true">
-                        <ImageView android:id="@+id/ic_aide" android:layout_width="36dp" android:layout_height="36dp" android:layout_centerVertical="true" android:background="@drawable/bg_bottom_nav" android:padding="8dp" android:src="@drawable/vector_black3_photo" android:contentDescription="Aide" />
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_toEndOf="@id/ic_aide" android:layout_centerVertical="true" android:layout_marginStart="12dp" android:text="Pages d'aide" android:textSize="15sp" android:textColor="?attr/colorOnBackground" />
-                        <ImageView android:layout_width="16dp" android:layout_height="16dp" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:src="@drawable/vector_black3_photo" android:contentDescription="Aller" />
-                    </RelativeLayout>
-                    <View android:layout_width="match_parent" android:layout_height="0.5dp" android:background="@color/separator" android:layout_marginStart="16dp" android:layout_marginEnd="16dp"/>
-
                     <RelativeLayout android:id="@+id/row_suggestion" android:layout_width="match_parent" android:layout_height="56dp" android:paddingStart="16dp" android:paddingEnd="16dp" android:background="?attr/selectableItemBackground" android:clickable="true" android:focusable="true">
-                        <ImageView android:id="@+id/ic_suggestion" android:layout_width="36dp" android:layout_height="36dp" android:layout_centerVertical="true" android:background="@drawable/bg_bottom_nav" android:padding="8dp" android:src="@drawable/vector_black3_message" android:contentDescription="Suggestion" />
+                        <ImageView android:id="@+id/ic_suggestion" android:layout_width="36dp" android:layout_height="36dp" android:layout_centerVertical="true" android:padding="8dp" android:src="@drawable/vector_white_messagerie" android:contentDescription="Suggestion" />
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_toEndOf="@id/ic_suggestion" android:layout_centerVertical="true" android:layout_marginStart="12dp" android:text="@string/send_suggestion" android:textSize="15sp" android:textColor="?attr/colorOnBackground" />
-                        <ImageView android:layout_width="16dp" android:layout_height="16dp" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:src="@drawable/vector_black3_photo" android:contentDescription="Aller" />
                     </RelativeLayout>
-                    <View android:layout_width="match_parent" android:layout_height="0.5dp" android:background="@color/separator" android:layout_marginStart="16dp" android:layout_marginEnd="16dp"/>
+                    <View android:layout_width="match_parent" android:layout_marginTop="5dp" android:layout_height="0.5dp" android:background="@color/separator" android:layout_marginStart="16dp" android:layout_marginEnd="16dp"/>
 
                     <RelativeLayout android:id="@+id/row_evaluer" android:layout_width="match_parent" android:layout_height="56dp" android:paddingStart="16dp" android:paddingEnd="16dp" android:background="?attr/selectableItemBackground" android:clickable="true" android:focusable="true">
-                        <ImageView android:id="@+id/ic_evaluer" android:layout_width="36dp" android:layout_height="36dp" android:layout_centerVertical="true" android:background="@drawable/bg_bottom_nav" android:padding="8dp" android:src="@drawable/vector_black3_grade" android:contentDescription="Évaluer" />
+                        <ImageView android:id="@+id/ic_evaluer" android:layout_width="36dp" android:layout_height="36dp" android:layout_centerVertical="true" android:padding="8dp" android:src="@drawable/vector_white_sombre_grade" android:contentDescription="Évaluer" />
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_toEndOf="@id/ic_evaluer" android:layout_centerVertical="true" android:layout_marginStart="12dp" android:text="@string/evaluate_us" android:textSize="15sp" android:textColor="?attr/colorOnBackground" />
-                        <ImageView android:layout_width="16dp" android:layout_height="16dp" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:src="@drawable/vector_black3_photo" android:contentDescription="Aller" />
                     </RelativeLayout>
                     <View android:layout_width="match_parent" android:layout_height="0.5dp" android:background="@color/separator" android:layout_marginStart="16dp" android:layout_marginEnd="16dp"/>
 
                     <RelativeLayout android:id="@+id/row_contact" android:layout_width="match_parent" android:layout_height="56dp" android:paddingStart="16dp" android:paddingEnd="16dp" android:background="?attr/selectableItemBackground" android:clickable="true" android:focusable="true">
-                        <ImageView android:id="@+id/ic_contact" android:layout_width="36dp" android:layout_height="36dp" android:layout_centerVertical="true" android:background="@drawable/bg_bottom_nav" android:padding="8dp" android:src="@drawable/vector_purple_200_phone" android:contentDescription="Contact" />
+                        <ImageView android:id="@+id/ic_contact" android:layout_width="36dp" android:layout_height="36dp" android:layout_centerVertical="true" android:padding="8dp" android:src="@drawable/vector_white_sombre_phone" android:contentDescription="Contact" />
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_toEndOf="@id/ic_contact" android:layout_centerVertical="true" android:layout_marginStart="12dp" android:text="Contactez-nous" android:textSize="15sp" android:textColor="?attr/colorOnBackground" />
-                        <ImageView android:layout_width="16dp" android:layout_height="16dp" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:src="@drawable/vector_black3_photo" android:contentDescription="Aller" />
                     </RelativeLayout>
-                    <View android:layout_width="match_parent" android:layout_height="0.5dp" android:background="@color/separator" android:layout_marginStart="16dp" android:layout_marginEnd="16dp"/>
+                    <View android:layout_width="match_parent" android:layout_height="0.5dp" android:background="@color/separator" android:layout_marginBottom="5dp" android:layout_marginStart="16dp" android:layout_marginEnd="16dp"/>
 
                     <RelativeLayout android:id="@+id/row_how_it_works" android:layout_width="match_parent" android:layout_height="56dp" android:paddingStart="16dp" android:paddingEnd="16dp" android:background="?attr/selectableItemBackground" android:clickable="true" android:focusable="true">
-                        <ImageView android:id="@+id/ic_video" android:layout_width="36dp" android:layout_height="36dp" android:layout_centerVertical="true" android:background="@drawable/bg_bottom_nav" android:padding="8dp" android:src="@drawable/vector_black3_video" android:contentDescription="Vidéo" />
+                        <ImageView android:id="@+id/ic_video" android:layout_width="36dp" android:layout_height="36dp" android:layout_centerVertical="true" android:padding="8dp" android:src="@drawable/vector_white_sombre_video" android:contentDescription="Vidéo" />
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_toEndOf="@id/ic_video" android:layout_centerVertical="true" android:layout_marginStart="12dp" android:text="@string/how_it_works" android:textSize="15sp" android:textColor="?attr/colorOnBackground" />
-                        <ImageView android:layout_width="16dp" android:layout_height="16dp" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:src="@drawable/vector_black3_photo" android:contentDescription="Aller" />
                     </RelativeLayout>
-                    <View android:layout_width="match_parent" android:layout_height="0.5dp" android:background="@color/separator" android:layout_marginStart="16dp" android:layout_marginEnd="16dp"/>
+                    <View android:layout_width="match_parent" android:layout_marginBottom="5dp" android:layout_height="0.5dp" android:background="@color/separator" android:layout_marginStart="16dp" android:layout_marginEnd="16dp"/>
 
                     <RelativeLayout android:id="@+id/row_quoi_de_neuf" android:layout_width="match_parent" android:layout_height="56dp" android:paddingStart="16dp" android:paddingEnd="16dp" android:background="?attr/selectableItemBackground" android:clickable="true" android:focusable="true">
-                        <ImageView android:id="@+id/ic_new" android:layout_width="36dp" android:layout_height="36dp" android:layout_centerVertical="true" android:background="@drawable/bg_bottom_nav" android:padding="8dp" android:src="@drawable/vector_new" android:contentDescription="Nouveautés" />
+                        <ImageView android:id="@+id/ic_new" android:layout_width="36dp" android:layout_height="36dp" android:layout_centerVertical="true" android:padding="8dp" android:src="@drawable/vector_white_sombre_new" android:contentDescription="Nouveautés" />
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_toEndOf="@id/ic_new" android:layout_centerVertical="true" android:layout_marginStart="12dp" android:text="Quoi de neuf ?" android:textSize="15sp" android:textColor="?attr/colorOnBackground" />
-                        <ImageView android:layout_width="16dp" android:layout_height="16dp" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:src="@drawable/vector_black3_photo" android:contentDescription="Aller" />
                     </RelativeLayout>
                 </LinearLayout>
-            </androidx.cardview.widget.CardView>
-
-            <!-- ===== BOUTON SE DÉCONNECTER ===== -->
-            <RelativeLayout
-                android:id="@+id/btn_logout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="14dp"
-                android:layout_marginEnd="14dp"
-                android:layout_marginBottom="12dp"
-                android:background="@drawable/bg_bottom_nav"
-                android:clickable="true"
-                android:focusable="true"
-                android:padding="15dp">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
-
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_marginEnd="8dp"
-                        android:src="@drawable/vector_black3_photo"
-                        android:contentDescription="Déconnexion" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Se déconnecter"
-                        android:textColor="#E74C3C"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-            </RelativeLayout>
+            </FrameLayout>
 
             <!-- Version -->
             <TextView
@@ -514,8 +458,9 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:textSize="12sp"
-                android:textColor="@color/separator"
-                android:paddingBottom="8dp" />
+                android:text="EduNiger v3.2.3 (2026)"
+                android:textColor="@color/white3"
+                android:paddingBottom="50dp" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
