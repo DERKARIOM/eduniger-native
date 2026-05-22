@@ -25,6 +25,18 @@
             android:src="@drawable/vector_back"
             android:tint="@color/text_primary"
             android:contentDescription="@string/todo" />
+
+        <ImageView
+            android:id="@+id/image_view_eduna"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_centerVertical="true"
+            android:padding="8dp"
+            android:layout_marginEnd="5dp"
+            android:src="@drawable/ic_ia"
+            android:tint="@color/text_primary"
+            android:layout_alignParentEnd="true"
+            android:contentDescription="@string/todo" />
     </RelativeLayout>
 
     <!-- SKELETON LOADING -->
@@ -365,7 +377,7 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"
                     android:layout_marginBottom="16dp"
-                    android:background="@drawable/bg_section_card"
+                    android:background="@drawable/bg_bottom_nav2"
                     android:orientation="vertical"
                     android:padding="16dp"
                     android:visibility="gone">
@@ -375,8 +387,6 @@
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:layout_centerVertical="true" android:text="@string/audio_format"
                             android:textColor="@color/text_primary" android:textStyle="bold" android:textSize="14sp" />
-                        <Spinner android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true" android:layout_centerVertical="true" />
                     </RelativeLayout>
 
                     <LinearLayout android:id="@+id/linear_layout_activity_book_media"
@@ -391,7 +401,7 @@
                                 <ImageView android:id="@+id/image_view_activity_book_player"
                                     android:layout_width="36dp" android:layout_height="36dp"
                                     android:src="@drawable/vector_black3_pause"
-                                    android:tint="@color/accent_blue" android:padding="4dp"
+                                    android:tint="@color/purple_200" android:padding="4dp"
                                     android:contentDescription="@string/todo" />
                             </RelativeLayout>
                             <ImageView android:id="@+id/image_view_activity_book_stop"
@@ -408,7 +418,7 @@
                             <SeekBar android:id="@+id/seekbar_activity_book"
                                 android:layout_width="0dp" android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:progressTint="@color/accent_blue" android:thumbTint="@color/accent_blue"
+                                android:progressTint="@color/purple_200" android:thumbTint="@color/purple_200"
                                 android:progress="100" />
                         </LinearLayout>
                     </LinearLayout>
@@ -428,7 +438,7 @@
                                 android:textSize="13sp"
                                 android:drawableStart="@drawable/vector_white_download"
                                 android:drawablePadding="6dp"
-                                android:backgroundTint="@color/accent_blue"
+                                android:backgroundTint="@color/purple_200"
                                 android:paddingStart="14dp"
                                 android:paddingEnd="14dp"
                                 android:stateListAnimator="@null" />
@@ -461,7 +471,7 @@
                                     android:text="0%"
                                     android:textSize="12sp"
                                     android:textStyle="bold"
-                                    android:textColor="@color/accent_blue"
+                                    android:textColor="@color/purple_200"
                                     android:gravity="end" />
 
                             </LinearLayout>
@@ -504,7 +514,7 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"
                     android:layout_marginBottom="16dp"
-                    android:background="@drawable/bg_section_card"
+                    android:background="@drawable/bg_bottom_nav2"
                     android:orientation="vertical"
                     android:padding="16dp"
                     android:visibility="gone">
@@ -514,8 +524,6 @@
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:layout_centerVertical="true" android:text="@string/electronic_format"
                             android:textColor="@color/text_primary" android:textStyle="bold" android:textSize="14sp" />
-                        <Spinner android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true" android:layout_centerVertical="true" />
                     </RelativeLayout>
 
                     <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
@@ -610,7 +618,7 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"
                     android:layout_marginBottom="16dp"
-                    android:background="@drawable/bg_section_card"
+                    android:background="@drawable/bg_bottom_nav2"
                     android:orientation="vertical"
                     android:padding="16dp"
                     android:visibility="gone">
@@ -620,8 +628,6 @@
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:layout_centerVertical="true" android:text="@string/to_book_reservation"
                             android:textColor="@color/text_primary" android:textStyle="bold" android:textSize="14sp" />
-                        <Spinner android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true" android:layout_centerVertical="true" />
                     </RelativeLayout>
 
                     <Button android:id="@+id/button_activity_book_reservation"
@@ -650,8 +656,6 @@
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:layout_centerVertical="true" android:text="@string/to_book_about"
                             android:textColor="@color/text_primary" android:textStyle="bold" android:textSize="16sp" />
-                        <Spinner android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true" android:layout_centerVertical="true" />
                     </RelativeLayout>
 
                     <TextView android:id="@+id/text_view_activity_book_description"
@@ -676,8 +680,6 @@
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:layout_centerVertical="true" android:text="@string/comments"
                             android:textColor="@color/text_primary" android:textStyle="bold" android:textSize="16sp" />
-                        <Spinner android:layout_width="wrap_content" android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true" android:layout_centerVertical="true" />
                     </RelativeLayout>
 
                     <androidx.recyclerview.widget.RecyclerView
@@ -744,7 +746,7 @@
             android:text="Écouter" android:textAllCaps="false"
             android:textColor="@color/white" android:textSize="15sp" android:textStyle="bold"
             android:drawableStart="@drawable/vector_black3_off_subscribe" android:drawablePadding="6dp"
-            android:backgroundTint="@color/accent_blue" android:stateListAnimator="@null"
+            android:backgroundTint="@color/purple_200" android:stateListAnimator="@null"
             android:visibility="gone" />
     </LinearLayout>
 
