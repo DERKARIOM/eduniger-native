@@ -817,7 +817,7 @@ public class BookActivity extends AppCompatActivity {
         }
 
         private void setupMediaPlayer() {
-            String url = "http://78.46.46.154/eduniger/admin-api/storage/app/private/structures/" + mOnlineBook.getIdStruct() + "/audios/" + mTones.getAudio();
+            String url = Server.getUrlServer(getApplicationContext()) + "/admin-api/storage/app/private/structures/" + mOnlineBook.getIdStruct() + "/audios/" + mTones.getAudio();
             try {
                 mMediaPlayer.setDataSource(url);
                 mMediaPlayer.prepare();

@@ -37,6 +37,13 @@ public class CreateNotification {
     public static void createNotification(Context context, Track track, int playbutton,
                                           int pos, int size,
                                           MediaSessionCompat.Token sessionToken) {
+        createNotification(context, track, playbutton, pos, size, sessionToken, false);
+    }
+
+    public static void createNotification(Context context, Track track, int playbutton,
+                                          int pos, int size,
+                                          MediaSessionCompat.Token sessionToken,
+                                          boolean isFavorite) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createNotificationChannel(context);
 
@@ -86,7 +93,8 @@ public class CreateNotification {
                     .setAutoCancel(false)
                     .setOnlyAlertOnce(true)
                     .setShowWhen(false)
-                    .addAction(R.drawable.vector_black2_favorite,             "Favori",    pendingIntentLove)
+                    .addAction(isFavorite ? R.drawable.vector_purple2_200_on_like : R.drawable.vector_black3_off_like,
+                                                                               "Favori",    pendingIntentLove)
                     .addAction(R.drawable.vector_black2_audio_player_back,    "Précédent", pendingIntentPrevious)
                     .addAction(playbutton,                                     "Lecture",   pendingIntentPlay)
                     .addAction(R.drawable.vector_black2_audio_player_next,    "Suivant",   pendingIntentNext)

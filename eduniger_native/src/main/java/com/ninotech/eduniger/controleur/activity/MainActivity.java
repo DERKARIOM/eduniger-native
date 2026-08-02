@@ -40,6 +40,7 @@ import com.ninotech.eduniger.controleur.fragment.BookStoreFragment;
 import com.ninotech.eduniger.controleur.fragment.HomeFragment;
 import com.ninotech.eduniger.controleur.fragment.LibraryFragment;
 import com.ninotech.eduniger.controleur.fragment.StructureFragment;
+import com.ninotech.eduniger.controleur.player.MiniPlayerController;
 import com.ninotech.eduniger.model.data.Account;
 import com.ninotech.eduniger.model.data.Initialization;
 import com.ninotech.eduniger.model.data.Themes;
@@ -78,6 +79,9 @@ public class MainActivity extends AppCompatActivity {
     private Account              mAccount;
     private DigitalPrintTable    mDigitalPrintTable;
     private BroadcastReceiver    mUpdateBadgeReceiver;
+
+    // Mini lecteur audio flottant (masqué tant qu'aucune lecture n'est en cours)
+    private MiniPlayerController mMiniPlayerController;
 
 
     // ================================================================
@@ -193,6 +197,21 @@ public class MainActivity extends AppCompatActivity {
 
         mEdunaImageView.setOnClickListener(v -> navigateToChatBot());
         requestNotificationPermission();
+
+        View miniPlayerRoot = findViewById(R.id.include_mini_player);
+        if (miniPlayerRoot != null) mMiniPlayerController = new MiniPlayerController(this, miniPlayerRoot);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (mMiniPlayerController != null) mMiniPlayerController.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mMiniPlayerController != null) mMiniPlayerController.onStop();
     }
 
     private void navigateToChatBot() {

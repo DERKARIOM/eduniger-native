@@ -21,6 +21,20 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
+        <!-- Mini lecteur flottant : visible uniquement quand une lecture audio est en cours.
+             La marge basse (@dimen/mini_player_bottom_offset) place le mini lecteur
+             au-dessus de la navbar flottante ; MiniPlayerController y ajoute au
+             runtime l'inset de la barre de navigation système (zone de sécurité). -->
+        <include
+            android:id="@+id/include_mini_player"
+            layout="@layout/view_mini_player"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginStart="@dimen/mini_player_margin_h"
+            android:layout_marginEnd="@dimen/mini_player_margin_h"
+            android:layout_marginBottom="@dimen/mini_player_bottom_offset" />
+
         <!-- Navbar par-dessus, fond transparent -->
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_navigation_main"

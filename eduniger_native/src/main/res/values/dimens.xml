@@ -2,4 +2,55 @@
     <dimen name="text_margin">16dp</dimen>
     <dimen name="size_button">15sp</dimen>
     <dimen name="size_mini_sub_title">10sp</dimen>
+
+    <!-- ===================================================================== -->
+    <!-- LECTEUR AUDIO — jetons responsives (valeurs par défaut : téléphones)   -->
+    <!-- Surcharges : values-sw600dp (tablettes), values-land (paysage).        -->
+    <!-- Toute la mise en page du lecteur passe par ces jetons : modifier une   -->
+    <!-- taille ici la propage à toutes les configurations d'écran.             -->
+    <!-- ===================================================================== -->
+
+    <!-- Grille / marges horizontales de référence -->
+    <dimen name="player_gutter">24dp</dimen>
+    <dimen name="player_gutter_tight">16dp</dimen>
+
+    <!-- Pochette : largeur maximale (au-delà, la pochette cesse de grandir) -->
+    <dimen name="player_cover_max_width">420dp</dimen>
+    <dimen name="player_cover_margin_h">32dp</dimen>
+    <dimen name="player_cover_elevation">14dp</dimen>
+
+    <!-- Zones tactiles : minimum Material = 48dp -->
+    <dimen name="player_touch_target">48dp</dimen>
+    <dimen name="player_touch_target_sm">44dp</dimen>
+
+    <!-- Icônes : le padding contrôle la taille visuelle DANS la zone tactile -->
+    <dimen name="player_icon_pad_toolbar">12dp</dimen>
+    <dimen name="player_icon_pad_secondary">12dp</dimen>
+    <dimen name="player_icon_pad_primary">9dp</dimen>
+
+    <!-- Bouton central lecture/pause -->
+    <dimen name="player_play_button_size">68dp</dimen>
+    <dimen name="player_play_icon_size">26dp</dimen>
+
+    <!-- Typographie -->
+    <dimen name="player_title_text">19sp</dimen>
+    <dimen name="player_author_text">14sp</dimen>
+    <dimen name="player_meta_text">12sp</dimen>
+    <dimen name="player_overline_text">10sp</dimen>
+    <dimen name="player_source_text">13sp</dimen>
+
+    <!-- Rythme vertical -->
+    <dimen name="player_space_cover_to_title">20dp</dimen>
+    <dimen name="player_space_title_to_seek">16dp</dimen>
+    <dimen name="player_space_seek_to_controls">8dp</dimen>
+    <dimen name="player_space_row_gap">4dp</dimen>
+    <dimen name="player_bottom_padding">24dp</dimen>
+
+    <!-- Mini lecteur -->
+    <dimen name="mini_player_height">64dp</dimen>
+    <dimen name="mini_player_cover">44dp</dimen>
+    <dimen name="mini_player_margin_h">12dp</dimen>
+    <!-- Décalage au-dessus de la barre de navigation flottante de MainActivity.
+         La marge finale = cette valeur + inset système, calculé au runtime. -->
+    <dimen name="mini_player_bottom_offset">72dp</dimen>
 </resources>

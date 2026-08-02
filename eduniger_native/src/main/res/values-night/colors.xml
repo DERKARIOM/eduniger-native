@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ===== Lecteur audio (v2) : jetons "mode sombre" ===== -->
+    <color name="player_bg">@color/black</color>
+    <color name="player_backdrop_top">#FF1A2229</color>
+    <color name="player_surface">#1AFFFFFF</color>
+    <color name="player_surface_solid">#FF1A2229</color>
+    <color name="player_text_primary">#FFFFFFFF</color>
+    <color name="player_text_secondary">#FFAAAAAA</color>
+    <color name="player_control_inactive">#FF666666</color>
+    <color name="player_track_bg">#FF3A3A3A</color>
+    <color name="player_accent">@color/purple_200</color>
+</resources>

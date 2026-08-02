@@ -51,7 +51,7 @@
             android:text="Titre du livre"
             android:textSize="15sp"
             android:textStyle="bold"
-            android:textColor="@color/white"
+            android:textColor="@color/player_text_primary"
             android:maxLines="1"
             android:ellipsize="end" />
 
@@ -63,7 +63,7 @@
             android:layout_marginTop="2dp"
             android:text="Par Auteur - Album"
             android:textSize="13sp"
-            android:textColor="#AAAAAA"
+            android:textColor="@color/player_text_secondary"
             android:maxLines="1"
             android:ellipsize="end" />
 
@@ -75,7 +75,7 @@
             android:layout_marginTop="2dp"
             android:text="30:15"
             android:textSize="12sp"
-            android:textColor="#666666" />
+            android:textColor="@color/player_control_inactive" />
 
         <!-- Badge EXPLICIT -->
         <TextView
@@ -86,7 +86,7 @@
             android:text="EXPLICIT"
             android:textSize="10sp"
             android:textStyle="bold"
-            android:textColor="#AAAAAA"
+            android:textColor="@color/player_text_secondary"
             android:paddingStart="5dp"
             android:paddingEnd="5dp"
             android:paddingTop="1dp"

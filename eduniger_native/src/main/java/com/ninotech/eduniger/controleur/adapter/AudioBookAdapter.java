@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -14,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -67,8 +67,10 @@ public class AudioBookAdapter extends RecyclerView.Adapter<AudioBookAdapter.MyVi
             return true;
         });
 
+        AudioBook audioBook = mAudioBooks.get(position);
+
         // Handle visible uniquement dans la file de lecture (isPlayerList = true)
-        if (mAudioBooks.get(position).isPlayerList()) {
+        if (audioBook.isPlayerList()) {
             holder.mDragHandleImageView.setVisibility(View.VISIBLE);
             holder.mDragHandleImageView.setOnTouchListener((v, event) -> {
                 if (event.getActionMasked() == MotionEvent.ACTION_DOWN && mItemTouchHelper != null) {
@@ -80,7 +82,27 @@ public class AudioBookAdapter extends RecyclerView.Adapter<AudioBookAdapter.MyVi
             holder.mDragHandleImageView.setVisibility(View.GONE);
         }
 
-        holder.display(mAudioBooks.get(position));
+        holder.display(audioBook);
+
+        // ── Fix : la sélection doit refléter l'ORDRE AFFICHÉ (après glisser-déposer) ──
+        // On envoie la liste complète des identifiants dans leur ordre courant plutôt
+        // qu'un simple index, pour que le Service rejoue bien la file réordonnée.
+        if (audioBook.isPlayerList()) {
+            holder.itemView.setOnClickListener(v -> {
+                ArrayList<String> orderedIds = new ArrayList<>();
+                for (AudioBook b : mAudioBooks) orderedIds.add(b.getId());
+
+                Intent intent = new Intent("SELECT_LIST_PLAYER");
+                intent.putStringArrayListExtra("ordered_ids", orderedIds);
+                intent.putExtra("selected_id", audioBook.getId());
+                v.getContext().sendBroadcast(intent);
+                try {
+                    ((Activity) v.getContext()).finish();
+                } catch (Exception e) {
+                    Toast.makeText(v.getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
     @Override
@@ -148,15 +170,18 @@ public class AudioBookAdapter extends RecyclerView.Adapter<AudioBookAdapter.MyVi
                     && audioBook.getTitle().toLowerCase().contains("explicit");
             mExplicitTextView.setVisibility(isExplicit ? View.VISIBLE : View.GONE);
 
+            // Couleurs issues des jetons de thème : lisibles en mode clair ET sombre
+            // (auparavant codées en dur en blanc => invisibles sur fond clair).
+            Context ctx = itemView.getContext();
             if (audioBook.isPlayer()) {
-                int green = Color.parseColor("#42B998");
-                mTitleTextView.setTextColor(green);
-                mAuthorTextView.setTextColor(green);
-                mDurationTextView.setTextColor(green);
+                int accent = ContextCompat.getColor(ctx, R.color.player_accent);
+                mTitleTextView.setTextColor(accent);
+                mAuthorTextView.setTextColor(accent);
+                mDurationTextView.setTextColor(accent);
             } else {
-                mTitleTextView.setTextColor(Color.WHITE);
-                mAuthorTextView.setTextColor(Color.parseColor("#AAAAAA"));
-                mDurationTextView.setTextColor(Color.parseColor("#666666"));
+                mTitleTextView.setTextColor(ContextCompat.getColor(ctx, R.color.player_text_primary));
+                mAuthorTextView.setTextColor(ContextCompat.getColor(ctx, R.color.player_text_secondary));
+                mDurationTextView.setTextColor(ContextCompat.getColor(ctx, R.color.player_control_inactive));
             }
 
             itemView.setOnClickListener(v -> {

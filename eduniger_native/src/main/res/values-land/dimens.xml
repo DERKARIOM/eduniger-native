@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    LECTEUR AUDIO — surcharges PAYSAGE (téléphones).
+    En paysage la hauteur disponible est très réduite (~360dp) : on compacte le
+    rythme vertical et la typographie pour qu'aucun contrôle ne soit coupé.
+
+    Note : le qualificateur "smallestWidth" est prioritaire sur "orientation",
+    donc une tablette en paysage conserve bien les valeurs de values-sw600dp.
+-->
+<resources>
+    <dimen name="player_gutter">20dp</dimen>
+    <dimen name="player_gutter_tight">14dp</dimen>
+
+    <dimen name="player_cover_max_width">300dp</dimen>
+    <dimen name="player_cover_margin_h">16dp</dimen>
+    <dimen name="player_cover_elevation">10dp</dimen>
+
+    <dimen name="player_touch_target">44dp</dimen>
+    <dimen name="player_touch_target_sm">40dp</dimen>
+
+    <dimen name="player_icon_pad_toolbar">11dp</dimen>
+    <dimen name="player_icon_pad_secondary">11dp</dimen>
+    <dimen name="player_icon_pad_primary">8dp</dimen>
+
+    <dimen name="player_play_button_size">58dp</dimen>
+    <dimen name="player_play_icon_size">22dp</dimen>
+
+    <dimen name="player_title_text">17sp</dimen>
+    <dimen name="player_author_text">13sp</dimen>
+    <dimen name="player_meta_text">11sp</dimen>
+    <dimen name="player_overline_text">9sp</dimen>
+    <dimen name="player_source_text">12sp</dimen>
+
+    <dimen name="player_space_cover_to_title">10dp</dimen>
+    <dimen name="player_space_title_to_seek">10dp</dimen>
+    <dimen name="player_space_seek_to_controls">4dp</dimen>
+    <dimen name="player_space_row_gap">2dp</dimen>
+    <dimen name="player_bottom_padding">12dp</dimen>
+
+    <dimen name="mini_player_height">58dp</dimen>
+    <dimen name="mini_player_cover">40dp</dimen>
+    <dimen name="mini_player_margin_h">12dp</dimen>
+    <dimen name="mini_player_bottom_offset">64dp</dimen>
+</resources>

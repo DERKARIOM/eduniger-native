@@ -128,7 +128,7 @@ public class ServerActivity extends AppCompatActivity {
                 {
                     case 1:
                         mUrlEditText.setVisibility(View.GONE);
-                        Server.saveServer(getApplicationContext(),"http://78.46.46.154/fabi/","http://78.46.46.154/fabi/android/");
+                        Server.saveServer(getApplicationContext(),"http://192.168.49.1:2222/fabi/","http://192.168.49.1:2222/fabi/android/");
                     break;
                     case 2:
                         mUrlEditText.setVisibility(View.GONE);

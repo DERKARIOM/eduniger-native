@@ -467,6 +467,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void handleSuccessfulLogin(String jsonData) {
         try {
+            Log.d("310726",jsonData);
             JSONObject jsonObject = new JSONObject(jsonData);
 
             mAccount.setName(jsonObject.getString("name"));

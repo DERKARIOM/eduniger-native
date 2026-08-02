@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/player_surface_solid"
+    android:paddingStart="24dp"
+    android:paddingEnd="24dp"
+    android:paddingTop="20dp"
+    android:paddingBottom="20dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/player_sleep_timer_title"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="@color/player_text_primary" />
+
+    <TextView android:id="@+id/chip_sleep_off"   style="@style/PlayerSleepChip" android:text="@string/player_sleep_timer_off" />
+    <TextView android:id="@+id/chip_sleep_5"     style="@style/PlayerSleepChip" android:text="5 min" />
+    <TextView android:id="@+id/chip_sleep_10"    style="@style/PlayerSleepChip" android:text="10 min" />
+    <TextView android:id="@+id/chip_sleep_15"    style="@style/PlayerSleepChip" android:text="15 min" />
+    <TextView android:id="@+id/chip_sleep_30"    style="@style/PlayerSleepChip" android:text="30 min" />
+    <TextView android:id="@+id/chip_sleep_45"    style="@style/PlayerSleepChip" android:text="45 min" />
+    <TextView android:id="@+id/chip_sleep_60"    style="@style/PlayerSleepChip" android:text="60 min" />
+
+</LinearLayout>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    LECTEUR AUDIO — surcharges TABLETTE (largeur minimale d'écran >= 600dp).
+    Sur grand écran on n'agrandit pas tout proportionnellement : on plafonne la
+    pochette, on aère la grille et on grossit légèrement la typographie, comme le
+    font Spotify/Deezer sur tablette.
+-->
+<resources>
+    <dimen name="player_gutter">48dp</dimen>
+    <dimen name="player_gutter_tight">32dp</dimen>
+
+    <!-- La pochette cesse de grandir : elle reste lisible et centrée -->
+    <dimen name="player_cover_max_width">460dp</dimen>
+    <dimen name="player_cover_margin_h">64dp</dimen>
+    <dimen name="player_cover_elevation">20dp</dimen>
+
+    <dimen name="player_touch_target">56dp</dimen>
+    <dimen name="player_touch_target_sm">52dp</dimen>
+
+    <dimen name="player_icon_pad_toolbar">14dp</dimen>
+    <dimen name="player_icon_pad_secondary">14dp</dimen>
+    <dimen name="player_icon_pad_primary">10dp</dimen>
+
+    <dimen name="player_play_button_size">84dp</dimen>
+    <dimen name="player_play_icon_size">32dp</dimen>
+
+    <dimen name="player_title_text">24sp</dimen>
+    <dimen name="player_author_text">16sp</dimen>
+    <dimen name="player_meta_text">14sp</dimen>
+    <dimen name="player_overline_text">11sp</dimen>
+    <dimen name="player_source_text">15sp</dimen>
+
+    <dimen name="player_space_cover_to_title">28dp</dimen>
+    <dimen name="player_space_title_to_seek">22dp</dimen>
+    <dimen name="player_space_seek_to_controls">12dp</dimen>
+    <dimen name="player_space_row_gap">8dp</dimen>
+    <dimen name="player_bottom_padding">36dp</dimen>
+
+    <dimen name="mini_player_height">76dp</dimen>
+    <dimen name="mini_player_cover">54dp</dimen>
+    <dimen name="mini_player_margin_h">24dp</dimen>
+    <dimen name="mini_player_bottom_offset">80dp</dimen>
+</resources>
