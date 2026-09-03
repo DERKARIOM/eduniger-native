@@ -36,6 +36,8 @@
     <dimen name="player_space_row_gap">8dp</dimen>
     <dimen name="player_bottom_padding">36dp</dimen>
 
+    <dimen name="continue_item_width">176dp</dimen>
+
     <dimen name="mini_player_height">76dp</dimen>
     <dimen name="mini_player_cover">54dp</dimen>
     <dimen name="mini_player_margin_h">24dp</dimen>

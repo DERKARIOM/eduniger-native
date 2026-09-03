@@ -37,12 +37,15 @@ import com.ninotech.eduniger.R;
 import com.ninotech.eduniger.controleur.activity.LoginActivity;
 import com.ninotech.eduniger.controleur.activity.SearchActivity;
 import com.ninotech.eduniger.controleur.adapter.AuthorHorizontaleAdapter;
+import com.ninotech.eduniger.controleur.adapter.ContinueListeningAdapter;
 import com.ninotech.eduniger.controleur.adapter.HorizontaleAdapter;
 import com.ninotech.eduniger.controleur.adapter.NoConnectionAdapter;
 import com.ninotech.eduniger.controleur.adapter.SemiNoConnectionAdapter;
 import com.ninotech.eduniger.controleur.adapter.StructureAdapter;
 import com.ninotech.eduniger.controleur.dialog.UpdateDialog;
 import com.ninotech.eduniger.model.data.Account;
+import com.ninotech.eduniger.model.data.ContinueItem;
+import com.ninotech.eduniger.model.data.PlaybackRepository;
 import com.ninotech.eduniger.model.data.Author;
 import com.ninotech.eduniger.model.data.Connection;
 import com.ninotech.eduniger.model.data.OnlineBook;
@@ -90,6 +93,11 @@ public class HomeFragment extends Fragment {
     private RelativeLayout mMoreAuthorRelativeLayout;
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
+    // Section « Reprendre l'écoute » (données locales, indépendantes du réseau)
+    private View               mContinueSection;
+    private RecyclerView       mContinueRecyclerView;
+    private PlaybackRepository mPlaybackRepository;
+
     // Data
     private final List<OnlineBook> mOnlineBookList = new ArrayList<>();
     private final List<Structure> mStructures = new ArrayList<>();
@@ -135,8 +143,47 @@ public class HomeFragment extends Fragment {
         setupSwipeRefresh();
         registerBroadcastReceiver();
         loadInitialData();
+        setupContinueListening(view);
 
         return view;
+    }
+
+    /**
+     * Section « Reprendre l'écoute ».
+     *
+     * Alimentée en local (PlaybackTable) : elle ne dépend d'aucun réseau et reste
+     * donc fonctionnelle hors ligne, contrairement au reste de l'accueil.
+     * La section entière est masquée s'il n'y a rien à reprendre.
+     */
+    private void setupContinueListening(View view) {
+        mContinueSection      = view.findViewById(R.id.layout_home_continue_section);
+        mContinueRecyclerView = view.findViewById(R.id.recycler_view_home_continue);
+        if (mContinueSection == null || mContinueRecyclerView == null) return;
+
+        mContinueRecyclerView.setLayoutManager(new LinearLayoutManager(
+                requireContext(), LinearLayoutManager.HORIZONTAL, false));
+        mContinueRecyclerView.setNestedScrollingEnabled(false);
+        refreshContinueListening();
+    }
+
+    private void refreshContinueListening() {
+        if (mContinueSection == null || mContinueRecyclerView == null) return;
+        if (mPlaybackRepository == null) mPlaybackRepository = new PlaybackRepository(requireContext());
+
+        List<ContinueItem> items = mPlaybackRepository.getContinueListening();
+        if (items.isEmpty()) {
+            mContinueSection.setVisibility(View.GONE);
+            return;
+        }
+        mContinueSection.setVisibility(View.VISIBLE);
+        mContinueRecyclerView.setAdapter(new ContinueListeningAdapter(items));
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // L'utilisateur revient du lecteur : la progression a changé, on rafraîchit.
+        refreshContinueListening();
     }
 
     // ==================== Initialisation ====================
@@ -250,6 +297,7 @@ public class HomeFragment extends Fragment {
             mAuthorArrayList.clear();
             mStructureIds.clear();
             stopPubFlipper();
+            refreshContinueListening();
             loadAllData();
         });
 

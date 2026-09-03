@@ -26,6 +26,7 @@ import com.ninotech.eduniger.controleur.adapter.ElectronicAdapter;
 import com.ninotech.eduniger.controleur.adapter.RecentAdapter;
 import com.ninotech.eduniger.model.data.Library;
 import com.ninotech.eduniger.model.data.LocalBooks;
+import com.ninotech.eduniger.model.data.PlaybackRepository;
 import com.ninotech.eduniger.model.data.Server;
 import com.ninotech.eduniger.model.table.AudioTable;
 import com.ninotech.eduniger.model.table.ElectronicTable;
@@ -136,6 +137,16 @@ public class LibraryFragment extends Fragment {
         libraryList.add(new Library(5, R.drawable.auteurs,
                 getString(R.string.author),
                 electronicTable.getNbrAuthor(session.getIdNumber())));
+
+        // Écoutes locales (PlaybackTable) — ids 7 et 8 routés par ElectronicAdapter
+        // vers PlaybackListActivity. L'id 6 est déjà pris par « Ajouter un livre ».
+        PlaybackRepository playbackRepository = new PlaybackRepository(getContext());
+        libraryList.add(new Library(7, R.drawable.vector_black3_off_like,
+                getString(R.string.your_favorites),
+                playbackRepository.getNbrFavorites()));
+        libraryList.add(new Library(8, R.drawable.vector_black3_time,
+                getString(R.string.listening_history),
+                playbackRepository.getNbrHistory()));
 
         // Livres récents
         try {

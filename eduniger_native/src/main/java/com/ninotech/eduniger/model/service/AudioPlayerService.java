@@ -5,7 +5,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.media.AudioAttributes;
 import android.media.AudioFocusRequest;
 import android.media.AudioManager;
@@ -27,6 +26,8 @@ import androidx.annotation.Nullable;
 import com.ninotech.eduniger.R;
 import com.ninotech.eduniger.model.data.CreateNotification;
 import com.ninotech.eduniger.model.data.Track;
+import com.ninotech.eduniger.model.table.PlaybackTable;
+import com.ninotech.eduniger.model.table.Session;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -34,6 +35,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Moteur de lecture audio d'EduNiger.
@@ -54,10 +57,6 @@ public class AudioPlayerService extends Service {
 
     private static final String TAG = "AudioPlayerService";
     public  static final String ACTION_TRACKS = "TRACKS_TRACKS";
-
-    private static final String PREFS_NAME        = "audio_player_prefs";
-    private static final String KEY_POSITION_PREFIX = "resume_pos_";
-    private static final String KEY_FAVORITE_PREFIX = "favorite_";
 
     public static final long SKIP_SHORT_MS = 10_000L; // ±10s
     public static final long SKIP_LONG_MS  = 30_000L; // ±30s
@@ -91,7 +90,16 @@ public class AudioPlayerService extends Service {
     private MediaSessionCompat mMediaSession;
     private AudioManager       mAudioManager;
     private AudioFocusRequest  mAudioFocusRequest; // API 26+ (minSdk 28)
-    private SharedPreferences  mPrefs;
+
+    // État d'écoute persistant (position de reprise, favoris, historique).
+    // Stocké en SQLite et cloisonné PAR UTILISATEUR via Session.getIdNumber().
+    private PlaybackTable mPlaybackTable;
+    private Session       mSession;
+    private String        mUserId;
+
+    // Les accès SQLite ne doivent jamais bloquer le thread principal : le ticker de
+    // progression écrit toutes les 5 s, et prepareAndPlay() lit la position de reprise.
+    private final ExecutorService mDbExecutor = Executors.newSingleThreadExecutor();
 
     // Data / file d'attente
     private List<Track>    mTracks    = new ArrayList<>();
@@ -137,8 +145,10 @@ public class AudioPlayerService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        mPrefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        mPlaybackTable = new PlaybackTable(this);
+        mSession       = new Session(this);
+        mUserId        = mSession.getIdNumber();
+        mAudioManager  = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
         mMediaSession = new MediaSessionCompat(this, "EduNigerPlayer");
         mMediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS
@@ -255,6 +265,7 @@ public class AudioPlayerService extends Service {
                 mIsPlaying = true;
                 mp.start();
                 startTicking();
+                markPlayed(track.getIdBook()); // historique + « Reprendre l'écoute »
                 updateNotification();
                 for (PlayerCallback cb : mCallbacks) cb.onTrackChanged(mPosition);
                 for (PlayerCallback cb : mCallbacks) cb.onPlaybackStateChanged(true);
@@ -424,41 +435,53 @@ public class AudioPlayerService extends Service {
         return mTracks.get(mPosition).getIdBook();
     }
 
+    /** Persiste la progression courante (hors thread principal). */
     private void saveResumePosition() {
-        String id = mLoadedTrackId;
-        if (id == null || mMediaPlayer == null) return;
-        int pos, dur;
+        final String id = mLoadedTrackId;
+        if (id == null || mMediaPlayer == null || mUserId == null) return;
+        final int pos, dur;
         try {
             pos = mMediaPlayer.getCurrentPosition();
             dur = mMediaPlayer.getDuration();
         } catch (IllegalStateException e) { return; }
-        SharedPreferences.Editor editor = mPrefs.edit();
-        if (dur > 0 && pos > 3000 && pos < dur - 3000) {
-            editor.putInt(KEY_POSITION_PREFIX + id, pos);
-        } else {
-            editor.remove(KEY_POSITION_PREFIX + id);
-        }
-        editor.apply();
+        if (dur <= 0) return;
+        mDbExecutor.execute(() -> mPlaybackTable.saveProgress(mUserId, id, pos, dur));
     }
 
+    /**
+     * Lecture SYNCHRONE de la position de reprise : appelée une seule fois dans
+     * onPrepared, juste avant le seek. Une requête indexée sur clé unique — coût
+     * négligeable, et la faire en asynchrone provoquerait un saut audible.
+     */
     private int getResumePosition(String idBook) {
-        return idBook == null ? 0 : mPrefs.getInt(KEY_POSITION_PREFIX + idBook, 0);
+        if (idBook == null || mUserId == null) return 0;
+        return mPlaybackTable.getPosition(mUserId, idBook);
     }
 
-    private void clearResumePosition(String idBook) {
-        if (idBook != null) mPrefs.edit().remove(KEY_POSITION_PREFIX + idBook).apply();
+    private void clearResumePosition(final String idBook) {
+        if (idBook == null || mUserId == null) return;
+        mDbExecutor.execute(() -> mPlaybackTable.clearPosition(mUserId, idBook));
+    }
+
+    /** Marque la piste comme écoutée : alimente l'historique et « Reprendre l'écoute ». */
+    private void markPlayed(final String idBook) {
+        if (idBook == null || mUserId == null) return;
+        mDbExecutor.execute(() -> mPlaybackTable.markPlayed(mUserId, idBook));
     }
 
     public boolean isFavorite(String idBook) {
-        return idBook != null && mPrefs.getBoolean(KEY_FAVORITE_PREFIX + idBook, false);
+        if (idBook == null || mUserId == null) return false;
+        return mPlaybackTable.isFavorite(mUserId, idBook);
     }
 
     public boolean toggleFavoriteCurrent() {
-        String id = currentIdBook();
-        if (id == null) return false;
+        final String id = currentIdBook();
+        if (id == null || mUserId == null) return false;
         boolean newVal = !isFavorite(id);
-        mPrefs.edit().putBoolean(KEY_FAVORITE_PREFIX + id, newVal).apply();
+        final boolean value = newVal;
+        mDbExecutor.execute(() -> mPlaybackTable.setFavorite(mUserId, id, value));
         for (PlayerCallback cb : mCallbacks) cb.onFavoriteChanged(newVal);
+        updateNotification(); // reflète l'icône ❤ dans la notification
         return newVal;
     }
 
@@ -647,5 +670,7 @@ public class AudioPlayerService extends Service {
         }
         releaseMediaPlayer();
         mCallbacks.clear();
+        mDbExecutor.shutdown();
+        if (mPlaybackTable != null) mPlaybackTable.close();
     }
 }

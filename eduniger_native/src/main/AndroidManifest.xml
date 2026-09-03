@@ -196,6 +196,11 @@
         <activity
             android:name=".controleur.activity.ListPlayerActivity"
             android:exported="false"
+            android:screenOrientation="portrait" />
+        <!-- Écran unique « Vos Favoris » / « Historique d'écoute » (voir EXTRA_MODE) -->
+        <activity
+            android:name=".controleur.activity.PlaybackListActivity"
+            android:exported="false"
             android:screenOrientation="portrait" /> <!-- ==================== Activités PDF ==================== -->
         <activity
             android:name=".controleur.activity.NotificationActivity"

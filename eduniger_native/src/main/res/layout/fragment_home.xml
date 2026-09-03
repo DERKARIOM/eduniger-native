@@ -145,10 +145,45 @@
                 android:id="@+id/relative_layout_fragment_home"
                 style="@style/match_parent_all">
 
+                <!-- ===== REPRENDRE L'ÉCOUTE =====
+                     Section entière masquée (GONE) tant qu'aucune écoute n'est en
+                     cours : un utilisateur qui n'a jamais lancé d'audio ne voit
+                     aucun espace vide. Alimentée par PlaybackRepository. -->
+                <LinearLayout
+                    android:id="@+id/layout_home_continue_section"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:orientation="vertical"
+                    android:layout_marginTop="16dp"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginBottom="10dp"
+                        android:text="@string/continue_listening"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/player_text_primary" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recycler_view_home_continue"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="15dp"
+                        android:paddingEnd="15dp"
+                        android:clipToPadding="false"
+                        android:orientation="horizontal"
+                        android:overScrollMode="never" />
+                </LinearLayout>
+
                 <ViewFlipper
                     android:id="@+id/view_flipper_pub"
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
+                    android:layout_below="@id/layout_home_continue_section"
                     android:layout_marginTop="20dp"
                     android:layout_marginStart="15dp"
                     android:layout_marginEnd="15dp"

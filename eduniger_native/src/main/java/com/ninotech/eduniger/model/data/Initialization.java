@@ -10,6 +10,7 @@ import com.ninotech.eduniger.model.table.AudioTable;
 import com.ninotech.eduniger.model.table.ElectronicTable;
 import com.ninotech.eduniger.model.table.LoandTable;
 import com.ninotech.eduniger.model.table.NotificationTable;
+import com.ninotech.eduniger.model.table.PlaybackTable;
 import com.ninotech.eduniger.model.table.StudentTable;
 import com.ninotech.eduniger.model.table.UserTable;
 
@@ -22,6 +23,7 @@ public class Initialization {
         mNotificationTable = new NotificationTable(context);
         mLoandTable = new LoandTable(context);
         mAudioTable = new AudioTable(context);
+        mPlaybackTable = new PlaybackTable(context);
     }
     public boolean onCreate(Context context)
     {
@@ -33,6 +35,7 @@ public class Initialization {
             mNotificationTable.onCreate(database);
             mLoandTable.onCreate(database);
             mAudioTable.onCreate(database);
+            mPlaybackTable.onCreate(database);
             return true;
         }catch (Exception e)
         {
@@ -45,5 +48,6 @@ public class Initialization {
     private final NotificationTable mNotificationTable;
     private final LoandTable mLoandTable;
     private final AudioTable mAudioTable;
+    private final PlaybackTable mPlaybackTable;
 }
 

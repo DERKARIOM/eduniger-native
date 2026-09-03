@@ -46,6 +46,9 @@
     <dimen name="player_space_row_gap">4dp</dimen>
     <dimen name="player_bottom_padding">24dp</dimen>
 
+    <!-- Carrousel « Reprendre l'écoute » -->
+    <dimen name="continue_item_width">132dp</dimen>
+
     <!-- Mini lecteur -->
     <dimen name="mini_player_height">64dp</dimen>
     <dimen name="mini_player_cover">44dp</dimen>

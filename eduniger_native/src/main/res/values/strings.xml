@@ -230,6 +230,12 @@
     <string name="player_sleep_timer_set_short">Arrêt dans %1$s</string>
     <string name="player_sleep_timer_cancelled">Minuteur d\'arrêt annulé</string>
     <string name="player_queue_updated">File d\'attente mise à jour</string>
+    <string name="continue_listening">Reprendre l\'écoute</string>
+    <string name="continue_remaining">Il reste %1$d min</string>
+    <string name="your_favorites">Vos Favoris</string>
+    <string name="listening_history">Historique d\'écoute</string>
+    <string name="no_favorites">Aucun favori pour le moment</string>
+    <string name="no_history">Aucune écoute pour le moment</string>
     <string name="your_loand_books">"Vos Livres Empruntés</string>
     <string name="cetegory">Catégories</string>
     <string name="author">Auteurs</string>

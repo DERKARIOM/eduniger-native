@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.ninotech.eduniger.R;
 import com.ninotech.eduniger.controleur.activity.AddBookActivity;
 import com.ninotech.eduniger.controleur.activity.ContainerActivity;
+import com.ninotech.eduniger.controleur.activity.PlaybackListActivity;
 import com.ninotech.eduniger.model.data.Library;
 
 import java.util.List;
@@ -80,18 +81,33 @@ public class ElectronicAdapter extends RecyclerView.Adapter<ElectronicAdapter.My
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (library.getId() != 6)
-                    {
-                        Intent local = new Intent(itemView.getContext(), ContainerActivity.class);
-                        local.putExtra("id",library.getId());
-                        itemView.getContext().startActivity(local);
+                    switch (library.getId()) {
+                        case 6: { // Ajouter un livre (réservé à l'administration)
+                            Intent addBook = new Intent(itemView.getContext(), AddBookActivity.class);
+                            itemView.getContext().startActivity(addBook);
+                            break;
+                        }
+                        case 7: { // Vos Favoris
+                            Intent favorites = new Intent(itemView.getContext(), PlaybackListActivity.class);
+                            favorites.putExtra(PlaybackListActivity.EXTRA_MODE,
+                                    PlaybackListActivity.MODE_FAVORITES);
+                            itemView.getContext().startActivity(favorites);
+                            break;
+                        }
+                        case 8: { // Historique d'écoute
+                            Intent history = new Intent(itemView.getContext(), PlaybackListActivity.class);
+                            history.putExtra(PlaybackListActivity.EXTRA_MODE,
+                                    PlaybackListActivity.MODE_HISTORY);
+                            itemView.getContext().startActivity(history);
+                            break;
+                        }
+                        default: {
+                            Intent local = new Intent(itemView.getContext(), ContainerActivity.class);
+                            local.putExtra("id", library.getId());
+                            itemView.getContext().startActivity(local);
+                            break;
+                        }
                     }
-                    else
-                    {
-                        Intent addBook = new Intent(itemView.getContext(), AddBookActivity.class);
-                        itemView.getContext().startActivity(addBook);
-                    }
-
                 }
             });
         }
