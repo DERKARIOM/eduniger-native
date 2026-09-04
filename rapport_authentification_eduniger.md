@@ -158,8 +158,8 @@ Environnement : PHP 8.4 (`php -S`) + MariaDB 10.11, schéma réel importé depui
 - **Tables manquantes** (`Comment`, `NotifView`, `StudentAccount`) : voir §5, fonctionnalités déjà non opérationnelles avant cette intervention.
 - **`RegisterActivity` n'obtient pas de tokens immédiatement après inscription** (voir §6) — nécessite une connexion explicite juste après.
 - **Aucun compte n'a actuellement `role = 'ADMIN'` dans votre base** (voir §9) — à corriger manuellement si vous voulez pouvoir utiliser les fonctions d'administration.
-- Aucun secret n'a été trouvé en dur dans les nouveaux fichiers (`JWT_SECRET` exclusivement via variable d'environnement, conformément à votre consigne).
-- **Compilation Android non vérifiée** (voir avertissement §6) — aucun SDK Android/Gradle disponible dans cet environnement pour compiler réellement les 26 fichiers modifiés ; seules une relecture attentive et une vérification mécanique de l'équilibre des accolades ont pu être faites.
+- Aucun secret n'a été trouvé en dur dans les nouveaux fichiers (`JWT_SECRET` exclusivement via variable d'environnement, conformément à votre consigne — voir §11 pour comment elle a été configurée sur votre serveur).
+- ✅ ~~Compilation Android non vérifiée~~ : compilée avec succès dans Android Studio après correction d'un bug réel (voir §11), et connexion confirmée fonctionnelle de bout en bout sur votre appareil réel contre votre serveur réel.
 
 ## 9. Stratégie de déploiement recommandée
 
@@ -167,8 +167,8 @@ Le système actuel a une contrainte incontournable : dès que `AuthMiddleware::r
 
 Séquence recommandée :
 1. ✅ Migration SQL (§4) exécutée sur la base de production.
-2. Déployer les fichiers `api/` de ce chantier (ils sont rétrocompatibles pour le login : les champs ajoutés à la réponse sont additifs, les anciens champs comme `password` sont conservés — voir note ci-dessous).
-3. ✅ Migration Android terminée (les 31 points d'appel ont été basculés vers `ApiClient`, voir §6) — il reste à **compiler réellement le projet avec Android Studio/Gradle** (non disponible dans cet environnement) et à faire des tests manuels réels sur les 15 scénarios avant publication, puis publier une nouvelle version de l'app.
+2. ✅ Fichiers `api/` déployés sur votre serveur réel (voir §11 pour le détail — chemin réel, secret JWT, cache).
+3. ✅ Migration Android terminée et **compilée avec succès** (voir §11) ; connexion testée et fonctionnelle sur un appareil réel. Il reste à faire passer manuellement les 14 autres scénarios du tableau ci-dessus directement dans l'app avant publication (déconnexion, renouvellement, accès sans droits, etc.), puis publier la nouvelle version.
 4. Une fois cette version suffisamment diffusée, **incrémenter `Version.idVersion`** en base : les appareils encore sur l'ancienne version seront alors bloqués à l'écran de connexion avec un message de mise à jour, au lieu de rencontrer des 401 confus sur certains écrans.
 5. Promouvoir au moins un compte en `role = 'ADMIN'` (ou `'SUPER_ADMIN'`) si vous avez besoin d'accéder aux fonctions d'administration (`send_notification.php`, `add_book.php`) :
    ```sql
@@ -176,6 +176,26 @@ Séquence recommandée :
    ```
 
 **Note sur le champ `password` renvoyé par `login.php`** : il est conservé dans la réponse uniquement parce que `LoginActivity.java` (ligne ~476) le lit encore pour l'écran de verrouillage local (`LockActivity`). C'est un problème résiduel d'exposition de données déjà signalé dans l'audit précédent ; le supprimer casserait immédiatement cette fonctionnalité pour toute la base installée. À traiter en migrant `LockActivity` vers un stockage sécurisé dédié (ne nécessitant plus de recevoir le hash du serveur), puis en retirant ce champ de la réponse.
+
+## 11. Déploiement réel sur votre serveur — ce qui a été trouvé et corrigé
+
+Après la migration Android (§6), la compilation réelle dans Android Studio a révélé un problème que je ne pouvais pas voir sans SDK : la version de `androidx.security:security-crypto` déclarée dans `build.gradle` (`1.1.0-alpha06`) a supprimé la classe `MasterKeys` au profit d'une nouvelle classe `MasterKey` (Builder). `TokenStore.java` a été corrigé pour utiliser la nouvelle API (`MasterKey.Builder(...).setKeyScheme(MasterKey.KeyScheme.AES256_GCM).build()` puis `EncryptedSharedPreferences.create(context, fileName, masterKey, ...)`), sans changement de comportement (même chiffrement AES-256/Keystore).
+
+Une fois l'app compilée, un premier test de connexion réel a échoué (`JSONException: No value for name`) — pas un bug de code, mais un **problème de déploiement**, diagnostiqué avec vous en direct :
+
+- **Topologie réelle du serveur** : `172.20.10.10:2222` est un serveur Apache 2.4/Ubuntu (probablement un environnement Termux/proot sur un appareil Android, vu le chemin `/sdcard/...`) sur votre réseau local. Le `DocumentRoot` du VirtualHost écoutant sur le port 2222 est `/var/www/html`, et `/var/www/html/eduniger` est un **lien symbolique vers `/sdcard/projets/eduniger`** — c'est donc **`/sdcard/projets/eduniger/api`** le vrai chemin à utiliser pour tout déploiement futur, PAS `/var/www/eduniger/api` (un premier essai y avait été fait par erreur, sans effet puisque ce dossier n'est pas servi ; il a été supprimé).
+- **PHP tourne en mod_php** (pas de PHP-FPM), avec **OPcache actif** — après tout déploiement de nouveaux fichiers PHP, un redémarrage d'Apache est nécessaire pour que les changements soient réellement pris en compte (sinon l'ancien bytecode compilé peut continuer à être servi).
+- **`JWT_SECRET` a été configuré** via `SetEnv JWT_SECRET "..."` ajouté dans `/etc/apache2/sites-enabled/000-default.conf` (à l'intérieur du bloc `<VirtualHost *:2222>`), suivi d'un `systemctl restart apache2`.
+- Un dossier `.git` s'était retrouvé copié par erreur sur le serveur lors du premier essai de déploiement (risque de fuite du code source si exposé publiquement) ; il a été supprimé avec le reste du mauvais dossier.
+
+**Aide-mémoire pour un futur déploiement** :
+```bash
+rsync -avz -e "ssh -p 8080" --exclude='.git' --exclude='.DS_Store' \
+  ~/projets/eduniger-native/api/ cloud@172.20.10.10:/sdcard/projets/eduniger/api/
+ssh -p 8080 cloud@172.20.10.10 "apache2ctl configtest && sudo systemctl restart apache2"
+```
+
+Après ces corrections, la connexion a été testée avec succès depuis l'app sur un appareil réel, contre le serveur réel — confirmation concrète, au-delà des tests automatisés du §7, que la chaîne complète (app Android → Apache/PHP → MariaDB) fonctionne.
 
 ## 10. Récapitulatif — durées de vie et stockage
 
