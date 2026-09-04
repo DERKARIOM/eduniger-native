@@ -143,7 +143,7 @@ public class CategoryActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             registerReceiver(receiverNoConnectionAdapter,
                     new IntentFilter("CATEGORY_ACTIVITY"),
-                    Context.RECEIVER_EXPORTED);
+                    Context.RECEIVER_NOT_EXPORTED);
         }
 
         // Chargement initial — inchangé

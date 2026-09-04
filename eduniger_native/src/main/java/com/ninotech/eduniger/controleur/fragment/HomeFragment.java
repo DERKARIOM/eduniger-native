@@ -437,7 +437,7 @@ public class HomeFragment extends Fragment {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             requireContext().registerReceiver(mReceiver,
                     new IntentFilter(ACTION_HOME_FRAGMENT),
-                    Context.RECEIVER_EXPORTED);
+                    Context.RECEIVER_NOT_EXPORTED);
         }
     }
 

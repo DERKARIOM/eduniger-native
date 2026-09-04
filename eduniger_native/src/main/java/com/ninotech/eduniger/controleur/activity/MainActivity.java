@@ -379,7 +379,7 @@ public class MainActivity extends AppCompatActivity {
             registerReceiver(
                     mUpdateBadgeReceiver,
                     new IntentFilter(ACTION_UPDATE_BADGE),
-                    Context.RECEIVER_EXPORTED
+                    Context.RECEIVER_NOT_EXPORTED
             );
         }
     }

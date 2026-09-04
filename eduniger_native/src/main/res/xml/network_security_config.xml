@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+   Configuration reseau : le trafic HTTP en clair (non chiffre) n'est autorise QUE pour les
+   hotes de test/developpement connus (IP locale et serveur historique) references dans
+   Server.java / strings.xml. Tout le reste du trafic doit passer en HTTPS.
+
+   Lors du passage a un serveur distant en HTTPS (ex: https://server.eduniger.com), ce
+   fichier n'a PLUS besoin d'etre modifie : le nouvel hote sera automatiquement chiffre
+   (aucune exception cleartext n'est necessaire pour du HTTPS). Si un futur environnement de
+   test doit lui aussi utiliser du HTTP en clair, ajoutez son domaine ci-dessous.
+-->
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">192.168.49.1</domain>
+        <domain includeSubdomains="false">78.46.46.154</domain>
+    </domain-config>
+    <base-config cleartextTrafficPermitted="false" />
+</network-security-config>

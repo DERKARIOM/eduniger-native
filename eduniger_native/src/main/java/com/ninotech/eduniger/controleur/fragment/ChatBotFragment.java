@@ -117,9 +117,9 @@ public class ChatBotFragment extends Fragment {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             requireContext().registerReceiver(mReceiverBook,
-                    new IntentFilter(ACTION_RECOVER_BOOK), Context.RECEIVER_EXPORTED);
+                    new IntentFilter(ACTION_RECOVER_BOOK), Context.RECEIVER_NOT_EXPORTED);
             requireContext().registerReceiver(mReceiverScroll,
-                    new IntentFilter(ACTION_GO_TO_END_CHAT), Context.RECEIVER_EXPORTED);
+                    new IntentFilter(ACTION_GO_TO_END_CHAT), Context.RECEIVER_NOT_EXPORTED);
         }
     }
 

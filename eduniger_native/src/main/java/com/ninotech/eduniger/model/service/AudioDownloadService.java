@@ -44,10 +44,10 @@ public class AudioDownloadService extends Service {
         try {
             AudioBook audioBook = new AudioBook();
             DownloadFile downloadFile = new DownloadFile(this);
-            audioBook.setCover(downloadFile.start("http://192.168.49.1:2222/eduniger/admin-api/storage/app/private/structures/1/blankets/" + names[0], names[0], this::updateProgress));
-            audioBook.setCoverCategory(downloadFile.start("http://192.168.49.1:2222/fabi/ressources/cover/" + names[2], names[2], this::updateProgress));
-            audioBook.setProfileAuthor(downloadFile.start("http://192.168.49.1:2222/fabi/ressources/profile/" + names[3], names[3], this::updateProgress));
-            audioBook.setAudio(downloadFile.start("http://192.168.49.1:2222/eduniger/admin-api/storage/app/private/structures/1/audios/" + names[4], names[4], this::updateProgress));
+            audioBook.setCover(downloadFile.start(Server.getUrlHost(this) + "/eduniger/admin-api/storage/app/private/structures/1/blankets/" + names[0], names[0], this::updateProgress));
+            audioBook.setCoverCategory(downloadFile.start(Server.getUrlHost(this) + "/fabi/ressources/cover/" + names[2], names[2], this::updateProgress));
+            audioBook.setProfileAuthor(downloadFile.start(Server.getUrlHost(this) + "/fabi/ressources/profile/" + names[3], names[3], this::updateProgress));
+            audioBook.setAudio(downloadFile.start(Server.getUrlHost(this) + "/eduniger/admin-api/storage/app/private/structures/1/audios/" + names[4], names[4], this::updateProgress));
 
             AudioTable audioTable = new AudioTable(getApplicationContext());
             audioTable.insert(names[5], names[6], names[7], names[8],audioBook.getCover(),audioBook.getAudio(), names[9], names[10],audioBook.getCoverCategory(),audioBook.getProfileAuthor(),names[11]);
@@ -60,6 +60,16 @@ public class AudioDownloadService extends Service {
             sendBroadcast(finishIntent);
         } catch (Exception e) {
             e.printStackTrace();
+            // Echec du telechargement : informer l'utilisateur au lieu de laisser la
+            // notification et l'interface bloquees sur "en cours" indefiniment.
+            notificationBuilder.setContentText("Echec du telechargement")
+                    .setProgress(0, 0, false)
+                    .setSmallIcon(android.R.drawable.stat_sys_warning);
+            notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
+            Intent failIntent = new Intent("ACTION_FINISH_DOWNLOAD");
+            failIntent.putExtra("format", "audio");
+            failIntent.putExtra("success", false);
+            sendBroadcast(failIntent);
         } finally {
             stopForeground(true);
             stopSelf();

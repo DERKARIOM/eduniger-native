@@ -48,8 +48,8 @@ public class PdfDownloadService extends Service {
         try {
             ElectronicBook electronicBook = new ElectronicBook();
             DownloadFile downloadFile = new DownloadFile(this);
-            electronicBook.setCover(downloadFile.start("http://78.46.46.154/eduniger/admin-api/storage/app/private/structures/1/blankets/" + names[0], names[0], this::updateProgress));
-            electronicBook.setPdf(downloadFile.start("http://78.46.46.154/eduniger/admin-api/storage/app/private/structures/1/pdfs/" + names[1], names[1], this::updateProgress));
+            electronicBook.setCover(downloadFile.start(Server.getUrlHostProd(this) + "/eduniger/admin-api/storage/app/private/structures/1/blankets/" + names[0], names[0], this::updateProgress));
+            electronicBook.setPdf(downloadFile.start(Server.getUrlHostProd(this) + "/eduniger/admin-api/storage/app/private/structures/1/pdfs/" + names[1], names[1], this::updateProgress));
             electronicBook.setCoverCategory(downloadFile.start(Server.getUrlServer(this) + "ressources/cover/" + names[2], names[2], this::updateProgress));
             electronicBook.setProfileAuthor(downloadFile.start(Server.getUrlServer(this) + "ressources/profile/" + names[3], names[3], this::updateProgress));
 
@@ -64,6 +64,16 @@ public class PdfDownloadService extends Service {
             sendBroadcast(finishIntent);
         } catch (Exception e) {
             e.printStackTrace();
+            // Echec du telechargement : informer l'utilisateur au lieu de laisser la
+            // notification et l'interface bloquees sur "en cours" indefiniment.
+            notificationBuilder.setContentText("Echec du telechargement")
+                    .setProgress(0, 0, false)
+                    .setSmallIcon(android.R.drawable.stat_sys_warning);
+            notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
+            Intent failIntent = new Intent("ACTION_FINISH_DOWNLOAD");
+            failIntent.putExtra("format", "pdf");
+            failIntent.putExtra("success", false);
+            sendBroadcast(failIntent);
         } finally {
             stopForeground(true);
             stopSelf();

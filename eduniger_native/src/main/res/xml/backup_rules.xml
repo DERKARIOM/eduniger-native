@@ -1,13 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-   Sample backup rules file; uncomment and customize as necessary.
-   See https://developer.android.com/guide/topics/data/autobackup
-   for details.
-   NoteTable: This file is ignored for devices older that API 31
-   See https://developer.android.com/about/versions/12/backup-restore
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+   Regles de sauvegarde complete (Android < 12, ignore a partir d'API 31 qui utilise
+   data_extraction_rules.xml).
+   SECURITE : meme exclusion que data_extraction_rules.xml, voir ce fichier.
 -->
 <full-backup-content>
-    <!--
-   <include domain="sharedpref" path="."/>
-   <exclude domain="sharedpref" path="device.xml"/>
--->
+    <exclude domain="database" path="data.db" />
+    <exclude domain="sharedpref" path="server_prefs.xml" />
 </full-backup-content>

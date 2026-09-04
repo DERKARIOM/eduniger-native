@@ -277,7 +277,7 @@ public class AuthorActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             registerReceiver(mNoConnectionReceiver,
                     new IntentFilter(ACTION_AUTHOR),
-                    Context.RECEIVER_EXPORTED);
+                    Context.RECEIVER_NOT_EXPORTED);
         }
     }
 

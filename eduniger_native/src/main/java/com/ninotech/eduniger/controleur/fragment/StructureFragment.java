@@ -173,7 +173,7 @@ public class StructureFragment extends Fragment {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             getContext().registerReceiver(receiver,
                     new IntentFilter("CATEGORY_FRAGMENT"),
-                    Context.RECEIVER_EXPORTED);
+                    Context.RECEIVER_NOT_EXPORTED);
         }
     }
 

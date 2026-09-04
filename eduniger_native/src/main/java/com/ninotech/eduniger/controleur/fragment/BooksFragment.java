@@ -206,7 +206,7 @@ public class BooksFragment extends Fragment {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             requireContext().registerReceiver(mNoConnectionReceiver,
                     new IntentFilter(ACTION_RANKING),
-                    Context.RECEIVER_EXPORTED);
+                    Context.RECEIVER_NOT_EXPORTED);
         }
     }
 

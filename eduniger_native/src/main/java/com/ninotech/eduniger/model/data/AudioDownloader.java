@@ -67,19 +67,19 @@ public class AudioDownloader extends AsyncTask<String, Integer, AudioBook> {
         DownloadFile downloadFile = new DownloadFile(mContext);
         try {
             // Télécharger les fichiers avec progression
-            audioBook.setCover(downloadFile.start("http://192.168.49.1:2222/eduniger/admin-api/storage/app/private/structures/1/blankets/" + names[12],
+            audioBook.setCover(downloadFile.start(Server.getUrlHost(mContext) + "/eduniger/admin-api/storage/app/private/structures/1/blankets/" + names[12],
                     names[0],
                     progress -> publishProgress(progress)
             ));
 
             audioBook.setCoverCategory(downloadFile.start(
-                    "http://192.168.49.1:2222/ressources/cover/" + names[2],
+                    Server.getUrlHost(mContext) + "/ressources/cover/" + names[2],
                     names[2],
                     progress -> publishProgress(progress)
             ));
 
             audioBook.setProfileAuthor(downloadFile.start(
-                    "http://192.168.49.1:2222/fabi/ressources/profile/" + names[3],
+                    Server.getUrlHost(mContext) + "/fabi/ressources/profile/" + names[3],
                     names[3],
                     progress -> publishProgress(progress)
             ));
@@ -91,26 +91,30 @@ public class AudioDownloader extends AsyncTask<String, Integer, AudioBook> {
             ));
         } catch (Exception e) {
             e.printStackTrace();
+            return null; // signale l'echec a onPostExecute au lieu de renvoyer un objet incomplet
         }
         return audioBook;
     }
     @Override
     protected void onPostExecute(AudioBook result) {
-        if (result != null) {
+        boolean success = result != null;
+        if (success) {
             // Convertir l'image Bitmap en un tableau d'octets
             AudioTable audioTable = new AudioTable(mContext);
             audioTable.insert(mIdNumber, mOnlineBook.getId(), mOnlineBook.getDescription(), mOnlineBook.getAuthor(),result.getCover(),result.getAudio(), mOnlineBook.getCategory(), mOnlineBook.getTitle(),result.getCoverCategory(),result.getProfileAuthor(),mTones.getDuration());
+            notificationBuilder.setContentText("Téléchargement terminé")
+                    .setProgress(0, 0, false)
+                    .setSmallIcon(android.R.drawable.stat_sys_download_done);
+        } else {
+            notificationBuilder.setContentText("Échec du téléchargement")
+                    .setProgress(0, 0, false)
+                    .setSmallIcon(android.R.drawable.stat_sys_warning);
         }
-        // Sauvegarder l'image dans la base de données SQLite
-        // Utilisez votre DatabaseHelper pour insérer l'image dans la base de données
-        // Mise à jour de la notification pour indiquer la fin du téléchargement
-        notificationBuilder.setContentText("Téléchargement terminé")
-                .setProgress(0, 0, false)
-                .setSmallIcon(android.R.drawable.stat_sys_download_done);
         notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
         notificationManager.cancel(NOTIFICATION_ID);
         Intent finishDownloadIntent = new Intent("ACTION_FINISH_DOWNLOAD");
         finishDownloadIntent.putExtra("format","audio");
+        finishDownloadIntent.putExtra("success", success);
         mContext.sendBroadcast(finishDownloadIntent);
     }
 }

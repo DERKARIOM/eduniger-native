@@ -372,34 +372,41 @@ public class BookActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             registerReceiver(mPdfProgressReceiver,
                     new IntentFilter("ACTION_PDF_DOWNLOAD_PROGRESS"),
-                    Context.RECEIVER_EXPORTED);
+                    Context.RECEIVER_NOT_EXPORTED);
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             registerReceiver(mFinishDownloadReceiver,
-                    new IntentFilter(ACTION_FINISH_DOWNLOAD), Context.RECEIVER_EXPORTED);
+                    new IntentFilter(ACTION_FINISH_DOWNLOAD), Context.RECEIVER_NOT_EXPORTED);
             registerReceiver(mNoConnectionReceiver,
-                    new IntentFilter(ACTION_BOOK), Context.RECEIVER_EXPORTED);
+                    new IntentFilter(ACTION_BOOK), Context.RECEIVER_NOT_EXPORTED);
             registerReceiver(mAudioProgressReceiver,
                     new IntentFilter("ACTION_AUDIO_DOWNLOAD_PROGRESS"),
-                    Context.RECEIVER_EXPORTED);
+                    Context.RECEIVER_NOT_EXPORTED);
         }
     }
 
     private void handleDownloadFinished(Intent intent) {
         String format = intent.getStringExtra("format");
+        // Par defaut "true" pour ne pas casser un eventuel emetteur qui n'enverrait pas cet extra.
+        boolean success = intent.getBooleanExtra("success", true);
         if ("audio".equals(format)) {
             mAudioDownloadProgressContainer.setVisibility(View.GONE);
             audioButton.setVisibility(View.VISIBLE);
-            audioButton.setText("Lire");
-            // ligne downloadAudioProgressBar → supprimer
+            audioButton.setText(success ? "Lire" : "Format Audio");
         } else if ("pdf".equals(format)) {
-            mSourcePdf = mElectronicTable.getPdf(mOnlineBook.getId());
+            if (success) {
+                mSourcePdf = mElectronicTable.getPdf(mOnlineBook.getId());
+            }
             mPdfDownloadProgressContainer.setVisibility(View.GONE);
             downloadPDFButton.setVisibility(View.VISIBLE);
-            downloadPDFButton.setText("Ouvrir");
+            downloadPDFButton.setText(success ? "Ouvrir" : "Format PDF");
         }
-        Toast.makeText(this, mOnlineBook.getTitle() + " Téléchargé avec succès", Toast.LENGTH_SHORT).show();
+        if (success) {
+            Toast.makeText(this, mOnlineBook.getTitle() + " Téléchargé avec succès", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Échec du téléchargement, veuillez réessayer", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void loadBookData() {

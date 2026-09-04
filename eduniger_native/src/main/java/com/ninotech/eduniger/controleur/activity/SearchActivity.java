@@ -692,7 +692,7 @@ public class SearchActivity extends AppCompatActivity {
 
     private void registerReceiverSafely(BroadcastReceiver receiver, IntentFilter filter) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            registerReceiver(receiver, filter, Context.RECEIVER_EXPORTED);
+            registerReceiver(receiver, filter, Context.RECEIVER_NOT_EXPORTED);
         } else {
             registerReceiver(receiver, filter);
         }

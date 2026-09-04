@@ -154,7 +154,7 @@ public class CategoryFragment extends Fragment {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             requireContext().registerReceiver(mNoConnectionReceiver,
                     new IntentFilter(ACTION_CATEGORY),
-                    Context.RECEIVER_EXPORTED);
+                    Context.RECEIVER_NOT_EXPORTED);
         }
     }
 

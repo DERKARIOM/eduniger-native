@@ -618,7 +618,7 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable,
         };
         IntentFilter filter = new IntentFilter(ACTION_SELECT_PLAYER);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
-            registerReceiver(mPlaylistReceiver, filter, Context.RECEIVER_EXPORTED);
+            registerReceiver(mPlaylistReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
         else
             registerReceiver(mPlaylistReceiver, filter);
     }

@@ -89,6 +89,7 @@ public class ElectronicDownloader extends AsyncTask<String, Integer, ElectronicB
             ));
         } catch (Exception e) {
             e.printStackTrace();
+            return null; // signale l'echec a onPostExecute au lieu de renvoyer un objet incomplet
         }
         return electronicBook;
     }
@@ -96,7 +97,8 @@ public class ElectronicDownloader extends AsyncTask<String, Integer, ElectronicB
     @Override
     protected void onPostExecute(ElectronicBook result) {
         // Téléchargement terminé
-        if (result != null) {
+        boolean success = result != null;
+        if (success) {
             ElectronicTable electronicTable = new ElectronicTable(mContext);
             electronicTable.insert(
                     mIdNumber,
@@ -110,16 +112,20 @@ public class ElectronicDownloader extends AsyncTask<String, Integer, ElectronicB
                     result.getCoverCategory(),
                     result.getProfileAuthor()
             );
+            notificationBuilder.setContentText("Téléchargement terminé")
+                    .setProgress(0, 0, false)
+                    .setSmallIcon(android.R.drawable.stat_sys_download_done);
+        } else {
+            notificationBuilder.setContentText("Échec du téléchargement")
+                    .setProgress(0, 0, false)
+                    .setSmallIcon(android.R.drawable.stat_sys_warning);
         }
 
-        // Mise à jour de la notification pour indiquer la fin du téléchargement
-        notificationBuilder.setContentText("Téléchargement terminé")
-                .setProgress(0, 0, false)
-                .setSmallIcon(android.R.drawable.stat_sys_download_done);
         notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
         notificationManager.cancel(NOTIFICATION_ID);
         Intent finishDownloadIntent = new Intent("ACTION_FINISH_DOWNLOAD");
         finishDownloadIntent.putExtra("format","pdf");
+        finishDownloadIntent.putExtra("success", success);
         mContext.sendBroadcast(finishDownloadIntent);
     }
 }

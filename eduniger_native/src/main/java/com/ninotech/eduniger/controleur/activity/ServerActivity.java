@@ -62,12 +62,12 @@ public class ServerActivity extends AppCompatActivity {
         mSwitch.setChecked(Server.getPass(getApplicationContext()) == 1);
         switch (Server.getUrlServer(getApplicationContext()))
         {
-            case "http://78.46.46.154/fabi/":
+            case Server.PRESET_PROD_FABI:
                 mUrlEditText.setVisibility(View.GONE);
                 RadioButton radioButton1 = (RadioButton) mRadioGroup.getChildAt(1);
                 radioButton1.setChecked(true);
                 break;
-            case "http://192.168.49.1:2222/fabi/":
+            case Server.PRESET_DEV_FABI:
                 mUrlEditText.setVisibility(View.GONE);
                 RadioButton radioButton2 = (RadioButton) mRadioGroup.getChildAt(2);
                 radioButton2.setChecked(true);
@@ -128,11 +128,11 @@ public class ServerActivity extends AppCompatActivity {
                 {
                     case 1:
                         mUrlEditText.setVisibility(View.GONE);
-                        Server.saveServer(getApplicationContext(),"http://192.168.49.1:2222/fabi/","http://192.168.49.1:2222/fabi/android/");
+                        Server.saveServer(getApplicationContext(),Server.PRESET_PROD_FABI,Server.PRESET_PROD_FABI + "android/");
                     break;
                     case 2:
                         mUrlEditText.setVisibility(View.GONE);
-                        Server.saveServer(getApplicationContext(),"http://192.168.49.1:2222/fabi/","http://192.168.49.1:2222/fabi/android/");
+                        Server.saveServer(getApplicationContext(),Server.PRESET_DEV_FABI,Server.PRESET_DEV_FABI + "android/");
                         break;
                     case 3:
                         mUrlEditText.setVisibility(View.VISIBLE);

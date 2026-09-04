@@ -115,7 +115,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
                 }
             };
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                itemView.getContext().registerReceiver(receiverResponseChat, new IntentFilter("RESPONSE_CHAT_OK"),Context.RECEIVER_EXPORTED);
+                itemView.getContext().registerReceiver(receiverResponseChat, new IntentFilter("RESPONSE_CHAT_OK"),Context.RECEIVER_NOT_EXPORTED);
             }
             Animation pulseAnimImg = AnimationUtils.loadAnimation(itemView.getContext(), R.anim.pulse);
             // Lancer l'animation automatiquement

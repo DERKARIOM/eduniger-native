@@ -19,6 +19,7 @@ import com.ninotech.eduniger.controleur.adapter.ChatHistoryBottomSheet;
 import com.ninotech.eduniger.controleur.adapter.MessageAdapter;
 import com.ninotech.eduniger.controleur.adapter.StatusBarAdapter;
 import com.ninotech.eduniger.model.data.ChatSession;
+import com.ninotech.eduniger.model.data.Server;
 import com.ninotech.eduniger.model.data.Message;
 import com.ninotech.eduniger.model.table.ChatDatabaseHelper;
 
@@ -39,7 +40,6 @@ import okhttp3.Response;
 public class ChatAiActivity extends AppCompatActivity {
 
     // ─── Constantes ───────────────────────────────────────────────────────────
-    private static final String API_URL   = "http://78.46.46.154/eduniger/ai/eduna_unified.php";
     private static final String ACTION    = "ask_about_book";
     private static final String ID_NUMBER = "94961793";
 
@@ -323,7 +323,7 @@ public class ChatAiActivity extends AppCompatActivity {
         if (sessionId != null) fb.add("session_id", sessionId);
 
         Request request = new Request.Builder()
-                .url(API_URL)
+                .url(Server.getUrlAi(getApplicationContext()))
                 .post(fb.build())
                 .build();
 
@@ -586,7 +586,7 @@ public class ChatAiActivity extends AppCompatActivity {
         if (sessionId != null) fb.add("session_id", sessionId);
 
         okhttp3.Request request = new okhttp3.Request.Builder()
-                .url(API_URL)
+                .url(Server.getUrlAi(getApplicationContext()))
                 .post(fb.build())
                 .build();
 
