@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import androidx.security.crypto.EncryptedSharedPreferences;
-import androidx.security.crypto.MasterKeys;
+import androidx.security.crypto.MasterKey;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -42,11 +42,17 @@ public class TokenStore {
     public TokenStore(Context context) {
         SharedPreferences prefs;
         try {
-            String masterKeyAlias = MasterKeys.getOrCreateAlias(MasterKeys.AES256_GCM_SPEC);
+            // API moderne (androidx.security.crypto >= 1.1.0-alpha03) : la classe MasterKeys
+            // et EncryptedSharedPreferences.create(fileName, masterKeyAlias, ...) sont
+            // supprimees au profit de MasterKey.Builder + une surcharge de create() qui prend
+            // l'objet MasterKey (et le Context en premier parametre).
+            MasterKey masterKey = new MasterKey.Builder(context.getApplicationContext())
+                    .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+                    .build();
             prefs = EncryptedSharedPreferences.create(
-                    PREFS_FILE_NAME,
-                    masterKeyAlias,
                     context.getApplicationContext(),
+                    PREFS_FILE_NAME,
+                    masterKey,
                     EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
                     EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
             );

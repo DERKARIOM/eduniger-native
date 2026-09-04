@@ -45,6 +45,7 @@ import java.util.Locale;
 import java.util.Set;
 
 import okhttp3.MultipartBody;
+import com.ninotech.eduniger.model.net.ApiClient;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -156,7 +157,7 @@ public class SearchActivity extends AppCompatActivity {
 
     private void initializeData() {
         mSession = new Session(this);
-        mHttpClient = new OkHttpClient();
+        mHttpClient = ApiClient.getInstance(this);
         mLayoutManager = new LinearLayoutManager(this);
         mCategoryList = new ArrayList<>();
         mSearchEditText.clearFocus();

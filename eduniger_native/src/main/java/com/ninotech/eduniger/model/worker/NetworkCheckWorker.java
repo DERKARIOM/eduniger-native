@@ -37,6 +37,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 import okhttp3.MultipartBody;
+import com.ninotech.eduniger.model.net.ApiClient;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -55,7 +56,7 @@ public class NetworkCheckWorker extends Worker {
 
     public NetworkCheckWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
-        mHttpClient = new OkHttpClient();
+        mHttpClient = ApiClient.getInstance(context);
         mSession = new Session(context);
     }
 

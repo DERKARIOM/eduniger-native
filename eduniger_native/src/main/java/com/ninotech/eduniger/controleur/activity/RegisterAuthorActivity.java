@@ -50,6 +50,7 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
+import com.ninotech.eduniger.model.net.ApiClient;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -147,8 +148,10 @@ public class RegisterAuthorActivity extends AppCompatActivity {
     private void initializeData() {
         mSession = new Session(getApplicationContext());
 
-        // Client HTTP optimisé pour grands fichiers
-        mHttpClient = new OkHttpClient.Builder()
+        // Client HTTP optimisé pour grands fichiers, tout en conservant l'ajout
+        // automatique du token et le renouvellement sur 401 (ApiClient.newBuilder()
+        // hérite de l'interceptor/authenticator du client partagé).
+        mHttpClient = ApiClient.newBuilder(this)
                 .connectTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
                 .writeTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
                 .readTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)

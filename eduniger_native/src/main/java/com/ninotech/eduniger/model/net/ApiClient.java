@@ -16,15 +16,12 @@ import okhttp3.OkHttpClient;
  *   "new OkHttpClient()" disperses dans le projet, qui heritaient des timeouts par defaut
  *    d'OkHttp (10s) sans garantie explicite - ici fixes et documentes.
  *
- * IMPORTANT (etat actuel, voir rapport final) : ce client n'est pour l'instant branche que
- * sur les nouveaux flux d'authentification (login/refresh/logout). Les ~34 instanciations
- * directes de "new OkHttpClient()" deja presentes ailleurs dans le projet (une par ecran,
- * cf. audit precedent) n'ont PAS ete migrees vers ce client partage dans cette intervention :
- * elles continueront donc de fonctionner pour les endpoints publics, mais n'enverront PAS
- * automatiquement le token sur les endpoints nouvellement proteges par AuthMiddleware. La
- * migration de chaque ecran vers ApiClient.getInstance(context) est le travail de suite
- * necessaire pour que l'authentification par token fonctionne de bout en bout dans toute
- * l'app (voir section "Travail restant" du rapport).
+ * Tous les points d'appel du projet qui instanciaient auparavant leur propre
+ * "new OkHttpClient()" ont ete migres vers ApiClient.getInstance(context) (ou
+ * ApiClient.newBuilder(context) quand un ecran a besoin de timeouts specifiques,
+ * par ex. les gros envois de fichiers) afin que le token soit systematiquement
+ * attache et renouvele automatiquement, y compris sur les endpoints nouvellement
+ * proteges par AuthMiddleware.
  */
 public class ApiClient {
     private static volatile OkHttpClient sInstance;
@@ -48,5 +45,17 @@ public class ApiClient {
             }
         }
         return sInstance;
+    }
+
+    /**
+     * A utiliser quand un ecran a besoin de timeouts differents du client partage
+     * (par ex. l'upload d'un livre/PDF/audio, qui peut prendre plus de 20s) tout en
+     * conservant l'ajout automatique du token et le renouvellement sur 401 : cette
+     * Builder herite de la configuration du client partage (interceptor + authenticator
+     * inclus, cf. OkHttpClient.newBuilder()) et peut ensuite surcharger uniquement les
+     * timeouts avant .build().
+     */
+    public static OkHttpClient.Builder newBuilder(Context context) {
+        return getInstance(context).newBuilder();
     }
 }

@@ -52,6 +52,7 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 
 import okhttp3.MultipartBody;
+import com.ninotech.eduniger.model.net.ApiClient;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -153,7 +154,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void initializeData() {
         mToken = DEFAULT_TOKEN;
-        mHttpClient = new OkHttpClient();
+        mHttpClient = ApiClient.getInstance(this);
         mIsNightMode = isNightMode();
         setupGoogleSignIn();
     }

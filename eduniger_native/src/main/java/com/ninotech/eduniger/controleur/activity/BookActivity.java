@@ -74,6 +74,7 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.MultipartBody;
+import com.ninotech.eduniger.model.net.ApiClient;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -191,7 +192,7 @@ public class BookActivity extends AppCompatActivity {
         mReservationDialog = new ReservationDialog(this);
         mHandler = new Handler();
         mMediaPlayer = new MediaPlayer();
-        mHttpClient = new OkHttpClient();
+        mHttpClient = ApiClient.getInstance(this);
     }
 
     private void initializeViews() {

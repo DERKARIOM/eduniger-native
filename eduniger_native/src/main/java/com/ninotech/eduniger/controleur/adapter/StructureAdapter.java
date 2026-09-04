@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Objects;
 
 import okhttp3.MultipartBody;
+import com.ninotech.eduniger.model.net.ApiClient;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -262,7 +263,7 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
             protected String doInBackground(String... params) {
 
                 try {
-                    OkHttpClient client = new OkHttpClient();
+                    OkHttpClient client = ApiClient.getInstance(itemView.getContext());
                     RequestBody requestBody = new MultipartBody.Builder()
                             .setType(MultipartBody.FORM)
                             .addFormDataPart("id_user",params[1])
@@ -307,7 +308,7 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
             protected String doInBackground(String... params) {
 
                 try {
-                    OkHttpClient client = new OkHttpClient();
+                    OkHttpClient client = ApiClient.getInstance(itemView.getContext());
                     RequestBody requestBody = new MultipartBody.Builder()
                             .setType(MultipartBody.FORM)
                             .addFormDataPart("idUser",params[1])

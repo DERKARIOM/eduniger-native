@@ -38,6 +38,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import okhttp3.MultipartBody;
+import com.ninotech.eduniger.model.net.ApiClient;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -118,7 +119,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     return;
                 }
 
-                OkHttpClient client = new OkHttpClient();
+                OkHttpClient client = ApiClient.getInstance(getApplicationContext());
 
                 // ── 1. Récupérer les loands non vus ─────────────────────────
                 RequestBody bodyGet = new MultipartBody.Builder()
@@ -377,7 +378,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private void sendTokenToServer(String idNumber, String token) {
         new Thread(() -> {
             try {
-                OkHttpClient client = new OkHttpClient();
+                OkHttpClient client = ApiClient.getInstance(getApplicationContext());
 
                 RequestBody body = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)

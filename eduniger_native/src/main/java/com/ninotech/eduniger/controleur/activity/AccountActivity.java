@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import okhttp3.Call;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
+import com.ninotech.eduniger.model.net.ApiClient;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -222,7 +223,7 @@ public class AccountActivity extends AppCompatActivity {
     private void uploadImage(File imageFile) {
         String serverUrl = Server.getUrlServer(getApplicationContext()) + "ressources/uploadProfile.php"; // Remplace par ton URL de serveur
 
-        OkHttpClient client = new OkHttpClient();
+        OkHttpClient client = ApiClient.getInstance(this);
 
         RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)

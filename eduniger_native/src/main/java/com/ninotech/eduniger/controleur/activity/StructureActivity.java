@@ -57,6 +57,7 @@ import java.util.List;
 import java.util.Objects;
 
 import okhttp3.MultipartBody;
+import com.ninotech.eduniger.model.net.ApiClient;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -126,7 +127,7 @@ public class StructureActivity extends AppCompatActivity {
 
     private void initializeComponents() {
         mSession = new Session(this);
-        mHttpClient = new OkHttpClient();
+        mHttpClient = ApiClient.getInstance(this);
         mStructure = extractStructureFromIntent();
     }
 

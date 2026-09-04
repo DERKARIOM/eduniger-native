@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.MultipartBody;
+import com.ninotech.eduniger.model.net.ApiClient;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -194,7 +195,7 @@ public class StructureFragment extends Fragment {
         @Override
         protected String doInBackground(String... params) {
             try {
-                OkHttpClient client = new OkHttpClient();
+                OkHttpClient client = ApiClient.getInstance(requireContext());
                 String url = params[0] + "?id_user=" + params[1];
                 Request request = new Request.Builder().url(url).get().build();
                 try {
@@ -244,7 +245,7 @@ public class StructureFragment extends Fragment {
         @Override
         protected String doInBackground(String... params) {
             try {
-                OkHttpClient client = new OkHttpClient();
+                OkHttpClient client = ApiClient.getInstance(requireContext());
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
                         .addFormDataPart("idUser", params[1])

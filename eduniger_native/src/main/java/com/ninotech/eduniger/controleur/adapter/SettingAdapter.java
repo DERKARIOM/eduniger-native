@@ -54,6 +54,7 @@ import java.util.List;
 import java.util.Objects;
 
 import okhttp3.MultipartBody;
+import com.ninotech.eduniger.model.net.ApiClient;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -346,7 +347,7 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.MyViewHo
             protected String doInBackground(String... params) {
 
                 try {
-                    OkHttpClient client = new OkHttpClient();
+                    OkHttpClient client = ApiClient.getInstance(itemView.getContext());
                     RequestBody requestBody = new MultipartBody.Builder()
                             .setType(MultipartBody.FORM)
                             .addFormDataPart("idNumber", params[1])
@@ -405,7 +406,7 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.MyViewHo
             protected String doInBackground(String... params) {
 
                 try {
-                    OkHttpClient client = new OkHttpClient();
+                    OkHttpClient client = ApiClient.getInstance(itemView.getContext());
                     RequestBody requestBody = new MultipartBody.Builder()
                             .setType(MultipartBody.FORM)
                             .addFormDataPart("idNumber", params[1])
@@ -462,7 +463,7 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.MyViewHo
             protected String doInBackground(String... params) {
 
                 try {
-                    OkHttpClient client = new OkHttpClient();
+                    OkHttpClient client = ApiClient.getInstance(itemView.getContext());
                     RequestBody requestBody = new MultipartBody.Builder()
                             .setType(MultipartBody.FORM)
                             .addFormDataPart("idNumber", params[1])

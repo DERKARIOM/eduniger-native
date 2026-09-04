@@ -38,6 +38,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 import okhttp3.MultipartBody;
+import com.ninotech.eduniger.model.net.ApiClient;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -89,7 +90,7 @@ public class ChatBotFragment extends Fragment {
         mSession = new Session(requireContext());
         mList = new ArrayList<>();
         mArm = new Arm();
-        mHttpClient = new OkHttpClient();
+        mHttpClient = ApiClient.getInstance(requireContext());
         mLayoutManager = new LinearLayoutManager(requireContext());
 
         // Message d'accueil initial

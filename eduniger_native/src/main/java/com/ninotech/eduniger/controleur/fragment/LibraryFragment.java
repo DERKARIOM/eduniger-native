@@ -44,6 +44,7 @@ import java.util.List;
 import okhttp3.Call;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
+import com.ninotech.eduniger.model.net.ApiClient;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -277,7 +278,7 @@ public class LibraryFragment extends Fragment {
 
     private void uploadImage(File imageFile) {
         String serverUrl = Server.getUrlApi(getContext()) + "uploadImg.php";
-        OkHttpClient client = new OkHttpClient();
+        OkHttpClient client = ApiClient.getInstance(getContext());
 
         RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)

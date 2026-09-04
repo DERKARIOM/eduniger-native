@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.util.Objects;
 
 import okhttp3.MultipartBody;
+import com.ninotech.eduniger.model.net.ApiClient;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -274,7 +275,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
         protected String doInBackground(String... params) {
 
             try {
-                OkHttpClient client = new OkHttpClient();
+                OkHttpClient client = ApiClient.getInstance(getApplicationContext());
                 RequestBody requestBody = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
                         .addFormDataPart("id_number",params[1])

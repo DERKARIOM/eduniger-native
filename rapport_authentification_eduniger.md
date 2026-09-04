@@ -81,7 +81,7 @@ CREATE TABLE RefreshToken (
 );
 ```
 
-Fichier : `api/auth/migration_001_auth_tokens.sql`. **À exécuter sur la base de production avant de déployer les nouveaux fichiers PHP** (les endpoints échoueront proprement, sans crasher, tant que ce n'est pas fait — mais l'authentification ne fonctionnera pas). Testée avec succès sur une copie locale de votre schéma réel.
+Fichier : `api/auth/migration_001_auth_tokens.sql`. **Déjà exécutée sur votre base réelle** (via phpMyAdmin, en votre présence) : les colonnes `role`/`failed_login_attempts`/`locked_until` existaient déjà sur `User` (probable tentative précédente), et la table `RefreshToken` a été créée et vérifiée (`DESCRIBE RefreshToken` conforme à la définition ci-dessus). Aucun compte n'a actuellement `isAdmin = 1` dans votre base — voir la note de promotion en fin de section 9.
 
 ## 5. Endpoints `api/` : ce qui a changé
 
@@ -104,12 +104,27 @@ Fichier : `api/auth/migration_001_auth_tokens.sql`. **À exécuter sur la base d
 - **Stockage sécurisé** : `TokenStore.java`, basé sur `EncryptedSharedPreferences` (AES-256, clé Android Keystore) — remplace tout stockage en clair pour les nouveaux tokens.
 - **Injection automatique du Bearer** : `AuthInterceptor.java`.
 - **Renouvellement automatique sur 401** : `AuthAuthenticator.java`, avec garde anti-boucle explicite (abandon après une seule tentative de refresh par requête — empêche tout `401 → refresh → 401 → refresh → ...` infini) et déconnexion locale propre (`TokenStore.clear()`) si le refresh échoue.
-- **Client partagé** : `ApiClient.java`, timeouts explicites (connexion 15s / lecture-écriture 20s).
+- **Client partagé** : `ApiClient.java`, timeouts explicites (connexion 15s / lecture-écriture 20s), et une méthode `ApiClient.newBuilder(context)` pour les écrans ayant besoin de timeouts spécifiques (gros envois de fichiers) tout en héritant de l'intercepteur/authenticator.
+- **Migration complète des ~34 points d'appel existants** : les 31 instanciations directes de `new OkHttpClient()` réparties dans 26 fichiers (15 activités, 2 adapters, 6 fragments, 1 service, 1 worker) ont été remplacées par `ApiClient.getInstance(context)` — ou `ApiClient.newBuilder(context)` pour `RegisterAuthorActivity`, qui a besoin de timeouts longs pour l'upload de fichiers volumineux. Détail dans la table ci-dessous. Le seul `new OkHttpClient()` restant dans le code (hors `ApiClient.java` lui-même) est volontaire : `AuthAuthenticator.mRefreshClient`, un client minimal dédié à l'appel de `refresh.php`, qui doit rester indépendant du client principal pour éviter une boucle de renouvellement sur lui-même.
+
+| Fichier | Contexte utilisé | Occurrences |
+|---|---|---|
+| `CategoryActivity.java` | `getApplicationContext()` (classes internes `AsyncTask`) | 2 |
+| `AddBookActivity.java`, `ChangePasswordActivity.java`, `SuggestionActivity.java`, `ChangeEmailActivity.java`, `PreRegistrationActivity.java` | `getApplicationContext()` (classes internes `AsyncTask`) | 1 chacun |
+| `ChatAiActivity.java`, `BookActivity.java`, `AccountActivity.java`, `RegisterActivity.java`, `LoginActivity.java`, `AuthorActivity.java`, `StructureActivity.java`, `SearchActivity.java` | `this` (appel direct dans une méthode de l'activité) | 1 chacun |
+| `RegisterAuthorActivity.java` | `ApiClient.newBuilder(this)` + timeouts longs conservés | 1 |
+| `SettingAdapter.java`, `StructureAdapter.java` | `itemView.getContext()` (classes internes du `ViewHolder`) | 3 et 2 |
+| `ChatBotFragment.java`, `StructureFragment.java`, `BooksFragment.java`, `HomeFragment.java`, `CategoryFragment.java` | `requireContext()` | 1, 2, 1, 1, 1 |
+| `LibraryFragment.java` | `getContext()` (cohérent avec le reste de la méthode) | 1 |
+| `MyFirebaseMessagingService.java` | `getApplicationContext()` | 2 |
+| `NetworkCheckWorker.java` | `context` (paramètre du constructeur) | 1 |
+
+Vérification effectuée : `grep` de contrôle confirmant zéro `new OkHttpClient()` actif restant en dehors des deux cas volontaires ci-dessus, import `ApiClient` ajouté partout où nécessaire (aucun doublon), et comptage d'accolades équilibré sur les 26 fichiers modifiés.
 - `LoginActivity.java` : sauvegarde désormais les tokens reçus après connexion ; **suppression de `Log.d("310726", jsonData)`**, qui écrivait l'intégralité de la réponse de login (mot de passe haché, et désormais les tokens) dans les logs système — faille explicitement à corriger d'après votre cahier des charges ; ajout d'un état "compte verrouillé" (`accountLocked`) distinct du mot de passe incorrect.
 - `MainActivity.java` : la déconnexion révoque désormais le refresh token côté serveur (best-effort, en tâche de fond) en plus du nettoyage de session local.
 - `build.gradle` : ajout de `androidx.security:security-crypto` et d'une dépendance OkHttp explicite (elle n'était utilisée que via résolution transitive non garantie jusqu'ici).
 
-**Important — travail restant côté mobile, à faire avant déploiement** : ce chantier a mis en place l'infrastructure (stockage, intercepteur, refresh automatique) et l'a branchée sur le flux de connexion/déconnexion, mais **n'a pas migré les ~34 instanciations directes de `new OkHttpClient()` déjà présentes dans le projet** (une par écran, déjà cataloguées dans l'audit précédent) vers `ApiClient.getInstance(context)`. Tant que cette migration écran par écran n'est pas faite, ces appels existants n'enverront pas le header `Authorization` et **recevront systématiquement 401** sur tous les endpoints nouvellement protégés listés au §5. C'est un travail mécanique mais volumineux qu'il n'était pas raisonnable de faire à l'aveugle (aucun SDK Android disponible dans cet environnement pour compiler/vérifier chaque écran) — voir §9 pour la stratégie de déploiement recommandée. Egalement à noter : après une inscription réussie, `RegisterActivity` appelle `mAccount.login()` qui ne fait qu'une écriture SQLite locale (pas d'appel réseau) — un utilisateur nouvellement inscrit n'obtient donc ses tokens qu'à sa PROCHAINE connexion explicite via `LoginActivity`.
+**Point important à noter malgré tout** : après une inscription réussie, `RegisterActivity` appelle `mAccount.login()` qui ne fait qu'une écriture SQLite locale (pas d'appel réseau) — un utilisateur nouvellement inscrit n'obtient donc ses tokens qu'à sa PROCHAINE connexion explicite via `LoginActivity`. Ce comportement pré-existant n'a pas été modifié dans ce chantier (voir §8).
 
 **Avertissement sur les changements Android** : comme pour l'audit précédent, cet environnement ne dispose pas du SDK Android/Gradle — ces fichiers ont été relus attentivement (accolades équilibrées vérifiées mécaniquement, API `EncryptedSharedPreferences`/OkHttp `Authenticator` standard et bien documentée) mais **n'ont pas pu être compilés**. Une compilation Gradle réelle avant publication est indispensable.
 
@@ -141,18 +156,24 @@ Environnement : PHP 8.4 (`php -S`) + MariaDB 10.11, schéma réel importé depui
 
 - **`login_google.php`** : la vérification cryptographique du token Google (signature RS256, JWKS) n'est pas fonctionnelle — la librairie `google/apiclient` n'est pas installée (`api/` n'a pas de Composer). L'endpoint échoue désormais proprement (503) plutôt que de planter, mais la connexion Google reste inopérante tant que cette dépendance n'est pas ajoutée. Hors périmètre de "Access/Refresh Token" strictement parlant.
 - **Tables manquantes** (`Comment`, `NotifView`, `StudentAccount`) : voir §5, fonctionnalités déjà non opérationnelles avant cette intervention.
-- **Retrofit Android incomplet** : voir §6, ~34 écrans à migrer vers `ApiClient` avant que la protection par token ne soit effective de bout en bout.
+- **`RegisterActivity` n'obtient pas de tokens immédiatement après inscription** (voir §6) — nécessite une connexion explicite juste après.
+- **Aucun compte n'a actuellement `role = 'ADMIN'` dans votre base** (voir §9) — à corriger manuellement si vous voulez pouvoir utiliser les fonctions d'administration.
 - Aucun secret n'a été trouvé en dur dans les nouveaux fichiers (`JWT_SECRET` exclusivement via variable d'environnement, conformément à votre consigne).
+- **Compilation Android non vérifiée** (voir avertissement §6) — aucun SDK Android/Gradle disponible dans cet environnement pour compiler réellement les 26 fichiers modifiés ; seules une relecture attentive et une vérification mécanique de l'équilibre des accolades ont pu être faites.
 
 ## 9. Stratégie de déploiement recommandée
 
 Le système actuel a une contrainte incontournable : dès que `AuthMiddleware::requireAuth()` est actif sur un endpoint, tout appareil exécutant l'**ancienne** version de l'app (qui n'envoie pas de Bearer token) recevra 401 sur cet endpoint. Le projet dispose déjà d'un levier prêt à l'emploi pour gérer cette transition proprement : le mécanisme de version (`Version.idVersion`, déjà vérifié par `login.php`/`register.php`, renvoyant `expiresVersion` → l'app affiche un dialogue de mise à jour obligatoire).
 
 Séquence recommandée :
-1. Exécuter la migration SQL (§4) sur la base de production.
+1. ✅ Migration SQL (§4) exécutée sur la base de production.
 2. Déployer les fichiers `api/` de ce chantier (ils sont rétrocompatibles pour le login : les champs ajoutés à la réponse sont additifs, les anciens champs comme `password` sont conservés — voir note ci-dessous).
-3. Terminer la migration Android (retrofit des ~34 écrans vers `ApiClient`, compilation, tests manuels réels), publier une nouvelle version de l'app.
+3. ✅ Migration Android terminée (les 31 points d'appel ont été basculés vers `ApiClient`, voir §6) — il reste à **compiler réellement le projet avec Android Studio/Gradle** (non disponible dans cet environnement) et à faire des tests manuels réels sur les 15 scénarios avant publication, puis publier une nouvelle version de l'app.
 4. Une fois cette version suffisamment diffusée, **incrémenter `Version.idVersion`** en base : les appareils encore sur l'ancienne version seront alors bloqués à l'écran de connexion avec un message de mise à jour, au lieu de rencontrer des 401 confus sur certains écrans.
+5. Promouvoir au moins un compte en `role = 'ADMIN'` (ou `'SUPER_ADMIN'`) si vous avez besoin d'accéder aux fonctions d'administration (`send_notification.php`, `add_book.php`) :
+   ```sql
+   UPDATE `User` SET `role` = 'ADMIN', `isAdmin` = 1 WHERE `email` = 'votre-email@exemple.com';
+   ```
 
 **Note sur le champ `password` renvoyé par `login.php`** : il est conservé dans la réponse uniquement parce que `LoginActivity.java` (ligne ~476) le lit encore pour l'écran de verrouillage local (`LockActivity`). C'est un problème résiduel d'exposition de données déjà signalé dans l'audit précédent ; le supprimer casserait immédiatement cette fonctionnalité pour toute la base installée. À traiter en migrant `LockActivity` vers un stockage sécurisé dédié (ne nécessitant plus de recevoir le hash du serveur), puis en retirant ce champ de la réponse.
 

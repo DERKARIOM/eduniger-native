@@ -65,6 +65,7 @@ import java.util.List;
 import java.util.Set;
 
 import okhttp3.MultipartBody;
+import com.ninotech.eduniger.model.net.ApiClient;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -127,7 +128,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mHttpClient = new OkHttpClient();
+        mHttpClient = ApiClient.getInstance(requireContext());
     }
 
     @Nullable

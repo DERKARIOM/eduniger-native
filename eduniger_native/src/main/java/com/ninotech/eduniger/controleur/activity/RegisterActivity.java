@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.util.Objects;
 
 import okhttp3.MultipartBody;
+import com.ninotech.eduniger.model.net.ApiClient;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -80,7 +81,7 @@ public class RegisterActivity extends AppCompatActivity {
         initializeFirebaseToken();
         setupClickListeners();
 
-        mHttpClient = new OkHttpClient();
+        mHttpClient = ApiClient.getInstance(this);
     }
 
     private void initializeViews() {

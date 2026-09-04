@@ -33,6 +33,7 @@ import java.util.UUID;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
+import com.ninotech.eduniger.model.net.ApiClient;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -70,7 +71,7 @@ public class ChatAiActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_ai);
 
-        httpClient = new OkHttpClient();
+        httpClient = ApiClient.getInstance(this);
         dbHelper   = ChatDatabaseHelper.getInstance(this);
 
         // Vérifie si on reprend une session existante (passée par Intent)
