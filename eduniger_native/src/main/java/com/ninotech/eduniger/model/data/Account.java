@@ -86,6 +86,10 @@ public class Account {
                     return "0111_0"; // matricule introuvable
                 case "expiresVersion":
                     return "update"; // version expires
+                case "accountLocked":
+                    // Compte temporairement verrouille (protection anti brute-force cote
+                    // serveur, voir LoginRateLimiter.php) apres plusieurs echecs de connexion.
+                    return "locked";
                 case "noFoundIdNumberOrEmail":
                     return "0011"; // matricule ou email introuvable
                 case "false":

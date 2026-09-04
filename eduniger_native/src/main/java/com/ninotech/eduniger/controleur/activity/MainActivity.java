@@ -273,6 +273,32 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void logout() {
+        // Revoque le refresh token cote serveur (best-effort, en tache de fond) avant de
+        // nettoyer la session locale : evite qu'un refresh token encore valide traine si
+        // jamais il fuitait plus tard (appareil perdu/vole apres la deconnexion, backup...).
+        // Volontairement non bloquant : l'utilisateur ne doit pas attendre le reseau pour
+        // se deconnecter localement, et un echec reseau ici ne doit pas empecher le logout.
+        final com.ninotech.eduniger.model.data.TokenStore tokenStore =
+                new com.ninotech.eduniger.model.data.TokenStore(getApplicationContext());
+        final String refreshToken = tokenStore.getRefreshToken();
+        if (refreshToken != null) {
+            new Thread(() -> {
+                try {
+                    okhttp3.RequestBody body = new okhttp3.FormBody.Builder()
+                            .add("refresh_token", refreshToken)
+                            .build();
+                    okhttp3.Request request = new okhttp3.Request.Builder()
+                            .url(com.ninotech.eduniger.model.data.Server.getUrlApi(getApplicationContext()) + "logout.php")
+                            .post(body)
+                            .build();
+                    new okhttp3.OkHttpClient().newCall(request).execute().close();
+                } catch (Exception ignored) {
+                    // Best-effort : la session locale est de toute facon nettoyee ci-dessous.
+                }
+            }).start();
+        }
+        tokenStore.clear();
+
         if (mAccount.logout(this)) {
             navigateToLogin();
         }

@@ -427,6 +427,9 @@ public class LoginActivity extends AppCompatActivity {
             case "10":
                 handleIncorrectPassword();
                 break;
+            case "locked":
+                handleAccountLocked();
+                break;
             case "update":
                 handleUpdateRequired();
                 break;
@@ -455,6 +458,11 @@ public class LoginActivity extends AppCompatActivity {
         );
     }
 
+    private void handleAccountLocked() {
+        setLoadingState(false);
+        mErrorTextView.setText(R.string.account_locked);
+    }
+
     private void handleUpdateRequired() {
         setLoadingState(false);
         showUpdateDialog();
@@ -467,7 +475,12 @@ public class LoginActivity extends AppCompatActivity {
 
     private void handleSuccessfulLogin(String jsonData) {
         try {
-            Log.d("310726",jsonData);
+            // SECURITE : l'ancien "Log.d("310726", jsonData)" ecrivait l'integralite de la
+            // reponse de connexion (dont le hash du mot de passe, et desormais les tokens
+            // d'authentification) dans les logs systeme Android, lisibles via logcat par
+            // toute application disposant de la permission READ_LOGS sur les anciennes
+            // versions d'Android, ou via un simple "adb logcat" sur un appareil connecte.
+            // Supprime : aucun secret ne doit jamais apparaitre dans les logs.
             JSONObject jsonObject = new JSONObject(jsonData);
 
             mAccount.setName(jsonObject.getString("name"));
@@ -475,6 +488,23 @@ public class LoginActivity extends AppCompatActivity {
             mAccount.setEmail(jsonObject.getString("email"));
             mAccount.setPassword(jsonObject.getString("password"));
             mAccount.setProfession(Long.parseLong(jsonObject.getString("profession")));
+
+            // Sauvegarde securisee des tokens d'authentification (Access + Refresh Token),
+            // voir TokenStore.java. Absents seulement si login_google.php a echoue avant
+            // l'emission des tokens (auquel cas isLoggedIn() restera false et les appels
+            // proteges echoueront proprement en 401, geres par AuthAuthenticator).
+            if (jsonObject.has("accessToken") && jsonObject.has("refreshToken")) {
+                com.ninotech.eduniger.model.data.TokenStore tokenStore =
+                        new com.ninotech.eduniger.model.data.TokenStore(getApplicationContext());
+                tokenStore.saveTokens(
+                        jsonObject.getString("accessToken"),
+                        jsonObject.getString("refreshToken"),
+                        jsonObject.optLong("expiresIn", 900)
+                );
+                if (jsonObject.has("role")) {
+                    tokenStore.saveRole(jsonObject.getString("role"));
+                }
+            }
 
             if (mAccount.register(getApplicationContext(), jsonObject.getString("isAdmin"))) {
                 if (mAccount.login(getApplicationContext())) {
