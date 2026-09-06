@@ -102,7 +102,7 @@ public class OnlineBookAdapter extends RecyclerView.Adapter<OnlineBookAdapter.My
         }
         void display(OnlineBook onlineBook){
             Picasso.get()
-                    .load(Server.getUrlServer(itemView.getContext()) + "admin-api/storage/app/private/structures/"+ onlineBook.getIdStruct() +"/blankets/"  + onlineBook.getCover())
+                    .load(Server.getUrlHostProd(itemView.getContext()) + "/api/public/resource/" + onlineBook.getIdStruct() + "/blanket/" + onlineBook.getCover())
                     .placeholder(R.drawable.img_wait_cover_book)
                     .error(R.drawable.img_wait_cover_book)
                     .transform(new RoundedTransformation(15,4))

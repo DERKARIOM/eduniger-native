@@ -660,8 +660,8 @@ public class BookActivity extends AppCompatActivity {
 
     private void loadBookCoverImage() {
         Picasso.get()
-                .load(Server.getUrlServer(BookActivity.this) +
-                        "admin-api/storage/app/private/structures/" + mOnlineBook.getIdStruct() + "/blankets/" + mOnlineBook.getCover())
+                .load(Server.getUrlHostProd(BookActivity.this) +
+                        "/api/public/resource/" + mOnlineBook.getIdStruct() + "/blanket/" + mOnlineBook.getCover())
                 .placeholder(R.drawable.img_wait_cover_book)
                 .error(R.drawable.img_wait_cover_book)
                 .transform(new RoundedTransformation(15, 4))
@@ -825,7 +825,7 @@ public class BookActivity extends AppCompatActivity {
         }
 
         private void setupMediaPlayer() {
-            String url = Server.getUrlServer(getApplicationContext()) + "/admin-api/storage/app/private/structures/" + mOnlineBook.getIdStruct() + "/audios/" + mTones.getAudio();
+            String url = Server.getUrlHostProd(getApplicationContext()) + "/api/public/resource/" + mOnlineBook.getIdStruct() + "/audio/" + mTones.getAudio();
             try {
                 mMediaPlayer.setDataSource(url);
                 mMediaPlayer.prepare();

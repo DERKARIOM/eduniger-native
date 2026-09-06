@@ -65,7 +65,7 @@ public class HorizontaleAdapter extends RecyclerView.Adapter<HorizontaleAdapter.
 
         void display(OnlineBook book) throws SQLException, IOException {
             Picasso.get()
-                    .load(Server.getUrlServer(itemView.getContext()) + "admin-api/storage/app/private/structures/"+ book.getIdStruct() +"/blankets/"  + book.getCover())
+                    .load(Server.getUrlHostProd(itemView.getContext()) + "/api/public/resource/" + book.getIdStruct() + "/blanket/" + book.getCover())
                     .placeholder(R.drawable.img_wait_cover_book)
                     .error(R.drawable.img_wait_cover_book)
                     .transform(new RoundedTransformation(15,4))

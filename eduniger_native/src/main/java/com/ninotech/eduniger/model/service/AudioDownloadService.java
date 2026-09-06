@@ -44,10 +44,10 @@ public class AudioDownloadService extends Service {
         try {
             AudioBook audioBook = new AudioBook();
             DownloadFile downloadFile = new DownloadFile(this);
-            audioBook.setCover(downloadFile.start(Server.getUrlHost(this) + "/eduniger/admin-api/storage/app/private/structures/1/blankets/" + names[0], names[0], this::updateProgress));
+            audioBook.setCover(downloadFile.start(Server.getUrlHostProd(this) + "/api/public/resource/1/blanket/" + names[0], names[0], this::updateProgress));
             audioBook.setCoverCategory(downloadFile.start(Server.getUrlHost(this) + "/fabi/ressources/cover/" + names[2], names[2], this::updateProgress));
             audioBook.setProfileAuthor(downloadFile.start(Server.getUrlHost(this) + "/fabi/ressources/profile/" + names[3], names[3], this::updateProgress));
-            audioBook.setAudio(downloadFile.start(Server.getUrlHost(this) + "/eduniger/admin-api/storage/app/private/structures/1/audios/" + names[4], names[4], this::updateProgress));
+            audioBook.setAudio(downloadFile.start(Server.getUrlHostProd(this) + "/api/public/resource/1/audio/" + names[4], names[4], this::updateProgress));
 
             AudioTable audioTable = new AudioTable(getApplicationContext());
             audioTable.insert(names[5], names[6], names[7], names[8],audioBook.getCover(),audioBook.getAudio(), names[9], names[10],audioBook.getCoverCategory(),audioBook.getProfileAuthor(),names[11]);

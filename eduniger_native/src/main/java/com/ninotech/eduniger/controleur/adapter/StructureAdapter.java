@@ -142,7 +142,7 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
                 default:
                     mBookNumberTextView.setText(structure.getBookNumber() + " Livres");
                     Picasso.get()
-                            .load(Server.getUrlServer(itemView.getContext()) + "admin-api/storage/app/private/structures/"+ structure.getId() +"/logos/" + structure.getCover())
+                            .load(Server.getUrlHostProd(itemView.getContext()) + "/api/public/resource/" + structure.getId() + "/logo/" + structure.getCover())
                             .placeholder(R.drawable.img_wait_struct)
                             .error(R.drawable.img_wait_struct)
                             .transform(new RoundedTransformation(1000,4))

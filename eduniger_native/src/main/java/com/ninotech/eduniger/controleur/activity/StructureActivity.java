@@ -322,8 +322,8 @@ public class StructureActivity extends AppCompatActivity {
             @Override
             protected android.graphics.Bitmap doInBackground(Void... voids) {
                 try {
-                    String logoUrl = Server.getUrlServer(StructureActivity.this)
-                            + "admin-api/storage/app/private/structures/1/logos/"
+                    String logoUrl = Server.getUrlHostProd(StructureActivity.this)
+                            + "/api/public/resource/1/logo/"
                             + mStructure.getCover();
                     return Picasso.get().load(logoUrl).resize(192, 192).centerCrop().get();
                 } catch (IOException e) {
@@ -457,8 +457,8 @@ public class StructureActivity extends AppCompatActivity {
 
     private void loadStructureImages() {
         Picasso.get()
-                .load(Server.getUrlServer(this) +
-                        "admin-api/storage/app/private/structures/" + mStructure.getId() + "/banners/" + mStructure.getBanner())
+                .load(Server.getUrlHostProd(this) +
+                        "/api/public/resource/" + mStructure.getId() + "/banner/" + mStructure.getBanner())
                 .transform(new RoundedTransformation(200, 10))
                 .resize(6200, 2222)
                 .placeholder(R.drawable.img_wait_banner)
@@ -468,8 +468,8 @@ public class StructureActivity extends AppCompatActivity {
         mWelcomeImageView.setVisibility(View.VISIBLE);
 
         Picasso.get()
-                .load(Server.getUrlServer(this) +
-                        "admin-api/storage/app/private/structures/" + mStructure.getId() + "/logos/" + mStructure.getCover())
+                .load(Server.getUrlHostProd(this) +
+                        "/api/public/resource/" + mStructure.getId() + "/logo/" + mStructure.getCover())
                 .placeholder(R.drawable.img_wait_struct)
                 .error(R.drawable.img_default_book)
                 .transform(new RoundedTransformation(1000, 4))

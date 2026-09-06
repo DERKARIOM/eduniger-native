@@ -560,9 +560,9 @@ public class ChatAiActivity extends AppCompatActivity {
                 String coverUrl = null;                                  // ← AJOUT
                 if (bookCover != null && bookIdStruct != null) {        // ← AJOUT
                     coverUrl = com.ninotech.eduniger.model.data.Server  // ← AJOUT
-                            .getUrlServer(this)                          // ← AJOUT
-                            + "admin-api/storage/app/private/structures/"// ← AJOUT
-                            + bookIdStruct + "/blankets/" + bookCover;   // ← AJOUT
+                            .getUrlHostProd(this)                        // ← AJOUT
+                            + "/api/public/resource/"                    // ← AJOUT
+                            + bookIdStruct + "/blanket/" + bookCover;    // ← AJOUT
                 }                                                        // ← AJOUT
 
                 String query = "Explique moi ce livre : " + bookTitle;

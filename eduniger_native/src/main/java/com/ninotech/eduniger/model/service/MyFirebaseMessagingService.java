@@ -176,8 +176,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     String localCoverPath = "";
                     if (!bookCover.isEmpty() && !"null".equals(bookCover)) {
                         try {
-                            String coverUrl = Server.getUrlServer(getApplicationContext())
-                                    + "admin-api/storage/app/private/structures/1/blankets/"
+                            String coverUrl = Server.getUrlHostProd(getApplicationContext())
+                                    + "/api/public/resource/1/blanket/"
                                     + bookCover;
 
                             localCoverPath = downloader.start(

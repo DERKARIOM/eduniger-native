@@ -48,8 +48,8 @@ public class PdfDownloadService extends Service {
         try {
             ElectronicBook electronicBook = new ElectronicBook();
             DownloadFile downloadFile = new DownloadFile(this);
-            electronicBook.setCover(downloadFile.start(Server.getUrlHostProd(this) + "/eduniger/admin-api/storage/app/private/structures/1/blankets/" + names[0], names[0], this::updateProgress));
-            electronicBook.setPdf(downloadFile.start(Server.getUrlHostProd(this) + "/eduniger/admin-api/storage/app/private/structures/1/pdfs/" + names[1], names[1], this::updateProgress));
+            electronicBook.setCover(downloadFile.start(Server.getUrlHostProd(this) + "/api/public/resource/1/blanket/" + names[0], names[0], this::updateProgress));
+            electronicBook.setPdf(downloadFile.start(Server.getUrlHostProd(this) + "/api/public/resource/1/pdf/" + names[1], names[1], this::updateProgress));
             electronicBook.setCoverCategory(downloadFile.start(Server.getUrlServer(this) + "ressources/cover/" + names[2], names[2], this::updateProgress));
             electronicBook.setProfileAuthor(downloadFile.start(Server.getUrlServer(this) + "ressources/profile/" + names[3], names[3], this::updateProgress));
 

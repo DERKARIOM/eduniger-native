@@ -67,7 +67,7 @@ public class AudioDownloader extends AsyncTask<String, Integer, AudioBook> {
         DownloadFile downloadFile = new DownloadFile(mContext);
         try {
             // Télécharger les fichiers avec progression
-            audioBook.setCover(downloadFile.start(Server.getUrlHost(mContext) + "/eduniger/admin-api/storage/app/private/structures/1/blankets/" + names[12],
+            audioBook.setCover(downloadFile.start(Server.getUrlHostProd(mContext) + "/api/public/resource/1/blanket/" + names[12],
                     names[0],
                     progress -> publishProgress(progress)
             ));
@@ -85,7 +85,7 @@ public class AudioDownloader extends AsyncTask<String, Integer, AudioBook> {
             ));
 
             audioBook.setAudio(downloadFile.start(
-                    Server.getUrlServer(mContext.getApplicationContext()) + "admin-api/storage/app/private/structures/1/audios/" + names[4],
+                    Server.getUrlHostProd(mContext.getApplicationContext()) + "/api/public/resource/1/audio/" + names[4],
                     names[4],
                     progress -> publishProgress(progress)
             ));

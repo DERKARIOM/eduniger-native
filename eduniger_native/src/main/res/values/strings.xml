@@ -6,7 +6,14 @@
     <!-- Configuration centralisee du serveur : modifier ICI pour changer d'environnement
          (local / test / production). Voir aussi model/data/Server.java. -->
     <string name="url_host">http://192.168.49.1:2222</string>
-    <string name="url_host_prod">http://78.46.46.154</string>
+    <!-- IMPORTANT : pointe vers 127.0.0.1 car sur ce deploiement de test, l'app mobile
+         et le serveur Laravel (admin-api-new) tournent sur le MEME telephone (Termux).
+         Sert desormais la route publique /api/public/resource/{idStruct}/{type}/{filename}
+         (voir FileController::publicShow cote API) au lieu du chemin brut vers storage/ utilise auparavant.
+         AVANT toute publication en production reelle : remettre l'adresse du vrai serveur
+         (ex: https://server.eduniger.com) - localhost ne fonctionnera evidemment pas pour
+         les utilisateurs finaux. -->
+    <string name="url_host_prod">http://127.0.0.1:8000</string>
     <string name="url_ai">http://78.46.46.154/eduniger/ai/eduna_unified.php</string>
     <string name="database_name">data.db</string>
     <string name="edit_text_hint_id_number">  Votre matricule ?</string>

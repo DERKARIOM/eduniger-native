@@ -1,0 +1,8 @@
+.gradle/
+local.properties
+.idea/inspectionProfiles/
+.idea/codeStyles/
+fabi/release/
+.idea/caches/
+app-web/
+*..part_aa
