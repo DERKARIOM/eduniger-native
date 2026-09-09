@@ -44,10 +44,19 @@ public class AudioDownloadService extends Service {
         try {
             AudioBook audioBook = new AudioBook();
             DownloadFile downloadFile = new DownloadFile(this);
-            audioBook.setCover(downloadFile.start(Server.getUrlHostProd(this) + "/api/public/resource/1/blanket/" + names[0], names[0], this::updateProgress));
-            audioBook.setCoverCategory(downloadFile.start(Server.getUrlHost(this) + "/fabi/ressources/cover/" + names[2], names[2], this::updateProgress));
-            audioBook.setProfileAuthor(downloadFile.start(Server.getUrlHost(this) + "/fabi/ressources/profile/" + names[3], names[3], this::updateProgress));
-            audioBook.setAudio(downloadFile.start(Server.getUrlHostProd(this) + "/api/public/resource/1/audio/" + names[4], names[4], this::updateProgress));
+            // Bug releve dans l'audit telechargement (meme cause que PdfDownloadService) :
+            // "1" etait un idStruct code en dur, cassant le telechargement pour toute
+            // structure != 1 puisque FileController::publicShow verifie que le fichier
+            // appartient reellement a CETTE structure. names[13] transporte desormais le
+            // vrai idStruct du livre (cf. BookActivity.startAudioDownloadService()).
+            String idStruct = names.length > 13 ? names[13] : null;
+            if (idStruct == null || idStruct.isEmpty()) {
+                throw new Exception("idStruct manquant : impossible de construire une URL de telechargement securisee.");
+            }
+            audioBook.setCover(downloadFile.start(Server.getUrlHostProd(this) + "/api/public/resource/" + idStruct + "/blanket/" + names[0], names[0], this::updateProgress).path);
+            audioBook.setCoverCategory(downloadFile.start(Server.getUrlHost(this) + "/fabi/ressources/cover/" + names[2], names[2], this::updateProgress).path);
+            audioBook.setProfileAuthor(downloadFile.start(Server.getUrlHost(this) + "/fabi/ressources/profile/" + names[3], names[3], this::updateProgress).path);
+            audioBook.setAudio(downloadFile.start(Server.getUrlHostProd(this) + "/api/public/resource/" + idStruct + "/audio/" + names[4], names[4], this::updateProgress).path);
 
             AudioTable audioTable = new AudioTable(getApplicationContext());
             audioTable.insert(names[5], names[6], names[7], names[8],audioBook.getCover(),audioBook.getAudio(), names[9], names[10],audioBook.getCoverCategory(),audioBook.getProfileAuthor(),names[11]);
@@ -76,13 +85,18 @@ public class AudioDownloadService extends Service {
         }
     }
 
-    private void updateProgress(int progress) {
-        notificationBuilder.setProgress(100, progress, false).setContentText("Progression : " + progress + "%");
+    private void updateProgress(int progress, long bytesDownloaded, long totalBytes) {
+        if (progress >= 0) {
+            notificationBuilder.setProgress(100, progress, false).setContentText("Progression : " + progress + "%");
+        } else {
+            notificationBuilder.setProgress(0, 0, true).setContentText("Téléchargement...");
+        }
         notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
 
-        // ← AJOUT
         Intent progressIntent = new Intent("ACTION_AUDIO_DOWNLOAD_PROGRESS");
         progressIntent.putExtra("progress", progress);
+        progressIntent.putExtra("bytesDownloaded", bytesDownloaded);
+        progressIntent.putExtra("totalBytes", totalBytes);
         sendBroadcast(progressIntent);
     }
 

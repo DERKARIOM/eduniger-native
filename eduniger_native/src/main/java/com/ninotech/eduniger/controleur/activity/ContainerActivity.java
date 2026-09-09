@@ -100,19 +100,35 @@ public class ContainerActivity extends AppCompatActivity {
         }
         switch (mId)
         {
-            case 1: // Electronic Book
+            case 1: // Electronic Book ("Mes telechargements")
                 actionBarTitle.setText(R.string.your_electronic_books);
                try {
                    mElectronicBookList = new ArrayList<>();
                    Cursor electronicCursor = mElectronicTable.getData(mSession.getIdNumber());
-                   electronicCursor.moveToFirst();
-                   do {
-                       mElectronicBookList.add(new ElectronicBook(electronicCursor.getString(2),electronicCursor.getString(5),electronicCursor.getString(8),electronicCursor.getString(7),electronicCursor.getString(4),electronicCursor.getString(6)));
-                   }while(electronicCursor.moveToNext());
-                   mElectronicBookAdapter = new ElectronicBookAdapter(mElectronicBookList);
-                   mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-                   registerForContextMenu(mRecyclerView);
-                   mRecyclerView.setAdapter(mElectronicBookAdapter);
+                   // moveToFirst() n'etait pas verifie : sur un curseur vide, le
+                   // do/while s'executait quand meme une fois et levait une
+                   // CursorIndexOutOfBoundsException -> absorbee par le catch ci-
+                   // dessous, qui affichait par coincidence le bon message "vide",
+                   // mais via une exception au lieu d'un controle explicite.
+                   if (electronicCursor != null && electronicCursor.moveToFirst()) {
+                       do {
+                           ElectronicBook book = new ElectronicBook(electronicCursor.getString(2),electronicCursor.getString(5),electronicCursor.getString(8),electronicCursor.getString(7),electronicCursor.getString(4),electronicCursor.getString(6));
+                           // Colonne statusElectronic (index 12) : permet a l'adapter
+                           // de refleter DOWNLOADING/FAILED, pas seulement COMPLETED
+                           // (cf. audit "Mes telechargements" section 4/6).
+                           book.setStatus(electronicCursor.getString(12));
+                           mElectronicBookList.add(book);
+                       } while (electronicCursor.moveToNext());
+                   }
+                   if (electronicCursor != null) electronicCursor.close();
+                   if (mElectronicBookList.isEmpty()) {
+                       voidContainer(R.drawable.img_telecharge_local,getString(R.string.no_electronic_book));
+                   } else {
+                       mElectronicBookAdapter = new ElectronicBookAdapter(mElectronicBookList);
+                       mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+                       registerForContextMenu(mRecyclerView);
+                       mRecyclerView.setAdapter(mElectronicBookAdapter);
+                   }
                }catch (Exception e)
                {
                    voidContainer(R.drawable.img_telecharge_local,getString(R.string.no_electronic_book));
@@ -460,22 +476,22 @@ public class ContainerActivity extends AppCompatActivity {
             case R.id.menu_item_delete:
                 switch (mId)
                 {
-                    case 1:
+                    case 1: {
                         File electronicFile = new File(mElectronicBookSelect.getPdf());
                         File coverFile = new File(mElectronicBookSelect.getCover());
-                        if(electronicFile.exists() && coverFile.exists())
-                        {
-                            if(electronicFile.delete() && coverFile.delete())
-                            {
-                                mElectronicTable.remove(mSession.getIdNumber(),mElectronicBookSelect.getId());
-                                mElectronicBookAdapter.Remove(mElectronicBookAdapter.getPosition());
-                            }
-                            else
-                            {
-                                Toast.makeText(this, "Une erreur s'est produite lors de la suppression", Toast.LENGTH_SHORT).show();
-                            }
+                        // On ne supprime que les fichiers qui existent encore (au lieu
+                        // d'exiger que les deux existent pour agir) ; on n'echoue que si
+                        // un delete() qui aurait du reussir echoue reellement.
+                        boolean pdfOk = !electronicFile.exists() || electronicFile.delete();
+                        boolean coverOk = !coverFile.exists() || coverFile.delete();
+                        if (pdfOk && coverOk) {
+                            mElectronicTable.remove(mSession.getIdNumber(), mElectronicBookSelect.getId());
+                            mElectronicBookAdapter.Remove(mElectronicBookAdapter.getPosition());
+                        } else {
+                            Toast.makeText(this, "Une erreur s'est produite lors de la suppression", Toast.LENGTH_SHORT).show();
                         }
                         break;
+                    }
                     case 2:
                         File audioFile = new File(mAudioBookSelect.getAudio());
                         File coverAudioFile = new File(mAudioBookSelect.getCover());

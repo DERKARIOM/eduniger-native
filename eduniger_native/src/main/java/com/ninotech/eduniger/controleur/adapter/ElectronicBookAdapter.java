@@ -7,13 +7,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ninotech.eduniger.R;
+import com.ninotech.eduniger.controleur.activity.BookActivity;
 import com.ninotech.eduniger.controleur.activity.PdfBoxViewerActivity;
 import com.ninotech.eduniger.controleur.animation.RoundedTransformation;
 import com.ninotech.eduniger.model.data.ElectronicBook;
+import com.ninotech.eduniger.model.table.ElectronicTable;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -105,19 +108,40 @@ public class ElectronicBookAdapter extends RecyclerView.Adapter<ElectronicBookAd
                     .resize(198, 304)
                     .into(mCoverImageView);
             mTitleTextView.setText(electronicBook.getTitle());
-            mCategoryTextView.setText("Catégorie : " + electronicBook.getCategory());
             mAuthorTextView.setText("De " + electronicBook.getAuthor());
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            // Etat reel du telechargement (cf. ElectronicTable.STATUS_*, propage
+            // par ContainerActivity depuis la colonne statusElectronic) : "Mes
+            // telechargements" doit refleter DOWNLOADING/FAILED et pas seulement
+            // ouvrir un PDF potentiellement absent/partiel comme si tout etait
+            // termine (audit sections 4/6/8). null = ancienne ligne ecrite avant
+            // l'ajout du statut -> traitee comme COMPLETED par retro-compatibilite.
+            String status = electronicBook.getStatus();
+            if (ElectronicTable.STATUS_DOWNLOADING.equals(status)) {
+                mCategoryTextView.setText("Téléchargement en cours...");
+                itemView.setOnClickListener(v -> Toast.makeText(
+                        itemView.getContext(), "Téléchargement en cours...", Toast.LENGTH_SHORT).show());
+            } else if (ElectronicTable.STATUS_FAILED.equals(status)) {
+                mCategoryTextView.setText("Échec — appuyez pour réessayer");
+                itemView.setOnClickListener(v -> {
+                    // Reouvre la fiche du livre (meme flux que le catalogue) plutot
+                    // que de dupliquer ici la logique de relance du telechargement :
+                    // BookActivity connait deja l'etat reel et propose "Réessayer"
+                    // (cf. configureElectronicFormat()/handlePdfDownload()).
+                    Intent intent = new Intent(itemView.getContext(), BookActivity.class);
+                    intent.putExtra("intent_adapter_book_id", electronicBook.getId());
+                    itemView.getContext().startActivity(intent);
+                });
+            } else {
+                mCategoryTextView.setText("Catégorie : " + electronicBook.getCategory());
+                itemView.setOnClickListener(v -> {
                     // Ouvrir le PDF avec PDFBox
                     Intent intent = new Intent(itemView.getContext(), PdfBoxViewerActivity.class);
                     intent.putExtra("PDF_PATH", electronicBook.getPdf());
                     intent.putExtra("PDF_TITLE", electronicBook.getTitle());
                     itemView.getContext().startActivity(intent);
-                }
-            });
+                });
+            }
         }
     }
 }

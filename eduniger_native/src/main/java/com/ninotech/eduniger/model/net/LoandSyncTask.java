@@ -104,7 +104,7 @@ public class LoandSyncTask extends AsyncTask<Void, Void, Boolean> {
                     try {
                         String coverUrl = Server.getUrlHostProd(mContext)
                                 + "/api/public/resource/1/blanket/" + bookCover;
-                        localCoverPath = downloader.start(coverUrl, bookCover, null);
+                        localCoverPath = downloader.start(coverUrl, bookCover, null).path;
                     } catch (Exception e) {
                         Log.e(TAG, "Erreur téléchargement couverture : " + e.getMessage());
                         localCoverPath = bookCover;

@@ -180,7 +180,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                                     coverUrl,
                                     bookCover,
                                     null
-                            );
+                            ).path;
                             Log.d(TAG, "Couverture téléchargée : " + localCoverPath);
 
                         } catch (Exception e) {

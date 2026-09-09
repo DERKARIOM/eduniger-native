@@ -370,13 +370,20 @@ public class BookActivity extends AppCompatActivity {
                 mPdfDownloadPercentText.setText(progress + "%");
             }
         };
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        // registerReceiver(receiver, filter, int flags) n'existe que depuis l'API 33
+        // (TIRAMISU) : le garder derriere Build.VERSION_CODES.O (API 26) comme
+        // precedemment provoquait un NoSuchMethodError au runtime sur les appareils
+        // API 28-32, pourtant explicitement supportes par l'app (minSdk 28). Meme
+        // correction et meme repli 2-arguments que AudioPlayerActivity/AudioPlayerService.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             registerReceiver(mPdfProgressReceiver,
                     new IntentFilter("ACTION_PDF_DOWNLOAD_PROGRESS"),
                     Context.RECEIVER_NOT_EXPORTED);
+        } else {
+            registerReceiver(mPdfProgressReceiver, new IntentFilter("ACTION_PDF_DOWNLOAD_PROGRESS"));
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             registerReceiver(mFinishDownloadReceiver,
                     new IntentFilter(ACTION_FINISH_DOWNLOAD), Context.RECEIVER_NOT_EXPORTED);
             registerReceiver(mNoConnectionReceiver,
@@ -384,6 +391,10 @@ public class BookActivity extends AppCompatActivity {
             registerReceiver(mAudioProgressReceiver,
                     new IntentFilter("ACTION_AUDIO_DOWNLOAD_PROGRESS"),
                     Context.RECEIVER_NOT_EXPORTED);
+        } else {
+            registerReceiver(mFinishDownloadReceiver, new IntentFilter(ACTION_FINISH_DOWNLOAD));
+            registerReceiver(mNoConnectionReceiver, new IntentFilter(ACTION_BOOK));
+            registerReceiver(mAudioProgressReceiver, new IntentFilter("ACTION_AUDIO_DOWNLOAD_PROGRESS"));
         }
     }
 
@@ -401,7 +412,11 @@ public class BookActivity extends AppCompatActivity {
             }
             mPdfDownloadProgressContainer.setVisibility(View.GONE);
             downloadPDFButton.setVisibility(View.VISIBLE);
-            downloadPDFButton.setText(success ? "Ouvrir" : "Format PDF");
+            // "Reessayer" (et non "Format PDF") sur echec : le fichier partiel local,
+            // s'il existe, sera repris via Range au prochain tap (handlePdfDownload
+            // accepte desormais les deux libelles), au lieu de laisser croire qu'aucun
+            // telechargement n'a jamais ete tente (cf. audit sections 6/8).
+            downloadPDFButton.setText(success ? "Ouvrir" : "Réessayer");
         }
         if (success) {
             Toast.makeText(this, mOnlineBook.getTitle() + " Téléchargé avec succès", Toast.LENGTH_SHORT).show();
@@ -457,7 +472,15 @@ public class BookActivity extends AppCompatActivity {
 
     private void handlePdfDownload() {
         String buttonText = downloadPDFButton.getText().toString();
-        if ("Format PDF".equals(buttonText)) {
+        if ("Format PDF".equals(buttonText) || "Réessayer".equals(buttonText)) {
+            // Garde anti double-tap : si un téléchargement est déjà en cours pour ce
+            // livre (ligne DOWNLOADING en base), on évite d'en déclencher un second en
+            // parallèle vers le même fichier local (cf. audit section "états").
+            if (ElectronicTable.STATUS_DOWNLOADING.equals(
+                    mElectronicTable.getStatus(mSession.getIdNumber(), mOnlineBook.getId()))) {
+                Toast.makeText(this, "Téléchargement déjà en cours", Toast.LENGTH_SHORT).show();
+                return;
+            }
             downloadPDFButton.setVisibility(View.GONE);
             mPdfDownloadProgressContainer.setVisibility(View.VISIBLE);
             mPdfDownloadProgressBar.setProgress(0);
@@ -476,7 +499,8 @@ public class BookActivity extends AppCompatActivity {
                 mCategory.getCover(), mAuthor.getProfile(),
                 mSession.getIdNumber(), mOnlineBook.getId(),
                 mOnlineBook.getDescription(), mOnlineBook.getAuthor(),
-                mOnlineBook.getCategory(), mOnlineBook.getTitle()
+                mOnlineBook.getCategory(), mOnlineBook.getTitle(),
+                mOnlineBook.getIdStruct()
         });
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) startForegroundService(intent);
     }
@@ -508,7 +532,8 @@ public class BookActivity extends AppCompatActivity {
                 mCategory.getCover(), mAuthor.getProfile(), mTones.getAudio(),
                 mSession.getIdNumber(), mOnlineBook.getId(),
                 mOnlineBook.getDescription(), mOnlineBook.getAuthor(),
-                mOnlineBook.getCategory(), mOnlineBook.getTitle(), mTones.getDuration(),mOnlineBook.getCover()
+                mOnlineBook.getCategory(), mOnlineBook.getTitle(), mTones.getDuration(),mOnlineBook.getCover(),
+                mOnlineBook.getIdStruct()
         });
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) startForegroundService(intent);
     }
@@ -798,8 +823,28 @@ public class BookActivity extends AppCompatActivity {
     private void configureElectronicFormat() {
         if (!"null".equals(mOnlineBook.getElectronic())) {
             mElectronicLinearLayout.setVisibility(View.VISIBLE);
-            mSourcePdf = mElectronicTable.isExist(mSession.getIdNumber(), mOnlineBook.getId());
-            if (!"false".equals(mSourcePdf)) downloadPDFButton.setText("Ouvrir");
+
+            // Etat reel du telechargement (COMPLETED/DOWNLOADING/FAILED, ou null si
+            // jamais tente) plutot que le seul isExist()==COMPLETED utilise auparavant :
+            // sans cela, relancer l'app apres un telechargement interrompu (processus
+            // tue) affichait de nouveau "Format PDF" comme si rien n'avait ete tente,
+            // sans aucune trace de l'echec ni moyen de reprendre (audit sections 4/6/8).
+            String electronicStatus = mElectronicTable.getStatus(mSession.getIdNumber(), mOnlineBook.getId());
+            if (ElectronicTable.STATUS_COMPLETED.equals(electronicStatus)) {
+                mSourcePdf = mElectronicTable.isExist(mSession.getIdNumber(), mOnlineBook.getId());
+                downloadPDFButton.setText("Ouvrir");
+            } else if (ElectronicTable.STATUS_DOWNLOADING.equals(electronicStatus)
+                    || ElectronicTable.STATUS_FAILED.equals(electronicStatus)) {
+                // Si un service de telechargement est reellement encore actif, la
+                // prochaine diffusion de progression/fin (receivers deja enregistres
+                // dans registerBroadcastReceivers) corrige l'affichage immediatement.
+                // Sinon (telechargement interrompu par la fermeture de l'app), ce
+                // bouton permet de reprendre : le fichier partiel local, s'il existe,
+                // sera repris via Range (DownloadFile.start()).
+                downloadPDFButton.setText("Réessayer");
+            } else {
+                downloadPDFButton.setText("Format PDF");
+            }
 
 //            if (!"null".equals(mOnlineBook.getSize())) {
 //                mPdfSizeTextView.setText(mOnlineBook.getSize());
