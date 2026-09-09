@@ -75,7 +75,6 @@ public class HomeFragment extends Fragment {
 
     private static final String TAG = "HomeFragment";
     private static final String ACTION_HOME_FRAGMENT = "HOME_FRAGMENT";
-    private static final String RESPONSE_RAS = "RAS";
     private static final String RESPONSE_EXPIRED_VERSION = "expiresVersion";
 
     // Views
@@ -124,6 +123,8 @@ public class HomeFragment extends Fragment {
     private View mSkeletonLoadingContainer;
     private View mNoConnectionContainer;
     private ValueAnimator mArrowAnimator;
+    /** false apres le tout premier onResume (voir onResume()). */
+    private boolean mFirstResume = true;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -185,6 +186,39 @@ public class HomeFragment extends Fragment {
         super.onResume();
         // L'utilisateur revient du lecteur : la progression a changé, on rafraîchit.
         refreshContinueListening();
+
+        if (mFirstResume) {
+            // Ce premier onResume suit immediatement onCreateView, qui vient deja
+            // de charger les recommandations (loadInitialData) : inutile de les
+            // recharger une seconde fois tout de suite.
+            mFirstResume = false;
+        } else {
+            // L'utilisateur revient sur l'accueil (ex: apres avoir rejoint/quitte
+            // une structure depuis StructureActivity) : les recommandations
+            // doivent refleter le nouvel etat sans attendre un tirer-pour-actualiser
+            // manuel. Seule la section Recommande est rechargee (pas Pub/Structures/
+            // Auteurs) pour eviter des appels reseau inutiles a chaque retour.
+            refreshRecommendations();
+        }
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        // mFragmentHome est heberge par MainActivity via un pattern
+        // hide()/show() (bottom navigation) : passer d'un autre onglet a
+        // l'accueil ne quitte pas l'Activity et ne declenche donc PAS
+        // onResume() (seul onHiddenChanged l'est). Sans ce complement, le
+        // scenario le plus courant du cahier des charges (rejoindre une
+        // structure depuis l'onglet Structures puis revenir sur l'onglet
+        // Accueil via la bottom nav) ne rafraichirait jamais Recommande.
+        // mFragmentHome demarre visible (jamais .hide() lors de la
+        // transaction initiale dans setupNavigation()), donc ce callback
+        // n'est jamais invoque au demarrage : pas besoin d'un garde
+        // "premier appel" comme pour mFirstResume dans onResume().
+        if (!hidden && isAdded()) {
+            refreshRecommendations();
+        }
     }
 
     // ==================== Initialisation ====================
@@ -473,7 +507,11 @@ public class HomeFragment extends Fragment {
         String version  = getString(R.string.app_version);
 
         new PubSyn().execute(baseUrl + "Pub.php", idNumber, version);
-        new RecommendedSyn().execute(baseUrl + "recommended.php", idNumber, version);
+        // Ancien : recommended.php (backend legacy JWT, jamais atteint depuis la
+        // bascule Sanctum -> section "Recommande" en pratique toujours vide/en echec).
+        // Bascule vers /api/recommendations (Sanctum), calcule cote serveur a partir
+        // des structures reelles de l'utilisateur (StructUser), en un seul appel.
+        refreshRecommendations();
         // Ancien : structure.php + structure_top.php (backend PHP legacy, JWT maison qui
         // rejette le token Sanctum -> 'Authentification requise'). Bascule vers la vraie
         // API Laravel /api/structures (Sanctum, deja authentifiee via ApiClient). Le second
@@ -485,6 +523,16 @@ public class HomeFragment extends Fragment {
         // reelle des auteurs via /api/structures... /api/authors (Sanctum), plutot que de
         // laisser la section vide ou en erreur.
         new AuthorSyn().execute(Server.getUrlHostProd(context) + "/api/authors");
+    }
+
+    /**
+     * Recharge uniquement la section "Recommande" (GET /api/recommendations).
+     * Extrait de loadAllData() pour pouvoir la rafraichir seule depuis onResume()
+     * sans re-declencher les appels Pub/Structures/Auteurs a chaque retour sur
+     * l'accueil (ceux-la restent couverts par le pull-to-refresh existant).
+     */
+    private void refreshRecommendations() {
+        new RecommendedSyn().execute(Server.getUrlHostProd(requireContext()) + "/api/recommendations");
     }
 
     // ==================== Cycle de vie ====================
@@ -528,8 +576,7 @@ public class HomeFragment extends Fragment {
     private class RecommendedSyn extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-            String url = params[0] + "?id_number=" + params[1] + "&version=" + params[2];
-            return executeGetRequest(url);
+            return executeGetRequest(params[0]);
         }
 
         @Override
@@ -542,14 +589,13 @@ public class HomeFragment extends Fragment {
                 loadPublicitySlider();
                 showContentState();
 
-                if (RESPONSE_EXPIRED_VERSION.equals(jsonData)) {
-                    showUpdateDialog();
-                } else if (!RESPONSE_RAS.equals(jsonData)) {
-                    processRecommendedBooks(jsonData);
-                    setupServerRecyclerView();
-                    mServerdRecyclerView.setVisibility(View.VISIBLE);
-                    mStructureRecyclerView.setVisibility(View.VISIBLE);
-                }
+                // /api/recommendations renvoie toujours un tableau JSON (eventuellement
+                // vide si l'utilisateur n'adhere a aucune structure) : plus besoin du
+                // sentinelle "RAS" ni du controle de version de l'ancien recommended.php.
+                processRecommendedBooks(jsonData);
+                setupServerRecyclerView();
+                mServerdRecyclerView.setVisibility(View.VISIBLE);
+                mStructureRecyclerView.setVisibility(View.VISIBLE);
             } else {
                 stopRefreshing();
                 showNoConnectionError();
