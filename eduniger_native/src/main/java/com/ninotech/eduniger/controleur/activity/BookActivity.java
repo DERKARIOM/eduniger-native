@@ -411,18 +411,19 @@ public class BookActivity extends AppCompatActivity {
     }
 
     private void loadBookData() {
-        String baseUrl  = Server.getUrlApi(this);
-        String idNumber = mSession.getIdNumber();
-        String bookId   = mOnlineBook.getId();
+        // Migration Laravel : le detail du livre (idStruct, audioFiles, compteurs...) vient
+        // desormais de /api/book/{idBook}/details ; le statut de reservation en depend
+        // (idStruct) et n'est donc plus lance ici mais depuis processBookData(), une fois
+        // ce detail recupere (voir checkReservationStatus()).
+        String hostUrl = Server.getUrlHostProd(this);
+        String bookId  = mOnlineBook.getId();
 
-        new RecoveryBook(this).execute(baseUrl + "book.php", idNumber, bookId);
-        new IsReservationSyn().execute(baseUrl + "is_reservation.php", idNumber, bookId);
-        new InsertViewSyn().execute(baseUrl + "insert_view.php", idNumber, bookId);
-        new IsSubscribeBookSyn().execute(baseUrl + "IsSubscribeBook.php", idNumber, bookId);
-        new IsLikeSyn().execute(baseUrl + "IsLike.php", idNumber, bookId);
-        new IsNoLikeSyn().execute(baseUrl + "IsNoLike.php", idNumber, bookId);
-        new ReceiveComments().execute(baseUrl + "ReceiveComments.php", idNumber, bookId);
-        new RecoveryTones().execute(baseUrl + "Tones.php");
+        new RecoveryBook(this).execute(hostUrl + "/api/book/" + bookId + "/details");
+        new InsertViewSyn().execute(hostUrl + "/api/book/" + bookId + "/view");
+        new IsSubscribeBookSyn().execute(hostUrl + "/api/book/" + bookId + "/subscription");
+        new IsLikeSyn().execute(hostUrl + "/api/book/" + bookId + "/like");
+        new IsNoLikeSyn().execute(hostUrl + "/api/book/" + bookId + "/dislike");
+        new ReceiveComments().execute(hostUrl + "/api/book/" + bookId + "/comments");
     }
 
     // ==================== Click Handlers ====================
@@ -443,9 +444,10 @@ public class BookActivity extends AppCompatActivity {
                         + mOnlineBook.getTitle() + "\" ?")
                 .setPositiveButton("Oui, annuler", (dialog, which) -> {
                     new CancelReservationSyn().execute(
-                            Server.getUrlApi(this) + "cancel_reservation.php",
+                            Server.getUrlHostProd(this) + "/api/reservations/cancel",
                             mOnlineBook.getId(),
-                            mSession.getIdNumber()
+                            mSession.getIdNumber(),
+                            mOnlineBook.getIdStruct()
                     );
                 })
                 .setNegativeButton("Non, garder", (dialog, which) -> dialog.dismiss())
@@ -556,7 +558,7 @@ public class BookActivity extends AppCompatActivity {
             isLike = true;
         }
         mNumberLikeTextView.setText(String.valueOf(mOnlineBook.getNumberLikes()));
-        new InsertLikeSyn().execute(Server.getUrlApi(this) + "insert_like.php",
+        new InsertLikeSyn().execute(Server.getUrlHostProd(this) + "/api/book/" + mOnlineBook.getId() + "/like",
                 mSession.getIdNumber(), mOnlineBook.getId());
     }
 
@@ -577,7 +579,7 @@ public class BookActivity extends AppCompatActivity {
             isNoLike = true;
         }
         mNumberNoLikeTextView.setText(String.valueOf(mOnlineBook.getNumberNoLikes()));
-        new InsertNoLikeSyn().execute(Server.getUrlApi(this) + "insert_no_like.php",
+        new InsertNoLikeSyn().execute(Server.getUrlHostProd(this) + "/api/book/" + mOnlineBook.getId() + "/dislike",
                 mSession.getIdNumber(), mOnlineBook.getId());
     }
 
@@ -592,7 +594,7 @@ public class BookActivity extends AppCompatActivity {
             isSubscribe = true;
         }
         mNumberSubscribeTextView.setText(String.valueOf(mOnlineBook.getNumberSubscribe()));
-        new InsertSubscribeBookSyn().execute(Server.getUrlApi(this) + "insert_subscribe_book.php",
+        new InsertSubscribeBookSyn().execute(Server.getUrlHostProd(this) + "/api/book/" + mOnlineBook.getId() + "/subscription",
                 mSession.getIdNumber(), mOnlineBook.getId());
     }
 
@@ -606,8 +608,8 @@ public class BookActivity extends AppCompatActivity {
             mCommentsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
             mCommentsRecyclerView.setAdapter(talksAdapter);
             mCommentsRecyclerView.smoothScrollToPosition(talksAdapter.getItemCount() - 1);
-            new SendComments().execute(Server.getUrlApi(this) + "SendComments.php",
-                    mSession.getIdNumber(), mOnlineBook.getId(), chat.getMessage());
+            new SendComments().execute(Server.getUrlHostProd(this) + "/api/book/" + mOnlineBook.getId() + "/comments",
+                    chat.getMessage());
         }
     }
 
@@ -623,39 +625,127 @@ public class BookActivity extends AppCompatActivity {
             loadBookCoverImage();
             updateStatistics();
             configureBookFormats();
+            processAudioFiles(obj.optJSONArray("audioFiles"));
+            checkReservationStatus();
         } catch (JSONException e) {
             Log.e(TAG, "Error parsing book data", e);
         }
     }
 
+    /**
+     * Migration Laravel : consomme desormais /api/book/{idBook}/details
+     * (BookAssociationController::getBookDetails), dont la forme differe de
+     * l'ancien book.php : categories/author/structures/audioFiles sont des
+     * objets/tableaux imbriques plutot que des colonnes GROUP_CONCAT a plat,
+     * et l'auteur n'expose pas de call/email/whatsapp (champs absents du modele
+     * Laravel Author) -> mis a "null" comme ailleurs dans l'appli pour masquer
+     * les boutons de contact correspondants.
+     */
     private void updateBookDetails(JSONObject obj) throws JSONException {
-        mOnlineBook.setCover(obj.getString("bookBlanket"));
-        mOnlineBook.setTitle(obj.getString("bookTitle"));
-        mOnlineBook.setIsPhysic(obj.getString("isPhysic"));
-        mOnlineBook.setIsAudio(obj.getString("isAudio"));
-        mOnlineBook.setElectronic(obj.getString("electronic"));
-        mOnlineBook.setDescription(obj.getString("description"));
-        mOnlineBook.setCategory(obj.getString("categoryTitle"));
-        mOnlineBook.setIsAvailable(obj.getString("available"));
-        mOnlineBook.setSize(obj.getString("size"));
-        mOnlineBook.setNbrPage(obj.getString("nbrPage"));
-        mOnlineBook.setNumberLikes(Integer.parseInt(obj.getString("numberLike")));
-        mOnlineBook.setNumberNoLikes(Integer.parseInt(obj.getString("numberNoLike")));
-        mOnlineBook.setNumberSubscribe(Integer.parseInt(obj.getString("numberSubscribe")));
-        mOnlineBook.setNumberView(Integer.parseInt(obj.getString("numberView")));
-        mOnlineBook.setAuthor(obj.getString("firstName") + " " + obj.getString("name"));
-        mOnlineBook.setIdStruct(obj.getString("idStructures"));
+        mOnlineBook.setCover(obj.optString("blanket", "null"));
+        mOnlineBook.setTitle(obj.optString("title", ""));
+        mOnlineBook.setIsPhysic(obj.optString("isPhysic", "0"));
+        mOnlineBook.setIsAudio(obj.optString("isAudio", "0"));
+        mOnlineBook.setElectronic(obj.optString("electronic", "null"));
+        mOnlineBook.setDescription(obj.optString("description", ""));
+        mOnlineBook.setIsAvailable(obj.optString("available", "0"));
+        mOnlineBook.setSize(obj.optString("size", "null"));
+        mOnlineBook.setNbrPage(obj.optString("nbrPage", "null"));
+        mOnlineBook.setNumberLikes(obj.optInt("numberLike", 0));
+        mOnlineBook.setNumberNoLikes(obj.optInt("numberNoLike", 0));
+        mOnlineBook.setNumberSubscribe(obj.optInt("numberSubscribe", 0));
+        mOnlineBook.setNumberView(obj.optInt("numberView", 0));
 
-        mCategory = new Category(obj.getString("categoryBlanket"), obj.getString("categoryTitle"));
-        mAuthor = new Author(obj.getString("idAuthor"), obj.getString("name"),
-                obj.getString("firstName"), obj.getString("profile"), obj.getString("profession"),
-                obj.getString("call"), obj.getString("email"), obj.getString("whatsapp"));
+        // Categories : peut desormais en avoir plusieurs -> jointes pour l'affichage,
+        // comme le faisait l'ancien GROUP_CONCAT cote SQL.
+        JSONArray categoriesArray = obj.optJSONArray("categories");
+        StringBuilder titles = new StringBuilder();
+        StringBuilder blankets = new StringBuilder();
+        if (categoriesArray != null) {
+            for (int i = 0; i < categoriesArray.length(); i++) {
+                JSONObject cat = categoriesArray.getJSONObject(i);
+                if (i > 0) { titles.append(", "); blankets.append(", "); }
+                titles.append(cat.optString("title", ""));
+                blankets.append(cat.optString("blanket", ""));
+            }
+        }
+        String categoryTitle = titles.toString();
+        String categoryBlanket = blankets.toString();
+        mOnlineBook.setCategory(categoryTitle);
+        mCategory = new Category(categoryBlanket, categoryTitle);
+
+        // Auteur
+        JSONObject authorObj = obj.optJSONObject("author");
+        String authorName = authorObj != null ? authorObj.optString("name", "") : "";
+        String authorFirstName = authorObj != null ? authorObj.optString("firstName", "") : "";
+        String authorId = authorObj != null ? authorObj.optString("idAuthor", "") : "";
+        String authorProfile = authorObj != null ? authorObj.optString("profile", "null") : "null";
+        String authorProfession = authorObj != null ? authorObj.optString("profession", "null") : "null";
+        mOnlineBook.setAuthor(authorFirstName + " " + authorName);
+        mAuthor = new Author(authorId, authorName, authorFirstName, authorProfile, authorProfession,
+                "null", "null", "null");
+
+        // Structure : premiere structure associee (meme convention que pour BooksFragment).
+        JSONArray structuresArray = obj.optJSONArray("structures");
+        String idStruct = "0";
+        if (structuresArray != null && structuresArray.length() > 0) {
+            idStruct = structuresArray.getJSONObject(0).optString("id", "0");
+        }
+        mOnlineBook.setIdStruct(idStruct);
 
         mTitleTextView.setText(mOnlineBook.getTitle());
-        mNameAuthor.setText("De " + obj.getString("name") + " " + obj.getString("firstName"));
+        mNameAuthor.setText("De " + authorName + " " + authorFirstName);
         mCote.setText("Cote : " + mOnlineBook.getId());
         mCategoryTextView.setText("Catégorie : " + mOnlineBook.getCategory());
         mDescriptionTextView.setText(mOnlineBook.getDescription());
+    }
+
+    /**
+     * Remplace l'ancien Tones.php : les metadonnees audio sont desormais incluses
+     * dans la reponse de /api/book/{idBook}/details (relation audioFiles).
+     */
+    private void processAudioFiles(JSONArray audioFilesArray) {
+        if (audioFilesArray == null || audioFilesArray.length() == 0) return;
+        try {
+            mListTones.clear();
+            for (int i = 0; i < audioFilesArray.length(); i++) {
+                JSONObject audioObj = audioFilesArray.getJSONObject(i);
+                String audio = audioObj.optString("audio", "");
+                String title = audioObj.optString("title", "");
+                String size = audioObj.optString("size", "null");
+                String maxTime = audioObj.has("maxTime")
+                        ? audioObj.optString("maxTime", "null")
+                        : audioObj.optString("maxtime", "null");
+                mListTones.add(new Tones(i + 1, audio, title, 0, false));
+                if (i == 0) mTones = new Tones(0, audio, size, maxTime);
+            }
+            if (mTones != null) {
+                if (!"null".equals(mTones.getSize())) {
+                    mAudioSizeTextView.setText(mTones.getSize());
+                    mAudioSizeLinearLayout.setVisibility(View.VISIBLE);
+                }
+                audioButton.setEnabled(true);
+                mMaxTimeTextView.setText(mTones.getDuration());
+                mMaxTimeLinearLayout.setVisibility(View.VISIBLE);
+                setupMediaPlayer();
+            }
+        } catch (JSONException e) {
+            Log.e(TAG, "Error parsing audio files", e);
+        }
+    }
+
+    /**
+     * Statut de reservation pour l'utilisateur courant. Ne peut etre lance qu'une fois
+     * mOnlineBook.getIdStruct() renseigne par updateBookDetails() (remplace l'ancien
+     * is_reservation.php, appele en parallele du detail livre car il ne dependait pas
+     * de idStruct).
+     */
+    private void checkReservationStatus() {
+        String url = Server.getUrlHostProd(this) + "/api/reservations/check"
+                + "?idStruct=" + mOnlineBook.getIdStruct()
+                + "&idUser=" + mSession.getIdNumber()
+                + "&idBook=" + mOnlineBook.getId();
+        new IsReservationSyn().execute(url);
     }
 
     private void loadBookCoverImage() {
@@ -737,8 +827,9 @@ public class BookActivity extends AppCompatActivity {
         protected String doInBackground(String... params) {
             BookActivity activity = activityRef.get();
             if (activity == null) return null;
-            String url = params[0] + "?id_number=" + params[1] + "&id_book=" + params[2];
-            return activity.executeGetRequest(url);
+            // params[0] = URL complete /api/book/{idBook}/details (plus de query string
+            // id_number/id_book a construire : idBook est deja dans le chemin).
+            return activity.executeGetRequest(params[0]);
         }
 
         @Override
@@ -753,10 +844,7 @@ public class BookActivity extends AppCompatActivity {
     private class ReceiveComments extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-            return executePostRequest(params[0], new MultipartBody.Builder()
-                    .setType(MultipartBody.FORM)
-                    .addFormDataPart("idNumber", params[1])
-                    .addFormDataPart("idBook", params[2]).build());
+            return executeGetRequest(params[0]);
         }
 
         @Override
@@ -766,17 +854,18 @@ public class BookActivity extends AppCompatActivity {
         }
 
         private void processComments(String jsonData) {
-            if (!RESPONSE_RAS.equals(jsonData)) {
-                try {
-                    JSONArray jsonArray = new JSONArray(jsonData);
-                    mTalksList.clear();
+            try {
+                JSONObject root = new JSONObject(jsonData);
+                JSONArray jsonArray = root.optJSONArray("data");
+                mTalksList.clear();
+                if (jsonArray != null) {
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject obj = jsonArray.getJSONObject(i);
-                        String fullName = obj.getString("name") + " " + obj.getString("firstName");
-                        mTalksList.add(new Talks(obj.getString("idUser") + ".png", fullName, obj.getString("message")));
+                        String fullName = obj.optString("name", "") + " " + obj.optString("firstName", "");
+                        mTalksList.add(new Talks(obj.optString("idUser", "") + ".png", fullName, obj.optString("message", "")));
                     }
-                } catch (JSONException e) { Log.e(TAG, "Error parsing comments", e); }
-            }
+                }
+            } catch (JSONException e) { Log.e(TAG, "Error parsing comments", e); }
             talksAdapter = new TalksAdapter(mTalksList);
             mCommentsRecyclerView.setLayoutManager(new LinearLayoutManager(BookActivity.this));
             registerForContextMenu(mCommentsRecyclerView);
@@ -793,38 +882,13 @@ public class BookActivity extends AppCompatActivity {
         }
     }
 
-    private class RecoveryTones extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... params) {
-            return executePostRequest(params[0], new MultipartBody.Builder()
-                    .setType(MultipartBody.FORM)
-                    .addFormDataPart("idNumber", mSession.getIdNumber())
-                    .addFormDataPart("idBook", mOnlineBook.getId()).build());
-        }
-
-        @Override
-        protected void onPostExecute(String jsonData) {
-            if (jsonData != null && !RESPONSE_RAS.equals(jsonData)) {
-                processTones(jsonData);
-                setupMediaPlayer();
-            }
-        }
-
-        private void processTones(String jsonData) {
-            try {
-                JSONArray jsonArray = new JSONArray(jsonData);
-                mListTones.clear();
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject obj = jsonArray.getJSONObject(i);
-                    mListTones.add(new Tones(i + 1, obj.getString("audio"), obj.getString("title"), 0, false));
-                    if (i == 0) mTones = new Tones(0, obj.getString("audio"), obj.getString("size"), obj.getString("maxTime"));
-                }
-                if (!"null".equals(mTones.getSize())) { mAudioSizeTextView.setText(mTones.getSize()); mAudioSizeLinearLayout.setVisibility(View.VISIBLE); }
-                 audioButton.setEnabled(true); mMaxTimeTextView.setText(mTones.getDuration()); mMaxTimeLinearLayout.setVisibility(View.VISIBLE);
-            } catch (JSONException e) { Log.e(TAG, "Error parsing tones", e); }
-        }
-
-        private void setupMediaPlayer() {
+    /**
+     * Configure le lecteur audio a partir de la premiere piste de mListTones/mTones
+     * (alimentes par processAudioFiles(), lui-meme nourri par la reponse de
+     * /api/book/{idBook}/details). Anciennement le onPostExecute de RecoveryTones,
+     * devenu une methode normale puisque Tones.php n'existe plus.
+     */
+    private void setupMediaPlayer() {
             String url = Server.getUrlHostProd(getApplicationContext()) + "/api/public/resource/" + mOnlineBook.getIdStruct() + "/audio/" + mTones.getAudio();
             try {
                 mMediaPlayer.setDataSource(url);
@@ -847,7 +911,6 @@ public class BookActivity extends AppCompatActivity {
                 });
                 mMediaPlayerThread.start();
             } catch (IOException e) { Log.e(TAG, "Error setting up media player", e); }
-        }
     }
 
     private class InsertLikeSyn extends AsyncTask<String, Void, String> {
@@ -866,37 +929,43 @@ public class BookActivity extends AppCompatActivity {
     }
 
     private class InsertViewSyn extends AsyncTask<String, Void, String> {
-        @Override protected String doInBackground(String... p) { return executePostRequest(p[0], createIdBookRequestBody(p[1], p[2])); }
+        @Override protected String doInBackground(String... p) { return executePostRequest(p[0], RequestBody.create(new byte[0], null)); }
         @Override protected void onPostExecute(String d) {}
     }
 
     private class IsLikeSyn extends AsyncTask<String, Void, String> {
-        @Override protected String doInBackground(String... p) { return executePostRequest(p[0], createIdBookRequestBody(p[1], p[2])); }
+        @Override protected String doInBackground(String... p) { return executeGetRequest(p[0]); }
         @Override protected void onPostExecute(String jsonData) {
-            if (jsonData != null && !RESPONSE_RAS.equals(jsonData)) {
-                if (jsonData.equals(mSession.getIdNumber())) { isLike = true; mLikeImageView.setImageResource(R.drawable.vector_purple2_200_on_like); }
-                else mLikeImageView.setImageResource(R.drawable.vector_black3_off_like);
-            }
+            if (jsonData == null) return;
+            try {
+                boolean liked = new JSONObject(jsonData).optBoolean("liked", false);
+                isLike = liked;
+                mLikeImageView.setImageResource(liked ? R.drawable.vector_purple2_200_on_like : R.drawable.vector_black3_off_like);
+            } catch (JSONException e) { Log.e(TAG, "Error parsing like status", e); }
         }
     }
 
     private class IsNoLikeSyn extends AsyncTask<String, Void, String> {
-        @Override protected String doInBackground(String... p) { return executePostRequest(p[0], createIdBookRequestBody(p[1], p[2])); }
+        @Override protected String doInBackground(String... p) { return executeGetRequest(p[0]); }
         @Override protected void onPostExecute(String jsonData) {
-            if (jsonData != null && !RESPONSE_RAS.equals(jsonData)) {
-                if (jsonData.equals(mSession.getIdNumber())) { isNoLike = true; mNoLikeImageView.setImageResource(R.drawable.vector_rouge_on_nolike); }
-                else mNoLikeImageView.setImageResource(R.drawable.vector_black3_off_no_like);
-            }
+            if (jsonData == null) return;
+            try {
+                boolean disliked = new JSONObject(jsonData).optBoolean("disliked", false);
+                isNoLike = disliked;
+                mNoLikeImageView.setImageResource(disliked ? R.drawable.vector_rouge_on_nolike : R.drawable.vector_black3_off_no_like);
+            } catch (JSONException e) { Log.e(TAG, "Error parsing dislike status", e); }
         }
     }
 
     private class IsSubscribeBookSyn extends AsyncTask<String, Void, String> {
-        @Override protected String doInBackground(String... p) { return executePostRequest(p[0], createIdBookRequestBody(p[1], p[2])); }
+        @Override protected String doInBackground(String... p) { return executeGetRequest(p[0]); }
         @Override protected void onPostExecute(String jsonData) {
-            if (jsonData != null && !RESPONSE_RAS.equals(jsonData)) {
-                if (jsonData.equals(mSession.getIdNumber())) { isSubscribe = true; mSubscribeImageView.setImageResource(R.drawable.vector_purple2_200_suscribe); }
-                else mSubscribeImageView.setImageResource(R.drawable.vector_black3_off_subscribe);
-            }
+            if (jsonData == null) return;
+            try {
+                boolean subscribed = new JSONObject(jsonData).optBoolean("subscribed", false);
+                isSubscribe = subscribed;
+                mSubscribeImageView.setImageResource(subscribed ? R.drawable.vector_purple2_200_suscribe : R.drawable.vector_black3_off_subscribe);
+            } catch (JSONException e) { Log.e(TAG, "Error parsing subscription status", e); }
         }
     }
 
@@ -904,24 +973,24 @@ public class BookActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... params) {
-            // Conversion POST → GET : paramètres passés en query string
-            String url = params[0] + "?idNumber=" + params[1] + "&idBook=" + params[2];
-            return executeGetRequest(url);
+            // params[0] = URL complete (idStruct/idUser/idBook deja en query string,
+            // construite par checkReservationStatus() une fois idStruct connu).
+            return executeGetRequest(params[0]);
         }
 
         @Override
         protected void onPostExecute(String jsonData) {
-            if (jsonData == null || RESPONSE_RAS.equals(jsonData)) return;
+            if (jsonData == null) return;
 
             try {
                 JSONObject obj = new JSONObject(jsonData);
 
-                // Nouveau format : { "success": true, "data": { "state": X, "treat": X }, "message": "" }
+                // Format : { "success": true, "data": { "state": X, "treat": X }, "message": "" }
+                // (endpoint /api/reservations/check, meme enveloppe que l'ancien is_reservation.php)
                 if (!obj.optBoolean("success", false)) return;
                 JSONObject data  = obj.getJSONObject("data");
                 String     state = data.getString("state");
                 String     treat = data.getString("treat");
-                Log.e("kkkkkk","ok");
                 if ("1".equals(state) && "0".equals(treat)) {
                     // Réservation active → bouton Annuler en rouge
                     mReservationButton.setText(R.string.cancel_reservation);
@@ -961,11 +1030,12 @@ public class BookActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... params) {
-            // params[0] = url  |  params[1] = idBook  |  params[2] = idNumber
+            // params[0] = url  |  params[1] = idBook  |  params[2] = idUser  |  params[3] = idStruct
             RequestBody body = new MultipartBody.Builder()
                     .setType(MultipartBody.FORM)
                     .addFormDataPart("idBook",   params[1])
-                    .addFormDataPart("idNumber", params[2])
+                    .addFormDataPart("idUser",   params[2])
+                    .addFormDataPart("idStruct", params[3])
                     .build();
             return executePostRequest(params[0], body);
         }
@@ -1000,12 +1070,13 @@ public class BookActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... params) {
-            return executePostRequest("https://server.eduniger.com/api/reservations",
+            // params[0] = idUser  |  params[1] = idBook  |  params[2] = numberOfDays  |  params[3] = idStruct
+            return executePostRequest(Server.getUrlHostProd(getApplicationContext()) + "/api/reservations",
                     new MultipartBody.Builder().setType(MultipartBody.FORM)
-                            .addFormDataPart("idStruct", "1")
-                            .addFormDataPart("idUser", params[1])
-                            .addFormDataPart("idBook", params[2])
-                            .addFormDataPart("numberOfDays", params[3]).build());
+                            .addFormDataPart("idStruct", params[3])
+                            .addFormDataPart("idUser", params[0])
+                            .addFormDataPart("idBook", params[1])
+                            .addFormDataPart("numberOfDays", params[2]).build());
         }
 
         @Override
@@ -1013,26 +1084,37 @@ public class BookActivity extends AppCompatActivity {
             mProgressBar.setVisibility(View.INVISIBLE);
             mSendButton.setEnabled(true);
             mSendButton.setText("Envoyer");
-            if (jsonData != null) {
-                try {
-                    if ("Réservation créée ".equals(new JSONObject(jsonData).getString("message"))) {
-                        mReservationDialog.cancel();
-                        showSuccessReservationDialog("Merci d'avoir réservé \"" + mTitleTextView.getText().toString() + "\" sur fabi; nous traitons votre demande et vous confirmerons la disponibilité bientôt.");
-                        mReservationButton.setText(R.string.cancel_reservation);
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                            mReservationButton.setBackgroundTintList(ContextCompat.getColorStateList(BookActivity.this, R.color.rouge));
-                    }
-                } catch (JSONException e) { Log.e(TAG, "Error parsing reservation response", e); }
+            if (jsonData == null) {
+                Toast.makeText(BookActivity.this, "Erreur réseau, veuillez réessayer", Toast.LENGTH_LONG).show();
+                return;
             }
+            try {
+                JSONObject obj = new JSONObject(jsonData);
+                String message = obj.optString("message", "");
+                if ("Réservation créée ".equals(message)) {
+                    mReservationDialog.cancel();
+                    showSuccessReservationDialog("Merci d'avoir réservé \"" + mTitleTextView.getText().toString() + "\" sur fabi; nous traitons votre demande et vous confirmerons la disponibilité bientôt.");
+                    mReservationButton.setText(R.string.cancel_reservation);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                        mReservationButton.setBackgroundTintList(ContextCompat.getColorStateList(BookActivity.this, R.color.rouge));
+                } else {
+                    // Erreur de validation/metier renvoyee par ReservationController::store()
+                    // (livre deja reserve, indisponible, etc.) desormais affichee a l'utilisateur
+                    // plutot que silencieusement ignoree.
+                    Toast.makeText(BookActivity.this,
+                            message.isEmpty() ? "Erreur lors de la réservation" : message,
+                            Toast.LENGTH_LONG).show();
+                }
+            } catch (JSONException e) { Log.e(TAG, "Error parsing reservation response", e); }
         }
     }
 
     private class SendComments extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
+            // params[0] = url  |  params[1] = message (idBook est dans l'URL, idNumber vient du token)
             return executePostRequest(params[0], new MultipartBody.Builder().setType(MultipartBody.FORM)
-                    .addFormDataPart("idNumber", params[1]).addFormDataPart("idBook", params[2])
-                    .addFormDataPart("message", params[3]).build());
+                    .addFormDataPart("message", params[1]).build());
         }
         @Override protected void onPostExecute(String d) {}
     }
@@ -1068,7 +1150,11 @@ public class BookActivity extends AppCompatActivity {
             Button sendButton = mReservationDialog.findViewById(R.id.button_dialog_reservation_send);
             ProgressBar progressBar = mReservationDialog.findViewById(R.id.progress_circularEvaluez);
             sendButton.setEnabled(false); sendButton.setText(""); progressBar.setVisibility(View.VISIBLE);
-            new Reservation(sendButton, progressBar).execute(Server.getUrlApi(this) + "Reservation.php", mSession.getIdNumber(), mOnlineBook.getId(), mNbrJour);
+            // "Consultation locale" (mNbrJour = "-1") n'a pas d'equivalent cote Laravel
+            // (numberOfDays exige un entier entre 1 et 30) -> on envoie la duree minimale.
+            String numberOfDaysForServer = "-1".equals(mNbrJour) ? "1" : mNbrJour;
+            new Reservation(sendButton, progressBar).execute(
+                    mSession.getIdNumber(), mOnlineBook.getId(), numberOfDaysForServer, mOnlineBook.getIdStruct());
         }
     }
 

@@ -88,8 +88,13 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyView
         public void onCreateContextMenu(ContextMenu menu , View v , ContextMenu.ContextMenuInfo menuInfo){
         }
         void display(Category category){
+            // Migre de l'ancien backend (ressources/cover/) vers la route Laravel
+            // publique /api/public/resource/{idStruct}/category/{filename} (voir
+            // FileController::publicShow) - les categories ne sont pas rattachees a
+            // une structure, donc idStruct=0 (place-tenant ignore par le controleur
+            // pour ce type, comme pour "profil").
             Picasso.get()
-                    .load(Server.getUrlServer(itemView.getContext()) + "ressources/cover/" + category.getCover())
+                    .load(Server.getUrlHostProd(itemView.getContext()) + "/api/public/resource/0/category/" + category.getCover())
                     .placeholder(R.drawable.img_default_book)
                     .error(R.drawable.img_default_book)
                     .into(mBlanketImageView);

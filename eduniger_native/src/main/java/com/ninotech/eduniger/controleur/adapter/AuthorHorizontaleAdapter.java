@@ -66,7 +66,7 @@ public class AuthorHorizontaleAdapter extends RecyclerView.Adapter<AuthorHorizon
 
         void display(Author author) throws SQLException, IOException {
             Picasso.get()
-                    .load(Server.getUrlServer(itemView.getContext()) + "ressources/profile/" + author.getProfile())
+                    .load(Server.getUrlHostProd(itemView.getContext()) + "/api/public/resource/0/profil/" + author.getProfile()) // route publique Laravel (FileController::publicShow, type profil)
                     .placeholder(R.drawable.img_wait_profile)
                     .error(R.drawable.img_wait_profile)
                     .transform(new RoundedTransformation(1000,4))

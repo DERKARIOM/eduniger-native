@@ -306,13 +306,16 @@ public class StructureActivity extends AppCompatActivity {
     // ==================== Chargement ====================
 
     private void loadStructureData() {
-        String baseUrl  = Server.getUrlApi(this);
-        String idNumber = mSession.getIdNumber();
-        String structId = mStructure.getId();
+        // Migration Laravel : les 3 appels legacy (struct_book.php, CategoryStrut.php,
+        // author_top.php) renvoyaient tous "Token invalide." (backend legacy, token
+        // Sanctum incompatible) - bascules vers les endpoints Laravel deja utilises
+        // ailleurs dans l'appli (BooksFragment, CategoryFragment, SearchActivity/HomeFragment).
+        String hostUrl   = Server.getUrlHostProd(this);
+        String structId  = mStructure.getId();
 
-        new StructBookSyn().execute(baseUrl + "struct_book.php", idNumber, structId);
-        new CategorySyn().execute(baseUrl + "CategoryStrut.php", idNumber);
-        new AuthorSyn().execute(baseUrl + "author_top.php", idNumber);
+        new StructBookSyn().execute(hostUrl + "/api/book/associations?structureId=" + structId);
+        new CategorySyn().execute(hostUrl + "/api/categories");
+        new AuthorSyn().execute(hostUrl + "/api/authors");
     }
 
     // ==================== Shortcut ====================
@@ -448,11 +451,8 @@ public class StructureActivity extends AppCompatActivity {
         mAdhererButton.setText("Se détacher");
         mStructure.setAdhere(true);
 
-        new DetachStructSyn().execute(
-                Server.getUrlApi(this) + "adherer_struct.php",
-                mSession.getIdNumber(),
-                mStructure.getId()
-        );
+        new StructMembershipSyn().execute(
+                Server.getUrlHostProd(this) + "/api/structures/" + mStructure.getId() + "/join");
     }
 
     private void loadStructureImages() {
@@ -482,12 +482,7 @@ public class StructureActivity extends AppCompatActivity {
     private class StructBookSyn extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-            return executePostRequest(params[0],
-                    new MultipartBody.Builder()
-                            .setType(MultipartBody.FORM)
-                            .addFormDataPart("idNumber", params[1])
-                            .addFormDataPart("idStruct", params[2])
-                            .build());
+            return executeGetRequest(params[0]);
         }
 
         @Override
@@ -503,35 +498,39 @@ public class StructureActivity extends AppCompatActivity {
             stopRefreshing();
             showContentState();
 
-            if (!RESPONSE_RAS.equals(jsonData)) {
-                try {
-                    JSONArray jsonArray = new JSONArray(jsonData);
-                    mOnlineBookList.clear();
+            try {
+                JSONArray jsonArray = new JSONArray(jsonData);
+                mOnlineBookList.clear();
 
-                    if (mStructure.isAdhere() && "1".equals(mStructure.getAdmin())) {
-                        mOnlineBookList.add(new OnlineBook(
-                                "add", "addbook.png", "Ajouter un livre",
-                                "EduNiger", "oui", "oui", "oui", 9, 9
-                        ));
-                    }
+                if (mStructure.isAdhere() && "1".equals(mStructure.getAdmin())) {
+                    mOnlineBookList.add(new OnlineBook(
+                            "add", "addbook.png", "Ajouter un livre",
+                            "EduNiger", "oui", "oui", "oui", 9, 9
+                    ));
+                }
 
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject obj = jsonArray.getJSONObject(i);
-                        int numberLike = Integer.parseInt(obj.getString("numberLike"));
+                // /api/book/associations?structureId=... (meme endpoint et meme forme
+                // que BooksFragment/RankingSyn) : categories est une relation many-to-many,
+                // on prend la premiere comme dans le reste de l'appli.
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject obj = jsonArray.getJSONObject(i);
+                    JSONArray categories = obj.optJSONArray("categories");
+                    String categoryTitle = (categories != null && categories.length() > 0)
+                            ? categories.getJSONObject(0).optString("title", "") : "";
 
-                        mOnlineBookList.add(new OnlineBook(
-                                obj.getString("idBook"),
-                                obj.getString("blanket"),
-                                obj.getString("bookTitle"),
-                                obj.getString("categoryTitle"),
-                                obj.getString("isPhysic"),
-                                obj.getString("electronic"),
-                                obj.getString("isAudio"),
-                                mStructure.getId(),
-                                numberLike,
-                                numberLike
-                        ));
-                    }
+                    mOnlineBookList.add(new OnlineBook(
+                            obj.optString("idBook", ""),
+                            obj.optString("blanket", ""),
+                            obj.optString("title", ""),
+                            categoryTitle,
+                            obj.optBoolean("isPhysic", false) ? "1" : "0",
+                            obj.isNull("electronic") ? "null" : obj.optString("electronic", "null"),
+                            obj.optBoolean("isAudio", false) ? "1" : "0",
+                            mStructure.getId(),
+                            obj.optInt("numberLike", 0),
+                            obj.optInt("numberView", 0)
+                    ));
+                }
 
                     HorizontaleAdapter adapter = new HorizontaleAdapter(mOnlineBookList);
                     mBookRecommendedRecyclerView.setLayoutManager(
@@ -542,15 +541,13 @@ public class StructureActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     Log.e(TAG, "Error parsing book data", e);
                 }
-            }
         }
     }
 
     private class AuthorSyn extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-            String url = params[0] + "?id_user=" + params[1];
-            return executeGetRequest(url);
+            return executeGetRequest(params[0]);
         }
 
         @Override
@@ -563,35 +560,36 @@ public class StructureActivity extends AppCompatActivity {
         }
 
         private void processAuthors(String jsonData) {
-            if (!RESPONSE_RAS.equals(jsonData)) {
-                try {
-                    JSONArray jsonArray = new JSONArray(jsonData);
-                    mAuthorArrayList.clear();
+            try {
+                JSONArray jsonArray = new JSONArray(jsonData);
+                mAuthorArrayList.clear();
 
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject obj = jsonArray.getJSONObject(i);
-                        mAuthorArrayList.add(new Author(
-                                obj.getString("idAuthor"),
-                                obj.getString("name"),
-                                obj.getString("firstName"),
-                                obj.getString("profile"),
-                                obj.getString("profession"),
-                                obj.getString("call"),
-                                obj.getString("email"),
-                                obj.getString("whatsapp")
-                        ));
-                    }
-
-                    AuthorHorizontaleAdapter adapter = new AuthorHorizontaleAdapter(mAuthorArrayList);
-                    mAuthorRecyclerView.setLayoutManager(
-                            new LinearLayoutManager(StructureActivity.this,
-                                    LinearLayoutManager.HORIZONTAL, false));
-                    mAuthorRecyclerView.setAdapter(adapter);
-                    mMoreAuthorRelativeLayout.setVisibility(View.VISIBLE);
-
-                } catch (JSONException e) {
-                    Log.e(TAG, "Error parsing author data", e);
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject obj = jsonArray.getJSONObject(i);
+                    // Modele Laravel Author : pas de call/email/whatsapp -> "null"
+                    // (convention deja utilisee dans AuthorActivity/SearchActivity/HomeFragment
+                    // pour masquer les boutons de contact correspondants).
+                    mAuthorArrayList.add(new Author(
+                            obj.optString("idAuthor", ""),
+                            obj.optString("name", ""),
+                            obj.optString("firstName", ""),
+                            obj.optString("profile", ""),
+                            obj.optString("profession", ""),
+                            "null",
+                            "null",
+                            "null"
+                    ));
                 }
+
+                AuthorHorizontaleAdapter adapter = new AuthorHorizontaleAdapter(mAuthorArrayList);
+                mAuthorRecyclerView.setLayoutManager(
+                        new LinearLayoutManager(StructureActivity.this,
+                                LinearLayoutManager.HORIZONTAL, false));
+                mAuthorRecyclerView.setAdapter(adapter);
+                mMoreAuthorRelativeLayout.setVisibility(View.VISIBLE);
+
+            } catch (JSONException e) {
+                Log.e(TAG, "Error parsing author data", e);
             }
         }
 
@@ -610,11 +608,7 @@ public class StructureActivity extends AppCompatActivity {
     private class CategorySyn extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-            return executePostRequest(params[0],
-                    new MultipartBody.Builder()
-                            .setType(MultipartBody.FORM)
-                            .addFormDataPart("idNumber", params[1])
-                            .build());
+            return executeGetRequest(params[0]);
         }
 
         @Override
@@ -627,27 +621,29 @@ public class StructureActivity extends AppCompatActivity {
         }
 
         private void processCategories(String jsonData) {
-            if (!RESPONSE_RAS.equals(jsonData)) {
-                try {
-                    JSONArray jsonArray = new JSONArray(jsonData);
-                    mCategoryList.clear();
+            try {
+                JSONArray jsonArray = new JSONArray(jsonData);
+                mCategoryList.clear();
 
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject obj = jsonArray.getJSONObject(i);
-                        mCategoryList.add(new Category(
-                                obj.getString("blanket"),
-                                obj.getString("title"),
-                                mStructure.getName()
-                        ));
-                    }
-
-                    CategoryAdapter adapter = new CategoryAdapter(mCategoryList);
-                    mCategoryRecyclerView.setLayoutManager(new LinearLayoutManager(StructureActivity.this));
-                    mCategoryRecyclerView.setAdapter(adapter);
-
-                } catch (JSONException e) {
-                    Log.e(TAG, "Error parsing category data", e);
+                // L'ancien CategoryStrut.php limitait a 3 categories (LIMIT 3, sans
+                // filtre reel par structure) ; /api/categories renvoie tout -> on
+                // reproduit la meme limite cote client pour ce widget d'apercu.
+                int limit = Math.min(jsonArray.length(), 3);
+                for (int i = 0; i < limit; i++) {
+                    JSONObject obj = jsonArray.getJSONObject(i);
+                    mCategoryList.add(new Category(
+                            obj.optString("blanket", ""),
+                            obj.optString("title", ""),
+                            mStructure.getName()
+                    ));
                 }
+
+                CategoryAdapter adapter = new CategoryAdapter(mCategoryList);
+                mCategoryRecyclerView.setLayoutManager(new LinearLayoutManager(StructureActivity.this));
+                mCategoryRecyclerView.setAdapter(adapter);
+
+            } catch (JSONException e) {
+                Log.e(TAG, "Error parsing category data", e);
             }
         }
 
@@ -657,22 +653,28 @@ public class StructureActivity extends AppCompatActivity {
         }
     }
 
-    private class DetachStructSyn extends AsyncTask<String, Void, String> {
+    /**
+     * Adhesion et retrait de structure (en libre-service, pour l'utilisateur
+     * courant). Remplace adherer_struct.php et DetachStruct.php ; idStruct est
+     * deja dans l'URL, idUser vient du token cote serveur (/api/structures/{id}/join
+     * et /leave).
+     */
+    private class StructMembershipSyn extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-            return executePostRequest(params[0],
-                    new MultipartBody.Builder()
-                            .setType(MultipartBody.FORM)
-                            .addFormDataPart("id_user", params[1])
-                            .addFormDataPart("id_struct", params[2])
-                            .build());
+            return executePostRequest(params[0], RequestBody.create(new byte[0], null));
         }
 
         @Override
         protected void onPostExecute(String jsonData) {
-            if (jsonData != null && !RESPONSE_RAS.equals(jsonData) && "true".equals(jsonData)) {
-                Toast.makeText(StructureActivity.this,
-                        "Structure détachée avec succès", Toast.LENGTH_SHORT).show();
+            if (jsonData == null) return;
+            try {
+                String message = new JSONObject(jsonData).optString("message", "");
+                if (!message.isEmpty()) {
+                    Toast.makeText(StructureActivity.this, message, Toast.LENGTH_SHORT).show();
+                }
+            } catch (JSONException e) {
+                Log.e(TAG, "Error parsing structure membership response", e);
             }
         }
     }
@@ -718,11 +720,8 @@ public class StructureActivity extends AppCompatActivity {
         mAdhererButton.setText("S'adhérer");
         mStructure.setAdhere(false);
 
-        new DetachStructSyn().execute(
-                Server.getUrlApi(this) + "DetachStruct.php",
-                mSession.getIdNumber(),
-                structId
-        );
+        new StructMembershipSyn().execute(
+                Server.getUrlHostProd(this) + "/api/structures/" + structId + "/leave");
     }
 
     private void showPasswordError(EditText passwordEditText, TextView errorTextView, String message) {

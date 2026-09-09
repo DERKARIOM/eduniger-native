@@ -171,10 +171,10 @@ public class CategoryFragment extends Fragment {
     // ==================== Chargement ====================
 
     private void loadCategoryData() {
-        new CategorySyn().execute(
-                Server.getUrlApi(requireContext()) + "category.php",
-                mSession.getIdNumber()
-        );
+        // Migre de l'ancien backend (category.php, id_number en query string) vers
+        // Laravel /api/categories (Sanctum, identite du lecteur via le Bearer token
+        // attache automatiquement par ApiClient/AuthInterceptor - id_number inutile).
+        new CategorySyn().execute(Server.getUrlHostProd(requireContext()) + "/api/categories");
     }
 
     // ==================== AsyncTask ====================
@@ -184,7 +184,7 @@ public class CategoryFragment extends Fragment {
     private class CategorySyn extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-            return executePostRequest(params[0], params[1]);
+            return executeGetRequest(params[0]);
         }
 
         @Override
@@ -249,16 +249,18 @@ public class CategoryFragment extends Fragment {
 
 // ==================== Helper Methods ====================
 
-    private String executePostRequest(String url, String idNumber) {
+    private String executeGetRequest(String url) {
         try {
-            String fullUrl = url + "?id_number=" + idNumber;
-
             Request request = new Request.Builder()
-                    .url(fullUrl)
+                    .url(url)
                     .get()
                     .build();
 
             try (Response response = mHttpClient.newCall(request).execute()) {
+                if (!response.isSuccessful()) {
+                    Log.e(TAG, "Reponse HTTP non OK: " + response.code());
+                    return null;
+                }
                 if (response.body() != null) {
                     String body = response.body().string().trim();
                     Log.d(TAG, "Server response: " + body);

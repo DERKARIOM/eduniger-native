@@ -44,6 +44,7 @@ import com.ninotech.eduniger.controleur.player.MiniPlayerController;
 import com.ninotech.eduniger.model.data.Account;
 import com.ninotech.eduniger.model.data.Initialization;
 import com.ninotech.eduniger.model.data.Themes;
+import com.ninotech.eduniger.model.data.TokenStore;
 import com.ninotech.eduniger.model.table.DigitalPrintTable;
 import com.ninotech.eduniger.model.table.NotificationTable;
 import com.ninotech.eduniger.model.table.Session;
@@ -175,7 +176,24 @@ public class MainActivity extends AppCompatActivity {
     // ================================================================
 
     private boolean checkSession() {
-        return mAccount.isSession(this);
+        boolean localSession = mAccount.isSession(this);
+        if (!localSession) {
+            Log.d(TAG, "checkSession: pas de session locale (Account/SQLite) -> Login");
+            return false;
+        }
+        // La session locale (table SQLite Account) peut exister sans qu'un token Sanctum
+        // valide soit present (ex: session locale heritee de l'ancien systeme, TokenStore
+        // vide/efface, refresh token revoque par AuthAuthenticator). Sans cette verification,
+        // MainActivity chargeait ses fragments authentifies (Structures, etc.) sans aucun
+        // header Authorization, provoquant un 401 sur des endpoints desormais proteges par
+        // AuthMiddleware et un crash (JSONException non gere sur la reponse d'erreur).
+        TokenStore tokenStore = new TokenStore(this);
+        boolean hasRefreshToken = tokenStore.isLoggedIn();
+        boolean hasAccessToken  = tokenStore.getAccessToken() != null;
+        Log.d(TAG, "checkSession: localSession=" + localSession
+                + " hasRefreshToken=" + hasRefreshToken
+                + " hasAccessToken=" + hasAccessToken);
+        return hasRefreshToken;
     }
 
     private void navigateToLogin() {

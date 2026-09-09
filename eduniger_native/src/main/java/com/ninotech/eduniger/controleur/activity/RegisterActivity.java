@@ -34,12 +34,16 @@ import com.ninotech.eduniger.model.data.Themes;
 import java.io.IOException;
 import java.util.Objects;
 
+import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import com.ninotech.eduniger.model.net.ApiClient;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -272,36 +276,98 @@ public class RegisterActivity extends AppCompatActivity {
     private void performRegistration() {
         new Thread(() -> {
             try {
-                String serverUrl = Server.getUrlApi(getApplicationContext()) + "register.php";
+                // Ancien : Server.getUrlApi(...) + "register.php" (script PHP historique du
+                // serveur "fabi", hors de portee de l'audit/API Laravel "eduniger"). On utilise
+                // desormais le vrai endpoint Laravel deja en place cote serveur.
+                String serverUrl = Server.getUrlHostProd(getApplicationContext()) + "/api/user/register";
 
-                RequestBody requestBody = new MultipartBody.Builder()
-                        .setType(MultipartBody.FORM)
-                        .addFormDataPart("id_user", mAccount.getIdNumber())
-                        .addFormDataPart("name", mAccount.getName())
-                        .addFormDataPart("first_name", mAccount.getFirstName())
-                        .addFormDataPart("email", mAccount.getEmail())
-                        .addFormDataPart("password", mAccount.getPassword())
-                        .addFormDataPart("profession", String.valueOf(mAccount.getProfession()))
-                        .addFormDataPart("version", getResources().getString(R.string.app_version))
-                        .build();
+                // Le champ "numero" (mIdNumberEditText) ne correspond a aucune colonne du
+                // modele User cote Laravel (idUser est un UUID genere serveur) : on l'envoie
+                // comme phoneNumber, colonne existante et deja utilisee pour la connexion.
+                JSONObject payload = new JSONObject();
+                payload.put("name", mAccount.getName());
+                payload.put("firstName", mAccount.getFirstName());
+                payload.put("email", mAccount.getEmail());
+                payload.put("phoneNumber", mAccount.getIdNumber());
+                payload.put("profession", mAccount.getProfession());
+                payload.put("password", mAccount.getPassword());
+                // Token FCM (notifications push), recupere en tache de fond des onCreate()
+                // (voir initializeFirebaseToken()) : envoye seulement s'il s'agit d'un vrai
+                // token (pas le sentinel "null" utilise quand Firebase n'a pas encore
+                // repondu au moment de la soumission du formulaire).
+                if (mJeton != null && !"null".equals(mJeton)) {
+                    payload.put("fcmToken", mJeton);
+                }
+
+                RequestBody requestBody = RequestBody.create(
+                        MediaType.parse("application/json; charset=utf-8"),
+                        payload.toString());
 
                 Request request = new Request.Builder()
                         .url(serverUrl)
                         .post(requestBody)
                         .build();
 
-                Response response = mHttpClient.newCall(request).execute();
-                String jsonData = response.body().string();
-
-                runOnUiThread(() -> handleRegistrationResponse(jsonData));
+                try (Response response = mHttpClient.newCall(request).execute()) {
+                    String body = response.body() != null ? response.body().string() : null;
+                    String sentinel = translateRegisterResponse(response.code(), body);
+                    runOnUiThread(() -> handleRegistrationResponse(sentinel));
+                }
 
             } catch (IOException e) {
                 runOnUiThread(() -> {
                     Toast.makeText(RegisterActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                     resetConnectionButton();
                 });
+            } catch (JSONException e) {
+                Log.e(TAG, "Failed to build/parse registration payload", e);
+                runOnUiThread(this::showConnectionError);
             }
         }).start();
+    }
+
+    /**
+     * Traduit le code HTTP + corps de reponse Laravel vers le protocole existant
+     * (Account.dataControl / handleRegistrationResponse), pour reutiliser l'affichage
+     * d'erreur deja en place sans dupliquer la logique d'UI.
+     *  - 2xx : on retransmet le JSON brut (sera parse par handleSuccessfulRegistration).
+     *  - 422 : erreur de validation ; on regarde quel champ est en cause pour choisir un
+     *    message pertinent (email deja utilise vs numero deja utilise).
+     *  - 409 : doublon detecte au niveau base (conditions de concurrence), meme traitement.
+     *  - autre / pas de reponse : message generique "pas de connexion".
+     */
+    private String translateRegisterResponse(int code, String body) {
+        if (code >= 200 && code < 300 && body != null) {
+            return body;
+        }
+        if (code == 422 && body != null) {
+            // 422 = erreur de validation Laravel : on ne mappe VERS "existingEmail" /
+            // "existingAccount" (messages "compte deja utilise") que si l'erreur concerne
+            // reellement le champ email/numero en doublon. Toute autre cause de validation
+            // (mot de passe trop court, champ manquant...) ne doit pas afficher un message
+            // de doublon trompeur : on retombe sur le message generique "false"
+            // (noConnection) plutot que d'inventer une cause fausse.
+            try {
+                JSONObject json = new JSONObject(body);
+                JSONObject errors = json.optJSONObject("errors");
+                if (errors != null && errors.has("email")) {
+                    return "existingEmail";
+                }
+                if (errors != null && errors.has("phoneNumber")) {
+                    return "existingAccount";
+                }
+            } catch (JSONException ignored) {
+                // Corps non-JSON ou inattendu : on retombe sur "false" ci-dessous.
+            }
+            return "false";
+        }
+        if (code == 409) {
+            // 409 = doublon detecte au niveau base (conditions de concurrence, message
+            // generique cote serveur sans detail de champ) : pas d'ambiguite possible ici,
+            // c'est bien un compte deja existant.
+            return "existingAccount";
+        }
+        return "false";
     }
 
     private void handleRegistrationResponse(String jsonData) {
@@ -322,7 +388,7 @@ public class RegisterActivity extends AppCompatActivity {
                 resetConnectionButton();
                 break;
             case "1111":
-                handleSuccessfulRegistration();
+                handleSuccessfulRegistration(jsonData);
                 break;
             default:
                 showConnectionError();
@@ -336,7 +402,20 @@ public class RegisterActivity extends AppCompatActivity {
         resetConnectionButton();
     }
 
-    private void handleSuccessfulRegistration() {
+    private void handleSuccessfulRegistration(String jsonData) {
+        // Sauvegarde du token Sanctum emis par UserAuthController::register, au meme titre
+        // que pour la connexion (voir LoginActivity.handleSuccessfulLogin pour le detail du
+        // choix de stockage access==refresh token, Sanctum n'emettant qu'un seul token ici).
+        try {
+            JSONObject root = new JSONObject(jsonData);
+            String token = root.getString("token");
+            com.ninotech.eduniger.model.data.TokenStore tokenStore =
+                    new com.ninotech.eduniger.model.data.TokenStore(getApplicationContext());
+            tokenStore.saveTokens(token, token, java.util.concurrent.TimeUnit.DAYS.toSeconds(3650));
+        } catch (JSONException e) {
+            Log.e(TAG, "Failed to parse token from registration response", e);
+        }
+
         if (mAccount.register(getApplicationContext(), "no")) {
             if (mAccount.login(getApplicationContext())) {
                 Intent home = new Intent(RegisterActivity.this, MainActivity.class);
@@ -374,7 +453,10 @@ public class RegisterActivity extends AppCompatActivity {
         annuler.setOnClickListener(v -> updateDialog.cancel());
 
         installer.setOnClickListener(v -> {
-            String url = "https://play.google.com/store/apps/details?id=com.ninotech.fabi&pcampaignid=web_share";
+            // Ancien : lien vers la fiche Play Store de com.ninotech.fabi, reliquat du
+            // rebranding Fabi -> EduNiger. Le vrai applicationId de cette app est
+            // com.ninotech.eduniger (build.gradle).
+            String url = "https://play.google.com/store/apps/details?id=com.ninotech.eduniger";
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
             startActivity(intent);
         });

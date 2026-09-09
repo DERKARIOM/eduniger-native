@@ -13,6 +13,12 @@
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="false">192.168.49.1</domain>
         <domain includeSubdomains="false">78.46.46.154</domain>
+        <!-- Serveur Laravel local (php artisan serve) tournant sur le telephone lui-meme,
+             utilise par Server.getUrlHostProd() (voir strings.xml: url_host_prod) pour les
+             ressources publiques et desormais la connexion/inscription mobile. Sans cette
+             entree, Android bloque silencieusement tout appel HTTP en clair vers 127.0.0.1
+             (UnknownServiceException: CLEARTEXT communication ... not permitted). -->
+        <domain includeSubdomains="false">127.0.0.1</domain>
     </domain-config>
     <base-config cleartextTrafficPermitted="false" />
 </network-security-config>

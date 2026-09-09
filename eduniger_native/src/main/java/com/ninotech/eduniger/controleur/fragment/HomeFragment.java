@@ -474,9 +474,17 @@ public class HomeFragment extends Fragment {
 
         new PubSyn().execute(baseUrl + "Pub.php", idNumber, version);
         new RecommendedSyn().execute(baseUrl + "recommended.php", idNumber, version);
-        new StructureSyn().execute(baseUrl + "structure.php", idNumber);
-        new StructureSyn2().execute(baseUrl + "structure_top.php", idNumber);
-        new AuthorSyn().execute(baseUrl + "author_top.php", idNumber);
+        // Ancien : structure.php + structure_top.php (backend PHP legacy, JWT maison qui
+        // rejette le token Sanctum -> 'Authentification requise'). Bascule vers la vraie
+        // API Laravel /api/structures (Sanctum, deja authentifiee via ApiClient). Le second
+        // appel (structure_top.php, un classement) n'a pas d'equivalent Laravel pour
+        // l'instant (cf. audit mobile) et n'est donc plus appele.
+        new StructureSyn().execute(Server.getUrlHostProd(context) + "/api/structures");
+        // Ancien : author_top.php (classement, backend legacy). Pas d'equivalent Laravel
+        // de "top auteurs" pour l'instant (cf. audit) : on affiche a la place la liste
+        // reelle des auteurs via /api/structures... /api/authors (Sanctum), plutot que de
+        // laisser la section vide ou en erreur.
+        new AuthorSyn().execute(Server.getUrlHostProd(context) + "/api/authors");
     }
 
     // ==================== Cycle de vie ====================
@@ -627,48 +635,54 @@ public class HomeFragment extends Fragment {
     private class StructureSyn extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-            String url = params[0] + "?id_user=" + params[1];
-            return executeGetRequest(url);
+            return executeGetRequest(params[0]);
         }
 
         @Override
         protected void onPostExecute(String jsonData) {
             if (!isAdded()) return;
 
-            if (jsonData != null && !RESPONSE_RAS.equals(jsonData)) {
-                processStructures(jsonData);
-                updateStructureView();
-            } else if (jsonData == null) {
+            if (jsonData != null) {
+                boolean ok = processStructures(jsonData);
+                if (ok) updateStructureView();
+                else showNoConnectionState(mStructureRecyclerView);
+            } else {
                 showNoConnectionState(mStructureRecyclerView);
             }
         }
 
-        private void processStructures(String jsonData) {
+        /** @return true si le JSON a ete parse avec succes (meme si la liste est vide). */
+        private boolean processStructures(String jsonData) {
             try {
                 JSONArray jsonArray = new JSONArray(jsonData);
 
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject obj = jsonArray.getJSONObject(i);
-                    String id = obj.getString("id");
+                    String id = obj.optString("id", "");
 
-                    if (!mStructureIds.contains(id)) {
+                    if (!id.isEmpty() && !mStructureIds.contains(id)) {
                         mStructureIds.add(id);
+                        // /api/structures renvoie desormais un champ 'isAdhere' calcule
+                        // cote serveur (appartenance StructUser de l'utilisateur courant).
+                        // 'author'/'isAdmin' restent absents (pas des colonnes de Structure).
                         mStructures.add(new Structure(
                                 id,
-                                obj.getString("logo"),
-                                obj.getString("nameStruct"),
-                                obj.getString("description"),
-                                true,
-                                obj.getString("banner"),
-                                obj.getString("author"),
-                                obj.getString("adhererNumber"),
-                                obj.getString("bookNumber"),
-                                obj.getString("isAdmin")
+                                obj.optString("logo", ""),
+                                obj.optString("nameStruct", ""),
+                                obj.optString("description", ""),
+                                obj.optBoolean("isAdhere", false),
+                                obj.optString("banner", ""),
+                                "",
+                                obj.optString("adhererNumber", "0"),
+                                obj.optString("bookNumber", "0"),
+                                "0"
                         ));
                     }
                 }
+                return true;
             } catch (JSONException e) {
-                Log.e(TAG, "Error parsing structures", e);
+                Log.e(TAG, "Reponse inattendue (non-JSONArray) pour /api/structures: " + jsonData, e);
+                return false;
             }
         }
 
@@ -733,8 +747,7 @@ public class HomeFragment extends Fragment {
     private class AuthorSyn extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-            String url = params[0] + "?id_user=" + params[1];
-            return executeGetRequest(url);
+            return executeGetRequest(params[0]);
         }
 
         @Override
@@ -756,15 +769,19 @@ public class HomeFragment extends Fragment {
 
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject obj = jsonArray.getJSONObject(i);
+                    // Le modele Laravel Author n'a pas de champs call/email/whatsapp
+                    // (lacune reelle du backend, voir SearchActivity.AuthorTask) : "null"
+                    // en chaine, convention deja utilisee pour masquer les boutons de
+                    // contact quand la donnee est absente.
                     mAuthorArrayList.add(new Author(
-                            obj.getString("idAuthor"),
-                            obj.getString("name"),
-                            obj.getString("firstName"),
-                            obj.getString("profile"),
-                            obj.getString("profession"),
-                            obj.getString("call"),
-                            obj.getString("email"),
-                            obj.getString("whatsapp")
+                            obj.optString("idAuthor", ""),
+                            obj.optString("name", ""),
+                            obj.optString("firstName", ""),
+                            obj.optString("profile", ""),
+                            obj.optString("profession", ""),
+                            "null",
+                            "null",
+                            "null"
                     ));
                 }
             } catch (JSONException e) {

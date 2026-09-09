@@ -54,6 +54,22 @@ public class AuthAuthenticator implements Authenticator {
     @Nullable
     @Override
     public Request authenticate(@Nullable Route route, @NonNull Response response) throws IOException {
+        // GARDE CRITIQUE : ce client OkHttp est partage par TOUS les appels reseau de l'app,
+        // y compris ceux qui visent encore l'ancien backend PHP non migre (recommended.php,
+        // author_top.php, Pub.php, ask_eduna.php...), dont l'auth JWT est totalement
+        // incompatible avec les tokens Sanctum stockes ici. Un 401 de l'ancien backend ne dit
+        // RIEN sur la validite de la session Laravel/Sanctum en cours.
+        // BUG REEL trouve en test : sans ce garde, un 401 legacy declenchait quand meme une
+        // tentative de refresh via refresh.php (ancien backend), qui echoue systematiquement
+        // (le token Sanctum n'a pas le format attendu), et le code ci-dessous effacait alors
+        // la session Sanctum pourtant valide - quelques secondes apres une connexion reussie,
+        // des le premier ecran (Accueil) qui appelle un endpoint legacy encore actif.
+        String requestHost = response.request().url().host();
+        okhttp3.HttpUrl laravelUrl = okhttp3.HttpUrl.parse(Server.getUrlHostProd(mAppContext));
+        if (laravelUrl == null || !laravelUrl.host().equalsIgnoreCase(requestHost)) {
+            return null;
+        }
+
         // Garde anti-boucle : une seule tentative de refresh par requete originale.
         if (responseCount(response) >= 2) {
             Log.w(TAG, "Echec persistant apres tentative de refresh, abandon (pas de nouvelle boucle).");

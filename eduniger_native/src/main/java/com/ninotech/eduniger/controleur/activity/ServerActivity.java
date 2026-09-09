@@ -47,6 +47,24 @@ public class ServerActivity extends AppCompatActivity {
         mSwitch = findViewById(R.id.switch_activity_server);
         mRadioGroup = findViewById(R.id.radio_group_activity_server);
         mUrlEditText = findViewById(R.id.edit_text_activity_server_ip);
+
+        // Configuration serveur de reference (Laravel / API EduNiger) : jusqu'ici aucun
+        // ecran ne permettait de la modifier, seule l'ancienne config (ci-dessous) l'etait
+        // - cf. audit mobile, section 'double configuration serveur'.
+        mLaravelUrlEditText = findViewById(R.id.edit_text_activity_server_laravel_url);
+        mLaravelUrlEditText.setText(Server.getUrlHostProd(getApplicationContext()));
+        mLaravelUrlEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) { }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                Server.saveUrlHostProd(getApplicationContext(), s.toString());
+            }
+        });
         if (Server.getPass(getApplicationContext()) == 1)
         {
             mSwitch.setChecked(true);
@@ -62,12 +80,12 @@ public class ServerActivity extends AppCompatActivity {
         mSwitch.setChecked(Server.getPass(getApplicationContext()) == 1);
         switch (Server.getUrlServer(getApplicationContext()))
         {
-            case Server.PRESET_PROD_FABI:
+            case Server.PRESET_INTERNET:
                 mUrlEditText.setVisibility(View.GONE);
                 RadioButton radioButton1 = (RadioButton) mRadioGroup.getChildAt(1);
                 radioButton1.setChecked(true);
                 break;
-            case Server.PRESET_DEV_FABI:
+            case Server.PRESET_DEVHUB:
                 mUrlEditText.setVisibility(View.GONE);
                 RadioButton radioButton2 = (RadioButton) mRadioGroup.getChildAt(2);
                 radioButton2.setChecked(true);
@@ -128,11 +146,11 @@ public class ServerActivity extends AppCompatActivity {
                 {
                     case 1:
                         mUrlEditText.setVisibility(View.GONE);
-                        Server.saveServer(getApplicationContext(),Server.PRESET_PROD_FABI,Server.PRESET_PROD_FABI + "android/");
+                        Server.saveServer(getApplicationContext(),Server.PRESET_INTERNET,Server.PRESET_INTERNET + "android/");
                     break;
                     case 2:
                         mUrlEditText.setVisibility(View.GONE);
-                        Server.saveServer(getApplicationContext(),Server.PRESET_DEV_FABI,Server.PRESET_DEV_FABI + "android/");
+                        Server.saveServer(getApplicationContext(),Server.PRESET_DEVHUB,Server.PRESET_DEVHUB + "android/");
                         break;
                     case 3:
                         mUrlEditText.setVisibility(View.VISIBLE);
@@ -145,4 +163,5 @@ public class ServerActivity extends AppCompatActivity {
     private Switch mSwitch;
     private RadioGroup mRadioGroup;
     private EditText mUrlEditText;
+    private EditText mLaravelUrlEditText;
 }

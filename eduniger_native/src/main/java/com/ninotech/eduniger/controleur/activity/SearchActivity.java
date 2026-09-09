@@ -1053,11 +1053,18 @@ public class SearchActivity extends AppCompatActivity {
             SearchActivity activity = activityRef.get();
             if (activity == null) return null;
             try {
+                // Migre de l'ancien backend (Author.php, idUser en form-data) vers Laravel
+                // /api/authors (Sanctum, GET simple - identite du lecteur via le Bearer
+                // token attache automatiquement par ApiClient/AuthInterceptor).
                 Request request = new Request.Builder()
-                        .url(Server.getUrlApi(activity) + "Author.php")
-                        .post(new MultipartBody.Builder().setType(MultipartBody.FORM)
-                                .addFormDataPart("idUser", params[0]).build()).build();
+                        .url(Server.getUrlHostProd(activity) + "/api/authors")
+                        .get()
+                        .build();
                 try (Response response = activity.mHttpClient.newCall(request).execute()) {
+                    if (!response.isSuccessful()) {
+                        Log.e(TAG, "Reponse HTTP non OK pour /api/authors: " + response.code());
+                        return null;
+                    }
                     if (response.body() != null) return response.body().string();
                 }
             } catch (IOException e) { Log.e(TAG, "Author request failed", e); }
@@ -1073,11 +1080,16 @@ public class SearchActivity extends AppCompatActivity {
                     JSONArray jsonArray = new JSONArray(jsonData);
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject obj = jsonArray.getJSONObject(i);
+                        // Le modele Laravel Author (idAuthor, name, firstName, profile, level,
+                        // profession, biography) n'a pas de champs call/email/whatsapp (lacune
+                        // reelle du backend actuel, pas juste un renommage) : on les met a
+                        // "null" (chaine), convention deja utilisee par AuthorActivity pour
+                        // masquer les boutons de contact quand la donnee est absente.
                         activity.mAuthors.add(new Author(
-                                obj.getString("idAuthor"), obj.getString("name"),
-                                obj.getString("firstName"), obj.getString("profile"),
-                                obj.getString("profession"), obj.getString("call"),
-                                obj.getString("email"), obj.getString("whatsapp")));
+                                obj.optString("idAuthor", ""), obj.optString("name", ""),
+                                obj.optString("firstName", ""), obj.optString("profile", ""),
+                                obj.optString("profession", ""), "null",
+                                "null", "null"));
                     }
                     activity.mAuthorVerticaleAdapter = new AuthorVerticaleAdapter(activity.mAuthors);
                     activity.setupRecyclerView(activity.mAuthorVerticaleAdapter);

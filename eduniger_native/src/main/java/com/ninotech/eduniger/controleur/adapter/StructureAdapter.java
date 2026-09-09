@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.util.Log;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -39,12 +40,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import okhttp3.MultipartBody;
 import com.ninotech.eduniger.model.net.ApiClient;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 
 public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyViewHolder> {
@@ -198,16 +201,16 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
                             break;
                         default:
                             if (mAdhereButton.getText().toString().equals("Détacher"))
-                                structDelete(structure.getId());
+                                structDelete(structure);
                             else
                             {
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                                     mAdhereButton.setBackgroundTintList(ColorStateList.valueOf(itemView.getContext().getColor(R.color.black3)));
                                 }
                                 mAdhereButton.setText("Détacher");
-                                structure.setAdhere(false);
-                                DetachStructSyn detachStructSyn = new DetachStructSyn();
-                                detachStructSyn.execute(Server.getUrlApi(itemView.getContext()) + "adherer_struct.php",mSession.getIdNumber(),structure.getId());
+                                structure.setAdhere(true);
+                                new StructMembershipSyn().execute(
+                                        Server.getUrlHostProd(itemView.getContext()) + "/api/structures/" + structure.getId() + "/join");
                             }
                             break;
                         case "AddBook","RegisterAuthor":
@@ -220,7 +223,7 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
                 }
             });
         }
-        private void structDelete(String id){
+        private void structDelete(Structure structure){
             StructDeleteDialog structDeleteDialog = new StructDeleteDialog((Activity) itemView.getContext());
             structDeleteDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             structDeleteDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
@@ -246,8 +249,9 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
                                 structDeleteDialog.cancel();
                                 mAdhereButton.setBackgroundTintList(ColorStateList.valueOf(itemView.getContext().getColor(R.color.purple_200)));
                                 mAdhereButton.setText("S'adhérer");
-                                DetachStructSyn detachStructSyn = new DetachStructSyn();
-                                detachStructSyn.execute(Server.getUrlApi(itemView.getContext()) + "detach_struct.php",mSession.getIdNumber(),id);
+                                structure.setAdhere(false);
+                                new StructMembershipSyn().execute(
+                                        Server.getUrlHostProd(itemView.getContext()) + "/api/structures/" + structure.getId() + "/leave");
                             }
                         }
                     }
@@ -258,93 +262,47 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
             });
             structDeleteDialog.build();
         }
-        private class DetachStructSyn extends AsyncTask<String,Void,String> {
+        /**
+         * Adhesion et retrait de structure (libre-service), via les nouveaux
+         * endpoints Laravel /api/structures/{id}/join et /leave (idUser vient
+         * du token Sanctum cote serveur). Remplace les anciens DetachStructSyn/
+         * AdhererStructSyn qui appelaient adherer_struct.php et detach_struct.php
+         * (backend legacy incompatible avec les tokens Sanctum -> "Token invalide."
+         * systematique, echouant silencieusement puisque ces classes ignoraient
+         * toute reponse autre que "true"/"RAS").
+         */
+        private class StructMembershipSyn extends AsyncTask<String, Void, String> {
             @Override
             protected String doInBackground(String... params) {
-
                 try {
                     OkHttpClient client = ApiClient.getInstance(itemView.getContext());
-                    RequestBody requestBody = new MultipartBody.Builder()
-                            .setType(MultipartBody.FORM)
-                            .addFormDataPart("id_user",params[1])
-                            .addFormDataPart("id_struct",params[2])
-                            .build();
+                    RequestBody requestBody = RequestBody.create(new byte[0], null);
                     Request request = new Request.Builder()
                             .url(params[0])
                             .post(requestBody)
                             .build();
                     try {
                         Response response = client.newCall(request).execute();
-                        assert response.body() != null;
-                        return response.body().string();
-                    }catch (IOException e)
-                    {
+                        return response.body() != null ? response.body().string() : null;
+                    } catch (IOException e) {
                         Toast.makeText(itemView.getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
-
-                }catch (Exception e)
-                {
+                } catch (Exception e) {
                     return null;
                 }
                 return null;
             }
-            @Override
-            protected void onPostExecute(String jsonData){
-                //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
-                if(jsonData != null)
-                {
-                    if(!jsonData.equals("RAS"))
-                    {
-                        if(jsonData.equals("true"))
-                        {
-                            Toast.makeText(itemView.getContext(), "Structure détacher", Toast.LENGTH_SHORT);
-                        }
-                    }
-                }
-            }
-        }
-        private class AdhererStructSyn extends AsyncTask<String,Void,String> {
-            @Override
-            protected String doInBackground(String... params) {
 
+            @Override
+            protected void onPostExecute(String jsonData) {
+                if (jsonData == null) return;
                 try {
-                    OkHttpClient client = ApiClient.getInstance(itemView.getContext());
-                    RequestBody requestBody = new MultipartBody.Builder()
-                            .setType(MultipartBody.FORM)
-                            .addFormDataPart("idUser",params[1])
-                            .addFormDataPart("idStruct",params[2])
-                            .build();
-                    Request request = new Request.Builder()
-                            .url(params[0])
-                            .post(requestBody)
-                            .build();
-                    try {
-                        Response response = client.newCall(request).execute();
-                        assert response.body() != null;
-                        return response.body().string();
-                    }catch (IOException e)
-                    {
-                        Toast.makeText(itemView.getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                    String message = new JSONObject(jsonData).optString("message", "");
+                    if (!message.isEmpty()) {
+                        Toast.makeText(itemView.getContext(), message, Toast.LENGTH_SHORT).show();
                     }
-
-                }catch (Exception e)
-                {
-                    return null;
-                }
-                return null;
-            }
-            @Override
-            protected void onPostExecute(String jsonData){
-                //Toast.makeText(NotificationService.this, response, Toast.LENGTH_SHORT).show();
-                if(jsonData != null)
-                {
-                    if(!jsonData.equals("RAS"))
-                    {
-                        if(jsonData.equals("true"))
-                        {
-                            Toast.makeText(itemView.getContext(), "Structure Adhérer", Toast.LENGTH_SHORT);
-                        }
-                    }
+                } catch (JSONException e) {
+                    Log.e("StructureAdapter", "Error parsing structure membership response", e);
                 }
             }
         }

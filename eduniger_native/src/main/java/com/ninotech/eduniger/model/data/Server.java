@@ -32,8 +32,8 @@ public class Server {
     private static final String KEY_URL_AI = "key_url_ai";
 
     // Presets utilises par l'ecran de changement de serveur (ServerActivity).
-    public static final String PRESET_PROD_FABI = "http://78.46.46.154/fabi/";
-    public static final String PRESET_DEV_FABI = "http://192.168.49.1:2222/fabi/";
+    public static final String PRESET_INTERNET = "http://78.46.46.154/fabi/";
+    public static final String PRESET_DEVHUB = "http://192.168.49.1:2222/fabi/";
 
     public Server()
     {
@@ -57,6 +57,21 @@ public class Server {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(URL_API, urlApi);
+        editor.apply();
+    }
+
+    /**
+     * Definit l'hote de l'API Laravel (getUrlHostProd) - utilise par TOUS les endpoints
+     * deja migres vers le nouveau backend (auth, structures, ressources...). Il n'existait
+     * jusqu'ici aucun moyen de changer cette valeur depuis l'application : seule la config
+     * de l'ancien backend PHP (getUrlServer/getUrlApi, ecran ServerActivity) etait
+     * modifiable, ce qui creait deux configurations serveur independantes et non
+     * synchronisees (cf. audit mobile).
+     */
+    public static void saveUrlHostProd(Context context, String urlHostProd) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(KEY_URL_HOST_PROD, urlHostProd);
         editor.apply();
     }
 

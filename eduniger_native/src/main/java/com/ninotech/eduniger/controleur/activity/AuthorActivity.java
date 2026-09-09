@@ -250,7 +250,7 @@ public class AuthorActivity extends AppCompatActivity {
 
     private void loadAuthorImage() {
         Picasso.get()
-                .load(Server.getUrlServer(this) + "ressources/profile/" + mAuthor.getProfile())
+                .load(Server.getUrlHostProd(this) + "/api/public/resource/0/profil/" + mAuthor.getProfile()) // migre vers la route publique Laravel (FileController::publicShow, type profil)
                 .placeholder(R.drawable.img_wait_profile)
                 .error(R.drawable.img_wait_profile)
                 .transform(new RoundedTransformation(1000, 4))

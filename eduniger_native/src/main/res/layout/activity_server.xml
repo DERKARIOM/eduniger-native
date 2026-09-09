@@ -6,8 +6,53 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     tools:context=".controleur.activity.ServerActivity">
+    <TextView
+        android:id="@+id/text_view_activity_server_laravel_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="URL de l'API EduNiger (Laravel)"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="15dp"
+        android:fontFamily="@font/linux"
+        android:textStyle="bold"
+        android:textSize="18dp" />
+
+    <TextView
+        android:id="@+id/text_view_activity_server_laravel_desc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Utilisee par toutes les fonctionnalites deja migrees (connexion, inscription, structures, ressources...). C'est desormais la configuration serveur de reference."
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_below="@id/text_view_activity_server_laravel_label"
+        android:fontFamily="@font/linux2"
+        android:textSize="13dp" />
+
+    <EditText
+        android:id="@+id/edit_text_activity_server_laravel_url"
+        android:hint="http://127.0.0.1:8000"
+        android:layout_below="@id/text_view_activity_server_laravel_desc"
+        style="@style/activity_url_server"
+        android:inputType="text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:autofillHints="" />
+
+    <TextView
+        android:id="@+id/text_view_activity_server_legacy_separator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ancien backend (fonctionnalites pas encore migrees)"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/linux"
+        android:textStyle="bold"
+        android:textSize="15dp"
+        android:layout_below="@id/edit_text_activity_server_laravel_url" />
+
     <Switch
         android:id="@+id/switch_activity_server"
+        android:layout_below="@id/text_view_activity_server_legacy_separator"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="@font/linux2"

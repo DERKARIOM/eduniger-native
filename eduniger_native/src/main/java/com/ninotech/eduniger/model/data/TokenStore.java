@@ -68,11 +68,19 @@ public class TokenStore {
 
     public synchronized void saveTokens(String accessToken, String refreshToken, long expiresInSeconds) {
         long expiresAtMillis = System.currentTimeMillis() + (expiresInSeconds * 1000L);
+        // commit() (synchrone) et non apply() (asynchrone) : bug reel observe en test -
+        // apply() met a jour la map en memoire immediatement mais differe l'ecriture disque
+        // sur un thread d'arriere-plan ; si le systeme tue le process juste apres (mise en
+        // arriere-plan, OS agressif sur la memoire - frequent sur Samsung/OneUI), le token
+        // n'atteint jamais le disque et la session parait perdue au redemarrage suivant,
+        // alors que la connexion avait pourtant reussi. commit() bloque jusqu'a l'ecriture
+        // effective ; le cout (appel peu frequent : login/refresh) est negligeable face a
+        // la garantie de durabilite.
         mPrefs.edit()
                 .putString(KEY_ACCESS_TOKEN, accessToken)
                 .putString(KEY_REFRESH_TOKEN, refreshToken)
                 .putLong(KEY_ACCESS_TOKEN_EXPIRES_AT, expiresAtMillis)
-                .apply();
+                .commit();
     }
 
     /** Met a jour uniquement l'access token (et son expiration), typiquement apres un refresh
@@ -83,11 +91,11 @@ public class TokenStore {
         mPrefs.edit()
                 .putString(KEY_ACCESS_TOKEN, accessToken)
                 .putLong(KEY_ACCESS_TOKEN_EXPIRES_AT, expiresAtMillis)
-                .apply();
+                .commit();
     }
 
     public synchronized void saveRole(String role) {
-        mPrefs.edit().putString(KEY_ROLE, role).apply();
+        mPrefs.edit().putString(KEY_ROLE, role).commit();
     }
 
     public synchronized String getAccessToken() {
@@ -123,6 +131,6 @@ public class TokenStore {
                 .remove(KEY_REFRESH_TOKEN)
                 .remove(KEY_ACCESS_TOKEN_EXPIRES_AT)
                 .remove(KEY_ROLE)
-                .apply();
+                .commit();
     }
 }

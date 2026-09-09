@@ -31,6 +31,7 @@ import com.ninotech.eduniger.model.table.Session;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -181,12 +182,13 @@ public class StructureFragment extends Fragment {
     // ==================== Chargement ====================
 
     private void loadStructures() {
-        new StructureSyn().execute(
-                Server.getUrlApi(getContext()) + "structure.php",
-                mSession.getIdNumber());
-        new StructureSyn2().execute(
-                Server.getUrlApi(getContext()) + "StructureMore.php",
-                mSession.getIdNumber());
+        // Basculé de l'ancien backend PHP (structure.php / StructureMore.php, protégé par un
+        // AuthMiddleware maison qui attend un JWT) vers la vraie API Laravel /api/structures
+        // (Sanctum), désormais correctement authentifiée par ApiClient/AuthInterceptor. Les
+        // anciens endpoints rejetaient systématiquement le token Sanctum envoyé par l'app
+        // (format différent d'un JWT) donc les structures créées côté web n'apparaissaient
+        // jamais côté mobile.
+        new StructureSyn().execute(Server.getUrlHostProd(getContext()) + "/api/structures");
     }
 
     // ==================== AsyncTask ====================
@@ -196,12 +198,15 @@ public class StructureFragment extends Fragment {
         protected String doInBackground(String... params) {
             try {
                 OkHttpClient client = ApiClient.getInstance(requireContext());
-                String url = params[0] + "?id_user=" + params[1];
-                Request request = new Request.Builder().url(url).get().build();
+                Request request = new Request.Builder().url(params[0]).get().build();
                 try {
                     Response response = client.newCall(request).execute();
-                    assert response.body() != null;
-                    return response.body().string();
+                    String body = response.body() != null ? response.body().string() : null;
+                    if (!response.isSuccessful()) {
+                        Log.e("StructureFragment", "GET /api/structures a echoue (" + response.code() + "): " + body);
+                        return null;
+                    }
+                    return body;
                 } catch (IOException e) {
                     if (isAdded()) Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
@@ -215,25 +220,30 @@ public class StructureFragment extends Fragment {
             stopRefreshing();
 
             if (jsonData != null) {
-                showContentState();
-                if (!jsonData.equals("RAS")) {
-                    try {
-                        JSONArray jsonArray = new JSONArray(jsonData);
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            mStructures.add(new Structure(
-                                    jsonArray.getJSONObject(i).getString("id"),
-                                    jsonArray.getJSONObject(i).getString("logo"),
-                                    jsonArray.getJSONObject(i).getString("nameStruct"),
-                                    jsonArray.getJSONObject(i).getString("description"), true,
-                                    jsonArray.getJSONObject(i).getString("banner"),
-                                    jsonArray.getJSONObject(i).getString("author"),
-                                    jsonArray.getJSONObject(i).getString("adhererNumber"),
-                                    jsonArray.getJSONObject(i).getString("bookNumber"),
-                                    jsonArray.getJSONObject(i).getString("isAdmin")));
-                        }
-                        mStructureRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                        mStructureRecyclerView.setAdapter(StructAdapter);
-                    } catch (JSONException e) { throw new RuntimeException(e); }
+                try {
+                    JSONArray jsonArray = new JSONArray(jsonData);
+                    showContentState();
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject obj = jsonArray.getJSONObject(i);
+                        // /api/structures renvoie desormais un champ 'isAdhere' calcule
+                        // cote serveur (appartenance StructUser de l'utilisateur courant).
+                        // 'author'/'isAdmin' restent absents (pas des colonnes de Structure).
+                        mStructures.add(new Structure(
+                                obj.optString("id", ""),
+                                obj.optString("logo", ""),
+                                obj.optString("nameStruct", ""),
+                                obj.optString("description", ""), obj.optBoolean("isAdhere", false),
+                                obj.optString("banner", ""),
+                                "",
+                                obj.optString("adhererNumber", "0"),
+                                obj.optString("bookNumber", "0"),
+                                "0"));
+                    }
+                    mStructureRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                    mStructureRecyclerView.setAdapter(StructAdapter);
+                } catch (JSONException e) {
+                    Log.e("StructureFragment", "Reponse inattendue (non-JSONArray) pour /api/structures: " + jsonData, e);
+                    showNoConnectionError();
                 }
             } else {
                 showNoConnectionError();
@@ -284,7 +294,10 @@ public class StructureFragment extends Fragment {
                     }
                     mStructureRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                     mStructureRecyclerView.setAdapter(StructAdapter);
-                } catch (JSONException e) { throw new RuntimeException(e); }
+                } catch (JSONException e) {
+                    Log.e("StructureFragment", "Reponse inattendue (non-JSONArray) pour StructureMore.php: " + jsonData, e);
+                    showNoConnectionError();
+                }
             } else if (jsonData == null) {
                 showNoConnectionError();
             }

@@ -51,6 +51,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 
+import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import com.ninotech.eduniger.model.net.ApiClient;
 import okhttp3.OkHttpClient;
@@ -345,8 +346,12 @@ public class LoginActivity extends AppCompatActivity {
 
 
     private void performLogin() {
+        // Ancien : Server.getUrlApi(...) + "login.php" (script PHP historique du serveur
+        // "fabi", hors de portee de l'audit/API Laravel "eduniger" ; retournait une reponse
+        // HTML corrompue - voir UserAuthController::login cote serveur pour la contrepartie
+        // Laravel reelle, deja utilisee ici).
         new LoginTask(this).execute(
-                Server.getUrlApi(getApplicationContext()) + "login.php",
+                Server.getUrlHostProd(getApplicationContext()) + "/api/user/login",
                 mAccount.getIdNumber(),
                 mAccount.getPassword()
         );
@@ -482,32 +487,35 @@ public class LoginActivity extends AppCompatActivity {
             // toute application disposant de la permission READ_LOGS sur les anciennes
             // versions d'Android, ou via un simple "adb logcat" sur un appareil connecte.
             // Supprime : aucun secret ne doit jamais apparaitre dans les logs.
-            JSONObject jsonObject = new JSONObject(jsonData);
+            // Reponse Laravel reelle (UserAuthController::login) : { message, user: {...}, token }
+            // - et non plus le format hypothetique attendu par l'ancien code (champs a plat,
+            // couple accessToken/refreshToken) qui ne correspondait a aucun endpoint reel.
+            JSONObject root = new JSONObject(jsonData);
+            JSONObject user = root.getJSONObject("user");
 
-            mAccount.setName(jsonObject.getString("name"));
-            mAccount.setFirstName(jsonObject.getString("firstName"));
-            mAccount.setEmail(jsonObject.getString("email"));
-            mAccount.setPassword(jsonObject.getString("password"));
-            mAccount.setProfession(Long.parseLong(jsonObject.getString("profession")));
+            mAccount.setName(user.optString("name", ""));
+            mAccount.setFirstName(user.optString("firstName", ""));
+            mAccount.setEmail(user.optString("email", ""));
+            mAccount.setPhoneNumber(user.optString("phoneNumber", mAccount.getIdNumber()));
+            mAccount.setProfession(user.optLong("profession", 0));
+            // Le mot de passe (hache) n'est jamais renvoye par l'API (champ "hidden" cote
+            // Laravel) : mAccount.getPassword() garde deja la valeur hachee localement par
+            // handleLoginClick() avant l'appel reseau, inutile de la relire ici.
 
-            // Sauvegarde securisee des tokens d'authentification (Access + Refresh Token),
-            // voir TokenStore.java. Absents seulement si login_google.php a echoue avant
-            // l'emission des tokens (auquel cas isLoggedIn() restera false et les appels
-            // proteges echoueront proprement en 401, geres par AuthAuthenticator).
-            if (jsonObject.has("accessToken") && jsonObject.has("refreshToken")) {
-                com.ninotech.eduniger.model.data.TokenStore tokenStore =
-                        new com.ninotech.eduniger.model.data.TokenStore(getApplicationContext());
-                tokenStore.saveTokens(
-                        jsonObject.getString("accessToken"),
-                        jsonObject.getString("refreshToken"),
-                        jsonObject.optLong("expiresIn", 900)
-                );
-                if (jsonObject.has("role")) {
-                    tokenStore.saveRole(jsonObject.getString("role"));
-                }
-            }
+            // Sauvegarde securisee du token d'authentification Sanctum, voir TokenStore.java.
+            // Sanctum n'emet ici qu'un seul token (pas de couple access/refresh, et
+            // config/sanctum.php a 'expiration' => null : il n'expire pas cote serveur). On
+            // le stocke comme access ET refresh token pour rester compatible avec
+            // TokenStore.isLoggedIn() (qui teste la presence d'un refresh token) : il n'existe
+            // pas de veritable endpoint de refresh cote Laravel pour les lecteurs, un futur
+            // 401 effacera simplement la session locale (voir AuthAuthenticator).
+            String token = root.getString("token");
+            com.ninotech.eduniger.model.data.TokenStore tokenStore =
+                    new com.ninotech.eduniger.model.data.TokenStore(getApplicationContext());
+            tokenStore.saveTokens(token, token, java.util.concurrent.TimeUnit.DAYS.toSeconds(3650));
 
-            if (mAccount.register(getApplicationContext(), jsonObject.getString("isAdmin"))) {
+            boolean isAdmin = user.optBoolean("isAdmin", false);
+            if (mAccount.register(getApplicationContext(), String.valueOf(isAdmin))) {
                 if (mAccount.login(getApplicationContext())) {
                     navigateToMainActivity();
                 } else {
@@ -620,14 +628,23 @@ public class LoginActivity extends AppCompatActivity {
             if (activity == null || activity.mHttpClient == null) return null;
 
             try {
-                RequestBody requestBody = new MultipartBody.Builder()
-                        .setType(MultipartBody.FORM)
-                        .addFormDataPart("id_number", params[1])
-                        .addFormDataPart("password", params[2])
-                        .addFormDataPart("token", activity.mToken)
-                        .addFormDataPart("version",
-                                activity.getResources().getString(R.string.app_version))
-                        .build();
+                // L'ecran de connexion mobile ne collecte qu'un "numero" (telephone) : on
+                // l'envoie comme phoneNumber, UserAuthController::login accepte email OU
+                // phoneNumber. Le mot de passe est deja hache cote client (PasswordUtil).
+                JSONObject payload = new JSONObject();
+                payload.put("phoneNumber", params[1]);
+                payload.put("password", params[2]);
+                // Token FCM (notifications push), deja recupere/attendu par
+                // retrieveFirebaseTokenThenLogin() avant l'appel a performLogin() : on
+                // l'envoie seulement s'il s'agit d'un vrai token (pas le sentinel
+                // DEFAULT_TOKEN="null" utilise quand Firebase n'a pas repondu a temps).
+                if (activity.mToken != null && !DEFAULT_TOKEN.equals(activity.mToken)) {
+                    payload.put("fcmToken", activity.mToken);
+                }
+
+                RequestBody requestBody = RequestBody.create(
+                        MediaType.parse("application/json; charset=utf-8"),
+                        payload.toString());
 
                 Request request = new Request.Builder()
                         .url(params[0])
@@ -635,12 +652,31 @@ public class LoginActivity extends AppCompatActivity {
                         .build();
 
                 try (Response response = activity.mHttpClient.newCall(request).execute()) {
-                    if (response.body() != null) {
-                        return response.body().string();
+                    String body = response.body() != null ? response.body().string() : null;
+
+                    // Traduction des codes HTTP Laravel vers le protocole existant
+                    // (Account.dataControl), pour reutiliser l'affichage d'erreur deja en
+                    // place sans dupliquer la logique d'UI.
+                    if (response.code() == 404) {
+                        return "accountNotExist";
                     }
+                    if (response.code() == 401) {
+                        return "incorrectPassword";
+                    }
+                    if (response.code() == 429) {
+                        return "accountLocked";
+                    }
+                    if (response.isSuccessful() && body != null) {
+                        return body;
+                    }
+                    // 422 (validation) ou 5xx : pas de cas dedie dans l'ancien protocole,
+                    // on retombe sur le message generique "pas de connexion".
+                    return "false";
                 } catch (IOException e) {
                     Log.e(TAG, "Network request failed", e);
                 }
+            } catch (org.json.JSONException e) {
+                Log.e(TAG, "Failed to build login JSON payload", e);
             } catch (Exception e) {
                 Log.e(TAG, "Unexpected error in login task", e);
             }

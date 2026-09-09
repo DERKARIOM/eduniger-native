@@ -223,10 +223,13 @@ public class BooksFragment extends Fragment {
     // ==================== Chargement ====================
 
     private void loadRankingData() {
-        new RankingSyn().execute(
-                Server.getUrlApi(requireContext()) + "books.php",
-                mSession.getIdNumber()
-        );
+        // Ancien : books.php (backend PHP legacy, JWT maison). Bascule vers l'API Laravel
+        // reelle (Sanctum, deja authentifiee via ApiClient/AuthInterceptor) qui expose les
+        // livres avec leurs associations (categories, auteur, structures, fichiers audio).
+        // Limite connue : 'numberLike'/'numberView' n'existent pas encore cote Laravel (le
+        // systeme de favoris/vues n'a pas ete migre - cf. audit mobile) -> mis a 0 pour
+        // l'instant plutot que de laisser planter le parsing.
+        new RankingSyn().execute(Server.getUrlHostProd(requireContext()) + "/api/book/associations");
     }
 
     // ==================== AsyncTask ====================
@@ -234,15 +237,19 @@ public class BooksFragment extends Fragment {
     private class RankingSyn extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-            String url = params[0] + "?id_number=" + params[1];
-            return executeGetRequest(url);
+            return executeGetRequest(params[0]);
         }
 
         private String executeGetRequest(String url) {
             try {
                 Request request = new Request.Builder().url(url).get().build();
                 try (Response response = mHttpClient.newCall(request).execute()) {
-                    if (response.body() != null) return response.body().string();
+                    String body = response.body() != null ? response.body().string() : null;
+                    if (!response.isSuccessful()) {
+                        Log.e(TAG, "GET /api/book/associations a echoue (" + response.code() + "): " + body);
+                        return null;
+                    }
+                    return body;
                 }
             } catch (IOException e) {
                 Log.e(TAG, "Network error: " + e.getMessage(), e);
@@ -265,39 +272,50 @@ public class BooksFragment extends Fragment {
         }
 
         private void processRankingData(String jsonData) {
-            showContentState();
+            try {
+                JSONArray jsonArray = new JSONArray(jsonData);
+                showContentState();
+                mOnlineBookList.clear();
 
-            if (!RESPONSE_RAS.equals(jsonData)) {
-                try {
-                    JSONArray jsonArray = new JSONArray(jsonData);
-                    mOnlineBookList.clear();
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject obj = jsonArray.getJSONObject(i);
 
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject obj = jsonArray.getJSONObject(i);
-                        String category = obj.getString("nameStruct") + " : " +
-                                obj.getString("categoryTitle");
+                    // 'categories' et 'structures' sont des relations many-to-many cote
+                    // Laravel (un livre peut appartenir a plusieurs) : on prend la premiere
+                    // de chaque pour reconstituer l'etiquette 'Structure : Categorie'
+                    // affichee par l'ancien systeme, faute d'un champ plat equivalent.
+                    JSONArray categories = obj.optJSONArray("categories");
+                    String categoryTitle = (categories != null && categories.length() > 0)
+                            ? categories.getJSONObject(0).optString("title", "") : "";
+                    JSONArray structures = obj.optJSONArray("structures");
+                    String nameStruct = (structures != null && structures.length() > 0)
+                            ? structures.getJSONObject(0).optString("nameStruct", "") : "";
+                    String idStruct = (structures != null && structures.length() > 0)
+                            ? structures.getJSONObject(0).optString("id", "") : "";
+                    String category = nameStruct.isEmpty() && categoryTitle.isEmpty() ? ""
+                            : nameStruct + " : " + categoryTitle;
 
-                        mOnlineBookList.add(new OnlineBook(
-                                obj.getString("idBook"),
-                                obj.getString("blanket"),
-                                obj.getString("bookTitle"),
-                                category,
-                                obj.getString("isPhysic"),
-                                obj.getString("electronic"),
-                                obj.getString("isAudio"),
-                                obj.getString("idStructures"),
-                                Integer.parseInt(obj.getString("numberLike")),
-                                Integer.parseInt(obj.getString("numberView"))
-                        ));
-                    }
-
-                    OnlineBookAdapter adapter = new OnlineBookAdapter(mOnlineBookList);
-                    mBookRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-                    mBookRecyclerView.setAdapter(adapter);
-
-                } catch (JSONException e) {
-                    Log.e(TAG, "Error parsing ranking data", e);
+                    mOnlineBookList.add(new OnlineBook(
+                            obj.optString("idBook", ""),
+                            obj.optString("blanket", ""),
+                            obj.optString("title", ""),
+                            category,
+                            obj.optBoolean("isPhysic", false) ? "1" : "0",
+                            obj.isNull("electronic") ? "null" : obj.optString("electronic", "null"),
+                            obj.optBoolean("isAudio", false) ? "1" : "0",
+                            idStruct,
+                            0,  // numberLike : favoris/likes pas encore migres cote Laravel
+                            0   // numberView : vues pas encore migrees cote Laravel
+                    ));
                 }
+
+                OnlineBookAdapter adapter = new OnlineBookAdapter(mOnlineBookList);
+                mBookRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+                mBookRecyclerView.setAdapter(adapter);
+
+            } catch (JSONException e) {
+                Log.e(TAG, "Reponse inattendue (non-JSONArray) pour /api/book/associations: " + jsonData, e);
+                showNoConnectionError();
             }
         }
     }
