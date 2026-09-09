@@ -379,12 +379,14 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private void searchOnLineStructure() {
+        // Bascule des legacy Structure.php / StructureMore.php (JWT, incompatibles avec
+        // Sanctum) vers /api/structures/mine et /api/structures/discover.
         registerRefreshReceiver("STRUCT_SEARCH", () -> {
-            new StructureTask(this, "Structure.php").execute(mSession.getIdNumber());
-            new StructureTask2(this, "StructureMore.php").execute(mSession.getIdNumber());
+            new StructureTask(this).execute();
+            new StructureTask2(this).execute();
         });
-        new StructureTask(this, "Structure.php").execute(mSession.getIdNumber());
-        new StructureTask2(this, "StructureMore.php").execute(mSession.getIdNumber());
+        new StructureTask(this).execute();
+        new StructureTask2(this).execute();
     }
 
     // ==================== Fabiola Book Search ====================
@@ -947,24 +949,22 @@ public class SearchActivity extends AppCompatActivity {
         }
     }
 
-    private static class StructureTask extends AsyncTask<String, Void, String> {
+    /** "Mes structures" (/api/structures/mine) : celles dont l'utilisateur est membre. */
+    private static class StructureTask extends AsyncTask<Void, Void, String> {
         private final WeakReference<SearchActivity> activityRef;
-        private final String fileName;
 
-        StructureTask(SearchActivity activity, String fileName) {
+        StructureTask(SearchActivity activity) {
             this.activityRef = new WeakReference<>(activity);
-            this.fileName = fileName;
         }
 
         @Override
-        protected String doInBackground(String... params) {
+        protected String doInBackground(Void... params) {
             SearchActivity activity = activityRef.get();
-            if (activity == null) return null;
+            if (activity == null || activity.mHttpClient == null) return null;
             try {
                 Request request = new Request.Builder()
-                        .url(Server.getUrlApi(activity) + fileName)
-                        .post(new MultipartBody.Builder().setType(MultipartBody.FORM)
-                                .addFormDataPart("idUser", params[0]).build()).build();
+                        .url(Server.getUrlHostProd(activity) + "/api/structures/mine")
+                        .get().build();
                 try (Response response = activity.mHttpClient.newCall(request).execute()) {
                     if (response.body() != null) return response.body().string();
                 }
@@ -976,9 +976,9 @@ public class SearchActivity extends AppCompatActivity {
         protected void onPostExecute(String jsonData) {
             SearchActivity activity = activityRef.get();
             if (activity == null) return;
-            if (jsonData != null && !"RAS".equals(jsonData)) {
+            if (jsonData != null) {
                 try {
-                    activity.parseStructures(new JSONArray(jsonData), true);
+                    activity.parseStructures(new JSONArray(jsonData));
                     activity.setupRecyclerView(activity.mStructureAdapter);
                 } catch (JSONException e) {
                     Log.e(TAG, "JSON parsing error", e);
@@ -988,24 +988,22 @@ public class SearchActivity extends AppCompatActivity {
         }
     }
 
-    private static class StructureTask2 extends AsyncTask<String, Void, String> {
+    /** Structures a decouvrir (/api/structures/discover) : max 4, non rejointes. */
+    private static class StructureTask2 extends AsyncTask<Void, Void, String> {
         private final WeakReference<SearchActivity> activityRef;
-        private final String fileName;
 
-        StructureTask2(SearchActivity activity, String fileName) {
+        StructureTask2(SearchActivity activity) {
             this.activityRef = new WeakReference<>(activity);
-            this.fileName = fileName;
         }
 
         @Override
-        protected String doInBackground(String... params) {
+        protected String doInBackground(Void... params) {
             SearchActivity activity = activityRef.get();
-            if (activity == null) return null;
+            if (activity == null || activity.mHttpClient == null) return null;
             try {
                 Request request = new Request.Builder()
-                        .url(Server.getUrlApi(activity) + fileName)
-                        .post(new MultipartBody.Builder().setType(MultipartBody.FORM)
-                                .addFormDataPart("idUser", params[0]).build()).build();
+                        .url(Server.getUrlHostProd(activity) + "/api/structures/discover")
+                        .get().build();
                 try (Response response = activity.mHttpClient.newCall(request).execute()) {
                     if (response.body() != null) return response.body().string();
                 }
@@ -1017,24 +1015,28 @@ public class SearchActivity extends AppCompatActivity {
         protected void onPostExecute(String jsonData) {
             SearchActivity activity = activityRef.get();
             if (activity == null) return;
-            if (jsonData != null && !"RAS".equals(jsonData)) {
+            if (jsonData != null) {
                 try {
-                    activity.parseStructures(new JSONArray(jsonData), false);
+                    activity.parseStructures(new JSONArray(jsonData));
                     activity.setupRecyclerView(activity.mStructureAdapter);
                 } catch (JSONException e) { Log.e(TAG, "JSON parsing error", e); }
             }
         }
     }
 
-    private void parseStructures(JSONArray jsonArray, boolean isAdmin) throws JSONException {
+    private void parseStructures(JSONArray jsonArray) throws JSONException {
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject obj = jsonArray.getJSONObject(i);
             String id = obj.getString("id");
-            if (!isAdmin && isStructureExists(mStructures, id)) continue;
-            mStructures.add(new Structure(id, obj.getString("logo"), obj.getString("nameStruct"),
-                    obj.getString("description"), isAdmin, obj.getString("banner"),
-                    obj.getString("author"), obj.getString("adhererNumber"),
-                    obj.getString("bookNumber"), obj.optString("isAdmin", "0")));
+            boolean isAdhere = obj.optBoolean("isAdhere", false);
+            // /api/structures/discover exclut deja les structures rejointes cote serveur ;
+            // ce dedoublonnage cote client reste une securite en cas d'arrivee decalee
+            // des deux reponses async (mine / discover).
+            if (!isAdhere && isStructureExists(mStructures, id)) continue;
+            mStructures.add(new Structure(id, obj.optString("logo", ""), obj.optString("nameStruct", ""),
+                    obj.optString("description", ""), isAdhere, obj.optString("banner", ""),
+                    obj.optString("author", ""), obj.optString("adhererNumber", "0"),
+                    obj.optString("bookNumber", "0"), String.valueOf(obj.optInt("isAdmin", 0))));
         }
     }
 
