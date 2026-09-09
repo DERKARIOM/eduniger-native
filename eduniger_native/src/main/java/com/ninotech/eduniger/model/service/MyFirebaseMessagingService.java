@@ -122,26 +122,22 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 OkHttpClient client = ApiClient.getInstance(getApplicationContext());
 
                 // ── 1. Récupérer les loands non vus ─────────────────────────
-                RequestBody bodyGet = new MultipartBody.Builder()
-                        .setType(MultipartBody.FORM)
-                        .addFormDataPart("idUser", idUser)
-                        .build();
-
+                // Sanctum (GET) : idUser vient desormais du token, plus besoin de le poster.
                 Request requestGet = new Request.Builder()
-                        .url(Server.getUrlApi(getApplicationContext()) + "get_unread_loands.php")
-                        .post(bodyGet)
+                        .url(Server.getUrlHostProd(getApplicationContext()) + "/api/loans/unread")
+                        .get()
                         .build();
 
                 String jsonResponse;
                 try (Response response = client.newCall(requestGet).execute()) {
                     if (response.body() == null) {
-                        Log.e(TAG, "Réponse vide de get_unread_loands.php");
+                        Log.e(TAG, "Réponse vide de /api/loans/unread");
                         return;
                     }
                     jsonResponse = response.body().string();
                 }
 
-                Log.d(TAG, "get_unread_loands response : " + jsonResponse);
+                Log.d(TAG, "/api/loans/unread response : " + jsonResponse);
 
                 JSONObject jsonObject = new JSONObject(jsonResponse);
 
@@ -224,14 +220,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private void markLoandAsViewed(OkHttpClient client, String idLoand, String idUser) {
         try {
-            RequestBody body = new MultipartBody.Builder()
-                    .setType(MultipartBody.FORM)
-                    .addFormDataPart("idLoand", idLoand)
-                    .addFormDataPart("idUser",  idUser)
-                    .build();
+            RequestBody body = RequestBody.create(new byte[0], null);
 
             Request request = new Request.Builder()
-                    .url(Server.getUrlApi(getApplicationContext()) + "mark_loand_viewed.php")
+                    .url(Server.getUrlHostProd(getApplicationContext()) + "/api/loans/" + idLoand + "/mark-viewed")
                     .post(body)
                     .build();
 

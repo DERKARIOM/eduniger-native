@@ -8,6 +8,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.ninotech.eduniger.R;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class LoandTable extends SQLiteOpenHelper {
     public static final String NAME_TABLE = "Loand";
     public LoandTable(Context context) {
@@ -50,6 +53,26 @@ public class LoandTable extends SQLiteOpenHelper {
         SQLiteDatabase database = this.getReadableDatabase();
         database.execSQL("DELETE FROM " + NAME_TABLE + " WHERE idLoand=\"" + idLoand + "\"");
         return true;
+    }
+    /**
+     * Tous les idLoand actuellement en cache local. Utilise par la synchro a la
+     * demande (LoandSyncTask) pour savoir quels emprunts sont deja en local
+     * (evite un re-telechargement inutile de la couverture) et lesquels ne
+     * figurent plus dans la reponse serveur (donc a retirer localement, ex :
+     * livre rendu).
+     */
+    public Set<String> getAllIds()
+    {
+        Set<String> ids = new HashSet<>();
+        SQLiteDatabase database = this.getReadableDatabase();
+        Cursor cursor = database.rawQuery("SELECT idLoand FROM " + NAME_TABLE, null);
+        if (cursor.moveToFirst()) {
+            do {
+                ids.add(cursor.getString(0));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return ids;
     }
     public boolean insert (String idLoand,String idNumber , String cover , String title , String dateLoand , String realReturnDate)
     {

@@ -28,6 +28,7 @@ import com.ninotech.eduniger.model.data.Library;
 import com.ninotech.eduniger.model.data.LocalBooks;
 import com.ninotech.eduniger.model.data.PlaybackRepository;
 import com.ninotech.eduniger.model.data.Server;
+import com.ninotech.eduniger.model.net.LoandSyncTask;
 import com.ninotech.eduniger.model.table.AudioTable;
 import com.ninotech.eduniger.model.table.ElectronicTable;
 import com.ninotech.eduniger.model.table.LoandTable;
@@ -76,6 +77,13 @@ public class LibraryFragment extends Fragment {
         initializeViews(view);
         loadData(view);
         setupSwipeRefresh(view);  // ← nouveau
+
+        // Reconcilie le cache local des emprunts (LoandTable) avec le serveur —
+        // sinon le compteur "emprunts" ne refletait que ce qu'une notification
+        // push avait deja synchronise, jamais les emprunts rendus depuis.
+        new LoandSyncTask(getContext(), () -> {
+            if (isAdded()) loadData(view);
+        }).execute();
 
         return view;
     }
@@ -210,6 +218,9 @@ public class LibraryFragment extends Fragment {
 
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
             loadData(view);
+            new LoandSyncTask(getContext(), () -> {
+                if (isAdded()) loadData(view);
+            }).execute();
             mSwipeRefreshLayout.setRefreshing(false);
         });
     }

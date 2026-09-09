@@ -42,6 +42,7 @@ import com.ninotech.eduniger.model.table.AudioTable;
 import com.ninotech.eduniger.model.table.ElectronicTable;
 import com.ninotech.eduniger.model.table.LoandTable;
 import com.ninotech.eduniger.model.table.Session;
+import com.ninotech.eduniger.model.net.LoandSyncTask;
 
 import java.io.File;
 import java.text.ParseException;
@@ -140,21 +141,10 @@ public class ContainerActivity extends AppCompatActivity {
                 break;
             case 3: // Loand Book
                 actionBarTitle.setText(R.string.your_loand_books);
-                LoandTable loandTable = new LoandTable(this);
-                ArrayList<LoandBook> loandBookList = new ArrayList<>();
-                Cursor LoandCursor = loandTable.getData();
-                LoandCursor.moveToFirst();
-                try {
-                    do {
-                        loandBookList.add(new LoandBook(LoandCursor.getString(2),LoandCursor.getString(3),LoandCursor.getString(4),LoandCursor.getString(5),percentage(converterDate(LoandCursor.getString(4)),converterDate(LoandCursor.getString(5)),getNowDate())));
-                    }while (LoandCursor.moveToNext());
-                    LoandBookAdapter loandBookAdapter = new LoandBookAdapter(loandBookList);
-                    mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-                    mRecyclerView.setAdapter(loandBookAdapter);
-                }catch (Exception e)
-                {
-                    voidContainer(R.drawable.img_physical,getString(R.string.no_loand_book));
-                }
+                loadLoandBooks();
+                // Reconcilie le cache local avec /api/loans/mine (ajoute les emprunts
+                // actifs manquants, retire ceux qui ne le sont plus - livre rendu).
+                new LoandSyncTask(this, this::loadLoandBooks).execute();
                 break;
             case 4: // Category
                 actionBarTitle.setText(R.string.category);
@@ -349,6 +339,24 @@ public class ContainerActivity extends AppCompatActivity {
         // Affichez le temps actuel en secondes
         return currentTimeSeconds;
     }
+    private void loadLoandBooks() {
+        LoandTable loandTable = new LoandTable(this);
+        ArrayList<LoandBook> loandBookList = new ArrayList<>();
+        Cursor LoandCursor = loandTable.getData();
+        LoandCursor.moveToFirst();
+        try {
+            do {
+                loandBookList.add(new LoandBook(LoandCursor.getString(2),LoandCursor.getString(3),LoandCursor.getString(4),LoandCursor.getString(5),percentage(converterDate(LoandCursor.getString(4)),converterDate(LoandCursor.getString(5)),getNowDate())));
+            }while (LoandCursor.moveToNext());
+            LoandBookAdapter loandBookAdapter = new LoandBookAdapter(loandBookList);
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+            mRecyclerView.setAdapter(loandBookAdapter);
+        }catch (Exception e)
+        {
+            voidContainer(R.drawable.img_physical,getString(R.string.no_loand_book));
+        }
+    }
+
     public long converterDate(String dateString)
     {
 //        String dateString = "2024-02-13 12:30:00";
