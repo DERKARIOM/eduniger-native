@@ -21,7 +21,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@style/activity_main_research"
-        android:elevation="1dp"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="10dp"
         android:layout_marginStart="50dp"
