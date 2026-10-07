@@ -339,7 +339,6 @@
     <string name="account_stat_favorites">Favoris</string>
     <string name="account_recent_title">Téléchargements récents</string>
     <string name="account_see_all">Voir tout</string>
-    <string name="account_read_offline">Lire hors ligne</string>
     <string name="account_more_actions">Plus d’actions</string>
     <string name="account_recent_empty">Aucun livre téléchargé pour le moment. Vos PDF apparaîtront ici pour être lus hors ligne.</string>
     <string name="account_recent_meta">%1$s · %2$s</string>

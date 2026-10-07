@@ -205,8 +205,6 @@ public class LibraryFragment extends Fragment {
 
         view.findViewById(R.id.text_view_fragment_library_see_all)
                 .setOnClickListener(v -> openContainer(CONTAINER_DOWNLOADS));
-        view.findViewById(R.id.linear_layout_fragment_library_read_offline)
-                .setOnClickListener(v -> readRecentOffline());
         view.findViewById(R.id.image_button_fragment_library_recent_more)
                 .setOnClickListener(this::showRecentMenu);
         mRecentCard.setOnClickListener(v -> readRecentOffline());
