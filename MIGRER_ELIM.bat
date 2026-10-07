@@ -17,6 +17,8 @@ if exist "%OLD%" (
 ) else (
   echo L'ancien package est deja supprime.
 )
+rem Nom du projet affiche par Android Studio (.idea non modifiable a distance)
+if exist ".idea" (<nul set /p="Elim" > ".idea\.name")
 echo Nettoyage Gradle ...
 call gradlew.bat clean
 echo.
