@@ -50,6 +50,7 @@
     <color name="account_card">#FFFFFFFF</color>
     <color name="account_card_alt">#FFEEF3F0</color>
     <color name="account_line">#FFE1E7E3</color>
+    <color name="account_card_stroke">#FFE1E7E3</color>
     <color name="account_text">#FF141A17</color>
     <color name="account_text_muted">#FF5C6862</color>
     <color name="account_icon_muted">#FF8A948F</color>
