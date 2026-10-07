@@ -327,10 +327,6 @@
     <string name="attach_videos">Suprends-moi</string>
 
     <!-- ===== Écran Compte (v2) ===== -->
-    <string name="account_title">Compte</string>
-    <string name="account_brand">EduNiger</string>
-    <string name="account_notifications">Notifications</string>
-    <string name="account_open_settings">Tous les paramètres</string>
     <string name="account_edit_profile">Modifier le profil</string>
     <string name="account_change_photo">Changer la photo de profil</string>
     <string name="account_photo_description">Photo de profil</string>

@@ -22,9 +22,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -41,7 +38,6 @@ import com.ninotech.eduniger.controleur.activity.MainActivity;
 import com.ninotech.eduniger.controleur.activity.NotificationActivity;
 import com.ninotech.eduniger.controleur.activity.PdfBoxViewerActivity;
 import com.ninotech.eduniger.controleur.activity.PlaybackListActivity;
-import com.ninotech.eduniger.controleur.activity.SettingV2Activity;
 import com.ninotech.eduniger.controleur.activity.SuggestionActivity;
 import com.ninotech.eduniger.controleur.activity.ThemeActivity;
 import com.ninotech.eduniger.controleur.animation.RoundedTransformation;
@@ -81,7 +77,7 @@ import okhttp3.Response;
  * Regroupe sur un seul écran : profil, statistiques de la bibliothèque locale, dernier
  * livre téléchargé (lecture hors ligne), paramètres du compte et déconnexion. Toutes les
  * actions réutilisent les écrans existants (ContainerActivity, AccountActivity,
- * ThemeActivity, SettingV2Activity...) : aucune logique métier n'est dupliquée ici.
+ * ThemeActivity, InfosActivity...) : aucune logique métier n'est dupliquée ici.
  *
  * Les données viennent uniquement des tables SQLite locales (aucun appel réseau à
  * l'affichage), sauf la synchronisation des emprunts (LoandSyncTask) et l'envoi de la
@@ -138,7 +134,6 @@ public class LibraryFragment extends Fragment {
         mUserTable = new UserTable(getContext());
 
         initializeViews(mRoot);
-        applyStatusBarInset(mRoot);
         setupStaticActions(mRoot);
         setupSettings(mRoot);
         setupSwipeRefresh();
@@ -191,28 +186,7 @@ public class LibraryFragment extends Fragment {
         versionTextView.setText(getString(R.string.account_version, getString(R.string.app_version)));
     }
 
-    /**
-     * Sur cet onglet la barre d'outils principale est masquée (cf. MainActivity) : si la
-     * fenêtre dessine sous la barre d'état (bord à bord, imposé par Android 15 avec
-     * targetSdk 35), on décale le contenu de la hauteur de la barre d'état. Sans bord à
-     * bord, l'encart reçu vaut 0 et rien ne change.
-     */
-    private void applyStatusBarInset(View view) {
-        View content = view.findViewById(R.id.linear_layout_fragment_library_content);
-        final int basePaddingTop = content.getPaddingTop();
-        ViewCompat.setOnApplyWindowInsetsListener(content, (v, insets) -> {
-            Insets bars = insets.getInsets(WindowInsetsCompat.Type.statusBars());
-            v.setPadding(v.getPaddingLeft(), basePaddingTop + bars.top,
-                    v.getPaddingRight(), v.getPaddingBottom());
-            return insets;
-        });
-    }
-
     private void setupStaticActions(View view) {
-        view.findViewById(R.id.image_button_fragment_library_notifications)
-                .setOnClickListener(v -> open(NotificationActivity.class));
-        view.findViewById(R.id.image_button_fragment_library_settings)
-                .setOnClickListener(v -> open(SettingV2Activity.class));
         view.findViewById(R.id.image_button_fragment_library_edit_profile)
                 .setOnClickListener(v -> open(AccountActivity.class));
 

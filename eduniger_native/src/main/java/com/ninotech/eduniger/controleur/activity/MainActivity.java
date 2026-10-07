@@ -480,20 +480,6 @@ public class MainActivity extends AppCompatActivity {
                 .show(target)
                 .commit();
         mActiveFragment = target;
-        updateToolbarVisibility();
-    }
-
-    /**
-     * L'onglet Compte (LibraryFragment) a son propre en-tête (titre, notifications,
-     * paramètres) : la barre d'outils principale y est masquée pour éviter deux en-têtes
-     * superposés, et réaffichée sur les autres onglets.
-     */
-    private void updateToolbarVisibility() {
-        View toolbarContainer = findViewById(R.id.relative_layout_toolbar_search);
-        if (toolbarContainer != null) {
-            toolbarContainer.setVisibility(
-                    mActiveFragment == mFragmentLibrary ? View.GONE : View.VISIBLE);
-        }
     }
 
     // ================================================================

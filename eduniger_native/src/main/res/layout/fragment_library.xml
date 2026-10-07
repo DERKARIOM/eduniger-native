@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Onglet « Compte » (LibraryFragment), version 2 :
-     en-tête, profil, statistiques, téléchargements récents, paramètres du compte,
-     déconnexion. Couleurs : jetons account_* (values / values-night). -->
+     profil, statistiques, téléchargements récents, paramètres du compte, déconnexion.
+     Barre d'outils et fond de page : ceux de MainActivity, comme les autres onglets.
+     Couleurs des cartes : jetons account_* (values / values-night). -->
 <androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/swipe_refresh_library"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/account_bg"
     tools:context=".controleur.fragment.LibraryFragment">
 
     <androidx.core.widget.NestedScrollView
@@ -22,89 +22,14 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingStart="16dp"
-            android:paddingTop="18dp"
+            android:paddingTop="12dp"
             android:paddingEnd="16dp"
             android:paddingBottom="112dp">
-
-            <!-- ==================== En-tête ==================== -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <FrameLayout
-                    android:layout_width="34dp"
-                    android:layout_height="34dp"
-                    android:background="@drawable/bg_account_logo">
-
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_gravity="center"
-                        android:importantForAccessibility="no"
-                        android:src="@drawable/ic_account_book"
-                        android:tint="@color/account_on_accent" />
-                </FrameLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:letterSpacing="0.08"
-                        android:text="@string/account_brand"
-                        android:textAllCaps="true"
-                        android:textColor="@color/account_accent"
-                        android:textSize="11sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:accessibilityHeading="true"
-                        android:text="@string/account_title"
-                        android:textColor="@color/account_text"
-                        android:textSize="22sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-
-                <ImageButton
-                    android:id="@+id/image_button_fragment_library_notifications"
-                    android:layout_width="44dp"
-                    android:layout_height="44dp"
-                    android:background="@drawable/bg_account_icon_button"
-                    android:contentDescription="@string/account_notifications"
-                    android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                    android:padding="12dp"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/ic_account_bell"
-                    android:tint="@color/account_text" />
-
-                <ImageButton
-                    android:id="@+id/image_button_fragment_library_settings"
-                    android:layout_width="44dp"
-                    android:layout_height="44dp"
-                    android:layout_marginStart="8dp"
-                    android:background="@drawable/bg_account_icon_button"
-                    android:contentDescription="@string/account_open_settings"
-                    android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                    android:padding="12dp"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/ic_account_settings"
-                    android:tint="@color/account_text" />
-            </LinearLayout>
 
             <!-- ==================== Profil ==================== -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="18dp"
                 android:background="@drawable/bg_account_card"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
