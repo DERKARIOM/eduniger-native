@@ -1,122 +1,563 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- Onglet « Compte » (LibraryFragment), version 2 :
+     en-tête, profil, statistiques, téléchargements récents, paramètres du compte,
+     déconnexion. Couleurs : jetons account_* (values / values-night). -->
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/swipe_refresh_library"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/account_bg"
     tools:context=".controleur.fragment.LibraryFragment">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="70dp">
+        android:clipToPadding="false"
+        android:fillViewport="true">
 
-        <RelativeLayout
-            android:layout_margin="10dp"
-            android:id="@+id/relative_layout_fragment_library_profile"
-            android:layout_width="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_height="wrap_content">
+        <LinearLayout
+            android:id="@+id/linear_layout_fragment_library_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="16dp"
+            android:paddingTop="18dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="112dp">
 
-            <FrameLayout
-                android:id="@+id/frame_layout_structure_activity_profile"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:padding="10dp">
-
-                <ImageView
-                    android:id="@+id/image_view_structure_activity_profile"
-                    android:layout_width="110dp"
-                    android:layout_height="110dp"
-                    android:layout_centerHorizontal="true"
-                    android:src="@drawable/user" />
-
-                <ImageView
-                    android:id="@+id/fabChangePhoto"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:layout_gravity="bottom|end"
-                    android:elevation="1dp"
-                    android:layout_marginBottom="5dp"
-                    android:layout_marginTop="80dp"
-                    android:layout_marginStart="50dp"
-                    android:contentDescription="photo"
-                    android:padding="5dp"
-                    android:background="@drawable/forme_white_radius_1000dp"
-                    app:srcCompat="@drawable/vector_black3_photo" />
-
-            </FrameLayout>
-
+            <!-- ==================== En-tête ==================== -->
             <LinearLayout
-                android:id="@+id/linear_layout_fragment_library_profile"
-                android:layout_margin="10dp"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/frame_layout_structure_activity_profile"
-                android:layout_centerHorizontal="true"
-                android:orientation="vertical">
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/text_view_fragment_library_username"
-                    android:layout_width="wrap_content"
+                <FrameLayout
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:background="@drawable/bg_account_logo">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_account_book"
+                        android:tint="@color/account_on_accent" />
+                </FrameLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:textStyle="bold"
-                    android:textSize="20dp" />
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/text_view_fragment_library_email"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="2023-2024-Master-1-IFA" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:letterSpacing="0.08"
+                        android:text="@string/account_brand"
+                        android:textAllCaps="true"
+                        android:textColor="@color/account_accent"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
 
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:accessibilityHeading="true"
+                        android:text="@string/account_title"
+                        android:textColor="@color/account_text"
+                        android:textSize="22sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <ImageButton
+                    android:id="@+id/image_button_fragment_library_notifications"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:background="@drawable/bg_account_icon_button"
+                    android:contentDescription="@string/account_notifications"
+                    android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                    android:padding="12dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_account_bell"
+                    android:tint="@color/account_text" />
+
+                <ImageButton
+                    android:id="@+id/image_button_fragment_library_settings"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/bg_account_icon_button"
+                    android:contentDescription="@string/account_open_settings"
+                    android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                    android:padding="12dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_account_settings"
+                    android:tint="@color/account_text" />
             </LinearLayout>
 
-            <View
-                android:id="@+id/view_fragment_library_1"
+            <!-- ==================== Profil ==================== -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:background="@drawable/bg_account_card"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="16dp">
+
+                <FrameLayout
+                    android:layout_width="74dp"
+                    android:layout_height="72dp">
+
+                    <ImageView
+                        android:id="@+id/image_view_fragment_library_avatar"
+                        android:layout_width="68dp"
+                        android:layout_height="68dp"
+                        android:background="@drawable/bg_account_avatar_ring"
+                        android:contentDescription="@string/account_photo_description"
+                        android:padding="3dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/user" />
+
+                    <ImageButton
+                        android:id="@+id/image_button_fragment_library_change_photo"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:layout_gravity="bottom|end"
+                        android:background="@drawable/bg_account_camera_badge"
+                        android:contentDescription="@string/account_change_photo"
+                        android:padding="7dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_account_camera"
+                        android:tint="@color/account_on_accent" />
+                </FrameLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/text_view_fragment_library_username"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="2"
+                        android:textColor="@color/account_text"
+                        android:textSize="17sp"
+                        android:textStyle="bold"
+                        tools:text="Bachir Abdoul Kader" />
+
+                    <TextView
+                        android:id="@+id/text_view_fragment_library_email"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:ellipsize="end"
+                        android:singleLine="true"
+                        android:textColor="@color/account_text_muted"
+                        android:textSize="12.5sp"
+                        tools:text="bachirabdoulkader62331@gmail.com" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="7dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/text_view_fragment_library_role"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_account_chip"
+                            android:paddingStart="9dp"
+                            android:paddingTop="3dp"
+                            android:paddingEnd="9dp"
+                            android:paddingBottom="3dp"
+                            android:text="@string/account_role_user"
+                            android:textColor="@color/account_accent"
+                            android:textSize="11.5sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/text_view_fragment_library_member_since"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:ellipsize="end"
+                            android:singleLine="true"
+                            android:textColor="@color/account_text_muted"
+                            android:textSize="11.5sp"
+                            android:visibility="gone"
+                            tools:text="Membre depuis avril 2026"
+                            tools:visibility="visible" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <ImageButton
+                    android:id="@+id/image_button_fragment_library_edit_profile"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:layout_gravity="top"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/bg_account_icon_button"
+                    android:contentDescription="@string/account_edit_profile"
+                    android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                    android:padding="13dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_account_pencil"
+                    android:tint="@color/account_text" />
+            </LinearLayout>
+
+            <!-- ==================== Statistiques ==================== -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:baselineAligned="false"
+                android:orientation="horizontal">
+
+                <include
+                    android:id="@+id/include_fragment_library_stat_downloads"
+                    layout="@layout/item_account_stat"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
+                    android:layout_weight="1" />
+
+                <include
+                    android:id="@+id/include_fragment_library_stat_audio"
+                    layout="@layout/item_account_stat"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginEnd="4dp"
+                    android:layout_weight="1" />
+
+                <include
+                    android:id="@+id/include_fragment_library_stat_loans"
+                    layout="@layout/item_account_stat"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginEnd="4dp"
+                    android:layout_weight="1" />
+
+                <include
+                    android:id="@+id/include_fragment_library_stat_favorites"
+                    layout="@layout/item_account_stat"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+            <!-- Raccourcis bibliothèque conservés de l'ancienne version
+                 (catégories, auteurs, historique d'écoute). -->
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/separator"
-                android:layout_below="@+id/linear_layout_fragment_library_profile" />
+                android:clipToPadding="false"
+                android:scrollbars="none">
 
-            <TextView
-                android:id="@+id/text_view_fragment_library_recent_read_book"
-                style="@style/wrap_content_all"
-                android:layout_below="@+id/view_fragment_library_1"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="20dp"
-                android:text="@string/recent_read"
-                android:textStyle="bold"
-                android:textSize="@dimen/size_title" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_view_electronic_fragment_recent"
-                android:layout_below="@+id/text_view_fragment_library_recent_read_book"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <View
-                android:id="@+id/view_fragment_library_2"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="20dp"
-                android:background="@color/separator"
-                android:layout_below="@+id/recycler_view_electronic_fragment_recent" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_view_electronic_fragment_media"
-                android:layout_below="@+id/view_fragment_library_2"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp" />
+                android:orientation="horizontal">
 
-        </RelativeLayout>
+                <TextView
+                    android:id="@+id/text_view_fragment_library_shortcut_categories"
+                    style="@style/account_shortcut_chip"
+                    android:drawableStart="@drawable/ic_account_category"
+                    tools:text="Catégories · 3" />
+
+                <TextView
+                    android:id="@+id/text_view_fragment_library_shortcut_authors"
+                    style="@style/account_shortcut_chip"
+                    android:layout_marginStart="8dp"
+                    android:drawableStart="@drawable/ic_account_authors"
+                    tools:text="Auteurs · 5" />
+
+                <TextView
+                    android:id="@+id/text_view_fragment_library_shortcut_history"
+                    style="@style/account_shortcut_chip"
+                    android:layout_marginStart="8dp"
+                    android:drawableStart="@drawable/ic_account_history"
+                    android:text="@string/account_shortcut_history" />
+            </LinearLayout>
+            </HorizontalScrollView>
+
+            <!-- ==================== Téléchargements récents ==================== -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:accessibilityHeading="true"
+                    android:text="@string/account_recent_title"
+                    android:textColor="@color/account_text"
+                    android:textSize="15.5sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/text_view_fragment_library_see_all"
+                    android:layout_width="wrap_content"
+                    android:layout_height="44dp"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="2dp"
+                    android:text="@string/account_see_all"
+                    android:textColor="@color/account_accent"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <RelativeLayout
+                android:id="@+id/relative_layout_fragment_library_recent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_account_card"
+                android:padding="14dp"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <ImageView
+                    android:id="@+id/image_view_fragment_library_recent_cover"
+                    android:layout_width="66dp"
+                    android:layout_height="94dp"
+                    android:background="@drawable/bg_account_cover"
+                    android:importantForAccessibility="no"
+                    android:scaleType="centerCrop" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="14dp"
+                    android:layout_marginEnd="34dp"
+                    android:layout_toEndOf="@id/image_view_fragment_library_recent_cover"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/text_view_fragment_library_recent_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="2"
+                        android:textColor="@color/account_text"
+                        android:textSize="14.5sp"
+                        android:textStyle="bold"
+                        tools:text="BAC D Maths 2010-2024 Niger" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_account_file_chip"
+                            android:paddingStart="6dp"
+                            android:paddingTop="2dp"
+                            android:paddingEnd="6dp"
+                            android:paddingBottom="2dp"
+                            android:text="@string/account_file_pdf"
+                            android:textColor="@color/account_text"
+                            android:textSize="10.5sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/text_view_fragment_library_recent_meta"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="7dp"
+                            android:ellipsize="end"
+                            android:singleLine="true"
+                            android:textColor="@color/account_text_muted"
+                            android:textSize="12sp"
+                            tools:text="1,2 Mo · 5 oct. 2026" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/linear_layout_fragment_library_read_offline"
+                        android:layout_width="wrap_content"
+                        android:layout_height="38dp"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/bg_account_button_primary"
+                        android:clickable="true"
+                        android:contentDescription="@string/account_read_offline"
+                        android:focusable="true"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingStart="14dp"
+                        android:paddingEnd="14dp">
+
+                        <ImageView
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_account_book"
+                            android:tint="@color/account_on_accent" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="7dp"
+                            android:importantForAccessibility="no"
+                            android:text="@string/account_read_offline"
+                            android:textColor="@color/account_on_accent"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <ImageButton
+                    android:id="@+id/image_button_fragment_library_recent_more"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="-8dp"
+                    android:layout_marginEnd="-10dp"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/account_more_actions"
+                    android:padding="10dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_account_more"
+                    android:tint="@color/account_text_muted" />
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/text_view_fragment_library_recent_empty"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_account_card"
+                android:padding="16dp"
+                android:text="@string/account_recent_empty"
+                android:textColor="@color/account_text_muted"
+                android:textSize="13sp"
+                android:visibility="gone" />
+
+            <!-- ==================== Paramètres du compte ==================== -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:accessibilityHeading="true"
+                android:text="@string/account_settings_title"
+                android:textColor="@color/account_text"
+                android:textSize="15.5sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:id="@+id/linear_layout_fragment_library_settings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/bg_account_card"
+                android:orientation="vertical">
+
+                <include
+                    android:id="@+id/include_fragment_library_setting_personal"
+                    layout="@layout/item_account_setting" />
+
+                <View style="@style/account_divider" />
+
+                <include
+                    android:id="@+id/include_fragment_library_setting_security"
+                    layout="@layout/item_account_setting" />
+
+                <View style="@style/account_divider" />
+
+                <include
+                    android:id="@+id/include_fragment_library_setting_notifications"
+                    layout="@layout/item_account_setting" />
+
+                <View style="@style/account_divider" />
+
+                <include
+                    android:id="@+id/include_fragment_library_setting_appearance"
+                    layout="@layout/item_account_setting" />
+
+                <View style="@style/account_divider" />
+
+                <include
+                    android:id="@+id/include_fragment_library_setting_storage"
+                    layout="@layout/item_account_setting" />
+
+                <View style="@style/account_divider" />
+
+                <include
+                    android:id="@+id/include_fragment_library_setting_help"
+                    layout="@layout/item_account_setting" />
+
+                <View style="@style/account_divider" />
+
+                <include
+                    android:id="@+id/include_fragment_library_setting_about"
+                    layout="@layout/item_account_setting" />
+            </LinearLayout>
+
+            <!-- ==================== Déconnexion ==================== -->
+            <LinearLayout
+                android:id="@+id/linear_layout_fragment_library_logout"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/bg_account_logout"
+                android:clickable="true"
+                android:contentDescription="@string/account_logout"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_account_logout"
+                    android:tint="@color/account_danger" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="9dp"
+                    android:importantForAccessibility="no"
+                    android:text="@string/account_logout"
+                    android:textColor="@color/account_danger"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/text_view_fragment_library_version"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:gravity="center"
+                android:textColor="@color/account_text_muted"
+                android:textSize="12sp"
+                tools:text="EduNiger · version 3.1.3" />
+        </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

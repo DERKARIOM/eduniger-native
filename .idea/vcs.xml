@@ -3,7 +3,7 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/api" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/app-web" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/app-web/eduniger-admin" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/eduniger-admin" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/eduniger-api" vcs="Git" />
   </component>
 </project>

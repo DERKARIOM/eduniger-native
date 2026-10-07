@@ -1,0 +1,232 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Force HTTPS
+    RewriteCond %{HTTPS} !=on
+    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+    # Transmettre l'en-tête Authorization
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    ########################################
+    # Gestion des requêtes OPTIONS (preflight)
+    ########################################
+    RewriteCond %{REQUEST_METHOD} OPTIONS
+    RewriteRule ^(.*)$ $1 [R=200,L]
+
+    ########################################
+    # Supprimer le slash final (sauf pour OPTIONS)
+    ########################################
+    RewriteCond %{REQUEST_METHOD} !OPTIONS
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.+)/$ /$1 [L,R=301]
+
+    ########################################
+    # Laravel Front Controller
+    ########################################
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.php [L]
+</IfModule>
+
+########################################
+# CORS Headers – un seul en-tête
+########################################
+<IfModule mod_headers.c>
+    Header always set Access-Control-Allow-Origin "https://admin.eduniger.com"
+    Header always set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS, PATCH"
+    Header always set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With, X-CSRF-TOKEN, Accept, Origin"
+    Header always set Access-Control-Allow-Credentials "true"
+    Header always set Access-Control-Max-Age "3600"
+</IfModule>
+
+########################################
+# Sécurité
+########################################
+
+# Désactiver listing des dossiers
+Options -Indexes
+
+# Bloquer accès aux fichiers sensibles
+<FilesMatch "\.(env|log|ini|phar|sh|sql|yaml|yml|config|gitignore)$">
+    Require all denied
+</FilesMatch>
+
+# Bloquer accès aux dossiers système Laravel
+RedirectMatch 403 ^/(app|bootstrap|config|database|resources|routes|storage|tests|vendor)/
+
+########################################
+# Headers de sécurité
+########################################
+
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+########################################
+# Compression Gzip
+########################################
+
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/xml
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE application/xml
+    AddOutputFilterByType DEFLATE application/xhtml+xml
+    AddOutputFilterByType DEFLATE application/rss+xml
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/json
+</IfModule>
+
+########################################
+# Cache statique
+########################################
+
+<IfModule mod_expires.c>
+    ExpiresActive On
+
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+
+    ExpiresByType image/jpg "access plus 6 months"
+    ExpiresByType image/jpeg "access plus 6 months"
+    ExpiresByType image/png "access plus 6 months"
+    ExpiresByType image/gif "access plus 6 months"
+    ExpiresByType image/svg+xml "access plus 6 months"
+</IfModule>
+
+# Désactiver le cache pour les fichiers PHP (dynamiques)
+<IfModule mod_headers.c>
+    <FilesMatch "\.(php|html|htm)$">
+        Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+    </FilesMatch>
+</IfModule>
+
+########################################
+# Gestion des erreurs
+########################################
+
+ErrorDocument 403 /index.php
+ErrorDocument 404 /index.php
+ErrorDocument 500 /index.php
+
+########################################
+# Protection du .htaccess lui-même
+########################################
+
+<Files .htaccess>
+    Require all denied
+</Files>
+
+
+
+
+
+
+// bootstrap/app 
+
+<?php
+
+use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Configuration\Exceptions;
+use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Middleware\HandleCors;  // ← Bon namespace
+
+return Application::configure(basePath: dirname(__DIR__))
+    ->withRouting(
+        api: __DIR__ . '/../routes/api.php',
+        web: __DIR__.'/../routes/web.php',
+        commands: __DIR__.'/../routes/console.php',
+        health: '/up',
+    )
+    ->withMiddleware(function (Middleware $middleware) {
+        
+        $middleware->alias([
+            'auth' => \App\Http\Middleware\Authenticate::class,
+        ]);
+        
+        // Ou pour le groupe API uniquement
+        // $middleware->api(prepend: [
+        //     HandleCors::class,
+        // ]);
+    })
+    ->withExceptions(function (Exceptions $exceptions) {
+        //
+    })->create();
+
+
+
+//cors 
+
+<?php
+
+return [
+    /*
+    |--------------------------------------------------------------------------
+    | Cross-Origin Resource Sharing (CORS) Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Here you may configure your settings for cross-origin resource sharing
+    | or "CORS". This determines what cross-origin operations may execute
+    | in web browsers. You are free to adjust these settings as needed.
+    |
+    | To learn more: https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
+    |
+    */
+
+    'paths' => [
+        
+    ],
+
+    'allowed_methods' => [
+        'GET',
+        'POST',
+        'PUT',
+        'PATCH',
+        'DELETE',
+        'OPTIONS'
+    ],
+
+    'allowed_origins' => [
+        'https://admin.eduniger.com',
+        'http://localhost:3000',
+        'http://localhost:8000',
+        'http://127.0.0.1:3000',
+        'http://127.0.0.1:8000',
+    ],
+
+    'allowed_origins_patterns' => [],
+
+    'allowed_headers' => [
+        'Accept',
+        'Accept-Language',
+        'Content-Language',
+        'Content-Type',
+        'Authorization',
+        'X-Requested-With',
+        'X-CSRF-TOKEN',
+        'X-HTTP-Method-Override',
+        'Origin',
+        'Access-Control-Request-Method',
+        'Access-Control-Request-Headers',
+        'Cache-Control',
+        'Pragma',
+        'Expires'
+    ],
+
+    'exposed_headers' => [
+        'Authorization',
+        'Content-Disposition',
+        'X-Response-Time'
+    ],
+
+    'max_age' => 3600,
+
+    'supports_credentials' => true,
+
+];

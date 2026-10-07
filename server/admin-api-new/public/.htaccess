@@ -1,0 +1,101 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Force HTTPS si activé
+    RewriteCond %{HTTPS} !=on
+    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+    # Supprimer trailing slash sauf dossier réel
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.+)/$ /$1 [L,R=301]
+
+    # Laravel Front Controller
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.php [L]
+</IfModule>
+
+
+############################################
+# Sécurité
+############################################
+
+# Désactiver listing des dossiers
+Options -Indexes
+
+# Bloquer accès aux fichiers sensibles
+<FilesMatch "\.(env|log|ini|phar|sh|sql|yaml|yml|config|gitignore)$">
+    Require all denied
+</FilesMatch>
+
+# Bloquer accès aux dossiers système Laravel
+RedirectMatch 403 /(app|bootstrap|config|database|resources|routes|storage|tests|vendor)/
+
+
+############################################
+# Headers sécurité
+############################################
+
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+
+############################################
+# Compression
+############################################
+
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/xml
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE application/xml
+    AddOutputFilterByType DEFLATE application/xhtml+xml
+    AddOutputFilterByType DEFLATE application/rss+xml
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/json
+</IfModule>
+
+
+############################################
+# Cache statique
+############################################
+
+<IfModule mod_expires.c>
+    ExpiresActive On
+
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+
+    ExpiresByType image/jpg "access plus 6 months"
+    ExpiresByType image/jpeg "access plus 6 months"
+    ExpiresByType image/png "access plus 6 months"
+    ExpiresByType image/gif "access plus 6 months"
+    ExpiresByType image/svg+xml "access plus 6 months"
+</IfModule>
+<IfModule mod_headers.c>
+    Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+</IfModule>
+
+############################################
+# Gestion erreurs
+############################################
+
+ErrorDocument 403 /index.php
+ErrorDocument 404 /index.php
+ErrorDocument 500 /index.php
+
+
+############################################
+# Protection .htaccess
+############################################
+
+<Files .htaccess>
+    Require all denied
+</Files>

@@ -1,0 +1,290 @@
+<?php
+// eduna_unified.php - Version unifiée avec mémoire et support PDF
+header("Content-Type: application/json; charset=UTF-8");
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
+
+// Configuration
+// SECURITE : les identifiants de connexion a la base de donnees ne doivent JAMAIS etre codes
+// en dur dans le code source (ils etaient auparavant exposes ici en clair, avec un compte
+// "root", et doivent etre consideres comme compromis : changez ce mot de passe cote serveur
+// MySQL et configurez les variables d'environnement ci-dessous, idealement avec un utilisateur
+// MySQL dedie et limite plutot que "root").
+define('DB_HOST', getenv('EDUNIGER_DB_HOST') ?: 'localhost');
+define('DB_USER', getenv('EDUNIGER_DB_USER') ?: 'root');
+define('DB_PASS', getenv('EDUNIGER_DB_PASS') ?: '');
+define('DB_NAME', getenv('EDUNIGER_DB_NAME') ?: 'eduniger');
+define('PDF_PATH', __DIR__ . '/books/pdf/');
+
+// ==================== FONCTIONS BASE DE DONNÉES ====================
+
+function getDbConnection() {
+    $conn = mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    if (!$conn) {
+        throw new Exception("Erreur de connexion DB: " . mysqli_connect_error());
+    }
+    mysqli_set_charset($conn, "utf8");
+    return $conn;
+}
+
+// ==================== FONCTIONS MÉMOIRE ====================
+
+function getOrCreateSession($conn, $idUser) {
+    // Nettoyer les anciennes sessions (plus de 24h)
+    $cleanup = "DELETE FROM EdunaSession WHERE last_interaction < DATE_SUB(NOW(), INTERVAL 24 HOUR)";
+    mysqli_query($conn, $cleanup);
+    
+    // Chercher une session existante
+    $query = "SELECT session_id, message_count, context, preferences FROM EdunaSession 
+              WHERE idUser = ? ORDER BY last_interaction DESC LIMIT 1";
+    $stmt = mysqli_prepare($conn, $query);
+    mysqli_stmt_bind_param($stmt, "s", $idUser);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $session = mysqli_fetch_assoc($result);
+    mysqli_stmt_close($stmt);
+    
+    if ($session) {
+        // Mettre à jour le compteur
+        $update = "UPDATE EdunaSession SET message_count = message_count + 1 
+                   WHERE idUser = ? AND session_id = ?";
+        $stmt = mysqli_prepare($conn, $update);
+        mysqli_stmt_bind_param($stmt, "ss", $idUser, $session['session_id']);
+        mysqli_stmt_execute($stmt);
+        mysqli_stmt_close($stmt);
+        
+        return [
+            'session_id' => $session['session_id'],
+            'message_count' => $session['message_count'] + 1,
+            'context' => $session['context']
+        ];
+    } else {
+        // Créer nouvelle session
+        $sessionId = uniqid($idUser . '_', true);
+        $insert = "INSERT INTO EdunaSession (idUser, session_id, message_count) VALUES (?, ?, 1)";
+        $stmt = mysqli_prepare($conn, $insert);
+        mysqli_stmt_bind_param($stmt, "ss", $idUser, $sessionId);
+        mysqli_stmt_execute($stmt);
+        mysqli_stmt_close($stmt);
+        
+        return [
+            'session_id' => $sessionId,
+            'message_count' => 1,
+            'context' => null
+        ];
+    }
+}
+
+function saveConversation($conn, $idUser, $sessionId, $userMessage, $assistantResponse, $bookContext = null) {
+    $query = "INSERT INTO EdunaConversation (idUser, session_id, user_message, assistant_response, book_context) 
+              VALUES (?, ?, ?, ?, ?)";
+    $stmt = mysqli_prepare($conn, $query);
+    mysqli_stmt_bind_param($stmt, "sssss", $idUser, $sessionId, $userMessage, $assistantResponse, $bookContext);
+    $result = mysqli_stmt_execute($stmt);
+    mysqli_stmt_close($stmt);
+    return $result;
+}
+
+function getConversationHistory($conn, $idUser, $sessionId, $limit = 10) {
+    $query = "SELECT user_message, assistant_response, book_context, created_at 
+              FROM EdunaConversation 
+              WHERE idUser = ? AND session_id = ? 
+              ORDER BY created_at DESC LIMIT ?";
+    $stmt = mysqli_prepare($conn, $query);
+    mysqli_stmt_bind_param($stmt, "ssi", $idUser, $sessionId, $limit);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    
+    $history = [];
+    while ($row = mysqli_fetch_assoc($result)) {
+        $history[] = $row;
+    }
+    mysqli_stmt_close($stmt);
+    
+    return array_reverse($history);
+}
+
+// ==================== FONCTIONS LIVRES ====================
+
+function getBookInfo($conn, $idBook) {
+    $query = "SELECT idBook, title, electronic FROM Book WHERE idBook = ?";
+    $stmt = mysqli_prepare($conn, $query);
+    mysqli_stmt_bind_param($stmt, "s", $idBook);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $book = mysqli_fetch_assoc($result);
+    mysqli_stmt_close($stmt);
+    return $book;
+}
+
+function extractPDFText($pdfPath, $maxPages = 15) {
+    $pythonScript = __DIR__ . '/eduna_pdf_reader.py';
+    
+    if (!file_exists($pythonScript)) {
+        return ["success" => false, "error" => "Script Python introuvable"];
+    }
+    
+    $cmd = "python3 " . escapeshellarg($pythonScript) . " extract " . escapeshellarg($pdfPath) . " " . intval($maxPages) . " 2>&1";
+    $output = shell_exec($cmd);
+    
+    if ($output === null) {
+        return ["success" => false, "error" => "Pas de sortie du script Python"];
+    }
+    
+    return json_decode($output, true);
+}
+
+// ==================== FONCTION PRINCIPALE D'APPEL À EDNA ====================
+
+function callEduna($userMessage, $contextData = []) {
+    $edunaScript = __DIR__ . '/eduna_with_memory.py';
+    if (!file_exists($edunaScript)) {
+        $edunaScript = __DIR__ . '/eduna.py';
+    }
+    
+    $cmd = "python3 " . escapeshellarg($edunaScript) . " " 
+         . escapeshellarg($userMessage) . " " 
+         . escapeshellarg(json_encode($contextData)) . " 2>&1";
+    
+    $output = shell_exec($cmd);
+    $response = json_decode($output, true);
+    
+    return [
+        'response' => $response['response'] ?? $output,
+        'raw' => $output
+    ];
+}
+
+// ==================== TRAITEMENT PRINCIPAL ====================
+
+try {
+    if ($_SERVER['REQUEST_METHOD'] != 'POST') {
+        throw new Exception("Méthode non autorisée");
+    }
+    
+    // Paramètres communs
+    $idUser = $_POST['id_user'] ?? $_POST['id_number'] ?? '';
+    $message = trim($_POST['message'] ?? $_POST['request'] ?? $_POST['query'] ?? '');
+    $idBook = $_POST['id_book'] ?? $_POST['book_id'] ?? '';
+    $action = $_POST['action'] ?? ($idBook ? 'ask_about_book' : 'simple_chat');
+    
+    if (empty($idUser)) {
+        throw new Exception("id_user requis");
+    }
+    
+    if (empty($message)) {
+        throw new Exception("Message requis");
+    }
+    
+    $conn = getDbConnection();
+    
+    // 1. Gestion de la session
+    $sessionInfo = getOrCreateSession($conn, $idUser);
+    $sessionId = $sessionInfo['session_id'];
+    
+    // 2. Récupérer l'historique
+    $history = getConversationHistory($conn, $idUser, $sessionId, 10);
+    
+    // 3. Construire le contexte de base
+    $context = "Tu es Eduna, l'assistant intelligent d'EduNiger.\n";
+    $context .= "Utilisateur ID: $idUser\n";
+    $context .= "Nombre de messages dans cette session: " . $sessionInfo['message_count'] . "\n\n";
+    
+    // Ajouter l'historique
+    if (!empty($history)) {
+        $context .= "HISTORIQUE DE LA CONVERSATION:\n";
+        foreach ($history as $index => $exchange) {
+            $context .= "[Message " . ($index + 1) . "]\n";
+            $context .= "User: " . $exchange['user_message'] . "\n";
+            $context .= "Eduna: " . $exchange['assistant_response'] . "\n";
+            if (!empty($exchange['book_context'])) {
+                $context .= "(Contexte: " . $exchange['book_context'] . ")\n";
+            }
+            $context .= "\n";
+        }
+    }
+    
+    // 4. Vérifier si c'est une question sur un livre
+    $bookContext = null;
+    $pdfExtraction = null;
+    
+    if (!empty($idBook)) {
+        $book = getBookInfo($conn, $idBook);
+        if ($book && !empty($book['electronic']) && $book['electronic'] != 'null') {
+            $pdfPath = PDF_PATH . $book['electronic'];
+            
+            if (file_exists($pdfPath)) {
+                $pdfExtraction = extractPDFText($pdfPath, 15);
+                
+                if ($pdfExtraction && $pdfExtraction['success']) {
+                    $bookContext = "Livre: " . $book['title'];
+                    
+                    $context .= "CONTEXTE LIVRE:\n";
+                    $context .= "Titre: " . $book['title'] . "\n";
+                    $context .= "Extrait du contenu (" . ($pdfExtraction['extracted_pages'] ?? 0) . " pages):\n";
+                    $context .= substr($pdfExtraction['text'] ?? '', 0, 4000) . "\n\n";
+                    $context .= "L'utilisateur pose une question sur ce livre. Utilise le contenu ci-dessus pour répondre.\n\n";
+                }
+            }
+        }
+    }
+    
+    // 5. Appeler Eduna
+    $context .= "MESSAGE ACTUEL: " . $message;
+    
+    $result = callEduna($message, [
+        'context' => $context,
+        'session_id' => $sessionId,
+        'message_count' => $sessionInfo['message_count'],
+        'has_book' => !empty($idBook)
+    ]);
+    
+    // 6. Sauvegarder dans l'historique
+    saveConversation(
+        $conn, 
+        $idUser, 
+        $sessionId, 
+        $message, 
+        $result['response'],
+        $bookContext
+    );
+    
+    // 7. Mettre à jour le contexte de session
+    $updateContext = "UPDATE EdunaSession SET context = ? WHERE idUser = ? AND session_id = ?";
+    $stmt = mysqli_prepare($conn, $updateContext);
+    $contextPreview = substr("Dernier sujet: " . ($bookContext ?? $message), 0, 500);
+    mysqli_stmt_bind_param($stmt, "sss", $contextPreview, $idUser, $sessionId);
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_close($stmt);
+    
+    mysqli_close($conn);
+    
+    // 8. Retourner la réponse
+    $response = [
+        'success' => true,
+        'response' => $result['response'],
+        'session_id' => $sessionId,
+        'message_count' => $sessionInfo['message_count']
+    ];
+    
+    if ($bookContext) {
+        $response['book'] = $book['title'] ?? null;
+        $response['pages_analyzed'] = $pdfExtraction['extracted_pages'] ?? 0;
+    }
+    
+    echo json_encode($response, JSON_UNESCAPED_UNICODE);
+    
+} catch (Exception $e) {
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'error' => $e->getMessage()
+    ]);
+}
+?>

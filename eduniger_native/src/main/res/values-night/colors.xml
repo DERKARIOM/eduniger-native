@@ -10,4 +10,18 @@
     <color name="player_control_inactive">#FF666666</color>
     <color name="player_track_bg">#FF3A3A3A</color>
     <color name="player_accent">@color/purple_200</color>
+    <!-- ===== Écran Compte (v2) : jetons "mode sombre" ===== -->
+    <color name="account_bg">#FF0D110F</color>
+    <color name="account_card">#FF161B18</color>
+    <color name="account_card_alt">#FF1C221F</color>
+    <color name="account_line">#FF232A26</color>
+    <color name="account_text">#FFEDF2EE</color>
+    <color name="account_text_muted">#FF9BA6A0</color>
+    <color name="account_icon_muted">#FF6F7A74</color>
+    <color name="account_accent">@color/purple_200</color>
+    <color name="account_accent_tint">#2442B998</color>
+    <color name="account_on_accent">#FF07200F</color>
+    <color name="account_danger">#FFF47171</color>
+    <color name="account_danger_line">#61F47171</color>
+    <color name="account_cover">#FF17325A</color>
 </resources>

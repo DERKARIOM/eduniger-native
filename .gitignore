@@ -5,3 +5,9 @@ local.properties
 fabi/release/
 .idea/caches/
 app-web/
+
+# Depots Web clones a cote du projet mobile (chacun a son propre depot Git) :
+# ne jamais les committer dans eduniger-native.
+eduniger-api/
+eduniger-admin/
+restauration/

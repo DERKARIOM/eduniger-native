@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Calque_1" data-name="Calque 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 159.12 159.12">
+  <rect width="159.12" height="159.12" rx="28.08" ry="28.08" style="fill: #008b56;"/>
+  <path d="m111.6,29.03l-17.5,5.99v10.84c-4.23-1.9-8.92-2.95-13.85-2.95-8,0-15.35,2.76-21.15,7.39v-15.29l-17.5-5.99,35-11.97,35,11.97Z" style="fill: #f49824;"/>
+  <g>
+    <path d="m103.24,115.82c-5.87,4.88-13.43,7.82-21.66,7.82-9.37,0-17.86-3.8-24-9.94-6.13-6.14-9.93-14.62-9.93-23.98,0-.46,0-.92.03-1.37.21-5.34,1.66-10.37,4.07-14.79,5.74-10.58,16.95-17.76,29.83-17.76,9.37,0,17.85,3.79,23.98,9.93" style="fill: none; stroke: #fff; stroke-linecap: round; stroke-miterlimit: 10; stroke-width: 15px;"/>
+    <polyline points="44.31 126.97 57.57 113.7 105.56 65.72" style="fill: none; stroke: #fff; stroke-linecap: round; stroke-miterlimit: 10; stroke-width: 15px;"/>
+  </g>
+</svg>

@@ -290,7 +290,11 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void logout() {
+    /**
+     * Déconnexion complète (révocation serveur + session locale). Publique : appelée
+     * aussi depuis l'onglet Compte (LibraryFragment, bouton « Se déconnecter »).
+     */
+    public void logout() {
         // Revoque le refresh token cote serveur (best-effort, en tache de fond) avant de
         // nettoyer la session locale : evite qu'un refresh token encore valide traine si
         // jamais il fuitait plus tard (appareil perdu/vole apres la deconnexion, backup...).
@@ -476,6 +480,20 @@ public class MainActivity extends AppCompatActivity {
                 .show(target)
                 .commit();
         mActiveFragment = target;
+        updateToolbarVisibility();
+    }
+
+    /**
+     * L'onglet Compte (LibraryFragment) a son propre en-tête (titre, notifications,
+     * paramètres) : la barre d'outils principale y est masquée pour éviter deux en-têtes
+     * superposés, et réaffichée sur les autres onglets.
+     */
+    private void updateToolbarVisibility() {
+        View toolbarContainer = findViewById(R.id.relative_layout_toolbar_search);
+        if (toolbarContainer != null) {
+            toolbarContainer.setVisibility(
+                    mActiveFragment == mFragmentLibrary ? View.GONE : View.VISIBLE);
+        }
     }
 
     // ================================================================
@@ -589,4 +607,4 @@ public class MainActivity extends AppCompatActivity {
     public void setEditText(EditText editText) {
         mEditText = editText;
     }
-}
+}

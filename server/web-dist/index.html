@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EduNiger</title>
+    <!-- Balises par défaut (seront surchargées dynamiquement) -->
+    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:title" content="EduNiger" />
+    <meta property="og:description" content="Plateforme de gestion de bibliothèque" />
+    <meta property="og:image" content="/img/logo.jpeg" />
+    <meta property="og:url" content="" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="EduNiger" />
+    <meta name="twitter:description" content="Plateforme de gestion de bibliothèque" />
+    <meta name="twitter:image" content="/img/logo.jpeg" />
+
+    <link rel="icon" href="/img/logo.jpeg" type="image/jpeg">
+
+    <script>
+      // Extraction du sous-domaine et mise à jour du titre et des métadonnées
+      (function() {
+        const hostname = window.location.hostname;
+        const parts = hostname.split('.');
+        let subdomain = null;
+
+        // Ignorer 'www' et ne pas traiter les hôtes locaux ou IP
+        if (parts[0].toLowerCase() === 'www') {
+          subdomain = parts[1] || null;
+        } else {
+          subdomain = parts[0];
+        }
+
+        const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1' || hostname === 'admin';
+        const isIp = /^\d+\.\d+\.\d+\.\d+$/.test(hostname);
+
+        if (subdomain && !isLocalhost && !isIp && subdomain !== 'www') {
+          const institutionName = subdomain.charAt(0).toUpperCase() + subdomain.slice(1).toLowerCase();
+          const title = `${toUpperCase(institutionName)} - Bibliothèque Numérique Centralisée`;
+          const description = `Plateforme de gestion de bibliothèque pour ${institutionName}. Accédez aux ressources éducatives.`;
+          const logoUrl = `https://server.eduniger.com/storage/logos/${subdomain}.png`;
+          // Modifier le titre de l'onglet
+          document.title = title;
+
+          // Mettre à jour les balises Open Graph
+          const ogTitle = document.querySelector('meta[property="og:title"]');
+          if (ogTitle) ogTitle.setAttribute('content', title);
+          const ogDesc = document.querySelector('meta[property="og:description"]');
+          if (ogDesc) ogDesc.setAttribute('content', description);
+          const ogUrl = document.querySelector('meta[property="og:url"]');
+          if (ogUrl) ogUrl.setAttribute('content', window.location.href.split('?')[0]);
+
+          // Mettre og:image à jour avec le logo de l'institution
+          const ogImage = document.querySelector('meta[property="og:image"]');
+          if (ogImage) ogImage.setAttribute('content', logoUrl);
+
+          // Mettre à jour l'icône du site
+          const favicon = document.querySelector('link[rel="icon"]');
+          if (favicon) {
+            favicon.setAttribute('href', logoUrl);
+            favicon.setAttribute('type', 'image/png');
+          }
+
+          // Mettre à jour les balises Twitter
+          const twitterTitle = document.querySelector('meta[name="twitter:title"]');
+          if (twitterTitle) twitterTitle.setAttribute('content', title);
+          const twitterDesc = document.querySelector('meta[name="twitter:description"]');
+          if (twitterDesc) twitterDesc.setAttribute('content', description);
+          const twitterImage = document.querySelector('meta[name="twitter:image"]');
+          if (twitterImage) twitterImage.setAttribute('content', logoUrl);
+
+
+        }
+      })();
+    </script>
+
+    <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
+    <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
+    <script type="module" crossorigin src="/assets/index-C_WHm5Gp.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-D_W4-CJM.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
