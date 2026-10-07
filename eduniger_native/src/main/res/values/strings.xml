@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">EduNiger</string>
+    <string name="app_name">Elim</string>
     <string name="app_version">3.1.3</string>
     <string name="url_api">http://192.168.49.1:2222/eduniger/api/</string>
     <string name="url_server">http://192.168.49.1:2222/eduniger/</string>
@@ -286,7 +286,7 @@
     <string name="send">Envoyer</string>
     <string name="add">Ajouter</string>
     <string name="suggestion_message_dialog">Merci beaucoup pour votre suggestion ! Nous apprécions vraiment que vous preniez le temps de nous faire part de vos idées pour améliorer Fabi</string>
-    <string name="suggestion_hint_message">Distes-nous comment nous pouvons amélioré l\'application EduNiger</string>
+    <string name="suggestion_hint_message">Distes-nous comment nous pouvons amélioré l\'application Elim</string>
     <string name="information_phone">Inclure les information de l\' appariel ? (facultatif)</string>
     <string name="details_information_phone">Les details techniques tels que le modele de votre appareil peuvent nous aide a repondre a votre question</string>
     <string name="search">Recherche</string>
@@ -359,7 +359,7 @@
     <string name="account_setting_storage_desc">%1$s utilisés · %2$d livres hors ligne</string>
     <string name="account_setting_help">Aide et support</string>
     <string name="account_setting_help_desc">Guide, contacter le support, signaler un problème</string>
-    <string name="account_setting_about">À propos d’EduNiger</string>
+    <string name="account_setting_about">À propos d’Elim</string>
     <string name="account_setting_about_desc">Version %1$s, informations sur l’application</string>
     <string name="account_security_change_password">Modifier le mot de passe</string>
     <string name="account_security_fingerprint">Verrouillage par empreinte</string>
@@ -371,5 +371,5 @@
     <string name="account_logout_confirm_message">Vos livres téléchargés restent sur cet appareil. Vous devrez vous reconnecter pour accéder à votre compte.</string>
     <string name="account_logout_confirm_yes">Se déconnecter</string>
     <string name="account_cancel">Annuler</string>
-    <string name="account_version">EduNiger · version %1$s</string>
+    <string name="account_version">Elim · version %1$s</string>
 </resources>

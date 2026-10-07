@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     style="@style/background"
-    tools:context="com.ninotech.eduniger.controleur.activity.MainActivity">
+    tools:context="com.naniger.elim.controleur.activity.MainActivity">
 
     <include layout="@layout/toolbar_main"/>
 

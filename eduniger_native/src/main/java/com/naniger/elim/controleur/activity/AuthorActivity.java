@@ -1,0 +1,562 @@
+package com.naniger.elim.controleur.activity;
+
+import android.Manifest;
+import android.animation.ValueAnimator;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.widget.NestedScrollView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import com.naniger.elim.R;
+import com.naniger.elim.controleur.adapter.AuthorFormatBookAdapter;
+import com.naniger.elim.controleur.adapter.AuthorHorizontaleAdapter;
+import com.naniger.elim.controleur.adapter.HorizontaleAdapter;
+import com.naniger.elim.controleur.adapter.NoConnectionAdapter;
+import com.naniger.elim.controleur.animation.RoundedTransformation;
+import com.naniger.elim.model.data.Author;
+import com.naniger.elim.model.data.Connection;
+import com.naniger.elim.model.data.Library;
+import com.naniger.elim.model.data.OnlineBook;
+import com.naniger.elim.model.data.Server;
+import com.naniger.elim.model.table.Session;
+import com.squareup.picasso.Picasso;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+import okhttp3.MultipartBody;
+import com.naniger.elim.model.net.ApiClient;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
+public class AuthorActivity extends AppCompatActivity {
+
+    private static final String TAG = "AuthorActivity";
+    private static final String ACTION_AUTHOR = "AUTHOR_ACTIVITY";
+    private static final String RESPONSE_RAS = "RAS";
+    private static final int REQUEST_CALL_PERMISSION = 1;
+    private static final String WHATSAPP_PACKAGE = "com.whatsapp";
+    private static final String WHATSAPP_BUSINESS_PACKAGE = "com.whatsapp.w4b";
+
+    // Views
+    private NestedScrollView mNestedScrollView;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private View mSkeletonLoadingContainer;
+    private View mNoConnectionContainer;
+    private RecyclerView mBooksRecyclerView;
+    private RecyclerView mAuthorRecyclerView;
+    private RecyclerView mAuthorFormatBookRecyclerView;
+    private ImageView mProfileImageView;
+    private ImageView mBackImageView;
+    private ImageView mAppelImageView;
+    private ImageView mEmailImageView;
+    private ImageView mWhatsAppImageView;
+    private TextView mUsernameTextView;
+    private TextView mProfessionTextView;
+    private EditText mSearchEditText;
+    private LinearLayout mContactsLinearLayout;
+
+    // Data
+    private final List<OnlineBook> mOnlineBookList = new ArrayList<>();
+    private final List<Author> mAuthorArrayList = new ArrayList<>();
+    private Author mAuthor;
+    private Session mSession;
+    private String mNumberAuthor;
+
+    // Utils
+    private OkHttpClient mHttpClient;
+    private BroadcastReceiver mNoConnectionReceiver;
+    private ValueAnimator mShimmerAnimator;
+    private ValueAnimator mArrowAnimator;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_author);
+        Objects.requireNonNull(getSupportActionBar()).hide();
+
+        initializeComponents();
+        initializeViews();
+        configureContactVisibility();
+        setupClickListeners();
+        setupSwipeRefresh();
+        loadAuthorImage();
+        registerBroadcastReceiver();
+        loadAuthorData();
+    }
+
+    private void initializeComponents() {
+        mSession = new Session(this);
+        mHttpClient = ApiClient.getInstance(this);
+        mAuthor = extractAuthorFromIntent();
+    }
+
+    private Author extractAuthorFromIntent() {
+        Intent intent = getIntent();
+        return new Author(
+                intent.getStringExtra("intent_author_adapter_id"),
+                intent.getStringExtra("intent_author_adapter_name"),
+                intent.getStringExtra("intent_author_adapter_first_name"),
+                intent.getStringExtra("intent_author_adapter_profile"),
+                intent.getStringExtra("intent_author_adapter_profession"),
+                intent.getStringExtra("intent_author_adapter_call"),
+                intent.getStringExtra("intent_author_adapter_email"),
+                intent.getStringExtra("intent_author_adapter_whatsapp")
+        );
+    }
+
+    private void initializeViews() {
+        mNestedScrollView         = findViewById(R.id.nested_scroll_view_activity_author);
+        mSwipeRefreshLayout       = findViewById(R.id.swipe_refresh_author);
+        mSkeletonLoadingContainer = findViewById(R.id.skeleton_loading_container);
+        mNoConnectionContainer    = findViewById(R.id.no_connection_container);
+        mProfileImageView         = findViewById(R.id.image_view_author_activity_profile);
+        mUsernameTextView         = findViewById(R.id.text_view_activity_author_username);
+        mProfessionTextView       = findViewById(R.id.text_view_activity_author_profession);
+        mBooksRecyclerView        = findViewById(R.id.recycler_view_activity_author_books);
+        mAuthorRecyclerView       = findViewById(R.id.recycler_view_activity_author);
+        mBackImageView            = findViewById(R.id.image_view_toolbar_search);
+        mSearchEditText           = findViewById(R.id.edit_text_toolbar_search);
+        mContactsLinearLayout     = findViewById(R.id.linear_layout_activity_author_contacts);
+        mAppelImageView           = findViewById(R.id.image_view_activity_author_appel);
+        mEmailImageView           = findViewById(R.id.image_view_activity_author_email);
+        mWhatsAppImageView        = findViewById(R.id.image_view_activity_author_whatsapp);
+        mAuthorFormatBookRecyclerView = findViewById(R.id.recycler_view_activity_author_format_books);
+
+        configureSearchField();
+        updateAuthorInfo();
+        startSkeletonShimmer(mSkeletonLoadingContainer);
+        startArrowAnimation();
+    }
+
+    private void configureSearchField() {
+        mSearchEditText.setVisibility(View.GONE);
+        mSearchEditText.setSelectAllOnFocus(false);
+        mSearchEditText.setFocusable(false);
+        mSearchEditText.setHint("  Recherche mes livres");
+    }
+
+    private void updateAuthorInfo() {
+        mUsernameTextView.setText(mAuthor.getFirstName() + " " + mAuthor.getName());
+        mProfessionTextView.setText(mAuthor.getProfession());
+    }
+
+    private void configureContactVisibility() {
+        int hiddenCount = 0;
+        if ("null".equals(mAuthor.getCall()))     { mAppelImageView.setVisibility(View.GONE);    hiddenCount++; }
+        if ("null".equals(mAuthor.getEmail()))    { mEmailImageView.setVisibility(View.GONE);    hiddenCount++; }
+        if ("null".equals(mAuthor.getWhatsapp())) { mWhatsAppImageView.setVisibility(View.GONE); hiddenCount++; }
+        if (hiddenCount == 3) mContactsLinearLayout.setVisibility(View.GONE);
+    }
+
+    private void setupClickListeners() {
+        mBackImageView.setOnClickListener(v -> onBackPressed());
+        mSearchEditText.setOnClickListener(v -> navigateToSearch());
+        mAppelImageView.setOnClickListener(v -> { mNumberAuthor = mAuthor.getCall(); initiateCall(mNumberAuthor); });
+        mEmailImageView.setOnClickListener(v -> sendEmail(mAuthor.getEmail(), "Sujet : ", "Bonjour " + mAuthor.getName() + " " + mAuthor.getFirstName() + ","));
+        mWhatsAppImageView.setOnClickListener(v -> sendWhatsAppMessage(mAuthor.getWhatsapp(), "Bonjour " + mAuthor.getName() + ","));
+    }
+
+    // ==================== SwipeRefresh ====================
+
+    private void setupSwipeRefresh() {
+        mSwipeRefreshLayout.setColorSchemeResources(
+                R.color.purple_200,
+                android.R.color.holo_blue_light,
+                android.R.color.holo_orange_light
+        );
+
+        mSwipeRefreshLayout.setOnRefreshListener(() -> {
+            mNoConnectionContainer.setVisibility(View.GONE);
+            showLoadingState();
+            loadAuthorData();
+        });
+
+        mNestedScrollView.setOnScrollChangeListener(
+                (NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) ->
+                        mSwipeRefreshLayout.setEnabled(scrollY == 0));
+    }
+
+    private void stopRefreshing() {
+        if (mSwipeRefreshLayout != null && mSwipeRefreshLayout.isRefreshing()) {
+            mSwipeRefreshLayout.setRefreshing(false);
+        }
+    }
+
+    // ==================== États ====================
+
+    private void showLoadingState() {
+        mNestedScrollView.setVisibility(View.GONE);
+        mNoConnectionContainer.setVisibility(View.GONE);
+        mSkeletonLoadingContainer.setVisibility(View.VISIBLE);
+        startSkeletonShimmer(mSkeletonLoadingContainer);
+    }
+
+    private void showContentState() {
+        mSkeletonLoadingContainer.setVisibility(View.GONE);
+        stopSkeletonShimmer(mSkeletonLoadingContainer);
+        mNoConnectionContainer.setVisibility(View.GONE);
+        mNestedScrollView.setVisibility(View.VISIBLE);
+        mSearchEditText.setVisibility(View.VISIBLE);
+    }
+
+    private void showNoConnectionError() {
+        stopRefreshing();
+        stopSkeletonShimmer(mSkeletonLoadingContainer);
+        mSkeletonLoadingContainer.setVisibility(View.GONE);
+        mNestedScrollView.setVisibility(View.GONE);
+        mNoConnectionContainer.setVisibility(View.VISIBLE);
+    }
+
+    // ==================== Navigation ====================
+
+    private void navigateToSearch() {
+        Intent intent = new Intent(this, SearchActivity.class);
+        intent.putExtra("search_key", "ONLINE_BOOK");
+        intent.putExtra("online_book_key", "AUTHOR_ACTIVITY");
+        intent.putExtra("id_author_key", mAuthor.getIdNumber());
+        startActivity(intent);
+    }
+
+    private void loadAuthorImage() {
+        Picasso.get()
+                .load(Server.getUrlHostProd(this) + "/api/public/resource/0/profil/" + mAuthor.getProfile()) // migre vers la route publique Laravel (FileController::publicShow, type profil)
+                .placeholder(R.drawable.img_wait_profile)
+                .error(R.drawable.img_wait_profile)
+                .transform(new RoundedTransformation(1000, 4))
+                .resize(384, 384)
+                .into(mProfileImageView);
+    }
+
+    // ==================== BroadcastReceiver ====================
+
+    private void registerBroadcastReceiver() {
+        mNoConnectionReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (ACTION_AUTHOR.equals(intent.getAction())) {
+                    try {
+                        showLoadingState();
+                        loadAuthorData();
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error handling broadcast", e);
+                    }
+                }
+            }
+        };
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            registerReceiver(mNoConnectionReceiver,
+                    new IntentFilter(ACTION_AUTHOR),
+                    Context.RECEIVER_NOT_EXPORTED);
+        }
+    }
+
+    private void loadAuthorData() {
+        String baseUrl  = Server.getUrlApi(this);
+        String idNumber = mSession.getIdNumber();
+        String authorId = mAuthor.getIdNumber();
+
+        new AuthorBookSyn().execute(baseUrl + "author_book.php", idNumber, authorId);
+        new AuthorSyn().execute(baseUrl + "AuthorSimular.php", authorId);
+    }
+
+    // ==================== AsyncTask Classes ====================
+
+    private class AuthorBookSyn extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            return executePostRequest(params[0],
+                    new MultipartBody.Builder()
+                            .setType(MultipartBody.FORM)
+                            .addFormDataPart("idNumber", params[1])
+                            .addFormDataPart("idAuthor", params[2])
+                            .build());
+        }
+
+        @Override
+        protected void onPostExecute(String jsonData) {
+            if (jsonData != null) processAuthorBooks(jsonData);
+            else showNoConnectionError();
+        }
+
+        private void processAuthorBooks(String jsonData) {
+            BookStats stats = new BookStats();
+
+            if (!RESPONSE_RAS.equals(jsonData)) {
+                stopRefreshing();
+                showContentState();
+
+                try {
+                    JSONArray jsonArray = new JSONArray(jsonData);
+                    mOnlineBookList.clear();
+
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject obj = jsonArray.getJSONObject(i);
+                        OnlineBook book = new OnlineBook(
+                                obj.getString("idBook"),
+                                obj.getString("blanket"),
+                                obj.getString("bookTitle"),
+                                obj.getString("categoryTitle"),
+                                obj.getString("isPhysic"),
+                                obj.getString("electronic"),
+                                obj.getString("isAudio"),
+                                obj.getString("idStruct"),
+                                Integer.parseInt(obj.getString("numberLike")),
+                                Integer.parseInt(obj.getString("numberNoLike"))
+                        );
+                        mOnlineBookList.add(book);
+                        stats.updateStats(book);
+                    }
+
+                    HorizontaleAdapter adapter = new HorizontaleAdapter(mOnlineBookList);
+                    mBooksRecyclerView.setLayoutManager(
+                            new LinearLayoutManager(AuthorActivity.this, LinearLayoutManager.HORIZONTAL, false));
+                    mBooksRecyclerView.setAdapter(adapter);
+
+                } catch (JSONException e) {
+                    Log.e(TAG, "Error parsing author books", e);
+                }
+            }
+
+            updateFormatBooksRecyclerView(stats);
+        }
+
+        private void updateFormatBooksRecyclerView(BookStats stats) {
+            List<Library> libraryList = new ArrayList<>();
+            libraryList.add(new Library(1, R.drawable.fichier_pdf, "Mes livres électroniques", stats.electronic, mAuthor.getIdNumber()));
+            libraryList.add(new Library(2, R.drawable.audio, "Mes livres audios", stats.audio, mAuthor.getIdNumber()));
+            libraryList.add(new Library(3, R.drawable.books_emp, "Mes livres physiques", stats.physical, mAuthor.getIdNumber()));
+
+            AuthorFormatBookAdapter adapter = new AuthorFormatBookAdapter(libraryList);
+            mAuthorFormatBookRecyclerView.setLayoutManager(new LinearLayoutManager(AuthorActivity.this));
+            mAuthorFormatBookRecyclerView.setAdapter(adapter);
+        }
+    }
+
+    private class AuthorSyn extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            return executePostRequest(params[0],
+                    new MultipartBody.Builder()
+                            .setType(MultipartBody.FORM)
+                            .addFormDataPart("idUser", params[1])
+                            .build());
+        }
+
+        @Override
+        protected void onPostExecute(String jsonData) {
+            if (jsonData != null) processSimilarAuthors(jsonData);
+            else showAuthorLoadError();
+        }
+
+        private void processSimilarAuthors(String jsonData) {
+            if (!RESPONSE_RAS.equals(jsonData)) {
+                try {
+                    JSONArray jsonArray = new JSONArray(jsonData);
+                    mAuthorArrayList.clear();
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject obj = jsonArray.getJSONObject(i);
+                        mAuthorArrayList.add(new Author(
+                                obj.getString("idAuthor"), obj.getString("name"),
+                                obj.getString("firstName"), obj.getString("profile"),
+                                obj.getString("profession"), obj.getString("call"),
+                                obj.getString("email"), obj.getString("whatsapp")
+                        ));
+                    }
+                } catch (JSONException e) { Log.e(TAG, "Error parsing similar authors", e); }
+            }
+
+            AuthorHorizontaleAdapter adapter = new AuthorHorizontaleAdapter(mAuthorArrayList);
+            mAuthorRecyclerView.setLayoutManager(
+                    new LinearLayoutManager(AuthorActivity.this, LinearLayoutManager.HORIZONTAL, false));
+            mAuthorRecyclerView.setAdapter(adapter);
+        }
+
+        private void showAuthorLoadError() {
+            List<Connection> list = new ArrayList<>();
+            list.add(new Connection(getString(R.string.no_connection_available), ACTION_AUTHOR, false));
+            NoConnectionAdapter adapter = new NoConnectionAdapter(list);
+            mAuthorRecyclerView.setLayoutManager(
+                    new LinearLayoutManager(AuthorActivity.this, LinearLayoutManager.HORIZONTAL, false));
+            mAuthorRecyclerView.setAdapter(adapter);
+        }
+    }
+
+    // ==================== Contact Methods ====================
+
+    private void initiateCall(String phoneNumber) {
+        if (phoneNumber == null || phoneNumber.isEmpty()) { Toast.makeText(this, "Numéro invalide", Toast.LENGTH_SHORT).show(); return; }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CALL_PERMISSION);
+        } else { makeCall(phoneNumber); }
+    }
+
+    private void makeCall(String phoneNumber) {
+        startActivity(new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phoneNumber)));
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_CALL_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) { if (mNumberAuthor != null) makeCall(mNumberAuthor); }
+            else Toast.makeText(this, "Permission d'appel refusée", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void sendEmail(String recipient, String subject, String message) {
+        Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + recipient));
+        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        intent.putExtra(Intent.EXTRA_TEXT, message);
+        try { startActivity(Intent.createChooser(intent, "Choisir une application de messagerie")); }
+        catch (android.content.ActivityNotFoundException e) { Toast.makeText(this, "Aucune application email installée", Toast.LENGTH_SHORT).show(); }
+    }
+
+    private void sendWhatsAppMessage(String phoneNumber, String message) {
+        try {
+            String url = "https://wa.me/" + phoneNumber + "?text=" + Uri.encode(message);
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            if (isPackageInstalled(WHATSAPP_PACKAGE)) intent.setPackage(WHATSAPP_PACKAGE);
+            else if (isPackageInstalled(WHATSAPP_BUSINESS_PACKAGE)) intent.setPackage(WHATSAPP_BUSINESS_PACKAGE);
+            else { Toast.makeText(this, "Aucune version de WhatsApp n'est installée", Toast.LENGTH_SHORT).show(); return; }
+            startActivity(intent);
+        } catch (Exception e) { Toast.makeText(this, "Erreur lors de l'ouverture de WhatsApp", Toast.LENGTH_SHORT).show(); }
+    }
+
+    private boolean isPackageInstalled(String packageName) {
+        try { getPackageManager().getPackageInfo(packageName, 0); return true; }
+        catch (Exception e) { return false; }
+    }
+
+    // ==================== Helper Methods ====================
+
+    private String executePostRequest(String url, RequestBody requestBody) {
+        try {
+            Request request = new Request.Builder().url(url).post(requestBody).build();
+            try (Response response = mHttpClient.newCall(request).execute()) {
+                if (response.body() != null) return response.body().string();
+            }
+        } catch (IOException e) { Log.e(TAG, "Network error: " + e.getMessage(), e); }
+        catch (Exception e) { Log.e(TAG, "Unexpected error: " + e.getMessage(), e); }
+        return null;
+    }
+
+    // ==================== Shimmer ====================
+
+    private void startSkeletonShimmer(View container) {
+        if (!(container instanceof ViewGroup)) return;
+        List<View> skeletonViews = new ArrayList<>();
+        collectSkeletonViews((ViewGroup) container, skeletonViews);
+
+        mShimmerAnimator = ValueAnimator.ofFloat(0f, 1f);
+        mShimmerAnimator.setDuration(1200);
+        mShimmerAnimator.setRepeatCount(ValueAnimator.INFINITE);
+        mShimmerAnimator.setRepeatMode(ValueAnimator.RESTART);
+        mShimmerAnimator.addUpdateListener(anim -> {
+            float fraction = (float) anim.getAnimatedValue();
+            float alpha = 0.4f + 0.6f * (float)(0.5 + 0.5 * Math.sin(fraction * 2 * Math.PI));
+            for (View v : skeletonViews) v.setAlpha(alpha);
+        });
+        mShimmerAnimator.start();
+    }
+
+    private void stopSkeletonShimmer(View container) {
+        if (mShimmerAnimator != null) { mShimmerAnimator.cancel(); mShimmerAnimator = null; }
+        if (container instanceof ViewGroup) {
+            List<View> views = new ArrayList<>();
+            collectSkeletonViews((ViewGroup) container, views);
+            for (View v : views) v.setAlpha(1f);
+        }
+    }
+
+    private void collectSkeletonViews(ViewGroup parent, List<View> out) {
+        for (int i = 0; i < parent.getChildCount(); i++) {
+            View child = parent.getChildAt(i);
+            if (child instanceof ViewGroup) collectSkeletonViews((ViewGroup) child, out);
+            else out.add(child);
+        }
+    }
+
+    // ==================== Arrow Animation ====================
+
+    private void startArrowAnimation() {
+        if (mNoConnectionContainer == null) return;
+        View arrow1 = mNoConnectionContainer.findViewById(R.id.arrow_1);
+        View arrow2 = mNoConnectionContainer.findViewById(R.id.arrow_2);
+        View arrow3 = mNoConnectionContainer.findViewById(R.id.arrow_3);
+        if (arrow1 == null || arrow2 == null || arrow3 == null) return;
+
+        mArrowAnimator = ValueAnimator.ofFloat(0f, 1f);
+        mArrowAnimator.setDuration(1000);
+        mArrowAnimator.setRepeatCount(ValueAnimator.INFINITE);
+        mArrowAnimator.setRepeatMode(ValueAnimator.RESTART);
+        mArrowAnimator.setInterpolator(new android.view.animation.AccelerateDecelerateInterpolator());
+        mArrowAnimator.addUpdateListener(anim -> {
+            float f = (float) anim.getAnimatedValue();
+            float dp = getResources().getDisplayMetrics().density;
+            float t1 = bounce(f), t2 = bounce((f + 0.33f) % 1f), t3 = bounce((f + 0.66f) % 1f);
+            float max = 10f;
+            arrow1.setTranslationY(t1 * max * dp); arrow2.setTranslationY(t2 * max * dp); arrow3.setTranslationY(t3 * max * dp);
+            arrow1.setAlpha(0.25f + t1 * 0.3f); arrow2.setAlpha(0.55f + t2 * 0.25f); arrow3.setAlpha(0.85f + t3 * 0.15f);
+        });
+        mArrowAnimator.start();
+    }
+
+    private float bounce(float t) { return (float) Math.sin(t * Math.PI); }
+
+    // ==================== Cycle de vie ====================
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mShimmerAnimator != null) { mShimmerAnimator.cancel(); mShimmerAnimator = null; }
+        if (mArrowAnimator != null)   { mArrowAnimator.cancel();   mArrowAnimator = null;   }
+        if (mNoConnectionReceiver != null) {
+            try { unregisterReceiver(mNoConnectionReceiver); }
+            catch (Exception e) { Log.e(TAG, "Error unregistering receiver", e); }
+        }
+    }
+
+    // ==================== Helper Classes ====================
+
+    private static class BookStats {
+        int electronic = 0, audio = 0, physical = 0;
+
+        void updateStats(OnlineBook book) {
+            if (!"null".equals(book.getElectronic())) electronic++;
+            if ("1".equals(book.getIsAudio())) audio++;
+            if ("1".equals(book.getIsPhysic())) physical++;
+        }
+    }
+}

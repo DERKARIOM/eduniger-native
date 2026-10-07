@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Carré du logo EduNiger dans l'en-tête Compte. -->
+<!-- Carré du logo Elim dans l'en-tête Compte. -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
     <solid android:color="@color/account_accent" />

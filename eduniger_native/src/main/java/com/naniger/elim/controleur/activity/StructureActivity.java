@@ -1,0 +1,867 @@
+package com.naniger.elim.controleur.activity;
+
+import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
+import android.os.Build;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.core.widget.NestedScrollView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import com.naniger.elim.R;
+import com.naniger.elim.controleur.adapter.AuthorHorizontaleAdapter;
+import com.naniger.elim.controleur.adapter.CategoryAdapter;
+import com.naniger.elim.controleur.adapter.HorizontaleAdapter;
+import com.naniger.elim.controleur.adapter.SemiNoConnectionAdapter;
+import com.naniger.elim.controleur.animation.RoundedTransformation;
+import com.naniger.elim.controleur.dialog.SimpleOkDialog;
+import com.naniger.elim.controleur.dialog.StructDeleteDialog;
+import com.naniger.elim.model.data.Author;
+import com.naniger.elim.model.data.Category;
+import com.naniger.elim.model.data.Connection;
+import com.naniger.elim.model.data.OnlineBook;
+import com.naniger.elim.model.data.PasswordUtil;
+import com.naniger.elim.model.data.Server;
+import com.naniger.elim.model.data.Structure;
+import com.naniger.elim.model.table.Session;
+import com.squareup.picasso.Picasso;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+import okhttp3.MultipartBody;
+import com.naniger.elim.model.net.ApiClient;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
+public class StructureActivity extends AppCompatActivity {
+
+    private static final String TAG = "StructureActivity";
+    private static final String ACTION_STRUCTURE = "STRUCTURE_ACTIVITY";
+    private static final String RESPONSE_RAS = "RAS";
+    private static final String EXCLUSIVE_STRUCTURE_ID = "2";
+
+    // Views
+    private NestedScrollView mNestedScrollView;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private View mSkeletonLoadingContainer;
+    private View mNoConnectionContainer;
+    private RecyclerView mBookRecommendedRecyclerView;
+    private RecyclerView mAuthorRecyclerView;
+    private RecyclerView mCategoryRecyclerView;
+    private ImageView mWelcomeImageView;
+    private ImageView mProfileImageView;
+    private ImageView mBackImageView;
+    private TextView mNameTextView;
+    private TextView mAuthorTextView;
+    private TextView mNumberTextView;
+    private TextView mDescriptionTextView;
+    private TextView mMoreDescTextView;
+    private TextView mReduceTextView;
+    private TextView mMoreBookTextView;
+    private TextView mMoreCategorie;
+    private TextView mMoreAuthorTextView;
+    private Button mAdhererButton;
+    private ImageView mSearchImageView;
+    private ImageView mShortcutImageView;
+    private ImageView mAnnouncementImageView;
+    private RelativeLayout mMoreAuthorRelativeLayout;
+
+    // Data
+    private final List<OnlineBook> mOnlineBookList = new ArrayList<>();
+    private final List<Author> mAuthorArrayList = new ArrayList<>();
+    private final List<Category> mCategoryList = new ArrayList<>();
+    private Structure mStructure;
+    private Session mSession;
+
+    // Utils
+    private OkHttpClient mHttpClient;
+    private BroadcastReceiver mNoConnectionReceiver;
+    private ValueAnimator mShimmerAnimator;
+    private ValueAnimator mArrowAnimator;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_structure);
+        Objects.requireNonNull(getSupportActionBar()).hide();
+
+        initializeComponents();
+        initializeViews();
+        setupRecyclerViews();
+        setupClickListeners();
+        setupSwipeRefresh();
+        loadStructureImages();
+        registerBroadcastReceiver();
+        loadStructureData();
+    }
+
+    private void initializeComponents() {
+        mSession = new Session(this);
+        mHttpClient = ApiClient.getInstance(this);
+        mStructure = extractStructureFromIntent();
+    }
+
+    private Structure extractStructureFromIntent() {
+        Intent intent = getIntent();
+        return new Structure(
+                intent.getStringExtra("intent_structure_adapter_id"),
+                intent.getStringExtra("intent_structure_adapter_logo"),
+                intent.getStringExtra("intent_structure_adapter_name"),
+                intent.getStringExtra("intent_structure_adapter_description"),
+                intent.getBooleanExtra("intent_structure_adapter_is_adhere", false),
+                intent.getStringExtra("intent_structure_adapter_banner"),
+                intent.getStringExtra("intent_structure_adapter_author"),
+                intent.getStringExtra("intent_structure_adapter_adherer_number"),
+                intent.getStringExtra("intent_structure_adapter_book_number"),
+                intent.getStringExtra("intent_structure_adapter_admin")
+        );
+    }
+
+    private void initializeViews() {
+        mNestedScrollView         = findViewById(R.id.nested_scroll_view_activity_structure);
+        mSwipeRefreshLayout       = findViewById(R.id.swipe_refresh_structure);
+        mSkeletonLoadingContainer = findViewById(R.id.skeleton_loading_container);
+        mNoConnectionContainer    = findViewById(R.id.no_connection_container);
+        mBackImageView            = findViewById(R.id.image_view_toolbar_book);
+        mSearchImageView          = findViewById(R.id.image_view_toolbar_research);
+        mShortcutImageView        = findViewById(R.id.image_view_toolbar_shortcut);
+        mAnnouncementImageView    = findViewById(R.id.image_view_toolbar_announcement);
+        mWelcomeImageView         = findViewById(R.id.image_view_structure_activity_welcome);
+        mProfileImageView         = findViewById(R.id.image_view_structure_activity_profile);
+        mAuthorRecyclerView       = findViewById(R.id.recycler_view_activity_structure_author);
+        mNameTextView             = findViewById(R.id.text_view_structure_activity_name);
+        mAuthorTextView           = findViewById(R.id.text_view_activity_structure_author);
+        mNumberTextView           = findViewById(R.id.image_view_activity_structure_number);
+        mDescriptionTextView      = findViewById(R.id.text_view_activity_structure_description);
+        mMoreDescTextView         = findViewById(R.id.text_view_activity_structure_more_desc);
+        mReduceTextView           = findViewById(R.id.text_view_activity_structure_reduce_desc);
+        mMoreBookTextView         = findViewById(R.id.text_view_activity_structure_more_books);
+        mMoreCategorie            = findViewById(R.id.text_view_activity_structure_more_category);
+        mMoreAuthorTextView       = findViewById(R.id.text_view_activity_structure_more_author);
+        mAdhererButton            = findViewById(R.id.button_activity_structure_adherer);
+        mBookRecommendedRecyclerView = findViewById(R.id.recycler_view_activity_structure_books);
+        mMoreAuthorRelativeLayout = findViewById(R.id.relative_layout_activity_structure_author);
+        mCategoryRecyclerView     = findViewById(R.id.recycler_view_activity_structure_category);
+
+        startSkeletonShimmer(mSkeletonLoadingContainer);
+        startArrowAnimation();
+
+        updateStructureInfo();
+    }
+
+    private void updateStructureInfo() {
+        mNameTextView.setText(mStructure.getName());
+        mAuthorTextView.setText("@" + mStructure.getAuthor());
+        mNumberTextView.setText(
+                mStructure.getAdhererNumber() + " Adhérents ° " +
+                        mStructure.getBookNumber() + " Livres"
+        );
+        mDescriptionTextView.setText("Bienvenue sur la structure " + mStructure.getName() + "!");
+
+        if (mStructure.isAdhere()) {
+            mAdhererButton.setText("Se détacher");
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                mAdhererButton.setBackgroundTintList(
+                        ColorStateList.valueOf(ContextCompat.getColor(this, R.color.black3)));
+            }
+        }
+    }
+
+    private void setupRecyclerViews() {
+        List<Connection> waitList = new ArrayList<>();
+        waitList.add(new Connection(getString(R.string.wait), null, true));
+
+        SemiNoConnectionAdapter semiNoConnectionAdapter = new SemiNoConnectionAdapter(waitList);
+        mAuthorRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mAuthorRecyclerView.setAdapter(semiNoConnectionAdapter);
+    }
+
+    private void setupClickListeners() {
+        mBackImageView.setOnClickListener(v -> onBackPressed());
+
+        mSearchImageView.setOnClickListener(v -> navigateToSearch(
+                "ONLINE_BOOK", "STRUCTURE_ACTIVITY", mStructure.getId()));
+
+        mMoreDescTextView.setOnClickListener(v -> expandDescription());
+        mReduceTextView.setOnClickListener(v -> collapseDescription());
+        mAdhererButton.setOnClickListener(v -> handleAdhererAction());
+
+        mMoreBookTextView.setOnClickListener(v -> navigateToSearch(
+                "ONLINE_BOOK", "STRUCTURE_ACTIVITY", mStructure.getId()));
+
+        mMoreCategorie.setOnClickListener(v -> navigateToSearch(
+                "STRUCT_CATEGORY", "STRUCTURE_CATEGORIE", null));
+
+        mMoreAuthorTextView.setOnClickListener(v -> navigateToSearch(
+                "AUTHOR_ONLINE", "MAIN_ACTIVITY", null));
+
+        mShortcutImageView.setOnClickListener(v -> createHomeShortcut());
+
+        mAnnouncementImageView.setOnClickListener(v -> {
+            Intent announcementIntent = new Intent(StructureActivity.this, NotificationActivity.class);
+            startActivity(announcementIntent);
+        });
+    }
+
+    // ==================== SwipeRefresh ====================
+
+    private void setupSwipeRefresh() {
+        mSwipeRefreshLayout.setColorSchemeResources(
+                R.color.purple_200,
+                android.R.color.holo_blue_light,
+                android.R.color.holo_orange_light
+        );
+
+        mSwipeRefreshLayout.setOnRefreshListener(() -> {
+            mNoConnectionContainer.setVisibility(View.GONE);
+            showLoadingState();
+            loadStructureData();
+        });
+
+        mNestedScrollView.setOnScrollChangeListener(
+                (NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) ->
+                        mSwipeRefreshLayout.setEnabled(scrollY == 0));
+    }
+
+    private void stopRefreshing() {
+        if (mSwipeRefreshLayout != null && mSwipeRefreshLayout.isRefreshing()) {
+            mSwipeRefreshLayout.setRefreshing(false);
+        }
+    }
+
+    // ==================== États ====================
+
+    private void showLoadingState() {
+        mNestedScrollView.setVisibility(View.GONE);
+        mNoConnectionContainer.setVisibility(View.GONE);
+        mSkeletonLoadingContainer.setVisibility(View.VISIBLE);
+        startSkeletonShimmer(mSkeletonLoadingContainer);
+    }
+
+    private void showContentState() {
+        mSkeletonLoadingContainer.setVisibility(View.GONE);
+        stopSkeletonShimmer(mSkeletonLoadingContainer);
+        mNoConnectionContainer.setVisibility(View.GONE);
+        mNestedScrollView.setVisibility(View.VISIBLE);
+    }
+
+    private void showNoConnectionError() {
+        stopRefreshing();
+        stopSkeletonShimmer(mSkeletonLoadingContainer);
+        mSkeletonLoadingContainer.setVisibility(View.GONE);
+        mNestedScrollView.setVisibility(View.GONE);
+        mNoConnectionContainer.setVisibility(View.VISIBLE);
+    }
+
+    // ==================== BroadcastReceiver ====================
+
+    private void registerBroadcastReceiver() {
+        mNoConnectionReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (ACTION_STRUCTURE.equals(intent.getAction())) {
+                    showLoadingState();
+                    loadStructureData();
+                }
+            }
+        };
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            registerReceiver(mNoConnectionReceiver,
+                    new IntentFilter(ACTION_STRUCTURE),
+                    Context.RECEIVER_NOT_EXPORTED);
+        }
+    }
+
+    // ==================== Chargement ====================
+
+    private void loadStructureData() {
+        // Migration Laravel : les 3 appels legacy (struct_book.php, CategoryStrut.php,
+        // author_top.php) renvoyaient tous "Token invalide." (backend legacy, token
+        // Sanctum incompatible) - bascules vers les endpoints Laravel deja utilises
+        // ailleurs dans l'appli (BooksFragment, CategoryFragment, SearchActivity/HomeFragment).
+        String hostUrl   = Server.getUrlHostProd(this);
+        String structId  = mStructure.getId();
+
+        new StructBookSyn().execute(hostUrl + "/api/book/associations?structureId=" + structId);
+        new CategorySyn().execute(hostUrl + "/api/categories");
+        new AuthorSyn().execute(hostUrl + "/api/authors");
+    }
+
+    // ==================== Shortcut ====================
+
+    private void createHomeShortcut() {
+        new AsyncTask<Void, Void, android.graphics.Bitmap>() {
+            @Override
+            protected android.graphics.Bitmap doInBackground(Void... voids) {
+                try {
+                    String logoUrl = Server.getUrlHostProd(StructureActivity.this)
+                            + "/api/public/resource/1/logo/"
+                            + mStructure.getCover();
+                    return Picasso.get().load(logoUrl).resize(192, 192).centerCrop().get();
+                } catch (IOException e) {
+                    Log.e(TAG, "Erreur téléchargement logo raccourci", e);
+                    return null;
+                }
+            }
+
+            @SuppressLint("WrongThread")
+            @Override
+            protected void onPostExecute(android.graphics.Bitmap logoBitmap) {
+                Intent shortcutIntent = new Intent(StructureActivity.this, StructureActivity.class);
+                shortcutIntent.setAction(Intent.ACTION_MAIN);
+                shortcutIntent.putExtra("intent_structure_adapter_id", mStructure.getId());
+                shortcutIntent.putExtra("intent_structure_adapter_logo", mStructure.getCover());
+                shortcutIntent.putExtra("intent_structure_adapter_name", mStructure.getName());
+                shortcutIntent.putExtra("intent_structure_adapter_description", mStructure.getDescription());
+                shortcutIntent.putExtra("intent_structure_adapter_is_adhere", mStructure.isAdhere());
+                shortcutIntent.putExtra("intent_structure_adapter_banner", mStructure.getBanner());
+                shortcutIntent.putExtra("intent_structure_adapter_author", mStructure.getAuthor());
+                shortcutIntent.putExtra("intent_structure_adapter_adherer_number", mStructure.getAdhererNumber());
+                shortcutIntent.putExtra("intent_structure_adapter_book_number", mStructure.getBookNumber());
+                shortcutIntent.putExtra("intent_structure_adapter_admin", mStructure.getAdmin());
+
+                android.graphics.drawable.Icon icon;
+                if (logoBitmap != null) {
+                    icon = android.graphics.drawable.Icon.createWithBitmap(logoBitmap);
+                } else {
+                    icon = android.graphics.drawable.Icon.createWithResource(
+                            StructureActivity.this, R.drawable.img_wait_struct);
+                }
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    android.content.pm.ShortcutManager shortcutManager =
+                            getSystemService(android.content.pm.ShortcutManager.class);
+
+                    if (shortcutManager != null && shortcutManager.isRequestPinShortcutSupported()) {
+                        android.content.pm.ShortcutInfo shortcutInfo =
+                                new android.content.pm.ShortcutInfo.Builder(
+                                        StructureActivity.this, "struct_" + mStructure.getId())
+                                        .setShortLabel(mStructure.getName())
+                                        .setLongLabel(mStructure.getName())
+                                        .setIcon(icon)
+                                        .setIntent(shortcutIntent)
+                                        .build();
+
+                        shortcutManager.requestPinShortcut(shortcutInfo, null);
+                        Toast.makeText(StructureActivity.this,
+                                "Raccourci « " + mStructure.getName() + " » créé !",
+                                Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(StructureActivity.this,
+                                "Votre lanceur ne supporte pas les raccourcis épinglés.",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Intent addShortcutIntent = new Intent("com.android.launcher.action.INSTALL_SHORTCUT");
+                    addShortcutIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, mStructure.getName());
+                    addShortcutIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
+                    addShortcutIntent.putExtra("duplicate", false);
+                    if (logoBitmap != null) {
+                        addShortcutIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON, logoBitmap);
+                    } else {
+                        Intent.ShortcutIconResource iconRes = Intent.ShortcutIconResource.fromContext(
+                                StructureActivity.this, R.drawable.img_wait_struct);
+                        addShortcutIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, iconRes);
+                    }
+                    sendBroadcast(addShortcutIntent);
+                    Toast.makeText(StructureActivity.this,
+                            "Raccourci « " + mStructure.getName() + " » créé !",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        }.execute();
+    }
+
+    private void navigateToSearch(String searchKey, String onlineBookKey, String structId) {
+        Intent intent = new Intent(this, SearchActivity.class);
+        intent.putExtra("search_key", searchKey);
+        intent.putExtra("online_book_key", onlineBookKey);
+        if (structId != null) intent.putExtra("id_struct_key", structId);
+        startActivity(intent);
+    }
+
+    private void expandDescription() {
+        mDescriptionTextView.setText(mStructure.getDescription());
+        mMoreDescTextView.setVisibility(View.GONE);
+        mReduceTextView.setVisibility(View.VISIBLE);
+    }
+
+    private void collapseDescription() {
+        mReduceTextView.setVisibility(View.GONE);
+        mMoreDescTextView.setVisibility(View.VISIBLE);
+        mDescriptionTextView.setText("Bienvenue sur la structure " + mStructure.getName() + "!");
+    }
+
+    private void handleAdhererAction() {
+        if (EXCLUSIVE_STRUCTURE_ID.equals(mStructure.getId())) {
+            showExclusiveStructureDialog();
+        } else if ("Se détacher".equals(mAdhererButton.getText().toString())) {
+            showStructDeleteDialog(mStructure.getId());
+        } else {
+            adhereToStructure();
+        }
+    }
+
+    private void showExclusiveStructureDialog() {
+        showSimpleDialog(
+                R.drawable.vector_purple_200_desole,
+                "Structure Exclusive",
+                "Cette structure est exclusivement réservée aux étudiants de la FAST UAM. " +
+                        "Veuillez vérifier que vous remplissez les critères d'adhésion puis contacter " +
+                        "les numéros suivants :\n+22796627534 / +22794961793."
+        );
+    }
+
+    private void adhereToStructure() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            mAdhererButton.setBackgroundTintList(
+                    ColorStateList.valueOf(ContextCompat.getColor(this, R.color.black3)));
+        }
+        mAdhererButton.setText("Se détacher");
+        mStructure.setAdhere(true);
+
+        new StructMembershipSyn().execute(
+                Server.getUrlHostProd(this) + "/api/structures/" + mStructure.getId() + "/join");
+    }
+
+    private void loadStructureImages() {
+        Picasso.get()
+                .load(Server.getUrlHostProd(this) +
+                        "/api/public/resource/" + mStructure.getId() + "/banner/" + mStructure.getBanner())
+                .transform(new RoundedTransformation(200, 10))
+                .resize(6200, 2222)
+                .placeholder(R.drawable.img_wait_banner)
+                .error(R.drawable.img_wait_banner)
+                .into(mWelcomeImageView);
+
+        mWelcomeImageView.setVisibility(View.VISIBLE);
+
+        Picasso.get()
+                .load(Server.getUrlHostProd(this) +
+                        "/api/public/resource/" + mStructure.getId() + "/logo/" + mStructure.getCover())
+                .placeholder(R.drawable.img_wait_struct)
+                .error(R.drawable.img_default_book)
+                .transform(new RoundedTransformation(1000, 4))
+                .resize(284, 284)
+                .into(mProfileImageView);
+    }
+
+    // ==================== AsyncTask Classes ====================
+
+    private class StructBookSyn extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            return executeGetRequest(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(String jsonData) {
+            if (jsonData != null) {
+                processBookData(jsonData);
+            } else {
+                showNoConnectionError();
+            }
+        }
+
+        private void processBookData(String jsonData) {
+            stopRefreshing();
+            showContentState();
+
+            try {
+                JSONArray jsonArray = new JSONArray(jsonData);
+                mOnlineBookList.clear();
+
+                if (mStructure.isAdhere() && "1".equals(mStructure.getAdmin())) {
+                    mOnlineBookList.add(new OnlineBook(
+                            "add", "addbook.png", "Ajouter un livre",
+                            "Elim", "oui", "oui", "oui", 9, 9
+                    ));
+                }
+
+                // /api/book/associations?structureId=... (meme endpoint et meme forme
+                // que BooksFragment/RankingSyn) : categories est une relation many-to-many,
+                // on prend la premiere comme dans le reste de l'appli.
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject obj = jsonArray.getJSONObject(i);
+                    JSONArray categories = obj.optJSONArray("categories");
+                    String categoryTitle = (categories != null && categories.length() > 0)
+                            ? categories.getJSONObject(0).optString("title", "") : "";
+
+                    mOnlineBookList.add(new OnlineBook(
+                            obj.optString("idBook", ""),
+                            obj.optString("blanket", ""),
+                            obj.optString("title", ""),
+                            categoryTitle,
+                            obj.optBoolean("isPhysic", false) ? "1" : "0",
+                            obj.isNull("electronic") ? "null" : obj.optString("electronic", "null"),
+                            obj.optBoolean("isAudio", false) ? "1" : "0",
+                            mStructure.getId(),
+                            obj.optInt("numberLike", 0),
+                            obj.optInt("numberView", 0)
+                    ));
+                }
+
+                    HorizontaleAdapter adapter = new HorizontaleAdapter(mOnlineBookList);
+                    mBookRecommendedRecyclerView.setLayoutManager(
+                            new LinearLayoutManager(StructureActivity.this,
+                                    LinearLayoutManager.HORIZONTAL, false));
+                    mBookRecommendedRecyclerView.setAdapter(adapter);
+
+                } catch (JSONException e) {
+                    Log.e(TAG, "Error parsing book data", e);
+                }
+        }
+    }
+
+    private class AuthorSyn extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            return executeGetRequest(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(String jsonData) {
+            if (jsonData != null) {
+                processAuthors(jsonData);
+            } else {
+                showAuthorLoadError();
+            }
+        }
+
+        private void processAuthors(String jsonData) {
+            try {
+                JSONArray jsonArray = new JSONArray(jsonData);
+                mAuthorArrayList.clear();
+
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject obj = jsonArray.getJSONObject(i);
+                    // Modele Laravel Author : pas de call/email/whatsapp -> "null"
+                    // (convention deja utilisee dans AuthorActivity/SearchActivity/HomeFragment
+                    // pour masquer les boutons de contact correspondants).
+                    mAuthorArrayList.add(new Author(
+                            obj.optString("idAuthor", ""),
+                            obj.optString("name", ""),
+                            obj.optString("firstName", ""),
+                            obj.optString("profile", ""),
+                            obj.optString("profession", ""),
+                            "null",
+                            "null",
+                            "null"
+                    ));
+                }
+
+                AuthorHorizontaleAdapter adapter = new AuthorHorizontaleAdapter(mAuthorArrayList);
+                mAuthorRecyclerView.setLayoutManager(
+                        new LinearLayoutManager(StructureActivity.this,
+                                LinearLayoutManager.HORIZONTAL, false));
+                mAuthorRecyclerView.setAdapter(adapter);
+                mMoreAuthorRelativeLayout.setVisibility(View.VISIBLE);
+
+            } catch (JSONException e) {
+                Log.e(TAG, "Error parsing author data", e);
+            }
+        }
+
+        private void showAuthorLoadError() {
+            List<Connection> list = new ArrayList<>();
+            list.add(new Connection(getString(R.string.no_connection_available),
+                    ACTION_STRUCTURE, false));
+            SemiNoConnectionAdapter adapter = new SemiNoConnectionAdapter(list);
+            mAuthorRecyclerView.setLayoutManager(
+                    new LinearLayoutManager(StructureActivity.this,
+                            LinearLayoutManager.HORIZONTAL, false));
+            mAuthorRecyclerView.setAdapter(adapter);
+        }
+    }
+
+    private class CategorySyn extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            return executeGetRequest(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(String jsonData) {
+            if (jsonData != null) {
+                processCategories(jsonData);
+            } else {
+                showCategoryLoadError();
+            }
+        }
+
+        private void processCategories(String jsonData) {
+            try {
+                JSONArray jsonArray = new JSONArray(jsonData);
+                mCategoryList.clear();
+
+                // L'ancien CategoryStrut.php limitait a 3 categories (LIMIT 3, sans
+                // filtre reel par structure) ; /api/categories renvoie tout -> on
+                // reproduit la meme limite cote client pour ce widget d'apercu.
+                int limit = Math.min(jsonArray.length(), 3);
+                for (int i = 0; i < limit; i++) {
+                    JSONObject obj = jsonArray.getJSONObject(i);
+                    mCategoryList.add(new Category(
+                            obj.optString("blanket", ""),
+                            obj.optString("title", ""),
+                            mStructure.getName()
+                    ));
+                }
+
+                CategoryAdapter adapter = new CategoryAdapter(mCategoryList);
+                mCategoryRecyclerView.setLayoutManager(new LinearLayoutManager(StructureActivity.this));
+                mCategoryRecyclerView.setAdapter(adapter);
+
+            } catch (JSONException e) {
+                Log.e(TAG, "Error parsing category data", e);
+            }
+        }
+
+        private void showCategoryLoadError() {
+            // Erreur silencieuse sur les catégories — le contenu principal reste visible
+            Log.e(TAG, "Error loading categories");
+        }
+    }
+
+    /**
+     * Adhesion et retrait de structure (en libre-service, pour l'utilisateur
+     * courant). Remplace adherer_struct.php et DetachStruct.php ; idStruct est
+     * deja dans l'URL, idUser vient du token cote serveur (/api/structures/{id}/join
+     * et /leave).
+     */
+    private class StructMembershipSyn extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            return executePostRequest(params[0], RequestBody.create(new byte[0], null));
+        }
+
+        @Override
+        protected void onPostExecute(String jsonData) {
+            if (jsonData == null) return;
+            try {
+                String message = new JSONObject(jsonData).optString("message", "");
+                if (!message.isEmpty()) {
+                    Toast.makeText(StructureActivity.this, message, Toast.LENGTH_SHORT).show();
+                }
+            } catch (JSONException e) {
+                Log.e(TAG, "Error parsing structure membership response", e);
+            }
+        }
+    }
+
+    // ==================== Dialogs ====================
+
+    private void showStructDeleteDialog(String structId) {
+        StructDeleteDialog dialog = new StructDeleteDialog(this);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+
+        TextView errorTextView    = dialog.findViewById(R.id.text_view_dialog_structure_delete_err);
+        TextView noTextView       = dialog.findViewById(R.id.no);
+        TextView yesTextView      = dialog.findViewById(R.id.yes);
+        EditText passwordEditText = dialog.findViewById(R.id.edit_text_dialog_struct_delete_password);
+
+        noTextView.setOnClickListener(v -> dialog.cancel());
+        yesTextView.setOnClickListener(v ->
+                handleStructureDetach(dialog, passwordEditText, errorTextView, structId));
+
+        dialog.build();
+    }
+
+    private void handleStructureDetach(StructDeleteDialog dialog, EditText passwordEditText,
+                                       TextView errorTextView, String structId) {
+        String password = passwordEditText.getText().toString();
+
+        if (password.isEmpty()) {
+            showPasswordError(passwordEditText, errorTextView, "Veuillez entrer votre mot de passe");
+            return;
+        }
+
+        if (!Objects.equals(PasswordUtil.hashPassword(password), mSession.getPassword())) {
+            showPasswordError(passwordEditText, errorTextView, "Mot de passe incorrect");
+            return;
+        }
+
+        dialog.cancel();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            mAdhererButton.setBackgroundTintList(
+                    ColorStateList.valueOf(ContextCompat.getColor(this, R.color.purple_200)));
+        }
+        mAdhererButton.setText("S'adhérer");
+        mStructure.setAdhere(false);
+
+        new StructMembershipSyn().execute(
+                Server.getUrlHostProd(this) + "/api/structures/" + structId + "/leave");
+    }
+
+    private void showPasswordError(EditText passwordEditText, TextView errorTextView, String message) {
+        passwordEditText.setBackground(getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
+        errorTextView.setVisibility(View.VISIBLE);
+        errorTextView.setText(message);
+    }
+
+    private void showSimpleDialog(int iconRes, String title, String message) {
+        SimpleOkDialog dialog = new SimpleOkDialog(this);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+
+        ImageView iconImageView    = dialog.findViewById(R.id.image_view_dialog_simple_ok_icon);
+        TextView titleTextView     = dialog.findViewById(R.id.text_view_dialog_simple_ok_title);
+        TextView messageTextView   = dialog.findViewById(R.id.text_view_dialog_simple_ok_message);
+        TextView okTextView        = dialog.findViewById(R.id.text_view_dialog_simple_ok);
+
+        iconImageView.setImageResource(iconRes);
+        titleTextView.setText(title);
+        messageTextView.setText(message);
+        okTextView.setOnClickListener(v -> dialog.cancel());
+
+        dialog.build();
+    }
+
+    // ==================== Helper Methods ====================
+
+    private String executeGetRequest(String url) {
+        try {
+            Request request = new Request.Builder().url(url).get().build();
+            try (Response response = mHttpClient.newCall(request).execute()) {
+                if (response.body() != null) return response.body().string();
+            }
+        } catch (IOException e) {
+            Log.e(TAG, "Network error: " + e.getMessage(), e);
+        } catch (Exception e) {
+            Log.e(TAG, "Unexpected error: " + e.getMessage(), e);
+        }
+        return null;
+    }
+
+    private String executePostRequest(String url, RequestBody requestBody) {
+        try {
+            Request request = new Request.Builder().url(url).post(requestBody).build();
+            try (Response response = mHttpClient.newCall(request).execute()) {
+                if (response.body() != null) return response.body().string();
+            }
+        } catch (IOException e) {
+            Log.e(TAG, "Network error: " + e.getMessage(), e);
+        } catch (Exception e) {
+            Log.e(TAG, "Unexpected error: " + e.getMessage(), e);
+        }
+        return null;
+    }
+
+    // ==================== Shimmer ====================
+
+    private void startSkeletonShimmer(View container) {
+        if (!(container instanceof ViewGroup)) return;
+        List<View> skeletonViews = new ArrayList<>();
+        collectSkeletonViews((ViewGroup) container, skeletonViews);
+
+        mShimmerAnimator = ValueAnimator.ofFloat(0f, 1f);
+        mShimmerAnimator.setDuration(1200);
+        mShimmerAnimator.setRepeatCount(ValueAnimator.INFINITE);
+        mShimmerAnimator.setRepeatMode(ValueAnimator.RESTART);
+        mShimmerAnimator.addUpdateListener(anim -> {
+            float fraction = (float) anim.getAnimatedValue();
+            float alpha = 0.4f + 0.6f * (float)(0.5 + 0.5 * Math.sin(fraction * 2 * Math.PI));
+            for (View v : skeletonViews) v.setAlpha(alpha);
+        });
+        mShimmerAnimator.start();
+    }
+
+    private void stopSkeletonShimmer(View container) {
+        if (mShimmerAnimator != null) {
+            mShimmerAnimator.cancel();
+            mShimmerAnimator = null;
+        }
+        if (container instanceof ViewGroup) {
+            List<View> views = new ArrayList<>();
+            collectSkeletonViews((ViewGroup) container, views);
+            for (View v : views) v.setAlpha(1f);
+        }
+    }
+
+    private void collectSkeletonViews(ViewGroup parent, List<View> out) {
+        for (int i = 0; i < parent.getChildCount(); i++) {
+            View child = parent.getChildAt(i);
+            if (child instanceof ViewGroup) collectSkeletonViews((ViewGroup) child, out);
+            else out.add(child);
+        }
+    }
+
+    // ==================== Arrow Animation ====================
+
+    private void startArrowAnimation() {
+        if (mNoConnectionContainer == null) return;
+        View arrow1 = mNoConnectionContainer.findViewById(R.id.arrow_1);
+        View arrow2 = mNoConnectionContainer.findViewById(R.id.arrow_2);
+        View arrow3 = mNoConnectionContainer.findViewById(R.id.arrow_3);
+        if (arrow1 == null || arrow2 == null || arrow3 == null) return;
+
+        mArrowAnimator = ValueAnimator.ofFloat(0f, 1f);
+        mArrowAnimator.setDuration(1000);
+        mArrowAnimator.setRepeatCount(ValueAnimator.INFINITE);
+        mArrowAnimator.setRepeatMode(ValueAnimator.RESTART);
+        mArrowAnimator.setInterpolator(new android.view.animation.AccelerateDecelerateInterpolator());
+        mArrowAnimator.addUpdateListener(anim -> {
+            float f  = (float) anim.getAnimatedValue();
+            float dp = getResources().getDisplayMetrics().density;
+            float t1 = bounce(f);
+            float t2 = bounce((f + 0.33f) % 1f);
+            float t3 = bounce((f + 0.66f) % 1f);
+            float max = 10f;
+            arrow1.setTranslationY(t1 * max * dp);
+            arrow2.setTranslationY(t2 * max * dp);
+            arrow3.setTranslationY(t3 * max * dp);
+            arrow1.setAlpha(0.25f + t1 * 0.3f);
+            arrow2.setAlpha(0.55f + t2 * 0.25f);
+            arrow3.setAlpha(0.85f + t3 * 0.15f);
+        });
+        mArrowAnimator.start();
+    }
+
+    private float bounce(float t) {
+        return (float) Math.sin(t * Math.PI);
+    }
+
+    // ==================== Cycle de vie ====================
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mShimmerAnimator != null) { mShimmerAnimator.cancel(); mShimmerAnimator = null; }
+        if (mArrowAnimator != null)   { mArrowAnimator.cancel();   mArrowAnimator = null;   }
+        if (mNoConnectionReceiver != null) {
+            try { unregisterReceiver(mNoConnectionReceiver); }
+            catch (Exception e) { Log.e(TAG, "Error unregistering receiver", e); }
+        }
+    }
+}

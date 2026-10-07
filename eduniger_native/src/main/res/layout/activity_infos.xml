@@ -32,7 +32,7 @@
         android:id="@+id/annee"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="2024-2025 EduNiger"
+        android:text="2024-2025 Elim"
         android:layout_below="@id/iconifos"
         android:layout_centerHorizontal="true"
         />
@@ -73,7 +73,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/version"
         android:textSize="40dp"
-        android:text="EduNiger"
+        android:text="Elim"
         android:fontFamily="@font/apple1"
         android:layout_centerHorizontal="true"
         />

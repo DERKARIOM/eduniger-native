@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'com.ninotech.eduniger'
+    namespace 'com.naniger.elim'
     compileSdk 35
 
     defaultConfig {
-        applicationId "com.ninotech.eduniger"
+        applicationId "com.naniger.elim"
         minSdk 28
         targetSdk 35
         versionCode 13
