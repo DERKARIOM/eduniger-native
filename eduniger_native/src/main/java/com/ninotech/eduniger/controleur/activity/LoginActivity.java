@@ -513,6 +513,8 @@ public class LoginActivity extends AppCompatActivity {
             com.ninotech.eduniger.model.data.TokenStore tokenStore =
                     new com.ninotech.eduniger.model.data.TokenStore(getApplicationContext());
             tokenStore.saveTokens(token, token, java.util.concurrent.TimeUnit.DAYS.toSeconds(3650));
+            com.ninotech.eduniger.controleur.fragment.LibraryFragment
+                    .saveMemberSince(getApplicationContext(), user);
 
             boolean isAdmin = user.optBoolean("isAdmin", false);
             if (mAccount.register(getApplicationContext(), String.valueOf(isAdmin))) {

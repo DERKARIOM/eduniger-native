@@ -412,6 +412,8 @@ public class RegisterActivity extends AppCompatActivity {
             com.ninotech.eduniger.model.data.TokenStore tokenStore =
                     new com.ninotech.eduniger.model.data.TokenStore(getApplicationContext());
             tokenStore.saveTokens(token, token, java.util.concurrent.TimeUnit.DAYS.toSeconds(3650));
+            com.ninotech.eduniger.controleur.fragment.LibraryFragment
+                    .saveMemberSince(getApplicationContext(), root.optJSONObject("user"));
         } catch (JSONException e) {
             Log.e(TAG, "Failed to parse token from registration response", e);
         }
