@@ -12,7 +12,7 @@
     <color name="player_accent">@color/purple_200</color>
     <!-- ===== Écran Compte (v2) : jetons "mode sombre" ===== -->
     <color name="account_bg">#FF0D110F</color>
-    <color name="account_card">#FF161B18</color>
+    <color name="account_card">#FF1E1E1E</color>
     <color name="account_card_alt">#FF1C221F</color>
     <color name="account_line">#FF232A26</color>
     <color name="account_text">#FFEDF2EE</color>
