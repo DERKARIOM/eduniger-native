@@ -185,42 +185,6 @@
                     android:layout_weight="1" />
             </LinearLayout>
 
-            <!-- Raccourcis bibliothèque conservés de l'ancienne version
-                 (catégories, auteurs, historique d'écoute). -->
-            <HorizontalScrollView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:clipToPadding="false"
-                android:scrollbars="none">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/text_view_fragment_library_shortcut_categories"
-                    style="@style/account_shortcut_chip"
-                    android:drawableStart="@drawable/ic_account_category"
-                    tools:text="Catégories · 3" />
-
-                <TextView
-                    android:id="@+id/text_view_fragment_library_shortcut_authors"
-                    style="@style/account_shortcut_chip"
-                    android:layout_marginStart="8dp"
-                    android:drawableStart="@drawable/ic_account_authors"
-                    tools:text="Auteurs · 5" />
-
-                <TextView
-                    android:id="@+id/text_view_fragment_library_shortcut_history"
-                    style="@style/account_shortcut_chip"
-                    android:layout_marginStart="8dp"
-                    android:drawableStart="@drawable/ic_account_history"
-                    android:text="@string/account_shortcut_history" />
-            </LinearLayout>
-            </HorizontalScrollView>
-
             <!-- ==================== Téléchargements récents ==================== -->
             <LinearLayout
                 android:layout_width="match_parent"

@@ -97,8 +97,6 @@ public class LibraryFragment extends Fragment {
     private static final int CONTAINER_DOWNLOADS = 1;
     private static final int CONTAINER_AUDIO = 2;
     private static final int CONTAINER_LOANS = 3;
-    private static final int CONTAINER_CATEGORIES = 4;
-    private static final int CONTAINER_AUTHORS = 5;
 
     private static final String GUIDE_URL =
             "https://www.youtube.com/playlist?list=PL9OgjL2isuO_lWGCR9rem2qKig6m8CPzK";
@@ -114,8 +112,6 @@ public class LibraryFragment extends Fragment {
     private TextView mEmailTextView;
     private TextView mRoleTextView;
     private TextView mMemberSinceTextView;
-    private TextView mCategoriesShortcut;
-    private TextView mAuthorsShortcut;
     private View mRecentCard;
     private TextView mRecentEmptyTextView;
     private ImageView mRecentCoverImageView;
@@ -169,8 +165,6 @@ public class LibraryFragment extends Fragment {
         mEmailTextView = view.findViewById(R.id.text_view_fragment_library_email);
         mRoleTextView = view.findViewById(R.id.text_view_fragment_library_role);
         mMemberSinceTextView = view.findViewById(R.id.text_view_fragment_library_member_since);
-        mCategoriesShortcut = view.findViewById(R.id.text_view_fragment_library_shortcut_categories);
-        mAuthorsShortcut = view.findViewById(R.id.text_view_fragment_library_shortcut_authors);
         mRecentCard = view.findViewById(R.id.relative_layout_fragment_library_recent);
         mRecentEmptyTextView = view.findViewById(R.id.text_view_fragment_library_recent_empty);
         mRecentCoverImageView = view.findViewById(R.id.image_view_fragment_library_recent_cover);
@@ -208,11 +202,6 @@ public class LibraryFragment extends Fragment {
         bindStat(view, R.id.include_fragment_library_stat_favorites,
                 R.drawable.ic_account_heart, R.string.account_stat_favorites,
                 v -> openPlaybackList(PlaybackListActivity.MODE_FAVORITES));
-
-        mCategoriesShortcut.setOnClickListener(v -> openContainer(CONTAINER_CATEGORIES));
-        mAuthorsShortcut.setOnClickListener(v -> openContainer(CONTAINER_AUTHORS));
-        view.findViewById(R.id.text_view_fragment_library_shortcut_history)
-                .setOnClickListener(v -> openPlaybackList(PlaybackListActivity.MODE_HISTORY));
 
         view.findViewById(R.id.text_view_fragment_library_see_all)
                 .setOnClickListener(v -> openContainer(CONTAINER_DOWNLOADS));
@@ -392,11 +381,6 @@ public class LibraryFragment extends Fragment {
         setStatValue(R.id.include_fragment_library_stat_audio, audioCount);
         setStatValue(R.id.include_fragment_library_stat_loans, loandTable.getNbrLoand(idNumber));
         setStatValue(R.id.include_fragment_library_stat_favorites, playbackRepository.getNbrFavorites());
-
-        int categories = electronicTable.getNbrCategory(idNumber);
-        int authors = electronicTable.getNbrAuthor(idNumber);
-        mCategoriesShortcut.setText(getString(R.string.account_shortcut_categories, categories));
-        mAuthorsShortcut.setText(getString(R.string.account_shortcut_authors, authors));
 
         long usedBytes = loadRecentAndStorage(electronicTable, audioTable, idNumber);
         setSettingDescription(R.id.include_fragment_library_setting_storage,

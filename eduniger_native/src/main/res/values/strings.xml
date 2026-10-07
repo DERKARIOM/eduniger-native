@@ -337,9 +337,6 @@
     <string name="account_stat_audio">Audio</string>
     <string name="account_stat_loans">Empruntés</string>
     <string name="account_stat_favorites">Favoris</string>
-    <string name="account_shortcut_categories">Catégories · %1$d</string>
-    <string name="account_shortcut_authors">Auteurs · %1$d</string>
-    <string name="account_shortcut_history">Historique</string>
     <string name="account_recent_title">Téléchargements récents</string>
     <string name="account_see_all">Voir tout</string>
     <string name="account_read_offline">Lire hors ligne</string>
