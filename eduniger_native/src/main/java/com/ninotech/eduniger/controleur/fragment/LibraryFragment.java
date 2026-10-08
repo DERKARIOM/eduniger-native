@@ -22,9 +22,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -41,7 +38,6 @@ import com.ninotech.eduniger.controleur.activity.MainActivity;
 import com.ninotech.eduniger.controleur.activity.NotificationActivity;
 import com.ninotech.eduniger.controleur.activity.PdfBoxViewerActivity;
 import com.ninotech.eduniger.controleur.activity.PlaybackListActivity;
-import com.ninotech.eduniger.controleur.activity.SettingV2Activity;
 import com.ninotech.eduniger.controleur.activity.SuggestionActivity;
 import com.ninotech.eduniger.controleur.activity.ThemeActivity;
 import com.ninotech.eduniger.controleur.animation.RoundedTransformation;
@@ -81,7 +77,7 @@ import okhttp3.Response;
  * Regroupe sur un seul écran : profil, statistiques de la bibliothèque locale, dernier
  * livre téléchargé (lecture hors ligne), paramètres du compte et déconnexion. Toutes les
  * actions réutilisent les écrans existants (ContainerActivity, AccountActivity,
- * ThemeActivity, SettingV2Activity...) : aucune logique métier n'est dupliquée ici.
+ * ThemeActivity, InfosActivity...) : aucune logique métier n'est dupliquée ici.
  *
  * Les données viennent uniquement des tables SQLite locales (aucun appel réseau à
  * l'affichage), sauf la synchronisation des emprunts (LoandSyncTask) et l'envoi de la
@@ -101,8 +97,6 @@ public class LibraryFragment extends Fragment {
     private static final int CONTAINER_DOWNLOADS = 1;
     private static final int CONTAINER_AUDIO = 2;
     private static final int CONTAINER_LOANS = 3;
-    private static final int CONTAINER_CATEGORIES = 4;
-    private static final int CONTAINER_AUTHORS = 5;
 
     private static final String GUIDE_URL =
             "https://www.youtube.com/playlist?list=PL9OgjL2isuO_lWGCR9rem2qKig6m8CPzK";
@@ -118,8 +112,6 @@ public class LibraryFragment extends Fragment {
     private TextView mEmailTextView;
     private TextView mRoleTextView;
     private TextView mMemberSinceTextView;
-    private TextView mCategoriesShortcut;
-    private TextView mAuthorsShortcut;
     private View mRecentCard;
     private TextView mRecentEmptyTextView;
     private ImageView mRecentCoverImageView;
@@ -138,7 +130,6 @@ public class LibraryFragment extends Fragment {
         mUserTable = new UserTable(getContext());
 
         initializeViews(mRoot);
-        applyStatusBarInset(mRoot);
         setupStaticActions(mRoot);
         setupSettings(mRoot);
         setupSwipeRefresh();
@@ -174,8 +165,6 @@ public class LibraryFragment extends Fragment {
         mEmailTextView = view.findViewById(R.id.text_view_fragment_library_email);
         mRoleTextView = view.findViewById(R.id.text_view_fragment_library_role);
         mMemberSinceTextView = view.findViewById(R.id.text_view_fragment_library_member_since);
-        mCategoriesShortcut = view.findViewById(R.id.text_view_fragment_library_shortcut_categories);
-        mAuthorsShortcut = view.findViewById(R.id.text_view_fragment_library_shortcut_authors);
         mRecentCard = view.findViewById(R.id.relative_layout_fragment_library_recent);
         mRecentEmptyTextView = view.findViewById(R.id.text_view_fragment_library_recent_empty);
         mRecentCoverImageView = view.findViewById(R.id.image_view_fragment_library_recent_cover);
@@ -191,28 +180,7 @@ public class LibraryFragment extends Fragment {
         versionTextView.setText(getString(R.string.account_version, getString(R.string.app_version)));
     }
 
-    /**
-     * Sur cet onglet la barre d'outils principale est masquée (cf. MainActivity) : si la
-     * fenêtre dessine sous la barre d'état (bord à bord, imposé par Android 15 avec
-     * targetSdk 35), on décale le contenu de la hauteur de la barre d'état. Sans bord à
-     * bord, l'encart reçu vaut 0 et rien ne change.
-     */
-    private void applyStatusBarInset(View view) {
-        View content = view.findViewById(R.id.linear_layout_fragment_library_content);
-        final int basePaddingTop = content.getPaddingTop();
-        ViewCompat.setOnApplyWindowInsetsListener(content, (v, insets) -> {
-            Insets bars = insets.getInsets(WindowInsetsCompat.Type.statusBars());
-            v.setPadding(v.getPaddingLeft(), basePaddingTop + bars.top,
-                    v.getPaddingRight(), v.getPaddingBottom());
-            return insets;
-        });
-    }
-
     private void setupStaticActions(View view) {
-        view.findViewById(R.id.image_button_fragment_library_notifications)
-                .setOnClickListener(v -> open(NotificationActivity.class));
-        view.findViewById(R.id.image_button_fragment_library_settings)
-                .setOnClickListener(v -> open(SettingV2Activity.class));
         view.findViewById(R.id.image_button_fragment_library_edit_profile)
                 .setOnClickListener(v -> open(AccountActivity.class));
 
@@ -235,15 +203,8 @@ public class LibraryFragment extends Fragment {
                 R.drawable.ic_account_heart, R.string.account_stat_favorites,
                 v -> openPlaybackList(PlaybackListActivity.MODE_FAVORITES));
 
-        mCategoriesShortcut.setOnClickListener(v -> openContainer(CONTAINER_CATEGORIES));
-        mAuthorsShortcut.setOnClickListener(v -> openContainer(CONTAINER_AUTHORS));
-        view.findViewById(R.id.text_view_fragment_library_shortcut_history)
-                .setOnClickListener(v -> openPlaybackList(PlaybackListActivity.MODE_HISTORY));
-
         view.findViewById(R.id.text_view_fragment_library_see_all)
                 .setOnClickListener(v -> openContainer(CONTAINER_DOWNLOADS));
-        view.findViewById(R.id.linear_layout_fragment_library_read_offline)
-                .setOnClickListener(v -> readRecentOffline());
         view.findViewById(R.id.image_button_fragment_library_recent_more)
                 .setOnClickListener(this::showRecentMenu);
         mRecentCard.setOnClickListener(v -> readRecentOffline());
@@ -418,11 +379,6 @@ public class LibraryFragment extends Fragment {
         setStatValue(R.id.include_fragment_library_stat_audio, audioCount);
         setStatValue(R.id.include_fragment_library_stat_loans, loandTable.getNbrLoand(idNumber));
         setStatValue(R.id.include_fragment_library_stat_favorites, playbackRepository.getNbrFavorites());
-
-        int categories = electronicTable.getNbrCategory(idNumber);
-        int authors = electronicTable.getNbrAuthor(idNumber);
-        mCategoriesShortcut.setText(getString(R.string.account_shortcut_categories, categories));
-        mAuthorsShortcut.setText(getString(R.string.account_shortcut_authors, authors));
 
         long usedBytes = loadRecentAndStorage(electronicTable, audioTable, idNumber);
         setSettingDescription(R.id.include_fragment_library_setting_storage,

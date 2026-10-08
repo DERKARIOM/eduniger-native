@@ -10,7 +10,7 @@
         android:id="@+id/text_view_activity_server_laravel_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="URL de l'API EduNiger (Laravel)"
+        android:text="URL de l'API Elim (Laravel)"
         android:layout_marginStart="15dp"
         android:layout_marginTop="15dp"
         android:fontFamily="@font/linux"
@@ -129,4 +129,4 @@
         android:layout_height="wrap_content"
         android:autofillHints="" />
 
-</RelativeLayout>
+</RelativeLayout>

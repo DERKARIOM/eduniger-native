@@ -23,7 +23,7 @@
         android:id="@+id/textEmprinte"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Lorsque cette option sera activée, vous derez utiliser votre emprinte digitale pour ouvrir EduNiger."
+        android:text="Lorsque cette option sera activée, vous derez utiliser votre emprinte digitale pour ouvrir Elim."
         android:layout_marginStart="12dp"
         android:fontFamily="@font/linux2"
         android:textSize="15dp"
@@ -76,4 +76,4 @@
             android:text="Au bout de 5 minutes" />
     </RadioGroup>
 
-</RelativeLayout>
+</RelativeLayout>
