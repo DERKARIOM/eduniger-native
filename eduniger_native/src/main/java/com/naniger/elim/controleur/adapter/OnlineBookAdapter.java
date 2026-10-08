@@ -1,0 +1,146 @@
+package com.naniger.elim.controleur.adapter;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.view.ContextMenu;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.naniger.elim.R;
+import com.naniger.elim.controleur.activity.BookActivity;
+import com.naniger.elim.model.data.OnlineBook;
+import com.naniger.elim.controleur.animation.RoundedTransformation;
+import com.naniger.elim.model.data.Server;
+import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class OnlineBookAdapter extends RecyclerView.Adapter<OnlineBookAdapter.MyViewHolder> {
+    List<OnlineBook> mOnlineBooks;
+
+    public int getPosition() {
+        return mPosition;
+    }
+
+    public void setPosition(int position) {
+        mPosition = position;
+    }
+
+    private int mPosition;
+    public OnlineBookAdapter(List<OnlineBook> onlineBooks) {
+        mOnlineBooks = onlineBooks;
+    }
+    @Override
+    public OnlineBookAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
+        View view = layoutInflater.inflate(R.layout.adapter_book,parent,false);
+        return new MyViewHolder(view);
+    }
+
+    @Override
+    public void onBindViewHolder(MyViewHolder holder, int position) {
+        OnlineBook item = mOnlineBooks.get(position);
+        int i = position;
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                mPosition = holder.getAdapterPosition();
+                view.showContextMenu();
+                return true;
+            }
+        });
+        holder.display(mOnlineBooks.get(position));
+
+    }
+    @Override
+    public int getItemCount() {
+        return mOnlineBooks.size();
+    }
+
+    public OnlineBook getItem(int position) {
+        return mOnlineBooks.get(position);
+    }
+
+    public void Remove(int position){
+        mOnlineBooks.remove(position);
+        notifyItemRemoved(position);
+    }
+    public void filterList(ArrayList<OnlineBook> filteredList) {
+        mOnlineBooks = filteredList;
+        notifyDataSetChanged();
+    }
+
+    public static class MyViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener{
+        private final ImageView mBlanketImageView;
+        private final TextView mTitleTextView;
+        private final TextView mCategoryTextView;
+        private final ImageView mPysicalImageView;
+        private final ImageView mElectronicImageView;
+        private final ImageView mAudioImageView;
+        private final TextView mNumberLikeTextView;
+        private final TextView mNumberViewTextView;
+        MyViewHolder(View itemView){
+            super(itemView);
+            mBlanketImageView = itemView.findViewById(R.id.image_view_adapter_book_audio_blanket);
+            mTitleTextView = itemView.findViewById(R.id.text_view_adapter_book_title);
+            mCategoryTextView = itemView.findViewById(R.id.text_view_adapter_book_category);
+            mPysicalImageView = itemView.findViewById(R.id.image_view_adapter_book_physical);
+            mElectronicImageView = itemView.findViewById(R.id.image_view_adapter_book_electronic);
+            mAudioImageView = itemView.findViewById(R.id.image_view_adapter_book_audio);
+            mNumberLikeTextView = itemView.findViewById(R.id.text_view_activity_book_number_like);
+            mNumberViewTextView = itemView.findViewById(R.id.text_view_adapter_book_number_view);
+            itemView.setOnCreateContextMenuListener(this);
+        }
+        @Override
+        public void onCreateContextMenu(ContextMenu menu , View v , ContextMenu.ContextMenuInfo menuInfo){
+        }
+        void display(OnlineBook onlineBook){
+            Picasso.get()
+                    .load(Server.getUrlHostProd(itemView.getContext()) + "/api/public/resource/" + onlineBook.getIdStruct() + "/blanket/" + onlineBook.getCover())
+                    .placeholder(R.drawable.img_wait_cover_book)
+                    .error(R.drawable.img_wait_cover_book)
+                    .transform(new RoundedTransformation(15,4))
+                    .resize(260,394)
+                    .into(mBlanketImageView);
+            mTitleTextView.setText(onlineBook.getTitle());
+            mCategoryTextView.setText(onlineBook.getCategory());
+            mNumberLikeTextView.setText(String.valueOf(onlineBook.getNumberLikes()));
+            mNumberViewTextView.setText(String.valueOf(onlineBook.getNumberView()));
+            if(onlineBook.getIsPhysic().equals("1"))
+                mPysicalImageView.setVisibility(View.VISIBLE);
+            if(!onlineBook.getElectronic().equals("null"))
+                mElectronicImageView.setVisibility(View.VISIBLE);
+            if(onlineBook.getIsAudio().equals("1"))
+                mAudioImageView.setVisibility(View.VISIBLE);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(onlineBook.getOnClickType() == null)
+                    {
+                        Intent intentBook = new Intent(itemView.getContext(), BookActivity.class);
+                        intentBook.putExtra("intent_adapter_book_id", onlineBook.getId());
+                        itemView.getContext().startActivity(intentBook);
+                    }
+                    else
+                    {
+                        // Dans MyViewHolder.display(), bloc ACTION_1
+                        if (onlineBook.getOnClickType().equals("ACTION_1")) {
+                            Intent result = new Intent();
+                            result.putExtra("book_title",    onlineBook.getTitle());
+                            result.putExtra("book_cover",    onlineBook.getCover());    // ← AJOUT
+                            result.putExtra("book_id_struct", onlineBook.getIdStruct()); // ← AJOUT
+                            ((Activity) itemView.getContext()).setResult(Activity.RESULT_OK, result);
+                            ((Activity) itemView.getContext()).finish();
+                        }
+                    }
+                }
+            });
+        }
+    }
+}
