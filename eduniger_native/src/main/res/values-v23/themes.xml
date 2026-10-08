@@ -8,6 +8,9 @@
         <item name="colorOnPrimary">@color/brand_on_primary</item>
         <item name="colorAccent">@color/brand_primary</item>
         <item name="colorControlActivated">@color/brand_primary</item>
+        <item name="materialButtonStyle">@style/Widget.Elim.Button</item>
+        <item name="materialButtonOutlinedStyle">@style/Widget.Elim.Button.Outlined</item>
+        <item name="borderlessButtonStyle">@style/Widget.Elim.Button.Text</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/brand_primary</item>
         <item name="colorSecondaryVariant">@color/brand_primary_strong</item>

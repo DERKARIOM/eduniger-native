@@ -71,7 +71,7 @@
             android:layout_width="130dp"
             android:layout_height="50dp"
             android:layout_margin="15dp"
-            android:background="@drawable/forme_white_100dp"
+            android:background="@drawable/bg_button_light"
             android:text="Réessayer"
 
             />

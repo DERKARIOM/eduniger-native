@@ -52,6 +52,6 @@
         android:layout_centerVertical="true"
         android:textSize="12sp"
         android:paddingTop="-1dp"
-        android:background="@drawable/form_purple_200_radius_100dp"
+        android:background="@drawable/bg_button_primary"
         android:backgroundTint="@color/purple_200"/>
 </RelativeLayout>

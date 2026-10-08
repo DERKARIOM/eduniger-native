@@ -8,6 +8,9 @@
         <item name="colorOnPrimary">@color/brand_on_primary</item>
         <item name="colorAccent">@color/brand_primary</item>
         <item name="colorControlActivated">@color/brand_primary</item>
+        <item name="materialButtonStyle">@style/Widget.Elim.Button</item>
+        <item name="materialButtonOutlinedStyle">@style/Widget.Elim.Button.Outlined</item>
+        <item name="borderlessButtonStyle">@style/Widget.Elim.Button.Text</item>
         <!-- Couleur de la marque secondaire. -->
         <item name="colorSecondary">@color/brand_primary</item>
         <item name="colorSecondaryVariant">@color/brand_primary_strong</item>
@@ -111,7 +114,7 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">35dp</item>
         <item name="android:layout_centerInParent">true</item>
-        <item name="android:background">@drawable/form_purple_200_radius_100dp</item>
+        <item name="android:background">@drawable/bg_button_primary</item>
         <item name="icon">@drawable/vector_black3_off_subscribe</item>
        <item name="iconGravity">textStart</item>
         <item name="android:text">@string/button_text_adhere</item>
@@ -358,5 +361,16 @@
         <item name="android:layout_height">1dp</item>
         <item name="android:layout_marginStart">68dp</item>
         <item name="android:background">@color/account_line</item>
+    </style>
+
+    <!-- ===== Boutons Elim : coins 10dp partout (MaterialButton / Button) ===== -->
+    <style name="Widget.Elim.Button" parent="Widget.MaterialComponents.Button">
+        <item name="cornerRadius">@dimen/button_corner_radius</item>
+    </style>
+    <style name="Widget.Elim.Button.Outlined" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="cornerRadius">@dimen/button_corner_radius</item>
+    </style>
+    <style name="Widget.Elim.Button.Text" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="cornerRadius">@dimen/button_corner_radius</item>
     </style>
 </resources>
