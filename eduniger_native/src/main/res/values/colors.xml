@@ -1,14 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple_200">#42B998</color>
-    <color name="purple2_200">#BD125CDC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#42B998</color>
-    <color name="teal_700">#42B998</color>
+    <!-- =====================================================================
+         IDENTITÉ VISUELLE ELIM — source unique de la couleur de marque.
+         Bleu de référence mesuré sur la maquette : #0D89CB.
+         Pour changer l'identité de l'application, modifier UNIQUEMENT ce bloc
+         (et son équivalent dans values-night/colors.xml).
+         ===================================================================== -->
+    <!-- Bleu principal : icônes actives, remplissages, sélection, progression -->
+    <color name="brand_primary">#FF0D89CB</color>
+    <!-- Bleu soutenu : textes/liens sur fond clair, états pressés (contraste 5,5:1 sur blanc) -->
+    <color name="brand_primary_strong">#FF0A6FA6</color>
+    <!-- Conteneur : fonds d'éléments sélectionnés, puces, pastilles -->
+    <color name="brand_primary_container">#FFDCEFFA</color>
+    <!-- Contenu posé sur le bleu / sur le conteneur -->
+    <color name="brand_on_primary">#FFFFFFFF</color>
+    <color name="brand_on_primary_container">#FF003A57</color>
+
+    <!-- Anciens noms conservés comme ALIAS (utilisés dans ~90 fichiers) :
+         ils pointent tous vers la marque, ne plus y mettre de valeur en dur. -->
+    <color name="purple_200">@color/brand_primary</color>
+    <color name="purple2_200">@color/brand_primary</color>
+    <color name="purple_500">@color/brand_primary_strong</color>
+    <color name="purple_700">@color/brand_primary_strong</color>
+    <color name="teal_200">@color/brand_primary</color>
+    <color name="teal_700">@color/brand_primary_strong</color>
     <color name="black">#0D1318</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="whiteVert">#D1F8FCF7</color>
+    <color name="whiteVert">#D1F6F9FC</color>
     <color name="white2">#EFEFEF</color>
     <color name="white3">#EBEBEB</color>
     <color name="whiteSombre">#B4EFEFEF</color>
@@ -30,8 +48,8 @@
     <color name="text_primary">#FFFFFF</color>
     <color name="text_secondary">#A0A0A0</color>
     <color name="text_hint">#555555</color>
-    <color name="accent_blue">#2D7CF6</color>
-    <color name="accent_blue_dark">#1A5FCC</color>
+    <color name="accent_blue">@color/brand_primary</color>
+    <color name="accent_blue_dark">@color/brand_primary_strong</color>
     <color name="divider">#2A2A2A</color>
 
     <!-- ===== Lecteur audio (v2) : jetons de couleur adaptatifs clair/sombre ===== -->
@@ -44,7 +62,7 @@
     <color name="player_text_secondary">#FF6B7278</color>
     <color name="player_control_inactive">#FFB3B8BC</color>
     <color name="player_track_bg">#FFE2E5E8</color>
-    <color name="player_accent">@color/purple_200</color>
+    <color name="player_accent">@color/brand_primary</color>
     <!-- ===== Écran Compte (v2) : jetons "mode clair" (surcharges sombres dans values-night) ===== -->
     <color name="account_bg">#FFF4F7F5</color>
     <color name="account_card">#FFFFFFFF</color>
@@ -54,8 +72,8 @@
     <color name="account_text">#FF141A17</color>
     <color name="account_text_muted">#FF5C6862</color>
     <color name="account_icon_muted">#FF8A948F</color>
-    <color name="account_accent">#FF1F8A68</color>
-    <color name="account_accent_tint">#1F42B998</color>
+    <color name="account_accent">@color/brand_primary_strong</color>
+    <color name="account_accent_tint">#1F0D89CB</color>
     <color name="account_on_accent">#FFFFFFFF</color>
     <color name="account_danger">#FFC93C3C</color>
     <color name="account_danger_line">#59C93C3C</color>

@@ -99,7 +99,7 @@
                     android:layout_height="wrap_content"
                     android:text="Retour le : 11/03/2025"
                     android:textSize="11sp"
-                    android:textColor="@color/vert"/>
+                    android:textColor="@color/brand_primary_strong"/>
 
             </LinearLayout>
 
@@ -131,7 +131,7 @@
                         android:text="50%"
                         android:textSize="10sp"
                         android:textStyle="bold"
-                        android:textColor="@color/vert"
+                        android:textColor="@color/brand_primary_strong"
                         android:layout_alignParentEnd="true"/>
 
                 </RelativeLayout>
@@ -144,7 +144,7 @@
                     android:layout_height="8dp"
                     android:progress="50"
                     android:progressBackgroundTint="@color/whiteSombre"
-                    android:progressTint="@color/vert"/>
+                    android:progressTint="@color/brand_primary_strong"/>
 
             </LinearLayout>
 
