@@ -6,11 +6,12 @@
  *   /home/<utilisateur>/private/elim-config.php   (modèle : elim-config.example.php)
  * Le dossier privé peut être forcé avec la variable d'environnement ELIM_PRIVATE_DIR.
  *
- * Arborescence attendue :
- *   /home/<u>/domains/elim.kawtal-consulting.com/public_html/eduniger/connectBDD.php
- *   → dirname(__DIR__, 4) = /home/<u>
+ * Le dossier privé est /home/<utilisateur>/private, quel que soit l'emplacement du
+ * sous-domaine (Hostinger place souvent les sous-domaines dans
+ * ~/domains/<domaine>/public_html/<sous-domaine>/).
  */
-$elimPrivateDir = getenv('ELIM_PRIVATE_DIR') ?: dirname(__DIR__, 4) . '/private';
+$elimHome = preg_match('#^(/home/[^/]+)#', __DIR__, $m) ? $m[1] : (getenv('HOME') ?: dirname(__DIR__, 4));
+$elimPrivateDir = getenv('ELIM_PRIVATE_DIR') ?: $elimHome . '/private';
 $elimConfigFile = $elimPrivateDir . '/elim-config.php';
 
 if (!is_readable($elimConfigFile)) {
