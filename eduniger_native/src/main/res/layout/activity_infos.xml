@@ -52,7 +52,7 @@
         android:textColor="@color/white"
         android:textAllCaps="false"
         android:background="@drawable/form_purple_200_radius_10dp"
-        android:text="Conditions d’Utilisation" />
+        android:text="Politique de confidentialité" />
     <TextView
         android:id="@+id/version"
         android:layout_width="wrap_content"
