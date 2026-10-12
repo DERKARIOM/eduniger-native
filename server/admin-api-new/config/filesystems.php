@@ -68,7 +68,7 @@ return [
             // projet) et doivent etre consideres comme compromis : changez ce mot de passe cote
             // serveur NextCloud et renseignez les variables d'environnement ci-dessous dans .env
             // (jamais commite). Voir aussi app/Services/NextCloudStorage.php qui utilise deja env().
-            'baseUri' => env('NEXTCLOUD_URI', 'http://78.46.46.154/remote.php/webdav/'),
+            'baseUri' => env('NEXTCLOUD_URI', ''),
             'userName' => env('NEXTCLOUD_USERNAME'),
             'password' => env('NEXTCLOUD_PASSWORD'),
         ],

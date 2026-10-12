@@ -146,7 +146,8 @@ public class ServerActivity extends AppCompatActivity {
                 {
                     case 1:
                         mUrlEditText.setVisibility(View.GONE);
-                        Server.saveServer(getApplicationContext(),Server.PRESET_INTERNET,Server.PRESET_INTERNET + "android/");
+                        // Serveur de production : memes adresses que la configuration par defaut
+                        Server.saveServer(getApplicationContext(),getString(R.string.url_server),getString(R.string.url_api));
                     break;
                     case 2:
                         mUrlEditText.setVisibility(View.GONE);

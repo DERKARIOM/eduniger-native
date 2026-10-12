@@ -8,7 +8,9 @@
 
 header('Content-Type: application/json; charset=UTF-8');
 
-const UPLOAD_DIR = "/var/www/html/fabi/ressources/profile/";
+// Chemin relatif à la racine web (…/public_html/fabi/ressources/profile/) : fonctionne
+// aussi bien sur l'ancien serveur (/var/www/html) que sur Hostinger.
+define('UPLOAD_DIR', dirname(__DIR__, 2) . '/fabi/ressources/profile/');
 const MAX_SIZE_BYTES = 5 * 1024 * 1024; // 5 Mo
 const ALLOWED_EXTENSIONS = [
     IMAGETYPE_JPEG => 'jpg',

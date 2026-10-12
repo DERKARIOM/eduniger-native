@@ -11,3 +11,7 @@ app-web/
 eduniger-api/
 eduniger-admin/
 restauration/
+
+# Signature release Elim (secrets)
+keystore.properties
+*.jks

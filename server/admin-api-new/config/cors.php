@@ -20,7 +20,12 @@ return [
 
     'allowed_methods' => ['*'],
 
-    // 'allowed_origins' => ['https://uamlib.eu','https://admin.baseuam.org'],
+    // // Origines autorisées, séparées par des virgules, depuis .env (CORS_ALLOWED_ORIGINS).
+    // Production : https://admin.kawtal-consulting.com. Valeurs par défaut = environnement local.
+    'allowed_origins' => array_values(array_filter(array_map('trim', explode(',', env(
+        'CORS_ALLOWED_ORIGINS',
+        'http://localhost:8080,http://localhost:8081,http://localhost:8085,http://192.168.49.1:8090,http://172.20.10.10:8090'
+    ))))),
     'allowed_origins' => [
     'http://localhost:8080',
     'http://localhost:8081',

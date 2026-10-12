@@ -16,9 +16,12 @@ require_once(__DIR__ . "/auth/AuthMiddleware.php");
 // Un jeton FCM n'est valable que pour le projet qui l'a émis : si FCM répond
 // SENDER_ID_MISMATCH / UNREGISTERED / INVALID_ARGUMENT, on essaie le projet suivant.
 // Un projet dont le fichier service-account est absent est simplement ignoré.
+// Dossier privé (hors web) contenant les comptes de service : défini par connectBDD.php
+// (ELIM_PRIVATE_DIR, ex. /home/<u>/private sur Hostinger) ; /var/www/private sinon.
+$privateDir  = rtrim(getenv('ELIM_PRIVATE_DIR') ?: '/var/www/private', '/');
 $fcmProjects = [
-    ['id' => 'elim-16f44', 'serviceAccount' => '/var/www/private/elim-16f44-service-account.json'],
-    ['id' => 'fabi-e56e6', 'serviceAccount' => '/var/www/private/fabi-e56e6-service-account.json'],
+    ['id' => 'elim-16f44', 'serviceAccount' => $privateDir . '/elim-16f44-service-account.json'],
+    ['id' => 'fabi-e56e6', 'serviceAccount' => $privateDir . '/fabi-e56e6-service-account.json'],
 ];
 
 // ================================================================
