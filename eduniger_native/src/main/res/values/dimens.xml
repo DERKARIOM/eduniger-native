@@ -1,4 +1,6 @@
 <resources>
+    <!-- Rayon des coins de TOUS les boutons de l'application (identité Elim). -->
+    <dimen name="button_corner_radius">10dp</dimen>
     <dimen name="text_margin">16dp</dimen>
     <dimen name="size_button">15sp</dimen>
     <dimen name="size_mini_sub_title">10sp</dimen>
@@ -56,4 +58,4 @@
     <!-- Décalage au-dessus de la barre de navigation flottante de MainActivity.
          La marge finale = cette valeur + inset système, calculé au runtime. -->
     <dimen name="mini_player_bottom_offset">72dp</dimen>
-</resources>
+</resources>

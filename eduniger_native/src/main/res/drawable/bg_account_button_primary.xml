@@ -5,7 +5,7 @@
     <item>
         <shape android:shape="rectangle">
             <solid android:color="@color/account_accent" />
-            <corners android:radius="10dp" />
+            <corners android:radius="@dimen/button_corner_radius" />
         </shape>
     </item>
 </ripple>
