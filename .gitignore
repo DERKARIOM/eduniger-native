@@ -10,3 +10,4 @@ app-web/
 keystore.properties
 *.jks
 elim-release*.jks
+deploy/hostinger/api/env.production.api
