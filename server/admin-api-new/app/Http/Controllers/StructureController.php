@@ -130,8 +130,14 @@ class StructureController extends Controller
             ? StructUser::where('idUser', $idUser)->pluck('idStruct')->map(fn ($id) => (string) $id)->all()
             : [];
 
-        $structures = $structures->map(function (Structure $structure) use ($joinedIds) {
+        // Nombre reel de livres par structure (le compteur stocke bookNumber n'est pas
+        // tenu a jour) : une seule requete groupee pour toute la liste.
+        $bookCounts = StructBook::select('idStruct', DB::raw('COUNT(*) as total'))
+            ->groupBy('idStruct')->pluck('total', 'idStruct');
+
+        $structures = $structures->map(function (Structure $structure) use ($joinedIds, $bookCounts) {
             $structure->isAdhere = in_array((string) $structure->id, $joinedIds, true);
+            $structure->bookNumber = (int) ($bookCounts[$structure->id] ?? 0);
             return $structure;
         });
 
@@ -159,7 +165,7 @@ class StructureController extends Controller
             'logo' => $structure->logo,
             'banner' => $structure->banner,
             'adhererNumber' => $structure->adhererNumber,
-            'bookNumber' => $structure->bookNumber,
+            'bookNumber' => StructBook::where('idStruct', $structure->id)->count(),
             'location' => $structure->location,
             'isAdhere' => $isAdhere,
             'created_at' => $structure->created_at,
