@@ -20,14 +20,18 @@ if [ -f app/Services/NextCloudStorage.php ] && [ ! -f app/Services/NextcloudStor
 fi
 
 echo "→ Dépendances (sans les outils de développement)"
-composer install --no-dev --optimize-autoloader --no-interaction
+# Hostinger désactive proc_open : Composer ne peut pas lancer les scripts post-install,
+# on les exécute donc nous-mêmes juste après.
+composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
+php artisan package:discover --ansi
 
 echo "→ Migrations en attente (la base importée contient déjà les tables)"
 php artisan migrate:status | tail -n 5
 php artisan migrate --force
 
 echo "→ Lien public vers storage/"
-php artisan storage:link || true
+# La fonction PHP symlink() est désactivée chez Hostinger : lien créé par le shell.
+[ -L public/storage ] || ln -s ../storage/app/public public/storage
 
 echo "→ Caches de production"
 php artisan config:cache
