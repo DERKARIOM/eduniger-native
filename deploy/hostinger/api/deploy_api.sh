@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 # Mise à jour de l'API Laravel d'Elim sur Hostinger (à lancer en SSH).
-#   bash ~/domains/api.kawtal-consulting.com/elim-api/deploy/deploy_api.sh
-# Prérequis : le code est à jour dans ~/domains/api.kawtal-consulting.com/elim-api
+#   bash ~/elim-api/deploy/deploy_api.sh
+# Prérequis : le code est à jour dans ~/elim-api (hors public_html ; le sous-domaine
+#             api.kawtal-consulting.com pointe vers ~/elim-api/public par un lien symbolique)
 #             (git pull ou envoi SFTP) et le fichier .env est rempli.
 set -euo pipefail
 
-APP_DIR="$HOME/domains/api.kawtal-consulting.com/elim-api"
+APP_DIR="$HOME/elim-api"
 cd "$APP_DIR"
 
 echo "→ Mode maintenance"
@@ -14,7 +15,8 @@ php artisan down --retry=30 || true
 echo "→ Dépendances (sans les outils de développement)"
 composer install --no-dev --optimize-autoloader --no-interaction
 
-echo "→ Migrations de base de données"
+echo "→ Migrations en attente (la base importée contient déjà les tables)"
+php artisan migrate:status | tail -n 5
 php artisan migrate --force
 
 echo "→ Lien public vers storage/"

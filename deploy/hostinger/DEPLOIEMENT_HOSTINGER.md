@@ -6,9 +6,9 @@ Domaine : **kawtal-consulting.com** · Offre : **Business Web Hosting** (hPanel,
 
 | Sous-domaine | Rôle | Racine web |
 |---|---|---|
-| `elim.kawtal-consulting.com` | API PHP historique (`/eduniger/api/…`) et ressources (`/fabi/ressources/…`) | `~/domains/elim.kawtal-consulting.com/public_html` |
-| `api.kawtal-consulting.com` | API Laravel 12 (`/api/…`) | lien symbolique vers `~/domains/api.kawtal-consulting.com/elim-api/public` |
-| `admin.kawtal-consulting.com` | Back-office web (application React) | `~/domains/admin.kawtal-consulting.com/public_html` |
+| `elim.kawtal-consulting.com` | API PHP historique (`/eduniger/api/…`) et ressources (`/fabi/ressources/…`) | `~/domains/kawtal-consulting.com/public_html/elim` |
+| `api.kawtal-consulting.com` | API Laravel 12 (`/api/…`) | `~/domains/kawtal-consulting.com/public_html/api` → lien symbolique vers `~/elim-api/public` |
+| `admin.kawtal-consulting.com` | Back-office web (application React) | `~/domains/kawtal-consulting.com/public_html/admin` |
 | *(inchangé)* `78.46.46.154` | Assistant IA et stockage des fichiers (Hetzner) | — |
 
 Secrets (jamais dans `public_html`) : `~/private/`
@@ -17,7 +17,7 @@ Secrets (jamais dans `public_html`) : `~/private/`
 - `fabi-e56e6-service-account.json` : compte de service de l'ancienne application, facultatif
 - `my.cnf` : identifiants pour la sauvegarde MySQL
 
-> `~` = `/home/uXXXXXXXX`. Le nom exact apparaît dans hPanel → Avancé → Accès SSH.
+> `~` = `/home/u883737194`. Sur Hostinger, les sous-domaines sont rangés dans `~/domains/kawtal-consulting.com/public_html/<sous-domaine>`. Le nom exact apparaît dans hPanel → Avancé → Accès SSH.
 
 ---
 
@@ -51,7 +51,7 @@ mkdir -p ~/private && chmod 700 ~/private
 ```
 
 ## Étape 5 — API PHP historique (`elim.kawtal-consulting.com`)
-1. Envoyer dans `~/domains/elim.kawtal-consulting.com/public_html/`, par le **Gestionnaire de fichiers** ou en SFTP :
+1. Envoyer dans `~/domains/kawtal-consulting.com/public_html/elim/`, par le **Gestionnaire de fichiers** ou en SFTP :
    - `.htaccess`, depuis `deploy/hostinger/elim/public_html/.htaccess` ;
    - `eduniger/connectBDD.php`, depuis `deploy/hostinger/elim/public_html/eduniger/connectBDD.php` ;
    - `eduniger/api/`, avec **tout le contenu de `server/api/` sauf `hash_password.php`**, qui ne doit pas être envoyé ;
@@ -69,16 +69,16 @@ mkdir -p ~/private && chmod 700 ~/private
    Le serveur doit répondre en JSON. Une erreur « Configuration serveur manquante » signifie que `~/private/elim-config.php` est absent ou illisible.
 
 ## Étape 6 — API Laravel (`api.kawtal-consulting.com`)
-1. Envoyer le dossier `server/admin-api-new/` **sans `vendor/` ni `.env`** dans `~/domains/api.kawtal-consulting.com/elim-api/`. Le plus simple est de le compresser en zip, de l'envoyer avec le Gestionnaire de fichiers, puis de cliquer sur « Extraire ».
+1. Envoyer le dossier `server/admin-api-new/` **sans `vendor/` ni `.env`** dans `~/elim-api/`. Le plus simple est de le compresser en zip, de l'envoyer avec le Gestionnaire de fichiers, puis de cliquer sur « Extraire ».
 2. Créer `elim-api/.env` à partir de `deploy/hostinger/api/env.production.example`. **Reprendre l'`APP_KEY` actuelle.**
 3. Faire pointer la racine du sous-domaine vers `public/` :
    ```
-   cd ~/domains/api.kawtal-consulting.com
-   mv public_html public_html.vide && ln -s elim-api/public public_html
+   cd ~/domains/kawtal-consulting.com/public_html
+   rm -rf api && ln -s ~/elim-api/public api
    ```
 4. Copier `deploy/hostinger/api/deploy_api.sh` dans `elim-api/deploy/`, puis lancer :
    ```
-   bash ~/domains/api.kawtal-consulting.com/elim-api/deploy/deploy_api.sh
+   bash ~/elim-api/deploy/deploy_api.sh
    ```
    Le script installe les dépendances (`composer install --no-dev`), lance les migrations, crée le lien `storage:link`, met en place les caches de production et règle les droits.
 5. Test :
@@ -102,7 +102,7 @@ chmod 600 ~/private/my.cnf
 ```
 
 ## Étape 8 — Back-office (`admin.kawtal-consulting.com`)
-Envoyer le contenu de `deploy/hostinger/admin/` (`index.html`, `assets/`, `.htaccess`) dans `~/domains/admin.kawtal-consulting.com/public_html/`.
+Envoyer le contenu de `deploy/hostinger/admin/` (`index.html`, `assets/`, `.htaccess`) dans `~/domains/kawtal-consulting.com/public_html/admin/`.
 
 Ce build est l'ancien `web-dist`, dont l'adresse locale `172.20.10.10:8000` a été remplacée par `https://api.kawtal-consulting.com`. Le temps réel (Reverb) n'est pas disponible sur l'offre Business : le back-office fonctionne, mais sans mises à jour en direct.
 
