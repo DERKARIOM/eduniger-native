@@ -70,7 +70,7 @@ mkdir -p ~/private && chmod 700 ~/private
 
 ## Étape 6 — API Laravel (`api.kawtal-consulting.com`)
 1. Envoyer le dossier `server/admin-api-new/` **sans `vendor/` ni `.env`** dans `~/domains/api.kawtal-consulting.com/elim-api/`. Le plus simple est de le compresser en zip, de l'envoyer avec le Gestionnaire de fichiers, puis de cliquer sur « Extraire ».
-2. Créer `elim-api/.env` à partir de `deploy/hostinger/api/.env.production.example`. **Reprendre l'`APP_KEY` actuelle.**
+2. Créer `elim-api/.env` à partir de `deploy/hostinger/api/env.production.example`. **Reprendre l'`APP_KEY` actuelle.**
 3. Faire pointer la racine du sous-domaine vers `public/` :
    ```
    cd ~/domains/api.kawtal-consulting.com
