@@ -64,6 +64,9 @@ public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";
     private static final String DEFAULT_TOKEN = "null";
     private static final String UPDATE_URL = "https://eduniger.com";
+    private static final String GOOGLE_REJECTED = "googleRejected";
+    private static final String GOOGLE_EMAIL_LINKED = "googleEmailLinked";
+    private static final String GOOGLE_UNAVAILABLE = "googleUnavailable";
 
     // Views
     private EditText mIdNumberEditText;
@@ -85,6 +88,7 @@ public class LoginActivity extends AppCompatActivity {
     private OkHttpClient mHttpClient;
     private static final int RC_SIGN_IN = 9001;
     private GoogleSignInClient mGoogleSignInClient;
+    private String mGoogleWebClientId;
     private boolean mIsNightMode;
 
     @Override
@@ -161,12 +165,24 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void setupGoogleSignIn() {
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .requestProfile()
-                .build();
+        // L'ID token est indispensable : c'est lui que le serveur fait verifier par Google.
+        // Sans lui, le serveur ne peut pas savoir qui se connecte (l'ancien flux envoyait
+        // un simple identifiant Google, falsifiable). "default_web_client_id" est genere
+        // par le plugin google-services a partir du client OAuth « Web » present dans
+        // google-services.json. Recherche dynamique : si le fichier n'en contient pas
+        // encore, l'application compile quand meme et le bouton affiche un message clair.
+        int webClientIdRes = getResources().getIdentifier(
+                "default_web_client_id", "string", getPackageName());
+        mGoogleWebClientId = webClientIdRes != 0 ? getString(webClientIdRes) : null;
 
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        GoogleSignInOptions.Builder builder =
+                new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                        .requestEmail()
+                        .requestProfile();
+        if (mGoogleWebClientId != null && !mGoogleWebClientId.isEmpty()) {
+            builder.requestIdToken(mGoogleWebClientId);
+        }
+        mGoogleSignInClient = GoogleSignIn.getClient(this, builder.build());
     }
 
     private void setupListeners() {
@@ -216,8 +232,16 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void launchGoogleSignIn() {
-        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-        startActivityForResult(signInIntent, RC_SIGN_IN);
+        if (mGoogleWebClientId == null || mGoogleWebClientId.isEmpty()) {
+            Log.e(TAG, "default_web_client_id absent : google-services.json sans client OAuth Web");
+            mErrorTextView.setText(R.string.google_signin_not_configured);
+            return;
+        }
+        mErrorTextView.setText("");
+        // signOut() avant : sinon Google reprend silencieusement le dernier compte utilise
+        // et l'utilisateur ne peut jamais choisir un autre compte.
+        mGoogleSignInClient.signOut().addOnCompleteListener(this, t ->
+                startActivityForResult(mGoogleSignInClient.getSignInIntent(), RC_SIGN_IN));
     }
 
     @Override
@@ -235,26 +259,47 @@ public class LoginActivity extends AppCompatActivity {
             GoogleSignInAccount googleAccount = completedTask.getResult(ApiException.class);
             performGoogleLogin(googleAccount);
         } catch (ApiException e) {
-            Log.w(TAG, "Google sign-in failed, code: " + e.getStatusCode());
-            mErrorTextView.setText(R.string.no_connection);
+            int code = e.getStatusCode();
+            Log.w(TAG, "Google sign-in failed, code: " + code);
+            switch (code) {
+                case 12501: // GoogleSignInStatusCodes.SIGN_IN_CANCELLED : l'utilisateur a ferme
+                    break;
+                case 7:     // CommonStatusCodes.NETWORK_ERROR
+                    mErrorTextView.setText(R.string.no_connection);
+                    break;
+                case 10:    // DEVELOPER_ERROR : SHA-1 de la cle de signature absent de Firebase
+                    Log.e(TAG, "DEVELOPER_ERROR : ajoutez le SHA-1 de cette signature dans Firebase (elim-16f44)");
+                    mErrorTextView.setText(R.string.google_signin_not_configured);
+                    break;
+                default:
+                    mErrorTextView.setText(R.string.google_signin_failed);
+                    break;
+            }
         }
     }
 
     private void performGoogleLogin(GoogleSignInAccount googleAccount) {
+        String idToken = googleAccount.getIdToken();
+        if (idToken == null || idToken.isEmpty()) {
+            Log.e(TAG, "Google n'a pas fourni d'ID token (client OAuth Web incorrect ?)");
+            mErrorTextView.setText(R.string.google_signin_not_configured);
+            return;
+        }
+
+        // Compte local temporaire : identite et profil viennent de la reponse serveur
+        // (handleSuccessfulLogin). Pas de mot de passe local pour un compte Google.
+        String email = googleAccount.getEmail() != null ? googleAccount.getEmail() : "";
+        mAccount = new Account(email, "");
+        mIsNightMode = isNightMode();
         setLoadingState(true);
 
-        String googleId  = googleAccount.getId();
-        String email     = googleAccount.getEmail()      != null ? googleAccount.getEmail()      : "";
-        String name      = googleAccount.getFamilyName() != null ? googleAccount.getFamilyName() : "";
-        String firstName = googleAccount.getGivenName()  != null ? googleAccount.getGivenName()  : "";
-
-        new GoogleLoginTask(this).execute(
-                Server.getUrlApi(getApplicationContext()) + "login_google.php",
-                googleId,
-                email,
-                name,
-                firstName
-        );
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
+            mToken = task.isSuccessful() && task.getResult() != null
+                    ? task.getResult() : DEFAULT_TOKEN;
+            new GoogleLoginTask(this).execute(
+                    Server.getUrlHostProd(getApplicationContext()) + "/api/user/login/google",
+                    idToken);
+        });
     }
 
     private void setupAnimations() {
@@ -424,6 +469,23 @@ public class LoginActivity extends AppCompatActivity {
     // ==================== Response Handling ====================
 
     private void handleLoginResponse(String jsonData) {
+        // Erreurs propres a la connexion Google (voir GoogleLoginTask)
+        if (GOOGLE_REJECTED.equals(jsonData)) {
+            setLoadingState(false);
+            mErrorTextView.setText(R.string.google_signin_rejected);
+            return;
+        }
+        if (GOOGLE_EMAIL_LINKED.equals(jsonData)) {
+            setLoadingState(false);
+            mErrorTextView.setText(R.string.google_signin_email_linked);
+            return;
+        }
+        if (GOOGLE_UNAVAILABLE.equals(jsonData)) {
+            setLoadingState(false);
+            mErrorTextView.setText(R.string.google_signin_failed);
+            return;
+        }
+
         String controlResult = mAccount.dataControl(jsonData);
 
         switch (controlResult) {
@@ -497,6 +559,14 @@ public class LoginActivity extends AppCompatActivity {
             mAccount.setFirstName(user.optString("firstName", ""));
             mAccount.setEmail(user.optString("email", ""));
             mAccount.setPhoneNumber(user.optString("phoneNumber", mAccount.getIdNumber()));
+            // Connexion Google : l'identifiant local provisoire est l'email ; si le compte
+            // a un numero (compte existant lie a Google), on garde le numero, comme pour
+            // une connexion classique.
+            String phone = user.isNull("phoneNumber") ? "" : user.optString("phoneNumber", "");
+            if (mAccount.getIdNumber() != null && mAccount.getIdNumber().contains("@")
+                    && !phone.isEmpty()) {
+                mAccount.setIdNumber(phone);
+            }
             mAccount.setProfession(user.optLong("profession", 0));
             // Le mot de passe (hache) n'est jamais renvoye par l'API (champ "hidden" cote
             // Laravel) : mAccount.getPassword() garde deja la valeur hachee localement par
@@ -578,26 +648,40 @@ public class LoginActivity extends AppCompatActivity {
             if (activity == null || activity.mHttpClient == null) return null;
 
             try {
-                RequestBody requestBody = new MultipartBody.Builder()
-                        .setType(MultipartBody.FORM)
-                        .addFormDataPart("google_id", params[1])
-                        .addFormDataPart("email",     params[2])
-                        .addFormDataPart("name",      params[3])
-                        .addFormDataPart("firstName", params[4])
-                        .addFormDataPart("token",     "ras")
-                        .addFormDataPart("version",
-                                activity.getResources().getString(R.string.app_version))
-                        .build();
+                // Seul l'ID token Google est envoye : le serveur le fait verifier par Google
+                // et en extrait lui-meme l'identite (email, nom, prenom).
+                JSONObject payload = new JSONObject();
+                payload.put("idToken", params[1]);
+                if (activity.mToken != null && !DEFAULT_TOKEN.equals(activity.mToken)) {
+                    payload.put("fcmToken", activity.mToken);
+                }
 
                 Request request = new Request.Builder()
                         .url(params[0])
-                        .post(requestBody)
+                        .header("Accept", "application/json")
+                        .post(RequestBody.create(
+                                MediaType.parse("application/json; charset=utf-8"),
+                                payload.toString()))
                         .build();
 
                 try (Response response = activity.mHttpClient.newCall(request).execute()) {
-                    if (response.body() != null) {
-                        Log.e("GooglePass", response.body().string());
-                        return response.body().string();
+                    // Corps lu UNE seule fois (l'ancien code le lisait deux fois : le second
+                    // string() levait une exception et la connexion echouait toujours).
+                    String body = response.body() != null ? response.body().string() : null;
+                    switch (response.code()) {
+                        case 200:
+                        case 201:
+                            return body;
+                        case 401:
+                        case 422:
+                            return GOOGLE_REJECTED;
+                        case 409:
+                            return GOOGLE_EMAIL_LINKED;
+                        case 429:
+                            return "accountLocked";
+                        default:
+                            Log.e(TAG, "Connexion Google : HTTP " + response.code());
+                            return GOOGLE_UNAVAILABLE;
                     }
                 } catch (IOException e) {
                     Log.e(TAG, "Google login network request failed", e);

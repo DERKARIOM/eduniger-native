@@ -39,6 +39,10 @@
     <string name="text_help">Besoin d\'aide</string>
     <string name="login_error_00">Votre numéro et mot de passe svp</string>
     <string name="account_not_exist">Ce compte n\' existe pas</string>
+    <string name="google_signin_not_configured">La connexion Google n\'est pas encore disponible sur cette version.</string>
+    <string name="google_signin_failed">Connexion Google impossible. Réessayez.</string>
+    <string name="google_signin_rejected">Votre compte Google n\'a pas pu être vérifié.</string>
+    <string name="google_signin_email_linked">Cette adresse e-mail est déjà liée à un autre compte Google.</string>
     <string name="incorrect_password">Mot de passe incorrect</string>
     <string name="account_locked">Trop de tentatives incorrectes. Compte temporairement verrouille, reessayez dans quelques minutes.</string>
     <string name="forgot_password">j\'ai oublié mon mot de passe</string>
