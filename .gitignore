@@ -5,3 +5,8 @@ local.properties
 fabi/release/
 .idea/caches/
 app-web/
+
+# Signature release Elim (secrets)
+keystore.properties
+*.jks
+elim-release*.jks

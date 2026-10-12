@@ -1,0 +1,10 @@
+# hPanel → Avancé → Tâches cron (remplacer uXXXXXXXX par votre utilisateur)
+
+# Planificateur Laravel (chaque minute)
+* * * * * cd /home/uXXXXXXXX/domains/api.kawtal-consulting.com/elim-api && /usr/bin/php artisan schedule:run >> /dev/null 2>&1
+
+# File d'attente Laravel (traite les tâches en attente puis s'arrête ; relancée chaque minute)
+* * * * * cd /home/uXXXXXXXX/domains/api.kawtal-consulting.com/elim-api && /usr/bin/php artisan queue:work --stop-when-empty --max-time=55 >> /dev/null 2>&1
+
+# Sauvegarde MySQL quotidienne à 3 h, conservée 14 jours dans ~/backups
+0 3 * * * mkdir -p /home/uXXXXXXXX/backups && mysqldump --defaults-extra-file=/home/uXXXXXXXX/private/my.cnf uXXXXXXXX_elim | gzip > /home/uXXXXXXXX/backups/elim-$(date +\%F).sql.gz && find /home/uXXXXXXXX/backups -name "elim-*.sql.gz" -mtime +14 -delete
