@@ -81,7 +81,7 @@ Le fichier produit est `eduniger_native\build\outputs\bundle\release\eduniger_na
 - **Icône 512 × 512** : `deploy/google-play/icone-512.png`
 - **Bannière 1024 × 500** : `deploy/google-play/banniere-1024x500.png`
 - **Captures d'écran** : au moins 2 (téléphone), par exemple l'accueil, un livre, le lecteur audio et l'assistant Eduna. Prenez-les sur le téléphone, en mode sombre.
-- **Catégorie** : Éducation · **Coordonnées** : contact@kawtal-consulting.com
+- **Catégorie** : Éducation · **Coordonnées** : contact@naniger.com
 - **Politique de confidentialité** : `https://elim.kawtal-consulting.com/confidentialite.html`
 
 ### Accès à l'application (obligatoire : l'application exige un compte)
