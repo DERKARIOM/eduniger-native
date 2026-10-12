@@ -36,6 +36,9 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/user/login', [UserAuthController::class, 'login']);
 Route::post('/user/register', [UserAuthController::class, 'register']);
+// Connexion « Continuer avec Google » de l'application mobile : l'ID token Google est
+// verifie cote serveur (signature, audience, expiration). Limite a 10 essais/minute/IP.
+Route::post('/user/login/google', [UserAuthController::class, 'loginWithGoogle'])->middleware('throttle:10,1');
 
 // Route PUBLIQUE (aucune authentification) : sert couvertures, PDF, audio et photos
 // d'auteur pour les LECTEURS (catalogue public Web + application mobile), qui n'ont

@@ -26,11 +26,13 @@ class User extends Authenticatable
         'isAdmin',
         'password',
         'fcm_token',
+        'google_id',
     ];
 
     protected $hidden = [
         'password',
         'remember_token',
+        'google_id',
     ];
 
     protected $casts = [

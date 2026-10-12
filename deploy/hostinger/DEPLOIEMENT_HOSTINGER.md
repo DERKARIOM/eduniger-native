@@ -146,6 +146,6 @@ Déjà fait dans le code (branche `feat/prod-hostinger`) :
 - Les sauvegardes quotidiennes de Hostinger sont actives. Vérifier aussi `~/backups/`.
 
 ## Points connus, à traiter ensuite
-- **Connexion Google** : `login_google.php` ne vérifie pas le jeton Google. À corriger avant d'ouvrir largement l'application.
+- **Connexion Google** : corrigée. L'application appelle `POST /api/user/login/google` (Laravel), qui fait vérifier l'ID token par Google. `login_google.php` n'est plus utilisé et peut être supprimé du serveur.
 - **Endpoints absents du serveur** : l'application appelle `AddBook.php`, `Category.php`, `CategoryIn.php`, `GradeSyn.php` et `upload.php`, qui n'existent pas dans `server/api/`. Les fichiers présents s'appellent `add_book.php`, `category.php`… et Linux distingue les majuscules. Ces fonctions ne marchaient déjà pas sur l'ancien serveur.
 - **Ancienne clé de signature** : le fichier `keystore` est encore versionné dans le dépôt GitHub public. Ne pas l'utiliser pour Elim, et le retirer de l'historique Git.
