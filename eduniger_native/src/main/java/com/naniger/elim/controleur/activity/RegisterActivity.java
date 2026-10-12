@@ -464,9 +464,7 @@ public class RegisterActivity extends AppCompatActivity {
         annuler.setOnClickListener(v -> updateDialog.cancel());
 
         installer.setOnClickListener(v -> {
-            // Ancien : lien vers la fiche Play Store de com.ninotech.fabi, reliquat du
-            // rebranding Fabi -> EduNiger. Le vrai applicationId de cette app est
-            // com.naniger.elim (build.gradle).
+            // Fiche Play Store d'Elim (applicationId com.naniger.elim, voir build.gradle).
             String url = "https://play.google.com/store/apps/details?id=com.naniger.elim";
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
             startActivity(intent);

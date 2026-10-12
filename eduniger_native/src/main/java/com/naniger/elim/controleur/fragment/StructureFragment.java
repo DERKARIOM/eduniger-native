@@ -92,7 +92,6 @@ public class StructureFragment extends Fragment {
 
     private void setupStories() {
         mStories.add(new StructureStory("1", "eduniger.png",  "Elim",   true));
-        mStories.add(new StructureStory("2", "ninotech.png",  "NinoTech",   true));
         mStories.add(new StructureStory("3", "sosbac.png",    "SOS BAC",    false));
         mStories.add(new StructureStory("4", "uaz.png",       "UAZ",        true));
         mStories.add(new StructureStory("5", "inp.png",       "INP-HB",     false));

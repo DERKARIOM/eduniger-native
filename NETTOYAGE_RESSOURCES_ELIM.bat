@@ -1,5 +1,5 @@
 @echo off
-REM Supprime les ressources des anciennes marques (Fabi / FAST / UAM) devenues inutiles.
+REM Supprime les ressources des anciennes marques (Fabi / FAST / UAM / NinoTech) devenues inutiles.
 REM Aucune n est referencee dans le code (verifie). A lancer une fois depuis la racine du projet.
 cd /d "%~dp0eduniger_native\src\main\res" || (echo Dossier res introuvable & pause & exit /b 1)
 if exist "drawable\cati.png" del /q "drawable\cati.png"
@@ -53,6 +53,7 @@ if exist "mipmap-xxxhdpi\ic_fabi_foreground.webp" del /q "mipmap-xxxhdpi\ic_fabi
 if exist "mipmap-xxxhdpi\ic_fabi_round.webp" del /q "mipmap-xxxhdpi\ic_fabi_round.webp"
 if exist "mipmap-xxxhdpi\ic_launcher.png" del /q "mipmap-xxxhdpi\ic_launcher.png"
 if exist "mipmap-xxxhdpi\ic_launcher_round.png" del /q "mipmap-xxxhdpi\ic_launcher_round.png"
+if exist "drawable\img_ninotech.png" del /q "drawable\img_ninotech.png"
 REM Dossier values-fr mal structure (values-fr\values\...), ignore par Android et contenant encore "Fabi"
 if exist "values-fr" rmdir /s /q "values-fr"
 echo Nettoyage termine.
