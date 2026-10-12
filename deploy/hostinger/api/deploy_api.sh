@@ -9,6 +9,9 @@ set -euo pipefail
 APP_DIR="$HOME/elim-api"
 cd "$APP_DIR"
 
+# En cas d'échec, ne pas laisser l'API bloquée en mode maintenance
+trap 'echo "✘ Échec du déploiement : remise en ligne de la version précédente"; php artisan up' ERR
+
 echo "→ Mode maintenance"
 php artisan down --retry=30 || true
 
