@@ -70,7 +70,7 @@ Générez ensuite le bundle à envoyer :
 ```
 .\gradlew.bat clean bundleRelease
 ```
-Le fichier produit est `eduniger_native\build\outputs\bundle\release\eduniger_native-release.aab`.
+Le fichier produit est `eduniger_native\build\outputs\bundle\release\elim-release.aab`.
 
 ## 4. Play Console : fiche et formulaires
 
