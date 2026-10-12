@@ -12,7 +12,20 @@
           "package_name": "com.naniger.elim"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "95597298490-eqm95hjiv7o34sv88b7fbqhrh13rcuju.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.naniger.elim",
+            "certificate_hash": "e23837ede377cc8f9c6c81b4588726992006dcc3"
+          }
+        },
+        {
+          "client_id": "95597298490-kup11l0iqgc0tjj5955eqno7jlgj55al.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCfHrV3b-RB7VQ8OeSIqF8ZHbSM7gHAuJM"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "95597298490-kup11l0iqgc0tjj5955eqno7jlgj55al.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
