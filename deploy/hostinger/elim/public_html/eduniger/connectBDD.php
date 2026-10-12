@@ -43,6 +43,9 @@ try {
         $elimConfig['db_password'],
         [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
     );
+    // MySQL 8 (Hostinger) active ONLY_FULL_GROUP_BY par défaut, contrairement à l'ancienne
+    // base MariaDB : plusieurs scripts (books.php, book.php, category_in.php…) en dépendent.
+    $pdo->exec("SET SESSION sql_mode = REPLACE(@@SESSION.sql_mode, 'ONLY_FULL_GROUP_BY', '')");
 } catch (PDOException $e) {
     // Ne jamais renvoyer le détail de l'erreur (identifiants, hôte) au client.
     error_log('connectBDD: ' . $e->getMessage());
