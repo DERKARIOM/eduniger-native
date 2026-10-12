@@ -12,6 +12,13 @@ cd "$APP_DIR"
 echo "→ Mode maintenance"
 php artisan down --retry=30 || true
 
+echo "→ Nettoyage des caches venus d'un autre environnement"
+rm -f bootstrap/cache/*.php
+# Linux distingue la casse : le fichier doit porter le nom exact de la classe
+if [ -f app/Services/NextCloudStorage.php ] && [ ! -f app/Services/NextcloudStorage.php ]; then
+    mv app/Services/NextCloudStorage.php app/Services/NextcloudStorage.php
+fi
+
 echo "→ Dépendances (sans les outils de développement)"
 composer install --no-dev --optimize-autoloader --no-interaction
 
