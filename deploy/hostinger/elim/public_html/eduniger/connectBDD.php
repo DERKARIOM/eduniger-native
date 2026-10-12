@@ -47,4 +47,4 @@ try {
     echo json_encode(['success' => false, 'error' => 'Base de données indisponible']);
     exit;
 }
-unset($elimConfig);
+unset($elimConfig, $elimHome, $m);
