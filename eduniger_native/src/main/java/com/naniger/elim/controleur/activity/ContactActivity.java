@@ -25,7 +25,6 @@ public class ContactActivity extends AppCompatActivity {
         RecyclerView mSettingRecyclerView = findViewById(R.id.recycler_view_activity_contact);
         ArrayList<Setting> settings = new ArrayList<>();
         settings.add(new Setting(R.mipmap.ic_v2,"L'équipe Elim","227-94961793"));
-        settings.add(new Setting(R.drawable.img_ninotech,"L'équipe NinoTech","227-96627534"));
 
         SettingAdapter mSettingAdapter = new SettingAdapter(settings);
         mSettingRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
@@ -41,4 +40,4 @@ public class ContactActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-}
+}

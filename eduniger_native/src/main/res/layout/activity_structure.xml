@@ -272,7 +272,7 @@
                             android:id="@+id/text_view_activity_structure_author"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="\@ninotech" />
+                            android:text="\@elim" />
 
                         <TextView
                             android:id="@+id/image_view_activity_structure_number"

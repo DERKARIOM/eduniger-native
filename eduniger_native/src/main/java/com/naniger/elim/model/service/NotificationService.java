@@ -15,7 +15,7 @@
 //import androidx.core.app.NotificationCompat;
 //import androidx.core.app.NotificationManagerCompat;
 //
-//import com.ninotech.fabi.R;
+//import com.naniger.elim.R;
 //import com.naniger.elim.controleur.activity.NotificationActivity;
 //import com.naniger.elim.model.data.AudioDownloader;
 //import com.naniger.elim.model.data.DownloadFile;
@@ -461,4 +461,4 @@
 //    private String mIdNumber;
 //    private NotificationTable mNotificationTable;
 //    private LoandTable mLoandTable;
-//}
+//}

@@ -78,7 +78,7 @@
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
-        android:text="NINOTECH"
+        android:text="ELIM"
         android:textSize="@dimen/size_sub_title"
         style="@style/text_view_pass_login_register" />
 </RelativeLayout>

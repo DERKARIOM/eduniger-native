@@ -658,7 +658,7 @@ public class HomeFragment extends Fragment {
         private void setupServerRecyclerView() {
             mServers.clear();
             mServers.add(createStructure("AddBook", "eduniger.png",
-                    "Ajouter un contenu", "@ninotech", "Créez librement", "0"));
+                    "Ajouter un contenu", "@elim", "Créez librement", "0"));
             mServerdRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
             mServerdRecyclerView.setAdapter(mServerAdapter);
         }

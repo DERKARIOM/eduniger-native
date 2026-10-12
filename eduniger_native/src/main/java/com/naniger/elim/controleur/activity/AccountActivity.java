@@ -91,7 +91,6 @@ public class AccountActivity extends AppCompatActivity {
                     settings.add(new Setting(R.drawable.vector_white_sombre_identify,"Nom",account.getName()));
                     settings.add(new Setting(R.drawable.vector_white_sombre_family,"Prénom",account.getFirstName()));
                     settings.add(new Setting(R.drawable.vector_white_sombre_lock,"Modifier le mot de passe",null));
-                    settings.add(new Setting(R.drawable.img_google,"Identifiant de réseau social","Se connecter avec google"));
                     settings.add(new Setting(R.drawable.vector_white_sombre_email,account.getEmail(),null));
                     settings.add(new Setting(R.drawable.vector_warning,"Supprimer le compte","La suppression de votre compte est permante et immédiate. Une fois votre compte supprimé, vous perdrez l'accès à vos service Elim"));
                 } else {
@@ -99,7 +98,6 @@ public class AccountActivity extends AppCompatActivity {
                     settings.add(new Setting(R.drawable.vector_black3_identify,"Nom",account.getName()));
                     settings.add(new Setting(R.drawable.vector_family,"Prénom",account.getFirstName()));
                     settings.add(new Setting(R.drawable.vector_black3_lock,"Modifier le mot de passe",null));
-                    settings.add(new Setting(R.drawable.img_google,"Identifiant de réseau social","Se connecter avec google"));
                     settings.add(new Setting(R.drawable.vector_black3_email,account.getEmail(),null));
                     settings.add(new Setting(R.drawable.vector_warning,"Supprimer le compte","La suppression de votre compte est permante et immédiate. Une fois votre compte supprimé, vous perdrez l'accès à vos service Elim"));
                 }
@@ -109,7 +107,6 @@ public class AccountActivity extends AppCompatActivity {
                 settings.add(new Setting(R.drawable.vector_black3_identify,"Nom",account.getName()));
                 settings.add(new Setting(R.drawable.vector_family,"Prénom",account.getFirstName()));
                 settings.add(new Setting(R.drawable.vector_black3_lock,"Modifier le mot de passe",null));
-                settings.add(new Setting(R.drawable.img_google,"Identifiant de réseau social","Se connecter avec google"));
                 settings.add(new Setting(R.drawable.vector_black3_email,account.getEmail(),null));
                 settings.add(new Setting(R.drawable.vector_warning,"Supprimer le compte","La suppression de votre compte est permante et immédiate. Une fois votre compte supprimé, vous perdrez l'accès à vos service Elim"));
                 break;
@@ -117,7 +114,6 @@ public class AccountActivity extends AppCompatActivity {
                 settings.add(new Setting(R.drawable.vector_white_sombre_identify,"Nom",account.getName()));
                 settings.add(new Setting(R.drawable.vector_white_sombre_family,"Prénom",account.getFirstName()));
                 settings.add(new Setting(R.drawable.vector_white_sombre_lock,"Modifier le mot de passe",null));
-                settings.add(new Setting(R.drawable.img_google,"Identifiant de réseau social","Se connecter avec google"));
                 settings.add(new Setting(R.drawable.vector_white_sombre_email,account.getEmail(),null));
                 settings.add(new Setting(R.drawable.vector_warning,"Supprimer le compte","La suppression de votre compte est permante et immédiate. Une fois votre compte supprimé, vous perdrez l'accès à vos service Elim"));
                 break;
@@ -260,4 +256,4 @@ public class AccountActivity extends AppCompatActivity {
     private UserTable mUserTable;
     private File mImageFile;
     private Session mSession;
-}
+}
