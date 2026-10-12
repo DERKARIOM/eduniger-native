@@ -251,7 +251,7 @@ public class AccountActivity extends AppCompatActivity {
     }
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_IMAGE_GALLERY = 2;
-    private RelativeLayout mPhotoRelativeLayout;
+    private View mPhotoRelativeLayout;
     private ImageView mPhotoImageView;
     private UserTable mUserTable;
     private File mImageFile;

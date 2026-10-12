@@ -1,15 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<!-- Sous-page de parametres : liste regroupee dans une carte, comme la page Compte. -->
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/account_bg"
+    android:fillViewport="true"
+    android:fitsSystemWindows="true"
     tools:context=".controleur.activity.ContactActivity">
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_activity_contact"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="10dp"
-        />
-</RelativeLayout>
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/bg_account_card"
+        android:clipToPadding="false"
+        android:nestedScrollingEnabled="false"
+        android:overScrollMode="never" />
+</androidx.core.widget.NestedScrollView>
