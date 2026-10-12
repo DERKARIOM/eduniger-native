@@ -534,15 +534,9 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.MyViewHo
                         public void onClick(DialogInterface dialog, int which) {
                             switch (which) {
                                 case 0:
-                                    if (ContextCompat.checkSelfPermission(itemView.getContext(), Manifest.permission.CALL_PHONE)
-                                            != PackageManager.PERMISSION_GRANTED) {
-                                        ActivityCompat.requestPermissions((Activity) itemView.getContext(),
-                                                new String[]{Manifest.permission.CALL_PHONE},
-                                                1);
-                                    } else {
-                                        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phoneNumber));
-                                        itemView.getContext().startActivity(intent);
-                                    }
+                                    // Composeur pre-rempli : pas de permission CALL_PHONE requise
+                                    itemView.getContext().startActivity(
+                                            new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phoneNumber)));
                                     break;
                                 case 1:
                                     // Envoyer via SMS

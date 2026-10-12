@@ -327,7 +327,7 @@ public class LoginActivity extends AppCompatActivity {
                         return;
                     }
                     mToken = task.getResult();
-                    Log.d(TAG, "Firebase token pré-chargé : " + mToken);
+                    Log.d(TAG, "Firebase token pré-chargé");
                 });
     }
 
@@ -356,7 +356,7 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && task.getResult() != null) {
                         mToken = task.getResult();
-                        Log.d(TAG, "Token FCM récupéré : " + mToken);
+                        Log.d(TAG, "Token FCM récupéré");
                     } else {
                         // Token non disponible → on envoie "null" quand même
                         mToken = DEFAULT_TOKEN;
