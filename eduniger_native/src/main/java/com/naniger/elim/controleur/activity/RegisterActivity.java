@@ -131,6 +131,15 @@ public class RegisterActivity extends AppCompatActivity {
         mConnectionButton.setOnClickListener(v -> handleRegistration());
         mLoginTextView.setOnClickListener(v -> navigateToLogin());
 
+        // « Continuer avec Google » : on reutilise le flux de LoginActivity (ID token
+        // verifie par le serveur, creation du compte s'il n'existe pas) au lieu de le
+        // dupliquer ici. LoginActivity ouvre directement le selecteur de compte Google.
+        findViewById(R.id.linear_layout_activity_register_google).setOnClickListener(v -> {
+            Intent google = new Intent(RegisterActivity.this, LoginActivity.class);
+            google.putExtra(LoginActivity.EXTRA_START_GOOGLE, true);
+            startActivity(google);
+        });
+
         // ✅ AJOUTÉ : toggle mot de passe
         mTogglePasswordButton.setOnClickListener(v -> {
             mIsPasswordVisible = !mIsPasswordVisible;
@@ -471,4 +480,4 @@ public class RegisterActivity extends AppCompatActivity {
         super.onDestroy();
         mHttpClient = null;
     }
-}
+}
