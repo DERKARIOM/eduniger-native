@@ -937,7 +937,7 @@ public class HomeFragment extends Fragment {
         TextView installer = dialog.findViewById(R.id.installer);
 
         annuler.setOnClickListener(v -> handleLogout(dialog));
-        installer.setOnClickListener(v -> openWebsite("https://eduniger.com"));
+        installer.setOnClickListener(v -> openWebsite(getString(R.string.url_play_store)));
         dialog.setOnCancelListener(d -> handleLogout(dialog));
 
         dialog.build();
@@ -956,4 +956,4 @@ public class HomeFragment extends Fragment {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         startActivity(intent);
     }
-}
+}

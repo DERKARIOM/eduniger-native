@@ -14,7 +14,8 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" /> <!-- ==================== Permissions Système ==================== -->
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" /> <!-- ==================== Permissions Téléphone ==================== -->
-    <uses-permission android:name="android.permission.CALL_PHONE" /> <!-- ==================== Permissions Biométrie ==================== -->
+    <!-- CALL_PHONE retiree : les appels passent par ACTION_DIAL (composeur), sans permission. -->
+    <!-- ==================== Permissions Biométrie ==================== -->
     <uses-permission android:name="android.permission.USE_BIOMETRIC" />
     <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
     <uses-permission
@@ -226,7 +227,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="eduniger.com"
+                    android:host="elim.kawtal-consulting.com"
                     android:path="/open"
                     android:scheme="https" />
             </intent-filter>

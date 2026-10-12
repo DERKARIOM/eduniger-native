@@ -5,10 +5,10 @@ import android.content.SharedPreferences;
 import com.naniger.elim.R;
 
 /**
- * Point d'entree UNIQUE pour l'adresse du serveur EduNiger.
+ * Point d'entree UNIQUE pour l'adresse du serveur Elim.
  *
  * Pour faire evoluer l'application d'un serveur local de test (http://192.168.49.1:2222)
- * vers un serveur distant securise (ex: https://server.eduniger.com), il suffit de modifier
+ * vers un serveur distant securise (ex: https://elim.kawtal-consulting.com), il suffit de modifier
  * les ressources correspondantes dans res/values/strings.xml : url_server, url_api, url_host,
  * url_host_prod, url_ai. Aucune autre modification n'est necessaire ailleurs dans le code :
  * toute URL serveur doit etre construite a partir des getters de cette classe (getUrlServer,

@@ -65,7 +65,7 @@ public class LoginActivity extends AppCompatActivity {
     /** Extra : lancer directement « Continuer avec Google » (depuis l'inscription). */
     public static final String EXTRA_START_GOOGLE = "extra_start_google";
     private static final String DEFAULT_TOKEN = "null";
-    private static final String UPDATE_URL = "https://eduniger.com";
+    private static final String UPDATE_URL = "https://play.google.com/store/apps/details?id=com.naniger.elim";
     private static final String GOOGLE_REJECTED = "googleRejected";
     private static final String GOOGLE_EMAIL_LINKED = "googleEmailLinked";
     private static final String GOOGLE_UNAVAILABLE = "googleUnavailable";
@@ -327,7 +327,7 @@ public class LoginActivity extends AppCompatActivity {
                         return;
                     }
                     mToken = task.getResult();
-                    Log.d(TAG, "Firebase token pré-chargé : " + mToken);
+                    Log.d(TAG, "Firebase token pré-chargé");
                 });
     }
 
@@ -356,7 +356,7 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && task.getResult() != null) {
                         mToken = task.getResult();
-                        Log.d(TAG, "Token FCM récupéré : " + mToken);
+                        Log.d(TAG, "Token FCM récupéré");
                     } else {
                         // Token non disponible → on envoie "null" quand même
                         mToken = DEFAULT_TOKEN;

@@ -417,13 +417,13 @@ public class AuthorActivity extends AppCompatActivity {
 
     private void initiateCall(String phoneNumber) {
         if (phoneNumber == null || phoneNumber.isEmpty()) { Toast.makeText(this, "Numéro invalide", Toast.LENGTH_SHORT).show(); return; }
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CALL_PERMISSION);
-        } else { makeCall(phoneNumber); }
+        makeCall(phoneNumber);
     }
 
     private void makeCall(String phoneNumber) {
-        startActivity(new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phoneNumber)));
+        // ACTION_DIAL ouvre le composeur avec le numero pre-rempli : aucune permission
+        // CALL_PHONE (permission sensible, a justifier aupres de Google Play) n'est requise.
+        startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phoneNumber)));
     }
 
     @Override
@@ -559,4 +559,4 @@ public class AuthorActivity extends AppCompatActivity {
             if ("1".equals(book.getIsPhysic())) physical++;
         }
     }
-}
+}

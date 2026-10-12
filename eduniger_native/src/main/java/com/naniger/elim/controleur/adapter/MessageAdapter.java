@@ -63,6 +63,35 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         holder.tvMessage.setText(msg.getText());
         holder.cancelAnimation();
 
+        // Reponse d'Eduna : appui long pour la copier ou la signaler (politique Google
+        // Play sur l'IA generative : contenu offensant signalable depuis l'application).
+        if (msg.getType() != Message.TYPE_USER) {
+            holder.itemView.setOnLongClickListener(v -> {
+                int pos = holder.getAdapterPosition();
+                if (pos == RecyclerView.NO_POSITION) return false;
+                String text = messages.get(pos).getText();
+                if (text == null || text.isEmpty()) return false;
+                String[] actions = {"Copier la réponse", "Signaler cette réponse"};
+                new androidx.appcompat.app.AlertDialog.Builder(v.getContext())
+                        .setItems(actions, (d, which) -> {
+                            if (which == 0) {
+                                android.content.ClipboardManager cm = (android.content.ClipboardManager)
+                                        v.getContext().getSystemService(android.content.Context.CLIPBOARD_SERVICE);
+                                if (cm != null) {
+                                    cm.setPrimaryClip(android.content.ClipData.newPlainText("Eduna", text));
+                                }
+                            } else {
+                                com.naniger.elim.model.net.ContentReporter.report(v.getContext(),
+                                        com.naniger.elim.model.net.ContentReporter.TYPE_AI, null, text);
+                            }
+                        })
+                        .show();
+                return true;
+            });
+        } else {
+            holder.itemView.setOnLongClickListener(null);
+        }
+
         // ── AJOUT : affichage de la couverture pour les messages USER ─────────
         if (holder.ivBookCover != null) {
             String coverUrl = msg.getCoverUrl();
@@ -151,4 +180,4 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             animRunnable = null;
         }
     }
-}
+}

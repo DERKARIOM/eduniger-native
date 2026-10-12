@@ -9,7 +9,7 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_margin="10dp"
-        android:src="@mipmap/ic_fabi_round"
+        android:src="@mipmap/ic_v2_round"
         android:contentDescription="@string/todo" />
     <TextView
         android:id="@+id/text_view_adapter_category_title"

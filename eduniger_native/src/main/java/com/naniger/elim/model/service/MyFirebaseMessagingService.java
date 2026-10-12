@@ -57,7 +57,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onNewToken(@NonNull String token) {
         super.onNewToken(token);
-        Log.d(TAG, "Token FCM renouvelé : " + token);
+        Log.d(TAG, "Token FCM renouvelé");
 
         Session session = new Session(getApplicationContext());
         String idNumber = session.getIdNumber();
@@ -394,4 +394,4 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             }
         }).start();
     }
-}
+}

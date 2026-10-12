@@ -10,9 +10,15 @@
     <cloud-backup>
         <exclude domain="database" path="data.db" />
         <exclude domain="sharedpref" path="server_prefs.xml" />
+        <!-- Jeton de connexion chiffre : sa cle reste dans le Keystore de l'appareil et ne
+             peut pas etre restauree ailleurs (fichier illisible apres restauration). -->
+        <exclude domain="sharedpref" path="eduniger_secure_auth_prefs.xml" />
     </cloud-backup>
     <device-transfer>
         <exclude domain="database" path="data.db" />
         <exclude domain="sharedpref" path="server_prefs.xml" />
+        <!-- Jeton de connexion chiffre : sa cle reste dans le Keystore de l'appareil et ne
+             peut pas etre restauree ailleurs (fichier illisible apres restauration). -->
+        <exclude domain="sharedpref" path="eduniger_secure_auth_prefs.xml" />
     </device-transfer>
 </data-extraction-rules>

@@ -19,6 +19,8 @@ import com.naniger.elim.model.data.Themes;
 import java.util.ArrayList;
 
 public class SettingV2Activity extends AppCompatActivity {
+    public static final String PRIVACY_TITLE = "Politique de confidentialité";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +93,18 @@ public class SettingV2Activity extends AppCompatActivity {
                 settings.add(new Setting(R.drawable.vector_white_sombre_new,"Quoi de neuf ?",null));
                 break;
         }
+        // Ecran « Serveur connecte » : outil de developpement, masque dans la version
+        // publiee (un serveur HTTP local y casserait l'application).
+        if (!com.naniger.elim.BuildConfig.DEBUG) {
+            settings.removeIf(st -> "Serveur connecté".equals(st.getTitle()));
+        }
+        // Politique de confidentialite accessible depuis l'application (Google Play)
+        int privacyIcon = R.drawable.vector_black3_help;
+        for (Setting st : settings) {
+            if (getString(R.string.app_information).equals(st.getTitle())) { privacyIcon = st.getIcone(); break; }
+        }
+        settings.add(new Setting(privacyIcon, PRIVACY_TITLE, null));
+
         SettingAdapter mSettingAdapter = new SettingAdapter(settings);
         mSettingRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         mSettingRecyclerView.setAdapter(mSettingAdapter);
@@ -105,4 +119,4 @@ public class SettingV2Activity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-}
+}

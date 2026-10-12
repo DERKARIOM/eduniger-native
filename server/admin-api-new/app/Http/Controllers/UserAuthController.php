@@ -14,6 +14,7 @@ use Illuminate\Database\QueryException;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Schema;
 
 class UserAuthController extends Controller
 {
@@ -440,5 +441,79 @@ class UserAuthController extends Controller
             'token' => $token,
             'isNewUser' => $isNewUser,
         ], $isNewUser ? 201 : 200);
+    }
+
+    /**
+     * Suppression definitive du compte par son proprietaire (exigence Google Play :
+     * un compte cree dans l'application doit pouvoir etre supprime depuis
+     * l'application). Supprime le compte et les donnees personnelles qui y sont
+     * rattachees, puis revoque toutes les sessions.
+     *
+     * Les emprunts et reservations de livres physiques ne sont pas effaces ici : ce
+     * sont des registres de la bibliotheque. Si la base les rattache au compte
+     * sans suppression en cascade, la suppression est refusee avec un message clair
+     * (l'utilisateur doit d'abord restituer ses livres).
+     */
+    public function deleteAccount(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'confirm' => 'required|accepted',
+        ], [
+            'confirm.*' => 'La suppression doit être confirmée.',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['message' => $validator->errors()->first()], 422);
+        }
+
+        $user = $request->user();
+        $idUser = $user->idUser;
+
+        // Donnees personnelles rattachees au compte : table => colonne identifiant
+        $personalData = [
+            'Like' => 'idNumber', 'NoLike' => 'idNumber', 'View' => 'idNumber',
+            'SubscribeBook' => 'idNumber', 'SubscribeCategory' => 'idNumber',
+            'Notification' => 'idNumber', 'Comment' => 'idNumber',
+            'StructUser' => 'idUser', 'UserNotificationRead' => 'user_id',
+            'EdunaConversation' => 'idUser', 'EdunaFavorite' => 'idUser',
+            'EdunaFeedback' => 'idUser', 'EdunaPDFQuery' => 'idUser', 'EdunaSession' => 'idUser',
+            'ContentReport' => 'idReporter',
+        ];
+
+        try {
+            DB::transaction(function () use ($personalData, $idUser, $user) {
+                foreach ($personalData as $table => $column) {
+                    if (Schema::hasTable($table) && Schema::hasColumn($table, $column)) {
+                        DB::table($table)->where($column, $idUser)->delete();
+                    }
+                }
+                $user->tokens()->delete();   // toutes les sessions Sanctum
+                $user->delete();
+            });
+        } catch (QueryException $e) {
+            Log::warning('Suppression de compte refusee (donnees liees) : ' . $e->getMessage(), ['user_id' => $idUser]);
+            return response()->json([
+                'message' => 'Votre compte ne peut pas être supprimé tant que des emprunts ou réservations sont en cours. Contactez votre bibliothèque.'
+            ], 409);
+        } catch (Exception $e) {
+            Log::error('Erreur lors de la suppression de compte : ' . $e->getMessage(), ['user_id' => $idUser]);
+            return response()->json(['message' => 'Une erreur est survenue lors de la suppression du compte.'], 500);
+        }
+
+        // Photo de profil : stockee par l'API historique sous <idUser>.png dans
+        // .../elim/fabi/ressources/profile/ (voir uploadImg.php). Chemin configurable.
+        try {
+            $dir = rtrim((string) env('LEGACY_PROFILE_DIR',
+                dirname(base_path()) . '/domains/kawtal-consulting.com/public_html/elim/fabi/ressources/profile'), '/');
+            if (preg_match('/^[A-Za-z0-9_-]+$/', $idUser)) {
+                $file = $dir . '/' . $idUser . '.png';
+                if (is_file($file)) {
+                    @unlink($file);
+                }
+            }
+        } catch (Exception $e) {
+            // non bloquant
+        }
+
+        return response()->json(['message' => 'Votre compte et vos données ont été supprimés.'], 200);
     }
 }

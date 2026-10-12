@@ -26,6 +26,7 @@ use App\Http\Controllers\StructureNotificationController;
 use App\Http\Controllers\AIBookController;
 use App\Http\Controllers\BookInteractionController;
 use App\Http\Controllers\HelpRequestController;
+use App\Http\Controllers\ContentReportController;
 use Illuminate\Support\Facades\Broadcast;
 
 
@@ -65,6 +66,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user/profile', [UserAuthController::class, 'me']);
     Route::put('/user/profile', [UserAuthController::class, 'updateProfile']);
     Route::post('/user/logout', [UserAuthController::class, 'logout']);
+    // Suppression definitive du compte par son proprietaire (exigence Google Play)
+    Route::delete('/user/account', [UserAuthController::class, 'deleteAccount'])->middleware('throttle:5,1');
+    // Signalement d'un contenu (commentaire, reponse IA, utilisateur) - exigence Google Play
+    Route::post('/reports', [ContentReportController::class, 'store'])->middleware('throttle:20,1');
 
     // Invitation routes
     Route::prefix('agents')->group(function () {
