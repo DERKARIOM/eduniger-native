@@ -16,6 +16,7 @@
             android:layout_margin="10dp"
             android:textSize="20dp"
             android:paddingBottom="20dp"
+            android:autoLink="web|email"
             android:text="Conditions d’Utilisation de l’Application Elim\n\nDernière mise à jour : 6/04/2025\n\nBienvenue sur Elim ! En utilisant notre application, vous acceptez les présentes Conditions d’Utilisation. Nous vous encourageons à les lire attentivement.\n\n1. Acceptation des Conditions\n\n
 L’utilisation de l’application Elim implique votre acceptation pleine et entière des présentes conditions. Si vous ne les acceptez pas, veuillez ne pas utiliser l’application.\n\n2. Objectif de l’Application\n\n
 Elim est une plateforme dédiée à l’apprentissage et à l’accès aux ressources éducatives sous divers formats (livres électroniques, audio, Physique, etc.). Son but est de faciliter l’accès au savoir à tous.\n\n3. Utilisation Responsable\n\n
@@ -24,7 +25,7 @@ Vous vous engagez à utiliser l’application de manière légale et conforme au
 
 En cas d’utilisation non autorisée de votre compte, veuillez nous en informer immédiatement.\n\n
 5. Protection des Données et Confidentialité
-Elim respecte votre vie privée et protège vos données personnelles conformément à notre Politique de Confidentialité.
+Elim respecte votre vie privée et protège vos données personnelles conformément à notre Politique de Confidentialité : https://elim.kawtal-consulting.com/confidentialite.html\n\nVous pouvez supprimer votre compte et vos données à tout moment depuis Paramètres &gt; Compte &gt; Supprimer le compte, ou en ligne : https://elim.kawtal-consulting.com/suppression-compte.html
 
 Vos informations ne seront ni vendues ni partagées avec des tiers sans votre consentement.\n\n
 6. Propriété Intellectuelle\n\n
@@ -37,7 +38,7 @@ Elim ne saurait être tenu responsable en cas de perte de données ou de tout do
 8. Modifications des Conditions\n\n
 Nous nous réservons le droit de modifier ces conditions à tout moment. Les utilisateurs seront informés des mises à jour importantes.\n\n
 9. Contact\n\n
-Pour toute question ou suggestion, contactez-nous à contact@eduniger.com
+Pour toute question ou suggestion, contactez-nous à contact@kawtal-consulting.com
 
 En utilisant Elim, vous acceptez ces conditions. Merci de faire partie de notre communauté d’apprentissage ! 🚀📚\n\n"/>
     </ScrollView>

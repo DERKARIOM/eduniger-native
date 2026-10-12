@@ -3,6 +3,7 @@ package com.naniger.elim.controleur.adapter;
 import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -251,6 +252,10 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.MyViewHo
                             case "Supprimer le compte":
                                 Toast.makeText(itemView.getContext(), "Supprimer le compte", Toast.LENGTH_SHORT).show();
                                 break;
+                            case com.naniger.elim.controleur.activity.SettingV2Activity.PRIVACY_TITLE:
+                                itemView.getContext().startActivity(new Intent(Intent.ACTION_VIEW,
+                                        Uri.parse(itemView.getContext().getString(R.string.url_privacy))));
+                                break;
                             case "Contactez-nous":
                                 showOptionsDialog("+22794961793");
                                 break;
@@ -269,8 +274,10 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.MyViewHo
                             .setPositiveButton("Oui", (dialog, which) -> {
                                 // Passez à l'Activity suivante après l'acceptation
                                 Log.e("Confirmation","no");
+                                // API Laravel : supprime le compte ET les donnees personnelles
+                                // associees (exigence Google Play), identite tiree du jeton.
                                 DeleteAccountSyn deleteAccountSyn = new DeleteAccountSyn();
-                                deleteAccountSyn.execute(Server.getUrlApi(itemView.getContext()) + "DeleteAccountSyn.php",mSession.getIdNumber());
+                                deleteAccountSyn.execute(Server.getUrlHostProd(itemView.getContext()) + "/api/user/account");
                             })
                             .setNegativeButton("Non", (dialog, which) -> {
                                 Log.e("Confirmation","no");
@@ -402,51 +409,57 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.MyViewHo
         }
 
         private class DeleteAccountSyn extends AsyncTask<String, Void, String> {
+            private static final String OK = "ok";
+
             @Override
             protected String doInBackground(String... params) {
-
                 try {
                     OkHttpClient client = ApiClient.getInstance(itemView.getContext());
-                    RequestBody requestBody = new MultipartBody.Builder()
-                            .setType(MultipartBody.FORM)
-                            .addFormDataPart("idNumber", params[1])
-                            .build();
                     Request request = new Request.Builder()
                             .url(params[0])
-                            .post(requestBody)
+                            .header("Accept", "application/json")
+                            .delete(RequestBody.create(
+                                    okhttp3.MediaType.parse("application/json; charset=utf-8"),
+                                    "{\"confirm\":true}"))
                             .build();
-                    try {
-                        Response response = client.newCall(request).execute();
-                        assert response.body() != null;
-                        return response.body().string();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                    try (Response response = client.newCall(request).execute()) {
+                        if (response.isSuccessful()) return OK;
+                        String body = response.body() != null ? response.body().string() : "";
+                        try {
+                            return new org.json.JSONObject(body).optString("message",
+                                    "Suppression impossible pour le moment.");
+                        } catch (org.json.JSONException ignored) {
+                            return "Suppression impossible pour le moment.";
+                        }
                     }
-
                 } catch (Exception e) {
-                    Log.e("errOkhttp", Objects.requireNonNull(e.getMessage()));
+                    Log.e("DeleteAccount", "Echec de la suppression du compte", e);
                 }
                 return null;
             }
 
             @Override
-            protected void onPostExecute(String response) {
-                // Log.e("JsonTest",response);
-                if(response != null)
-                {
-                    Toast.makeText(itemView.getContext(), response, Toast.LENGTH_SHORT).show();
-                    if(response.equals("true"))
-                    {
-                        mSession.delete();
-                        mUserTable.delete();
-                        Lock.savePass(itemView.getContext(),0);
-                        Intent loginIntent = new Intent(itemView.getContext(), LoginActivity.class);
-                        itemView.getContext().startActivity(loginIntent);
-                        ((Activity)itemView.getContext()).finish();
-                    }
+            protected void onPostExecute(String result) {
+                Context ctx = itemView.getContext();
+                if (result == null) {
+                    Toast.makeText(ctx, ctx.getString(R.string.no_connection), Toast.LENGTH_LONG).show();
+                    return;
                 }
+                if (!OK.equals(result)) {
+                    Toast.makeText(ctx, result, Toast.LENGTH_LONG).show();
+                    return;
+                }
+                // Compte supprime cote serveur : on efface toute trace locale de la session
+                mSession.delete();
+                mUserTable.delete();
+                new com.naniger.elim.model.data.TokenStore(ctx.getApplicationContext()).clear();
+                Lock.savePass(ctx, 0);
+                Toast.makeText(ctx, "Votre compte et vos données ont été supprimés.", Toast.LENGTH_LONG).show();
+                Intent loginIntent = new Intent(ctx, LoginActivity.class);
+                loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                ctx.startActivity(loginIntent);
+                ((Activity) ctx).finish();
             }
-
         }
 
         public boolean isAppInstalled(String packageName) {

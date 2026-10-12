@@ -53,13 +53,29 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
     public void onBindViewHolder(MyViewHolder holder, @SuppressLint("RecyclerView") int position) {
         Chat item = mListDisscution.get(position);
         int i = position;
-        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                mPosition = holder.getAdapterPosition();
-                view.showContextMenu();
-                return true;
-            }
+        // Appui long sur une reponse de l'IA : la copier ou la signaler (politique Google
+        // Play sur l'IA generative : les reponses offensantes doivent pouvoir etre signalees).
+        holder.itemView.setOnLongClickListener(view -> {
+            mPosition = holder.getAdapterPosition();
+            if (mPosition == RecyclerView.NO_POSITION) return false;
+            Chat chat = mListDisscution.get(mPosition);
+            if (!chat.isChat() || chat.getMessage() == null || chat.getMessage().isEmpty()) return false;
+            String[] actions = {"Copier la réponse", "Signaler cette réponse"};
+            new androidx.appcompat.app.AlertDialog.Builder(view.getContext())
+                    .setItems(actions, (d, which) -> {
+                        if (which == 0) {
+                            android.content.ClipboardManager cm = (android.content.ClipboardManager)
+                                    view.getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+                            if (cm != null) {
+                                cm.setPrimaryClip(android.content.ClipData.newPlainText("Eduna", chat.getMessage()));
+                            }
+                        } else {
+                            com.naniger.elim.model.net.ContentReporter.report(view.getContext(),
+                                    com.naniger.elim.model.net.ContentReporter.TYPE_AI, null, chat.getMessage());
+                        }
+                    })
+                    .show();
+            return true;
         });
         holder.display(mListDisscution.get(position));
 

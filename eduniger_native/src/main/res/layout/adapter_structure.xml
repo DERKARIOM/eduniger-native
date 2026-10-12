@@ -13,7 +13,7 @@
         android:layout_marginBottom="10dp"
         android:layout_centerVertical="true"
         android:elevation="5dp"
-        android:src="@mipmap/ic_fabi_round"
+        android:src="@mipmap/ic_v2_round"
         android:contentDescription="@string/todo" />
     <RelativeLayout
         android:id="@+id/info_livre2"

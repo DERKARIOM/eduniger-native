@@ -16,7 +16,7 @@
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
         android:scaleType="centerCrop"
-        android:src="@mipmap/ic_fabi_round"
+        android:src="@mipmap/ic_v2_round"
         android:contentDescription="@string/todo" />
 
     <!-- Drag handle à droite -->

@@ -7,6 +7,16 @@ public class Talks {
         mMessage = message;
     }
 
+    /** Commentaire venant du serveur : identifiants necessaires au signalement / blocage. */
+    public Talks(String profil, String username, String message, String idComment, String idUser) {
+        this(profil, username, message);
+        mIdComment = idComment;
+        mIdUser = idUser;
+    }
+
+    public String getIdComment() { return mIdComment; }
+    public String getIdUser() { return mIdUser; }
+
     public String getProfil() {
         return profil;
     }
@@ -34,4 +44,6 @@ public class Talks {
     private String profil;
     private String mUsername;
     private String mMessage;
+    private String mIdComment;
+    private String mIdUser;
 }

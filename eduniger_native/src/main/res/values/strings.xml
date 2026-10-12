@@ -1,5 +1,10 @@
 <resources>
     <string name="app_name">Elim</string>
+    <!-- Pages publiques exigees par Google Play (hebergees sur Hostinger) -->
+    <string name="url_privacy" translatable="false">https://elim.kawtal-consulting.com/confidentialite.html</string>
+    <string name="url_account_deletion" translatable="false">https://elim.kawtal-consulting.com/suppression-compte.html</string>
+    <string name="url_play_store" translatable="false">https://play.google.com/store/apps/details?id=com.naniger.elim</string>
+    <string name="contact_email" translatable="false">contact@kawtal-consulting.com</string>
     <string name="app_version">3.1.3</string>
     <!-- ===== Serveurs de PRODUCTION (Hostinger, domaine kawtal-consulting.com) =====
          Modifier ICI pour changer d'environnement. En debug, l'ecran « Serveur connecte »

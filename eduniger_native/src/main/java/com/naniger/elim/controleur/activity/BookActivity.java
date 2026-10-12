@@ -906,8 +906,12 @@ public class BookActivity extends AppCompatActivity {
                 if (jsonArray != null) {
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject obj = jsonArray.getJSONObject(i);
+                        String idUser = obj.optString("idUser", "");
+                        // Auteur masque par l'utilisateur (voir ContentReporter.blockUser)
+                        if (com.naniger.elim.model.net.ContentReporter.isBlocked(BookActivity.this, idUser)) continue;
                         String fullName = obj.optString("name", "") + " " + obj.optString("firstName", "");
-                        mTalksList.add(new Talks(obj.optString("idUser", "") + ".png", fullName, obj.optString("message", "")));
+                        mTalksList.add(new Talks(idUser + ".png", fullName, obj.optString("message", ""),
+                                obj.optString("idComment", ""), idUser));
                     }
                 }
             } catch (JSONException e) { Log.e(TAG, "Error parsing comments", e); }

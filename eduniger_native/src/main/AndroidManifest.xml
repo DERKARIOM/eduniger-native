@@ -227,7 +227,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="eduniger.com"
+                    android:host="elim.kawtal-consulting.com"
                     android:path="/open"
                     android:scheme="https" />
             </intent-filter>
