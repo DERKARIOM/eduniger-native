@@ -27,6 +27,10 @@ $elimConfig = require $elimConfigFile;
 if (!empty($elimConfig['jwt_secret']) && getenv('JWT_SECRET') === false) {
     putenv('JWT_SECRET=' . $elimConfig['jwt_secret']);
 }
+// Clé de l'API Google Gemini pour l'assistant Eduna (eduniger/ai/eduna_unified.php).
+if (!empty($elimConfig['gemini_api_key']) && getenv('GEMINI_API_KEY') === false) {
+    putenv('GEMINI_API_KEY=' . $elimConfig['gemini_api_key']);
+}
 // Dossier privé (comptes de service Firebase…) partagé avec send_notification.php.
 if (getenv('ELIM_PRIVATE_DIR') === false) {
     putenv('ELIM_PRIVATE_DIR=' . $elimPrivateDir);

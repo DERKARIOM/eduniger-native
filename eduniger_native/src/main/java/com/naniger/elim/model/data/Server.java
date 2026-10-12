@@ -32,7 +32,8 @@ public class Server {
     private static final String KEY_URL_AI = "key_url_ai";
 
     // Presets utilises par l'ecran de changement de serveur (ServerActivity).
-    public static final String PRESET_INTERNET = "http://78.46.46.154/fabi/";
+    // Production (Hostinger) : identique a R.string.url_server.
+    public static final String PRESET_INTERNET = "https://elim.kawtal-consulting.com/eduniger/";
     public static final String PRESET_DEVHUB = "http://192.168.49.1:2222/fabi/";
 
     public Server()

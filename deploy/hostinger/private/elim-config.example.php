@@ -18,4 +18,7 @@ return [
     // ATTENTION : reprendre la valeur du serveur actuel pour ne pas déconnecter
     // tous les utilisateurs déjà connectés.
     'jwt_secret'  => 'A_REMPLACER',
+
+    // Assistant IA Eduna : clé Google AI Studio (https://aistudio.google.com/apikey)
+    'gemini_api_key' => '',
 ];

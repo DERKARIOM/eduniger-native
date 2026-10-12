@@ -1,15 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-   Configuration reseau de PRODUCTION : tout le trafic doit passer en HTTPS
-   (elim.kawtal-consulting.com, api.kawtal-consulting.com).
-   Seule exception : l'assistant IA, encore servi en HTTP par 78.46.46.154 (url_ai).
-   A retirer des que l'IA sera servie en HTTPS.
-   Les hotes de developpement (IP locales) sont autorises uniquement dans les builds
-   debug : voir src/debug/res/xml/network_security_config.xml.
+   Configuration reseau de PRODUCTION : tout le trafic passe en HTTPS vers Hostinger
+   (elim.kawtal-consulting.com : API historique + assistant IA ; api.kawtal-consulting.com : API Laravel).
+   Aucune exception en clair. Les hotes de developpement locaux sont autorises uniquement
+   dans les builds debug : voir src/debug/res/xml/network_security_config.xml.
 -->
 <network-security-config>
-    <domain-config cleartextTrafficPermitted="true">
-        <domain includeSubdomains="false">78.46.46.154</domain>
-    </domain-config>
     <base-config cleartextTrafficPermitted="false" />
 </network-security-config>

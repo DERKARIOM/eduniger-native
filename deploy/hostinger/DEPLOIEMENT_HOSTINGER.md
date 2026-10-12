@@ -9,7 +9,9 @@ Domaine : **kawtal-consulting.com** · Offre : **Business Web Hosting** (hPanel,
 | `elim.kawtal-consulting.com` | API PHP historique (`/eduniger/api/…`) et ressources (`/fabi/ressources/…`) | `~/domains/kawtal-consulting.com/public_html/elim` |
 | `api.kawtal-consulting.com` | API Laravel 12 (`/api/…`) | `~/domains/kawtal-consulting.com/public_html/api` → lien symbolique vers `~/elim-api/public` |
 | `admin.kawtal-consulting.com` | Back-office web (application React) | `~/domains/kawtal-consulting.com/public_html/admin` |
-| *(inchangé)* `78.46.46.154` | Assistant IA et stockage des fichiers (Hetzner) | — |
+| `elim.kawtal-consulting.com/eduniger/ai/` | Assistant IA Eduna (PHP + API Google Gemini) | `…/public_html/elim/eduniger/ai/` |
+
+Tout est hébergé chez Hostinger : plus aucune dépendance au serveur Hetzner (`78.46.46.154`). Les fichiers des livres sont dans `~/elim-api/storage/app/private/`.
 
 Secrets (jamais dans `public_html`) : `~/private/`
 - `elim-config.php` : accès MySQL + secret JWT de l'API historique
@@ -109,7 +111,7 @@ Ce build est l'ancien `web-dist`, dont l'adresse locale `172.20.10.10:8000` a é
 ## Étape 9 — Application Android
 Déjà fait dans le code (branche `feat/prod-hostinger`) :
 - les adresses de production sont dans `res/values/strings.xml` ;
-- le HTTP en clair est interdit en release, sauf pour l'IA (`78.46.46.154`) ;
+- le HTTP en clair est interdit en release, sans exception ;
 - les adresses locales restent autorisées dans les builds debug ;
 - `versionCode` est passé à 14 ;
 - la signature de release est lue depuis `keystore.properties`, qui n'est pas versionné.
@@ -144,7 +146,6 @@ Déjà fait dans le code (branche `feat/prod-hostinger`) :
 - Les sauvegardes quotidiennes de Hostinger sont actives. Vérifier aussi `~/backups/`.
 
 ## Points connus, à traiter ensuite
-- **Assistant IA** : servi en HTTP par `78.46.46.154`. Le passer en HTTPS, ou le déplacer sur `elim.kawtal-consulting.com`.
 - **Connexion Google** : `login_google.php` ne vérifie pas le jeton Google. À corriger avant d'ouvrir largement l'application.
 - **Endpoints absents du serveur** : l'application appelle `AddBook.php`, `Category.php`, `CategoryIn.php`, `GradeSyn.php` et `upload.php`, qui n'existent pas dans `server/api/`. Les fichiers présents s'appellent `add_book.php`, `category.php`… et Linux distingue les majuscules. Ces fonctions ne marchaient déjà pas sur l'ancien serveur.
 - **Ancienne clé de signature** : le fichier `keystore` est encore versionné dans le dépôt GitHub public. Ne pas l'utiliser pour Elim, et le retirer de l'historique Git.

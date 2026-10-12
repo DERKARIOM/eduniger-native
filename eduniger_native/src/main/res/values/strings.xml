@@ -10,7 +10,7 @@
     <string name="url_server">https://elim.kawtal-consulting.com/eduniger/</string>
     <string name="url_host">https://elim.kawtal-consulting.com</string>
     <string name="url_host_prod">https://api.kawtal-consulting.com</string>
-    <string name="url_ai">http://78.46.46.154/eduniger/ai/eduna_unified.php</string>
+    <string name="url_ai">https://elim.kawtal-consulting.com/eduniger/ai/eduna_unified.php</string>
     <string name="database_name">data.db</string>
     <string name="edit_text_hint_id_number">  Votre matricule ?</string>
     <string name="edit_text_hint_email">  exemple@gmail.com</string>
