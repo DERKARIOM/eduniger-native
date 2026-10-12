@@ -68,7 +68,6 @@ public class StructureActivity extends AppCompatActivity {
     private static final String TAG = "StructureActivity";
     private static final String ACTION_STRUCTURE = "STRUCTURE_ACTIVITY";
     private static final String RESPONSE_RAS = "RAS";
-    private static final String EXCLUSIVE_STRUCTURE_ID = "2";
 
     // Views
     private NestedScrollView mNestedScrollView;
@@ -424,23 +423,11 @@ public class StructureActivity extends AppCompatActivity {
     }
 
     private void handleAdhererAction() {
-        if (EXCLUSIVE_STRUCTURE_ID.equals(mStructure.getId())) {
-            showExclusiveStructureDialog();
-        } else if ("Se détacher".equals(mAdhererButton.getText().toString())) {
+        if ("Se détacher".equals(mAdhererButton.getText().toString())) {
             showStructDeleteDialog(mStructure.getId());
         } else {
             adhereToStructure();
         }
-    }
-
-    private void showExclusiveStructureDialog() {
-        showSimpleDialog(
-                R.drawable.vector_purple_200_desole,
-                "Structure Exclusive",
-                "Cette structure est exclusivement réservée aux étudiants de la FAST UAM. " +
-                        "Veuillez vérifier que vous remplissez les critères d'adhésion puis contacter " +
-                        "les numéros suivants :\n+22796627534 / +22794961793."
-        );
     }
 
     private void adhereToStructure() {

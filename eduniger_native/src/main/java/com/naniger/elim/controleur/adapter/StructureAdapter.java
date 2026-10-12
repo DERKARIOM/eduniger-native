@@ -196,9 +196,6 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
                 public void onClick(View v) {
                     switch (structure.getId())
                     {
-                        case "2":
-                            simpleOkDialog(R.drawable.vector_purple_200_desole,"Structure Exclusive","Cette structure est exclusivement réservée aux étudiants de la FAST UAM. Veuillez vérifier que vous remplissez les critères d'adhésion puis contacter les numéro suivante :\n+22796627534 / +22794961793.");
-                            break;
                         default:
                             if (mAdhereButton.getText().toString().equals("Détacher"))
                                 structDelete(structure);
