@@ -1,37 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- Ligne des sous-pages de paramètres (Paramètres, Compte, Contact, recherche).
+     Même présentation que les lignes de la page Compte (item_account_setting) :
+     pastille d'icône, titre, description, chevron, séparateur. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_margin="10dp"
-    android:layout_height="wrap_content">
-    <ImageView
-        android:id="@+id/image_view_adapter_setting_icon"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:layout_centerVertical="true"
-        android:layout_margin="10dp"/>
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
     <LinearLayout
+        android:id="@+id/linear_layout_adapter_setting_row"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_centerVertical="true"
+        android:background="@drawable/bg_account_row"
         android:gravity="center_vertical"
-        android:layout_toRightOf="@id/image_view_adapter_setting_icon"
-        android:paddingStart="10dp"
-        >
-        <TextView
-            android:id="@+id/text_view_adapter_setting_title"
-            android:layout_width="wrap_content"
+        android:minHeight="64dp"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingTop="12dp"
+        android:paddingEnd="14dp"
+        android:paddingBottom="12dp">
+
+        <FrameLayout
+            android:id="@+id/frame_layout_adapter_setting_tile"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:background="@drawable/bg_account_tile">
+
+            <ImageView
+                android:id="@+id/image_view_adapter_setting_icon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:importantForAccessibility="no" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:text="Photo"
-            android:textStyle="bold"
-            android:textSize="16sp"/>
-        <TextView
-            android:id="@+id/text_view_adapter_setting_sub_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:text="Abdoul Kader"
-            android:textSize="14sp"/>
+            android:layout_marginStart="14dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/text_view_adapter_setting_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/account_text"
+                android:textSize="14.5sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/text_view_adapter_setting_sub_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textColor="@color/account_text_muted"
+                android:textSize="12.5sp" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/image_view_adapter_setting_chevron"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_marginStart="8dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_account_chevron"
+            android:tint="@color/account_icon_muted" />
     </LinearLayout>
-</RelativeLayout>
+
+    <View
+        android:id="@+id/view_adapter_setting_divider"
+        style="@style/account_divider" />
+</LinearLayout>

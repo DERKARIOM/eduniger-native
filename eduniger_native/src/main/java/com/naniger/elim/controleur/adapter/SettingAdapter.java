@@ -5,6 +5,9 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Context;
 import android.content.Intent;
+import androidx.core.widget.ImageViewCompat;
+import android.util.TypedValue;
+import android.content.res.ColorStateList;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -94,7 +97,10 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.MyViewHo
             }
         });
         holder.display(mSettings.get(position));
-
+        // Separateur entre les lignes, comme sur la page Compte (pas sous la derniere)
+        if (holder.mDivider != null) {
+            holder.mDivider.setVisibility(position == mSettings.size() - 1 ? View.GONE : View.VISIBLE);
+        }
     }
     @Override
     public int getItemCount() {
@@ -116,6 +122,9 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.MyViewHo
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener{
         private ImageView mIconeImageView;
+        private View mDivider;
+        private View mTile;
+        private ImageView mChevron;
         private TextView mTitleTextView;
         private TextView mSubTitleTextView;
         private Session mSession;
@@ -131,6 +140,9 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.MyViewHo
             mIconeImageView = (ImageView)itemView.findViewById(R.id.image_view_adapter_setting_icon);
             mTitleTextView = (TextView)itemView.findViewById(R.id.text_view_adapter_setting_title);
             mSubTitleTextView = (TextView)itemView.findViewById(R.id.text_view_adapter_setting_sub_title) ;
+            mDivider = itemView.findViewById(R.id.view_adapter_setting_divider);
+            mTile = itemView.findViewById(R.id.frame_layout_adapter_setting_tile);
+            mChevron = itemView.findViewById(R.id.image_view_adapter_setting_chevron);
             mSession = new Session(itemView.getContext());
             mUserTable = new UserTable(itemView.getContext());
             itemView.setOnCreateContextMenuListener(this);
@@ -141,9 +153,42 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.MyViewHo
 //            menu.add(Menu.NONE,R.id.suppNotif,Menu.NONE,"Supprimer");
 //            menu.add(Menu.NONE,R.id.inportanteNotif,Menu.NONE,"Message importants");
         }
+        /**
+         * Style « carte » de la page Compte : icone dans une pastille, teintee de la couleur
+         * d'accent. Exceptions : photo de profil et logo Elim (images en couleur, pleine
+         * pastille) et suppression du compte (rouge, sans chevron).
+         */
+        private void applyCardStyle(Setting setting) {
+            Context ctx = itemView.getContext();
+            String title = setting.getTitle();
+            boolean isPhoto = "Compte".equals(title);
+            boolean isLogo = setting.getIcone() == R.mipmap.ic_v2;
+            boolean isDanger = "Supprimer le compte".equals(title);
+
+            int size = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                    (isPhoto || isLogo) ? 38 : 20, ctx.getResources().getDisplayMetrics());
+            ViewGroup.LayoutParams lp = mIconeImageView.getLayoutParams();
+            lp.width = size; lp.height = size;
+            mIconeImageView.setLayoutParams(lp);
+
+            if (isPhoto || isLogo) {
+                ImageViewCompat.setImageTintList(mIconeImageView, null);
+            } else if (isDanger) {
+                ImageViewCompat.setImageTintList(mIconeImageView,
+                        ColorStateList.valueOf(ContextCompat.getColor(ctx, R.color.account_danger)));
+            } else {
+                ImageViewCompat.setImageTintList(mIconeImageView,
+                        ColorStateList.valueOf(ContextCompat.getColor(ctx, R.color.account_accent)));
+            }
+            mTitleTextView.setTextColor(ContextCompat.getColor(ctx,
+                    isDanger ? R.color.account_danger : R.color.account_text));
+            if (mChevron != null) mChevron.setVisibility(isDanger ? View.GONE : View.VISIBLE);
+        }
+
         void display(Setting setting){
             mIconeImageView.setImageResource(setting.getIcone());
             mTitleTextView.setText(setting.getTitle());
+            applyCardStyle(setting);
             if(!setting.getTitle().equals("Compte"))
             {
                 mIconeImageView.setImageResource(setting.getIcone());

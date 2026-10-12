@@ -1,54 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Sous-page « Compte » : ligne Photo + liste, regroupées dans une carte comme la page Compte. -->
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/account_bg"
+    android:fillViewport="true"
     android:fitsSystemWindows="true"
     tools:context=".controleur.activity.AccountActivity">
-    <RelativeLayout
-        android:fitsSystemWindows="true"
-        android:layout_width="wrap_content"
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        >
-        <RelativeLayout
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/bg_account_card"
+        android:orientation="vertical">
+
+        <!-- Ligne Photo (photo de profil a droite) -->
+        <LinearLayout
             android:id="@+id/relative_layout_activity_setting_account"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginStart="10dp"
-            >
-            <ImageView
-                android:id="@+id/image_view_setting_account_icon"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_centerVertical="true"
-                style="@style/activity_account_img_photo"
-                android:layout_margin="10dp"/>
+            android:background="@drawable/bg_account_row"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:minHeight="64dp"
+            android:orientation="horizontal"
+            android:paddingStart="16dp"
+            android:paddingTop="12dp"
+            android:paddingEnd="14dp"
+            android:paddingBottom="12dp">
+
+            <FrameLayout
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:background="@drawable/bg_account_tile">
+
+                <ImageView
+                    android:id="@+id/image_view_setting_account_icon"
+                    style="@style/activity_account_img_photo"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center"
+                    android:importantForAccessibility="no"
+                    android:tint="@color/account_accent" />
+            </FrameLayout>
+
             <TextView
                 android:id="@+id/text_view_setting_account_title"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
+                android:layout_marginStart="14dp"
+                android:layout_weight="1"
                 android:text="Photo"
-                android:layout_toRightOf="@id/image_view_setting_account_icon"
-                android:layout_marginStart="20dp"
-                android:textSize="16sp"/>
+                android:textColor="@color/account_text"
+                android:textSize="14.5sp"
+                android:textStyle="bold" />
+
             <ImageView
                 android:id="@+id/image_view_setting_account_photo"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_alignParentEnd="true"
-                android:src="@drawable/user"
-                android:layout_margin="10dp"/>
-        </RelativeLayout>
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:contentDescription="Photo de profil"
+                android:src="@drawable/user" />
+        </LinearLayout>
+
+        <View style="@style/account_divider" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view_setting_account"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fitsSystemWindows="true"
-            android:layout_below="@id/relative_layout_activity_setting_account"
-            />
-    </RelativeLayout>
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
+            android:overScrollMode="never" />
+    </LinearLayout>
 </androidx.core.widget.NestedScrollView>
