@@ -62,6 +62,8 @@ import okhttp3.Response;
 public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = "LoginActivity";
+    /** Extra : lancer directement « Continuer avec Google » (depuis l'inscription). */
+    public static final String EXTRA_START_GOOGLE = "extra_start_google";
     private static final String DEFAULT_TOKEN = "null";
     private static final String UPDATE_URL = "https://eduniger.com";
     private static final String GOOGLE_REJECTED = "googleRejected";
@@ -89,6 +91,8 @@ public class LoginActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 9001;
     private GoogleSignInClient mGoogleSignInClient;
     private String mGoogleWebClientId;
+    // Ouverte depuis la page d'inscription uniquement pour la connexion Google
+    private boolean mStartedForGoogle;
     private boolean mIsNightMode;
 
     @Override
@@ -103,6 +107,11 @@ public class LoginActivity extends AppCompatActivity {
         setupListeners();
         setupAnimations();
         retrieveFirebaseToken();
+
+        mStartedForGoogle = getIntent().getBooleanExtra(EXTRA_START_GOOGLE, false);
+        if (mStartedForGoogle && savedInstanceState == null) {
+            launchGoogleSignIn();
+        }
     }
 
     private void hideActionBar() {
@@ -263,6 +272,8 @@ public class LoginActivity extends AppCompatActivity {
             Log.w(TAG, "Google sign-in failed, code: " + code);
             switch (code) {
                 case 12501: // GoogleSignInStatusCodes.SIGN_IN_CANCELLED : l'utilisateur a ferme
+                    // Venu de l'inscription : on y retourne au lieu de laisser la page Login
+                    if (mStartedForGoogle) finish();
                     break;
                 case 7:     // CommonStatusCodes.NETWORK_ERROR
                     mErrorTextView.setText(R.string.no_connection);
@@ -610,6 +621,9 @@ public class LoginActivity extends AppCompatActivity {
 
     private void navigateToMainActivity() {
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        // Vide la pile (Login / Inscription) : « retour » depuis l'accueil ne doit pas
+        // ramener sur un ecran de connexion alors que l'utilisateur est connecte.
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
     }

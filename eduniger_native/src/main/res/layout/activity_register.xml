@@ -156,9 +156,41 @@
                 style="@style/button_connexion" />
         </RelativeLayout>
 
+        <!-- Inscription en un geste avec Google (meme flux securise que la page Login) -->
+        <LinearLayout
+            android:id="@+id/linear_layout_activity_register_google"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_marginStart="28dp"
+            android:layout_marginEnd="28dp"
+            android:layout_marginBottom="20dp"
+            android:elevation="10dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:clickable="true"
+            android:focusable="true"
+            android:contentDescription="Continuer avec Google"
+            style="@style/activity_login_pass_google"
+            android:layout_below="@id/relative_layout_activity_register_connection">
+
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:importantForAccessibility="no"
+                android:src="@drawable/img_google"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Continuer avec Google"
+                android:textSize="16sp"
+                android:layout_marginStart="10dp"
+                android:textStyle="bold"
+                android:layout_gravity="center"/>
+        </LinearLayout>
+
         <TextView
             android:id="@+id/text_view_activity_register_login"
-            android:layout_below="@id/relative_layout_activity_register_connection"
+            android:layout_below="@id/linear_layout_activity_register_google"
             android:layout_marginBottom="10dp"
             android:layout_centerHorizontal="true"
             android:layout_gravity="center_horizontal"
