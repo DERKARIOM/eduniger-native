@@ -23,6 +23,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
@@ -40,7 +42,9 @@ import com.naniger.elim.controleur.activity.PdfBoxViewerActivity;
 import com.naniger.elim.controleur.activity.PlaybackListActivity;
 import com.naniger.elim.controleur.activity.SuggestionActivity;
 import com.naniger.elim.controleur.activity.ThemeActivity;
+import com.naniger.elim.controleur.adapter.ContinueListeningAdapter;
 import com.naniger.elim.controleur.animation.RoundedTransformation;
+import com.naniger.elim.model.data.ContinueItem;
 import com.naniger.elim.model.data.PlaybackRepository;
 import com.naniger.elim.model.data.Server;
 import com.naniger.elim.model.net.ApiClient;
@@ -61,6 +65,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import okhttp3.Call;
@@ -118,6 +123,10 @@ public class LibraryFragment extends Fragment {
     private TextView mRecentTitleTextView;
     private TextView mRecentMetaTextView;
 
+    // Section « Reprendre l'écoute » (déplacée depuis l'accueil)
+    private View mContinueSection;
+    private RecyclerView mContinueRecyclerView;
+
     /** Dernier livre PDF téléchargé et complet, ou null s'il n'y en a pas. */
     private RecentBook mRecentBook;
 
@@ -156,6 +165,32 @@ public class LibraryFragment extends Fragment {
         }
     }
 
+    /**
+     * Retour du lecteur audio (Activity) : la progression a changé. onHiddenChanged
+     * n'est pas appelé dans ce cas, seul onResume l'est.
+     */
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (!isHidden() && mRoot != null) {
+            refreshContinueListening();
+        }
+    }
+
+    /** Affiche les écoutes en cours ; la section reste masquée s'il n'y a rien à reprendre. */
+    private void refreshContinueListening() {
+        Context context = getContext();
+        if (context == null || mContinueSection == null) return;
+        List<ContinueItem> items = new PlaybackRepository(context).getContinueListening();
+        if (items.isEmpty()) {
+            mContinueSection.setVisibility(View.GONE);
+            mContinueRecyclerView.setAdapter(null);
+            return;
+        }
+        mContinueSection.setVisibility(View.VISIBLE);
+        mContinueRecyclerView.setAdapter(new ContinueListeningAdapter(items));
+    }
+
     // ==================== Vues ====================
 
     private void initializeViews(View view) {
@@ -170,6 +205,11 @@ public class LibraryFragment extends Fragment {
         mRecentCoverImageView = view.findViewById(R.id.image_view_fragment_library_recent_cover);
         mRecentTitleTextView = view.findViewById(R.id.text_view_fragment_library_recent_title);
         mRecentMetaTextView = view.findViewById(R.id.text_view_fragment_library_recent_meta);
+
+        mContinueSection = view.findViewById(R.id.layout_fragment_library_continue_section);
+        mContinueRecyclerView = view.findViewById(R.id.recycler_view_fragment_library_continue);
+        mContinueRecyclerView.setLayoutManager(new LinearLayoutManager(
+                view.getContext(), LinearLayoutManager.HORIZONTAL, false));
 
         // Les lignes de paramètres ont un fond « ripple » rectangulaire : on découpe la
         // carte selon ses coins arrondis pour que l'effet ne déborde pas.
@@ -366,6 +406,7 @@ public class LibraryFragment extends Fragment {
 
         String idNumber = mSession.getIdNumber();
         loadProfile(idNumber);
+        refreshContinueListening();
 
         ElectronicTable electronicTable = new ElectronicTable(context);
         AudioTable audioTable = new AudioTable(context);

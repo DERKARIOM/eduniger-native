@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
     Vignette « Reprendre l'écoute ».
-    Pochette carrée + barre de progression réelle + titre/auteur, façon Spotify.
+    Couverture au format livre (2:3) + barre de progression réelle + titre/auteur, façon Spotify.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -16,7 +16,7 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/continue_item_width">
+        android:layout_height="@dimen/continue_item_cover_height">
 
         <ImageView
             android:id="@+id/image_view_continue_cover"
