@@ -50,7 +50,7 @@
         android:layout_marginTop="@dimen/player_gutter_tight"
         android:layout_marginBottom="@dimen/player_gutter_tight"
         android:elevation="@dimen/player_cover_elevation"
-        android:scaleType="centerCrop"
+        android:scaleType="fitCenter"
         android:src="@drawable/vector_white_music"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintWidth_max="@dimen/player_cover_max_width"
