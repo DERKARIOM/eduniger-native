@@ -3,6 +3,9 @@ import android.app.*;
 import android.content.Context;
 import android.content.Intent;
 import android.os.*;
+import android.util.Log;
+
+import java.io.File;
 
 import androidx.core.app.NotificationCompat;
 
@@ -35,9 +38,17 @@ public class AudioDownloadService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        String[] fileNames = intent.getStringArrayExtra("fileNames");
+        // Intent null : le systeme relance le service apres l'avoir tue (START_STICKY).
+        // Sans les noms de fichiers, rien a reprendre : on s'arrete proprement au lieu de
+        // planter (NullPointerException).
+        String[] fileNames = intent != null ? intent.getStringArrayExtra("fileNames") : null;
+        if (fileNames == null) {
+            stopForeground(true);
+            stopSelf();
+            return START_NOT_STICKY;
+        }
         new Thread(() -> startDownload(fileNames)).start();
-        return START_STICKY;
+        return START_NOT_STICKY;
     }
 
     private void startDownload(String[] names) {
@@ -53,10 +64,19 @@ public class AudioDownloadService extends Service {
             if (idStruct == null || idStruct.isEmpty()) {
                 throw new Exception("idStruct manquant : impossible de construire une URL de telechargement securisee.");
             }
-            audioBook.setCover(downloadFile.start(Server.getUrlHostProd(this) + "/api/public/resource/" + idStruct + "/blanket/" + names[0], names[0], this::updateProgress).path);
-            audioBook.setCoverCategory(downloadFile.start(Server.getUrlHost(this) + "/fabi/ressources/cover/" + names[2], names[2], this::updateProgress).path);
-            audioBook.setProfileAuthor(downloadFile.start(Server.getUrlHost(this) + "/fabi/ressources/profile/" + names[3], names[3], this::updateProgress).path);
-            audioBook.setAudio(downloadFile.start(Server.getUrlHostProd(this) + "/api/public/resource/" + idStruct + "/audio/" + names[4], names[4], this::updateProgress).path);
+            String host = Server.getUrlHostProd(this);
+
+            // Couverture du livre et fichier audio : indispensables a la lecture hors ligne.
+            audioBook.setCover(downloadFile.start(host + "/api/public/resource/" + idStruct + "/blanket/" + names[0], names[0], this::updateProgress).path);
+            audioBook.setAudio(downloadFile.start(host + "/api/public/resource/" + idStruct + "/audio/" + names[4], names[4], this::updateProgress).path);
+
+            // Icone de categorie et photo d'auteur : purement decoratives. Elles etaient
+            // encore demandees a l'ancien serveur PHP (/fabi/ressources/...), qui n'existe
+            // plus sur Hostinger -> HTTP 404 -> TOUT le livre audio passait en echec alors
+            // que le MP3 aurait pu etre telecharge. Meme correctif que PdfDownloadService :
+            // route publique Laravel + echec non bloquant.
+            audioBook.setCoverCategory(downloadOptionalAsset(downloadFile, host, idStruct, "category", names[2]));
+            audioBook.setProfileAuthor(downloadOptionalAsset(downloadFile, host, idStruct, "profil", names[3]));
 
             AudioTable audioTable = new AudioTable(getApplicationContext());
             audioTable.insert(names[5], names[6], names[7], names[8],audioBook.getCover(),audioBook.getAudio(), names[9], names[10],audioBook.getCoverCategory(),audioBook.getProfileAuthor(),names[11]);
@@ -66,6 +86,8 @@ public class AudioDownloadService extends Service {
             // Envoyer une notification de fin de téléchargement
             Intent finishIntent = new Intent("ACTION_FINISH_DOWNLOAD");
             finishIntent.putExtra("format", "audio");
+            finishIntent.putExtra("success", true);
+            finishIntent.setPackage(getPackageName());
             sendBroadcast(finishIntent);
         } catch (Exception e) {
             e.printStackTrace();
@@ -78,10 +100,32 @@ public class AudioDownloadService extends Service {
             Intent failIntent = new Intent("ACTION_FINISH_DOWNLOAD");
             failIntent.putExtra("format", "audio");
             failIntent.putExtra("success", false);
+            failIntent.setPackage(getPackageName());
             sendBroadcast(failIntent);
         } finally {
             stopForeground(true);
             stopSelf();
+        }
+    }
+
+    /**
+     * Telecharge un fichier accessoire (icone de categorie, photo d'auteur). Ne leve
+     * jamais d'exception et renvoie toujours le chemin local attendu (comme
+     * PdfDownloadService) : si le fichier est absent, l'interface affiche l'image par defaut.
+     */
+    private String downloadOptionalAsset(DownloadFile downloadFile, String host, String idStruct,
+                                         String type, String fileName) {
+        if (fileName == null || fileName.isEmpty() || "null".equals(fileName)) return "";
+        String localPath = getExternalFilesDir(null) + "/" + fileName;
+        File local = new File(localPath);
+        if (local.exists() && local.length() > 0) return localPath;
+        try {
+            return downloadFile.start(host + "/api/public/resource/" + idStruct + "/" + type + "/" + fileName,
+                    fileName, this::updateProgress).path;
+        } catch (Exception e) {
+            Log.w("AudioDownloadService", "Fichier accessoire indisponible (" + type + "/" + fileName
+                    + ") ignore, le livre audio reste telecharge : " + e.getMessage());
+            return localPath;
         }
     }
 
@@ -97,6 +141,7 @@ public class AudioDownloadService extends Service {
         progressIntent.putExtra("progress", progress);
         progressIntent.putExtra("bytesDownloaded", bytesDownloaded);
         progressIntent.putExtra("totalBytes", totalBytes);
+        progressIntent.setPackage(getPackageName());
         sendBroadcast(progressIntent);
     }
 
