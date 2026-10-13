@@ -158,7 +158,8 @@ public class AudioBookAdapter extends RecyclerView.Adapter<AudioBookAdapter.MyVi
                     .placeholder(R.drawable.img_wait_cover_book)
                     .error(R.drawable.img_wait_cover_book)
                     .transform(new RoundedTransformation(8, 4))
-                    .resize(200, 200)
+                    // Format livre 2:3 (comme la vignette 52x78dp) : couverture entiere.
+                    .resize(160, 240)
                     .centerCrop()
                     .into(mCoverImageView);
 
@@ -216,4 +217,4 @@ public class AudioBookAdapter extends RecyclerView.Adapter<AudioBookAdapter.MyVi
             return file;
         }
     }
-}
+}

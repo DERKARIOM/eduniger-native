@@ -119,7 +119,8 @@ public class PdfDownloadService extends Service {
             finishIntent.putExtra("format", "pdf");
             finishIntent.putExtra("success", true);
             finishIntent.putExtra("idBook", idBook);
-            sendBroadcast(finishIntent);
+            finishIntent.setPackage(getPackageName());
+        sendBroadcast(finishIntent);
         } catch (Exception e) {
             e.printStackTrace();
             // Échec : la ligne DOWNLOADING insérée plus haut est repassée à FAILED (et
@@ -135,7 +136,8 @@ public class PdfDownloadService extends Service {
             failIntent.putExtra("format", "pdf");
             failIntent.putExtra("success", false);
             failIntent.putExtra("idBook", idBook);
-            sendBroadcast(failIntent);
+            failIntent.setPackage(getPackageName());
+        sendBroadcast(failIntent);
         } finally {
             stopForeground(true);
             stopSelf();
@@ -179,6 +181,7 @@ public class PdfDownloadService extends Service {
         progressIntent.putExtra("progress", progress);
         progressIntent.putExtra("bytesDownloaded", bytesDownloaded);
         progressIntent.putExtra("totalBytes", totalBytes);
+        progressIntent.setPackage(getPackageName());
         sendBroadcast(progressIntent);
     }
 

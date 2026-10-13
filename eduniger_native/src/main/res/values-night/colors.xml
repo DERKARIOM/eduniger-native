@@ -8,7 +8,7 @@
     <color name="brand_on_primary_container">#FFC7E6F8</color>
     <!-- ===== Lecteur audio (v2) : jetons "mode sombre" ===== -->
     <color name="player_bg">@color/black</color>
-    <color name="player_backdrop_top">#FF1A2229</color>
+    <color name="player_backdrop_top">#FF0F2533</color>
     <color name="player_surface">#1AFFFFFF</color>
     <color name="player_surface_solid">#FF1A2229</color>
     <color name="player_text_primary">#FFFFFFFF</color>

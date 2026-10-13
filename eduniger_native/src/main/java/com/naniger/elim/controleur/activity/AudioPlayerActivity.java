@@ -175,7 +175,9 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable,
     private void applyStatusBarStyle() {
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(ContextCompat.getColor(this, R.color.player_bg));
+        // Haut du degrade = couleur de la barre d'etat ; bas = fond de l'app (barre de navigation).
+        window.setStatusBarColor(ContextCompat.getColor(this, R.color.player_backdrop_top));
+        window.setNavigationBarColor(ContextCompat.getColor(this, R.color.player_bg));
         boolean isNightMode = (getResources().getConfiguration().uiMode
                 & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -539,8 +541,11 @@ public class AudioPlayerActivity extends AppCompatActivity implements Playable,
                 .placeholder(R.drawable.img_wait_cover_book)
                 .error(R.drawable.img_wait_cover_book)
                 .transform(new RoundedTransformation(24, 4))
+                // centerInside (et non centerCrop) : les couvertures de livres sont en
+                // portrait (2:3) ; un recadrage carre coupait le titre en haut et le bas.
                 .resize(700, 700)
-                .centerCrop()
+                .centerInside()
+                .onlyScaleDown()
                 .into(mCoverImageView);
     }
 

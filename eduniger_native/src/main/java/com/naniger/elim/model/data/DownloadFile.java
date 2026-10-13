@@ -95,6 +95,20 @@ public class DownloadFile {
             Log.d(TAG, "  HTTP code    : " + responseCode);
             Log.d(TAG, "  Content-Type : " + contentType);
 
+            if (isResume && responseCode == 416) {
+                // 416 Range Not Satisfiable : l'offset demande est >= a la taille du fichier
+                // serveur. Cas le plus courant : le fichier local est DEJA complet (un
+                // telechargement precedent l'a termine). On le reconnait grace a
+                // Content-Range: bytes */<taille> et on evite de le retelecharger.
+                long serverSize = parseTotalFromContentRange(connection.getHeaderField("Content-Range"));
+                if (serverSize > 0 && serverSize == startOffset) {
+                    String checksum = sha256(targetFile);
+                    Log.d(TAG, "Fichier deja complet en local ✓ (" + startOffset + " octets) : " + filePath);
+                    if (callback != null) callback.onProgress(100, startOffset, startOffset);
+                    return new Result(filePath, startOffset, checksum);
+                }
+            }
+
             if (isResume && responseCode == HttpURLConnection.HTTP_PARTIAL) {
                 // Le serveur accepte la reprise : on ajoute à la suite du fichier existant.
                 long remaining = connection.getContentLength();
@@ -121,6 +135,9 @@ public class DownloadFile {
                 }
 
                 if (responseCode != HttpURLConnection.HTTP_OK) {
+                    // 4xx (fichier absent, acces refuse...) : erreur definitive, pas transitoire.
+                    // Aucun fichier partiel a conserver pour une reprise.
+                    if (responseCode >= 400 && responseCode < 500) contentConfirmedInvalid = true;
                     String msg = "Serveur a retourné HTTP " + responseCode
                             + " " + connection.getResponseMessage()
                             + " pour : " + fileUrl;
@@ -186,6 +203,18 @@ public class DownloadFile {
 
         } finally {
             if (connection != null) connection.disconnect();
+        }
+    }
+
+    /** Extrait la taille totale d'un en-tete "Content-Range: bytes * /1234" (ou "bytes 0-9/1234"). -1 si inconnue. */
+    private static long parseTotalFromContentRange(String contentRange) {
+        if (contentRange == null) return -1;
+        int slash = contentRange.lastIndexOf('/');
+        if (slash < 0 || slash == contentRange.length() - 1) return -1;
+        try {
+            return Long.parseLong(contentRange.substring(slash + 1).trim());
+        } catch (NumberFormatException e) {
+            return -1;
         }
     }
 

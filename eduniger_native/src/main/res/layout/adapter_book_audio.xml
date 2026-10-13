@@ -8,11 +8,11 @@
     android:paddingBottom="10dp"
     android:background="?attr/selectableItemBackground">
 
-    <!-- Cover image carrée -->
+    <!-- Couverture au format livre (2:3) : un carre coupait le titre de la couverture -->
     <ImageView
         android:id="@+id/image_view_adapter_book_audio_blanket"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
+        android:layout_width="52dp"
+        android:layout_height="78dp"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
         android:scaleType="centerCrop"

@@ -13,4 +13,8 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "Elim"
-include ':eduniger_native'
+// Module Android de l'application : nomme « elim » dans Gradle et Android Studio.
+// Le dossier sur le disque reste « eduniger_native » : on evite ainsi un deplacement
+// de centaines de fichiers (source des conflits Git lors du renommage precedent).
+include ':elim'
+project(':elim').projectDir = new File(rootDir, 'eduniger_native')

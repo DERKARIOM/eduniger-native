@@ -54,8 +54,8 @@
 
     <!-- ===== Lecteur audio (v2) : jetons de couleur adaptatifs clair/sombre ===== -->
     <!-- Valeurs "mode clair" ; les équivalents "mode sombre" sont dans values-night/colors.xml -->
-    <color name="player_bg">#FFF7F7FA</color>
-    <color name="player_backdrop_top">#FFE7EEEA</color>
+    <color name="player_bg">@color/white</color>
+    <color name="player_backdrop_top">#FFE3F2FA</color>
     <color name="player_surface">#14000000</color>
     <color name="player_surface_solid">#FFFFFFFF</color>
     <color name="player_text_primary">#FF14181B</color>
