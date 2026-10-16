@@ -86,7 +86,7 @@ public class ContinueListeningAdapter
                         .placeholder(R.drawable.img_wait_cover_book)
                         .error(R.drawable.img_wait_cover_book)
                         .transform(new RoundedTransformation(12, 0))
-                        .resize(300, 300)
+                        .resize(240, 360) // format livre 2:3, comme la vignette
                         .centerCrop()
                         .into(mCover);
             } else {

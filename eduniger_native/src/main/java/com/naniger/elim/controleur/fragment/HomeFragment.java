@@ -37,15 +37,12 @@ import com.naniger.elim.R;
 import com.naniger.elim.controleur.activity.LoginActivity;
 import com.naniger.elim.controleur.activity.SearchActivity;
 import com.naniger.elim.controleur.adapter.AuthorHorizontaleAdapter;
-import com.naniger.elim.controleur.adapter.ContinueListeningAdapter;
 import com.naniger.elim.controleur.adapter.HorizontaleAdapter;
 import com.naniger.elim.controleur.adapter.NoConnectionAdapter;
 import com.naniger.elim.controleur.adapter.SemiNoConnectionAdapter;
 import com.naniger.elim.controleur.adapter.StructureAdapter;
 import com.naniger.elim.controleur.dialog.UpdateDialog;
 import com.naniger.elim.model.data.Account;
-import com.naniger.elim.model.data.ContinueItem;
-import com.naniger.elim.model.data.PlaybackRepository;
 import com.naniger.elim.model.data.Author;
 import com.naniger.elim.model.data.Connection;
 import com.naniger.elim.model.data.OnlineBook;
@@ -93,10 +90,6 @@ public class HomeFragment extends Fragment {
     private RelativeLayout mMoreAuthorRelativeLayout;
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
-    // Section « Reprendre l'écoute » (données locales, indépendantes du réseau)
-    private View               mContinueSection;
-    private RecyclerView       mContinueRecyclerView;
-    private PlaybackRepository mPlaybackRepository;
 
     // Data
     private final List<OnlineBook> mOnlineBookList = new ArrayList<>();
@@ -145,47 +138,13 @@ public class HomeFragment extends Fragment {
         setupSwipeRefresh();
         registerBroadcastReceiver();
         loadInitialData();
-        setupContinueListening(view);
 
         return view;
-    }
-
-    /**
-     * Section « Reprendre l'écoute ».
-     *
-     * Alimentée en local (PlaybackTable) : elle ne dépend d'aucun réseau et reste
-     * donc fonctionnelle hors ligne, contrairement au reste de l'accueil.
-     * La section entière est masquée s'il n'y a rien à reprendre.
-     */
-    private void setupContinueListening(View view) {
-        mContinueSection      = view.findViewById(R.id.layout_home_continue_section);
-        mContinueRecyclerView = view.findViewById(R.id.recycler_view_home_continue);
-        if (mContinueSection == null || mContinueRecyclerView == null) return;
-
-        mContinueRecyclerView.setLayoutManager(new LinearLayoutManager(
-                requireContext(), LinearLayoutManager.HORIZONTAL, false));
-        mContinueRecyclerView.setNestedScrollingEnabled(false);
-        refreshContinueListening();
-    }
-
-    private void refreshContinueListening() {
-        if (mContinueSection == null || mContinueRecyclerView == null) return;
-        if (mPlaybackRepository == null) mPlaybackRepository = new PlaybackRepository(requireContext());
-
-        List<ContinueItem> items = mPlaybackRepository.getContinueListening();
-        if (items.isEmpty()) {
-            mContinueSection.setVisibility(View.GONE);
-            return;
-        }
-        mContinueSection.setVisibility(View.VISIBLE);
-        mContinueRecyclerView.setAdapter(new ContinueListeningAdapter(items));
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        // L'utilisateur revient du lecteur : la progression a changé, on rafraîchit.
-        refreshContinueListening();
 
         if (mFirstResume) {
             // Ce premier onResume suit immediatement onCreateView, qui vient deja
@@ -332,7 +291,6 @@ public class HomeFragment extends Fragment {
             mAuthorArrayList.clear();
             mStructureIds.clear();
             stopPubFlipper();
-            refreshContinueListening();
             loadAllData();
         });
 

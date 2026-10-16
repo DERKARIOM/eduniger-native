@@ -185,6 +185,38 @@
                     android:layout_weight="1" />
             </LinearLayout>
 
+            <!-- ==================== Reprendre l'écoute ====================
+                 Déplacée depuis l'accueil. Masquée (GONE) tant qu'aucune écoute
+                 n'est en cours. Données locales (PlaybackRepository) : fonctionne
+                 hors ligne. -->
+            <LinearLayout
+                android:id="@+id/layout_fragment_library_continue_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:accessibilityHeading="true"
+                    android:text="@string/continue_listening"
+                    android:textColor="@color/account_text"
+                    android:textSize="15.5sp"
+                    android:textStyle="bold" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_view_fragment_library_continue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clipToPadding="false"
+                    android:nestedScrollingEnabled="false"
+                    android:orientation="horizontal"
+                    android:overScrollMode="never" />
+            </LinearLayout>
+
             <!-- ==================== Téléchargements récents ==================== -->
             <LinearLayout
                 android:layout_width="match_parent"

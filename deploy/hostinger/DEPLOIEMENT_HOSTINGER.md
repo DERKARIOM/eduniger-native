@@ -104,9 +104,19 @@ chmod 600 ~/private/my.cnf
 ```
 
 ## Étape 8 — Back-office (`admin.kawtal-consulting.com`)
-Envoyer le contenu de `deploy/hostinger/admin/` (`index.html`, `assets/`, `.htaccess`) dans `~/domains/kawtal-consulting.com/public_html/admin/`.
+Build : `deploy/hostinger/elim-admin.zip` (sources `eduniger-admin`, branche `prod-hostinger`, `npm run build` avec `.env.production`).
+API appelée : `https://api.kawtal-consulting.com/api`. Temps réel désactivé (`VITE_REALTIME_ENABLED=false`, pas de Reverb sur l'offre Business).
 
-Ce build est l'ancien `web-dist`, dont l'adresse locale `172.20.10.10:8000` a été remplacée par `https://api.kawtal-consulting.com`. Le temps réel (Reverb) n'est pas disponible sur l'offre Business : le back-office fonctionne, mais sans mises à jour en direct.
+1. hPanel : sous-domaine `admin` créé, SSL installé, HTTPS forcé. Noter son dossier racine.
+2. Envoi et extraction (PowerShell puis SSH) :
+   ```
+   scp -P 65002 deploy\hostinger\elim-admin.zip u883737194@185.224.138.118:elim-admin.zip
+   ssh -p 65002 u883737194@185.224.138.118
+   D=~/domains/kawtal-consulting.com/public_html/admin   # dossier racine du sous-domaine
+   mkdir -p $D && cd $D && rm -rf assets index.html && unzip -oq ~/elim-admin.zip && rm ~/elim-admin.zip
+   ```
+3. CORS côté API : `.env` de l'API → `CORS_ALLOWED_ORIGINS=https://admin.kawtal-consulting.com`, et `config/cors.php` corrigé (une 2e clé `allowed_origins` codée en dur annulait la valeur du `.env`). Envoyer `config/cors.php`, puis `bash ~/elim-api/deploy/deploy_api.sh`.
+4. Test : `https://admin.kawtal-consulting.com` → page « Connexion » Elim, connexion avec un compte administrateur.
 
 ## Étape 9 — Application Android
 Déjà fait dans le code (branche `feat/prod-hostinger`) :
