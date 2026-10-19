@@ -1,49 +1,44 @@
 package com.naniger.elim.model.service;
 
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 
 import java.io.File;
 
-import androidx.core.app.NotificationCompat;
 
 import com.naniger.elim.model.data.DownloadFile;
 import com.naniger.elim.model.data.Server;
 import com.naniger.elim.model.table.ElectronicTable;
 
 public class PdfDownloadService extends Service {
-    public static final String CHANNEL_ID = "DownloadChannel";
-    private NotificationManager notificationManager;
-    private NotificationCompat.Builder notificationBuilder;
+    public static final String CHANNEL_ID = DownloadNotifier.CHANNEL_ID;
+    /** IDs distincts de AudioDownloadService : un PDF et un audio peuvent se télécharger en même temps. */
     private static final int NOTIFICATION_ID = 1;
+    private static final int RESULT_NOTIFICATION_ID = 1001;
+
+    private DownloadNotifier mNotifier;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        createNotificationChannel();
-
-        notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(android.R.drawable.stat_sys_download)
-                .setContentTitle("Téléchargement en cours")
-                .setContentText("Téléchargement en cours...")
-                .setProgress(100, 0, false)
-                .setPriority(NotificationCompat.PRIORITY_LOW);
-
-        startForeground(NOTIFICATION_ID, notificationBuilder.build());
+        mNotifier = new DownloadNotifier(this, NOTIFICATION_ID, RESULT_NOTIFICATION_ID,
+                "ACTION_PDF_DOWNLOAD_PROGRESS");
+        startForeground(NOTIFICATION_ID, mNotifier.initialNotification());
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        String[] fileNames = intent.getStringArrayExtra("fileNames");
+        // Intent null : relance du service par le système, sans rien à reprendre.
+        String[] fileNames = intent != null ? intent.getStringArrayExtra("fileNames") : null;
+        if (fileNames == null) {
+            stopForeground(true);
+            stopSelf();
+            return START_NOT_STICKY;
+        }
         new Thread(() -> startDownload(fileNames)).start();
-        return START_STICKY;
+        return START_NOT_STICKY;
     }
 
     /**
@@ -83,44 +78,33 @@ public class PdfDownloadService extends Service {
 
             String host = Server.getUrlHostProd(this);
             DownloadFile downloadFile = new DownloadFile(this);
+            mNotifier.setTitle(names[9]);
 
+            // Une seule progression pour tout le livre : petits fichiers d'abord (0-8 %),
+            // puis le PDF, qui représente l'essentiel du volume (8-100 %).
             DownloadFile.Result coverResult = downloadFile.start(
                     host + "/api/public/resource/" + idStruct + "/blanket/" + names[0],
-                    names[0], this::updateProgress);
+                    names[0], mNotifier.phase(0, 4));
+
+            // Icône de catégorie et photo d'auteur : décoratives et partagées entre livres.
+            // Un échec (404, réseau) ne doit pas faire échouer le téléchargement du livre.
+            downloadOptionalAsset(downloadFile, host, idStruct, "category", names[2], 4, 6);
+            downloadOptionalAsset(downloadFile, host, idStruct, "profil", names[3], 6, 8);
 
             DownloadFile.Result pdfResult = downloadFile.start(
                     host + "/api/public/resource/" + idStruct + "/pdf/" + names[1],
-                    names[1], this::updateProgress);
-
-            // Migration : couverture de catégorie et photo d'auteur étaient encore servies
-            // par l'ancien backend PHP legacy (Server.getUrlServer()) alors que le reste du
-            // téléchargement utilise déjà le backend Sanctum migré - incohérence relevée
-            // dans l'audit (section "nettoyage"/"consistance"). FileController::publicShow
-            // gère déjà les types "category" et "profil", donc on bascule ces deux fichiers
-            // sur la même route publique sécurisée que la couverture et le PDF.
-            //
-            // Ces deux fichiers sont "décoratifs" et partagés entre plusieurs livres (icône
-            // de catégorie, photo d'auteur) : un échec ici (fichier absent côté serveur,
-            // réseau...) ne doit PAS faire échouer le téléchargement du livre lui-même - le
-            // PDF et sa couverture, seuls éléments réellement nécessaires pour "Ouvrir" un
-            // livre téléchargé, sont déjà sécurisés à ce stade (coverResult/pdfResult
-            // ci-dessus). Cf. bug constaté en test réel : l'icône de catégorie d'un livre
-            // renvoyait 404, ce qui faisait passer TOUT le téléchargement en FAILED alors
-            // que le PDF était intégralement et correctement téléchargé.
-            downloadOptionalAsset(downloadFile, host, idStruct, "category", names[2]);
-            downloadOptionalAsset(downloadFile, host, idStruct, "profil", names[3]);
+                    names[1], mNotifier.phase(8, 100));
 
             electronicTable.markCompleted(idNumber, idBook, pdfResult.size, pdfResult.checksum);
 
-            notificationBuilder.setContentText("Téléchargement terminé").setProgress(0, 0, false).setSmallIcon(android.R.drawable.stat_sys_download_done);
-            notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
+            mNotifier.finish(true);
 
             Intent finishIntent = new Intent("ACTION_FINISH_DOWNLOAD");
             finishIntent.putExtra("format", "pdf");
             finishIntent.putExtra("success", true);
             finishIntent.putExtra("idBook", idBook);
             finishIntent.setPackage(getPackageName());
-        sendBroadcast(finishIntent);
+            sendBroadcast(finishIntent);
         } catch (Exception e) {
             e.printStackTrace();
             // Échec : la ligne DOWNLOADING insérée plus haut est repassée à FAILED (et
@@ -128,17 +112,15 @@ public class PdfDownloadService extends Service {
             // l'échec et proposer de réessayer (cf. audit section 4/6/8).
             electronicTable.markFailed(idNumber, idBook);
 
-            notificationBuilder.setContentText("Echec du telechargement")
-                    .setProgress(0, 0, false)
-                    .setSmallIcon(android.R.drawable.stat_sys_warning);
-            notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
+            mNotifier.finish(false);
             Intent failIntent = new Intent("ACTION_FINISH_DOWNLOAD");
             failIntent.putExtra("format", "pdf");
             failIntent.putExtra("success", false);
             failIntent.putExtra("idBook", idBook);
             failIntent.setPackage(getPackageName());
-        sendBroadcast(failIntent);
+            sendBroadcast(failIntent);
         } finally {
+            // stopForeground est déjà appelé par mNotifier.finish() ; sans effet s'il est répété.
             stopForeground(true);
             stopSelf();
         }
@@ -153,44 +135,28 @@ public class PdfDownloadService extends Service {
      * ou HTTP (404 notamment) sans faire échouer le téléchargement du livre.
      */
     private void downloadOptionalAsset(DownloadFile downloadFile, String host, String idStruct,
-                                        String type, String fileName) {
-        if (fileName == null || fileName.isEmpty()) return;
+                                        String type, String fileName, int from, int to) {
+        if (fileName == null || fileName.isEmpty() || "null".equals(fileName)) {
+            mNotifier.advanceTo(to);
+            return;
+        }
         File local = new File(localPathFor(fileName));
-        if (local.exists() && local.length() > 0) return;
+        if (local.exists() && local.length() > 0) {
+            mNotifier.advanceTo(to);
+            return;
+        }
         try {
             downloadFile.start(host + "/api/public/resource/" + idStruct + "/" + type + "/" + fileName,
-                    fileName, this::updateProgress);
+                    fileName, mNotifier.phase(from, to));
         } catch (Exception e) {
             Log.w("PdfDownloadService", "Échec téléchargement accessoire (" + type + "/" + fileName
                     + ") ignoré - n'affecte pas le téléchargement du livre : " + e.getMessage());
         }
+        mNotifier.advanceTo(to);
     }
 
     private String localPathFor(String fileName) {
         return getExternalFilesDir(null) + "/" + fileName;
-    }
-
-    private void updateProgress(int progress, long bytesDownloaded, long totalBytes) {
-        if (progress >= 0) {
-            notificationBuilder.setProgress(100, progress, false).setContentText("Progression : " + progress + "%");
-        } else {
-            notificationBuilder.setProgress(0, 0, true).setContentText("Téléchargement...");
-        }
-        notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
-        Intent progressIntent = new Intent("ACTION_PDF_DOWNLOAD_PROGRESS");
-        progressIntent.putExtra("progress", progress);
-        progressIntent.putExtra("bytesDownloaded", bytesDownloaded);
-        progressIntent.putExtra("totalBytes", totalBytes);
-        progressIntent.setPackage(getPackageName());
-        sendBroadcast(progressIntent);
-    }
-
-    private void createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Téléchargements", NotificationManager.IMPORTANCE_LOW);
-            channel.setDescription("Canal pour les notifications de téléchargement");
-            getSystemService(NotificationManager.class).createNotificationChannel(channel);
-        }
     }
 
     @Override

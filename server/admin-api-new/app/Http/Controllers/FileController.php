@@ -91,6 +91,20 @@ class FileController extends Controller
     }
 
     /**
+     * Identique a secure(), mais le nom du fichier est passe dans la query string (?f=).
+     * Voir routes/api.php (/secure-file) : evite qu'une URL finissant par une extension
+     * d'image soit servie/filtree par le serveur web avant d'atteindre Laravel.
+     */
+    public function secureByQuery(\Illuminate\Http\Request $request, int $idStruct, string $type)
+    {
+        $filename = (string) $request->query('f', '');
+        if ($filename === '') {
+            abort(404);
+        }
+        return $this->secure($idStruct, $type, $filename);
+    }
+
+    /**
      * Sert un fichier PUBLIC (sans authentification), utilisé à la fois par le
      * catalogue public du Web et par l'application mobile pour afficher les
      * couvertures/PDF/audio des livres consultés par un LECTEUR (pas un agent).

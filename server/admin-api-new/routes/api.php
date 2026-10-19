@@ -247,6 +247,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/stats/top-books', [ReservationController::class, 'getTopReservedBooks']);
     });
 
+    // Variante SANS extension dans le chemin (nom du fichier dans ?f=) : sur Hostinger, les
+    // URL finissant par .png/.jpg/.mp3... sont interceptees par le serveur web avant Laravel,
+    // qui repond lui-meme au preflight CORS sans autoriser l'en-tete Authorization : toutes
+    // les images du back-office etaient bloquees. Ici le preflight atteint bien Laravel.
+    Route::get('/secure-file/{idStruct}/{type}', [FileController::class, 'secureByQuery'])->where('idStruct', '[0-9]+')->middleware('structure.scope:idStruct');
     Route::get('/secure/{idStruct}/{type}/{filename}', [FileController::class, 'secure'])->where('filename', '.*')->where('idStruct', '[0-9]+')->middleware('structure.scope:idStruct');    // pour accepter les sous-dossiers éventuels
     Route::get('/storage/usage/{idStruct}', [StorageController::class, 'usage'])->where('idStruct', '[0-9]+')->middleware('structure.scope:idStruct');
 
