@@ -222,40 +222,27 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
         }
         private void structDelete(Structure structure){
             StructDeleteDialog structDeleteDialog = new StructDeleteDialog((Activity) itemView.getContext());
-            structDeleteDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            structDeleteDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
-            TextView err = structDeleteDialog.findViewById(R.id.text_view_dialog_structure_delete_err);
             TextView no = structDeleteDialog.findViewById(R.id.no);
             TextView yes = structDeleteDialog.findViewById(R.id.yes);
             EditText password = structDeleteDialog.findViewById(R.id.edit_text_dialog_struct_delete_password);
-            no.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    structDeleteDialog.cancel();
-                }
-            });
+            no.setOnClickListener(view -> structDeleteDialog.cancel());
 
-            yes.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (!password.getText().toString().isEmpty())
-                    {
-                        if (Objects.equals(PasswordUtil.hashPassword(password.getText().toString()), mSession.getPassword()))
-                        {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                structDeleteDialog.cancel();
-                                mAdhereButton.setBackgroundTintList(ColorStateList.valueOf(itemView.getContext().getColor(R.color.purple_200)));
-                                mAdhereButton.setText("S'adhérer");
-                                structure.setAdhere(false);
-                                new StructMembershipSyn().execute(
-                                        Server.getUrlHostProd(itemView.getContext()) + "/api/structures/" + structure.getId() + "/leave");
-                            }
-                        }
-                    }
-                    password.setBackground(itemView.getContext().getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
-                    err.setVisibility(View.VISIBLE);
-                    err.setText("Mot de passe incorrect");
+            yes.setOnClickListener(view -> {
+                String typed = password.getText().toString();
+                if (typed.isEmpty()) {
+                    structDeleteDialog.showError(R.string.struct_leave_err_empty);
+                    return;
                 }
+                if (!Objects.equals(PasswordUtil.hashPassword(typed), mSession.getPassword())) {
+                    structDeleteDialog.showError(R.string.struct_leave_err_wrong);
+                    return;
+                }
+                structDeleteDialog.cancel();
+                mAdhereButton.setBackgroundTintList(ColorStateList.valueOf(itemView.getContext().getColor(R.color.purple_200)));
+                mAdhereButton.setText("S'adhérer");
+                structure.setAdhere(false);
+                new StructMembershipSyn().execute(
+                        Server.getUrlHostProd(itemView.getContext()) + "/api/structures/" + structure.getId() + "/leave");
             });
             structDeleteDialog.build();
         }

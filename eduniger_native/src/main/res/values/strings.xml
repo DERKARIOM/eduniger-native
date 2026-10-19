@@ -377,4 +377,12 @@
     <string name="account_logout_confirm_yes">Se déconnecter</string>
     <string name="account_cancel">Annuler</string>
     <string name="account_version">Elim · version %1$s</string>
+    <!-- Boîte de dialogue « Quitter une structure » -->
+    <string name="struct_leave_title">Quitter cette structure ?</string>
+    <string name="struct_leave_message">Vous n\'aurez plus accès aux livres réservés à ses membres. Confirmez avec votre mot de passe.</string>
+    <string name="struct_leave_password_hint">Mot de passe</string>
+    <string name="struct_leave_cancel">Annuler</string>
+    <string name="struct_leave_confirm">Quitter</string>
+    <string name="struct_leave_err_empty">Veuillez saisir votre mot de passe</string>
+    <string name="struct_leave_err_wrong">Mot de passe incorrect</string>
 </resources>

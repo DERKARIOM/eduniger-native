@@ -31,5 +31,6 @@
     <color name="account_on_accent">@color/brand_on_primary</color>
     <color name="account_danger">#FFF47171</color>
     <color name="account_danger_line">#FF5C2E2E</color>
+    <color name="account_danger_container">#33F47171</color>
     <color name="account_cover">#FF17325A</color>
 </resources>

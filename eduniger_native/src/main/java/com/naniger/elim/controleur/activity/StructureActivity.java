@@ -670,32 +670,29 @@ public class StructureActivity extends AppCompatActivity {
 
     private void showStructDeleteDialog(String structId) {
         StructDeleteDialog dialog = new StructDeleteDialog(this);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
 
-        TextView errorTextView    = dialog.findViewById(R.id.text_view_dialog_structure_delete_err);
         TextView noTextView       = dialog.findViewById(R.id.no);
         TextView yesTextView      = dialog.findViewById(R.id.yes);
         EditText passwordEditText = dialog.findViewById(R.id.edit_text_dialog_struct_delete_password);
 
         noTextView.setOnClickListener(v -> dialog.cancel());
         yesTextView.setOnClickListener(v ->
-                handleStructureDetach(dialog, passwordEditText, errorTextView, structId));
+                handleStructureDetach(dialog, passwordEditText, structId));
 
         dialog.build();
     }
 
     private void handleStructureDetach(StructDeleteDialog dialog, EditText passwordEditText,
-                                       TextView errorTextView, String structId) {
+                                       String structId) {
         String password = passwordEditText.getText().toString();
 
         if (password.isEmpty()) {
-            showPasswordError(passwordEditText, errorTextView, "Veuillez entrer votre mot de passe");
+            dialog.showError(R.string.struct_leave_err_empty);
             return;
         }
 
         if (!Objects.equals(PasswordUtil.hashPassword(password), mSession.getPassword())) {
-            showPasswordError(passwordEditText, errorTextView, "Mot de passe incorrect");
+            dialog.showError(R.string.struct_leave_err_wrong);
             return;
         }
 
@@ -709,12 +706,6 @@ public class StructureActivity extends AppCompatActivity {
 
         new StructMembershipSyn().execute(
                 Server.getUrlHostProd(this) + "/api/structures/" + structId + "/leave");
-    }
-
-    private void showPasswordError(EditText passwordEditText, TextView errorTextView, String message) {
-        passwordEditText.setBackground(getDrawable(R.drawable.forme_white_radius_100dp_border_rouge));
-        errorTextView.setVisibility(View.VISIBLE);
-        errorTextView.setText(message);
     }
 
     private void showSimpleDialog(int iconRes, String title, String message) {
