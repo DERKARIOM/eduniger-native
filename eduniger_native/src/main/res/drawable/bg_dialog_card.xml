@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Carte des boîtes de dialogue (clair/sombre via les couleurs account_*). -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/account_card" />
+    <corners android:radius="24dp" />
+    <stroke android:width="1dp" android:color="@color/account_card_stroke" />
+</shape>

@@ -1,95 +1,120 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Confirmation « Quitter une structure ».
+    Couleurs account_* : s'adaptent automatiquement aux modes clair et sombre.
+    Les identifiants (edit_text_dialog_struct_delete_password, text_view_dialog_structure_delete_err,
+    yes, no) sont conservés : StructureAdapter et StructureActivity n'ont pas à changer.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_dialog_card"
     android:orientation="vertical"
-    android:background="@drawable/forme_white_vert_radius_10dp"
-    android:padding="10dp">
-    <LinearLayout
+    android:paddingStart="24dp"
+    android:paddingTop="28dp"
+    android:paddingEnd="24dp"
+    android:paddingBottom="20dp">
+
+    <FrameLayout
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/bg_dialog_icon_danger">
+
+        <ImageView
+            android:layout_width="26dp"
+            android:layout_height="26dp"
+            android:layout_gravity="center"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_account_logout"
+            android:tint="@color/account_danger" />
+    </FrameLayout>
+
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:accessibilityHeading="true"
         android:gravity="center"
-        android:layout_marginBottom="20dp">
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/vector_rouge_desole" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:text="Détachement"
-            android:textSize="20dp"
-            android:textColor="@color/black"
-            android:fontFamily="@font/linux2"
-            />
-    </LinearLayout>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Êtes-vous sûr de vouloir vous détacher de cette structure ?"
-        android:layout_margin="10dp"
-        android:gravity="center"
-        android:layout_gravity="center"
-        android:fontFamily="@font/linux2"
-        android:textColor="@color/black2"
-        android:textSize="15dp"
-        />
-    <EditText
+        android:text="@string/struct_leave_title"
+        android:textColor="@color/account_text"
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:lineSpacingExtra="2dp"
+        android:text="@string/struct_leave_message"
+        android:textColor="@color/account_text_muted"
+        android:textSize="14sp" />
+
+    <EditText
         android:id="@+id/edit_text_dialog_struct_delete_password"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
+        android:layout_height="52dp"
         android:layout_marginTop="20dp"
-        android:textColor="@color/black3"
-        android:background="@drawable/forme_white_radius_100dp_border_vert"
-        android:hint="  Votre mot de passe"
+        android:autofillHints="password"
+        android:background="@drawable/bg_dialog_input"
         android:drawableStart="@drawable/vector_black3_password"
+        android:drawablePadding="12dp"
+        android:drawableTint="@color/account_icon_muted"
+        android:hint="@string/struct_leave_password_hint"
+        android:imeOptions="actionDone"
         android:inputType="textPassword"
-        android:padding="7dp"
-        android:selectAllOnFocus="false" />
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:textColor="@color/account_text"
+        android:textColorHint="@color/account_text_muted"
+        android:textSize="15sp" />
+
     <TextView
         android:id="@+id/text_view_dialog_structure_delete_err"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text=""
-        android:layout_marginTop="10dp"
-        android:gravity="center_horizontal"
-        android:layout_gravity="center_horizontal"
-        android:fontFamily="@font/linux2"
-        android:visibility="gone"
-        android:textColor="@color/rouge"
-        android:textSize="13dp"
-        />
+        android:layout_marginTop="8dp"
+        android:accessibilityLiveRegion="polite"
+        android:paddingStart="4dp"
+        android:textColor="@color/account_danger"
+        android:textSize="13sp"
+        android:visibility="gone" />
+
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_gravity="end"
-        android:layout_margin="10dp"
-        >
-        <TextView
-            android:id="@+id/yes"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Oui"
-            android:padding="10dp"
-            android:textColor="@color/rouge"
-            android:fontFamily="@font/linux2"
-            android:layout_margin="10dp"
-            android:textSize="20dp"/>
+        android:layout_marginTop="24dp"
+        android:orientation="horizontal">
+
         <TextView
             android:id="@+id/no"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Non"
-            android:layout_margin="10dp"
-            android:padding="10dp"
-            android:textColor="@color/purple_200"
-            android:fontFamily="@font/linux2"
-            android:textSize="20dp"
-            />
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="6dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_dialog_button_secondary"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:text="@string/struct_leave_cancel"
+            android:textColor="@color/account_text"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/yes"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="6dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_dialog_button_danger"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:text="@string/struct_leave_confirm"
+            android:textColor="#FFFFFFFF"
+            android:textSize="15sp"
+            android:textStyle="bold" />
     </LinearLayout>
 </LinearLayout>
