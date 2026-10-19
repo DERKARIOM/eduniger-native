@@ -24,7 +24,7 @@
             android:padding="8dp"
             android:src="@drawable/vector_back"
             android:tint="@color/text_primary"
-            android:contentDescription="@string/todo" />
+            android:contentDescription="@string/a11y_back" />
     </RelativeLayout>
 
     <!-- SKELETON LOADING -->
@@ -202,7 +202,7 @@
                         android:elevation="16dp"
                         android:src="@drawable/img_wait_cover_book"
                         android:scaleType="centerCrop"
-                        android:contentDescription="@string/todo" />
+                        android:importantForAccessibility="no" />
                 </FrameLayout>
 
                 <!-- Badge catégorie -->
@@ -283,7 +283,7 @@
                             android:layout_width="22dp" android:layout_height="22dp"
                             android:src="@drawable/vector_black3_off_like"
                             android:tint="@color/text_secondary"
-                            android:contentDescription="@string/todo" />
+                            android:contentDescription="@string/a11y_like" />
                         <TextView android:id="@+id/text_view_activity_book_number_like"
                             android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:layout_marginTop="3dp"
@@ -305,7 +305,7 @@
                             android:layout_width="22dp" android:layout_height="22dp"
                             android:src="@drawable/vector_black3_off_no_like"
                             android:tint="@color/text_secondary"
-                            android:contentDescription="@string/todo" />
+                            android:contentDescription="@string/a11y_dislike" />
                         <TextView android:id="@+id/text_view_activity_book_number_no_like"
                             android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:layout_marginTop="3dp"
@@ -327,7 +327,7 @@
                             android:layout_width="22dp" android:layout_height="22dp"
                             android:src="@drawable/vector_black3_off_subscribe"
                             android:tint="@color/text_secondary"
-                            android:contentDescription="@string/todo" />
+                            android:contentDescription="@string/a11y_subscribe" />
                         <TextView android:id="@+id/text_view_activity_book_number_subscribe"
                             android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:layout_marginTop="3dp"
@@ -349,7 +349,7 @@
                             android:layout_width="22dp" android:layout_height="22dp"
                             android:src="@drawable/vector_black3_vue"
                             android:tint="@color/text_secondary"
-                            android:contentDescription="@string/todo" />
+                            android:importantForAccessibility="no" />
                         <TextView android:id="@+id/text_view_activity_book_view"
                             android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:layout_marginTop="3dp" android:text="50"
@@ -388,18 +388,19 @@
                                 <ProgressBar android:id="@+id/progress_bar_activity_book_wait_player"
                                     android:layout_width="36dp" android:layout_height="36dp"
                                     android:progressDrawable="@drawable/form_circular_bar_connexion" />
-                                <ImageView android:id="@+id/image_view_activity_book_player"
-                                    android:layout_width="36dp" android:layout_height="36dp"
+                                <ImageView
+        android:scaleType="fitCenter" android:id="@+id/image_view_activity_book_player"
+                                    android:layout_width="48dp" android:layout_height="48dp"
                                     android:src="@drawable/vector_black3_pause"
-                                    android:tint="@color/accent_blue" android:padding="4dp"
-                                    android:contentDescription="@string/todo" />
+                                    android:tint="@color/accent_blue" android:padding="10dp"
+                                    android:contentDescription="@string/a11y_play_pause" />
                             </RelativeLayout>
                             <ImageView android:id="@+id/image_view_activity_book_stop"
                                 android:layout_width="32dp" android:layout_height="32dp"
                                 android:layout_marginStart="6dp" android:layout_marginEnd="6dp"
                                 android:src="@drawable/vector_black3_stop"
                                 android:tint="@color/text_secondary" android:padding="4dp"
-                                android:contentDescription="@string/todo" />
+                                android:contentDescription="@string/a11y_stop" />
                             <TextView android:id="@+id/text_view_activity_book_time_now"
                                 android:layout_width="wrap_content" android:layout_height="wrap_content"
                                 android:layout_marginEnd="8dp" android:text="@string/default_time"
@@ -473,7 +474,7 @@
                             android:orientation="horizontal" tools:ignore="UseCompoundDrawables">
                             <ImageView android:layout_width="16dp" android:layout_height="16dp"
                                 android:src="@drawable/vector_black3_download" android:tint="@color/text_hint"
-                                android:contentDescription="@string/todo" />
+                                android:importantForAccessibility="no" />
                             <TextView android:id="@+id/text_view_activity_book_audio_size"
                                 android:layout_width="wrap_content" android:layout_height="wrap_content"
                                 android:layout_marginStart="4dp" android:text="35Mo"
@@ -486,7 +487,7 @@
                             tools:ignore="UseCompoundDrawables">
                             <ImageView android:layout_width="16dp" android:layout_height="16dp"
                                 android:src="@drawable/vector_black3_time" android:tint="@color/text_hint"
-                                android:contentDescription="@string/todo" />
+                                android:importantForAccessibility="no" />
                             <TextView android:id="@+id/text_view_activity_book_audio_max_time"
                                 android:layout_width="wrap_content" android:layout_height="wrap_content"
                                 android:layout_marginStart="4dp" android:text="39:05"
@@ -580,7 +581,7 @@
                             tools:ignore="UseCompoundDrawables">
                             <ImageView android:layout_width="16dp" android:layout_height="16dp"
                                 android:src="@drawable/vector_black3_off_like" android:tint="@color/text_hint"
-                                android:contentDescription="@string/todo" />
+                                android:importantForAccessibility="no" />
                             <TextView android:id="@+id/text_view_activity_book_pdf_size"
                                 android:layout_width="wrap_content" android:layout_height="wrap_content"
                                 android:layout_marginStart="4dp" android:text="35Mo"
@@ -593,7 +594,7 @@
                             tools:ignore="UseCompoundDrawables">
                             <ImageView android:layout_width="16dp" android:layout_height="16dp"
                                 android:src="@drawable/vector_black3_vue" android:tint="@color/text_hint"
-                                android:contentDescription="@string/todo" />
+                                android:importantForAccessibility="no" />
                             <TextView android:id="@+id/text_view_activity_book_pdf_max_page"
                                 android:layout_width="wrap_content" android:layout_height="wrap_content"
                                 android:layout_marginStart="4dp" android:text="300P"
@@ -706,7 +707,7 @@
                             android:layout_centerVertical="true" android:layout_alignParentEnd="true"
                             android:layout_marginEnd="4dp" android:padding="6dp"
                             android:src="@drawable/vector_white_send" android:tint="@color/purple_200"
-                            android:background="@null" android:contentDescription="@string/todo" />
+                            android:background="@null" android:contentDescription="@string/a11y_send_comment" />
                     </RelativeLayout>
                 </LinearLayout>
 

@@ -124,7 +124,7 @@ public class ChatAiActivity extends AppCompatActivity {
         sheetBg.setCornerRadii(new float[]{
                 dp(24), dp(24), dp(24), dp(24), 0, 0, 0, 0 // coins haut arrondis
         });
-        sheetBg.setColor(android.graphics.Color.parseColor("#1C1C1E"));
+        sheetBg.setColor(androidx.core.content.ContextCompat.getColor(this, com.naniger.elim.R.color.elim_surface));
         root.setBackground(sheetBg);
 
         // ── Items ────────────────────────────────────────────────────────
@@ -161,7 +161,7 @@ public class ChatAiActivity extends AppCompatActivity {
             android.graphics.drawable.GradientDrawable iconBg =
                     new android.graphics.drawable.GradientDrawable();
             iconBg.setShape(android.graphics.drawable.GradientDrawable.OVAL);
-            iconBg.setColor(android.graphics.Color.parseColor("#2C2C2E"));
+            iconBg.setColor(androidx.core.content.ContextCompat.getColor(this, com.naniger.elim.R.color.elim_surface_variant));
             iconContainer.setBackground(iconBg);
 
             android.widget.ImageView iv = new android.widget.ImageView(this);
@@ -170,7 +170,7 @@ public class ChatAiActivity extends AppCompatActivity {
             ivLp.gravity = android.view.Gravity.CENTER;
             iv.setLayoutParams(ivLp);
             iv.setImageResource(icons[i]);
-            iv.setColorFilter(android.graphics.Color.WHITE,
+            iv.setColorFilter(androidx.core.content.ContextCompat.getColor(this, com.naniger.elim.R.color.elim_on_surface),
                     android.graphics.PorterDuff.Mode.SRC_IN);
             iconContainer.addView(iv);
             row.addView(iconContainer);
@@ -178,7 +178,7 @@ public class ChatAiActivity extends AppCompatActivity {
             // Label
             android.widget.TextView tv = new android.widget.TextView(this);
             tv.setText(labels[i]);
-            tv.setTextColor(android.graphics.Color.WHITE);
+            tv.setTextColor(androidx.core.content.ContextCompat.getColor(this, com.naniger.elim.R.color.elim_on_surface));
             tv.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, 16f);
             tv.setTypeface(null, android.graphics.Typeface.BOLD);
             row.addView(tv, new android.widget.LinearLayout.LayoutParams(
@@ -190,7 +190,7 @@ public class ChatAiActivity extends AppCompatActivity {
             // Séparateur (sauf dernier)
             if (i < labels.length - 1) {
                 android.view.View sep = new android.view.View(this);
-                sep.setBackgroundColor(android.graphics.Color.parseColor("#2C2C2E"));
+                sep.setBackgroundColor(androidx.core.content.ContextCompat.getColor(this, com.naniger.elim.R.color.elim_outline));
                 android.widget.LinearLayout.LayoutParams sepLp =
                         new android.widget.LinearLayout.LayoutParams(
                                 android.widget.LinearLayout.LayoutParams.MATCH_PARENT, dp(1));
@@ -396,13 +396,13 @@ public class ChatAiActivity extends AppCompatActivity {
         android.graphics.drawable.GradientDrawable bg =
                 new android.graphics.drawable.GradientDrawable();
         bg.setCornerRadius(dp(50));
-        bg.setColor(android.graphics.Color.parseColor("#1E1E1E"));
+        bg.setColor(androidx.core.content.ContextCompat.getColor(this, com.naniger.elim.R.color.elim_surface));
         layout.setBackground(bg);
 
         // Icône warning
         android.widget.ImageView icon = new android.widget.ImageView(this);
         icon.setImageResource(android.R.drawable.ic_dialog_alert);
-        icon.setColorFilter(android.graphics.Color.parseColor("#FFA500"),
+        icon.setColorFilter(androidx.core.content.ContextCompat.getColor(this, com.naniger.elim.R.color.elim_warning),
                 android.graphics.PorterDuff.Mode.SRC_IN);
         android.widget.LinearLayout.LayoutParams iconLp =
                 new android.widget.LinearLayout.LayoutParams(dp(18), dp(18));
@@ -412,7 +412,7 @@ public class ChatAiActivity extends AppCompatActivity {
         // Texte
         android.widget.TextView tv = new android.widget.TextView(this);
         tv.setText(message);
-        tv.setTextColor(android.graphics.Color.WHITE);
+        tv.setTextColor(androidx.core.content.ContextCompat.getColor(this, com.naniger.elim.R.color.elim_on_surface));
         tv.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, 13f);
         layout.addView(tv, new android.widget.LinearLayout.LayoutParams(
                 android.widget.LinearLayout.LayoutParams.WRAP_CONTENT,

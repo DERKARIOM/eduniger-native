@@ -5,5 +5,5 @@
         android:topLeftRadius="20dp"
         android:topRightRadius="20dp" />
     <!-- Utilisez votre couleur de fond de chat, ex: #1E1E1E ou bg_toolbar_night -->
-    <solid android:color="#1C1C1E" />
+    <solid android:color="@color/elim_surface" />
 </shape>

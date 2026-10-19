@@ -4,13 +4,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black">
+    android:background="@color/elim_background">
 
     <!-- ══════════════════════ HEADER ══════════════════════ -->
     <LinearLayout
         android:id="@+id/header"
         android:layout_width="0dp"
-        android:background="@color/black"
+        android:background="@color/elim_background"
         android:layout_height="56dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
@@ -21,13 +21,15 @@
 
         <!-- Bouton retour / menu -->
         <ImageButton
+        android:scaleType="fitCenter"
+        android:padding="5dp"
             android:id="@+id/btnBack"
-            android:layout_width="38dp"
-            android:layout_height="38dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:background="@drawable/bg_bottom_nav"
             android:contentDescription="Menu"
             android:src="@drawable/vector_back"
-            android:tint="#FFFFFF" />
+            android:tint="@color/elim_on_surface" />
 
         <!-- Titre centré -->
         <TextView
@@ -36,19 +38,21 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="Eduna IA"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/elim_on_surface"
             android:textSize="17sp"
             android:textStyle="bold" />
 
         <!-- Bouton nouvelle conversation -->
         <ImageButton
+        android:scaleType="fitCenter"
+        android:padding="5dp"
             android:id="@+id/btnMenu"
-            android:layout_width="38dp"
-            android:layout_height="38dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:background="@drawable/bg_bottom_nav"
             android:contentDescription="Nouvelle conversation"
             android:src="@drawable/ic_menu"
-            android:tint="#FFFFFF" />
+            android:tint="@color/elim_on_surface" />
 
     </LinearLayout>
 
@@ -57,7 +61,7 @@
         android:id="@+id/divider"
         android:layout_width="0dp"
         android:layout_height="0.5dp"
-        android:background="#222222"
+        android:background="@color/elim_surface_variant"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/header" />
@@ -80,7 +84,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Comment puis-je vous aider ?"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/elim_on_surface"
             android:textSize="22sp"
             android:textStyle="bold"
             android:gravity="center"
@@ -107,7 +111,7 @@
                 <ImageView android:layout_width="15dp" android:layout_height="15dp"
                     android:src="@drawable/books_emp" android:layout_marginEnd="8dp"/>
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="Expliquer un livre" android:textColor="#AAAAAA" android:textSize="12sp"/>
+                    android:text="Expliquer un livre" android:textColor="@color/elim_on_surface_variant" android:textSize="12sp"/>
             </LinearLayout>
 
             <!-- Suggestion 2 -->
@@ -124,7 +128,7 @@
                 <ImageView android:layout_width="15dp" android:layout_height="15dp"
                     android:src="@drawable/books_emp" android:layout_marginEnd="8dp"/>
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="Résumer un livre" android:textColor="#AAAAAA" android:textSize="12sp"/>
+                    android:text="Résumer un livre" android:textColor="@color/elim_on_surface_variant" android:textSize="12sp"/>
             </LinearLayout>
 
             <!-- Suggestion 3 -->
@@ -141,7 +145,7 @@
                 <ImageView android:layout_width="15dp" android:layout_height="15dp"
                     android:src="@drawable/books_emp" android:layout_marginEnd="8dp"/>
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="Poser une question" android:textColor="#AAAAAA" android:textSize="12sp"/>
+                    android:text="Poser une question" android:textColor="@color/elim_on_surface_variant" android:textSize="12sp"/>
             </LinearLayout>
 
             <!-- Suggestion 4 -->
@@ -158,14 +162,14 @@
                 <ImageView android:layout_width="15dp" android:layout_height="15dp"
                     android:src="@drawable/books_emp" android:layout_marginEnd="8dp"/>
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="Surprends-moi" android:textColor="#AAAAAA" android:textSize="12sp"/>
+                    android:text="Surprends-moi" android:textColor="@color/elim_on_surface_variant" android:textSize="12sp"/>
             </LinearLayout>
 
         </GridLayout>
     </LinearLayout>
     <!-- ══════════════════════ MESSAGES ══════════════════════ -->
     <androidx.recyclerview.widget.RecyclerView
-        android:background="@color/black"
+        android:background="@color/elim_background"
         android:id="@+id/recyclerViewMessages"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -209,7 +213,7 @@
         android:id="@+id/layoutInput"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@color/black"
+        android:background="@color/elim_background"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingHorizontal="12dp"
@@ -226,7 +230,7 @@
             android:background="@drawable/bg_bottom_nav"
             android:contentDescription="Joindre"
             android:src="@drawable/vector_white_sombre_add"
-            android:tint="#888888" />
+            android:tint="@color/elim_on_surface_variant" />
 
         <!-- Champ de texte -->
         <EditText
@@ -241,7 +245,7 @@
             android:minHeight="44dp"
             android:paddingHorizontal="16dp"
             android:paddingVertical="10dp"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/elim_on_surface"
             android:textSize="15sp" />
 
         <!-- Bouton envoyer -->
@@ -252,7 +256,7 @@
             android:background="@drawable/bg_send_button"
             android:contentDescription="Envoyer"
             android:src="@drawable/vector_white_send"
-            android:tint="#000000" />
+            android:tint="@color/elim_surface" />
 
     </LinearLayout>
 

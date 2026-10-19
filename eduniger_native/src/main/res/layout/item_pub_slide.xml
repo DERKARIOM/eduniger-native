@@ -18,7 +18,7 @@
             android:layout_height="match_parent"
             android:scaleType="fitXY"
             android:adjustViewBounds="true"
-            android:contentDescription="@string/todo" />
+            android:importantForAccessibility="no" />
 
     </com.google.android.material.card.MaterialCardView>
 

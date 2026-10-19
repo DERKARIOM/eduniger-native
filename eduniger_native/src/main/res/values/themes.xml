@@ -1,7 +1,10 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Le themes de base de l'application -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <!-- Repli uniquement : en mode clair c'est values-v23/themes.xml qui s'applique (minSdk 28),
+         en mode sombre values-night/themes.xml. Parent aligné sur ces deux thèmes
+         (MaterialComponents, requis par MaterialCardView / BottomNavigationView / TabLayout). -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Couleur de la marque principale. -->
         <item name="colorPrimary">@color/brand_primary</item>
         <item name="colorPrimaryVariant">@color/brand_primary_strong</item>
@@ -14,10 +17,25 @@
         <!-- Couleur de la marque secondaire. -->
         <item name="colorSecondary">@color/brand_primary</item>
         <item name="colorSecondaryVariant">@color/brand_primary_strong</item>
-        <item name="colorOnSecondary">@color/black</item>
-        <item name="android:textColorPrimary">@color/black</item>
+        <item name="colorOnSecondary">@color/brand_on_primary</item>
+        <item name="android:textColorPrimary">@color/elim_on_surface</item>
+        <item name="android:textColorSecondary">@color/elim_on_surface_variant</item>
+        <!-- Rôles de la palette centralisée (values*/colors.xml : elim_*) -->
+        <item name="colorSurface">@color/elim_surface</item>
+        <item name="colorOnSurface">@color/elim_on_surface</item>
+        <item name="colorError">@color/elim_error</item>
+        <item name="colorOnError">@color/elim_on_error</item>
+        <item name="android:colorBackground">@color/elim_background</item>
+        <item name="colorOnBackground">@color/elim_on_surface</item>
+        <item name="android:textColorHint">@color/elim_text_hint</item>
+        <item name="android:windowBackground">@color/elim_background</item>
         <!-- Couleur de la barre d'état. -->
         <item name="android:statusBarColor">@color/transparent</item>
+        <!-- Mode clair : icônes sombres dans les barres système (sinon icônes blanches
+             invisibles sur fond clair). -->
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
+        <item name="android:navigationBarColor">@color/elim_background</item>
     </style>
     <style name="background">
         <item name="background">@color/whiteVert</item>
@@ -196,17 +214,17 @@
     </style>
     <style name="semeste">
         <item name="android:fontFamily">@font/apple2</item>
-        <item name="android:textSize">20dp</item>
+        <item name="android:textSize">20sp</item>
     </style>
     <style name="semeste2">
         <item name="android:fontFamily">@font/apple2</item>
-        <item name="android:textSize">18dp</item>
+        <item name="android:textSize">18sp</item>
     </style>
     <style name="ColorMatier">
         <item name="android:textColor">@color/black</item>
     </style>
     <style name="toolbar">
-        <item name="android:textSize">25dp</item>
+        <item name="android:textSize">25sp</item>
         <item name="android:fontFamily">@font/apple1</item>
     </style>
     <style name="Progretion">

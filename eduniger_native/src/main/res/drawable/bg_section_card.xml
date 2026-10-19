@@ -5,7 +5,7 @@
     <solid android:color="@color/transparent" />  <!-- noir très transparent -->
     <stroke
         android:width="1dp"
-        android:color="#40FFFFFF" />  <!-- bordure blanche subtile -->
+        android:color="@color/elim_outline" />  <!-- bordure blanche subtile -->
     <padding
         android:left="12dp"
         android:right="12dp"

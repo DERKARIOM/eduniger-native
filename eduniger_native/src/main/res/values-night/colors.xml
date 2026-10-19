@@ -6,6 +6,32 @@
     <color name="brand_primary_container">#FF0B3550</color>
     <color name="brand_on_primary">#FF00263A</color>
     <color name="brand_on_primary_container">#FFC7E6F8</color>
+
+    <!-- ===== PALETTE CENTRALISÉE ELIM — rôles, mode sombre ===== -->
+    <color name="elim_secondary">#FF9FB7C7</color>
+    <color name="elim_background">#FF0D1318</color>
+    <color name="elim_surface">#FF1A1F24</color>
+    <color name="elim_surface_variant">#FF232A31</color>
+    <color name="elim_on_surface">#FFF2F5F7</color>
+    <color name="elim_on_surface_variant">#FFA0A8AF</color>
+    <color name="elim_text_hint">#FF8A949C</color>
+    <color name="elim_outline">#FF2E363D</color>
+    <color name="elim_error">#FFF47171</color>
+    <color name="elim_on_error">#FF3B0A0A</color>
+    <color name="elim_error_container">#FF4A1C1C</color>
+    <color name="elim_success">#FF66BB6A</color>
+    <color name="elim_warning">#FFFFB74D</color>
+    <color name="elim_info">@color/brand_primary</color>
+    <color name="elim_disabled">#FF5C656D</color>
+    <!-- Anciennes couleurs « sombres » rendues adaptatives (cf. values/colors.xml) -->
+    <color name="text_primary">#FFFFFFFF</color>
+    <color name="text_secondary">#FFA0A0A0</color>
+    <color name="bg_dark">#FF0D0D0D</color>
+    <color name="bg_card">#FF1A1A1A</color>
+    <color name="bg_section">#FF141414</color>
+    <color name="divider">#FF2A2A2A</color>
+    <color name="skeleton_base">#FF2A2A2A</color>
+
     <!-- ===== Lecteur audio (v2) : jetons "mode sombre" ===== -->
     <color name="player_bg">@color/black</color>
     <color name="player_backdrop_top">#FF0F2533</color>

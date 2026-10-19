@@ -385,4 +385,18 @@
     <string name="struct_leave_confirm">Quitter</string>
     <string name="struct_leave_err_empty">Veuillez saisir votre mot de passe</string>
     <string name="struct_leave_err_wrong">Mot de passe incorrect</string>
+    <!-- Descriptions d'accessibilité (TalkBack) -->
+    <string name="a11y_back">Retour</string>
+    <string name="a11y_shortcut">Raccourci</string>
+    <string name="a11y_announcements">Annonces</string>
+    <string name="a11y_search">Rechercher</string>
+    <string name="a11y_volume">Volume</string>
+    <string name="a11y_equalizer">Égaliseur</string>
+    <string name="a11y_play_pause">Lecture ou pause</string>
+    <string name="a11y_stop">Arrêter</string>
+    <string name="a11y_dislike">Je n\'aime pas</string>
+    <string name="a11y_like">J\'aime</string>
+    <string name="a11y_subscribe">S\'abonner</string>
+    <string name="a11y_send_comment">Envoyer le commentaire</string>
+    <string name="a11y_lock">Verrouillage</string>
 </resources>

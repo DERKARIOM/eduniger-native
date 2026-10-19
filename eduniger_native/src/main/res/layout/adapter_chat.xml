@@ -29,7 +29,7 @@
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@+id/chatProfile"
                 android:text="FASTIA"
-                android:textSize="13dp"
+                android:textSize="13sp"
                 android:textColor="@color/white"
                 android:textStyle="bold"
                 android:layout_centerVertical="true"/>
@@ -45,7 +45,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="15dp"
-                android:textSize="16dp"
+                android:textSize="16sp"
                 android:textAlignment="viewStart"
                 android:text="Salut que puis-je faire pour vous"/>
         </RelativeLayout>

@@ -17,7 +17,7 @@
         android:layout_marginTop="4dp"
         android:src="@drawable/ia_new"
         android:visibility="gone"
-        android:tint="#FFFFFF"
+        android:tint="@color/elim_on_surface"
         android:contentDescription="Eduna" />
 
     <TextView
@@ -25,7 +25,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:textColor="#ECECEC"
+        android:textColor="@color/elim_on_surface"
         android:textSize="15sp"
         android:lineSpacingExtra="4dp" />
 

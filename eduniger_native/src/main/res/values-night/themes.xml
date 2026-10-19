@@ -16,6 +16,17 @@
         <item name="colorSecondary">@color/brand_primary</item>
         <item name="colorSecondaryVariant">@color/brand_primary_strong</item>
         <item name="colorOnSecondary">@color/brand_on_primary</item>
+        <item name="android:textColorPrimary">@color/elim_on_surface</item>
+        <item name="android:textColorSecondary">@color/elim_on_surface_variant</item>
+        <!-- Rôles de la palette centralisée (values*/colors.xml : elim_*) -->
+        <item name="colorSurface">@color/elim_surface</item>
+        <item name="colorOnSurface">@color/elim_on_surface</item>
+        <item name="colorError">@color/elim_error</item>
+        <item name="colorOnError">@color/elim_on_error</item>
+        <item name="android:colorBackground">@color/elim_background</item>
+        <item name="colorOnBackground">@color/elim_on_surface</item>
+        <item name="android:textColorHint">@color/elim_text_hint</item>
+
         <!-- Couleur de la navigation bar -->
         <item name="android:navigationBarColor">@color/black</item>
         <!-- Status bar color. -->

@@ -8,5 +8,5 @@
         android:layout_height="150dp"
         android:layout_margin="5dp"
         android:src="@mipmap/ic_v2_round"
-        android:contentDescription="@string/todo" />
+        android:importantForAccessibility="no" />
 </RelativeLayout>

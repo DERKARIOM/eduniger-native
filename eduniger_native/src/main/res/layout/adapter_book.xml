@@ -15,7 +15,7 @@
         android:layout_marginBottom="10dp"
         android:elevation="2dp"
         android:src="@mipmap/ic_v2_round"
-        android:contentDescription="@string/todo" />
+        android:importantForAccessibility="no" />
     <RelativeLayout
         android:id="@+id/info_livre"
         style="@style/wrap_content_all"
@@ -46,7 +46,7 @@
                 android:id="@+id/image_view_adapter_book_physical"
                 android:src="@drawable/vector_black3_physical"
                 style="@style/icon_format"
-                android:contentDescription="@string/todo" />
+                android:importantForAccessibility="no" />
             <ImageView
                 android:id="@+id/image_view_adapter_book_electronic"
                 android:layout_width="10dp"
@@ -54,12 +54,12 @@
                 android:layout_margin="5dp"
                 android:visibility="gone"
                 style="@style/adapter_book_pdf"
-                android:contentDescription="@string/todo" />
+                android:importantForAccessibility="no" />
             <ImageView
                 android:id="@+id/image_view_adapter_book_audio"
                 style="@style/icon_format"
                 android:src="@drawable/vector_audio"
-                android:contentDescription="@string/todo" />
+                android:importantForAccessibility="no" />
             <LinearLayout
                 android:id="@+id/linear_layout_activity_book_like"
                 style="@style/wrap_content_all"
@@ -71,7 +71,7 @@
                     android:layout_width="10dp"
                     android:layout_height="10dp"
                     style="@style/adapter_book_like"
-                    android:contentDescription="@string/todo" />
+                    android:contentDescription="@string/a11y_like" />
                 <TextView
                     android:id="@+id/text_view_activity_book_number_like"
                     style="@style/icon_subcribe_text_view"
@@ -87,7 +87,7 @@
                     android:layout_width="10dp"
                     android:layout_height="10dp"
                     style="@style/adapter_book_view"
-                    android:contentDescription="@string/todo" />
+                    android:contentDescription="@string/a11y_dislike" />
                 <TextView
                     android:id="@+id/text_view_adapter_book_number_view"
                     style="@style/icon_subcribe_text_view"

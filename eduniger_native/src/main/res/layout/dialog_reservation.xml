@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/forme_white_radius_10dp"
+    android:background="@drawable/bg_dialog_card"
     >
     <Spinner
         android:id="@+id/spinner_dialog_reservation_time_limit"
@@ -11,7 +11,6 @@
         android:layout_height="wrap_content"
         android:autofillHints="rasdkdkdkdkdkd"
         android:layout_margin="10dp"
-        android:fontFamily="sans-serif-smallcaps"
         android:gravity="center"
         android:theme="@style/AppTheme"
         android:backgroundTint="@color/purple_200"
@@ -28,9 +27,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/apple1"
-            android:textColor="@color/black"
-            android:textSize="18dp"
+            android:textColor="@color/elim_on_surface"
+            android:textSize="18sp"
             android:text="Consultation sur place"
             />
         <CheckBox
@@ -48,8 +46,8 @@
        android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginTop="20dp"
-        android:textColor="@color/black3"
-        android:background="@drawable/forme_white_radius_100dp_border_vert"
+        android:textColor="@color/elim_on_surface"
+        android:background="@drawable/bg_dialog_input"
         android:elevation="2dp"
         android:hint="  Votre mot de passe"
         android:drawableStart="@drawable/vector_black3_password"
@@ -60,8 +58,8 @@
         android:id="@+id/text_view_dialog_reservation_error"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="10dp"
-        android:textColor="@color/rouge"
+        android:textSize="12sp"
+        android:textColor="@color/elim_error"
         android:text=""
         android:layout_gravity="center"/>
     <RelativeLayout

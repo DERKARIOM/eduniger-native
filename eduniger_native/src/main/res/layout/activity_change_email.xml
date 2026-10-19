@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- Défilement : le formulaire reste accessible quand le clavier est ouvert ou sur petit écran. -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="@color/elim_background">
+<RelativeLayout
     style="@style/match_parent_all"
     android:orientation="vertical"
-    android:background="@color/white"
+    android:background="@color/elim_background"
     tools:context=".controleur.activity.ChangeEmailActivity">
 
     <RelativeLayout
@@ -19,7 +25,7 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="@string/todo" />
+            android:importantForAccessibility="no" />
 
     </RelativeLayout>
 
@@ -31,7 +37,7 @@
         android:layout_marginStart="28dp"
         android:layout_marginEnd="28dp"
         android:layout_marginBottom="30dp"
-        android:background="@drawable/forme_white_radius_10dp"
+        android:background="@drawable/bg_dialog_input"
         android:elevation="10dp"
         android:hint="@string/edit_text_hint_id_number"
         android:drawableStart="@drawable/vector_black3_identify"
@@ -46,7 +52,7 @@
         android:layout_marginStart="28dp"
         android:layout_marginEnd="28dp"
         android:layout_marginBottom="30dp"
-        android:background="@drawable/forme_white_radius_10dp"
+        android:background="@drawable/bg_dialog_input"
         android:elevation="10dp"
         android:hint="@string/edit_text_hint_password"
         android:drawableStart="@drawable/vector_black3_password"
@@ -62,7 +68,7 @@
         android:layout_marginStart="30dp"
         android:layout_marginEnd="30dp"
         android:layout_marginBottom="30dp"
-        android:background="@drawable/forme_white_radius_10dp"
+        android:background="@drawable/bg_dialog_input"
         android:elevation="10dp"
         android:hint="@string/email_new"
         android:drawableStart="@drawable/vector_black3_email"
@@ -77,7 +83,7 @@
         android:layout_above="@id/relative_layout_change_email_connection"
         android:layout_centerInParent="true"
         android:layout_marginBottom="30dp"
-        android:textColor="@color/rouge"
+        android:textColor="@color/elim_error"
         android:textSize="@dimen/size_sub_title" />
 
 
@@ -113,3 +119,4 @@
         android:textColor="@color/purple_200"
         android:textSize="@dimen/size_title" />
 </RelativeLayout>
+</ScrollView>

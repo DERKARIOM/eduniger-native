@@ -24,8 +24,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Compte"
-                android:textColor="@color/black"
-                android:textSize="15dp"/>
+                android:textColor="@color/elim_on_surface"
+                android:textSize="15sp"/>
             <TextView
                 android:id="@+id/sousTitre"
                 android:layout_width="wrap_content"

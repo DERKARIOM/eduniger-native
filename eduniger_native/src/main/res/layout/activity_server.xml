@@ -13,9 +13,8 @@
         android:text="URL de l'API Elim (Laravel)"
         android:layout_marginStart="15dp"
         android:layout_marginTop="15dp"
-        android:fontFamily="@font/linux"
         android:textStyle="bold"
-        android:textSize="18dp" />
+        android:textSize="18sp" />
 
     <TextView
         android:id="@+id/text_view_activity_server_laravel_desc"
@@ -25,8 +24,7 @@
         android:layout_marginStart="15dp"
         android:layout_marginEnd="15dp"
         android:layout_below="@id/text_view_activity_server_laravel_label"
-        android:fontFamily="@font/linux2"
-        android:textSize="13dp" />
+        android:textSize="13sp" />
 
     <EditText
         android:id="@+id/edit_text_activity_server_laravel_url"
@@ -45,9 +43,8 @@
         android:text="Ancien backend (fonctionnalites pas encore migrees)"
         android:layout_marginStart="15dp"
         android:layout_marginTop="20dp"
-        android:fontFamily="@font/linux"
         android:textStyle="bold"
-        android:textSize="15dp"
+        android:textSize="15sp"
         android:layout_below="@id/edit_text_activity_server_laravel_url" />
 
     <Switch
@@ -55,14 +52,13 @@
         android:layout_below="@id/text_view_activity_server_legacy_separator"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/linux2"
         android:showText="false"
         android:layout_marginStart="15dp"
         android:layout_marginEnd="15dp"
         android:layout_marginTop="15dp"
         android:text="Mode multi serveurs"
         android:layout_marginBottom="5dp"
-        android:textSize="20dp" />
+        android:textSize="20sp" />
 
     <TextView
         android:id="@+id/text_view_activity_server_desc_muti_server"
@@ -70,8 +66,7 @@
         android:layout_height="wrap_content"
         android:text="Lorsque cette option sera activée, vous pouvez synchroniser les données de plusieurs serveurs."
         android:layout_marginStart="12dp"
-        android:fontFamily="@font/linux2"
-        android:textSize="15dp"
+        android:textSize="15sp"
         android:layout_marginEnd="10dp"
         android:layout_below="@+id/switch_activity_server"
         />
@@ -92,8 +87,7 @@
             android:layout_marginTop="30dp"
             android:layout_marginBottom="10dp"
             android:layout_marginStart="10dp"
-            android:textSize="20dp"
-            android:fontFamily="@font/linux"
+            android:textSize="20sp"
             android:textColor="@color/black"
             />
 

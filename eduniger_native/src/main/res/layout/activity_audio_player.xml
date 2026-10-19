@@ -165,7 +165,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/vector_black2_volume"
                 app:tint="@color/player_text_primary"
-                android:contentDescription="@string/todo" />
+                android:contentDescription="@string/a11y_volume" />
 
             <ImageView
                 android:id="@+id/image_view_activity_audio_player_tones"
@@ -176,7 +176,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/vector_black2_equalizer"
                 app:tint="@color/player_text_primary"
-                android:contentDescription="@string/todo" />
+                android:contentDescription="@string/a11y_equalizer" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -202,7 +202,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintVertical_bias="0.5"
-        android:contentDescription="@string/todo" />
+        android:contentDescription="@string/a11y_play_pause" />
 
     <!-- ================================================================= -->
     <!-- TITRE + FAVORI + FILE D'ATTENTE (ancré au-dessus de la progression) -->
@@ -478,7 +478,7 @@
                 android:scaleType="fitCenter"
                 android:src="@drawable/vector_player_rotate_left"
                 app:tint="@color/player_text_primary"
-                android:contentDescription="@string/todo" />
+                android:importantForAccessibility="no" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -512,7 +512,7 @@
                     android:scaleType="fitCenter"
                     android:src="@drawable/vector_black3_pause"
                     app:tint="@color/white"
-                    android:contentDescription="@string/todo" />
+                    android:contentDescription="@string/a11y_play_pause" />
             </FrameLayout>
         </FrameLayout>
 
@@ -531,7 +531,7 @@
                 android:scaleType="fitCenter"
                 android:src="@drawable/vector_player_rotate_right"
                 app:tint="@color/player_text_primary"
-                android:contentDescription="@string/todo" />
+                android:importantForAccessibility="no" />
 
             <TextView
                 android:layout_width="wrap_content"

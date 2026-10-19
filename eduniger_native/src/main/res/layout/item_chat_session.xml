@@ -13,7 +13,7 @@
         android:layout_width="36dp"
         android:layout_height="36dp"
         android:src="@drawable/ic_menu"
-        android:tint="#888888"
+        android:tint="@color/elim_on_surface_variant"
         android:visibility="gone"
         android:contentDescription="Discussion" />
 
@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="1"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/elim_on_surface"
             android:textSize="14sp" />
 
         <TextView
@@ -39,19 +39,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
-            android:textColor="#888888"
+            android:textColor="@color/elim_on_surface_variant"
             android:textSize="12sp" />
 
     </LinearLayout>
 
     <!-- Bouton suppression -->
     <ImageButton
+        android:scaleType="fitCenter"
+        android:padding="6dp"
         android:id="@+id/btnDeleteSession"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:background="@android:color/transparent"
         android:contentDescription="Supprimer"
         android:src="@drawable/ic_delete"
-        android:tint="#FF4444" />
+        android:tint="@color/elim_error" />
 
 </LinearLayout>

@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/black"
+    android:background="@color/elim_surface"
     android:orientation="vertical"
     android:paddingBottom="24dp">
 
@@ -14,7 +14,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="12dp"
         android:layout_marginBottom="16dp"
-        android:background="#444444"
+        android:background="@color/elim_outline"
         android:alpha="0.6" />
 
     <!-- Titre -->
@@ -24,7 +24,7 @@
         android:paddingHorizontal="20dp"
         android:paddingBottom="12dp"
         android:text="Discussions sauvegardées"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/elim_on_surface"
         android:textSize="16sp"
         android:textStyle="bold" />
 

@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/forme_white_radius_10dp"
+    android:background="@drawable/bg_dialog_card"
     android:padding="20dp">
     <LinearLayout
         android:layout_width="match_parent"
@@ -16,14 +16,17 @@
             android:layout_height="wrap_content"
             android:src="@drawable/vector_emoji_success" />
         <TextView
+            android:minHeight="48dp"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:background="?attr/selectableItemBackground"
             android:id="@+id/text_view_dialog_simple_ok_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:text="Succès"
-            android:textSize="25dp"
-            android:textColor="@color/purple_200"
-            android:fontFamily="@font/linux2"
+            android:textSize="16sp"
+            android:textColor="@color/elim_primary_text"
             />
     </LinearLayout>
     <TextView
@@ -34,9 +37,8 @@
         android:layout_margin="10dp"
         android:gravity="center"
         android:layout_gravity="center"
-        android:fontFamily="@font/linux2"
-        android:textColor="@color/black2"
-        android:textSize="15dp"
+        android:textColor="@color/elim_on_surface_variant"
+        android:textSize="15sp"
         />
     <LinearLayout
         android:layout_width="wrap_content"
@@ -46,14 +48,17 @@
         android:layout_margin="10dp"
         >
         <TextView
+            android:minHeight="48dp"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:background="?attr/selectableItemBackground"
             android:id="@+id/text_view_dialog_simple_ok"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="OK"
             android:layout_margin="10dp"
-            android:textColor="@color/purple_200"
-            android:fontFamily="@font/linux2"
-            android:textSize="20dp"
+            android:textColor="@color/elim_primary_text"
+            android:textSize="16sp"
             />
     </LinearLayout>
 </LinearLayout>
