@@ -12,9 +12,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/linux2"
             android:layout_margin="10dp"
-            android:textSize="20dp"
+            android:textSize="20sp"
             android:paddingBottom="20dp"
             android:autoLink="web|email"
             android:text="Conditions d’Utilisation de l’Application Elim\n\nDernière mise à jour : 6/04/2025\n\nBienvenue sur Elim ! En utilisant notre application, vous acceptez les présentes Conditions d’Utilisation. Nous vous encourageons à les lire attentivement.\n\n1. Acceptation des Conditions\n\n

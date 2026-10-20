@@ -171,7 +171,7 @@
                         android:layout_height="wrap_content"
                         android:textStyle="bold"
                         android:layout_gravity="center_horizontal"
-                        android:textSize="20dp" />
+                        android:textSize="20sp" />
 
                     <TextView
                         android:id="@+id/text_view_activity_author_profession"
@@ -189,9 +189,11 @@
                     android:layout_below="@+id/linear_layout_activity_author_profile">
 
                     <ImageView
+        android:scaleType="fitCenter"
+        android:padding="11dp"
                         android:id="@+id/image_view_activity_author_appel"
-                        android:layout_width="25dp"
-                        android:layout_height="25dp"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
                         android:layout_marginTop="10dp"
                         android:layout_marginBottom="10dp"
                         android:layout_marginStart="15dp"
@@ -199,9 +201,11 @@
                         android:src="@drawable/appel_new" />
 
                     <ImageView
+        android:scaleType="fitCenter"
+        android:padding="11dp"
                         android:id="@+id/image_view_activity_author_email"
-                        android:layout_width="25dp"
-                        android:layout_height="25dp"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
                         android:layout_marginTop="10dp"
                         android:layout_marginBottom="10dp"
                         android:layout_marginStart="15dp"
@@ -209,9 +213,11 @@
                         android:src="@drawable/courrier_new" />
 
                     <ImageView
+        android:scaleType="fitCenter"
+        android:padding="11dp"
                         android:id="@+id/image_view_activity_author_whatsapp"
-                        android:layout_width="25dp"
-                        android:layout_height="25dp"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
                         android:layout_marginTop="10dp"
                         android:layout_marginBottom="10dp"
                         android:layout_marginStart="15dp"

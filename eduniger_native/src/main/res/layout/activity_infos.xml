@@ -66,7 +66,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@id/version"
-        android:textSize="40dp"
+        android:textSize="40sp"
         android:text="Elim"
         android:fontFamily="@font/apple1"
         android:layout_centerHorizontal="true"

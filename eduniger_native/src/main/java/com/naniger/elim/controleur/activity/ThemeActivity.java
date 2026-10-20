@@ -74,7 +74,9 @@ public class ThemeActivity extends AppCompatActivity {
                         break;
                     case 3:
                         Themes.saveTheme(getApplicationContext(),"system");
-                       // AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.getDefaultNightMode());
+                        // « Système » : suit le réglage clair/sombre d'Android. Avant, aucun mode
+                        // n'était appliqué : l'application restait bloquée sur le dernier choix.
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
                         break;
 
                 }
@@ -82,4 +84,4 @@ public class ThemeActivity extends AppCompatActivity {
         });
     }
     private RadioGroup mRadioGroup;
-}
+}

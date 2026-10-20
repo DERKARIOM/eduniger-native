@@ -16,6 +16,34 @@
     <color name="brand_on_primary">#FFFFFFFF</color>
     <color name="brand_on_primary_container">#FF003A57</color>
 
+
+    <!-- =====================================================================
+         PALETTE CENTRALISÉE ELIM — rôles (mode clair ; mode sombre dans values-night).
+         Toute nouvelle interface utilise CES noms. Contrastes vérifiés (WCAG) :
+         texte principal 16:1, secondaire 5,6:1, indice 4,5:1, erreur/succès ≥ 4,8:1.
+         ===================================================================== -->
+    <color name="elim_primary">@color/brand_primary</color>
+    <color name="elim_on_primary">@color/brand_on_primary</color>
+    <color name="elim_primary_container">@color/brand_primary_container</color>
+    <color name="elim_on_primary_container">@color/brand_on_primary_container</color>
+    <!-- Bleu des textes et liens (lisible sur fond clair) -->
+    <color name="elim_primary_text">@color/brand_primary_strong</color>
+    <color name="elim_secondary">#FF3D5A6C</color>
+    <color name="elim_background">#FFF6F8FA</color>
+    <color name="elim_surface">#FFFFFFFF</color>
+    <color name="elim_surface_variant">#FFEEF2F5</color>
+    <color name="elim_on_surface">#FF141A1F</color>
+    <color name="elim_on_surface_variant">#FF5A6570</color>
+    <color name="elim_text_hint">#FF66707A</color>
+    <color name="elim_outline">#FFD5DCE2</color>
+    <color name="elim_error">#FFC62828</color>
+    <color name="elim_on_error">#FFFFFFFF</color>
+    <color name="elim_error_container">#FFFDECEA</color>
+    <color name="elim_success">#FF2E7D32</color>
+    <color name="elim_warning">#FFA15C00</color>
+    <color name="elim_info">@color/brand_primary_strong</color>
+    <color name="elim_disabled">#FF9AA4AD</color>
+
     <!-- Anciens noms conservés comme ALIAS (utilisés dans ~90 fichiers) :
          ils pointent tous vers la marque, ne plus y mettre de valeur en dur. -->
     <color name="purple_200">@color/brand_primary</color>
@@ -38,19 +66,23 @@
     <color name="hint_sombre">#3DFBF8F8</color>
     <color name="rouge">#E6FD1010</color>
     <color name="vert">#005B4A</color>
-    <color name="separator">#6DAAAAAA</color>
+    <color name="separator">@color/elim_outline</color>
     <color name="transparent">#00FFFFFF</color>
-    <color name="skeleton_base">#2A2A2A</color> -->
-<!--    <color name="skeleton_base">#E0E0E0</color>-->
-    <color name="bg_dark">#0D0D0D</color>
-    <color name="bg_card">#1A1A1A</color>
-    <color name="bg_section">#141414</color>
-    <color name="text_primary">#FFFFFF</color>
-    <color name="text_secondary">#A0A0A0</color>
-    <color name="text_hint">#555555</color>
+    <!-- Couleurs historiquement « sombres uniquement » (écran Livre, réservation,
+         structure…) : texte blanc sur fond clair = INVISIBLE en mode clair.
+         Elles suivent désormais la palette ; valeurs sombres d'origine dans values-night. -->
+    <!-- Squelettes de chargement : gris clair en mode clair (était #2A2A2A partout) -->
+    <color name="skeleton_base">#FFE3E8EC</color>
+    <color name="bg_dark">@color/elim_background</color>
+    <color name="bg_card">@color/elim_surface</color>
+    <color name="bg_section">@color/elim_surface_variant</color>
+    <color name="text_primary">@color/elim_on_surface</color>
+    <color name="text_secondary">@color/elim_on_surface_variant</color>
+    <!-- Indice / métadonnées : #555555 n'avait qu'un contraste de 2,2:1 en sombre -->
+    <color name="text_hint">@color/elim_text_hint</color>
     <color name="accent_blue">@color/brand_primary</color>
     <color name="accent_blue_dark">@color/brand_primary_strong</color>
-    <color name="divider">#2A2A2A</color>
+    <color name="divider">@color/elim_outline</color>
 
     <!-- ===== Lecteur audio (v2) : jetons de couleur adaptatifs clair/sombre ===== -->
     <!-- Valeurs "mode clair" ; les équivalents "mode sombre" sont dans values-night/colors.xml -->

@@ -32,7 +32,7 @@
         android:layout_centerVertical="true"
         android:elevation="5dp"
         android:src="@drawable/img_no_wifi"
-        android:contentDescription="@string/todo" />
+        android:importantForAccessibility="no" />
     <RelativeLayout
         android:id="@+id/info_livre2"
         android:layout_width="wrap_content"
@@ -67,4 +67,4 @@
         android:paddingTop="-1dp"
         android:background="@drawable/bg_button_primary"
         android:backgroundTint="@color/purple_200"/>
-</RelativeLayout>
+</RelativeLayout>

@@ -23,7 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            android:contentDescription="@string/todo" />
+            android:importantForAccessibility="no" />
 
         <!-- Pastille de lecture en surimpression -->
         <FrameLayout
@@ -40,7 +40,7 @@
                 android:layout_gravity="center"
                 android:scaleType="fitCenter"
                 android:src="@drawable/vector_black3_play"
-                android:contentDescription="@string/todo" />
+                android:importantForAccessibility="no" />
         </FrameLayout>
     </FrameLayout>
 

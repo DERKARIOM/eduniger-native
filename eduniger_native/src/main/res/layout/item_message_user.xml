@@ -27,7 +27,7 @@
         android:background="@drawable/bg_bubble_user"
         android:paddingHorizontal="14dp"
         android:paddingVertical="10dp"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/elim_on_surface"
         android:textSize="15sp"
         android:lineSpacingExtra="2dp" />
 

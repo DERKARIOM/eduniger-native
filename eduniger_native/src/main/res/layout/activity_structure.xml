@@ -25,7 +25,7 @@
             android:padding="8dp"
             android:src="@drawable/vector_back"
             android:tint="@color/text_primary"
-            android:contentDescription="@string/todo" />
+            android:contentDescription="@string/a11y_back" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -42,7 +42,7 @@
                 android:padding="8dp"
                 android:src="@drawable/shortcut"
                 android:tint="@color/text_primary"
-                android:contentDescription="@string/todo" />
+                android:contentDescription="@string/a11y_shortcut" />
 
             <ImageView
                 android:id="@+id/image_view_toolbar_announcement"
@@ -51,7 +51,7 @@
                 android:padding="8dp"
                 android:src="@drawable/vector_black3_off_subscribe"
                 android:tint="@color/text_primary"
-                android:contentDescription="@string/todo" />
+                android:contentDescription="@string/a11y_announcements" />
 
             <ImageView
                 android:id="@+id/image_view_toolbar_research"
@@ -60,7 +60,7 @@
                 android:padding="8dp"
                 android:src="@drawable/ic_research"
                 android:tint="@color/text_primary"
-                android:contentDescription="@string/todo" />
+                android:contentDescription="@string/a11y_search" />
         </LinearLayout>
     </RelativeLayout>
 
@@ -235,7 +235,7 @@
                     android:layout_height="150dp"
                     android:layout_marginStart="15dp"
                     android:layout_marginEnd="15dp"
-                    android:contentDescription="@string/todo"
+                    android:importantForAccessibility="no"
                     android:elevation="6dp" />
 
                 <RelativeLayout
@@ -266,7 +266,7 @@
                             android:layout_height="wrap_content"
                             android:text="OpenLab"
                             android:textStyle="bold"
-                            android:textSize="20dp" />
+                            android:textSize="20sp" />
 
                         <TextView
                             android:id="@+id/text_view_activity_structure_author"

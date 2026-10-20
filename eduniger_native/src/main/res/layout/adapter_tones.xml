@@ -31,5 +31,5 @@
         android:src="@drawable/vector_black3_download"
         android:layout_margin="10dp"
         android:layout_alignParentEnd="true"
-        android:contentDescription="@string/todo" />
+        android:importantForAccessibility="no" />
 </RelativeLayout>

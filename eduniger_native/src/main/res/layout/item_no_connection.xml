@@ -2,7 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black">
+    android:background="@color/elim_background">
 
     <!-- Vue "chargement" utilisée par l'adapter -->
     <RelativeLayout
@@ -49,7 +49,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Pas de connexion"
-            android:textColor="@color/white"
+            android:textColor="@color/elim_on_surface"
             android:textSize="20sp"
             android:textStyle="bold"
             android:letterSpacing="0.02"
@@ -63,7 +63,7 @@
             android:gravity="center"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
-            android:textColor="@color/white"
+            android:textColor="@color/elim_on_surface"
             android:text="Vérifiez votre connexion Internet\npuis Swipe pour réessayer"
             android:textSize="14sp"
             android:lineSpacingMultiplier="1.5"

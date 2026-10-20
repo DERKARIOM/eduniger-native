@@ -6,7 +6,7 @@
     android:orientation="vertical"
     style="@style/AppTheme"
     android:padding="10dp"
-    android:background="@drawable/form_white_radius_10dp"
+    android:background="@drawable/bg_dialog_card"
     >
     <TextView
         android:id="@+id/text_view_dialog_edit_text_one_label"
@@ -15,12 +15,12 @@
         android:layout_margin="10dp"
         android:text="Nom"
         android:textStyle="bold"
-        android:textColor="@color/black"
+        android:textColor="@color/elim_on_surface"
         android:textSize="16sp"/>
     <EditText
         android:id="@+id/edit_text_dialog_edit_text_one"
         android:layout_width="match_parent"
-        android:background="@drawable/forme_white_radius_10dp_border_pupel_200"
+        android:background="@drawable/bg_dialog_input"
         android:elevation="3dp"
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true"
@@ -36,8 +36,7 @@
         android:text="Merci beaucoup pour votre suggestion ! Nous apprécions vraiment "
         android:gravity="center"
         android:layout_gravity="center"
-        android:fontFamily="@font/linux2"
-        android:textColor="@color/black2"
+        android:textColor="@color/elim_on_surface_variant"
         />
     <RelativeLayout
         android:layout_marginStart="10dp"
@@ -46,27 +45,33 @@
         android:gravity="end"
         android:layout_height="wrap_content">
         <TextView
+            android:minHeight="48dp"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:background="?attr/selectableItemBackground"
             android:id="@+id/text_view_dialog_edit_text_one_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
             android:text="ANNULER"
-            android:textStyle="bold"
             android:padding="10dp"
-            android:textColor="@color/purple_200"
+            android:textColor="@color/elim_primary_text"
             android:textSize="15sp"/>
         <TextView
+            android:minHeight="48dp"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:background="?attr/selectableItemBackground"
             android:id="@+id/text_view_dialog_edit_text_one_ok"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
             android:text="OK"
-            android:textStyle="bold"
             android:layout_toRightOf="@id/text_view_dialog_edit_text_one_cancel"
             android:padding="10dp"
-            android:textColor="@color/purple_200"
+            android:textColor="@color/elim_primary_text"
             android:textSize="15sp"/>
         <ProgressBar
             android:visibility="invisible"

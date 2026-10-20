@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/forme_white_radius_10dp"
+    android:background="@drawable/bg_dialog_card"
     android:padding="20dp">
     <EditText
         android:id="@+id/notre_note"
@@ -13,13 +13,13 @@
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
         android:layout_marginTop="20dp"
-        android:background="@drawable/forme_white_radius_10dp"
+        android:background="@drawable/bg_dialog_input"
         android:elevation="10dp"
         android:maxLength="2"
         android:hint="  Votre note /20..."
         android:drawableStart="@drawable/vector_black3_start"
         android:inputType="number"
-        android:textColor="@color/black3"
+        android:textColor="@color/elim_on_surface"
         android:padding="10dp"
         android:selectAllOnFocus="false" />
     <EditText
@@ -27,8 +27,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
        android:layout_margin="10dp"
-        android:textColor="@color/black3"
-        android:background="@drawable/forme_white_radius_10dp"
+        android:textColor="@color/elim_on_surface"
+        android:background="@drawable/bg_dialog_input"
         android:elevation="10dp"
         android:hint="  Observation..."
         android:drawableStart="@drawable/vector_black3_microscopt"
@@ -39,8 +39,8 @@
         android:id="@+id/err_evaluez"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="10dp"
-        android:textColor="@color/rouge"
+        android:textSize="12sp"
+        android:textColor="@color/elim_error"
         android:text=""
         android:layout_gravity="center"/>
     <RelativeLayout

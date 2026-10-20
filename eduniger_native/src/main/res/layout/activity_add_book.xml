@@ -24,7 +24,7 @@
                 android:layout_height="200dp"
                 android:layout_gravity="center"
                 android:src="@drawable/img_add_cover"
-                android:contentDescription="@string/todo" />
+                android:importantForAccessibility="no" />
         </LinearLayout>
         <LinearLayout
             android:layout_below="@id/relative_layout_activity_declaration_img"

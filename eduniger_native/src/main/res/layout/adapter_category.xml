@@ -10,7 +10,7 @@
         android:layout_height="30dp"
         android:layout_margin="10dp"
         android:src="@mipmap/ic_v2_round"
-        android:contentDescription="@string/todo" />
+        android:importantForAccessibility="no" />
     <TextView
         android:id="@+id/text_view_adapter_category_title"
         style="@style/wrap_content_all"

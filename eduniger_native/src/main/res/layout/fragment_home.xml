@@ -168,7 +168,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:scaleType="fitXY"
-                            android:contentDescription="@string/todo" />
+                            android:importantForAccessibility="no" />
                     </com.google.android.material.card.MaterialCardView>
 
                     <com.google.android.material.card.MaterialCardView
@@ -181,7 +181,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:scaleType="fitXY"
-                            android:contentDescription="@string/todo" />
+                            android:importantForAccessibility="no" />
                     </com.google.android.material.card.MaterialCardView>
 
                     <com.google.android.material.card.MaterialCardView
@@ -194,7 +194,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:scaleType="fitXY"
-                            android:contentDescription="@string/todo" />
+                            android:importantForAccessibility="no" />
                     </com.google.android.material.card.MaterialCardView>
 
                 </ViewFlipper>

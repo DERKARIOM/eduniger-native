@@ -14,7 +14,7 @@
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
             android:src="@drawable/vector_black3_profile"
-            android:contentDescription="@string/todo" />
+            android:importantForAccessibility="no" />
         <TextView
             android:id="@+id/text_view_adapter_talks_user_name"
             style="@style/wrap_content_all"

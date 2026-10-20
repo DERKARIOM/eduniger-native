@@ -44,7 +44,7 @@
             android:layout_height="@dimen/mini_player_cover"
             android:scaleType="centerCrop"
             android:src="@drawable/vector_white_music"
-            android:contentDescription="@string/todo" />
+            android:contentDescription="@string/a11y_play_pause" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -97,7 +97,7 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/vector_black3_pause"
             app:tint="@color/player_text_primary"
-            android:contentDescription="@string/todo" />
+            android:contentDescription="@string/a11y_play_pause" />
 
         <ImageView
             android:id="@+id/image_view_mini_player_next"

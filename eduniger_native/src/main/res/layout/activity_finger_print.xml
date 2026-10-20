@@ -10,14 +10,13 @@
         android:id="@+id/switch1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/linux2"
         android:showText="false"
        android:layout_marginStart="15dp"
         android:layout_marginEnd="15dp"
         android:layout_marginTop="15dp"
         android:text="Déverrouiller avec l'empreinte"
         android:layout_marginBottom="5dp"
-        android:textSize="20dp" />
+        android:textSize="20sp" />
 
     <TextView
         android:id="@+id/textEmprinte"
@@ -25,8 +24,7 @@
         android:layout_height="wrap_content"
         android:text="Lorsque cette option sera activée, vous derez utiliser votre emprinte digitale pour ouvrir Elim."
         android:layout_marginStart="12dp"
-        android:fontFamily="@font/linux2"
-        android:textSize="15dp"
+        android:textSize="15sp"
         android:layout_marginEnd="10dp"
         android:layout_below="@+id/switch1"
         />
@@ -48,9 +46,8 @@
             android:layout_marginTop="30dp"
             android:layout_marginBottom="10dp"
             android:layout_marginStart="10dp"
-            android:textSize="20dp"
-            android:fontFamily="@font/linux"
-            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textColor="@color/elim_on_surface"
             />
 
         <RadioButton
@@ -76,4 +73,4 @@
             android:text="Au bout de 5 minutes" />
     </RadioGroup>
 
-</RelativeLayout>
+</RelativeLayout>

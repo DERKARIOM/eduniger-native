@@ -48,7 +48,7 @@
                 android:layout_marginBottom="5dp"
                 android:textStyle="bold"
                 android:textSize="15sp"
-                android:textColor="@color/black"
+                android:textColor="@color/elim_on_surface"
                 android:maxLines="2"
                 android:ellipsize="end"
                 android:lineSpacingExtra="2dp"/>
@@ -75,7 +75,7 @@
                     android:layout_height="wrap_content"
                     android:text="Emprunté le : 11/01/2025"
                     android:textSize="11sp"
-                    android:textColor="@color/black3"/>
+                    android:textColor="@color/elim_on_surface_variant"/>
 
             </LinearLayout>
 
@@ -121,7 +121,7 @@
                         android:layout_height="wrap_content"
                         android:text="Temps restant"
                         android:textSize="10sp"
-                        android:textColor="@color/black3"
+                        android:textColor="@color/elim_on_surface_variant"
                         android:layout_alignParentStart="true"/>
 
                     <TextView
@@ -152,4 +152,4 @@
 
     </RelativeLayout>
 
-</androidx.cardview.widget.CardView>
+</androidx.cardview.widget.CardView>
