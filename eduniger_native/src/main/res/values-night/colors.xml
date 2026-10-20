@@ -59,4 +59,6 @@
     <color name="account_danger_line">#FF5C2E2E</color>
     <color name="account_danger_container">#33F47171</color>
     <color name="account_cover">#FF17325A</color>
+    <!-- Lecteur PDF : fond autour des pages (les pages restent blanches) -->
+    <color name="reader_canvas">#FF06090C</color>
 </resources>

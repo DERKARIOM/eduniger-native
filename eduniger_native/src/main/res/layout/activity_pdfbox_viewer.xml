@@ -1,382 +1,280 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<!--
+    Lecteur PDF Elim.
+    - Pages : liste continue verticale, zoom par pincement / double-tap (ZoomRecyclerView).
+    - Barre haute : retour, titre, recherche (Android 15+), aller à la page, menu.
+    - Barre basse : « Page x / n » + curseur pour naviguer vite.
+    - Tap sur la page : masque/affiche les barres (lecture plein écran).
+    Couleurs : palette Elim (elim_*), adaptée aux modes clair et sombre.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/reader_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="false"
-    android:background="#0D0D0D">
+    android:background="@color/reader_canvas"
+    tools:context=".controleur.activity.PdfBoxViewerActivity">
 
-    <RelativeLayout
-        android:id="@+id/rootLayout"
+    <com.naniger.elim.controleur.pdf.ZoomRecyclerView
+        android:id="@+id/reader_pages"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#0D0D0D">
+        android:clipToPadding="false"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:scrollbarStyle="outsideOverlay"
+        android:scrollbars="vertical" />
 
-        <!-- ===== ZONE PDF (plein écran) ===== -->
-        <FrameLayout
-            android:id="@+id/pdfContainer"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#0D0D0D">
+    <!-- ===== Barre haute ===== -->
+    <LinearLayout
+        android:id="@+id/reader_top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:background="@color/elim_surface"
+        android:elevation="4dp"
+        android:gravity="center_vertical"
+        android:minHeight="56dp"
+        android:orientation="horizontal"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp">
 
-            <!-- MODE PAGE : ScrollViews imbriqués -->
-            <ScrollView
-                android:id="@+id/scrollViewVertical"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:fillViewport="true"
-                android:scrollbars="none"
-                android:background="#0D0D0D">
+        <ImageButton
+            android:id="@+id/reader_back"
+            style="@style/ReaderIconButton"
+            android:contentDescription="@string/a11y_back"
+            android:src="@drawable/ic_reader_back" />
 
-                <HorizontalScrollView
-                    android:id="@+id/scrollViewHorizontal"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fillViewport="true"
-                    android:scrollbars="none">
+        <TextView
+            android:id="@+id/reader_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/elim_on_surface"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            tools:text="Épreuve de Philosophie 2020" />
 
-                    <ImageView
-                        android:id="@+id/imageViewPdf"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center"
-                        android:adjustViewBounds="true"
-                        android:scaleType="fitCenter"
-                        android:visibility="gone"/>
+        <ImageButton
+            android:id="@+id/reader_search"
+            style="@style/ReaderIconButton"
+            android:contentDescription="@string/reader_search"
+            android:src="@drawable/ic_reader_search"
+            android:visibility="gone" />
 
-                </HorizontalScrollView>
-            </ScrollView>
+        <ImageButton
+            android:id="@+id/reader_goto"
+            style="@style/ReaderIconButton"
+            android:contentDescription="@string/reader_goto_page"
+            android:src="@drawable/ic_reader_goto" />
 
-            <!-- MODE VERTICAL : toutes les pages empilées -->
-            <ScrollView
-                android:id="@+id/scrollViewAllPages"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:fillViewport="false"
-                android:scrollbars="vertical"
-                android:visibility="gone"
-                android:background="#0D0D0D">
+        <ImageButton
+            android:id="@+id/reader_more"
+            style="@style/ReaderIconButton"
+            android:contentDescription="@string/reader_more"
+            android:src="@drawable/ic_reader_more" />
+    </LinearLayout>
 
-                <LinearLayout
-                    android:id="@+id/containerAllPages"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity="center_horizontal"
-                    android:padding="12dp"/>
+    <!-- ===== Barre de recherche (remplace la barre haute) ===== -->
+    <LinearLayout
+        android:id="@+id/reader_search_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:background="@color/elim_surface"
+        android:elevation="4dp"
+        android:gravity="center_vertical"
+        android:minHeight="56dp"
+        android:orientation="horizontal"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp"
+        android:visibility="gone">
 
-            </ScrollView>
+        <ImageButton
+            android:id="@+id/reader_search_close"
+            style="@style/ReaderIconButton"
+            android:contentDescription="@string/reader_search_close"
+            android:src="@drawable/ic_reader_close" />
 
-        </FrameLayout>
+        <EditText
+            android:id="@+id/reader_search_input"
+            android:layout_width="0dp"
+            android:layout_height="44dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_dialog_input"
+            android:hint="@string/reader_search_hint"
+            android:imeOptions="actionSearch"
+            android:importantForAutofill="no"
+            android:inputType="text"
+            android:maxLines="1"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:textColor="@color/elim_on_surface"
+            android:textColorHint="@color/elim_text_hint"
+            android:textSize="15sp" />
 
-        <!-- ===== BARRE DU HAUT (overlay semi-transparent) ===== -->
-        <LinearLayout
-            android:id="@+id/toolbarSecondary"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:layout_alignParentTop="true"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            android:background="#CC0D0D0D"
-            android:elevation="8dp">
-
-            <!-- Bouton plein écran -->
-            <ImageButton
-                android:id="@+id/btnFullscreen"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                android:background="@color/transparent"
-                android:src="@android:drawable/ic_menu_view"
-                android:contentDescription="Plein écran"
-                android:scaleType="fitCenter"
-                android:padding="10dp"/>
-
-            <!-- Séparateur vertical -->
-            <View
-                android:layout_width="1dp"
-                android:layout_height="24dp"
-                android:background="#33FFFFFF"
-                android:layout_marginStart="4dp"
-                android:layout_marginEnd="4dp"/>
-
-            <!-- Bouton toggle mode -->
-            <ImageButton
-                android:id="@+id/btnToggleMode"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                android:background="@color/transparent"
-                android:src="@android:drawable/ic_dialog_dialer"
-                android:contentDescription="Basculer mode lecture"
-                android:scaleType="fitCenter"
-                android:padding="10dp"/>
-
-            <TextView
-                android:id="@+id/textViewMode"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Mode page"
-                android:textSize="11sp"
-                android:textColor="#99FFFFFF"
-                android:layout_marginStart="2dp"
-                android:fontFamily="sans-serif-medium"/>
-
-            <Space
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"/>
-
-            <!-- Saisie numéro de page -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:background="#1AFFFFFF"
-                android:paddingStart="10dp"
-                android:paddingEnd="10dp"
-                android:paddingTop="4dp"
-                android:paddingBottom="4dp">
-
-                <EditText
-                    android:id="@+id/editTextPageNumber"
-                    android:layout_width="36dp"
-                    android:layout_height="32dp"
-                    android:inputType="number"
-                    android:textSize="13sp"
-                    android:textColor="#FFFFFF"
-                    android:textAlignment="center"
-                    android:gravity="center"
-                    android:background="@null"
-                    android:padding="0dp"
-                    android:imeOptions="actionGo"
-                    android:singleLine="true"
-                    android:hint="1"
-                    android:fontFamily="sans-serif-medium"
-                    android:contentDescription="Numéro de page"/>
-
-                <TextView
-                    android:id="@+id/textViewTotalPages"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="/ 1"
-                    android:textSize="13sp"
-                    android:textColor="#99FFFFFF"
-                    android:layout_marginStart="2dp"
-                    android:fontFamily="sans-serif"/>
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <!-- ===== BARRE DE PROGRESSION (fine, sous la toolbar) ===== -->
-        <ProgressBar
-            android:id="@+id/progressBarPage"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="56dp"
-            android:progress="0"
-            android:max="100"
-            android:progressTint="#E8C84A"
-            android:progressBackgroundTint="#22FFFFFF"
-            android:elevation="8dp"/>
-
-        <!-- ===== CHARGEMENT ===== -->
-        <LinearLayout
-            android:id="@+id/loadingLayout"
+        <TextView
+            android:id="@+id/reader_search_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:orientation="vertical"
+            android:layout_marginStart="8dp"
+            android:minWidth="44dp"
             android:gravity="center"
-            android:padding="24dp"
-            android:background="#CC1A1A1A"
-            android:visibility="gone">
+            android:textColor="@color/elim_on_surface_variant"
+            android:textSize="13sp"
+            tools:text="3 / 17" />
 
-            <ProgressBar
-                android:id="@+id/progressBar"
-                style="?android:attr/progressBarStyleLarge"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:indeterminate="true"
-                android:indeterminateTint="#E8C84A"/>
+        <ImageButton
+            android:id="@+id/reader_search_prev"
+            style="@style/ReaderIconButton"
+            android:contentDescription="@string/reader_search_prev"
+            android:src="@drawable/ic_reader_up" />
 
-            <TextView
-                android:id="@+id/textViewLoading"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Chargement du PDF..."
-                android:textSize="13sp"
-                android:textColor="#CCFFFFFF"
-                android:fontFamily="sans-serif"/>
+        <ImageButton
+            android:id="@+id/reader_search_next"
+            style="@style/ReaderIconButton"
+            android:contentDescription="@string/reader_search_next"
+            android:src="@drawable/ic_reader_down" />
+    </LinearLayout>
 
-        </LinearLayout>
+    <!-- ===== Barre basse : position + curseur ===== -->
+    <LinearLayout
+        android:id="@+id/reader_bottom_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@color/elim_surface"
+        android:elevation="4dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="8dp">
 
-        <!-- ===== CONTRÔLES DU BAS (overlay) ===== -->
-        <LinearLayout
-            android:id="@+id/controlLayout"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/reader_page_label"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:orientation="vertical"
-            android:background="#CC0D0D0D"
-            android:elevation="8dp"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:paddingTop="12dp"
-            android:paddingBottom="16dp">
+            android:minWidth="88dp"
+            android:textColor="@color/elim_on_surface"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            tools:text="Page 12 / 240" />
 
-            <!-- Info page + zoom centré -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:layout_marginBottom="12dp">
+        <SeekBar
+            android:id="@+id/reader_seek"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:contentDescription="@string/reader_seek"
+            android:progressTint="@color/elim_primary"
+            android:thumbTint="@color/elim_primary" />
+    </LinearLayout>
 
-                <TextView
-                    android:id="@+id/textViewPageInfo"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Page 1 / 1"
-                    android:textSize="13sp"
-                    android:textColor="#CCFFFFFF"
-                    android:fontFamily="sans-serif"/>
+    <!-- Indicateur discret quand les barres sont masquées -->
+    <TextView
+        android:id="@+id/reader_page_chip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="24dp"
+        android:alpha="0"
+        android:background="@drawable/bg_reader_chip"
+        android:paddingStart="12dp"
+        android:paddingTop="6dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="6dp"
+        android:textColor="#FFFFFFFF"
+        android:textSize="13sp"
+        tools:alpha="1"
+        tools:text="12 / 240" />
 
-                <TextView
-                    android:id="@+id/textViewSwipeHint"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="⬅  Swipez  ➡"
-                    android:textSize="11sp"
-                    android:textColor="#66FFFFFF"
-                    android:visibility="gone"/>
+    <!-- ===== Chargement ===== -->
+    <LinearLayout
+        android:id="@+id/reader_loading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/reader_canvas"
+        android:gravity="center"
+        android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/textViewZoomLevel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="100%"
-                    android:textSize="13sp"
-                    android:textColor="#E8C84A"
-                    android:fontFamily="sans-serif-medium"/>
+        <ProgressBar
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:indeterminateTint="@color/elim_primary" />
 
-            </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/reader_opening"
+            android:textColor="@color/elim_on_surface_variant"
+            android:textSize="14sp" />
+    </LinearLayout>
 
-            <!-- Boutons de navigation -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:orientation="horizontal"
-                android:gravity="center"
-                android:weightSum="5">
+    <!-- ===== Erreur ===== -->
+    <LinearLayout
+        android:id="@+id/reader_error"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/elim_background"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="32dp"
+        android:visibility="gone">
 
-                <!-- Précédent -->
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center">
+        <FrameLayout
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:background="@drawable/bg_dialog_icon_danger">
 
-                    <ImageButton
-                        android:id="@+id/btnPrevious"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:background="@color/transparent"
-                        android:src="@android:drawable/ic_media_previous"
-                        android:contentDescription="Page précédente"
-                        android:padding="10dp"/>
+            <ImageView
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_gravity="center"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_reader_error"
+                android:tint="@color/elim_error" />
+        </FrameLayout>
 
-                </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:text="@string/reader_error_title"
+            android:textColor="@color/elim_on_surface"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
-                <!-- Zoom Out -->
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center">
+        <TextView
+            android:id="@+id/reader_error_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:lineSpacingExtra="2dp"
+            android:textColor="@color/elim_on_surface_variant"
+            android:textSize="14sp"
+            tools:text="Le fichier est introuvable." />
 
-                    <ImageButton
-                        android:id="@+id/btnZoomOut"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:background="@color/transparent"
-                        android:src="@android:drawable/ic_menu_zoom"
-                        android:contentDescription="Dézoomer"
-                        android:rotation="180"
-                        android:padding="10dp"/>
+        <TextView
+            android:id="@+id/reader_error_close"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/bg_dialog_button_secondary"
+            android:gravity="center"
+            android:paddingStart="28dp"
+            android:paddingEnd="28dp"
+            android:text="@string/reader_close"
+            android:textColor="@color/elim_on_surface"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+    </LinearLayout>
 
-                </LinearLayout>
-
-                <!-- Bouton central plein écran (raccourci) -->
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center">
-
-                    <ImageButton
-                        android:id="@+id/btnFullscreenCenter"
-                        android:layout_width="52dp"
-                        android:layout_height="52dp"
-                        android:background="@color/transparent"
-                        android:src="@android:drawable/ic_menu_view"
-                        android:contentDescription="Plein écran"
-                        android:padding="12dp"/>
-
-                </LinearLayout>
-
-                <!-- Zoom In -->
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center">
-
-                    <ImageButton
-                        android:id="@+id/btnZoomIn"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:background="@color/transparent"
-                        android:src="@android:drawable/ic_menu_zoom"
-                        android:contentDescription="Zoomer"
-                        android:padding="10dp"/>
-
-                </LinearLayout>
-
-                <!-- Suivant -->
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:gravity="center">
-
-                    <ImageButton
-                        android:id="@+id/btnNext"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:background="@color/transparent"
-                        android:src="@android:drawable/ic_media_next"
-                        android:contentDescription="Page suivante"
-                        android:padding="10dp"/>
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-    </RelativeLayout>
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</FrameLayout>

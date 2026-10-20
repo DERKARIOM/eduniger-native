@@ -392,4 +392,27 @@
     <style name="Widget.Elim.Button.Text" parent="Widget.MaterialComponents.Button.TextButton">
         <item name="cornerRadius">@dimen/button_corner_radius</item>
     </style>
+
+    <!-- ===== Lecteur PDF ===== -->
+    <!-- Thème du lecteur : MaterialComponents DayNight sans barre d'action (la barre est dans
+         le layout), fenêtre de la couleur du fond de lecture (pas de flash au démarrage). -->
+    <style name="Theme.Elim.Reader" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/brand_primary</item>
+        <item name="colorPrimaryVariant">@color/brand_primary_strong</item>
+        <item name="colorOnPrimary">@color/brand_on_primary</item>
+        <item name="colorAccent">@color/brand_primary</item>
+        <item name="colorControlActivated">@color/brand_primary</item>
+        <item name="colorSurface">@color/elim_surface</item>
+        <item name="colorOnSurface">@color/elim_on_surface</item>
+        <item name="android:windowBackground">@color/reader_canvas</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
+    <style name="ReaderIconButton">
+        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+        <item name="android:scaleType">center</item>
+        <item name="android:tint">@color/elim_on_surface</item>
+    </style>
 </resources>
