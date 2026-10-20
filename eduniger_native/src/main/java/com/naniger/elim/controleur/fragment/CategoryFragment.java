@@ -21,6 +21,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.naniger.elim.R;
+import com.naniger.elim.model.cache.ApiCache;
+import com.naniger.elim.model.cache.CachedLoader;
 import com.naniger.elim.controleur.adapter.CategoryAdapter;
 import com.naniger.elim.model.data.Category;
 import com.naniger.elim.model.data.Server;
@@ -105,8 +107,7 @@ public class CategoryFragment extends Fragment {
 
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
             mNoConnectionContainer.setVisibility(View.GONE);
-            mCategoryList.clear();
-            loadCategoryData();
+            loadCategoryData(true);   // le contenu reste affiché pendant l'actualisation
         });
     }
 
@@ -161,8 +162,8 @@ public class CategoryFragment extends Fragment {
 
     private void handleBroadcastReceived() {
         try {
-            showLoadingState();
-            loadCategoryData();
+            if (mCategoryList.isEmpty()) showLoadingState();
+            loadCategoryData(true);
         } catch (Exception e) {
             Log.e(TAG, "Error handling broadcast", e);
         }
@@ -174,7 +175,29 @@ public class CategoryFragment extends Fragment {
         // Migre de l'ancien backend (category.php, id_number en query string) vers
         // Laravel /api/categories (Sanctum, identite du lecteur via le Bearer token
         // attache automatiquement par ApiClient/AuthInterceptor - id_number inutile).
-        new CategorySyn().execute(Server.getUrlHostProd(requireContext()) + "/api/categories");
+        loadCategoryData(false);
+    }
+
+    /** Cache d'abord, puis actualisation (forcée par « tirer pour actualiser »). */
+    private void loadCategoryData(boolean force) {
+        ApiCache.loadList(requireContext(), Server.getUrlHostProd(requireContext()) + "/api/categories",
+                ApiCache.TTL_CATEGORIES, force, new CachedLoader.Callback() {
+                    @Override public void onCached(String body, long ageMs) { renderCategories(body); }
+                    @Override public void onFresh(String body) { renderCategories(body); }
+                    @Override public void onFailure(boolean hadCache) {
+                        if (!isAdded()) return;
+                        stopRefreshing();
+                        if (!hadCache && mCategoryList.isEmpty()) showNoConnectionError();
+                        else android.widget.Toast.makeText(requireContext(), R.string.offline_cached_notice,
+                                android.widget.Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    /** Réutilise le rendu existant de CategorySyn. */
+    private void renderCategories(String json) {
+        if (!isAdded()) return;
+        new CategorySyn().onPostExecute(json);
     }
 
     // ==================== AsyncTask ====================

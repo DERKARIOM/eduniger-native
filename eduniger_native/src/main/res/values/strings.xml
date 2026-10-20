@@ -404,4 +404,6 @@
     <string name="author_no_books_title">Aucun livre pour le moment</string>
     <string name="author_no_books_message">Cet auteur n\'a pas encore publié de livre. Revenez bientôt !</string>
     <string name="author_no_books_message_named">%1$s n\'a pas encore publié de livre. Revenez bientôt !</string>
+    <!-- Cache / hors ligne -->
+    <string name="offline_cached_notice">Hors ligne : affichage des dernières données enregistrées</string>
 </resources>
