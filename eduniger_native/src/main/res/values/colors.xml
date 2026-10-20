@@ -112,4 +112,6 @@
     <!-- Fond de la pastille d'icône des boîtes de dialogue de confirmation « danger » -->
     <color name="account_danger_container">#1FC93C3C</color>
     <color name="account_cover">#FF17325A</color>
+    <!-- Lecteur PDF : fond autour des pages (les pages restent blanches) -->
+    <color name="reader_canvas">#FFE6EBEF</color>
 </resources>

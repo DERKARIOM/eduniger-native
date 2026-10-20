@@ -406,4 +406,29 @@
     <string name="author_no_books_message_named">%1$s n\'a pas encore publié de livre. Revenez bientôt !</string>
     <!-- Cache / hors ligne -->
     <string name="offline_cached_notice">Hors ligne : affichage des dernières données enregistrées</string>
+    <!-- Lecteur PDF -->
+    <string name="reader_search">Rechercher dans le document</string>
+    <string name="reader_search_hint">Rechercher…</string>
+    <string name="reader_search_close">Fermer la recherche</string>
+    <string name="reader_search_prev">Résultat précédent</string>
+    <string name="reader_search_next">Résultat suivant</string>
+    <string name="reader_search_none">Aucun résultat</string>
+    <string name="reader_searching">Recherche… %1$d %%</string>
+    <string name="reader_goto_page">Aller à la page</string>
+    <string name="reader_goto_title">Aller à la page</string>
+    <string name="reader_goto_hint">Numéro (1 à %1$d)</string>
+    <string name="reader_goto_invalid">Entrez un numéro entre 1 et %1$d</string>
+    <string name="reader_more">Plus d\'options</string>
+    <string name="reader_seek">Position dans le document</string>
+    <string name="reader_opening">Ouverture du document…</string>
+    <string name="reader_error_title">Impossible d\'ouvrir ce document</string>
+    <string name="reader_close">Fermer</string>
+    <string name="reader_page_of">Page %1$d / %2$d</string>
+    <string name="reader_page_chip">%1$d / %2$d</string>
+    <string name="reader_resume">Reprise à la page %1$d</string>
+    <string name="reader_invert">Couleurs inversées (lecture de nuit)</string>
+    <string name="reader_fit_width">Revenir à la largeur de page</string>
+    <string name="reader_first_page">Revenir au début</string>
+    <string name="reader_ok">Aller</string>
+    <string name="reader_cancel">Annuler</string>
 </resources>
