@@ -126,6 +126,9 @@ public class Account {
         SQLiteDatabase database = context.openOrCreateDatabase(context.getResources().getString(R.string.database_name),MODE_PRIVATE,null);
         Session session = new Session(context);
         try {
+            // Cache d'affichage (accueil, structures...) : vidé avant d'effacer la session,
+            // pour qu'aucune donnée de ce compte ne soit montrée au compte suivant.
+            com.naniger.elim.model.cache.ApiCache.clearAll(context);
             session.onUpgrade(database,0,1);
             return true;
         }catch (Exception e)

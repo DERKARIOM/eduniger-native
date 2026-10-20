@@ -38,6 +38,8 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view_fragment_category"
             style="@style/match_parent_all"
+            android:paddingBottom="@dimen/list_bottom_inset"
+            android:clipToPadding="false"
             android:visibility="gone" />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

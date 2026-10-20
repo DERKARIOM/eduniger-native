@@ -59,4 +59,8 @@
     <!-- Décalage au-dessus de la barre de navigation flottante de MainActivity.
          La marge finale = cette valeur + inset système, calculé au runtime. -->
     <dimen name="mini_player_bottom_offset">72dp</dimen>
+    <!-- Marge basse des listes plein écran : la barre de navigation flottante et le mini
+         lecteur sont superposés au contenu ; sans elle, les derniers éléments restent cachés.
+         Même valeur que l'écran Compte (fragment_library). -->
+    <dimen name="list_bottom_inset">112dp</dimen>
 </resources>

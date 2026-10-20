@@ -20,6 +20,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.naniger.elim.R;
+import com.naniger.elim.model.cache.ApiCache;
+import com.naniger.elim.model.cache.CachedLoader;
 import com.naniger.elim.controleur.adapter.NoConnectionAdapter;
 import com.naniger.elim.controleur.adapter.StructureAdapter;
 import com.naniger.elim.controleur.adapter.StructureStoryAdapter;
@@ -141,9 +143,7 @@ public class StructureFragment extends Fragment {
 
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
             mNoConnectionContainer.setVisibility(View.GONE);
-            showLoadingState();
-            mStructures.clear();
-            loadStructures();
+            loadStructures(true);   // le contenu reste affiché pendant l'actualisation
         });
     }
 
@@ -161,9 +161,8 @@ public class StructureFragment extends Fragment {
             public void onReceive(Context context, Intent intent) {
                 if ("CATEGORY_FRAGMENT".equals(intent.getAction())) {
                     try {
-                        showLoadingState();
-                        mStructures.clear();
-                        loadStructures();
+                        if (mStructures.isEmpty()) showLoadingState();
+                        loadStructures(true);
                     } catch (Exception e) {
                         Log.e("StructureFragment", e.getMessage());
                     }
@@ -181,13 +180,32 @@ public class StructureFragment extends Fragment {
     // ==================== Chargement ====================
 
     private void loadStructures() {
-        // Basculé de l'ancien backend PHP (structure.php / StructureMore.php, protégé par un
-        // AuthMiddleware maison qui attend un JWT) vers la vraie API Laravel /api/structures
-        // (Sanctum), désormais correctement authentifiée par ApiClient/AuthInterceptor. Les
-        // anciens endpoints rejetaient systématiquement le token Sanctum envoyé par l'app
-        // (format différent d'un JWT) donc les structures créées côté web n'apparaissaient
-        // jamais côté mobile.
-        new StructureSyn().execute(Server.getUrlHostProd(getContext()) + "/api/structures");
+        loadStructures(false);
+    }
+
+    /**
+     * Cache d'abord (partagé avec l'accueil : même clé /api/structures, une seule requête si
+     * les deux écrans la demandent en même temps), puis actualisation si périmé ou forcé.
+     */
+    private void loadStructures(boolean force) {
+        ApiCache.loadList(requireContext(), Server.getUrlHostProd(requireContext()) + "/api/structures",
+                ApiCache.TTL_STRUCTURES, force, new CachedLoader.Callback() {
+                    @Override public void onCached(String body, long ageMs) { renderStructures(body); }
+                    @Override public void onFresh(String body) { renderStructures(body); }
+                    @Override public void onFailure(boolean hadCache) {
+                        if (!isAdded()) return;
+                        stopRefreshing();
+                        if (!hadCache && mStructures.isEmpty()) showNoConnectionError();
+                        else Toast.makeText(requireContext(), R.string.offline_cached_notice, Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    /** Réutilise le rendu existant de StructureSyn (données déjà validées par le cache). */
+    private void renderStructures(String json) {
+        if (!isAdded()) return;
+        mStructures.clear();
+        new StructureSyn().onPostExecute(json);
     }
 
     // ==================== AsyncTask ====================

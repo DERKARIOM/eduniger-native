@@ -7,6 +7,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -23,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import androidx.annotation.NonNull;
@@ -42,6 +47,8 @@ import com.naniger.elim.controleur.adapter.NoConnectionAdapter;
 import com.naniger.elim.controleur.adapter.SemiNoConnectionAdapter;
 import com.naniger.elim.controleur.adapter.StructureAdapter;
 import com.naniger.elim.controleur.dialog.UpdateDialog;
+import com.naniger.elim.model.cache.ApiCache;
+import com.naniger.elim.model.cache.CachedLoader;
 import com.naniger.elim.model.data.Account;
 import com.naniger.elim.model.data.Author;
 import com.naniger.elim.model.data.Connection;
@@ -109,6 +116,16 @@ public class HomeFragment extends Fragment {
     private UserTable mUserTable;
     private Session mSession;
     private String mPubData;
+
+    // ===== Cache et mode hors ligne =====
+    /** Au moins une section affichée (depuis le cache ou le réseau). */
+    private boolean mHasContent;
+    /** Dernière actualisation échouée : à relancer quand Internet revient. */
+    private volatile boolean mRefreshPending;
+    private boolean mOfflineNoticeShown;
+    private ConnectivityManager.NetworkCallback mNetworkCallback;
+    private static final String PREFS_HOME = "elim_home_cache";
+    private static final String PREF_PUB = "pub";
     private BroadcastReceiver mReceiver;
     private OkHttpClient mHttpClient;
     private Handler mDotsHandler;
@@ -137,6 +154,7 @@ public class HomeFragment extends Fragment {
         setupClickListeners();
         setupSwipeRefresh();
         registerBroadcastReceiver();
+        registerNetworkCallback();
         loadInitialData();
 
         return view;
@@ -282,16 +300,11 @@ public class HomeFragment extends Fragment {
                 android.R.color.holo_orange_light
         );
 
+        // Tirer pour actualiser : le contenu (éventuellement issu du cache) reste affiché
+        // pendant l'actualisation ; il n'est remplacé que par une réponse valide.
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
-            mNoConnectionContainer.setVisibility(View.GONE); // ← AJOUTER
-            showLoadingState();                               // ← AJOUTER
-            mOnlineBookList.clear();
-            mStructures.clear();
-            mServers.clear();
-            mAuthorArrayList.clear();
-            mStructureIds.clear();
-            stopPubFlipper();
-            loadAllData();
+            mNoConnectionContainer.setVisibility(View.GONE);
+            loadAllData(true);
         });
 
         mNestedScrollView.setOnScrollChangeListener(
@@ -436,8 +449,8 @@ public class HomeFragment extends Fragment {
 
     private void handleBroadcastReceived() {
         try {
-            showLoadingState();
-            loadAllData();
+            if (!mHasContent) showLoadingState();
+            loadAllData(true);
         } catch (Exception e) {
             Log.e(TAG, "Error handling broadcast", e);
         }
@@ -459,38 +472,168 @@ public class HomeFragment extends Fragment {
     }
 
     private void loadAllData() {
+        loadAllData(false);
+    }
+
+    /**
+     * Charge l'accueil en « cache d'abord » : les données enregistrées s'affichent tout de
+     * suite (même hors ligne), puis le réseau actualise si elles sont périmées ou si
+     * {@code force} (tirer pour actualiser, retour d'Internet). Les écrans qui demandent
+     * la même donnée au même moment partagent une seule requête (cf. CachedLoader).
+     */
+    private void loadAllData(boolean force) {
         Context context = requireContext();
         String baseUrl  = Server.getUrlApi(context);
         String idNumber = mSession.getIdNumber();
         String version  = getString(R.string.app_version);
 
+        if (!mHasContent) showLoadingState();
+
+        // Bannières : réponse « legacy » (POST, une simple extension de fichier) gardée en
+        // préférences pour afficher le carrousel hors ligne.
+        if (mPubData == null) mPubData = readCachedPub();
         new PubSyn().execute(baseUrl + "Pub.php", idNumber, version);
-        // Ancien : recommended.php (backend legacy JWT, jamais atteint depuis la
-        // bascule Sanctum -> section "Recommande" en pratique toujours vide/en echec).
-        // Bascule vers /api/recommendations (Sanctum), calcule cote serveur a partir
-        // des structures reelles de l'utilisateur (StructUser), en un seul appel.
-        refreshRecommendations();
-        // Ancien : structure.php + structure_top.php (backend PHP legacy, JWT maison qui
-        // rejette le token Sanctum -> 'Authentification requise'). Bascule vers la vraie
-        // API Laravel /api/structures (Sanctum, deja authentifiee via ApiClient). Le second
-        // appel (structure_top.php, un classement) n'a pas d'equivalent Laravel pour
-        // l'instant (cf. audit mobile) et n'est donc plus appele.
-        new StructureSyn().execute(Server.getUrlHostProd(context) + "/api/structures");
-        // Ancien : author_top.php (classement, backend legacy). Pas d'equivalent Laravel
-        // de "top auteurs" pour l'instant (cf. audit) : on affiche a la place la liste
-        // reelle des auteurs via /api/structures... /api/authors (Sanctum), plutot que de
-        // laisser la section vide ou en erreur.
-        new AuthorSyn().execute(Server.getUrlHostProd(context) + "/api/authors");
+
+        loadRecommendations(force);
+        // /api/structures (Sanctum) : remplace structure.php / structure_top.php (legacy).
+        loadStructures(force);
+        // /api/authors (Sanctum) : remplace author_top.php (legacy).
+        loadAuthors(force);
     }
 
     /**
      * Recharge uniquement la section "Recommande" (GET /api/recommendations).
-     * Extrait de loadAllData() pour pouvoir la rafraichir seule depuis onResume()
-     * sans re-declencher les appels Pub/Structures/Auteurs a chaque retour sur
-     * l'accueil (ceux-la restent couverts par le pull-to-refresh existant).
+     * Appelée à chaque retour sur l'accueil : grâce au cache (validité 5 min), aucune
+     * requête n'est refaite si la donnée est récente.
      */
     private void refreshRecommendations() {
-        new RecommendedSyn().execute(Server.getUrlHostProd(requireContext()) + "/api/recommendations");
+        loadRecommendations(false);
+    }
+
+    private void loadRecommendations(boolean force) {
+        ApiCache.loadList(requireContext(), Server.getUrlHostProd(requireContext()) + "/api/recommendations",
+                ApiCache.TTL_RECOMMENDATIONS, force, new SectionCallback() {
+                    @Override void render(String json) { new RecommendedSection().render(json); }
+                    @Override void showEmptyOffline() { showNoConnectionError(); }
+                });
+    }
+
+    private void loadStructures(boolean force) {
+        ApiCache.loadList(requireContext(), Server.getUrlHostProd(requireContext()) + "/api/structures",
+                ApiCache.TTL_STRUCTURES, force, new SectionCallback() {
+                    @Override void render(String json) { new StructureSection().render(json); }
+                    @Override void showEmptyOffline() { showNoConnectionState(mStructureRecyclerView); }
+                });
+    }
+
+    private void loadAuthors(boolean force) {
+        ApiCache.loadList(requireContext(), Server.getUrlHostProd(requireContext()) + "/api/authors",
+                ApiCache.TTL_AUTHORS, force, new SectionCallback() {
+                    @Override void render(String json) { new AuthorSection().render(json); }
+                    @Override void showEmptyOffline() { showNoConnectionState(mAuthorRecyclerView); }
+                });
+    }
+
+    /**
+     * Réception commune des données d'une section : affiche le cache puis la version
+     * fraîche ; en cas d'échec, garde l'affichage existant (mode hors ligne) ou, s'il n'y a
+     * rien à montrer, l'état « pas de connexion » avec « Réessayer ».
+     */
+    private abstract class SectionCallback implements CachedLoader.Callback {
+        abstract void render(String json);
+
+        abstract void showEmptyOffline();
+
+        @Override
+        public void onCached(String body, long ageMs) {
+            if (!isAdded()) return;
+            render(body);
+        }
+
+        @Override
+        public void onFresh(String body) {
+            if (!isAdded()) return;
+            stopRefreshing();
+            render(body);
+        }
+
+        @Override
+        public void onFailure(boolean hadCache) {
+            if (!isAdded()) return;
+            stopRefreshing();
+            mRefreshPending = true;     // relancé automatiquement au retour d'Internet
+            if (hadCache || mHasContent) {
+                revealContent();
+                if (!mOfflineNoticeShown) {
+                    mOfflineNoticeShown = true;
+                    Toast.makeText(requireContext(), R.string.offline_cached_notice, Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                showEmptyOffline();
+            }
+        }
+    }
+
+    // ==================== Retour d'Internet ====================
+
+    /**
+     * Relance l'actualisation quand un réseau AVEC accès Internet vérifié revient
+     * (NET_CAPABILITY_VALIDATED) : un Wi-Fi connecté mais sans Internet ne déclenche rien,
+     * et une seule relance a lieu par échec (pas de boucle de requêtes).
+     */
+    private void registerNetworkCallback() {
+        ConnectivityManager cm = (ConnectivityManager) requireContext()
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm == null) return;
+        mNetworkCallback = new ConnectivityManager.NetworkCallback() {
+            @Override
+            public void onCapabilitiesChanged(@NonNull Network network, @NonNull NetworkCapabilities caps) {
+                if (!caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)) return;
+                if (!mRefreshPending) return;
+                mRefreshPending = false;
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    if (!isAdded()) return;
+                    mOfflineNoticeShown = false;
+                    loadAllData(true);
+                });
+            }
+        };
+        try {
+            cm.registerDefaultNetworkCallback(mNetworkCallback);
+        } catch (Exception e) {
+            mNetworkCallback = null;
+            Log.w(TAG, "Suivi du réseau indisponible : " + e.getMessage());
+        }
+    }
+
+    private void unregisterNetworkCallback() {
+        if (mNetworkCallback == null) return;
+        try {
+            ConnectivityManager cm = (ConnectivityManager) requireContext()
+                    .getSystemService(Context.CONNECTIVITY_SERVICE);
+            if (cm != null) cm.unregisterNetworkCallback(mNetworkCallback);
+        } catch (Exception ignored) {
+        }
+        mNetworkCallback = null;
+    }
+
+    /** Affiche le contenu (masque le squelette et l'écran « pas de connexion »). */
+    private void revealContent() {
+        if (!isAdded()) return;
+        stopSkeletonShimmer(mSkeletonLoadingContainer);
+        mSkeletonLoadingContainer.setVisibility(View.GONE);
+        mNoConnectionContainer.setVisibility(View.GONE);
+        mNestedScrollView.setVisibility(View.VISIBLE);
+    }
+
+    private String readCachedPub() {
+        return requireContext().getSharedPreferences(PREFS_HOME, Context.MODE_PRIVATE)
+                .getString(PREF_PUB, null);
+    }
+
+    private void saveCachedPub(String value) {
+        requireContext().getSharedPreferences(PREFS_HOME, Context.MODE_PRIVATE)
+                .edit().putString(PREF_PUB, value).apply();
     }
 
     // ==================== Cycle de vie ====================
@@ -498,6 +641,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        unregisterNetworkCallback();
         stopPubFlipper();
         if (mArrowAnimator != null) {       // ← AJOUTER
             mArrowAnimator.cancel();        // ← AJOUTER
@@ -527,37 +671,28 @@ public class HomeFragment extends Fragment {
 
         @Override
         protected void onPostExecute(String jsonData) {
-            mPubData = jsonData;
+            if (jsonData != null && jsonData.length() < 64 && !jsonData.contains("<")) {
+                mPubData = jsonData;
+                if (isAdded()) saveCachedPub(jsonData);
+            }
         }
     }
 
-    private class RecommendedSyn extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... params) {
-            return executeGetRequest(params[0]);
-        }
-
-        @Override
-        protected void onPostExecute(String jsonData) {
+    /** Rendu de la section « Recommandé » (données du cache ou du réseau, déjà validées). */
+    private class RecommendedSection {
+        void render(String jsonData) {
             if (!isAdded()) return;
+            mHasContent = true;
+            loadPublicitySlider();
+            showContentState();
+            mNoConnectionContainer.setVisibility(View.GONE);
 
-            stopRefreshing();
-
-            if (jsonData != null) {
-                loadPublicitySlider();
-                showContentState();
-
-                // /api/recommendations renvoie toujours un tableau JSON (eventuellement
-                // vide si l'utilisateur n'adhere a aucune structure) : plus besoin du
-                // sentinelle "RAS" ni du controle de version de l'ancien recommended.php.
-                processRecommendedBooks(jsonData);
-                setupServerRecyclerView();
-                mServerdRecyclerView.setVisibility(View.VISIBLE);
-                mStructureRecyclerView.setVisibility(View.VISIBLE);
-            } else {
-                stopRefreshing();
-                showNoConnectionError();
-            }
+            // /api/recommendations renvoie toujours un tableau JSON (eventuellement
+            // vide si l'utilisateur n'adhere a aucune structure).
+            processRecommendedBooks(jsonData);
+            setupServerRecyclerView();
+            mServerdRecyclerView.setVisibility(View.VISIBLE);
+            mStructureRecyclerView.setVisibility(View.VISIBLE);
         }
 
         private void loadPublicitySlider() {
@@ -636,23 +771,18 @@ public class HomeFragment extends Fragment {
         mNoConnectionContainer.setVisibility(View.VISIBLE);
     }
 
-    private class StructureSyn extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... params) {
-            return executeGetRequest(params[0]);
-        }
-
-        @Override
-        protected void onPostExecute(String jsonData) {
+    /** Rendu de la section « Structures ». */
+    private class StructureSection {
+        void render(String jsonData) {
             if (!isAdded()) return;
-
-            if (jsonData != null) {
-                boolean ok = processStructures(jsonData);
-                if (ok) updateStructureView();
-                else showNoConnectionState(mStructureRecyclerView);
-            } else {
-                showNoConnectionState(mStructureRecyclerView);
-            }
+            mHasContent = true;
+            // Le cache puis la version fraîche sont rendus l'un après l'autre : on repart
+            // d'une liste vide pour ne pas dupliquer les structures.
+            mStructures.clear();
+            mStructureIds.clear();
+            revealContent();
+            if (processStructures(jsonData)) updateStructureView();
+            else showNoConnectionState(mStructureRecyclerView);
         }
 
         /** @return true si le JSON a ete parse avec succes (meme si la liste est vide). */
@@ -748,22 +878,14 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    private class AuthorSyn extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... params) {
-            return executeGetRequest(params[0]);
-        }
-
-        @Override
-        protected void onPostExecute(String jsonData) {
+    /** Rendu de la section « Auteurs ». */
+    private class AuthorSection {
+        void render(String jsonData) {
             if (!isAdded()) return;
-
-            if (jsonData != null) {
-                processAuthors(jsonData);
-                updateAuthorView();
-            } else {
-                showNoConnectionState(mAuthorRecyclerView);
-            }
+            mHasContent = true;
+            revealContent();
+            processAuthors(jsonData);
+            updateAuthorView();
         }
 
         private void processAuthors(String jsonData) {
