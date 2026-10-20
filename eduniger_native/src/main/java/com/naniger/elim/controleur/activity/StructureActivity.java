@@ -187,13 +187,7 @@ public class StructureActivity extends AppCompatActivity {
         );
         mDescriptionTextView.setText("Bienvenue sur la structure " + mStructure.getName() + "!");
 
-        if (mStructure.isAdhere()) {
-            mAdhererButton.setText("Se détacher");
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                mAdhererButton.setBackgroundTintList(
-                        ColorStateList.valueOf(ContextCompat.getColor(this, R.color.black3)));
-            }
-        }
+        applyAdhereButtonState(mStructure.isAdhere());
     }
 
     private void setupRecyclerViews() {
@@ -422,6 +416,25 @@ public class StructureActivity extends AppCompatActivity {
         mDescriptionTextView.setText("Bienvenue sur la structure " + mStructure.getName() + "!");
     }
 
+    /**
+     * État du bouton d'adhésion :
+     *  - membre     : « Se détacher », fond gris, icône de sortie ;
+     *  - non membre : « S'adhérer », fond bleu Elim, icône cloche.
+     * Icône toujours blanche (lisible sur le gris comme sur le bleu, en clair comme en sombre).
+     */
+    private void applyAdhereButtonState(boolean adhered) {
+        mAdhererButton.setText(adhered ? "Se détacher" : "S'adhérer");
+        mAdhererButton.setBackgroundTintList(ColorStateList.valueOf(
+                ContextCompat.getColor(this, adhered ? R.color.black3 : R.color.purple_200)));
+        if (mAdhererButton instanceof com.google.android.material.button.MaterialButton) {
+            com.google.android.material.button.MaterialButton button =
+                    (com.google.android.material.button.MaterialButton) mAdhererButton;
+            button.setIconResource(adhered ? R.drawable.ic_account_logout
+                    : R.drawable.vector_black3_off_subscribe);
+            button.setIconTint(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.white)));
+        }
+    }
+
     private void handleAdhererAction() {
         if ("Se détacher".equals(mAdhererButton.getText().toString())) {
             showStructDeleteDialog(mStructure.getId());
@@ -431,11 +444,7 @@ public class StructureActivity extends AppCompatActivity {
     }
 
     private void adhereToStructure() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            mAdhererButton.setBackgroundTintList(
-                    ColorStateList.valueOf(ContextCompat.getColor(this, R.color.black3)));
-        }
-        mAdhererButton.setText("Se détacher");
+        applyAdhereButtonState(true);
         mStructure.setAdhere(true);
 
         new StructMembershipSyn().execute(
@@ -697,11 +706,7 @@ public class StructureActivity extends AppCompatActivity {
         }
 
         dialog.cancel();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            mAdhererButton.setBackgroundTintList(
-                    ColorStateList.valueOf(ContextCompat.getColor(this, R.color.purple_200)));
-        }
-        mAdhererButton.setText("S'adhérer");
+        applyAdhereButtonState(false);
         mStructure.setAdhere(false);
 
         new StructMembershipSyn().execute(
