@@ -26,7 +26,7 @@
         android:layout_height="wrap_content"
         style="@style/activity_main_research"
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="90dp"
+        android:layout_marginEnd="108dp"
         android:hint="  Rechercher un livre"
         android:drawableStart="?android:attr/actionModeWebSearchDrawable"
         android:inputType="text"
@@ -34,16 +34,19 @@
         android:padding="8dp"
         android:focusable="false"
         android:selectAllOnFocus="false" />
+    <!-- Icône Eduna : zone tactile 48 dp placée juste avant l'emplacement de la cloche
+         (bouton de menu de 48 dp, au bord droit). Icône 24 dp comme la cloche, centrée
+         verticalement : même écart (24 dp) entre champ de recherche, Eduna et cloche. -->
     <ImageView
-        android:scaleType="fitCenter"
-        android:padding="14dp"
         android:id="@+id/image_view_toolbar_main_eduna"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_marginTop="10dp"
+        android:layout_alignEnd="@id/toolbar_search"
         android:layout_centerVertical="true"
-        android:src="@drawable/ic_ia"
-        android:layout_marginEnd="50dp"
-       android:layout_alignEnd="@id/toolbar_search"
-        />
+        android:layout_marginEnd="48dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/a11y_eduna"
+        android:padding="12dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_ia" />
 </RelativeLayout>
