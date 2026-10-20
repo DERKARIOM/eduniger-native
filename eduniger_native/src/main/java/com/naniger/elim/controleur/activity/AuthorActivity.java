@@ -74,6 +74,8 @@ public class AuthorActivity extends AppCompatActivity {
     private View mSkeletonLoadingContainer;
     private View mNoConnectionContainer;
     private RecyclerView mBooksRecyclerView;
+    private View mBooksEmptyView;
+    private TextView mBooksEmptyMessageTextView;
     private RecyclerView mAuthorRecyclerView;
     private RecyclerView mAuthorFormatBookRecyclerView;
     private ImageView mProfileImageView;
@@ -144,6 +146,8 @@ public class AuthorActivity extends AppCompatActivity {
         mUsernameTextView         = findViewById(R.id.text_view_activity_author_username);
         mProfessionTextView       = findViewById(R.id.text_view_activity_author_profession);
         mBooksRecyclerView        = findViewById(R.id.recycler_view_activity_author_books);
+        mBooksEmptyView           = findViewById(R.id.linear_layout_activity_author_books_empty);
+        mBooksEmptyMessageTextView = findViewById(R.id.text_view_activity_author_books_empty_message);
         mAuthorRecyclerView       = findViewById(R.id.recycler_view_activity_author);
         mBackImageView            = findViewById(R.id.image_view_toolbar_search);
         mSearchEditText           = findViewById(R.id.edit_text_toolbar_search);
@@ -312,11 +316,13 @@ public class AuthorActivity extends AppCompatActivity {
 
         private void processAuthorBooks(String jsonData) {
             BookStats stats = new BookStats();
+            // Bug corrigé : avec la réponse « RAS » (auteur sans livre), le squelette de
+            // chargement restait affiché indéfiniment.
+            stopRefreshing();
+            showContentState();
+            mOnlineBookList.clear();
 
             if (!RESPONSE_RAS.equals(jsonData)) {
-                stopRefreshing();
-                showContentState();
-
                 try {
                     JSONArray jsonArray = new JSONArray(jsonData);
                     mOnlineBookList.clear();
@@ -349,7 +355,20 @@ public class AuthorActivity extends AppCompatActivity {
                 }
             }
 
+            showBooksEmptyState(mOnlineBookList.isEmpty());
             updateFormatBooksRecyclerView(stats);
+        }
+
+        /** Carte « Aucun livre pour le moment » à la place de la liste vide. */
+        private void showBooksEmptyState(boolean empty) {
+            mBooksRecyclerView.setVisibility(empty ? View.GONE : View.VISIBLE);
+            mBooksEmptyView.setVisibility(empty ? View.VISIBLE : View.GONE);
+            if (empty) {
+                String name = mUsernameTextView.getText() != null ? mUsernameTextView.getText().toString().trim() : "";
+                mBooksEmptyMessageTextView.setText(name.isEmpty()
+                        ? getString(R.string.author_no_books_message)
+                        : getString(R.string.author_no_books_message_named, name));
+            }
         }
 
         private void updateFormatBooksRecyclerView(BookStats stats) {
