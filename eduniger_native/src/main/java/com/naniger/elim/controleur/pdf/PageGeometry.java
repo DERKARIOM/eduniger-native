@@ -56,4 +56,30 @@ public final class PageGeometry {
             return -1;
         }
     }
+
+    /**
+     * Progression de lecture en % (0…100) : pages terminées + part de la page courante.
+     * Renvoie -1 si le nombre de pages est inconnu.
+     */
+    public static int readingPercent(int page, float offset, int pageCount) {
+        if (pageCount <= 0) return -1;
+        int p = Math.max(0, Math.min(page, pageCount - 1));
+        float o = Math.max(0f, Math.min(1f, offset));
+        int pct = Math.round((p + o) * 100f / pageCount);
+        return Math.max(0, Math.min(100, pct));
+    }
+
+    /**
+     * Page où reprendre la lecture. Si le fichier a changé (moins de pages qu'à la
+     * sauvegarde), on reste dans les bornes du document.
+     */
+    public static int resumePage(int savedPage, int pageCount) {
+        if (pageCount <= 0 || savedPage <= 0) return 0;
+        return Math.min(savedPage, pageCount - 1);
+    }
+
+    /** Vaut-il la peine de proposer la reprise (l'utilisateur a dépassé le haut de la 1re page) ? */
+    public static boolean worthResuming(int page, float offset) {
+        return page > 0 || offset > 0.15f;
+    }
 }

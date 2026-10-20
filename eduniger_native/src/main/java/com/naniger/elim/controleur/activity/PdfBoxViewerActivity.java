@@ -15,7 +15,6 @@ import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
@@ -50,7 +49,9 @@ import java.util.Map;
  *   <li>Zoom par pincement et double-tap (1× à 4×), rendu plus net après le geste.</li>
  *   <li>Barre haute (retour, titre, recherche, aller à la page, menu) et barre basse
  *       (Page x / n + curseur). Tap sur la page : lecture plein écran.</li>
- *   <li>Reprise automatique à la dernière page lue.</li>
+ *   <li>Reprise automatique à l'endroit exact où la lecture s'est arrêtée (page + position
+ *       dans la page), sauvegardée à chaque arrêt du défilement, avec un bandeau
+ *       « Reprise à la page x / n » et un bouton « Début ».</li>
  *   <li>Recherche avec surlignage et navigation entre résultats : Android 15+.</li>
  *   <li>Couleurs inversées pour lire dans le noir (préférence mémorisée).</li>
  *   <li>États de chargement et d'erreur explicites (fichier absent, vide, protégé, endommagé).</li>
@@ -59,10 +60,12 @@ import java.util.Map;
 public class PdfBoxViewerActivity extends AppCompatActivity {
 
     private static final String STATE_PAGE = "page";
+    private static final String STATE_OFFSET = "offset";
+    private static final long RESUME_BANNER_MS = 7000;
 
     private ZoomRecyclerView mPages;
     private LinearLayoutManager mLayoutManager;
-    private View mTopBar, mSearchBar, mBottomBar, mLoading, mError;
+    private View mTopBar, mSearchBar, mBottomBar, mLoading, mError, mResumeBanner;
     private TextView mTitle, mPageLabel, mPageChip, mErrorMessage, mSearchCount;
     private EditText mSearchInput;
     private ImageButton mSearchButton;
@@ -76,6 +79,11 @@ public class PdfBoxViewerActivity extends AppCompatActivity {
     private int mPageCount;
     private int mCurrentPage;
     private int mRestorePage = -1;
+    private float mRestoreOffset = 0f;
+    private long mRestoreUpdatedAt = 0L;
+    /** Vrai seulement si la position vient d'une lecture précédente (pas d'une rotation). */
+    private boolean mOfferResume;
+    private final Runnable mHideResumeBanner = this::hideResumeBanner;
     private boolean mChromeVisible = true;
     private boolean mSeekDragging;
 
@@ -93,9 +101,19 @@ public class PdfBoxViewerActivity extends AppCompatActivity {
         mPath = getIntent().getStringExtra("PDF_PATH");
         String title = getIntent().getStringExtra("PDF_TITLE");
         mStore = new ReadingPositionStore(this);
-        mRestorePage = savedInstanceState != null
-                ? savedInstanceState.getInt(STATE_PAGE, -1)
-                : mStore.lastPage(mPath);
+        if (savedInstanceState != null) {
+            // Rotation / retour après mise en arrière-plan : on revient au même endroit, sans bandeau.
+            mRestorePage = savedInstanceState.getInt(STATE_PAGE, 0);
+            mRestoreOffset = savedInstanceState.getFloat(STATE_OFFSET, 0f);
+        } else {
+            ReadingPositionStore.Position last = mStore.get(mPath);
+            if (last != null) {
+                mRestorePage = last.page;
+                mRestoreOffset = last.offset;
+                mRestoreUpdatedAt = last.updatedAt;
+                mOfferResume = PageGeometry.worthResuming(last.page, last.offset);
+            }
+        }
 
         bindViews();
         mTitle.setText(title != null && !title.isEmpty() ? title : getString(R.string.app_name));
@@ -122,6 +140,7 @@ public class PdfBoxViewerActivity extends AppCompatActivity {
         mSearchInput = findViewById(R.id.reader_search_input);
         mSearchButton = findViewById(R.id.reader_search);
         mSeek = findViewById(R.id.reader_seek);
+        mResumeBanner = findViewById(R.id.reader_resume_banner);
 
         mLayoutManager = new LinearLayoutManager(this);
         mLayoutManager.setInitialPrefetchItemCount(2);
@@ -145,8 +164,14 @@ public class PdfBoxViewerActivity extends AppCompatActivity {
             mSearchBar.setPadding(mSearchBar.getPaddingLeft(), topBase + bars.top, mSearchBar.getPaddingRight(), mSearchBar.getPaddingBottom());
             mBottomBar.setPadding(mBottomBar.getPaddingLeft(), mBottomBar.getPaddingTop(), mBottomBar.getPaddingRight(), bottomBase + bars.bottom);
             // Espace pour que la première et la dernière page ne restent pas sous les barres.
-            mPages.post(() -> mPages.setPadding(mPages.getPaddingLeft(), mTopBar.getHeight() + dp(8),
-                    mPages.getPaddingRight(), mBottomBar.getHeight() + dp(8)));
+            mPages.post(() -> {
+                mPages.setPadding(mPages.getPaddingLeft(), mTopBar.getHeight() + dp(8),
+                        mPages.getPaddingRight(), mBottomBar.getHeight() + dp(8));
+                android.widget.FrameLayout.LayoutParams lp =
+                        (android.widget.FrameLayout.LayoutParams) mResumeBanner.getLayoutParams();
+                lp.bottomMargin = mBottomBar.getHeight() + dp(12);
+                mResumeBanner.setLayoutParams(lp);
+            });
             return insets;
         });
     }
@@ -156,6 +181,11 @@ public class PdfBoxViewerActivity extends AppCompatActivity {
         findViewById(R.id.reader_error_close).setOnClickListener(v -> finish());
         findViewById(R.id.reader_goto).setOnClickListener(v -> showGoToPageDialog());
         findViewById(R.id.reader_more).setOnClickListener(this::showMoreMenu);
+        findViewById(R.id.reader_resume_restart).setOnClickListener(v -> {
+            hideResumeBanner();
+            goToPage(0);
+            saveProgress();
+        });
 
         if (PdfDocument.isSearchSupported()) {
             mSearchButton.setVisibility(View.VISIBLE);
@@ -196,9 +226,14 @@ public class PdfBoxViewerActivity extends AppCompatActivity {
 
             @Override
             public void onScrollStateChanged(@androidx.annotation.NonNull RecyclerView rv, int state) {
+                // L'utilisateur reprend la lecture : le bandeau n'a plus d'utilité.
+                if (state == RecyclerView.SCROLL_STATE_DRAGGING) hideResumeBanner();
                 if (state == RecyclerView.SCROLL_STATE_IDLE && mAdapter != null) {
                     mAdapter.prefetch(mLayoutManager.findFirstVisibleItemPosition(),
                             mLayoutManager.findLastVisibleItemPosition());
+                    // Sauvegarde à chaque arrêt du défilement : la position survit même
+                    // si l'application est tuée par le système.
+                    saveProgress();
                 }
             }
         });
@@ -218,6 +253,7 @@ public class PdfBoxViewerActivity extends AppCompatActivity {
             public void onStopTrackingTouch(SeekBar seekBar) {
                 mSeekDragging = false;
                 goToPage(seekBar.getProgress());
+                saveProgress();
             }
         });
     }
@@ -250,19 +286,22 @@ public class PdfBoxViewerActivity extends AppCompatActivity {
                 mAdapter = new PdfPageAdapter(mDocument, dp(8));
                 mAdapter.setInverted(mStore.invertColors());
                 mPages.setAdapter(mAdapter);
-                mPages.post(() -> mAdapter.setPageWidth(
-                        mPages.getWidth() - mPages.getPaddingLeft() - mPages.getPaddingRight()));
                 mSeek.setMax(Math.max(0, pageCount - 1));
                 mLoading.setVisibility(View.GONE);
 
-                int start = (mRestorePage > 0 && mRestorePage < pageCount) ? mRestorePage : 0;
+                final int start = PageGeometry.resumePage(mRestorePage, pageCount);
+                final float offset = start == mRestorePage ? mRestoreOffset : 0f;
                 mCurrentPage = start;
+                mSeek.setProgress(start);
                 showPageLabel(start);
-                if (start > 0) {
-                    mPages.post(() -> mLayoutManager.scrollToPositionWithOffset(start, 0));
-                    Toast.makeText(PdfBoxViewerActivity.this,
-                            getString(R.string.reader_resume, start + 1), Toast.LENGTH_SHORT).show();
-                }
+                mPages.post(() -> {
+                    int width = mPages.getWidth() - mPages.getPaddingLeft() - mPages.getPaddingRight();
+                    mAdapter.setPageWidth(width);
+                    // Position exacte dans la page (et pas seulement le haut de la page).
+                    int pageHeight = Math.round(width * mDocument.aspect(start));
+                    mLayoutManager.scrollToPositionWithOffset(start, -Math.round(offset * pageHeight));
+                });
+                if (mOfferResume) showResumeBanner(start, offset);
             }
 
             @Override
@@ -290,6 +329,59 @@ public class PdfBoxViewerActivity extends AppCompatActivity {
                 showPageLabel(page);
             }
         }
+    }
+
+    /**
+     * Point de lecture exact : la page qui se trouve en haut de la zone de lecture (juste
+     * sous la barre du haut) et la part de cette page déjà défilée (0 = haut, 1 = bas).
+     * C'est ce point qui est restauré, au pixel près, à la réouverture.
+     */
+    private float[] readingAnchor() {
+        int top = mPages.getPaddingTop();
+        for (int i = 0; i < mPages.getChildCount(); i++) {
+            View v = mPages.getChildAt(i);
+            if (v.getBottom() > top && v.getHeight() > 0) {
+                int page = mPages.getChildAdapterPosition(v);
+                if (page == RecyclerView.NO_POSITION) continue;
+                float offset = Math.max(0f, Math.min(1f, (top - v.getTop()) / (float) v.getHeight()));
+                return new float[]{page, offset};
+            }
+        }
+        return new float[]{mCurrentPage, 0f};
+    }
+
+    private void saveProgress() {
+        if (mPageCount == 0 || mAdapter == null) return;
+        float[] a = readingAnchor();
+        mStore.save(mPath, (int) a[0], a[1], mPageCount);
+    }
+
+    private void showResumeBanner(int page, float offset) {
+        TextView title = findViewById(R.id.reader_resume_title);
+        TextView subtitle = findViewById(R.id.reader_resume_subtitle);
+        title.setText(getString(R.string.reader_resume, page + 1, mPageCount));
+        int percent = PageGeometry.readingPercent(page, offset, mPageCount);
+        if (mRestoreUpdatedAt > 0) {
+            CharSequence when = android.text.format.DateUtils.getRelativeTimeSpanString(mRestoreUpdatedAt,
+                    System.currentTimeMillis(), android.text.format.DateUtils.MINUTE_IN_MILLIS);
+            subtitle.setText(getString(R.string.reader_resume_percent_when, percent, when));
+        } else {
+            subtitle.setText(getString(R.string.reader_resume_percent, percent));
+        }
+        mResumeBanner.setAlpha(0f);
+        mResumeBanner.setTranslationY(dp(16));
+        mResumeBanner.setVisibility(View.VISIBLE);
+        mResumeBanner.animate().alpha(1f).translationY(0).setDuration(220).start();
+        mResumeBanner.announceForAccessibility(title.getText());
+        mResumeBanner.removeCallbacks(mHideResumeBanner);
+        mResumeBanner.postDelayed(mHideResumeBanner, RESUME_BANNER_MS);
+    }
+
+    private void hideResumeBanner() {
+        if (mResumeBanner.getVisibility() != View.VISIBLE) return;
+        mResumeBanner.removeCallbacks(mHideResumeBanner);
+        mResumeBanner.animate().alpha(0f).translationY(dp(16)).setDuration(180)
+                .withEndAction(() -> mResumeBanner.setVisibility(View.GONE)).start();
     }
 
     private void showPageLabel(int page) {
@@ -487,17 +579,20 @@ public class PdfBoxViewerActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        if (mPageCount > 0) mStore.savePage(mPath, mCurrentPage);
+        saveProgress();
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(STATE_PAGE, mCurrentPage);
+        float[] a = mPageCount > 0 ? readingAnchor() : new float[]{0f, 0f};
+        outState.putInt(STATE_PAGE, (int) a[0]);
+        outState.putFloat(STATE_OFFSET, a[1]);
     }
 
     @Override
     protected void onDestroy() {
+        mResumeBanner.removeCallbacks(mHideResumeBanner);
         if (mAdapter != null) mAdapter.release();
         if (mDocument != null) mDocument.close();
         super.onDestroy();
