@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Petite pastille de format (PDF, Audio, Papier) sur une publication. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/elim_surface_variant" />
+    <corners android:radius="8dp" />
+</shape>

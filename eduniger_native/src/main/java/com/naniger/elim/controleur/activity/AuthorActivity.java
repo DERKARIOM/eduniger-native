@@ -1,581 +1,823 @@
 package com.naniger.elim.controleur.activity;
 
-import android.Manifest;
-import android.animation.ValueAnimator;
-import android.content.BroadcastReceiver;
-import android.content.Context;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.text.Editable;
+import android.text.Layout;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.naniger.elim.R;
-import com.naniger.elim.controleur.adapter.AuthorFormatBookAdapter;
 import com.naniger.elim.controleur.adapter.AuthorHorizontaleAdapter;
-import com.naniger.elim.controleur.adapter.HorizontaleAdapter;
-import com.naniger.elim.controleur.adapter.NoConnectionAdapter;
-import com.naniger.elim.controleur.animation.RoundedTransformation;
+import com.naniger.elim.controleur.adapter.AuthorProfileAdapter;
+import com.naniger.elim.model.author.AuthorJson;
+import com.naniger.elim.model.author.AuthorProfile;
+import com.naniger.elim.model.author.BibliographyQuery;
+import com.naniger.elim.model.author.PagedList;
+import com.naniger.elim.model.author.ProfileText;
+import com.naniger.elim.model.author.Publication;
+import com.naniger.elim.model.author.SimilarAuthors;
+import com.naniger.elim.model.cache.ApiCache;
+import com.naniger.elim.model.cache.CachedLoader;
 import com.naniger.elim.model.data.Author;
-import com.naniger.elim.model.data.Connection;
-import com.naniger.elim.model.data.Library;
-import com.naniger.elim.model.data.OnlineBook;
 import com.naniger.elim.model.data.Server;
-import com.naniger.elim.model.table.Session;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import okhttp3.MultipartBody;
-import com.naniger.elim.model.net.ApiClient;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-
-public class AuthorActivity extends AppCompatActivity {
+/**
+ * Profil d'auteur, organisé comme un profil professionnel :
+ * identité (portrait, nom, profession, chiffres clés, partage, contacts) → À propos (biographie)
+ * → En chiffres (formats, domaines) → Auteurs similaires → Bibliographie paginée avec recherche,
+ * tri et filtres.
+ *
+ * <p>Données : API Laravel uniquement ({@code /api/authors/{id}}, {@code /api/authors/{id}/similar},
+ * {@code /api/book/associations?authorId=…}), via le cache « cache d'abord » de l'application :
+ * un profil déjà consulté reste lisible hors ligne. Les anciens scripts PHP
+ * ({@code author_book.php}, {@code AuthorSimular.php}) ne sont plus appelés.
+ *
+ * <p>Extras attendus (inchangés) : {@code intent_author_adapter_id} (obligatoire) et, pour un
+ * affichage immédiat avant la réponse du serveur, nom, prénom, portrait et profession.
+ */
+public class AuthorActivity extends AppCompatActivity implements AuthorProfileAdapter.Listener {
 
     private static final String TAG = "AuthorActivity";
-    private static final String ACTION_AUTHOR = "AUTHOR_ACTIVITY";
-    private static final String RESPONSE_RAS = "RAS";
-    private static final int REQUEST_CALL_PERMISSION = 1;
-    private static final String WHATSAPP_PACKAGE = "com.whatsapp";
-    private static final String WHATSAPP_BUSINESS_PACKAGE = "com.whatsapp.w4b";
+    private static final long SEARCH_DELAY_MS = 350;
+    private static final int PREFETCH_DISTANCE = 5;
+    private static final int MAX_SIMILAR = 12;
+    private static final int BIO_COLLAPSED_LINES = 6;
 
-    // Views
-    private NestedScrollView mNestedScrollView;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
-    private View mSkeletonLoadingContainer;
-    private View mNoConnectionContainer;
-    private RecyclerView mBooksRecyclerView;
-    private View mBooksEmptyView;
-    private TextView mBooksEmptyMessageTextView;
-    private RecyclerView mAuthorRecyclerView;
-    private RecyclerView mAuthorFormatBookRecyclerView;
-    private ImageView mProfileImageView;
-    private ImageView mBackImageView;
-    private ImageView mAppelImageView;
-    private ImageView mEmailImageView;
-    private ImageView mWhatsAppImageView;
-    private TextView mUsernameTextView;
-    private TextView mProfessionTextView;
-    private EditText mSearchEditText;
-    private LinearLayout mContactsLinearLayout;
+    // Vues
+    private SwipeRefreshLayout mSwipe;
+    private RecyclerView mList;
+    private LinearLayoutManager mLayoutManager;
+    private View mTopBar, mNotFound;
+    private TextView mTopTitle;
+    private View mHeader;
+    private ImageView mPortrait;
+    private TextView mName, mProfession, mMeta;
+    private View mCallButton, mEmailButton, mWhatsappButton;
+    private View mNotice;
+    private TextView mNoticeText;
+    private TextView mBio, mBioToggle, mBioEmpty;
+    private View mBioSkeleton;
+    private View mNumbersSection;
+    private TextView mStatPublications, mStatPdf, mStatAudio, mStatPhysical;
+    private View mStatPdfBox, mStatAudioBox, mStatPhysicalBox;
+    private View mDomainsTitle, mDomainsHint;
+    private ChipGroup mDomains;
+    private View mSimilarSection;
+    private RecyclerView mSimilarList;
+    private TextView mSimilarEmpty;
+    private View mBibliographySection;
+    private TextView mBibliographyTitle;
+    private EditText mSearch;
+    private View mSearchClear;
+    private TextView mSortButton;
+    private ChipGroup mFormats;
+    private Chip mActiveCategory;
 
-    // Data
-    private final List<OnlineBook> mOnlineBookList = new ArrayList<>();
-    private final List<Author> mAuthorArrayList = new ArrayList<>();
-    private Author mAuthor;
-    private Session mSession;
-    private String mNumberAuthor;
+    // Données
+    private String mAuthorId;
+    private AuthorProfile mProfile;
+    private BibliographyQuery mQuery;
+    private final PagedList<Publication> mBooks = new PagedList<>(p -> p.id);
+    private AuthorProfileAdapter mAdapter;
+    private boolean mBioExpanded;
+    private float mDensity;
 
-    // Utils
-    private OkHttpClient mHttpClient;
-    private BroadcastReceiver mNoConnectionReceiver;
-    private ValueAnimator mShimmerAnimator;
-    private ValueAnimator mArrowAnimator;
+    private final Handler mHandler = new Handler(Looper.getMainLooper());
+    private final Runnable mRunSearch = this::reloadBibliography;
+
+    // =================================================================== cycle de vie
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_author);
-        Objects.requireNonNull(getSupportActionBar()).hide();
+        if (getSupportActionBar() != null) getSupportActionBar().hide();
+        mDensity = getResources().getDisplayMetrics().density;
 
-        initializeComponents();
-        initializeViews();
-        configureContactVisibility();
-        setupClickListeners();
-        setupSwipeRefresh();
-        loadAuthorImage();
-        registerBroadcastReceiver();
-        loadAuthorData();
-    }
+        bindViews();
 
-    private void initializeComponents() {
-        mSession = new Session(this);
-        mHttpClient = ApiClient.getInstance(this);
-        mAuthor = extractAuthorFromIntent();
-    }
-
-    private Author extractAuthorFromIntent() {
         Intent intent = getIntent();
-        return new Author(
-                intent.getStringExtra("intent_author_adapter_id"),
-                intent.getStringExtra("intent_author_adapter_name"),
-                intent.getStringExtra("intent_author_adapter_first_name"),
-                intent.getStringExtra("intent_author_adapter_profile"),
-                intent.getStringExtra("intent_author_adapter_profession"),
-                intent.getStringExtra("intent_author_adapter_call"),
-                intent.getStringExtra("intent_author_adapter_email"),
-                intent.getStringExtra("intent_author_adapter_whatsapp")
-        );
-    }
-
-    private void initializeViews() {
-        mNestedScrollView         = findViewById(R.id.nested_scroll_view_activity_author);
-        mSwipeRefreshLayout       = findViewById(R.id.swipe_refresh_author);
-        mSkeletonLoadingContainer = findViewById(R.id.skeleton_loading_container);
-        mNoConnectionContainer    = findViewById(R.id.no_connection_container);
-        mProfileImageView         = findViewById(R.id.image_view_author_activity_profile);
-        mUsernameTextView         = findViewById(R.id.text_view_activity_author_username);
-        mProfessionTextView       = findViewById(R.id.text_view_activity_author_profession);
-        mBooksRecyclerView        = findViewById(R.id.recycler_view_activity_author_books);
-        mBooksEmptyView           = findViewById(R.id.linear_layout_activity_author_books_empty);
-        mBooksEmptyMessageTextView = findViewById(R.id.text_view_activity_author_books_empty_message);
-        mAuthorRecyclerView       = findViewById(R.id.recycler_view_activity_author);
-        mBackImageView            = findViewById(R.id.image_view_toolbar_search);
-        mSearchEditText           = findViewById(R.id.edit_text_toolbar_search);
-        mContactsLinearLayout     = findViewById(R.id.linear_layout_activity_author_contacts);
-        mAppelImageView           = findViewById(R.id.image_view_activity_author_appel);
-        mEmailImageView           = findViewById(R.id.image_view_activity_author_email);
-        mWhatsAppImageView        = findViewById(R.id.image_view_activity_author_whatsapp);
-        mAuthorFormatBookRecyclerView = findViewById(R.id.recycler_view_activity_author_format_books);
-
-        configureSearchField();
-        updateAuthorInfo();
-        startSkeletonShimmer(mSkeletonLoadingContainer);
-        startArrowAnimation();
-    }
-
-    private void configureSearchField() {
-        mSearchEditText.setVisibility(View.GONE);
-        mSearchEditText.setSelectAllOnFocus(false);
-        mSearchEditText.setFocusable(false);
-        mSearchEditText.setHint("  Recherche mes livres");
-    }
-
-    private void updateAuthorInfo() {
-        mUsernameTextView.setText(mAuthor.getFirstName() + " " + mAuthor.getName());
-        mProfessionTextView.setText(mAuthor.getProfession());
-    }
-
-    private void configureContactVisibility() {
-        int hiddenCount = 0;
-        if ("null".equals(mAuthor.getCall()))     { mAppelImageView.setVisibility(View.GONE);    hiddenCount++; }
-        if ("null".equals(mAuthor.getEmail()))    { mEmailImageView.setVisibility(View.GONE);    hiddenCount++; }
-        if ("null".equals(mAuthor.getWhatsapp())) { mWhatsAppImageView.setVisibility(View.GONE); hiddenCount++; }
-        if (hiddenCount == 3) mContactsLinearLayout.setVisibility(View.GONE);
-    }
-
-    private void setupClickListeners() {
-        mBackImageView.setOnClickListener(v -> onBackPressed());
-        mSearchEditText.setOnClickListener(v -> navigateToSearch());
-        mAppelImageView.setOnClickListener(v -> { mNumberAuthor = mAuthor.getCall(); initiateCall(mNumberAuthor); });
-        mEmailImageView.setOnClickListener(v -> sendEmail(mAuthor.getEmail(), "Sujet : ", "Bonjour " + mAuthor.getName() + " " + mAuthor.getFirstName() + ","));
-        mWhatsAppImageView.setOnClickListener(v -> sendWhatsAppMessage(mAuthor.getWhatsapp(), "Bonjour " + mAuthor.getName() + ","));
-    }
-
-    // ==================== SwipeRefresh ====================
-
-    private void setupSwipeRefresh() {
-        mSwipeRefreshLayout.setColorSchemeResources(
-                R.color.purple_200,
-                android.R.color.holo_blue_light,
-                android.R.color.holo_orange_light
-        );
-
-        mSwipeRefreshLayout.setOnRefreshListener(() -> {
-            mNoConnectionContainer.setVisibility(View.GONE);
-            showLoadingState();
-            loadAuthorData();
-        });
-
-        mNestedScrollView.setOnScrollChangeListener(
-                (NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) ->
-                        mSwipeRefreshLayout.setEnabled(scrollY == 0));
-    }
-
-    private void stopRefreshing() {
-        if (mSwipeRefreshLayout != null && mSwipeRefreshLayout.isRefreshing()) {
-            mSwipeRefreshLayout.setRefreshing(false);
+        mAuthorId = intent.getStringExtra("intent_author_adapter_id");
+        if (!BibliographyQuery.isValidAuthorId(mAuthorId)) {
+            // Identifiant absent ou invalide : aucune requête, message clair.
+            showNotFound();
+            return;
         }
+        mAuthorId = mAuthorId.trim();
+        mQuery = BibliographyQuery.forAuthor(mAuthorId);
+
+        showIntentPreview(intent);
+        setupList();
+        setupBibliographyTools();
+        setupActions();
+
+        mList.post(this::updateTopBar);
+        loadProfile(false);
+        loadSimilar(false);
+        reloadBibliography();
     }
-
-    // ==================== États ====================
-
-    private void showLoadingState() {
-        mNestedScrollView.setVisibility(View.GONE);
-        mNoConnectionContainer.setVisibility(View.GONE);
-        mSkeletonLoadingContainer.setVisibility(View.VISIBLE);
-        startSkeletonShimmer(mSkeletonLoadingContainer);
-    }
-
-    private void showContentState() {
-        mSkeletonLoadingContainer.setVisibility(View.GONE);
-        stopSkeletonShimmer(mSkeletonLoadingContainer);
-        mNoConnectionContainer.setVisibility(View.GONE);
-        mNestedScrollView.setVisibility(View.VISIBLE);
-        mSearchEditText.setVisibility(View.VISIBLE);
-    }
-
-    private void showNoConnectionError() {
-        stopRefreshing();
-        stopSkeletonShimmer(mSkeletonLoadingContainer);
-        mSkeletonLoadingContainer.setVisibility(View.GONE);
-        mNestedScrollView.setVisibility(View.GONE);
-        mNoConnectionContainer.setVisibility(View.VISIBLE);
-    }
-
-    // ==================== Navigation ====================
-
-    private void navigateToSearch() {
-        Intent intent = new Intent(this, SearchActivity.class);
-        intent.putExtra("search_key", "ONLINE_BOOK");
-        intent.putExtra("online_book_key", "AUTHOR_ACTIVITY");
-        intent.putExtra("id_author_key", mAuthor.getIdNumber());
-        startActivity(intent);
-    }
-
-    private void loadAuthorImage() {
-        Picasso.get()
-                .load(Server.getUrlHostProd(this) + "/api/public/resource/0/profil/" + mAuthor.getProfile()) // migre vers la route publique Laravel (FileController::publicShow, type profil)
-                .placeholder(R.drawable.img_wait_profile)
-                .error(R.drawable.img_wait_profile)
-                .transform(new RoundedTransformation(1000, 4))
-                .resize(384, 384)
-                .into(mProfileImageView);
-    }
-
-    // ==================== BroadcastReceiver ====================
-
-    private void registerBroadcastReceiver() {
-        mNoConnectionReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if (ACTION_AUTHOR.equals(intent.getAction())) {
-                    try {
-                        showLoadingState();
-                        loadAuthorData();
-                    } catch (Exception e) {
-                        Log.e(TAG, "Error handling broadcast", e);
-                    }
-                }
-            }
-        };
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            registerReceiver(mNoConnectionReceiver,
-                    new IntentFilter(ACTION_AUTHOR),
-                    Context.RECEIVER_NOT_EXPORTED);
-        }
-    }
-
-    private void loadAuthorData() {
-        String baseUrl  = Server.getUrlApi(this);
-        String idNumber = mSession.getIdNumber();
-        String authorId = mAuthor.getIdNumber();
-
-        new AuthorBookSyn().execute(baseUrl + "author_book.php", idNumber, authorId);
-        new AuthorSyn().execute(baseUrl + "AuthorSimular.php", authorId);
-    }
-
-    // ==================== AsyncTask Classes ====================
-
-    private class AuthorBookSyn extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... params) {
-            return executePostRequest(params[0],
-                    new MultipartBody.Builder()
-                            .setType(MultipartBody.FORM)
-                            .addFormDataPart("idNumber", params[1])
-                            .addFormDataPart("idAuthor", params[2])
-                            .build());
-        }
-
-        @Override
-        protected void onPostExecute(String jsonData) {
-            if (jsonData != null) processAuthorBooks(jsonData);
-            else showNoConnectionError();
-        }
-
-        private void processAuthorBooks(String jsonData) {
-            BookStats stats = new BookStats();
-            // Bug corrigé : avec la réponse « RAS » (auteur sans livre), le squelette de
-            // chargement restait affiché indéfiniment.
-            stopRefreshing();
-            showContentState();
-            mOnlineBookList.clear();
-
-            if (!RESPONSE_RAS.equals(jsonData)) {
-                try {
-                    JSONArray jsonArray = new JSONArray(jsonData);
-                    mOnlineBookList.clear();
-
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject obj = jsonArray.getJSONObject(i);
-                        OnlineBook book = new OnlineBook(
-                                obj.getString("idBook"),
-                                obj.getString("blanket"),
-                                obj.getString("bookTitle"),
-                                obj.getString("categoryTitle"),
-                                obj.getString("isPhysic"),
-                                obj.getString("electronic"),
-                                obj.getString("isAudio"),
-                                obj.getString("idStruct"),
-                                Integer.parseInt(obj.getString("numberLike")),
-                                Integer.parseInt(obj.getString("numberNoLike"))
-                        );
-                        mOnlineBookList.add(book);
-                        stats.updateStats(book);
-                    }
-
-                    HorizontaleAdapter adapter = new HorizontaleAdapter(mOnlineBookList);
-                    mBooksRecyclerView.setLayoutManager(
-                            new LinearLayoutManager(AuthorActivity.this, LinearLayoutManager.HORIZONTAL, false));
-                    mBooksRecyclerView.setAdapter(adapter);
-
-                } catch (JSONException e) {
-                    Log.e(TAG, "Error parsing author books", e);
-                }
-            }
-
-            showBooksEmptyState(mOnlineBookList.isEmpty());
-            updateFormatBooksRecyclerView(stats);
-        }
-
-        /** Carte « Aucun livre pour le moment » à la place de la liste vide. */
-        private void showBooksEmptyState(boolean empty) {
-            mBooksRecyclerView.setVisibility(empty ? View.GONE : View.VISIBLE);
-            mBooksEmptyView.setVisibility(empty ? View.VISIBLE : View.GONE);
-            if (empty) {
-                String name = mUsernameTextView.getText() != null ? mUsernameTextView.getText().toString().trim() : "";
-                mBooksEmptyMessageTextView.setText(name.isEmpty()
-                        ? getString(R.string.author_no_books_message)
-                        : getString(R.string.author_no_books_message_named, name));
-            }
-        }
-
-        private void updateFormatBooksRecyclerView(BookStats stats) {
-            List<Library> libraryList = new ArrayList<>();
-            libraryList.add(new Library(1, R.drawable.fichier_pdf, "Mes livres électroniques", stats.electronic, mAuthor.getIdNumber()));
-            libraryList.add(new Library(2, R.drawable.audio, "Mes livres audios", stats.audio, mAuthor.getIdNumber()));
-            libraryList.add(new Library(3, R.drawable.books_emp, "Mes livres physiques", stats.physical, mAuthor.getIdNumber()));
-
-            AuthorFormatBookAdapter adapter = new AuthorFormatBookAdapter(libraryList);
-            mAuthorFormatBookRecyclerView.setLayoutManager(new LinearLayoutManager(AuthorActivity.this));
-            mAuthorFormatBookRecyclerView.setAdapter(adapter);
-        }
-    }
-
-    private class AuthorSyn extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... params) {
-            return executePostRequest(params[0],
-                    new MultipartBody.Builder()
-                            .setType(MultipartBody.FORM)
-                            .addFormDataPart("idUser", params[1])
-                            .build());
-        }
-
-        @Override
-        protected void onPostExecute(String jsonData) {
-            if (jsonData != null) processSimilarAuthors(jsonData);
-            else showAuthorLoadError();
-        }
-
-        private void processSimilarAuthors(String jsonData) {
-            if (!RESPONSE_RAS.equals(jsonData)) {
-                try {
-                    JSONArray jsonArray = new JSONArray(jsonData);
-                    mAuthorArrayList.clear();
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject obj = jsonArray.getJSONObject(i);
-                        mAuthorArrayList.add(new Author(
-                                obj.getString("idAuthor"), obj.getString("name"),
-                                obj.getString("firstName"), obj.getString("profile"),
-                                obj.getString("profession"), obj.getString("call"),
-                                obj.getString("email"), obj.getString("whatsapp")
-                        ));
-                    }
-                } catch (JSONException e) { Log.e(TAG, "Error parsing similar authors", e); }
-            }
-
-            AuthorHorizontaleAdapter adapter = new AuthorHorizontaleAdapter(mAuthorArrayList);
-            mAuthorRecyclerView.setLayoutManager(
-                    new LinearLayoutManager(AuthorActivity.this, LinearLayoutManager.HORIZONTAL, false));
-            mAuthorRecyclerView.setAdapter(adapter);
-        }
-
-        private void showAuthorLoadError() {
-            List<Connection> list = new ArrayList<>();
-            list.add(new Connection(getString(R.string.no_connection_available), ACTION_AUTHOR, false));
-            NoConnectionAdapter adapter = new NoConnectionAdapter(list);
-            mAuthorRecyclerView.setLayoutManager(
-                    new LinearLayoutManager(AuthorActivity.this, LinearLayoutManager.HORIZONTAL, false));
-            mAuthorRecyclerView.setAdapter(adapter);
-        }
-    }
-
-    // ==================== Contact Methods ====================
-
-    private void initiateCall(String phoneNumber) {
-        if (phoneNumber == null || phoneNumber.isEmpty()) { Toast.makeText(this, "Numéro invalide", Toast.LENGTH_SHORT).show(); return; }
-        makeCall(phoneNumber);
-    }
-
-    private void makeCall(String phoneNumber) {
-        // ACTION_DIAL ouvre le composeur avec le numero pre-rempli : aucune permission
-        // CALL_PHONE (permission sensible, a justifier aupres de Google Play) n'est requise.
-        startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phoneNumber)));
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_CALL_PERMISSION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) { if (mNumberAuthor != null) makeCall(mNumberAuthor); }
-            else Toast.makeText(this, "Permission d'appel refusée", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void sendEmail(String recipient, String subject, String message) {
-        Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + recipient));
-        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
-        intent.putExtra(Intent.EXTRA_TEXT, message);
-        try { startActivity(Intent.createChooser(intent, "Choisir une application de messagerie")); }
-        catch (android.content.ActivityNotFoundException e) { Toast.makeText(this, "Aucune application email installée", Toast.LENGTH_SHORT).show(); }
-    }
-
-    private void sendWhatsAppMessage(String phoneNumber, String message) {
-        try {
-            String url = "https://wa.me/" + phoneNumber + "?text=" + Uri.encode(message);
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-            if (isPackageInstalled(WHATSAPP_PACKAGE)) intent.setPackage(WHATSAPP_PACKAGE);
-            else if (isPackageInstalled(WHATSAPP_BUSINESS_PACKAGE)) intent.setPackage(WHATSAPP_BUSINESS_PACKAGE);
-            else { Toast.makeText(this, "Aucune version de WhatsApp n'est installée", Toast.LENGTH_SHORT).show(); return; }
-            startActivity(intent);
-        } catch (Exception e) { Toast.makeText(this, "Erreur lors de l'ouverture de WhatsApp", Toast.LENGTH_SHORT).show(); }
-    }
-
-    private boolean isPackageInstalled(String packageName) {
-        try { getPackageManager().getPackageInfo(packageName, 0); return true; }
-        catch (Exception e) { return false; }
-    }
-
-    // ==================== Helper Methods ====================
-
-    private String executePostRequest(String url, RequestBody requestBody) {
-        try {
-            Request request = new Request.Builder().url(url).post(requestBody).build();
-            try (Response response = mHttpClient.newCall(request).execute()) {
-                if (response.body() != null) return response.body().string();
-            }
-        } catch (IOException e) { Log.e(TAG, "Network error: " + e.getMessage(), e); }
-        catch (Exception e) { Log.e(TAG, "Unexpected error: " + e.getMessage(), e); }
-        return null;
-    }
-
-    // ==================== Shimmer ====================
-
-    private void startSkeletonShimmer(View container) {
-        if (!(container instanceof ViewGroup)) return;
-        List<View> skeletonViews = new ArrayList<>();
-        collectSkeletonViews((ViewGroup) container, skeletonViews);
-
-        mShimmerAnimator = ValueAnimator.ofFloat(0f, 1f);
-        mShimmerAnimator.setDuration(1200);
-        mShimmerAnimator.setRepeatCount(ValueAnimator.INFINITE);
-        mShimmerAnimator.setRepeatMode(ValueAnimator.RESTART);
-        mShimmerAnimator.addUpdateListener(anim -> {
-            float fraction = (float) anim.getAnimatedValue();
-            float alpha = 0.4f + 0.6f * (float)(0.5 + 0.5 * Math.sin(fraction * 2 * Math.PI));
-            for (View v : skeletonViews) v.setAlpha(alpha);
-        });
-        mShimmerAnimator.start();
-    }
-
-    private void stopSkeletonShimmer(View container) {
-        if (mShimmerAnimator != null) { mShimmerAnimator.cancel(); mShimmerAnimator = null; }
-        if (container instanceof ViewGroup) {
-            List<View> views = new ArrayList<>();
-            collectSkeletonViews((ViewGroup) container, views);
-            for (View v : views) v.setAlpha(1f);
-        }
-    }
-
-    private void collectSkeletonViews(ViewGroup parent, List<View> out) {
-        for (int i = 0; i < parent.getChildCount(); i++) {
-            View child = parent.getChildAt(i);
-            if (child instanceof ViewGroup) collectSkeletonViews((ViewGroup) child, out);
-            else out.add(child);
-        }
-    }
-
-    // ==================== Arrow Animation ====================
-
-    private void startArrowAnimation() {
-        if (mNoConnectionContainer == null) return;
-        View arrow1 = mNoConnectionContainer.findViewById(R.id.arrow_1);
-        View arrow2 = mNoConnectionContainer.findViewById(R.id.arrow_2);
-        View arrow3 = mNoConnectionContainer.findViewById(R.id.arrow_3);
-        if (arrow1 == null || arrow2 == null || arrow3 == null) return;
-
-        mArrowAnimator = ValueAnimator.ofFloat(0f, 1f);
-        mArrowAnimator.setDuration(1000);
-        mArrowAnimator.setRepeatCount(ValueAnimator.INFINITE);
-        mArrowAnimator.setRepeatMode(ValueAnimator.RESTART);
-        mArrowAnimator.setInterpolator(new android.view.animation.AccelerateDecelerateInterpolator());
-        mArrowAnimator.addUpdateListener(anim -> {
-            float f = (float) anim.getAnimatedValue();
-            float dp = getResources().getDisplayMetrics().density;
-            float t1 = bounce(f), t2 = bounce((f + 0.33f) % 1f), t3 = bounce((f + 0.66f) % 1f);
-            float max = 10f;
-            arrow1.setTranslationY(t1 * max * dp); arrow2.setTranslationY(t2 * max * dp); arrow3.setTranslationY(t3 * max * dp);
-            arrow1.setAlpha(0.25f + t1 * 0.3f); arrow2.setAlpha(0.55f + t2 * 0.25f); arrow3.setAlpha(0.85f + t3 * 0.15f);
-        });
-        mArrowAnimator.start();
-    }
-
-    private float bounce(float t) { return (float) Math.sin(t * Math.PI); }
-
-    // ==================== Cycle de vie ====================
 
     @Override
     protected void onDestroy() {
+        mHandler.removeCallbacksAndMessages(null);
         super.onDestroy();
-        if (mShimmerAnimator != null) { mShimmerAnimator.cancel(); mShimmerAnimator = null; }
-        if (mArrowAnimator != null)   { mArrowAnimator.cancel();   mArrowAnimator = null;   }
-        if (mNoConnectionReceiver != null) {
-            try { unregisterReceiver(mNoConnectionReceiver); }
-            catch (Exception e) { Log.e(TAG, "Error unregistering receiver", e); }
+    }
+
+    private boolean isGone() {
+        return isFinishing() || isDestroyed();
+    }
+
+    // =================================================================== vues
+
+    private void bindViews() {
+        mSwipe = findViewById(R.id.swipe_refresh_author);
+        mList = findViewById(R.id.recycler_view_author_profile);
+        mTopBar = findViewById(R.id.linear_layout_author_top_bar);
+        mTopTitle = findViewById(R.id.text_view_author_top_title);
+        mNotFound = findViewById(R.id.linear_layout_author_not_found);
+
+        mHeader = LayoutInflater.from(this).inflate(R.layout.item_author_profile_header, mList, false);
+        mPortrait = mHeader.findViewById(R.id.image_view_author_profile_portrait);
+        mName = mHeader.findViewById(R.id.text_view_author_profile_name);
+        mProfession = mHeader.findViewById(R.id.text_view_author_profile_profession);
+        mMeta = mHeader.findViewById(R.id.text_view_author_profile_meta);
+        mCallButton = mHeader.findViewById(R.id.image_button_author_profile_call);
+        mEmailButton = mHeader.findViewById(R.id.image_button_author_profile_email);
+        mWhatsappButton = mHeader.findViewById(R.id.image_button_author_profile_whatsapp);
+        mNotice = mHeader.findViewById(R.id.linear_layout_author_profile_notice);
+        mNoticeText = mHeader.findViewById(R.id.text_view_author_profile_notice);
+        mBio = mHeader.findViewById(R.id.text_view_author_profile_bio);
+        mBioToggle = mHeader.findViewById(R.id.text_view_author_profile_bio_toggle);
+        mBioEmpty = mHeader.findViewById(R.id.text_view_author_profile_bio_empty);
+        mBioSkeleton = mHeader.findViewById(R.id.linear_layout_author_profile_bio_skeleton);
+        mNumbersSection = mHeader.findViewById(R.id.linear_layout_author_profile_numbers);
+        mStatPublications = mHeader.findViewById(R.id.text_view_author_stat_publications);
+        mStatPdf = mHeader.findViewById(R.id.text_view_author_stat_pdf);
+        mStatAudio = mHeader.findViewById(R.id.text_view_author_stat_audio);
+        mStatPhysical = mHeader.findViewById(R.id.text_view_author_stat_physical);
+        mStatPdfBox = mHeader.findViewById(R.id.linear_layout_author_stat_pdf);
+        mStatAudioBox = mHeader.findViewById(R.id.linear_layout_author_stat_audio);
+        mStatPhysicalBox = mHeader.findViewById(R.id.linear_layout_author_stat_physical);
+        mDomainsTitle = mHeader.findViewById(R.id.text_view_author_profile_domains_title);
+        mDomainsHint = mHeader.findViewById(R.id.text_view_author_profile_domains_hint);
+        mDomains = mHeader.findViewById(R.id.chip_group_author_profile_domains);
+        mSimilarSection = mHeader.findViewById(R.id.linear_layout_author_profile_similar);
+        mSimilarList = mHeader.findViewById(R.id.recycler_view_author_profile_similar);
+        mSimilarEmpty = mHeader.findViewById(R.id.text_view_author_profile_similar_empty);
+        mBibliographySection = mHeader.findViewById(R.id.linear_layout_author_profile_bibliography);
+        mBibliographyTitle = mHeader.findViewById(R.id.text_view_author_profile_bibliography_title);
+        mSearch = mHeader.findViewById(R.id.edit_text_author_profile_search);
+        mSearchClear = mHeader.findViewById(R.id.image_button_author_profile_search_clear);
+        mSortButton = mHeader.findViewById(R.id.text_view_author_profile_sort);
+        mFormats = mHeader.findViewById(R.id.chip_group_author_profile_formats);
+        mActiveCategory = mHeader.findViewById(R.id.chip_author_profile_active_category);
+
+        findViewById(R.id.image_button_author_back).setOnClickListener(v -> finish());
+        findViewById(R.id.text_view_author_not_found_back).setOnClickListener(v -> finish());
+    }
+
+    /** Affichage immédiat avec les données transmises par l'écran précédent. */
+    private void showIntentPreview(Intent intent) {
+        String name = ProfileText.fullName(intent.getStringExtra("intent_author_adapter_first_name"),
+                intent.getStringExtra("intent_author_adapter_name"));
+        setName(name);
+        setProfession(intent.getStringExtra("intent_author_adapter_profession"));
+        loadPortrait(intent.getStringExtra("intent_author_adapter_profile"));
+        mMeta.setVisibility(View.GONE);
+        mNumbersSection.setVisibility(View.GONE);
+    }
+
+    private void setupList() {
+        mLayoutManager = new LinearLayoutManager(this);
+        mList.setLayoutManager(mLayoutManager);
+        mAdapter = new AuthorProfileAdapter(mHeader, this);
+        mList.setAdapter(mAdapter);
+        mList.setItemAnimator(null); // pas de clignotement à l'ajout des pages
+
+        mList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView rv, int dx, int dy) {
+                updateTopBar();
+                // Chargement progressif : page suivante quand la fin approche.
+                int lastVisible = mLayoutManager.findLastVisibleItemPosition() - 1; // -1 : en-tête
+                if (mBooks.shouldPrefetch(lastVisible, PREFETCH_DISTANCE)) loadNextPage();
+            }
+        });
+
+        mSwipe.setColorSchemeColors(ContextCompat.getColor(this, R.color.elim_primary));
+        mSwipe.setOnRefreshListener(() -> {
+            loadProfile(true);
+            loadSimilar(true);
+            reloadBibliography(true);
+        });
+    }
+
+    /** Barre du haut : transparente sur le bandeau, puis surface + nom de l'auteur. */
+    private void updateTopBar() {
+        float progress = 1f;
+        if (mLayoutManager.findFirstVisibleItemPosition() == 0) {
+            View first = mLayoutManager.findViewByPosition(0);
+            float scrolled = first != null ? -first.getTop() : 0f;
+            float threshold = 150 * mDensity; // ≈ bas du portrait
+            progress = Math.max(0f, Math.min(1f, (scrolled - threshold * 0.6f) / (threshold * 0.4f)));
+        }
+        int surface = ContextCompat.getColor(this, R.color.elim_surface);
+        int alpha = Math.round(progress * 255);
+        mTopBar.setBackgroundColor((surface & 0x00FFFFFF) | (alpha << 24));
+        mTopBar.setElevation(progress >= 1f ? 3 * mDensity : 0f);
+        mTopTitle.setAlpha(progress);
+    }
+
+    private void setupActions() {
+        View.OnClickListener share = v -> shareProfile();
+        findViewById(R.id.image_button_author_share_top).setOnClickListener(share);
+        mHeader.findViewById(R.id.text_view_author_profile_share).setOnClickListener(share);
+        mHeader.findViewById(R.id.text_view_author_profile_notice_retry).setOnClickListener(v -> {
+            mNotice.setVisibility(View.GONE);
+            loadProfile(true);
+            loadSimilar(true);
+            if (mBooks.hasError() || mBooks.isEmptyResult()) reloadBibliography(true);
+        });
+        mBioToggle.setOnClickListener(v -> {
+            mBioExpanded = !mBioExpanded;
+            mBio.setMaxLines(mBioExpanded ? Integer.MAX_VALUE : BIO_COLLAPSED_LINES);
+            mBioToggle.setText(mBioExpanded ? R.string.author_profile_see_less : R.string.author_profile_see_more);
+        });
+        mCallButton.setOnClickListener(v -> callAuthor());
+        mEmailButton.setOnClickListener(v -> emailAuthor());
+        mWhatsappButton.setOnClickListener(v -> whatsappAuthor());
+    }
+
+    // =================================================================== profil
+
+    private void loadProfile(boolean force) {
+        String url = BibliographyQuery.profileUrl(Server.getUrlHostProd(this), mAuthorId);
+        ApiCache.loadObject(this, url, ApiCache.TTL_AUTHOR_PROFILE, force, new CachedLoader.Callback() {
+            @Override
+            public void onCached(String body, long ageMs) {
+                if (isGone()) return;
+                applyProfile(body);
+            }
+
+            @Override
+            public void onFresh(String body) {
+                if (isGone()) return;
+                mNotice.setVisibility(View.GONE);
+                applyProfile(body);
+                mSwipe.setRefreshing(false);
+            }
+
+            @Override
+            public void onFailure(boolean hadCache) {
+                if (isGone()) return;
+                mSwipe.setRefreshing(false);
+                // Hors ligne avec un profil déjà enregistré : on le garde et on le signale.
+                // Jamais consulté : on le dit, sans prétendre que le profil est disponible.
+                showNotice(hadCache ? R.string.author_profile_offline
+                        : (mProfile == null ? R.string.author_profile_offline_empty : R.string.author_profile_error));
+                if (mProfile == null) showBioState(null, true);
+            }
+
+            @Override
+            public void onNotFound() {
+                if (isGone()) return;
+                mSwipe.setRefreshing(false);
+                showNotFound();
+            }
+        });
+    }
+
+    private void applyProfile(String body) {
+        try {
+            AuthorProfile p = AuthorJson.profile(body);
+            mProfile = p;
+            String name = p.fullName();
+            if (!name.isEmpty()) setName(name);
+            setProfession(p.profession);
+            loadPortrait(p.profile);
+            bindMeta(p);
+            showBioState(p.biography, false);
+            bindNumbers(p);
+            bindContacts(p);
+            bindFormatChips(p);
+        } catch (Exception e) {
+            Log.e(TAG, "Profil illisible", e);
+            showNotice(R.string.author_profile_error);
         }
     }
 
-    // ==================== Helper Classes ====================
+    private void setName(String name) {
+        mName.setText(name);
+        mTopTitle.setText(name);
+        mPortrait.setContentDescription(getString(R.string.author_profile_portrait, name));
+    }
 
-    private static class BookStats {
-        int electronic = 0, audio = 0, physical = 0;
+    private void setProfession(String raw) {
+        String profession = ProfileText.clean(raw);
+        mProfession.setText(profession != null ? profession : "");
+        mProfession.setVisibility(profession != null ? View.VISIBLE : View.GONE);
+    }
 
-        void updateStats(OnlineBook book) {
-            if (!"null".equals(book.getElectronic())) electronic++;
-            if ("1".equals(book.getIsAudio())) audio++;
-            if ("1".equals(book.getIsPhysic())) physical++;
+    private void loadPortrait(String rawProfile) {
+        String profile = ProfileText.clean(rawProfile);
+        if (profile == null) {
+            Picasso.get().cancelRequest(mPortrait);
+            mPortrait.setImageResource(R.drawable.img_wait_profile);
+            return;
         }
+        Picasso.get()
+                .load(Server.getUrlHostProd(this) + "/api/public/resource/0/profil/" + Uri.encode(profile))
+                .placeholder(R.drawable.img_wait_profile)
+                .error(R.drawable.img_wait_profile)
+                .fit()
+                .centerCrop()
+                .into(mPortrait);
+    }
+
+    /** « 12 publications · PDF · Audio · Sur Elim depuis 2025 » — uniquement des valeurs calculées. */
+    private void bindMeta(AuthorProfile p) {
+        List<String> parts = new ArrayList<>();
+        parts.add(p.publications > 0
+                ? getResources().getQuantityString(R.plurals.author_profile_publications, p.publications, p.publications)
+                : getString(R.string.author_profile_no_publication));
+        String formats = ProfileText.formats(p.electronic, p.audio, p.physical,
+                getString(R.string.author_stat_pdf), getString(R.string.author_stat_audio),
+                getString(R.string.author_stat_physical));
+        if (!formats.isEmpty()) parts.add(formats);
+        String since = ProfileText.year(p.firstAddedAt);
+        if (since != null) parts.add(getString(R.string.author_profile_since, since));
+        mMeta.setText(ProfileText.join(parts, " · "));
+        mMeta.setVisibility(View.VISIBLE);
+        mBibliographyTitle.setText(p.publications > 0
+                ? getString(R.string.author_profile_bibliography) + " · " + p.publications
+                : getString(R.string.author_profile_bibliography));
+    }
+
+    private void showBioState(String biography, boolean failed) {
+        mBioSkeleton.setVisibility(View.GONE);
+        if (biography == null) {
+            mBio.setVisibility(View.GONE);
+            mBioToggle.setVisibility(View.GONE);
+            // Échec sans aucune donnée : on n'affirme pas « pas de biographie ».
+            mBioEmpty.setVisibility(failed ? View.GONE : View.VISIBLE);
+            return;
+        }
+        mBioEmpty.setVisibility(View.GONE);
+        mBio.setVisibility(View.VISIBLE);
+        mBio.setText(biography); // texte brut : aucun HTML interprété
+        mBio.setMaxLines(mBioExpanded ? Integer.MAX_VALUE : BIO_COLLAPSED_LINES);
+        // « Voir plus » seulement si le texte dépasse réellement 6 lignes.
+        mBio.post(() -> {
+            Layout layout = mBio.getLayout();
+            boolean overflow = mBio.getLineCount() > BIO_COLLAPSED_LINES
+                    || (layout != null && layout.getLineCount() > 0
+                    && layout.getEllipsisCount(layout.getLineCount() - 1) > 0);
+            mBioToggle.setVisibility(overflow || mBioExpanded ? View.VISIBLE : View.GONE);
+        });
+    }
+
+    private void bindNumbers(AuthorProfile p) {
+        if (p.publications <= 0) {
+            mNumbersSection.setVisibility(View.GONE); // pas de chiffres creux
+            return;
+        }
+        mNumbersSection.setVisibility(View.VISIBLE);
+        mStatPublications.setText(String.valueOf(p.publications));
+        bindStat(mStatPdfBox, mStatPdf, p.electronic);
+        bindStat(mStatAudioBox, mStatAudio, p.audio);
+        bindStat(mStatPhysicalBox, mStatPhysical, p.physical);
+
+        mDomains.removeAllViews();
+        boolean hasDomains = !p.categories.isEmpty();
+        mDomainsTitle.setVisibility(hasDomains ? View.VISIBLE : View.GONE);
+        mDomainsHint.setVisibility(hasDomains ? View.VISIBLE : View.GONE);
+        for (AuthorProfile.CategoryCount c : p.categories) {
+            Chip chip = (Chip) LayoutInflater.from(this).inflate(R.layout.item_profile_chip, mDomains, false);
+            chip.setCheckable(false);
+            chip.setText(c.count > 0 ? c.title + " · " + c.count : c.title);
+            chip.setOnClickListener(v -> applyCategoryFilter(c.id, c.title));
+            mDomains.addView(chip);
+        }
+    }
+
+    private void bindStat(View box, TextView value, int count) {
+        box.setVisibility(count > 0 ? View.VISIBLE : View.INVISIBLE);
+        value.setText(String.valueOf(count));
+    }
+
+    private void bindContacts(AuthorProfile p) {
+        mCallButton.setVisibility(p.phone != null ? View.VISIBLE : View.GONE);
+        mEmailButton.setVisibility(p.email != null ? View.VISIBLE : View.GONE);
+        mWhatsappButton.setVisibility(p.whatsapp != null ? View.VISIBLE : View.GONE);
+    }
+
+    private void showNotice(int message) {
+        mNoticeText.setText(message);
+        mNotice.setVisibility(View.VISIBLE);
+    }
+
+    private void showNotFound() {
+        mNotFound.setVisibility(View.VISIBLE);
+        if (mSwipe != null) mSwipe.setVisibility(View.GONE);
+        View share = findViewById(R.id.image_button_author_share_top);
+        if (share != null) share.setVisibility(View.GONE);
+    }
+
+    // =================================================================== similaires
+
+    private void loadSimilar(boolean force) {
+        String url = BibliographyQuery.similarUrl(Server.getUrlHostProd(this), mAuthorId);
+        ApiCache.loadList(this, url, ApiCache.TTL_AUTHOR_PROFILE, force, new CachedLoader.Callback() {
+            @Override
+            public void onCached(String body, long ageMs) {
+                if (!isGone()) applySimilar(body);
+            }
+
+            @Override
+            public void onFresh(String body) {
+                if (!isGone()) applySimilar(body);
+            }
+
+            @Override
+            public void onFailure(boolean hadCache) {
+                // Section masquée si rien n'a jamais pu être chargé (pas de faux « aucun auteur »).
+                if (!isGone() && !hadCache && mSimilarList.getAdapter() == null) {
+                    mSimilarSection.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onNotFound() {
+                if (!isGone()) mSimilarSection.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    private void applySimilar(String body) {
+        List<Author> authors;
+        try {
+            authors = SimilarAuthors.filter(AuthorJson.similar(body), mAuthorId, Author::getIdNumber, MAX_SIMILAR);
+        } catch (Exception e) {
+            Log.e(TAG, "Auteurs similaires illisibles", e);
+            return;
+        }
+        mSimilarSection.setVisibility(View.VISIBLE);
+        mSimilarEmpty.setVisibility(authors.isEmpty() ? View.VISIBLE : View.GONE);
+        mSimilarList.setVisibility(authors.isEmpty() ? View.GONE : View.VISIBLE);
+        mSimilarList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        mSimilarList.setAdapter(new AuthorHorizontaleAdapter(authors));
+    }
+
+    // =================================================================== bibliographie
+
+    private void setupBibliographyTools() {
+        // Recherche (déclenchée 350 ms après la dernière frappe, côté serveur).
+        mSearch.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int a, int b, int c) { }
+            @Override public void onTextChanged(CharSequence s, int a, int b, int c) { }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                mSearchClear.setVisibility(s.length() > 0 ? View.VISIBLE : View.GONE);
+                String text = s.toString();
+                if (Objects.equals(text.trim(), mQuery.search)) return;
+                mQuery = mQuery.withSearch(text);
+                mHandler.removeCallbacks(mRunSearch);
+                mHandler.postDelayed(mRunSearch, SEARCH_DELAY_MS);
+            }
+        });
+        mSearch.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                hideKeyboard();
+                return true;
+            }
+            return false;
+        });
+        mSearchClear.setOnClickListener(v -> mSearch.setText(""));
+
+        // Tri
+        updateSortLabel();
+        mSortButton.setOnClickListener(this::showSortMenu);
+
+        // Formats (les formats absents de la bibliographie sont masqués une fois le profil connu)
+        addFormatChip(R.string.author_filter_all, null, true);
+        addFormatChip(R.string.author_stat_pdf, BibliographyQuery.Format.PDF, false);
+        addFormatChip(R.string.author_stat_audio, BibliographyQuery.Format.AUDIO, false);
+        addFormatChip(R.string.author_stat_physical, BibliographyQuery.Format.PHYSICAL, false);
+
+        // Domaine actif
+        mActiveCategory.setOnCloseIconClickListener(v -> clearCategoryFilter());
+        mActiveCategory.setOnClickListener(v -> clearCategoryFilter());
+    }
+
+    private void addFormatChip(int label, BibliographyQuery.Format format, boolean checked) {
+        Chip chip = (Chip) LayoutInflater.from(this).inflate(R.layout.item_profile_chip, mFormats, false);
+        chip.setId(View.generateViewId());
+        chip.setText(label);
+        chip.setTag(format);
+        chip.setChecked(checked);
+        chip.setOnCheckedChangeListener((b, isChecked) -> {
+            if (!isChecked) return;
+            BibliographyQuery.Format f = (BibliographyQuery.Format) b.getTag();
+            if (f == mQuery.format) return;
+            mQuery = mQuery.withFormat(f);
+            reloadBibliography();
+        });
+        mFormats.addView(chip);
+    }
+
+    /** Formats sans aucun livre : puce masquée (filtre inutile). Tous les formats si chiffres inconnus. */
+    private void bindFormatChips(AuthorProfile p) {
+        int shownFormats = 0;
+        for (int i = 0; i < mFormats.getChildCount(); i++) {
+            View chip = mFormats.getChildAt(i);
+            BibliographyQuery.Format f = (BibliographyQuery.Format) chip.getTag();
+            int count = f == null ? 1 : f == BibliographyQuery.Format.PDF ? p.electronic
+                    : f == BibliographyQuery.Format.AUDIO ? p.audio : p.physical;
+            boolean visible = f == null || count > 0 || f == mQuery.format;
+            chip.setVisibility(visible ? View.VISIBLE : View.GONE);
+            if (f != null && visible) shownFormats++;
+        }
+        // Un seul format : le filtre n'apporte rien, la rangée est masquée.
+        mFormats.setVisibility(shownFormats >= 2 || mQuery.format != null ? View.VISIBLE : View.GONE);
+    }
+
+    private void showSortMenu(View anchor) {
+        PopupMenu menu = new PopupMenu(this, anchor);
+        BibliographyQuery.Sort[] sorts = BibliographyQuery.Sort.values();
+        for (int i = 0; i < sorts.length; i++) {
+            menu.getMenu().add(0, i, i, sortLabel(sorts[i])).setCheckable(true).setChecked(sorts[i] == mQuery.sort);
+        }
+        menu.getMenu().setGroupCheckable(0, true, true);
+        menu.setOnMenuItemClickListener(item -> {
+            BibliographyQuery.Sort s = sorts[item.getItemId()];
+            if (s != mQuery.sort) {
+                mQuery = mQuery.withSort(s);
+                updateSortLabel();
+                reloadBibliography();
+            }
+            return true;
+        });
+        menu.show();
+    }
+
+    private String sortLabel(BibliographyQuery.Sort s) {
+        switch (s) {
+            case OLDEST: return getString(R.string.author_sort_oldest);
+            case TITLE: return getString(R.string.author_sort_title);
+            case TITLE_DESC: return getString(R.string.author_sort_title_desc);
+            default: return getString(R.string.author_sort_recent);
+        }
+    }
+
+    private void updateSortLabel() {
+        mSortButton.setText(getString(R.string.author_profile_sort, sortLabel(mQuery.sort)));
+    }
+
+    private void applyCategoryFilter(int categoryId, String title) {
+        mActiveCategory.setText(title);
+        mActiveCategory.setCloseIconContentDescription(getString(R.string.author_filter_category_clear, title));
+        mActiveCategory.setVisibility(View.VISIBLE);
+        mQuery = mQuery.withCategory(categoryId);
+        reloadBibliography();
+        scrollToBibliography();
+    }
+
+    private void clearCategoryFilter() {
+        mActiveCategory.setVisibility(View.GONE);
+        if (mQuery.categoryId == null) return;
+        mQuery = mQuery.withCategory(null);
+        reloadBibliography();
+    }
+
+    /** Fait défiler jusqu'aux outils de la bibliographie (sous la barre du haut). */
+    private void scrollToBibliography() {
+        mList.post(() -> {
+            int offset = -mBibliographySection.getTop() + mTopBar.getHeight();
+            mLayoutManager.scrollToPositionWithOffset(0, offset);
+            updateTopBar();
+        });
+    }
+
+    private void reloadBibliography() {
+        reloadBibliography(false);
+    }
+
+    /** Nouvelle requête (recherche, tri, filtre, actualisation) : repart de la page 1. */
+    private void reloadBibliography(boolean force) {
+        mHandler.removeCallbacks(mRunSearch);
+        mBooks.reset();
+        mAdapter.replaceAll(mBooks.items());
+        mAdapter.setFooter(AuthorProfileAdapter.Footer.LOADING_FIRST, null);
+        loadPage(force);
+    }
+
+    private void loadNextPage() {
+        if (mBooks.nextPageToLoad() > 1) {
+            mAdapter.setFooter(AuthorProfileAdapter.Footer.LOADING_MORE, null);
+            loadPage(false);
+        }
+    }
+
+    private void loadPage(boolean force) {
+        final int page = mBooks.nextPageToLoad();
+        if (page < 1) return;
+        final int generation = mBooks.generation();
+        final BibliographyQuery query = mQuery;
+        mBooks.markLoading();
+        String url = query.pageUrl(Server.getUrlHostProd(this), page);
+        ApiCache.loadList(this, url, ApiCache.TTL_AUTHOR_PROFILE, force, new CachedLoader.Callback() {
+            @Override
+            public void onCached(String body, long ageMs) {
+                applyPage(generation, page, body);
+            }
+
+            @Override
+            public void onFresh(String body) {
+                applyPage(generation, page, body);
+                if (page == 1) mSwipe.setRefreshing(false);
+            }
+
+            @Override
+            public void onFailure(boolean hadCache) {
+                if (isGone()) return;
+                if (page == 1) mSwipe.setRefreshing(false);
+                if (hadCache) return; // la page en cache reste affichée
+                if (mBooks.onError(generation)) updateFooter();
+            }
+
+            @Override
+            public void onNotFound() {
+                if (isGone()) return;
+                mSwipe.setRefreshing(false);
+                showNotFound();
+            }
+        });
+    }
+
+    private void applyPage(int generation, int page, String body) {
+        if (isGone()) return;
+        List<Publication> items;
+        try {
+            items = AuthorJson.publications(body, mAuthorId);
+        } catch (Exception e) {
+            Log.e(TAG, "Bibliographie illisible", e);
+            if (mBooks.onError(generation)) updateFooter();
+            return;
+        }
+        // mayHaveMore : calculé sur la réponse brute (avant filtrage des éventuelles
+        // incohérences) pour ne pas arrêter la pagination trop tôt.
+        int rawCount;
+        try {
+            rawCount = new org.json.JSONArray(body).length();
+        } catch (Exception e) {
+            rawCount = items.size();
+        }
+        int added = mBooks.onPage(generation, page, items, BibliographyQuery.mayHaveMore(rawCount));
+        if (added < 0) return; // réponse périmée (autre recherche) : ignorée
+        if (page == 1) mAdapter.replaceAll(mBooks.items());
+        else mAdapter.append(mBooks.items());
+        updateFooter();
+        // Page trop courte pour remplir l'écran : on enchaîne sur la suivante.
+        mList.post(() -> {
+            int lastVisible = mLayoutManager.findLastVisibleItemPosition() - 1;
+            if (mBooks.shouldPrefetch(lastVisible, PREFETCH_DISTANCE)) loadNextPage();
+        });
+    }
+
+    private void updateFooter() {
+        AuthorProfileAdapter.Footer footer;
+        String emptyMessage = null;
+        if (mBooks.hasError()) {
+            footer = AuthorProfileAdapter.Footer.ERROR;
+        } else if (mBooks.isEmptyResult()) {
+            if (mQuery.isFiltered()) {
+                footer = AuthorProfileAdapter.Footer.NO_RESULTS;
+            } else {
+                footer = AuthorProfileAdapter.Footer.EMPTY;
+                String name = mName.getText() != null ? mName.getText().toString().trim() : "";
+                emptyMessage = name.isEmpty() ? getString(R.string.author_no_books_message)
+                        : getString(R.string.author_no_books_message_named, name);
+            }
+        } else if (mBooks.isLoading()) {
+            footer = mBooks.loadedPages() == 0 ? AuthorProfileAdapter.Footer.LOADING_FIRST
+                    : AuthorProfileAdapter.Footer.LOADING_MORE;
+        } else if (!mBooks.hasMore() && mBooks.loadedPages() > 1) {
+            footer = AuthorProfileAdapter.Footer.END;
+        } else {
+            footer = AuthorProfileAdapter.Footer.NONE;
+        }
+        mAdapter.setFooter(footer, emptyMessage);
+    }
+
+    // =================================================================== AuthorProfileAdapter.Listener
+
+    @Override
+    public void onPublicationClick(Publication publication) {
+        // Fiche du livre existante : lecture, écoute, téléchargement, favoris y sont déjà gérés.
+        Intent intent = new Intent(this, BookActivity.class);
+        intent.putExtra("intent_adapter_book_id", publication.id);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onRetry() {
+        mBooks.clearError();
+        if (mBooks.loadedPages() == 0) {
+            reloadBibliography(true);
+        } else {
+            mAdapter.setFooter(AuthorProfileAdapter.Footer.LOADING_MORE, null);
+            loadPage(true);
+        }
+    }
+
+    @Override
+    public void onResetFilters() {
+        mActiveCategory.setVisibility(View.GONE);
+        mHandler.removeCallbacks(mRunSearch);
+        mQuery = BibliographyQuery.forAuthor(mAuthorId).withSort(mQuery.sort);
+        if (mSearch.getText().length() > 0) mSearch.setText(""); // ne relance pas : requête déjà vidée
+        for (int i = 0; i < mFormats.getChildCount(); i++) {
+            Chip chip = (Chip) mFormats.getChildAt(i);
+            if (chip.getTag() == null) chip.setChecked(true);
+        }
+        reloadBibliography();
+    }
+
+    // =================================================================== partage & contacts
+
+    private void shareProfile() {
+        String name = mName.getText() != null ? mName.getText().toString() : "";
+        String message = ProfileText.shareMessage(name, mProfile != null ? mProfile.profession : null,
+                mProfile != null ? mProfile.publications : 0, getString(R.string.url_play_store));
+        Intent send = new Intent(Intent.ACTION_SEND);
+        send.setType("text/plain");
+        send.putExtra(Intent.EXTRA_SUBJECT, name);
+        send.putExtra(Intent.EXTRA_TEXT, message);
+        try {
+            startActivity(Intent.createChooser(send, getString(R.string.author_profile_share_chooser)));
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(this, R.string.author_profile_error, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void callAuthor() {
+        if (mProfile == null || mProfile.phone == null) return;
+        // ACTION_DIAL : composeur pré-rempli, aucune permission d'appel nécessaire.
+        startSafely(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + Uri.encode(mProfile.phone))));
+    }
+
+    private void emailAuthor() {
+        if (mProfile == null || mProfile.email == null) return;
+        Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + mProfile.email));
+        intent.putExtra(Intent.EXTRA_TEXT, "Bonjour " + mName.getText() + ",");
+        startSafely(Intent.createChooser(intent, getString(R.string.author_profile_email)));
+    }
+
+    private void whatsappAuthor() {
+        if (mProfile == null || mProfile.whatsapp == null) return;
+        String url = "https://wa.me/" + mProfile.whatsapp + "?text=" + Uri.encode("Bonjour " + mName.getText() + ",");
+        startSafely(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+    }
+
+    private void startSafely(Intent intent) {
+        try {
+            startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(this, R.string.author_profile_error, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        if (imm != null) imm.hideSoftInputFromWindow(mSearch.getWindowToken(), 0);
+        mSearch.clearFocus();
     }
 }

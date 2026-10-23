@@ -297,4 +297,39 @@ public class CacheTest {
         //noinspection ResultOfMethodCallIgnored
         f.delete();
     }
+
+    // Profil d'auteur supprimé (HTTP 404) : l'entrée en cache est retirée et l'écran
+    // est prévenu explicitement (« auteur introuvable ») au lieu d'afficher la version périmée.
+    @Test
+    public void notFound_removesCachedEntry_andIsReported() {
+        FakeNet net = new FakeNet();
+        net.next = new CachedLoader.Response(200, "{\"idAuthor\":5}");
+        CacheStore store = newStore("u1");
+        CachedLoader.Validator obj = b -> b.trim().startsWith("{");
+        syncLoader(store, net).load(KEY, KEY, TTL, false, obj, new Screen());
+        assertNotNull(store.get(KEY));
+
+        net.next = new CachedLoader.Response(404, "{\"message\":\"Auteur non trouvé.\"}");
+        final List<String> events = new ArrayList<>();
+        CachedLoader.Callback screen = new CachedLoader.Callback() {
+            @Override public void onCached(String body, long ageMs) { events.add("cache"); }
+            @Override public void onFresh(String body) { events.add("fresh"); }
+            @Override public void onFailure(boolean hadCache) { events.add("fail"); }
+            @Override public void onNotFound() { events.add("not-found"); }
+        };
+        syncLoader(store, net).load(KEY, KEY, TTL, true, obj, screen);
+        assertEquals(java.util.Arrays.asList("cache", "not-found"), events);
+        assertNull(store.get(KEY));
+        assertNull(newStore("u1").get(KEY));   // retiré du disque aussi
+    }
+
+    // Écran existant qui ne gère pas onNotFound : comportement inchangé (simple échec).
+    @Test
+    public void notFound_defaultsToFailureForExistingScreens() {
+        FakeNet net = new FakeNet();
+        net.next = new CachedLoader.Response(404, "{}");
+        Screen s = new Screen();
+        syncLoader(newStore("u1"), net).load(KEY, KEY, TTL, false, jsonArray, s);
+        assertEquals(Collections.singletonList("fail-empty"), s.events);
+    }
 }
