@@ -74,4 +74,10 @@
     <dimen name="book_row_title">15sp</dimen>
     <dimen name="book_row_subtitle">13sp</dimen>
     <dimen name="book_row_count">12sp</dimen>
+    <!-- Échelle typographique de l'accueil -->
+    <dimen name="text_section_title">19sp</dimen>
+    <dimen name="text_section_subtitle">13sp</dimen>
+    <dimen name="text_card_title">14sp</dimen>
+    <dimen name="text_card_meta">12sp</dimen>
+    <dimen name="text_search_field">15sp</dimen>
 </resources>

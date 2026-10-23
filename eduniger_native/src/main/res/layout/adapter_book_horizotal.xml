@@ -66,7 +66,7 @@
         android:importantForAccessibility="no"
         android:maxLines="2"
         android:textColor="@color/elim_on_surface"
-        android:textSize="14.5sp"
+        android:textSize="@dimen/text_card_title"
         tools:text="Le cycle de l'eau" />
 
     <TextView
@@ -78,6 +78,6 @@
         android:importantForAccessibility="no"
         android:maxLines="1"
         android:textColor="@color/elim_on_surface_variant"
-        android:textSize="12.5sp"
+        android:textSize="@dimen/text_card_meta"
         tools:text="Sciences · PDF" />
 </LinearLayout>
