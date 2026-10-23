@@ -436,4 +436,17 @@
     <string name="reader_first_page">Revenir au début</string>
     <string name="reader_ok">Aller</string>
     <string name="reader_cancel">Annuler</string>
+    <!-- Cartes de livres / en-têtes de section de l'accueil -->
+    <string name="book_card_badge_audio">Audio</string>
+    <string name="book_card_format_pdf">PDF</string>
+    <string name="book_card_format_audio">Livre audio</string>
+    <string name="book_card_format_physical">Papier</string>
+    <string name="book_card_a11y_audio">livre audio</string>
+    <string name="section_see_all">Voir tout</string>
+    <string name="section_recommended_title">Recommandé pour vous</string>
+    <string name="section_recommended_subtitle">Sélectionnés dans vos structures</string>
+    <string name="section_structures_title">Structures</string>
+    <string name="section_structures_subtitle">Bibliothèques et établissements partenaires</string>
+    <string name="section_authors_title">Auteurs</string>
+    <string name="section_authors_subtitle">Découvrez les auteurs d\'Elim</string>
 </resources>

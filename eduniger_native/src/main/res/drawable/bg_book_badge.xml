@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Pastille posée sur la couverture (ex. « Audio ») : lisible sur toute couverture. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="#B3101418" />
+    <corners android:radius="10dp" />
+</shape>
