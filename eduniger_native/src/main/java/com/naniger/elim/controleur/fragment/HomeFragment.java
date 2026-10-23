@@ -89,9 +89,9 @@ public class HomeFragment extends Fragment {
     private RecyclerView mServerdRecyclerView;
     private RecyclerView mStructureRecyclerView;
     private RecyclerView mAuthorRecyclerView;
-    private TextView mBookMoreTextView;
-    private TextView mStructMoreTextView;
-    private TextView mAuthorMoreTextView;
+    private View mBookMoreTextView;
+    private View mStructMoreTextView;
+    private View mAuthorMoreTextView;
     private NestedScrollView mNestedScrollView;
     private RelativeLayout mMoreStructRelativeLayout;
     private RelativeLayout mMoreAuthorRelativeLayout;
@@ -416,9 +416,15 @@ public class HomeFragment extends Fragment {
     // ==================== Click Listeners ====================
 
     private void setupClickListeners() {
-        mBookMoreTextView.setOnClickListener(v -> navigateToSearch("ONLINE_BOOK"));
-        mStructMoreTextView.setOnClickListener(v -> navigateToSearch("STRUCTURE"));
-        mAuthorMoreTextView.setOnClickListener(v -> navigateToSearch("AUTHOR_ONLINE"));
+        // Chevron et en-tête entier ouvrent la liste complète (cible tactile plus large).
+        bindSeeAll(mBookMoreTextView, v -> navigateToSearch("ONLINE_BOOK"));
+        bindSeeAll(mStructMoreTextView, v -> navigateToSearch("STRUCTURE"));
+        bindSeeAll(mAuthorMoreTextView, v -> navigateToSearch("AUTHOR_ONLINE"));
+    }
+
+    private static void bindSeeAll(View chevron, View.OnClickListener listener) {
+        chevron.setOnClickListener(listener);
+        if (chevron.getParent() instanceof View) ((View) chevron.getParent()).setOnClickListener(listener);
     }
 
     private void navigateToSearch(String searchKey) {

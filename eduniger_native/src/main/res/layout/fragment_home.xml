@@ -235,40 +235,83 @@
                 <RelativeLayout
                     android:id="@+id/relative_layout_fragment_home_more_book"
                     android:layout_below="@id/recycler_view_fragment_home_server"
-                    style="@style/match_wrap">
-                    <TextView style="@style/wrap_content_all"
-                        android:layout_marginStart="25dp" android:layout_marginTop="10dp"
-                        android:layout_marginEnd="10dp" android:layout_marginBottom="10dp"
-                        android:text="Recommandé" android:textStyle="bold" android:textSize="14sp" />
-                    <TextView android:id="@+id/text_view_recommended_more"
-                        style="@style/wrap_content_all"
-                        android:layout_marginTop="10dp" android:layout_marginEnd="25dp"
-                        android:layout_marginBottom="10dp" android:text="Voir plus"
-                        android:layout_alignParentEnd="true"
-                        android:textColor="@color/purple_200" android:textStyle="bold" android:textSize="14sp" />
+                    style="@style/match_wrap"
+                    android:background="?attr/selectableItemBackground"
+                    android:minHeight="56dp"
+                    android:paddingStart="@dimen/section_gutter"
+                    android:paddingTop="22dp"
+                    android:paddingEnd="8dp"
+                    android:paddingBottom="12dp">
+                    <ImageView android:id="@+id/text_view_recommended_more"
+                        android:layout_width="44dp" android:layout_height="44dp"
+                        android:layout_alignParentEnd="true" android:layout_centerVertical="true"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="@string/section_see_all"
+                        android:scaleType="center"
+                        android:src="@drawable/ic_section_chevron" />
+                    <TextView android:id="@+id/text_view_recommended_more_title"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:layout_toStartOf="@id/text_view_recommended_more"
+                        android:accessibilityHeading="true"
+                        android:ellipsize="end" android:maxLines="1"
+                        android:text="@string/section_recommended_title"
+                        android:textColor="@color/elim_on_surface"
+                        android:textSize="21sp" android:textStyle="bold" />
+                    <TextView
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:layout_below="@id/text_view_recommended_more_title"
+                        android:layout_toStartOf="@id/text_view_recommended_more"
+                        android:layout_marginTop="2dp"
+                        android:ellipsize="end" android:maxLines="1"
+                        android:text="@string/section_recommended_subtitle"
+                        android:textColor="@color/elim_on_surface_variant"
+                        android:textSize="13.5sp" />
                 </RelativeLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recycler_view_ranking"
                     android:nestedScrollingEnabled="false"
-                    android:layout_margin="10dp"
+                    android:clipToPadding="false"
+                    android:paddingStart="@dimen/section_gutter"
+                    android:paddingEnd="6dp"
+                    android:paddingBottom="4dp"
                     android:layout_below="@id/relative_layout_fragment_home_more_book"
                     style="@style/match_parent_all" />
 
                 <RelativeLayout
                     android:id="@+id/relative_layout_fragment_home_more_structure"
                     android:layout_below="@id/recycler_view_ranking"
-                    style="@style/match_wrap">
-                    <TextView style="@style/wrap_content_all"
-                        android:layout_marginStart="25dp" android:layout_marginTop="10dp"
-                        android:layout_marginEnd="10dp" android:layout_marginBottom="10dp"
-                        android:text="Structures" android:textStyle="bold" android:textSize="14sp" />
-                    <TextView android:id="@+id/text_view_recommended_more_structure"
-                        style="@style/wrap_content_all"
-                        android:layout_marginTop="10dp" android:layout_marginEnd="25dp"
-                        android:layout_marginBottom="10dp" android:text="Voir plus"
-                        android:layout_alignParentEnd="true"
-                        android:textColor="@color/purple_200" android:textStyle="bold" android:textSize="14sp" />
+                    style="@style/match_wrap"
+                    android:background="?attr/selectableItemBackground"
+                    android:minHeight="56dp"
+                    android:paddingStart="@dimen/section_gutter"
+                    android:paddingTop="22dp"
+                    android:paddingEnd="8dp"
+                    android:paddingBottom="12dp">
+                    <ImageView android:id="@+id/text_view_recommended_more_structure"
+                        android:layout_width="44dp" android:layout_height="44dp"
+                        android:layout_alignParentEnd="true" android:layout_centerVertical="true"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="@string/section_see_all"
+                        android:scaleType="center"
+                        android:src="@drawable/ic_section_chevron" />
+                    <TextView android:id="@+id/text_view_recommended_more_structure_title"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:layout_toStartOf="@id/text_view_recommended_more_structure"
+                        android:accessibilityHeading="true"
+                        android:ellipsize="end" android:maxLines="1"
+                        android:text="@string/section_structures_title"
+                        android:textColor="@color/elim_on_surface"
+                        android:textSize="21sp" android:textStyle="bold" />
+                    <TextView
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:layout_below="@id/text_view_recommended_more_structure_title"
+                        android:layout_toStartOf="@id/text_view_recommended_more_structure"
+                        android:layout_marginTop="2dp"
+                        android:ellipsize="end" android:maxLines="1"
+                        android:text="@string/section_structures_subtitle"
+                        android:textColor="@color/elim_on_surface_variant"
+                        android:textSize="13.5sp" />
                 </RelativeLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -281,17 +324,37 @@
                 <RelativeLayout
                     android:id="@+id/relative_layout_fragment_home_more_author"
                     android:layout_below="@id/recycler_view_fragment_recommended_structure"
-                    style="@style/match_wrap">
-                    <TextView style="@style/wrap_content_all"
-                        android:layout_marginStart="25dp" android:layout_marginTop="10dp"
-                        android:layout_marginEnd="10dp" android:layout_marginBottom="10dp"
-                        android:text="Auteurs" android:textStyle="bold" android:textSize="14sp" />
-                    <TextView android:id="@+id/text_view_recommended_more_author"
-                        style="@style/wrap_content_all"
-                        android:layout_marginTop="10dp" android:layout_marginEnd="25dp"
-                        android:layout_marginBottom="10dp" android:text="Voir plus"
-                        android:layout_alignParentEnd="true"
-                        android:textColor="@color/purple_200" android:textStyle="bold" android:textSize="14sp" />
+                    style="@style/match_wrap"
+                    android:background="?attr/selectableItemBackground"
+                    android:minHeight="56dp"
+                    android:paddingStart="@dimen/section_gutter"
+                    android:paddingTop="22dp"
+                    android:paddingEnd="8dp"
+                    android:paddingBottom="12dp">
+                    <ImageView android:id="@+id/text_view_recommended_more_author"
+                        android:layout_width="44dp" android:layout_height="44dp"
+                        android:layout_alignParentEnd="true" android:layout_centerVertical="true"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="@string/section_see_all"
+                        android:scaleType="center"
+                        android:src="@drawable/ic_section_chevron" />
+                    <TextView android:id="@+id/text_view_recommended_more_author_title"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:layout_toStartOf="@id/text_view_recommended_more_author"
+                        android:accessibilityHeading="true"
+                        android:ellipsize="end" android:maxLines="1"
+                        android:text="@string/section_authors_title"
+                        android:textColor="@color/elim_on_surface"
+                        android:textSize="21sp" android:textStyle="bold" />
+                    <TextView
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:layout_below="@id/text_view_recommended_more_author_title"
+                        android:layout_toStartOf="@id/text_view_recommended_more_author"
+                        android:layout_marginTop="2dp"
+                        android:ellipsize="end" android:maxLines="1"
+                        android:text="@string/section_authors_subtitle"
+                        android:textColor="@color/elim_on_surface_variant"
+                        android:textSize="13.5sp" />
                 </RelativeLayout>
 
                 <androidx.recyclerview.widget.RecyclerView

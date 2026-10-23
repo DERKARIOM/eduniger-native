@@ -5,13 +5,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.naniger.elim.R;
 import com.naniger.elim.controleur.activity.AudioPlayerActivity;
 import com.naniger.elim.controleur.activity.PdfBoxViewerActivity;
-import com.naniger.elim.controleur.animation.RoundedTransformation;
 import com.naniger.elim.model.data.LocalBooks;
 import com.squareup.picasso.Picasso;
 
@@ -67,21 +67,34 @@ public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.MyViewHold
 
     public class MyViewHolder extends RecyclerView.ViewHolder{
         private final ImageView mCoverImageView;
+        private final TextView mTitleTextView;
+        private final TextView mMetaTextView;
+        private final TextView mBadgeTextView;
+
         MyViewHolder(View itemView){
             super(itemView);
-            mCoverImageView = (ImageView) itemView.findViewById(R.id.image_view_adapter_similar_cover);
+            mCoverImageView = itemView.findViewById(R.id.image_view_adapter_similar_cover);
+            mTitleTextView = itemView.findViewById(R.id.text_view_adapter_book_title);
+            mMetaTextView = itemView.findViewById(R.id.text_view_adapter_book_meta);
+            mBadgeTextView = itemView.findViewById(R.id.text_view_adapter_book_badge);
         }
         void display(LocalBooks localBooks) throws SQLException, IOException {
-            // Convertir le Bitmap en un fichier
-            File file = new File(localBooks.getCover());
-
-            // Charger le fichier avec Picasso
-            Picasso.get().load(file)
+            // Même carte que les livres en ligne (HorizontaleAdapter) : couverture
+            // arrondie par la vue, titre, catégorie et pastille « Audio ».
+            Picasso.get().load(new File(localBooks.getCover()))
                     .placeholder(R.drawable.img_wait_cover_book)
                     .error(R.drawable.img_wait_cover_book)
-                    .transform(new RoundedTransformation(15,4))
-                    .resize(198,304)
+                    .fit()
+                    .centerCrop()
                     .into(mCoverImageView);
+            boolean isAudio = "audio".equals(localBooks.getFormat());
+            String title = HorizontaleAdapter.hasText(localBooks.getTitle()) ? localBooks.getTitle() : "";
+            String meta = HorizontaleAdapter.hasText(localBooks.getCategory()) ? localBooks.getCategory()
+                    : itemView.getContext().getString(isAudio ? R.string.book_card_format_audio : R.string.book_card_format_pdf);
+            mTitleTextView.setText(title);
+            mMetaTextView.setText(meta);
+            mBadgeTextView.setVisibility(isAudio ? View.VISIBLE : View.GONE);
+            itemView.setContentDescription(title + ", " + meta);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

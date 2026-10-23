@@ -1,12 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/wrap_content_all"
-   >
-    <ImageView
-        android:id="@+id/image_view_adapter_similar_cover"
-        android:layout_width="100dp"
-        android:layout_height="150dp"
-        android:layout_margin="5dp"
-        android:src="@mipmap/ic_v2_round"
-        android:importantForAccessibility="no" />
-</RelativeLayout>
+<!--
+    Carte de livre horizontale (accueil, structure, auteur).
+    Couverture aux coins arrondis + titre + ligne d'information, sans cadre,
+    à la manière des catalogues modernes. Palette Elim, clair/sombre.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linear_layout_adapter_book_card"
+    android:layout_width="@dimen/book_card_width"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="@dimen/book_card_gap"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="vertical"
+    android:paddingBottom="4dp"
+    android:stateListAnimator="@animator/card_press">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/book_card_cover_height">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/image_view_adapter_similar_cover"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/skeleton_base"
+            android:importantForAccessibility="no"
+            android:padding="0.5dp"
+            android:scaleType="centerCrop"
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.Elim.BookCover"
+            app:strokeColor="@color/elim_outline"
+            app:strokeWidth="1dp"
+            tools:src="@drawable/img_wait_cover_book" />
+
+        <TextView
+            android:id="@+id/text_view_adapter_book_badge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|start"
+            android:layout_margin="8dp"
+            android:background="@drawable/bg_book_badge"
+            android:drawableStart="@drawable/ic_book_badge_audio"
+            android:drawablePadding="4dp"
+            android:gravity="center_vertical"
+            android:importantForAccessibility="no"
+            android:paddingStart="7dp"
+            android:paddingTop="3dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="3dp"
+            android:text="@string/book_card_badge_audio"
+            android:textColor="#FFFFFFFF"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            tools:visibility="visible" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/text_view_adapter_book_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:ellipsize="end"
+        android:importantForAccessibility="no"
+        android:maxLines="2"
+        android:textColor="@color/elim_on_surface"
+        android:textSize="14.5sp"
+        tools:text="Le cycle de l'eau" />
+
+    <TextView
+        android:id="@+id/text_view_adapter_book_meta"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:ellipsize="end"
+        android:importantForAccessibility="no"
+        android:maxLines="1"
+        android:textColor="@color/elim_on_surface_variant"
+        android:textSize="12.5sp"
+        tools:text="Sciences · PDF" />
+</LinearLayout>

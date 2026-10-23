@@ -415,4 +415,9 @@
         <item name="android:scaleType">center</item>
         <item name="android:tint">@color/elim_on_surface</item>
     </style>
+    <!-- Couverture de livre : coins arrondis 12dp -->
+    <style name="ShapeAppearance.Elim.BookCover" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">12dp</item>
+    </style>
 </resources>
