@@ -1,23 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Auteur dans une liste horizontale (accueil, structure, auteur) :
+    grand portrait rond + nom centré, sans cadre. Palette Elim clair/sombre.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/wrap_content_all"
-    android:layout_margin="5dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="@dimen/author_card_width"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="@dimen/author_card_gap"
+    android:clickable="true"
+    android:focusable="true"
+    android:gravity="center_horizontal"
     android:orientation="vertical"
-   >
-    <ImageView
+    android:paddingBottom="4dp"
+    android:stateListAnimator="@animator/card_press">
+
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/image_view_adapter_author_horizontal_profile"
-        android:layout_width="55dp"
-        android:layout_height="55dp"
-        android:layout_margin="5dp"
+        android:layout_width="@dimen/author_avatar_size"
+        android:layout_height="@dimen/author_avatar_size"
+        android:background="@color/skeleton_base"
+        android:importantForAccessibility="no"
+        android:padding="0.5dp"
+        android:scaleType="centerCrop"
         android:src="@drawable/img_wait_profile"
-        android:layout_gravity="center_horizontal"
-        android:importantForAccessibility="no" />
+        app:shapeAppearanceOverlay="@style/ShapeAppearance.Elim.Circle"
+        app:strokeColor="@color/elim_outline"
+        app:strokeWidth="1dp" />
+
     <TextView
         android:id="@+id/text_view_adapter_author_horizontal_name"
-        style="@style/wrap_content_all"
-
-        android:layout_gravity="center_horizontal"
-        android:text="DERK@RIOM"
-        android:textStyle="bold"
-        android:textSize="@dimen/size_sub_title"/>
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:ellipsize="end"
+        android:gravity="center_horizontal"
+        android:importantForAccessibility="no"
+        android:maxLines="1"
+        android:textColor="@color/elim_on_surface"
+        android:textSize="13sp"
+        tools:text="Abdoul Kader" />
 </LinearLayout>

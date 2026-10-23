@@ -80,4 +80,8 @@
     <dimen name="text_card_title">14sp</dimen>
     <dimen name="text_card_meta">12sp</dimen>
     <dimen name="text_search_field">15sp</dimen>
+    <!-- Auteurs (liste horizontale) : portrait rond ≈ 3,8 visibles sur 360dp -->
+    <dimen name="author_avatar_size">72dp</dimen>
+    <dimen name="author_card_width">82dp</dimen>
+    <dimen name="author_card_gap">12dp</dimen>
 </resources>

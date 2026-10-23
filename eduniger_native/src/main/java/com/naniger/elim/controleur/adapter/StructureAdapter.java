@@ -26,7 +26,6 @@ import com.naniger.elim.R;
 import com.naniger.elim.controleur.activity.AddBookActivity;
 import com.naniger.elim.controleur.activity.RegisterAuthorActivity;
 import com.naniger.elim.controleur.activity.StructureActivity;
-import com.naniger.elim.controleur.animation.RoundedTransformation;
 import com.naniger.elim.controleur.dialog.SimpleOkDialog;
 import com.naniger.elim.controleur.dialog.StructDeleteDialog;
 import com.naniger.elim.model.data.PasswordUtil;
@@ -128,28 +127,33 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
             {
                 case "AddBook":
                     mBookNumberTextView.setText(structure.getBookNumber());
-                    Animation pulseAnimImg = AnimationUtils.loadAnimation(itemView.getContext(), R.anim.slide_down_up);
+                    Animation pulseAnimImg = AnimationUtils.loadAnimation(itemView.getContext(), R.anim.float_bob);
                     // Lancer l'animation automatiquement
                     mBlanketImageView.startAnimation(pulseAnimImg);
                     mAdhereButton.setText("Ajouter");
-                    mBlanketImageView.setImageResource(R.drawable.add_auteurs);
+                    // Icône « document + » (publier un contenu) au lieu de la photo.
+                    // Ligne recyclée : on annule un éventuel chargement de logo en cours.
+                    Picasso.get().cancelRequest(mBlanketImageView);
+                    mBlanketImageView.setImageResource(R.drawable.bg_add_content_avatar);
                     break;
                 case "RegisterAuthor":
                     mBookNumberTextView.setText(structure.getBookNumber());
-                    Animation pulseAnimImg2 = AnimationUtils.loadAnimation(itemView.getContext(), R.anim.slide_down_up);
+                    Animation pulseAnimImg2 = AnimationUtils.loadAnimation(itemView.getContext(), R.anim.float_bob);
                     // Lancer l'animation automatiquement
                     mBlanketImageView.startAnimation(pulseAnimImg2);
                     mAdhereButton.setText("S'inscrire");
                     mBlanketImageView.setImageResource(R.drawable.add_auteurs);
                     break;
                 default:
+                    // Ligne recyclée : pas d'animation héritée de la carte « Ajouter ».
+                    mBlanketImageView.clearAnimation();
                     mBookNumberTextView.setText(structure.getBookNumber() + " Livres");
                     Picasso.get()
                             .load(Server.getUrlHostProd(itemView.getContext()) + "/api/public/resource/" + structure.getId() + "/logo/" + structure.getCover())
                             .placeholder(R.drawable.img_wait_struct)
                             .error(R.drawable.img_wait_struct)
-                            .transform(new RoundedTransformation(1000,4))
-                            .resize(284,284)
+                            .fit()
+                            .centerCrop()
                             .into(mBlanketImageView);
                     break;
             }

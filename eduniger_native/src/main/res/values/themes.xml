@@ -438,4 +438,8 @@
         <item name="android:textColor">@color/elim_on_surface_variant</item>
         <item name="android:textSize">@dimen/book_row_count</item>
     </style>
+    <style name="ShapeAppearance.Elim.Circle" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
 </resources>

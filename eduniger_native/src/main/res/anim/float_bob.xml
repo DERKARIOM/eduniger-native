@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Flottement doux de l'illustration « Ajouter un contenu » / « Devenir auteur ».
+    Amplitude en % de la hauteur de l'image (≈ ±4 % → ±3 dp pour 72 dp) : le mouvement
+    reste dans la marge de la ligne et l'image n'est jamais coupée, quelle que soit la densité.
+-->
+<translate xmlns:android="http://schemas.android.com/apk/res/android"
+    android:duration="1400"
+    android:fromYDelta="-4%"
+    android:interpolator="@android:anim/accelerate_decelerate_interpolator"
+    android:repeatCount="infinite"
+    android:repeatMode="reverse"
+    android:toYDelta="4%" />

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Pastille ronde « Ajouter un contenu » : fond primaire doux + icône document « + ». -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:width="@dimen/author_avatar_size"
+        android:height="@dimen/author_avatar_size">
+        <shape android:shape="oval">
+            <solid android:color="@color/elim_primary_container" />
+        </shape>
+    </item>
+    <item
+        android:width="32dp"
+        android:height="32dp"
+        android:drawable="@drawable/ic_add_content"
+        android:gravity="center" />
+</layer-list>
