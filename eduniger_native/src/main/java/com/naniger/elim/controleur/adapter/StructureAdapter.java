@@ -131,7 +131,10 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
                     // Lancer l'animation automatiquement
                     mBlanketImageView.startAnimation(pulseAnimImg);
                     mAdhereButton.setText("Ajouter");
-                    mBlanketImageView.setImageResource(R.drawable.add_auteurs);
+                    // Icône « document + » (publier un contenu) au lieu de la photo.
+                    // Ligne recyclée : on annule un éventuel chargement de logo en cours.
+                    Picasso.get().cancelRequest(mBlanketImageView);
+                    mBlanketImageView.setImageResource(R.drawable.bg_add_content_avatar);
                     break;
                 case "RegisterAuthor":
                     mBookNumberTextView.setText(structure.getBookNumber());
