@@ -161,9 +161,15 @@ Route::middleware('auth:sanctum')->group(function () {
         // Auteurs similaires (categories communes avec les livres de cet auteur) -
         // cf. audit mobile "Auteurs". Remplace l'ancien AuthorSimular.php.
         Route::get('/{idAuthor}/similar', [AuthorController::class, 'similar']);
-        Route::post('/', [AuthorController::class, 'store']);
-        Route::post('/{idAuthor}', [AuthorController::class, 'update']); // ou PUT/PATCH
-        Route::delete('/{idAuthor}', [AuthorController::class, 'destroy']);
+        // Creation / modification / suppression reservees aux agents du back-office
+        // (roles StructAgent 0 = Admin, 1 = Agent, 2 = Super Admin). Auparavant tout
+        // compte authentifie - y compris un lecteur de l'application mobile - pouvait
+        // modifier ou supprimer un auteur (et, par cascade, tous ses livres).
+        Route::post('/', [AuthorController::class, 'store'])->middleware('role:0,1,2');
+        Route::post('/{idAuthor}', [AuthorController::class, 'update'])->middleware('role:0,1,2'); // ou PUT/PATCH
+        // Suppression : Super Admin uniquement (supprime aussi tous les livres de l'auteur,
+        // dans toutes les structures, par la cle etrangere ON DELETE CASCADE).
+        Route::delete('/{idAuthor}', [AuthorController::class, 'destroy'])->middleware('role:2');
         Route::get('/', [AuthorController::class, 'index']);
     });
 

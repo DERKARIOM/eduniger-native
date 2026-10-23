@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Publication de la bibliographie d'un auteur (ligne cliquable → fiche du livre). -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/elim_surface"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/linear_layout_author_publication"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/section_gutter"
+        android:paddingTop="12dp"
+        android:paddingEnd="@dimen/section_gutter"
+        android:paddingBottom="12dp">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/image_view_author_publication_cover"
+            android:layout_width="@dimen/book_row_cover_width"
+            android:layout_height="@dimen/book_row_cover_height"
+            android:background="@color/skeleton_base"
+            android:importantForAccessibility="no"
+            android:padding="0.5dp"
+            android:scaleType="centerCrop"
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.Elim.BookRowCover"
+            app:strokeColor="@color/elim_outline"
+            app:strokeWidth="1dp"
+            tools:src="@drawable/img_wait_cover_book" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/text_view_author_publication_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textColor="@color/elim_on_surface"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                tools:text="Épreuve de Sciences de la Vie et de la Terre 2020" />
+
+            <TextView
+                android:id="@+id/text_view_author_publication_category"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@color/elim_primary"
+                android:textSize="13sp"
+                tools:text="Sciences · Kit TD" />
+
+            <TextView
+                android:id="@+id/text_view_author_publication_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:lineSpacingExtra="1dp"
+                android:maxLines="2"
+                android:textColor="@color/elim_on_surface_variant"
+                android:textSize="13sp"
+                tools:text="Sujet officiel avec corrigé détaillé." />
+
+            <LinearLayout
+                android:id="@+id/linear_layout_author_publication_formats"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView android:id="@+id/text_view_author_publication_pdf" style="@style/ProfilePill" android:text="@string/author_stat_pdf" />
+                <TextView android:id="@+id/text_view_author_publication_audio" style="@style/ProfilePill" android:text="@string/author_stat_audio" />
+                <TextView android:id="@+id/text_view_author_publication_physical" style="@style/ProfilePill" android:text="@string/author_stat_physical" />
+
+                <TextView
+                    android:id="@+id/text_view_author_publication_extra"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textColor="@color/elim_on_surface_variant"
+                    android:textSize="12sp"
+                    tools:text="120 pages" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="100dp"
+        android:background="@color/elim_outline"
+        android:alpha="0.6" />
+</LinearLayout>

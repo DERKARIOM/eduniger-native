@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Bandeau du profil d'auteur (pas d'image de couverture en base : couleur de marque douce). -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/elim_primary_container" />
+</shape>

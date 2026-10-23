@@ -70,6 +70,14 @@ public class CachedLoader {
          *                 « pas de connexion » avec « Réessayer ».
          */
         void onFailure(boolean hadCache);
+
+        /**
+         * La ressource n'existe pas (HTTP 404) : identifiant invalide ou contenu supprimé.
+         * L'entrée de cache éventuelle est retirée. Par défaut : traité comme un échec.
+         */
+        default void onNotFound() {
+            onFailure(false);
+        }
     }
 
     /** Callback vide pour un préchargement sans affichage. */
@@ -137,10 +145,14 @@ public class CachedLoader {
 
             long startedAt = mStore.clock().now();
             String fresh = null;
+            boolean notFound = false;
             try {
                 mNetworkCalls++;
                 Response r = mFetcher.fetch(url);
-                if (r != null && r.isSuccessful() && r.body != null
+                if (r != null && r.code == 404) {
+                    notFound = true;
+                    mStore.remove(key);   // ne plus servir une ressource supprimée
+                } else if (r != null && r.isSuccessful() && r.body != null
                         && (validator == null || validator.isValid(r.body))) {
                     fresh = r.body;
                     // false = une réponse plus récente a déjà été enregistrée : on garde la plus récente.
@@ -159,7 +171,9 @@ public class CachedLoader {
             }
             if (toNotify == null) return;
             for (Callback cb : toNotify) {
-                if (fresh != null) {
+                if (notFound) {
+                    mPoster.post(cb::onNotFound);
+                } else if (fresh != null) {
                     final String body = fresh;
                     mPoster.post(() -> cb.onFresh(body));
                 } else {
@@ -180,6 +194,7 @@ public class CachedLoader {
             @Override public void onCached(String body, long ageMs) { cb.onCached(body, ageMs); }
             @Override public void onFresh(String body) { cb.onFresh(body); }
             @Override public void onFailure(boolean ignored) { cb.onFailure(hadCache); }
+            @Override public void onNotFound() { cb.onNotFound(); }
         };
     }
 }

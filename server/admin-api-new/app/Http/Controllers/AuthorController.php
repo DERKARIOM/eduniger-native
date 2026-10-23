@@ -52,21 +52,86 @@ class AuthorController extends Controller
      */
     public function show($idAuthor)
     {
+        // Identifiant strictement numérique : evite une requete inutile (et un 500
+        // possible) pour /api/authors/abc ; meme reponse qu'un auteur inexistant.
+        if (!ctype_digit((string) $idAuthor)) {
+            return response()->json(['message' => 'Auteur non trouvé.'], 404);
+        }
         try {
             $author = Author::find($idAuthor);
             if (!$author) {
                 return response()->json(['message' => 'Auteur non trouvé.'], 404);
             }
-            // books_count (+ repartition par format) : necessaire a l'affichage
-            // mobile ("Nombre de livres", widget "Mes livres electroniques / audios /
-            // physiques") - absent du modele brut. Calcule cote serveur pour rester
-            // exact quelle que soit la page chargee par /api/book/associations
-            // (compter cote client depuis une seule page paginee serait faux).
             $authorData = $author->toArray();
-            $authorData['books_count'] = Book::where('idAuthor', $idAuthor)->count();
-            $authorData['books_count_electronic'] = Book::where('idAuthor', $idAuthor)->whereNotNull('electronic')->count();
-            $authorData['books_count_physical'] = Book::where('idAuthor', $idAuthor)->where('isPhysic', 1)->count();
-            $authorData['books_count_audio'] = Book::where('idAuthor', $idAuthor)->where('isAudio', 1)->count();
+
+            // Compteurs historiques (tous les livres de l'auteur, utilises par le Web
+            // d'administration) : meme semantique qu'avant, mais calcules en UNE requete
+            // au lieu de quatre.
+            $all = DB::table('Book')
+                ->where('idAuthor', $idAuthor)
+                ->selectRaw("COUNT(*) AS total,
+                    SUM(CASE WHEN electronic IS NOT NULL THEN 1 ELSE 0 END) AS electronic,
+                    SUM(CASE WHEN isPhysic = 1 THEN 1 ELSE 0 END) AS physical,
+                    SUM(CASE WHEN isAudio = 1 THEN 1 ELSE 0 END) AS audio")
+                ->first();
+            $authorData['books_count'] = (int) ($all->total ?? 0);
+            $authorData['books_count_electronic'] = (int) ($all->electronic ?? 0);
+            $authorData['books_count_physical'] = (int) ($all->physical ?? 0);
+            $authorData['books_count_audio'] = (int) ($all->audio ?? 0);
+
+            // Profil public (application mobile) : seuls les livres PUBLIES, c'est-a-dire
+            // rattaches a au moins une structure (StructBook) - ce sont les seuls que le
+            // lecteur peut ouvrir (couverture et fichiers sont stockes par structure).
+            // Memes regles que /api/book/associations?authorId=..&published=1, donc les
+            // chiffres affiches correspondent exactement a la bibliographie listee.
+            $published = DB::table('Book')
+                ->where('Book.idAuthor', $idAuthor)
+                ->whereExists(function ($q) {
+                    $q->select(DB::raw(1))->from('StructBook')->whereColumn('StructBook.idBook', 'Book.idBook');
+                })
+                ->selectRaw("COUNT(*) AS total,
+                    SUM(CASE WHEN electronic IS NOT NULL AND electronic <> '' AND electronic <> 'null' THEN 1 ELSE 0 END) AS electronic,
+                    SUM(CASE WHEN isAudio = 1 THEN 1 ELSE 0 END) AS audio,
+                    SUM(CASE WHEN isPhysic = 1 THEN 1 ELSE 0 END) AS physical,
+                    MIN(created_at) AS first_added_at,
+                    MAX(created_at) AS last_added_at")
+                ->first();
+            $electronic = (int) ($published->electronic ?? 0);
+            $audio = (int) ($published->audio ?? 0);
+            $physical = (int) ($published->physical ?? 0);
+            $authorData['public_stats'] = [
+                'publications'   => (int) ($published->total ?? 0),
+                'electronic'     => $electronic,
+                'audio'          => $audio,
+                'physical'       => $physical,
+                'formats'        => ($electronic > 0 ? 1 : 0) + ($audio > 0 ? 1 : 0) + ($physical > 0 ? 1 : 0),
+                'first_added_at' => $published->first_added_at ?? null,
+                'last_added_at'  => $published->last_added_at ?? null,
+            ];
+
+            // Repartition par categorie (livres publies), une seule requete groupee.
+            $authorData['categories'] = DB::table('Book')
+                ->join('BookCategory', 'BookCategory.idBook', '=', 'Book.idBook')
+                ->join('Category', 'Category.idCategory', '=', 'BookCategory.idCategory')
+                ->where('Book.idAuthor', $idAuthor)
+                ->whereExists(function ($q) {
+                    $q->select(DB::raw(1))->from('StructBook')->whereColumn('StructBook.idBook', 'Book.idBook');
+                })
+                ->groupBy('Category.idCategory', 'Category.title')
+                ->orderByDesc(DB::raw('COUNT(DISTINCT Book.idBook)'))
+                ->limit(12)
+                ->get([
+                    'Category.idCategory as idCategory',
+                    'Category.title as title',
+                    DB::raw('COUNT(DISTINCT Book.idBook) as books_count'),
+                ])
+                ->map(fn ($c) => [
+                    'idCategory'  => (int) $c->idCategory,
+                    'title'       => $c->title,
+                    'books_count' => (int) $c->books_count,
+                ])
+                ->values();
+
             return response()->json($authorData, 200);
         } catch (Exception $e) {
             Log::error('Erreur lors de l\'affichage de l\'auteur ID ' . $idAuthor . ' : ' . $e->getMessage(), [
@@ -90,6 +155,9 @@ class AuthorController extends Controller
      */
     public function similar($idAuthor)
     {
+        if (!ctype_digit((string) $idAuthor)) {
+            return response()->json(['message' => 'Auteur non trouvé.'], 404);
+        }
         try {
             $author = Author::find($idAuthor);
             if (!$author) {
@@ -136,16 +204,31 @@ class AuthorController extends Controller
                 ->pluck('cnt', 'idAuthor');
 
             $authors = Author::whereIn('idAuthor', $sharedCounts->keys())
-                ->get(['idAuthor', 'name', 'firstName', 'profile']);
+                ->get(['idAuthor', 'name', 'firstName', 'profile', 'profession']);
 
-            $result = $authors->map(function ($a) use ($sharedCounts, $booksCounts) {
+            // Categories effectivement partagees (pour expliquer la recommandation :
+            // « Sciences · Mathématiques »). Une seule requete groupee, pas de N+1.
+            $sharedTitles = DB::table('Book')
+                ->join('BookCategory', 'BookCategory.idBook', '=', 'Book.idBook')
+                ->join('Category', 'Category.idCategory', '=', 'BookCategory.idCategory')
+                ->whereIn('Book.idAuthor', $sharedCounts->keys())
+                ->whereIn('BookCategory.idCategory', $categoryIds)
+                ->groupBy('Book.idAuthor', 'Category.idCategory', 'Category.title')
+                ->orderByDesc(DB::raw('COUNT(DISTINCT Book.idBook)'))
+                ->get(['Book.idAuthor as idAuthor', 'Category.title as title'])
+                ->groupBy('idAuthor')
+                ->map(fn ($rows) => $rows->pluck('title')->filter()->take(3)->values());
+
+            $result = $authors->map(function ($a) use ($sharedCounts, $booksCounts, $sharedTitles) {
                 return [
                     'idAuthor'           => $a->idAuthor,
                     'name'               => $a->name,
                     'firstName'          => $a->firstName,
                     'profile'            => $a->profile,
+                    'profession'         => $a->profession,
                     'books_count'        => $booksCounts[$a->idAuthor] ?? 0,
                     'shared_books_count' => $sharedCounts[$a->idAuthor] ?? 0,
+                    'shared_categories'  => $sharedTitles[$a->idAuthor] ?? [],
                 ];
             })->sortByDesc('shared_books_count')->values();
 

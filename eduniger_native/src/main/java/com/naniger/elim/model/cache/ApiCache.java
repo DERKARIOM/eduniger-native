@@ -43,6 +43,8 @@ public final class ApiCache {
     public static final long TTL_STRUCTURES = 10 * 60_000L;
     public static final long TTL_AUTHORS = 30 * 60_000L;
     public static final long TTL_CATEGORIES = 30 * 60_000L;
+    /** Profil d'auteur, sa bibliographie et ses auteurs similaires. */
+    public static final long TTL_AUTHOR_PROFILE = 10 * 60_000L;
 
     private static final long MAX_DISK_BYTES = 5L * 1024 * 1024;
     private static final int MAX_MEMORY_CHARS = 1_000_000;
@@ -101,6 +103,12 @@ public final class ApiCache {
     public static void loadList(Context context, String url, long ttlMs, boolean forceRefresh,
                                 CachedLoader.Callback callback) {
         get(context).load(url, url, ttlMs, forceRefresh, JSON_ARRAY, callback);
+    }
+
+    /** Chargement « cache d'abord » d'un objet JSON (GET), ex. le profil d'un auteur. */
+    public static void loadObject(Context context, String url, long ttlMs, boolean forceRefresh,
+                                  CachedLoader.Callback callback) {
+        get(context).load(url, url, ttlMs, forceRefresh, JSON_OBJECT, callback);
     }
 
     /** À appeler à la déconnexion : aucune donnée du compte ne doit rester pour le suivant. */

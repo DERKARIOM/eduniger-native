@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Pied de la bibliographie : chargement, chargement de la suite, erreur, vide, fin. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/elim_surface"
+    android:minHeight="56dp">
+
+    <!-- Premier chargement : squelettes -->
+    <LinearLayout
+        android:id="@+id/linear_layout_author_footer_skeleton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:visibility="gone">
+
+        <include layout="@layout/item_skeleton_book_vertical" />
+        <include layout="@layout/item_skeleton_book_vertical" />
+        <include layout="@layout/item_skeleton_book_vertical" />
+    </LinearLayout>
+
+    <!-- Chargement de la page suivante -->
+    <ProgressBar
+        android:id="@+id/progress_bar_author_footer"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_gravity="center"
+        android:layout_margin="16dp"
+        android:indeterminateTint="@color/elim_primary"
+        android:visibility="gone" />
+
+    <!-- Erreur (première page ou suite) -->
+    <LinearLayout
+        android:id="@+id/linear_layout_author_footer_error"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/text_view_author_footer_error"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/author_bib_error"
+            android:textColor="@color/elim_on_surface_variant"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/text_view_author_footer_retry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_profile_primary_button"
+            android:gravity="center"
+            android:minHeight="42dp"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp"
+            android:text="@string/author_retry"
+            android:textColor="@color/elim_on_primary"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- Aucune publication / aucun résultat -->
+    <LinearLayout
+        android:id="@+id/linear_layout_author_footer_empty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/section_gutter"
+        android:background="@drawable/bg_empty_state_card"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:visibility="gone">
+
+        <FrameLayout
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:background="@drawable/bg_empty_state_icon">
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_empty_books" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/text_view_author_footer_empty_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:gravity="center"
+            android:textColor="@color/elim_on_surface"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/text_view_author_footer_empty_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:gravity="center"
+            android:lineSpacingExtra="2dp"
+            android:textColor="@color/elim_on_surface_variant"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/text_view_author_footer_reset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="?attr/selectableItemBackground"
+            android:gravity="center"
+            android:minHeight="44dp"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:text="@string/author_bib_reset_filters"
+            android:textColor="@color/elim_primary"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <!-- Fin de la liste -->
+    <TextView
+        android:id="@+id/text_view_author_footer_end"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="20dp"
+        android:text="@string/author_bib_end"
+        android:textColor="@color/elim_on_surface_variant"
+        android:textSize="12sp"
+        android:visibility="gone" />
+</FrameLayout>

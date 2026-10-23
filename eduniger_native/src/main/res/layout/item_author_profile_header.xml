@@ -1,0 +1,510 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    En-tête du profil d'auteur (premier élément de la liste).
+    Identité → À propos → En chiffres → Auteurs similaires → outils de la Bibliographie.
+    Seules les informations réellement présentes en base sont affichées.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <!-- ================= Identité ================= -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/elim_surface"
+        android:orientation="vertical"
+        android:paddingBottom="20dp">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="172dp">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:background="@drawable/bg_author_cover" />
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/image_view_author_profile_portrait"
+                android:layout_width="104dp"
+                android:layout_height="104dp"
+                android:layout_gravity="bottom|start"
+                android:layout_marginStart="@dimen/section_gutter"
+                android:background="@color/skeleton_base"
+                android:padding="3dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/img_wait_profile"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.Elim.Circle"
+                app:strokeColor="@color/elim_surface"
+                app:strokeWidth="5dp" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/text_view_author_profile_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/section_gutter"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="@dimen/section_gutter"
+            android:accessibilityHeading="true"
+            android:textColor="@color/elim_on_surface"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            tools:text="Bachir Abdoul Kader" />
+
+        <TextView
+            android:id="@+id/text_view_author_profile_profession"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/section_gutter"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="@dimen/section_gutter"
+            android:textColor="@color/elim_on_surface"
+            android:textSize="15sp"
+            tools:text="Co-fondateur Ninotech" />
+
+        <TextView
+            android:id="@+id/text_view_author_profile_meta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/section_gutter"
+            android:layout_marginTop="6dp"
+            android:layout_marginEnd="@dimen/section_gutter"
+            android:textColor="@color/elim_on_surface_variant"
+            android:textSize="13sp"
+            tools:text="12 publications · PDF · Audio · Sur Elim depuis 2025" />
+
+        <!-- Actions : partager + contacts réellement renseignés -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/section_gutter"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="@dimen/section_gutter"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/text_view_author_profile_share"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_profile_primary_button"
+                android:drawableStart="@drawable/ic_profile_share"
+                android:drawablePadding="8dp"
+                android:drawableTint="@color/elim_on_primary"
+                android:gravity="center"
+                android:minHeight="42dp"
+                android:paddingStart="18dp"
+                android:paddingEnd="20dp"
+                android:text="@string/author_profile_share"
+                android:textColor="@color/elim_on_primary"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <ImageButton
+                android:id="@+id/image_button_author_profile_call"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_marginStart="10dp"
+                android:background="@drawable/bg_profile_action_circle"
+                android:contentDescription="@string/author_profile_call"
+                android:padding="11dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_profile_phone"
+                android:tint="@color/elim_on_surface"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <ImageButton
+                android:id="@+id/image_button_author_profile_email"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_marginStart="10dp"
+                android:background="@drawable/bg_profile_action_circle"
+                android:contentDescription="@string/author_profile_email"
+                android:padding="11dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_profile_mail"
+                android:tint="@color/elim_on_surface"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <ImageButton
+                android:id="@+id/image_button_author_profile_whatsapp"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_marginStart="10dp"
+                android:background="@drawable/bg_profile_action_circle"
+                android:contentDescription="@string/author_profile_whatsapp"
+                android:padding="11dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_profile_message"
+                android:tint="@color/elim_on_surface"
+                android:visibility="gone"
+                tools:visibility="visible" />
+        </LinearLayout>
+
+        <!-- Hors ligne / chargement partiel -->
+        <LinearLayout
+            android:id="@+id/linear_layout_author_profile_notice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/section_gutter"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="@dimen/section_gutter"
+            android:background="@drawable/bg_profile_banner"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="14dp"
+            android:paddingTop="6dp"
+            android:paddingEnd="6dp"
+            android:paddingBottom="6dp"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <TextView
+                android:id="@+id/text_view_author_profile_notice"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/elim_on_surface_variant"
+                android:textSize="13sp"
+                tools:text="@string/author_profile_offline" />
+
+            <TextView
+                android:id="@+id/text_view_author_profile_notice_retry"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:gravity="center"
+                android:minHeight="44dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:text="@string/author_retry"
+                android:textColor="@color/elim_primary"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- ================= À propos ================= -->
+    <LinearLayout style="@style/ProfileSection">
+
+        <TextView
+            style="@style/ProfileSectionTitle"
+            android:text="@string/author_profile_about" />
+
+        <TextView
+            android:id="@+id/text_view_author_profile_bio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:ellipsize="end"
+            android:lineSpacingExtra="4dp"
+            android:maxLines="6"
+            android:textColor="@color/elim_on_surface"
+            android:textIsSelectable="false"
+            android:textSize="15sp"
+            android:visibility="gone"
+            tools:text="Ingénieur et auteur nigérien.\n\nIl écrit sur l'éducation numérique."
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/text_view_author_profile_bio_toggle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:background="?attr/selectableItemBackground"
+            android:gravity="center_vertical"
+            android:minHeight="44dp"
+            android:text="@string/author_profile_see_more"
+            android:textColor="@color/elim_primary"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/text_view_author_profile_bio_empty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/author_profile_bio_empty"
+            android:textColor="@color/elim_on_surface_variant"
+            android:textSize="14sp"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:id="@+id/linear_layout_author_profile_bio_skeleton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <View style="@style/ProfileSkeletonBar" android:layout_width="match_parent" />
+            <View style="@style/ProfileSkeletonBar" android:layout_width="match_parent" />
+            <View style="@style/ProfileSkeletonBar" android:layout_width="180dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- ================= En chiffres ================= -->
+    <LinearLayout
+        android:id="@+id/linear_layout_author_profile_numbers"
+        style="@style/ProfileSection">
+
+        <TextView
+            style="@style/ProfileSectionTitle"
+            android:text="@string/author_profile_numbers" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/linear_layout_author_stat_publications"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView android:id="@+id/text_view_author_stat_publications" style="@style/ProfileStatNumber" tools:text="12" />
+                <TextView style="@style/ProfileStatLabel" android:text="@string/author_stat_publications" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linear_layout_author_stat_pdf"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView android:id="@+id/text_view_author_stat_pdf" style="@style/ProfileStatNumber" tools:text="10" />
+                <TextView style="@style/ProfileStatLabel" android:text="@string/author_stat_pdf" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linear_layout_author_stat_audio"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView android:id="@+id/text_view_author_stat_audio" style="@style/ProfileStatNumber" tools:text="2" />
+                <TextView style="@style/ProfileStatLabel" android:text="@string/author_stat_audio" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linear_layout_author_stat_physical"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView android:id="@+id/text_view_author_stat_physical" style="@style/ProfileStatNumber" tools:text="1" />
+                <TextView style="@style/ProfileStatLabel" android:text="@string/author_stat_physical" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/text_view_author_profile_domains_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:text="@string/author_profile_domains"
+            android:textColor="@color/elim_on_surface"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/text_view_author_profile_domains_hint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="@string/author_profile_domains_hint"
+            android:textColor="@color/elim_on_surface_variant"
+            android:textSize="12sp" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chip_group_author_profile_domains"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:chipSpacingHorizontal="8dp" />
+    </LinearLayout>
+
+    <!-- ================= Auteurs similaires ================= -->
+    <LinearLayout
+        android:id="@+id/linear_layout_author_profile_similar"
+        style="@style/ProfileSection"
+        android:paddingStart="0dp"
+        android:paddingEnd="0dp">
+
+        <TextView
+            style="@style/ProfileSectionTitle"
+            android:layout_marginStart="@dimen/section_gutter"
+            android:text="@string/author_profile_similar" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/section_gutter"
+            android:layout_marginTop="2dp"
+            android:text="@string/author_profile_similar_subtitle"
+            android:textColor="@color/elim_on_surface_variant"
+            android:textSize="13sp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view_author_profile_similar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:clipToPadding="false"
+            android:nestedScrollingEnabled="false"
+            android:paddingStart="@dimen/section_gutter"
+            android:paddingEnd="6dp" />
+
+        <TextView
+            android:id="@+id/text_view_author_profile_similar_empty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/section_gutter"
+            android:layout_marginTop="10dp"
+            android:text="@string/author_profile_similar_empty"
+            android:textColor="@color/elim_on_surface_variant"
+            android:textSize="14sp"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <!-- ================= Bibliographie : titre + outils ================= -->
+    <LinearLayout
+        android:id="@+id/linear_layout_author_profile_bibliography"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@color/elim_surface"
+        android:orientation="vertical"
+        android:paddingTop="18dp"
+        android:paddingBottom="6dp">
+
+        <TextView
+            android:id="@+id/text_view_author_profile_bibliography_title"
+            style="@style/ProfileSectionTitle"
+            android:layout_marginStart="@dimen/section_gutter"
+            android:layout_marginEnd="@dimen/section_gutter"
+            android:text="@string/author_profile_bibliography" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="46dp"
+            android:layout_marginStart="@dimen/section_gutter"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="@dimen/section_gutter"
+            android:background="@drawable/bg_profile_field"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="12dp"
+            android:paddingEnd="4dp">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_profile_search"
+                android:tint="@color/elim_on_surface_variant" />
+
+            <EditText
+                android:id="@+id/edit_text_author_profile_search"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:background="@null"
+                android:hint="@string/author_profile_search_hint"
+                android:imeOptions="actionSearch"
+                android:importantForAutofill="no"
+                android:inputType="text"
+                android:maxLength="100"
+                android:maxLines="1"
+                android:textColor="@color/elim_on_surface"
+                android:textColorHint="@color/elim_text_hint"
+                android:textSize="15sp" />
+
+            <ImageButton
+                android:id="@+id/image_button_author_profile_search_clear"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/author_profile_search_clear"
+                android:padding="10dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_profile_close"
+                android:tint="@color/elim_on_surface_variant"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:clipToPadding="false"
+            android:paddingStart="@dimen/section_gutter"
+            android:paddingEnd="@dimen/section_gutter"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/text_view_author_profile_sort"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/bg_profile_field"
+                    android:drawableStart="@drawable/ic_profile_sort"
+                    android:drawablePadding="6dp"
+                    android:drawableTint="@color/elim_on_surface"
+                    android:gravity="center_vertical"
+                    android:minHeight="36dp"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="14dp"
+                    android:textColor="@color/elim_on_surface"
+                    android:textSize="13sp"
+                    tools:text="Trier : Plus récents" />
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chip_group_author_profile_formats"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:chipSpacingHorizontal="8dp"
+                    app:selectionRequired="true"
+                    app:singleLine="true"
+                    app:singleSelection="true" />
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <!-- Filtre de domaine actif (touché dans « En chiffres ») -->
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_author_profile_active_category"
+            style="@style/ProfileChip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/section_gutter"
+            android:layout_marginTop="4dp"
+            android:checkable="false"
+            android:visibility="gone"
+            android:textColor="@color/elim_on_primary_container"
+            app:chipBackgroundColor="@color/elim_primary_container"
+            app:closeIconTint="@color/elim_on_primary_container"
+            app:closeIconVisible="true"
+            tools:text="Sciences"
+            tools:visibility="visible" />
+    </LinearLayout>
+</LinearLayout>

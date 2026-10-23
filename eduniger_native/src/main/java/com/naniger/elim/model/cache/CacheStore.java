@@ -153,6 +153,14 @@ public class CacheStore {
         return true;
     }
 
+    /** Retire une entrée (ex. ressource supprimée côté serveur : HTTP 404). */
+    public synchronized void remove(String key) {
+        Entry old = mMemory.remove(key);
+        if (old != null) mMemoryChars -= old.body.length();
+        //noinspection ResultOfMethodCallIgnored
+        fileFor(key).delete();
+    }
+
     /** Vide le cache du compte courant (mémoire + disque). */
     public synchronized void clearScope() {
         mMemory.clear();

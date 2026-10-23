@@ -31,6 +31,13 @@ class BookAssociationController extends Controller
             // existaient). Absent -> comportement 100% inchange pour les appelants
             // existants (Web Library.tsx, mobile) qui continuent a filtrer cote client.
             $search      = $request->input('search', $request->input('q'));
+            // Parametres additifs (profil auteur mobile) - absents = comportement inchange :
+            //   sort      : recent | oldest | title | title_desc
+            //   format    : pdf | audio | physical
+            //   published : 1 -> seulement les livres rattaches a au moins une structure
+            $sort        = $request->input('sort');
+            $format      = $request->input('format');
+            $published   = $request->input('published');
             $page        = $request->input('page');
             $limit       = $request->input('limit', 20);
 
@@ -48,6 +55,16 @@ class BookAssociationController extends Controller
             if ($authorId !== null && !is_numeric($authorId)) {
                 return response()->json([
                     'message' => 'L\'identifiant de l\'auteur doit être un nombre valide.'
+                ], 422);
+            }
+            if ($sort !== null && !in_array($sort, ['recent', 'oldest', 'title', 'title_desc'], true)) {
+                return response()->json([
+                    'message' => 'Tri invalide (recent, oldest, title ou title_desc).'
+                ], 422);
+            }
+            if ($format !== null && !in_array($format, ['pdf', 'audio', 'physical'], true)) {
+                return response()->json([
+                    'message' => 'Format invalide (pdf, audio ou physical).'
                 ], 422);
             }
             if ($page !== null && (!is_numeric($page) || (int) $page < 1)) {
@@ -113,7 +130,33 @@ class BookAssociationController extends Controller
                 });
             }
 
-            $query->orderByDesc('idBook');
+            if ($format === 'pdf') {
+                $query->whereNotNull('electronic')->where('electronic', '<>', '')->where('electronic', '<>', 'null');
+            } elseif ($format === 'audio') {
+                $query->where('isAudio', 1);
+            } elseif ($format === 'physical') {
+                $query->where('isPhysic', 1);
+            }
+            if ((string) $published === '1') {
+                $query->whereHas('structures');
+            }
+
+            switch ($sort) {
+                case 'title':
+                    $query->orderBy('title')->orderBy('idBook');
+                    break;
+                case 'title_desc':
+                    $query->orderByDesc('title')->orderBy('idBook');
+                    break;
+                case 'oldest':
+                    $query->orderBy('created_at')->orderBy('idBook');
+                    break;
+                case 'recent':
+                    $query->orderByDesc('created_at')->orderByDesc('idBook');
+                    break;
+                default:
+                    $query->orderByDesc('idBook'); // comportement historique
+            }
 
             // Pagination "opt-in" (page/limit) : si absents, comportement inchangé
             // (tableau complet, retro-compatible avec BooksFragment/CategoryActivity/

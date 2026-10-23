@@ -1,367 +1,140 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--
+    Profil d'auteur (inspiré d'un profil professionnel) : une seule liste défilante
+    (RecyclerView) = en-tête du profil + bibliographie paginée + pied (chargement / erreur / vide).
+    La barre du haut reste fixe : transparente sur le bandeau, elle prend la couleur de surface
+    et affiche le nom de l'auteur dès que l'en-tête est passé.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/elim_background"
     tools:context=".controleur.activity.AuthorActivity">
 
-    <include
-        android:id="@+id/include2"
-        layout="@layout/toolbar_search" />
-
-    <!-- SKELETON LOADING -->
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/skeleton_loading_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/include2"
-        android:visibility="visible">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
-
-            <!-- Avatar -->
-            <View
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_gravity="center_horizontal"
-                android:background="@drawable/skeleton_shape_circle"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="16dp" />
-
-            <!-- Nom -->
-            <View
-                android:layout_width="180dp"
-                android:layout_height="18dp"
-                android:layout_gravity="center_horizontal"
-                android:background="@drawable/skeleton_shape"
-                android:layout_marginBottom="8dp" />
-
-            <!-- Profession -->
-            <View
-                android:layout_width="220dp"
-                android:layout_height="13dp"
-                android:layout_gravity="center_horizontal"
-                android:background="@drawable/skeleton_shape"
-                android:layout_marginBottom="16dp" />
-
-            <!-- Icônes contacts -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:orientation="horizontal"
-                android:layout_marginBottom="16dp">
-                <View android:layout_width="28dp" android:layout_height="28dp"
-                    android:background="@drawable/skeleton_shape_circle"
-                    android:layout_marginStart="15dp" android:layout_marginEnd="15dp"/>
-                <View android:layout_width="28dp" android:layout_height="28dp"
-                    android:background="@drawable/skeleton_shape_circle"
-                    android:layout_marginStart="15dp" android:layout_marginEnd="15dp"/>
-                <View android:layout_width="28dp" android:layout_height="28dp"
-                    android:background="@drawable/skeleton_shape_circle"
-                    android:layout_marginStart="15dp" android:layout_marginEnd="15dp"/>
-            </LinearLayout>
-
-            <!-- Séparateur -->
-            <View android:layout_width="match_parent" android:layout_height="1dp"
-                android:background="@drawable/skeleton_shape"
-                android:layout_marginBottom="20dp"/>
-
-            <!-- Titre "Mes Livres" -->
-            <View
-                android:layout_width="100dp"
-                android:layout_height="14dp"
-                android:background="@drawable/skeleton_shape"
-                android:layout_marginBottom="14dp" />
-
-            <!-- Livres horizontaux -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="20dp">
-                <include layout="@layout/item_skeleton_book"/>
-                <include layout="@layout/item_skeleton_book"/>
-                <include layout="@layout/item_skeleton_book"/>
-                <include layout="@layout/item_skeleton_book"/>
-            </LinearLayout>
-
-            <!-- Séparateur -->
-            <View android:layout_width="match_parent" android:layout_height="1dp"
-                android:background="@drawable/skeleton_shape"
-                android:layout_marginBottom="16dp"/>
-
-            <!-- Format livres (3 lignes) -->
-            <include layout="@layout/item_skeleton_format_book"/>
-            <include layout="@layout/item_skeleton_format_book"/>
-            <include layout="@layout/item_skeleton_format_book"/>
-
-            <!-- Séparateur -->
-            <View android:layout_width="match_parent" android:layout_height="1dp"
-                android:background="@drawable/skeleton_shape"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="16dp"/>
-
-            <!-- Titre "Auteurs similaires" -->
-            <View
-                android:layout_width="160dp"
-                android:layout_height="14dp"
-                android:background="@drawable/skeleton_shape"
-                android:layout_marginBottom="14dp" />
-
-            <!-- Auteurs horizontaux -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="20dp">
-                <include layout="@layout/item_skeleton_author"/>
-                <include layout="@layout/item_skeleton_author"/>
-                <include layout="@layout/item_skeleton_author"/>
-                <include layout="@layout/item_skeleton_author"/>
-            </LinearLayout>
-
-        </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
-
-    <!-- CONTENU PRINCIPAL -->
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh_author"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/include2">
+        android:layout_height="match_parent">
 
-        <androidx.core.widget.NestedScrollView
-            android:id="@+id/nested_scroll_view_activity_author"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view_author_profile"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone">
-
-            <RelativeLayout
-                android:layout_margin="10dp"
-                android:id="@+id/relative_layout_activity_author_profile"
-                android:layout_width="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:id="@+id/image_view_author_activity_profile"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_centerHorizontal="true"
-                    android:src="@drawable/user" />
-
-                <LinearLayout
-                    android:id="@+id/linear_layout_activity_author_profile"
-                    android:layout_margin="10dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/image_view_author_activity_profile"
-                    android:layout_centerHorizontal="true"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/text_view_activity_author_username"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textStyle="bold"
-                        android:layout_gravity="center_horizontal"
-                        android:textSize="20sp" />
-
-                    <TextView
-                        android:id="@+id/text_view_activity_author_profession"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="Elim" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/linear_layout_activity_author_contacts"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:layout_below="@+id/linear_layout_activity_author_profile">
-
-                    <ImageView
-        android:scaleType="fitCenter"
-        android:padding="11dp"
-                        android:id="@+id/image_view_activity_author_appel"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:layout_marginStart="15dp"
-                        android:layout_marginEnd="15dp"
-                        android:src="@drawable/appel_new" />
-
-                    <ImageView
-        android:scaleType="fitCenter"
-        android:padding="11dp"
-                        android:id="@+id/image_view_activity_author_email"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:layout_marginStart="15dp"
-                        android:layout_marginEnd="15dp"
-                        android:src="@drawable/courrier_new" />
-
-                    <ImageView
-        android:scaleType="fitCenter"
-        android:padding="11dp"
-                        android:id="@+id/image_view_activity_author_whatsapp"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:layout_marginStart="15dp"
-                        android:layout_marginEnd="15dp"
-                        style="@style/icone_whatsapp" />
-                </LinearLayout>
-
-                <View
-                    android:id="@+id/view_fragment_library_1"
-                    android:layout_marginTop="10dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/separator"
-                    android:layout_below="@+id/linear_layout_activity_author_contacts" />
-
-                <TextView
-                    android:id="@+id/text_view_fragment_library_recent_read_book"
-                    style="@style/wrap_content_all"
-                    android:layout_below="@+id/view_fragment_library_1"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="20dp"
-                    android:text="Mes Livres"
-                    android:textStyle="bold"
-                    android:textSize="@dimen/size_title" />
-
-                <!-- Livres de l'auteur, ou état vide quand il n'en a publié aucun. -->
-                <FrameLayout
-                    android:id="@+id/frame_layout_activity_author_books"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/text_view_fragment_library_recent_read_book">
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recycler_view_activity_author_books"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-
-                    <LinearLayout
-                        android:id="@+id/linear_layout_activity_author_books_empty"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginEnd="16dp"
-                        android:background="@drawable/bg_empty_state_card"
-                        android:gravity="center_horizontal"
-                        android:orientation="vertical"
-                        android:paddingStart="24dp"
-                        android:paddingTop="28dp"
-                        android:paddingEnd="24dp"
-                        android:paddingBottom="28dp"
-                        android:visibility="gone">
-
-                        <FrameLayout
-                            android:layout_width="64dp"
-                            android:layout_height="64dp"
-                            android:background="@drawable/bg_empty_state_icon">
-
-                            <ImageView
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:layout_gravity="center"
-                                android:importantForAccessibility="no"
-                                android:src="@drawable/ic_empty_books"
-                                android:tint="@color/elim_on_primary_container" />
-                        </FrameLayout>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="16dp"
-                            android:gravity="center"
-                            android:text="@string/author_no_books_title"
-                            android:textColor="@color/elim_on_surface"
-                            android:textSize="17sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/text_view_activity_author_books_empty_message"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="6dp"
-                            android:gravity="center"
-                            android:lineSpacingExtra="2dp"
-                            android:text="@string/author_no_books_message"
-                            android:textColor="@color/elim_on_surface_variant"
-                            android:textSize="14sp" />
-                    </LinearLayout>
-                </FrameLayout>
-
-                <View
-                    android:id="@+id/view_fragment_library_2"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="20dp"
-                    android:background="@color/separator"
-                    android:layout_below="@+id/frame_layout_activity_author_books" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recycler_view_activity_author_format_books"
-                    android:layout_below="@+id/view_fragment_library_2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp" />
-
-                <View
-                    android:id="@+id/view_fragment_library_3"
-                    android:layout_marginTop="10dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/separator"
-                    android:layout_below="@+id/recycler_view_activity_author_format_books" />
-
-                <TextView
-                    android:id="@+id/text_view_activity_author"
-                    style="@style/wrap_content_all"
-                    android:layout_below="@+id/view_fragment_library_3"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="20dp"
-                    android:text="Les auteurs similaires"
-                    android:textStyle="bold"
-                    android:textSize="@dimen/size_title" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recycler_view_activity_author"
-                    android:layout_below="@+id/text_view_activity_author"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-            </RelativeLayout>
-        </androidx.core.widget.NestedScrollView>
-
+            android:clipToPadding="false"
+            android:paddingBottom="32dp" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    <!-- NO CONNECTION — EN DERNIER = au-dessus de tout -->
-    <include
-        android:id="@+id/no_connection_container"
-        layout="@layout/item_no_connection"
+    <!-- Barre haute fixe -->
+    <LinearLayout
+        android:id="@+id/linear_layout_author_top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp">
+
+        <ImageButton
+            android:id="@+id/image_button_author_back"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:background="@drawable/bg_profile_scrim_circle"
+            android:contentDescription="@string/author_profile_back"
+            android:padding="10dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_profile_back"
+            android:tint="@color/elim_on_surface" />
+
+        <TextView
+            android:id="@+id/text_view_author_top_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp"
+            android:layout_weight="1"
+            android:alpha="0"
+            android:ellipsize="end"
+            android:importantForAccessibility="no"
+            android:maxLines="1"
+            android:textColor="@color/elim_on_surface"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            tools:alpha="1"
+            tools:text="Bachir Abdoul Kader" />
+
+        <ImageButton
+            android:id="@+id/image_button_author_share_top"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:background="@drawable/bg_profile_scrim_circle"
+            android:contentDescription="@string/author_profile_share"
+            android:padding="11dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_profile_share"
+            android:tint="@color/elim_on_surface" />
+    </LinearLayout>
+
+    <!-- Auteur introuvable (identifiant invalide ou auteur supprimé) -->
+    <LinearLayout
+        android:id="@+id/linear_layout_author_not_found"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/include2"
-        android:visibility="gone" />
+        android:background="@color/elim_background"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="32dp"
+        android:visibility="gone">
 
-</RelativeLayout>
+        <FrameLayout
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:background="@drawable/bg_empty_state_icon">
+
+            <ImageView
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_gravity="center"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_profile_person_off"
+                android:tint="@color/elim_primary" />
+        </FrameLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:text="@string/author_not_found_title"
+            android:textColor="@color/elim_on_surface"
+            android:textSize="19sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:lineSpacingExtra="3dp"
+            android:text="@string/author_not_found_message"
+            android:textColor="@color/elim_on_surface_variant"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/text_view_author_not_found_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/bg_profile_primary_button"
+            android:gravity="center"
+            android:minHeight="44dp"
+            android:paddingStart="28dp"
+            android:paddingEnd="28dp"
+            android:text="@string/author_profile_back"
+            android:textColor="@color/elim_on_primary"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+</FrameLayout>

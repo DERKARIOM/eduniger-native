@@ -111,6 +111,11 @@ public class BooksFragment extends Fragment {
 
         if (arrow1 == null || arrow2 == null || arrow3 == null) return;
 
+        // Densité lue une seule fois depuis la vue : l'animation ne doit plus appeler
+        // requireContext() à chaque image (plantage si l'onglet est quitté entre-temps).
+        final float dp = arrow1.getResources().getDisplayMetrics().density;
+        if (mArrowAnimator != null) mArrowAnimator.cancel();
+
         // Animation de translation Y en boucle (effet cascade vers le bas)
         mArrowAnimator = ValueAnimator.ofFloat(0f, 1f);
         mArrowAnimator.setDuration(1000);
@@ -127,7 +132,6 @@ public class BooksFragment extends Fragment {
             float t3 = bounce((f + 0.66f) % 1f);           // flèche 3 : +66%
 
             float maxTranslation = 10f; // dp en pixels
-            float dp = requireContext().getResources().getDisplayMetrics().density;
 
             arrow1.setTranslationY(t1 * maxTranslation * dp);
             arrow2.setTranslationY(t2 * maxTranslation * dp);
@@ -365,6 +369,12 @@ public class BooksFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        // Animation infinie : sans cet arrêt elle continuait après la destruction de la vue
+        // et faisait planter l'application (IllegalStateException « not attached to a context »).
+        if (mArrowAnimator != null) {
+            mArrowAnimator.cancel();
+            mArrowAnimator = null;
+        }
         if (mShimmerAnimator != null) {
             mShimmerAnimator.cancel();
             mShimmerAnimator = null;
@@ -377,4 +387,4 @@ public class BooksFragment extends Fragment {
             }
         }
     }
-}
+}
