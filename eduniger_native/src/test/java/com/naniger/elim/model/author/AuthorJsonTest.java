@@ -19,7 +19,7 @@ public class AuthorJsonTest {
 
     /** Auteur avec portrait, biographie, contacts et plusieurs livres. */
     private static final String FULL = "{\"idAuthor\":108,\"name\":\"Abdoul Kader\",\"firstName\":\"Bachir\","
-            + "\"profile\":\"derkariom.png\",\"level\":2,\"profession\":\"CO-FONDATEUR NINOTECH\","
+            + "\"profile\":\"derkariom.png\",\"cover\":\"cover_ab12.jpg\",\"level\":2,\"profession\":\"CO-FONDATEUR NINOTECH\","
             + "\"biography\":\"Ingénieur nigérien.\\r\\nFondateur d'Elim.\\r\\n\\r\\n\\r\\nAuteur de manuels.\","
             + "\"call\":\"+227 90 00 00 00\",\"email\":\"auteur@elim.ne\",\"whatsapp\":\"+227 90 00 00 00\","
             + "\"books_count\":14,\"books_count_electronic\":12,\"books_count_physical\":1,\"books_count_audio\":2,"
@@ -46,6 +46,7 @@ public class AuthorJsonTest {
         assertEquals("108", p.id);
         assertEquals("Bachir Abdoul Kader", p.fullName());
         assertEquals("derkariom.png", p.profile);
+        assertEquals("cover_ab12.jpg", p.cover);
         assertEquals("CO-FONDATEUR NINOTECH", p.profession);
         assertEquals("Ingénieur nigérien.\nFondateur d'Elim.\n\nAuteur de manuels.", p.biography);
         assertEquals("+227 90 00 00 00", p.phone);
@@ -66,6 +67,7 @@ public class AuthorJsonTest {
         AuthorProfile p = AuthorJson.profile(BARE);
         assertEquals("ALIO SANDA Abdelkader", p.fullName());
         assertNull(p.profile);       // → image de remplacement
+        assertNull(p.cover);         // → couleur Elim du bandeau
         assertNull(p.profession);    // → ligne masquée
         assertNull(p.biography);     // → état « aucune biographie »
         assertNull(p.phone);

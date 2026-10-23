@@ -11,6 +11,6 @@ class Author extends Model
     protected $keyType = 'int';
     public $timestamps = false; // ou true si tu as created_at/updated_at
     protected $fillable = [
-        'name', 'firstName', 'profile', 'level', 'profession','biography'
+        'name', 'firstName', 'profile', 'cover', 'level', 'profession','biography'
     ];
 }

@@ -134,7 +134,7 @@ class FileController extends Controller
         try {
             $filename = $this->sanitizePath($filename);
 
-            $publicTypes = ['blanket', 'pdf', 'audio', 'profil', 'logo', 'banner', 'category'];
+            $publicTypes = ['blanket', 'pdf', 'audio', 'profil', 'author_cover', 'logo', 'banner', 'category'];
             if (!in_array($type, $publicTypes)) {
                 abort(404);
             }
@@ -153,6 +153,7 @@ class FileController extends Controller
                         ->exists();
                 })(),
                 'profil' => Author::where('profile', $filename)->exists(),
+                'author_cover' => Author::where('cover', $filename)->exists(),
                 'logo' => Structure::where('id', $idStruct)
                     ->where('logo', $filename)
                     ->exists(),
@@ -241,7 +242,7 @@ class FileController extends Controller
     private function getPathForType(int $idStruct, string $type, string $filename): string
     {
         // Liste des types autorisés
-        $allowedTypes = ['blanket', 'profil', 'pdf', 'audio', 'banner', 'pub', 'logo', 'backup', 'category'];
+        $allowedTypes = ['blanket', 'profil', 'author_cover', 'pdf', 'audio', 'banner', 'pub', 'logo', 'backup', 'category'];
         
         if (!in_array($type, $allowedTypes)) {
             Log::warning('Type de fichier non autorisé', ['type' => $type]);
@@ -251,6 +252,7 @@ class FileController extends Controller
         return match ($type) {
             'blanket'  => 'structures/' . $idStruct . '/blankets/' . $filename,
             'profil'   => 'profils/' . $filename,
+            'author_cover' => 'author_covers/' . $filename,
             'pdf'      => 'structures/' . $idStruct . '/pdfs/' . $filename,
             'audio'    => 'structures/' . $idStruct . '/audios/' . $filename,
             'banner'   => 'structures/' . $idStruct . '/banners/' . $filename,

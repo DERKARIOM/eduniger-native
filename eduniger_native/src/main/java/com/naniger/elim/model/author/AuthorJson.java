@@ -51,6 +51,7 @@ public final class AuthorJson {
         p.firstName = str(o, "firstName");
         p.name = str(o, "name");
         p.profile = str(o, "profile");
+        p.cover = str(o, "cover");
         p.profession = str(o, "profession");
         p.biography = ProfileText.biography(str(o, "biography"));
         p.phone = ProfileText.phone(str(o, "call"));

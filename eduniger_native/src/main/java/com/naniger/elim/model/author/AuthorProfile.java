@@ -26,6 +26,8 @@ public final class AuthorProfile {
     public String firstName;
     public String name;
     public String profile;
+    /** Bannière du profil (nom de fichier), null si l'auteur n'en a pas. */
+    public String cover;
     public String profession;
     public String biography;
     public String phone;

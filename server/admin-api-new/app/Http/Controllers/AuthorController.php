@@ -252,6 +252,7 @@ class AuthorController extends Controller
         $validator = Validator::make($request->all(), [
             'fullName'   => 'required|string|max:512',
             'profile'    => 'nullable|file|mimes:jpg,jpeg,png|max:8000', // 8 Mo
+            'cover'      => 'nullable|file|mimes:jpg,jpeg,png,webp|max:5120', // bannière, 5 Mo
             'level'      => 'nullable|integer',
             'profession' => 'nullable|string|max:1000',
             'biography'  => 'nullable|string',
@@ -259,6 +260,8 @@ class AuthorController extends Controller
             'fullName.required' => 'Le nom complet est obligatoire.',
             'profile.mimes'     => 'La photo de profil doit être au format JPG ou PNG.',
             'profile.max'       => 'La photo de profil ne peut dépasser 8 Mo.',
+            'cover.mimes'       => 'La bannière doit être au format JPG, PNG ou WEBP.',
+            'cover.max'         => 'La bannière ne peut dépasser 5 Mo.',
             'level.integer'     => 'Le niveau doit être un nombre entier.',
             'profession.max'    => 'La profession ne peut dépasser 1000 caractères.',
         ]);
@@ -304,6 +307,10 @@ class AuthorController extends Controller
                 $data['profile'] = $filename;
             } else {
                 $data['profile'] = 'user.png';
+            }
+
+            if ($request->hasFile('cover')) {
+                $data['cover'] = $this->storeCover($request->file('cover'));
             }
 
             $author = Author::create($data);
@@ -353,6 +360,8 @@ class AuthorController extends Controller
         $validator = Validator::make($request->all(), [
             'fullName'   => 'sometimes|required|string|max:512',
             'profile'    => 'nullable|file|mimes:jpg,jpeg,png|max:5120',
+            'cover'      => 'nullable|file|mimes:jpg,jpeg,png,webp|max:5120',
+            'remove_cover' => 'nullable|boolean',
             'level'      => 'nullable|integer',
             'profession' => 'nullable|string|max:1000',
             'biography'  => 'nullable|string',
@@ -360,6 +369,8 @@ class AuthorController extends Controller
             'fullName.required' => 'Le nom complet est obligatoire.',
             'profile.mimes'     => 'La photo de profil doit être JPG ou PNG.',
             'profile.max'       => 'La photo de profil ne peut dépasser 5 Mo.',
+            'cover.mimes'       => 'La bannière doit être au format JPG, PNG ou WEBP.',
+            'cover.max'         => 'La bannière ne peut dépasser 5 Mo.',
             'level.integer'     => 'Le niveau doit être un nombre entier.',
             'profession.max'    => 'La profession ne peut dépasser 1000 caractères.',
         ]);
@@ -419,6 +430,15 @@ class AuthorController extends Controller
                 $updatedFields['profile'] = $filename;
             }
 
+            // Bannière : nouvelle image (l'ancienne est supprimée) ou retrait explicite.
+            if ($request->hasFile('cover')) {
+                $this->deleteCover($author->cover);
+                $updatedFields['cover'] = $this->storeCover($request->file('cover'));
+            } elseif ($request->boolean('remove_cover')) {
+                $this->deleteCover($author->cover);
+                $updatedFields['cover'] = null;
+            }
+
             if (!empty($updatedFields)) {
                 $author->update($updatedFields);
             }
@@ -474,6 +494,8 @@ class AuthorController extends Controller
                 }
             }
 
+            $this->deleteCover($author->cover);
+
             $author->delete();
             DB::commit();
             return response()->json(['message' => 'Auteur supprimé avec succès.'], 200);
@@ -489,6 +511,29 @@ class AuthorController extends Controller
                 'trace' => $e->getTraceAsString()
             ]);
             return response()->json(['message' => 'Une erreur est survenue lors de la suppression de l\'auteur.'], 500);
+        }
+    }
+
+    /**
+     * Enregistre la bannière d'un auteur dans le disque privé (author_covers/).
+     * Nom aléatoire : jamais le nom d'origine (pas de collision ni de chemin injecté).
+     */
+    private function storeCover($file): string
+    {
+        if (!$file->isValid()) {
+            throw new Exception('Le fichier de bannière est invalide.');
+        }
+        $filename = 'cover_' . Str::uuid()->toString() . '.' . strtolower($file->getClientOriginalExtension());
+        if (Storage::disk('private')->putFileAs('author_covers', $file, $filename) === false) {
+            throw new Exception('Échec de l\'enregistrement de la bannière');
+        }
+        return $filename;
+    }
+
+    private function deleteCover(?string $cover): void
+    {
+        if ($cover && Storage::disk('private')->exists('author_covers/' . $cover)) {
+            Storage::disk('private')->delete('author_covers/' . $cover);
         }
     }
 }
