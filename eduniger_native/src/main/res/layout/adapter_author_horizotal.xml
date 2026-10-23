@@ -33,12 +33,12 @@
         android:id="@+id/text_view_adapter_author_horizontal_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="8dp"
         android:ellipsize="end"
         android:gravity="center_horizontal"
         android:importantForAccessibility="no"
         android:maxLines="1"
         android:textColor="@color/elim_on_surface"
-        android:textSize="@dimen/text_card_title"
+        android:textSize="13sp"
         tools:text="Abdoul Kader" />
 </LinearLayout>
