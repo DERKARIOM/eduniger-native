@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.naniger.elim.R;
 import com.naniger.elim.controleur.activity.AuthorActivity;
-import com.naniger.elim.controleur.animation.RoundedTransformation;
 import com.naniger.elim.model.data.Author;
 import com.naniger.elim.model.data.Server;
 import com.squareup.picasso.Picasso;
@@ -69,10 +68,11 @@ public class AuthorHorizontaleAdapter extends RecyclerView.Adapter<AuthorHorizon
                     .load(Server.getUrlHostProd(itemView.getContext()) + "/api/public/resource/0/profil/" + author.getProfile()) // route publique Laravel (FileController::publicShow, type profil)
                     .placeholder(R.drawable.img_wait_profile)
                     .error(R.drawable.img_wait_profile)
-                    .transform(new RoundedTransformation(1000,4))
-                    .resize(284,284)
+                    .fit()
+                    .centerCrop()
                     .into(mProfileImageView);
             mNameTextView.setText(author.getName());
+            itemView.setContentDescription(author.getName());
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
