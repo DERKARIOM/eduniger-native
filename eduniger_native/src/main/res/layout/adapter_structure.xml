@@ -69,8 +69,6 @@
         android:paddingTop="9dp"
         android:paddingEnd="20dp"
         android:paddingBottom="9dp"
-        app:insetTop="0dp"
-        app:insetBottom="0dp"
         android:letterSpacing="0"
         android:textStyle="bold"
         android:text="S'adhérer"
