@@ -23,10 +23,14 @@
             android:layout_width="match_parent"
             android:layout_height="172dp">
 
-            <View
+            <!-- Bannière de l'auteur (choisie dans le back-office) ; sinon couleur Elim. -->
+            <ImageView
+                android:id="@+id/image_view_author_profile_cover"
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
-                android:background="@drawable/bg_author_cover" />
+                android:background="@drawable/bg_author_cover"
+                android:importantForAccessibility="no"
+                android:scaleType="centerCrop" />
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/image_view_author_profile_portrait"

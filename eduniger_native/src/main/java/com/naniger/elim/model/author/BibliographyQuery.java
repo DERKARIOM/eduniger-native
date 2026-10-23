@@ -105,6 +105,12 @@ public final class BibliographyQuery {
         return trimSlash(host) + "/api/authors/" + enc(authorId.trim());
     }
 
+    /** Bannière d'un auteur (route publique de l'API), null si aucune. */
+    public static String coverUrl(String host, String cover) {
+        String c = ProfileText.clean(cover);
+        return c == null ? null : trimSlash(host) + "/api/public/resource/0/author_cover/" + enc(c);
+    }
+
     public static String similarUrl(String host, String authorId) {
         return trimSlash(host) + "/api/authors/" + enc(authorId.trim()) + "/similar";
     }

@@ -65,6 +65,15 @@ public class AuthorProfileLogicTest {
         assertEquals("https://api.kawtal-consulting.com/api/authors/108/similar", BibliographyQuery.similarUrl(HOST, "108"));
     }
 
+    @Test
+    public void coverUrl_publicRoute_orNullWithoutCover() {
+        assertEquals("https://api.kawtal-consulting.com/api/public/resource/0/author_cover/cover_ab%2012.jpg",
+                BibliographyQuery.coverUrl(HOST, "cover_ab 12.jpg"));
+        assertNull(BibliographyQuery.coverUrl(HOST, null));
+        assertNull(BibliographyQuery.coverUrl(HOST, "null"));
+        assertNull(BibliographyQuery.coverUrl(HOST, "  "));
+    }
+
     // ------------------------------------------------------------- textes
 
     @Test

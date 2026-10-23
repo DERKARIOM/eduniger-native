@@ -77,7 +77,7 @@ public class AuthorActivity extends AppCompatActivity implements AuthorProfileAd
     private View mTopBar, mNotFound;
     private TextView mTopTitle;
     private View mHeader;
-    private ImageView mPortrait;
+    private ImageView mPortrait, mCover;
     private TextView mName, mProfession, mMeta;
     private View mCallButton, mEmailButton, mWhatsappButton;
     private View mNotice;
@@ -169,6 +169,7 @@ public class AuthorActivity extends AppCompatActivity implements AuthorProfileAd
         mList.setLayoutManager(mLayoutManager);
         mHeader = LayoutInflater.from(this).inflate(R.layout.item_author_profile_header, mList, false);
         mPortrait = mHeader.findViewById(R.id.image_view_author_profile_portrait);
+        mCover = mHeader.findViewById(R.id.image_view_author_profile_cover);
         mName = mHeader.findViewById(R.id.text_view_author_profile_name);
         mProfession = mHeader.findViewById(R.id.text_view_author_profile_profession);
         mMeta = mHeader.findViewById(R.id.text_view_author_profile_meta);
@@ -324,6 +325,7 @@ public class AuthorActivity extends AppCompatActivity implements AuthorProfileAd
             if (!name.isEmpty()) setName(name);
             setProfession(p.profession);
             loadPortrait(p.profile);
+            loadCover(p.cover);
             bindMeta(p);
             showBioState(p.biography, false);
             bindNumbers(p);
@@ -361,6 +363,21 @@ public class AuthorActivity extends AppCompatActivity implements AuthorProfileAd
                 .fit()
                 .centerCrop()
                 .into(mPortrait);
+    }
+
+    /** Bannière : image de l'auteur si elle existe, sinon la couleur Elim du bandeau. */
+    private void loadCover(String cover) {
+        String url = BibliographyQuery.coverUrl(Server.getUrlHostProd(this), cover);
+        if (url == null) {
+            Picasso.get().cancelRequest(mCover);
+            mCover.setImageDrawable(null);
+            return;
+        }
+        Picasso.get()
+                .load(url)
+                .fit()
+                .centerCrop()
+                .into(mCover);
     }
 
     /** « 12 publications · PDF · Audio · Sur Elim depuis 2025 » — uniquement des valeurs calculées. */
