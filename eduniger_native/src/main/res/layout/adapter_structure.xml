@@ -17,41 +17,53 @@
         android:importantForAccessibility="no" />
     <RelativeLayout
         android:id="@+id/info_livre2"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/image_view_adapter_structure_cover"
+        android:layout_toEndOf="@+id/image_view_adapter_structure_cover"
+        android:layout_toStartOf="@+id/button_adapter_structure"
         android:layout_centerVertical="true">
 
         <TextView
             android:id="@+id/text_view_adapter_structure_title"
-            style="@style/wrap_content_all"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="5dp"
-            android:layout_marginBottom="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:text="NinoLib"
-            android:textStyle="bold"
-            android:textSize="@dimen/size_title" />
+            android:textColor="@color/elim_on_surface"
+            android:textSize="15sp"
+            android:textStyle="bold" />
         <TextView
             android:id="@+id/image_view_adapter_structure_book_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
+            android:layout_marginStart="6dp"
+            android:layout_marginTop="2dp"
             android:layout_below="@id/text_view_adapter_structure_title"
-            android:text="293 Livres"/>
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="293 Livres"
+            android:textColor="@color/elim_on_surface_variant"
+            android:textSize="13sp"/>
     </RelativeLayout>
     <Button
         android:id="@+id/button_adapter_structure"
         android:layout_width="wrap_content"
-        android:layout_height="33dp"
+        android:layout_height="36dp"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        android:paddingStart="18dp"
+        android:paddingEnd="18dp"
+        android:letterSpacing="0"
+        android:textStyle="bold"
         android:text="S'adhérer"
         android:textAllCaps="false"
         style="@style/adapter_struture_btt"
         android:layout_margin="10dp"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
-        android:textSize="12sp"
-        android:paddingTop="-1dp"
+        android:textSize="13sp"
         android:background="@drawable/bg_button_primary"
         android:backgroundTint="@color/purple_200"/>
 </RelativeLayout>

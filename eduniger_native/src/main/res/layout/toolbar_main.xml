@@ -26,27 +26,33 @@
         android:layout_height="wrap_content"
         style="@style/activity_main_research"
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="108dp"
-        android:hint="  Rechercher un livre"
+        android:layout_marginEnd="83dp"
+        android:hint="@string/find_book"
+        android:textColorHint="@color/elim_text_hint"
+        android:textColor="@color/elim_on_surface"
+        android:textSize="@dimen/text_search_field"
         android:drawableStart="?android:attr/actionModeWebSearchDrawable"
+        android:drawablePadding="10dp"
         android:inputType="text"
         android:layout_centerVertical="true"
         android:padding="8dp"
         android:focusable="false"
         android:selectAllOnFocus="false" />
-    <!-- Icône Eduna : zone tactile 48 dp placée juste avant l'emplacement de la cloche
-         (bouton de menu de 48 dp, au bord droit). Icône 24 dp comme la cloche, centrée
-         verticalement : même écart (24 dp) entre champ de recherche, Eduna et cloche. -->
+    <!-- Icône Eduna. Mesures relevées sur capture (1080 px, densité ≈ 2,6) : le dessin de la
+         cloche occupe environ 20 dp de haut et s'étend de 13 à 31 dp du bord droit.
+         Le dessin « AI » remplit tout son cadre : 20 dp d'icône (48 - 2×14) = même taille
+         visuelle que la cloche. Écart identique de 16 dp : recherche | AI | cloche
+         (bord droit du dessin AI = 33 + 14 = 47 dp ; champ de recherche terminé à 83 dp). -->
     <ImageView
         android:id="@+id/image_view_toolbar_main_eduna"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_alignEnd="@id/toolbar_search"
         android:layout_centerVertical="true"
-        android:layout_marginEnd="48dp"
+        android:layout_marginEnd="33dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/a11y_eduna"
-        android:padding="12dp"
+        android:padding="14dp"
         android:scaleType="fitCenter"
         android:src="@drawable/ic_ia" />
 </RelativeLayout>
