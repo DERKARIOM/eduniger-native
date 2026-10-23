@@ -127,7 +127,7 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
             {
                 case "AddBook":
                     mBookNumberTextView.setText(structure.getBookNumber());
-                    Animation pulseAnimImg = AnimationUtils.loadAnimation(itemView.getContext(), R.anim.slide_down_up);
+                    Animation pulseAnimImg = AnimationUtils.loadAnimation(itemView.getContext(), R.anim.float_bob);
                     // Lancer l'animation automatiquement
                     mBlanketImageView.startAnimation(pulseAnimImg);
                     mAdhereButton.setText("Ajouter");
@@ -135,7 +135,7 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
                     break;
                 case "RegisterAuthor":
                     mBookNumberTextView.setText(structure.getBookNumber());
-                    Animation pulseAnimImg2 = AnimationUtils.loadAnimation(itemView.getContext(), R.anim.slide_down_up);
+                    Animation pulseAnimImg2 = AnimationUtils.loadAnimation(itemView.getContext(), R.anim.float_bob);
                     // Lancer l'animation automatiquement
                     mBlanketImageView.startAnimation(pulseAnimImg2);
                     mAdhereButton.setText("S'inscrire");
