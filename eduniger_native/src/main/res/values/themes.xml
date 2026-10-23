@@ -438,6 +438,15 @@
         <item name="android:textColor">@color/elim_on_surface_variant</item>
         <item name="android:textSize">@dimen/book_row_count</item>
     </style>
+    <!-- Logo d'organisation : carré arrondi (fiche et cartes des structures) -->
+    <style name="ShapeAppearance.Elim.StructureLogo" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">14dp</item>
+    </style>
+    <style name="ShapeAppearance.Elim.StructureLogoLarge" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">22dp</item>
+    </style>
     <style name="ShapeAppearance.Elim.Circle" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>

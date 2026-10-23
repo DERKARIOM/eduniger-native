@@ -120,6 +120,15 @@ public final class AuthorJson {
             JSONArray structures = o.optJSONArray("structures");
             if (structures != null && structures.length() > 0) {
                 b.structureId = str(structures.optJSONObject(0), "id");
+                for (int j = 0; j < structures.length(); j++) {
+                    String sid = str(structures.optJSONObject(j), "id");
+                    if (sid != null) b.structureIds.add(sid);
+                }
+            }
+            JSONObject author = o.optJSONObject("author");
+            if (author != null) {
+                String full = ProfileText.fullName(str(author, "firstName"), str(author, "name"));
+                b.authorName = full.isEmpty() ? null : full;
             }
             JSONArray cats = o.optJSONArray("categories");
             List<String> titles = new ArrayList<>();
@@ -128,6 +137,21 @@ public final class AuthorJson {
             }
             b.categories.addAll(ProfileText.distinct(titles));
             out.add(b);
+        }
+        return out;
+    }
+
+    /**
+     * Ressources d'une page pour une structure. Un livre dont la liste de structures est connue
+     * et ne contient pas la structure consultée (réponse incohérente) est écarté.
+     */
+    public static List<Publication> structureResources(String body, String structureId) throws JSONException {
+        List<Publication> all = publications(body, null);
+        List<Publication> out = new ArrayList<>();
+        String sid = structureId == null ? null : structureId.trim();
+        for (Publication p : all) {
+            if (sid != null && !p.structureIds.isEmpty() && !p.structureIds.contains(sid)) continue;
+            out.add(p);
         }
         return out;
     }

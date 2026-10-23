@@ -79,5 +79,5 @@
         android:layout_centerVertical="true"
         android:textSize="13sp"
         android:background="@drawable/bg_button_primary"
-        android:backgroundTint="@color/purple_200"/>
+        android:backgroundTint="@color/elim_primary"/>
 </RelativeLayout>

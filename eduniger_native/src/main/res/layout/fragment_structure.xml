@@ -1,118 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--
+    Onglet Structures : une seule liste défilante = en-tête (titre, recherche, tri, filtres)
+    + cartes des structures + état (chargement, erreur, vide, aucun résultat).
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/match_parent_all"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/elim_background"
     tools:context=".controleur.fragment.StructureFragment">
 
-    <!-- SKELETON LOADING -->
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/skeleton_loading_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="visible">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="10dp">
-
-            <!-- Skeleton stories horizontales -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
-                android:paddingTop="10dp"
-                android:paddingBottom="6dp">
-
-                <include layout="@layout/item_skeleton_author"/>
-                <include layout="@layout/item_skeleton_author"/>
-                <include layout="@layout/item_skeleton_author"/>
-                <include layout="@layout/item_skeleton_author"/>
-                <include layout="@layout/item_skeleton_author"/>
-
-            </LinearLayout>
-
-            <!-- Skeleton structures verticales -->
-            <include layout="@layout/item_skeleton_structure"/>
-            <include layout="@layout/item_skeleton_structure"/>
-            <include layout="@layout/item_skeleton_structure"/>
-            <include layout="@layout/item_skeleton_structure"/>
-            <include layout="@layout/item_skeleton_structure"/>
-
-        </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
-
-    <!-- CONTENU PRINCIPAL -->
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh_structure"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view_fragment_structure"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <!-- Stories -->
-            <LinearLayout
-                android:id="@+id/layout_stories"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingTop="10dp"
-                android:paddingBottom="6dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
-                    android:text="Story"
-                    android:textStyle="bold"
-                    android:visibility="gone"
-                    android:textSize="18sp" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recycler_view_stories"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:nestedScrollingEnabled="false"
-                    android:visibility="gone"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp"
-                    android:clipToPadding="false" />
-
-            </LinearLayout>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                android:visibility="gone"
-                android:text="Structures"
-                android:textStyle="bold"
-                android:textSize="18sp" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_view_fragment_structure"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:paddingBottom="@dimen/list_bottom_inset"
-                android:clipToPadding="false"
-                android:visibility="gone" />
-
-        </LinearLayout>
+            android:clipToPadding="false"
+            android:paddingBottom="@dimen/list_bottom_inset" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
-    <!-- NO CONNECTION — EN DERNIER = au-dessus de tout -->
-    <include
-        android:id="@+id/no_connection_container"
-        layout="@layout/item_no_connection"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone" />
-
-</RelativeLayout>
+</FrameLayout>

@@ -1,404 +1,347 @@
 package com.naniger.elim.controleur.fragment;
 
-import android.animation.ValueAnimator;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.PopupMenu;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.naniger.elim.R;
+import com.naniger.elim.controleur.activity.StructureActivity;
+import com.naniger.elim.controleur.adapter.StructureCardAdapter;
 import com.naniger.elim.model.cache.ApiCache;
 import com.naniger.elim.model.cache.CachedLoader;
-import com.naniger.elim.controleur.adapter.NoConnectionAdapter;
-import com.naniger.elim.controleur.adapter.StructureAdapter;
-import com.naniger.elim.controleur.adapter.StructureStoryAdapter;
-import com.naniger.elim.model.data.Connection;
 import com.naniger.elim.model.data.Server;
-import com.naniger.elim.model.data.Structure;
-import com.naniger.elim.model.data.StructureStory;
-import com.naniger.elim.model.table.Session;
+import com.naniger.elim.model.structure.StructureInfo;
+import com.naniger.elim.model.structure.StructureJson;
+import com.naniger.elim.model.structure.StructureListQuery;
+import com.naniger.elim.model.structure.StructureText;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-import okhttp3.MultipartBody;
-import com.naniger.elim.model.net.ApiClient;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
+/**
+ * Onglet Structures : découvrir les écoles, universités, bibliothèques et organisations d'Elim.
+ *
+ * <p>Données : {@code GET /api/structures} (une seule requête, partagée avec l'accueil via le
+ * cache « cache d'abord » : affichage immédiat des données enregistrées, actualisation en
+ * arrière-plan). Recherche par nom ou ville, filtres (« Mes structures », villes réellement
+ * renseignées) et tri sont appliqués localement : aucune requête réseau par frappe.
+ *
+ * <p>Le type de structure n'existe pas en base : aucun filtre « type » n'est proposé.
+ */
+public class StructureFragment extends Fragment implements StructureCardAdapter.Listener {
 
-public class StructureFragment extends Fragment {
+    private static final String TAG = "StructureFragment";
 
-    private RecyclerView mStructureRecyclerView;
-    private RecyclerView mStoriesRecyclerView;
-    private View mSkeletonLoadingContainer;
-    private View mNoConnectionContainer;
-    private ArrayList<Structure> mStructures;
-    private StructureAdapter StructAdapter;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
-    private Session mSession;
+    private SwipeRefreshLayout mSwipe;
+    private RecyclerView mList;
+    private View mHeader;
+    private EditText mSearch;
+    private View mSearchClear;
+    private TextView mSortButton;
+    private ChipGroup mFilters;
+    private TextView mCount;
 
-    // Stories
-    private final List<StructureStory> mStories = new ArrayList<>();
-    private StructureStoryAdapter mStoryAdapter;
-
-    // Animators
-    private ValueAnimator mShimmerAnimator;
-    private ValueAnimator mArrowAnimator;
+    private StructureCardAdapter mAdapter;
+    private final List<StructureInfo> mAll = new ArrayList<>();
+    private StructureListQuery mQuery = StructureListQuery.initial();
+    private boolean mLoaded;     // au moins une réponse (cache ou réseau) affichée
+    private boolean mFailed;     // dernier chargement sans aucune donnée
+    private boolean mFirstResume = true;
+    /** Filtres affichés (évite de recréer les puces quand les données n'ont pas changé). */
+    private String mFilterSignature = "";
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_structure, container, false);
+        mSwipe = view.findViewById(R.id.swipe_refresh_structure);
+        mList = view.findViewById(R.id.recycler_view_fragment_structure);
 
-        mStructureRecyclerView    = view.findViewById(R.id.recycler_view_fragment_structure);
-        mStoriesRecyclerView      = view.findViewById(R.id.recycler_view_stories);
-        mSkeletonLoadingContainer = view.findViewById(R.id.skeleton_loading_container);
-        mNoConnectionContainer    = view.findViewById(R.id.no_connection_container);
-        mSwipeRefreshLayout       = view.findViewById(R.id.swipe_refresh_structure);
-        mSession                  = new Session(getContext());
-        mStructures               = new ArrayList<>();
-        StructAdapter             = new StructureAdapter(mStructures);
+        // Gestionnaire de mise en page AVANT de gonfler l'en-tête avec la liste pour parent.
+        LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext());
+        mList.setLayoutManager(layoutManager);
+        mHeader = inflater.inflate(R.layout.item_structures_header, mList, false);
+        mSearch = mHeader.findViewById(R.id.edit_text_structures_search);
+        mSearchClear = mHeader.findViewById(R.id.image_button_structures_search_clear);
+        mSortButton = mHeader.findViewById(R.id.text_view_structures_sort);
+        mFilters = mHeader.findViewById(R.id.chip_group_structures_filters);
+        mCount = mHeader.findViewById(R.id.text_view_structures_count);
 
-        startSkeletonShimmer(mSkeletonLoadingContainer);
-        startArrowAnimation();
+        mAdapter = new StructureCardAdapter(mHeader, this);
+        mList.setAdapter(mAdapter);
+        mList.setItemAnimator(null);
+        mList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView rv, int state) {
+                if (state == RecyclerView.SCROLL_STATE_DRAGGING) hideKeyboard();
+            }
+        });
 
-        setupStories();
-        setupBroadcastReceiver();
-        loadStructures();
-        setupSwipeRefresh();
+        mSwipe.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.elim_primary));
+        mSwipe.setOnRefreshListener(() -> load(true));
 
+        setupSearch();
+        updateSortLabel();
+        mSortButton.setOnClickListener(this::showSortMenu);
+        rebuildFilters();
+
+        render();
+        load(false);
         return view;
     }
 
-    // ==================== Stories ====================
-
-    private void setupStories() {
-        mStories.add(new StructureStory("1", "eduniger.png",  "Elim",   true));
-        mStories.add(new StructureStory("3", "sosbac.png",    "SOS BAC",    false));
-        mStories.add(new StructureStory("4", "uaz.png",       "UAZ",        true));
-        mStories.add(new StructureStory("5", "inp.png",       "INP-HB",     false));
-        mStories.add(new StructureStory("6", "iftic.png",     "IFTIC",      true));
-        mStories.add(new StructureStory("7", "ungestion.png", "UN Gestion", false));
-
-        mStoryAdapter = new StructureStoryAdapter(mStories, story ->
-                Toast.makeText(getContext(), "Story : " + story.getName(), Toast.LENGTH_SHORT).show());
-
-        mStoriesRecyclerView.setLayoutManager(
-                new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-        mStoriesRecyclerView.setAdapter(mStoryAdapter);
-    }
-
-    // ==================== États ====================
-
-    private void showLoadingState() {
-        mStructureRecyclerView.setVisibility(View.GONE);
-        mNoConnectionContainer.setVisibility(View.GONE);
-        mSkeletonLoadingContainer.setVisibility(View.VISIBLE);
-        startSkeletonShimmer(mSkeletonLoadingContainer);
-    }
-
-    private void showContentState() {
-        mSkeletonLoadingContainer.setVisibility(View.GONE);
-        stopSkeletonShimmer(mSkeletonLoadingContainer);
-        mNoConnectionContainer.setVisibility(View.GONE);
-        mStructureRecyclerView.setVisibility(View.VISIBLE);
-    }
-
-    private void showNoConnectionError() {
-        if (!isAdded()) return;
-        stopSkeletonShimmer(mSkeletonLoadingContainer);
-        mSkeletonLoadingContainer.setVisibility(View.GONE);
-        mStructureRecyclerView.setVisibility(View.GONE);
-        mNoConnectionContainer.setVisibility(View.VISIBLE);
-    }
-
-    // ==================== SwipeRefresh ====================
-
-    private void setupSwipeRefresh() {
-        mSwipeRefreshLayout.setColorSchemeResources(
-                R.color.purple_200,
-                android.R.color.holo_blue_light,
-                android.R.color.holo_orange_light
-        );
-
-        mSwipeRefreshLayout.setOnRefreshListener(() -> {
-            mNoConnectionContainer.setVisibility(View.GONE);
-            loadStructures(true);   // le contenu reste affiché pendant l'actualisation
-        });
-    }
-
-    private void stopRefreshing() {
-        if (mSwipeRefreshLayout != null && mSwipeRefreshLayout.isRefreshing()) {
-            mSwipeRefreshLayout.setRefreshing(false);
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mFirstResume) {
+            mFirstResume = false;
+        } else if (!isHidden()) {
+            // Retour d'une fiche : si l'adhésion a changé, la fiche a invalidé le cache de la
+            // liste et la réponse fraîche est demandée ; sinon le cache valide est réaffiché.
+            load(false);
         }
     }
 
-    // ==================== BroadcastReceiver ====================
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        // Onglets gérés par hide()/show() : pas d'onResume en revenant sur l'onglet.
+        if (!hidden && isAdded() && mAdapter != null) load(false);
+        if (hidden) hideKeyboard();
+    }
 
-    private void setupBroadcastReceiver() {
-        BroadcastReceiver receiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if ("CATEGORY_FRAGMENT".equals(intent.getAction())) {
-                    try {
-                        if (mStructures.isEmpty()) showLoadingState();
-                        loadStructures(true);
-                    } catch (Exception e) {
-                        Log.e("StructureFragment", e.getMessage());
+    // =================================================================== chargement
+
+    private void load(boolean force) {
+        Context context = getContext();
+        if (context == null) return;
+        if (!mLoaded) {
+            mFailed = false;
+            render();
+        }
+        ApiCache.loadList(context, StructureText.listUrl(Server.getUrlHostProd(context)), ApiCache.TTL_STRUCTURES,
+                force, new CachedLoader.Callback() {
+                    @Override
+                    public void onCached(String body, long ageMs) {
+                        apply(body);
                     }
-                }
-            }
-        };
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            getContext().registerReceiver(receiver,
-                    new IntentFilter("CATEGORY_FRAGMENT"),
-                    Context.RECEIVER_NOT_EXPORTED);
-        }
-    }
+                    @Override
+                    public void onFresh(String body) {
+                        apply(body);
+                        if (mSwipe != null) mSwipe.setRefreshing(false);
+                    }
 
-    // ==================== Chargement ====================
-
-    private void loadStructures() {
-        loadStructures(false);
-    }
-
-    /**
-     * Cache d'abord (partagé avec l'accueil : même clé /api/structures, une seule requête si
-     * les deux écrans la demandent en même temps), puis actualisation si périmé ou forcé.
-     */
-    private void loadStructures(boolean force) {
-        ApiCache.loadList(requireContext(), Server.getUrlHostProd(requireContext()) + "/api/structures",
-                ApiCache.TTL_STRUCTURES, force, new CachedLoader.Callback() {
-                    @Override public void onCached(String body, long ageMs) { renderStructures(body); }
-                    @Override public void onFresh(String body) { renderStructures(body); }
-                    @Override public void onFailure(boolean hadCache) {
+                    @Override
+                    public void onFailure(boolean hadCache) {
                         if (!isAdded()) return;
-                        stopRefreshing();
-                        if (!hadCache && mStructures.isEmpty()) showNoConnectionError();
-                        else Toast.makeText(requireContext(), R.string.offline_cached_notice, Toast.LENGTH_SHORT).show();
+                        mSwipe.setRefreshing(false);
+                        if (mLoaded) {
+                            // Données valides déjà affichées : on les garde et on le signale.
+                            if (force) Toast.makeText(requireContext(), R.string.offline_cached_notice, Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        mFailed = true;
+                        render();
                     }
                 });
     }
 
-    /** Réutilise le rendu existant de StructureSyn (données déjà validées par le cache). */
-    private void renderStructures(String json) {
+    private void apply(String body) {
         if (!isAdded()) return;
-        mStructures.clear();
-        new StructureSyn().onPostExecute(json);
-    }
-
-    // ==================== AsyncTask ====================
-
-    private class StructureSyn extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... params) {
-            try {
-                OkHttpClient client = ApiClient.getInstance(requireContext());
-                Request request = new Request.Builder().url(params[0]).get().build();
-                try {
-                    Response response = client.newCall(request).execute();
-                    String body = response.body() != null ? response.body().string() : null;
-                    if (!response.isSuccessful()) {
-                        Log.e("StructureFragment", "GET /api/structures a echoue (" + response.code() + "): " + body);
-                        return null;
-                    }
-                    return body;
-                } catch (IOException e) {
-                    if (isAdded()) Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            } catch (Exception e) { return null; }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String jsonData) {
-            if (!isAdded()) return;
-            stopRefreshing();
-
-            if (jsonData != null) {
-                try {
-                    JSONArray jsonArray = new JSONArray(jsonData);
-                    showContentState();
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject obj = jsonArray.getJSONObject(i);
-                        // /api/structures renvoie desormais un champ 'isAdhere' calcule
-                        // cote serveur (appartenance StructUser de l'utilisateur courant).
-                        // 'author'/'isAdmin' restent absents (pas des colonnes de Structure).
-                        mStructures.add(new Structure(
-                                obj.optString("id", ""),
-                                obj.optString("logo", ""),
-                                obj.optString("nameStruct", ""),
-                                obj.optString("description", ""), obj.optBoolean("isAdhere", false),
-                                obj.optString("banner", ""),
-                                "",
-                                obj.optString("adhererNumber", "0"),
-                                obj.optString("bookNumber", "0"),
-                                "0"));
-                    }
-                    mStructureRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                    mStructureRecyclerView.setAdapter(StructAdapter);
-                } catch (JSONException e) {
-                    Log.e("StructureFragment", "Reponse inattendue (non-JSONArray) pour /api/structures: " + jsonData, e);
-                    showNoConnectionError();
-                }
-            } else {
-                showNoConnectionError();
+        List<StructureInfo> parsed;
+        try {
+            parsed = StructureJson.list(body);
+        } catch (Exception e) {
+            Log.e(TAG, "Réponse /api/structures illisible", e);
+            if (!mLoaded) {
+                mFailed = true;
+                render();
             }
+            return;
         }
+        mAll.clear();
+        mAll.addAll(parsed);
+        mLoaded = true;
+        mFailed = false;
+        rebuildFilters();
+        render();
     }
 
-    private class StructureSyn2 extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... params) {
-            try {
-                OkHttpClient client = ApiClient.getInstance(requireContext());
-                RequestBody requestBody = new MultipartBody.Builder()
-                        .setType(MultipartBody.FORM)
-                        .addFormDataPart("idUser", params[1])
-                        .build();
-                Request request = new Request.Builder().url(params[0]).post(requestBody).build();
-                try {
-                    Response response = client.newCall(request).execute();
-                    assert response.body() != null;
-                    return response.body().string();
-                } catch (IOException e) {
-                    if (isAdded()) Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            } catch (Exception e) { return null; }
-            return null;
+    /** Applique recherche, filtre et tri, puis met à jour la liste et l'état. */
+    private void render() {
+        if (mAdapter == null) return;
+        if (!mLoaded) {
+            mCount.setVisibility(View.INVISIBLE);
+            mAdapter.submit(new ArrayList<>(), mFailed ? StructureCardAdapter.State.ERROR : StructureCardAdapter.State.LOADING);
+            return;
         }
+        List<StructureInfo> visible = mQuery.apply(mAll);
+        StructureCardAdapter.State state = StructureCardAdapter.State.NONE;
+        if (visible.isEmpty()) {
+            state = mAll.isEmpty() ? StructureCardAdapter.State.EMPTY : StructureCardAdapter.State.NO_RESULTS;
+        }
+        mAdapter.submit(visible, state);
+        mCount.setText(getResources().getQuantityString(R.plurals.structures_count, visible.size(), visible.size()));
+        mCount.setVisibility(visible.isEmpty() ? View.INVISIBLE : View.VISIBLE);
+    }
 
-        @Override
-        protected void onPostExecute(String jsonData) {
-            if (!isAdded()) return;
-            stopRefreshing();
+    // =================================================================== recherche, tri, filtres
 
-            if (jsonData != null && !jsonData.equals("RAS")) {
-                try {
-                    JSONArray jsonArray = new JSONArray(jsonData);
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        if (!isExistsS(mStructures, jsonArray.getJSONObject(i).getString("id")))
-                            mStructures.add(new Structure(
-                                    jsonArray.getJSONObject(i).getString("id"),
-                                    jsonArray.getJSONObject(i).getString("logo"),
-                                    jsonArray.getJSONObject(i).getString("nameStruct"),
-                                    jsonArray.getJSONObject(i).getString("description"), false,
-                                    jsonArray.getJSONObject(i).getString("banner"),
-                                    jsonArray.getJSONObject(i).getString("author"),
-                                    jsonArray.getJSONObject(i).getString("adhererNumber"),
-                                    jsonArray.getJSONObject(i).getString("bookNumber"), "0"));
-                    }
-                    mStructureRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                    mStructureRecyclerView.setAdapter(StructAdapter);
-                } catch (JSONException e) {
-                    Log.e("StructureFragment", "Reponse inattendue (non-JSONArray) pour StructureMore.php: " + jsonData, e);
-                    showNoConnectionError();
-                }
-            } else if (jsonData == null) {
-                showNoConnectionError();
+    private void setupSearch() {
+        mSearch.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int a, int b, int c) { }
+            @Override public void onTextChanged(CharSequence s, int a, int b, int c) { }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                mSearchClear.setVisibility(s.length() > 0 ? View.VISIBLE : View.GONE);
+                if (Objects.equals(s.toString().trim(), mQuery.search)) return;
+                mQuery = mQuery.withSearch(s.toString());
+                render(); // filtrage local, instantané
             }
-        }
-    }
-
-    // ==================== Shimmer ====================
-
-    private void startSkeletonShimmer(View container) {
-        if (!(container instanceof ViewGroup)) return;
-        List<View> skeletonViews = new ArrayList<>();
-        collectSkeletonViews((ViewGroup) container, skeletonViews);
-
-        mShimmerAnimator = ValueAnimator.ofFloat(0f, 1f);
-        mShimmerAnimator.setDuration(1200);
-        mShimmerAnimator.setRepeatCount(ValueAnimator.INFINITE);
-        mShimmerAnimator.setRepeatMode(ValueAnimator.RESTART);
-        mShimmerAnimator.addUpdateListener(anim -> {
-            float fraction = (float) anim.getAnimatedValue();
-            float alpha = 0.4f + 0.6f * (float)(0.5 + 0.5 * Math.sin(fraction * 2 * Math.PI));
-            for (View v : skeletonViews) v.setAlpha(alpha);
         });
-        mShimmerAnimator.start();
-    }
-
-    private void stopSkeletonShimmer(View container) {
-        if (mShimmerAnimator != null) { mShimmerAnimator.cancel(); mShimmerAnimator = null; }
-        if (container instanceof ViewGroup) {
-            List<View> views = new ArrayList<>();
-            collectSkeletonViews((ViewGroup) container, views);
-            for (View v : views) v.setAlpha(1f);
-        }
-    }
-
-    private void collectSkeletonViews(ViewGroup parent, List<View> out) {
-        for (int i = 0; i < parent.getChildCount(); i++) {
-            View child = parent.getChildAt(i);
-            if (child instanceof ViewGroup) collectSkeletonViews((ViewGroup) child, out);
-            else out.add(child);
-        }
-    }
-
-    // ==================== Arrow Animation ====================
-
-    private void startArrowAnimation() {
-        if (mNoConnectionContainer == null) return;
-        View arrow1 = mNoConnectionContainer.findViewById(R.id.arrow_1);
-        View arrow2 = mNoConnectionContainer.findViewById(R.id.arrow_2);
-        View arrow3 = mNoConnectionContainer.findViewById(R.id.arrow_3);
-        if (arrow1 == null || arrow2 == null || arrow3 == null) return;
-
-        mArrowAnimator = ValueAnimator.ofFloat(0f, 1f);
-        mArrowAnimator.setDuration(1000);
-        mArrowAnimator.setRepeatCount(ValueAnimator.INFINITE);
-        mArrowAnimator.setRepeatMode(ValueAnimator.RESTART);
-        mArrowAnimator.setInterpolator(new android.view.animation.AccelerateDecelerateInterpolator());
-        mArrowAnimator.addUpdateListener(anim -> {
-            float f  = (float) anim.getAnimatedValue();
-            float dp = requireContext().getResources().getDisplayMetrics().density;
-            float t1 = bounce(f), t2 = bounce((f + 0.33f) % 1f), t3 = bounce((f + 0.66f) % 1f);
-            float max = 10f;
-            arrow1.setTranslationY(t1 * max * dp); arrow2.setTranslationY(t2 * max * dp); arrow3.setTranslationY(t3 * max * dp);
-            arrow1.setAlpha(0.25f + t1 * 0.3f);   arrow2.setAlpha(0.55f + t2 * 0.25f);   arrow3.setAlpha(0.85f + t3 * 0.15f);
+        mSearch.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                hideKeyboard();
+                return true;
+            }
+            return false;
         });
-        mArrowAnimator.start();
+        mSearchClear.setOnClickListener(v -> mSearch.setText(""));
     }
 
-    private float bounce(float t) { return (float) Math.sin(t * Math.PI); }
-
-    // ==================== Utilitaire ====================
-
-    public boolean isExistsS(ArrayList<Structure> structures, String id) {
-        for (int i = 0; i < structures.size(); i++) {
-            if (structures.get(i).getId().equals(id)) return true;
+    private void showSortMenu(View anchor) {
+        PopupMenu menu = new PopupMenu(requireContext(), anchor);
+        StructureListQuery.Sort[] sorts = StructureListQuery.Sort.values();
+        for (int i = 0; i < sorts.length; i++) {
+            menu.getMenu().add(0, i, i, sortLabel(sorts[i])).setCheckable(true).setChecked(sorts[i] == mQuery.sort);
         }
+        menu.getMenu().setGroupCheckable(0, true, true);
+        menu.setOnMenuItemClickListener(item -> {
+            StructureListQuery.Sort s = sorts[item.getItemId()];
+            if (s != mQuery.sort) {
+                mQuery = mQuery.withSort(s);
+                updateSortLabel();
+                render();
+                mList.scrollToPosition(0);
+            }
+            return true;
+        });
+        menu.show();
+    }
+
+    private String sortLabel(StructureListQuery.Sort s) {
+        switch (s) {
+            case RESOURCES: return getString(R.string.structures_sort_resources);
+            case MEMBERS: return getString(R.string.structures_sort_members);
+            case RECENT: return getString(R.string.structures_sort_recent);
+            default: return getString(R.string.structures_sort_name);
+        }
+    }
+
+    private void updateSortLabel() {
+        String label = sortLabel(mQuery.sort);
+        mSortButton.setText(getString(R.string.structures_sort, label));
+        mSortButton.setContentDescription(getString(R.string.structures_sort, label));
+    }
+
+    /**
+     * Puces de filtre construites à partir des données : « Toutes », « Mes structures » (si
+     * l'utilisateur est membre d'au moins une structure) et les villes réellement renseignées
+     * (au moins deux villes différentes, sinon le filtre n'apporterait rien).
+     */
+    private void rebuildFilters() {
+        int mine = StructureListQuery.memberCount(mAll);
+        List<String> locations = StructureListQuery.locations(mAll);
+        String signature = mine + "|" + locations;
+        if (signature.equals(mFilterSignature) && mFilters.getChildCount() > 0) return;
+        mFilterSignature = signature;
+
+        // Filtre devenu impossible (ex. plus aucune adhésion) : retour à « Toutes ».
+        if (mQuery.onlyMine && mine == 0) mQuery = mQuery.withOnlyMine(false);
+        if (mQuery.location != null && !containsIgnoreCase(locations, mQuery.location)) mQuery = mQuery.withLocation(null);
+
+        mFilters.setOnCheckedChangeListener(null);
+        mFilters.removeAllViews();
+        addFilterChip(getString(R.string.structures_filter_all), null, false,
+                !mQuery.onlyMine && mQuery.location == null);
+        if (mine > 0) addFilterChip(getString(R.string.structures_filter_mine, mine), null, true, mQuery.onlyMine);
+        for (String l : locations) {
+            addFilterChip(l, l, false, mQuery.location != null && StructureText.fold(l).equals(StructureText.fold(mQuery.location)));
+        }
+        boolean useful = mine > 0 || !locations.isEmpty();
+        mFilters.setVisibility(useful ? View.VISIBLE : View.GONE);
+    }
+
+    private void addFilterChip(String label, String location, boolean mine, boolean checked) {
+        Chip chip = (Chip) LayoutInflater.from(requireContext()).inflate(R.layout.item_profile_chip, mFilters, false);
+        chip.setId(View.generateViewId());
+        chip.setText(label);
+        chip.setChecked(checked);
+        chip.setOnCheckedChangeListener((b, isChecked) -> {
+            if (!isChecked) return;
+            mQuery = mQuery.withOnlyMine(mine).withLocation(location);
+            render();
+        });
+        mFilters.addView(chip);
+    }
+
+    private static boolean containsIgnoreCase(List<String> values, String v) {
+        for (String s : values) if (StructureText.fold(s).equals(StructureText.fold(v))) return true;
         return false;
     }
 
-    // ==================== Cycle de vie ====================
+    private void resetFilters() {
+        mQuery = StructureListQuery.initial().withSort(mQuery.sort);
+        if (mSearch.getText().length() > 0) mSearch.setText("");
+        mFilterSignature = "";
+        rebuildFilters();
+        render();
+    }
+
+    private void hideKeyboard() {
+        if (mSearch == null || getContext() == null) return;
+        InputMethodManager imm = (InputMethodManager) requireContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) imm.hideSoftInputFromWindow(mSearch.getWindowToken(), 0);
+        mSearch.clearFocus();
+    }
+
+    // =================================================================== StructureCardAdapter.Listener
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        if (mShimmerAnimator != null) { mShimmerAnimator.cancel(); mShimmerAnimator = null; }
-        if (mArrowAnimator != null)   { mArrowAnimator.cancel();   mArrowAnimator = null;   }
+    public void onStructureClick(StructureInfo structure) {
+        hideKeyboard();
+        startActivity(StructureActivity.intentFor(requireContext(), structure));
+    }
+
+    @Override
+    public void onStateAction(StructureCardAdapter.State state) {
+        if (state == StructureCardAdapter.State.NO_RESULTS) {
+            resetFilters();
+        } else if (state == StructureCardAdapter.State.ERROR) {
+            mFailed = false;
+            render();
+            load(true);
+        }
     }
 }

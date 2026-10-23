@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Bouton secondaire (contour) de la fiche structure : Partager, Membre. -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android" android:color="?attr/colorControlHighlight">
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/elim_surface" />
+            <corners android:radius="20dp" />
+            <stroke android:width="1dp" android:color="@color/elim_outline" />
+        </shape>
+    </item>
+</ripple>

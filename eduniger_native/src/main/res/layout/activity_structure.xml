@@ -1,461 +1,152 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<!--
+    Fiche d'une structure (page de présentation d'organisation) : une seule liste défilante
+    = en-tête (identité, adhésion, À propos, chiffres, domaines, auteurs, outils de recherche)
+    + ressources paginées + pied (chargement / erreur / vide / fin).
+    Barre du haut fixe : transparente sur la bannière, puis surface + nom de la structure.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
+    android:background="@color/elim_background"
     tools:context=".controleur.activity.StructureActivity">
 
-    <!-- TOOLBAR -->
-    <RelativeLayout
-        android:id="@+id/include2"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp"
-        style="@style/background">
-
-        <ImageView
-            android:id="@+id/image_view_toolbar_book"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_centerVertical="true"
-            android:padding="8dp"
-            android:src="@drawable/vector_back"
-            android:tint="@color/text_primary"
-            android:contentDescription="@string/a11y_back" />
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
-
-            <ImageView
-                android:id="@+id/image_view_toolbar_shortcut"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:padding="8dp"
-                android:src="@drawable/shortcut"
-                android:tint="@color/text_primary"
-                android:contentDescription="@string/a11y_shortcut" />
-
-            <ImageView
-                android:id="@+id/image_view_toolbar_announcement"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:padding="8dp"
-                android:src="@drawable/vector_black3_off_subscribe"
-                android:tint="@color/text_primary"
-                android:contentDescription="@string/a11y_announcements" />
-
-            <ImageView
-                android:id="@+id/image_view_toolbar_research"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:padding="8dp"
-                android:src="@drawable/ic_research"
-                android:tint="@color/text_primary"
-                android:contentDescription="@string/a11y_search" />
-        </LinearLayout>
-    </RelativeLayout>
-
-    <!-- SKELETON LOADING -->
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/skeleton_loading_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/include2"
-        android:visibility="visible">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <!-- Banner -->
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="150dp"
-                android:layout_marginStart="15dp"
-                android:layout_marginEnd="15dp"
-                android:layout_marginTop="0dp"
-                android:background="@drawable/skeleton_shape" />
-
-            <!-- Profile row -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="20dp"
-                android:gravity="center_vertical">
-
-                <!-- Avatar -->
-                <View
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    android:background="@drawable/skeleton_shape_circle"
-                    android:layout_marginEnd="14dp" />
-
-                <!-- Nom + auteur + adhérents -->
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <View
-                        android:layout_width="140dp"
-                        android:layout_height="18dp"
-                        android:background="@drawable/skeleton_shape"
-                        android:layout_marginBottom="8dp" />
-
-                    <View
-                        android:layout_width="100dp"
-                        android:layout_height="12dp"
-                        android:background="@drawable/skeleton_shape"
-                        android:layout_marginBottom="8dp" />
-
-                    <View
-                        android:layout_width="200dp"
-                        android:layout_height="12dp"
-                        android:background="@drawable/skeleton_shape" />
-
-                </LinearLayout>
-            </LinearLayout>
-
-            <!-- Description -->
-            <View
-                android:layout_width="260dp"
-                android:layout_height="12dp"
-                android:background="@drawable/skeleton_shape"
-                android:layout_marginStart="20dp"
-                android:layout_marginBottom="20dp" />
-
-            <!-- Bouton adhérer -->
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="44dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="20dp"
-                android:background="@drawable/skeleton_shape" />
-
-            <!-- Section Livres header -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingStart="25dp"
-                android:paddingEnd="25dp"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp">
-                <View
-                    android:layout_width="80dp"
-                    android:layout_height="14dp"
-                    android:background="@drawable/skeleton_shape" />
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="1" />
-                <View
-                    android:layout_width="60dp"
-                    android:layout_height="14dp"
-                    android:background="@drawable/skeleton_shape" />
-            </LinearLayout>
-
-            <!-- Livres horizontaux -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingStart="10dp"
-                android:layout_marginBottom="20dp">
-                <include layout="@layout/item_skeleton_book"/>
-                <include layout="@layout/item_skeleton_book"/>
-                <include layout="@layout/item_skeleton_book"/>
-                <include layout="@layout/item_skeleton_book"/>
-            </LinearLayout>
-
-            <!-- Section Catégories header -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingStart="25dp"
-                android:paddingEnd="25dp"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp">
-                <View
-                    android:layout_width="100dp"
-                    android:layout_height="14dp"
-                    android:background="@drawable/skeleton_shape" />
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="1" />
-                <View
-                    android:layout_width="60dp"
-                    android:layout_height="14dp"
-                    android:background="@drawable/skeleton_shape" />
-            </LinearLayout>
-
-            <!-- Catégories -->
-            <include layout="@layout/item_skeleton_category"/>
-            <include layout="@layout/item_skeleton_category"/>
-            <include layout="@layout/item_skeleton_category"/>
-
-        </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
-
-    <!-- CONTENU PRINCIPAL -->
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh_structure"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/include2">
+        android:layout_height="match_parent">
 
-        <androidx.core.widget.NestedScrollView
-            android:id="@+id/nested_scroll_view_activity_structure"
-            android:visibility="gone"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view_structure_profile"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:id="@+id/image_view_structure_activity_welcome"
-                    android:layout_width="match_parent"
-                    android:layout_height="150dp"
-                    android:layout_marginStart="15dp"
-                    android:layout_marginEnd="15dp"
-                    android:importantForAccessibility="no"
-                    android:elevation="6dp" />
-
-                <RelativeLayout
-                    android:layout_marginStart="20dp"
-                    android:id="@+id/relative_layout_structure_activity_profile"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/image_view_structure_activity_welcome">
-
-                    <ImageView
-                        android:id="@+id/image_view_structure_activity_profile"
-                        android:layout_width="70dp"
-                        android:layout_height="70dp"
-                        android:layout_centerVertical="true"
-                        android:src="@drawable/user" />
-
-                    <LinearLayout
-                        android:layout_margin="10dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_toRightOf="@id/image_view_structure_activity_profile"
-                        android:layout_centerVertical="true"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/text_view_structure_activity_name"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="OpenLab"
-                            android:textStyle="bold"
-                            android:textSize="20sp" />
-
-                        <TextView
-                            android:id="@+id/text_view_activity_structure_author"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="\@elim" />
-
-                        <TextView
-                            android:id="@+id/image_view_activity_structure_number"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="1,48 M d'Adhérents ° 293 Livres" />
-                    </LinearLayout>
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/linear_layout_activity_structure_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginStart="20dp"
-                    android:layout_below="@id/relative_layout_structure_activity_profile">
-
-                    <TextView
-                        android:id="@+id/text_view_activity_structure_description"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Bienvenue sur l'struture OpenLab !" />
-
-                    <TextView
-                        android:id="@+id/text_view_activity_structure_more_desc"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textStyle="bold"
-                        android:paddingEnd="10dp"
-                        android:layout_toRightOf="@+id/text_view_activity_structure_description"
-                        android:text="...plus" />
-
-                    <TextView
-                        android:id="@+id/text_view_activity_structure_reduce_desc"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textStyle="bold"
-                        android:paddingTop="10dp"
-                        android:paddingEnd="10dp"
-                        android:visibility="gone"
-                        android:layout_below="@id/text_view_activity_structure_description"
-                        android:text="Réduire" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/relative_layout_activity_structure_btt"
-                    style="@style/wrap_content_all"
-                    android:layout_below="@+id/linear_layout_activity_structure_button"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="20dp">
-
-                    <ProgressBar
-                        android:id="@+id/progress_bar_register_connection"
-                        style="@style/progress_bar_connection" />
-
-                    <Button
-                        android:id="@+id/button_activity_structure_adherer"
-                        android:textAllCaps="false"
-                        android:gravity="center"
-                        android:paddingTop="-1dp"
-                        style="@style/button_adhere" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/relative_layout_activity_structure_more_book"
-                    android:layout_below="@id/relative_layout_activity_structure_btt"
-                    style="@style/match_wrap">
-
-                    <TextView
-                        style="@style/wrap_content_all"
-                        android:layout_marginStart="25dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:text="Livres"
-                        android:textStyle="bold"
-                        android:textSize="14sp" />
-
-                    <TextView
-                        android:id="@+id/text_view_activity_structure_more_books"
-                        style="@style/wrap_content_all"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginEnd="25dp"
-                        android:layout_marginBottom="10dp"
-                        android:text="Voir plus"
-                        android:layout_alignParentEnd="true"
-                        android:textColor="@color/purple_200"
-                        android:textStyle="bold"
-                        android:textSize="14sp" />
-                </RelativeLayout>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recycler_view_activity_structure_books"
-                    android:nestedScrollingEnabled="false"
-                    android:layout_margin="10dp"
-                    android:layout_below="@id/relative_layout_activity_structure_more_book"
-                    style="@style/match_parent_all" />
-
-                <RelativeLayout
-                    android:id="@+id/relative_layout_activity_structure_more_category"
-                    android:layout_below="@id/recycler_view_activity_structure_books"
-                    style="@style/match_wrap">
-
-                    <TextView
-                        style="@style/wrap_content_all"
-                        android:layout_marginStart="25dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:text="Catégories"
-                        android:textStyle="bold"
-                        android:textSize="14sp" />
-
-                    <TextView
-                        android:id="@+id/text_view_activity_structure_more_category"
-                        style="@style/wrap_content_all"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginEnd="25dp"
-                        android:layout_marginBottom="10dp"
-                        android:text="Voir plus"
-                        android:layout_alignParentEnd="true"
-                        android:textColor="@color/purple_200"
-                        android:textStyle="bold"
-                        android:textSize="14sp" />
-                </RelativeLayout>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recycler_view_activity_structure_category"
-                    android:nestedScrollingEnabled="false"
-                    android:layout_margin="10dp"
-                    android:layout_below="@id/relative_layout_activity_structure_more_category"
-                    style="@style/match_parent_all" />
-
-                <RelativeLayout
-                    android:id="@+id/relative_layout_activity_structure_author"
-                    android:layout_below="@id/recycler_view_activity_structure_category"
-                    android:visibility="gone"
-                    style="@style/match_wrap">
-
-                    <TextView
-                        style="@style/wrap_content_all"
-                        android:layout_marginStart="25dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:text="Les Auteurs"
-                        android:textStyle="bold"
-                        android:textSize="14sp" />
-
-                    <TextView
-                        android:id="@+id/text_view_activity_structure_more_author"
-                        style="@style/wrap_content_all"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginEnd="25dp"
-                        android:layout_marginBottom="10dp"
-                        android:text="Voir plus"
-                        android:layout_alignParentEnd="true"
-                        android:textColor="@color/purple_200"
-                        android:textStyle="bold"
-                        android:textSize="14sp" />
-                </RelativeLayout>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recycler_view_activity_structure_author"
-                    android:nestedScrollingEnabled="false"
-                    android:layout_margin="10dp"
-                    android:layout_below="@id/relative_layout_activity_structure_author"
-                    style="@style/match_parent_all" />
-
-            </RelativeLayout>
-        </androidx.core.widget.NestedScrollView>
-
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingBottom="32dp" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    <!-- NO CONNECTION — EN DERNIER = au-dessus de tout -->
-    <include
-        android:id="@+id/no_connection_container"
-        layout="@layout/item_no_connection"
+    <!-- Barre haute fixe -->
+    <LinearLayout
+        android:id="@+id/linear_layout_structure_top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp">
+
+        <ImageButton
+            android:id="@+id/image_button_structure_back"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:background="@drawable/bg_profile_scrim_circle"
+            android:contentDescription="@string/author_profile_back"
+            android:padding="10dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_profile_back"
+            android:tint="@color/elim_on_surface" />
+
+        <TextView
+            android:id="@+id/text_view_structure_top_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:alpha="0"
+            android:ellipsize="end"
+            android:importantForAccessibility="no"
+            android:maxLines="1"
+            android:textColor="@color/elim_on_surface"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            tools:alpha="1"
+            tools:text="Kit TD" />
+
+        <ImageButton
+            android:id="@+id/image_button_structure_announcements"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginEnd="6dp"
+            android:background="@drawable/bg_profile_scrim_circle"
+            android:contentDescription="@string/structure_announcements"
+            android:padding="11dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/vector_black3_off_subscribe"
+            android:tint="@color/elim_on_surface" />
+
+        <ImageButton
+            android:id="@+id/image_button_structure_share_top"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:background="@drawable/bg_profile_scrim_circle"
+            android:contentDescription="@string/author_profile_share"
+            android:padding="11dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_profile_share"
+            android:tint="@color/elim_on_surface" />
+    </LinearLayout>
+
+    <!-- Structure introuvable (identifiant invalide ou structure supprimée) -->
+    <LinearLayout
+        android:id="@+id/linear_layout_structure_not_found"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/include2"
-        android:visibility="gone" />
+        android:background="@color/elim_background"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="32dp"
+        android:visibility="gone">
 
-</RelativeLayout>
+        <FrameLayout
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:background="@drawable/bg_empty_state_icon">
+
+            <ImageView
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_gravity="center"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_structure_building"
+                android:tint="@color/elim_primary" />
+        </FrameLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:text="@string/structure_not_found_title"
+            android:textColor="@color/elim_on_surface"
+            android:textSize="19sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:lineSpacingExtra="3dp"
+            android:text="@string/structure_not_found_message"
+            android:textColor="@color/elim_on_surface_variant"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/text_view_structure_not_found_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/bg_profile_primary_button"
+            android:gravity="center"
+            android:minHeight="44dp"
+            android:paddingStart="28dp"
+            android:paddingEnd="28dp"
+            android:text="@string/author_profile_back"
+            android:textColor="@color/elim_on_primary"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+</FrameLayout>

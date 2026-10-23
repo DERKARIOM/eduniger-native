@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Carte d'une structure (onglet Structures) : logo (ou initiales), nom, statut d'adhésion réel,
+    localisation, présentation courte, chiffres réels. Toute la carte ouvre la fiche.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="@dimen/section_gutter"
+    android:paddingTop="6dp"
+    android:paddingEnd="@dimen/section_gutter"
+    android:paddingBottom="6dp">
+
+    <LinearLayout
+        android:id="@+id/linear_layout_structure_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_structure_card"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackground"
+        android:minHeight="88dp"
+        android:orientation="horizontal"
+        android:padding="14dp">
+
+        <!-- Logo : initiales sur fond bleu doux tant qu'aucun logo réel n'est chargé -->
+        <FrameLayout
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:background="@drawable/bg_structure_logo">
+
+            <TextView
+                android:id="@+id/text_view_structure_card_initials"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:importantForAccessibility="no"
+                android:maxLines="1"
+                android:textColor="@color/elim_on_primary_container"
+                android:textSize="19sp"
+                android:textStyle="bold"
+                tools:text="KT" />
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/image_view_structure_card_logo"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:importantForAccessibility="no"
+                android:scaleType="centerCrop"
+                android:visibility="gone"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.Elim.StructureLogo"
+                app:strokeColor="@color/elim_outline"
+                app:strokeWidth="1dp" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="14dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/text_view_structure_card_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    android:textColor="@color/elim_on_surface"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    tools:text="Kit TD" />
+
+                <TextView
+                    android:id="@+id/text_view_structure_card_badge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/bg_structure_badge"
+                    android:drawableStart="@drawable/ic_structure_check"
+                    android:drawablePadding="3dp"
+                    android:drawableTint="@color/elim_on_primary_container"
+                    android:gravity="center_vertical"
+                    android:paddingStart="7dp"
+                    android:paddingTop="2dp"
+                    android:paddingEnd="9dp"
+                    android:paddingBottom="2dp"
+                    android:text="@string/structure_badge_member"
+                    android:textColor="@color/elim_on_primary_container"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/text_view_structure_card_location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:drawableStart="@drawable/ic_structure_location"
+                android:drawablePadding="4dp"
+                android:drawableTint="@color/elim_on_surface_variant"
+                android:ellipsize="end"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:textColor="@color/elim_on_surface_variant"
+                android:textSize="13sp"
+                android:visibility="gone"
+                tools:text="Niamey, Niger"
+                tools:visibility="visible" />
+
+            <TextView
+                android:id="@+id/text_view_structure_card_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:ellipsize="end"
+                android:lineSpacingExtra="2dp"
+                android:maxLines="2"
+                android:textColor="@color/elim_on_surface"
+                android:textSize="13sp"
+                android:visibility="gone"
+                tools:text="Kit TD est une structure d'EduNiger dédiée aux candidats aux examens."
+                tools:visibility="visible" />
+
+            <TextView
+                android:id="@+id/text_view_structure_card_meta"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textColor="@color/elim_primary_text"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                tools:text="40 ressources · 12 membres" />
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="6dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_section_chevron"
+            android:tint="@color/elim_on_surface_variant" />
+    </LinearLayout>
+</FrameLayout>

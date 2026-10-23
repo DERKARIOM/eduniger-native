@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    En-tête de l'onglet Structures (premier élément de la liste, jamais recyclé) :
+    titre, présentation, recherche par nom ou ville, tri, filtres issus des données réelles.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingTop="8dp"
+    android:paddingBottom="6dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/section_gutter"
+        android:layout_marginEnd="@dimen/section_gutter"
+        android:accessibilityHeading="true"
+        android:text="@string/structures_title"
+        android:textColor="@color/elim_on_surface"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/section_gutter"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="@dimen/section_gutter"
+        android:lineSpacingExtra="2dp"
+        android:text="@string/structures_subtitle"
+        android:textColor="@color/elim_on_surface_variant"
+        android:textSize="14sp" />
+
+    <!-- Recherche (filtrage local, sans requête réseau) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/section_gutter"
+        android:layout_marginTop="14dp"
+        android:layout_marginEnd="@dimen/section_gutter"
+        android:background="@drawable/bg_profile_field"
+        android:gravity="center_vertical"
+        android:minHeight="48dp"
+        android:orientation="horizontal"
+        android:paddingStart="12dp"
+        android:paddingEnd="4dp">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_profile_search"
+            android:tint="@color/elim_on_surface_variant" />
+
+        <EditText
+            android:id="@+id/edit_text_structures_search"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_weight="1"
+            android:background="@null"
+            android:hint="@string/structures_search_hint"
+            android:imeOptions="actionSearch"
+            android:importantForAutofill="no"
+            android:inputType="text"
+            android:maxLength="80"
+            android:maxLines="1"
+            android:minHeight="48dp"
+            android:textColor="@color/elim_on_surface"
+            android:textColorHint="@color/elim_text_hint"
+            android:textSize="15sp" />
+
+        <ImageButton
+            android:id="@+id/image_button_structures_search_clear"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/author_profile_search_clear"
+            android:padding="12dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_profile_close"
+            android:tint="@color/elim_on_surface_variant"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <!-- Tri + filtres (Toutes / Mes structures / villes réellement renseignées) -->
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:clipToPadding="false"
+        android:paddingStart="@dimen/section_gutter"
+        android:paddingEnd="@dimen/section_gutter"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/text_view_structures_sort"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/bg_profile_field"
+                android:drawableStart="@drawable/ic_profile_sort"
+                android:drawablePadding="6dp"
+                android:drawableTint="@color/elim_on_surface"
+                android:foreground="?attr/selectableItemBackground"
+                android:gravity="center_vertical"
+                android:minHeight="40dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="14dp"
+                android:textColor="@color/elim_on_surface"
+                android:textSize="13sp"
+                tools:text="Trier : Nom A → Z" />
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chip_group_structures_filters"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:chipSpacingHorizontal="8dp"
+                app:selectionRequired="true"
+                app:singleLine="true"
+                app:singleSelection="true" />
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <TextView
+        android:id="@+id/text_view_structures_count"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/section_gutter"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="@dimen/section_gutter"
+        android:accessibilityLiveRegion="polite"
+        android:textColor="@color/elim_on_surface_variant"
+        android:textSize="13sp"
+        android:visibility="invisible"
+        tools:text="12 structures"
+        tools:visibility="visible" />
+</LinearLayout>

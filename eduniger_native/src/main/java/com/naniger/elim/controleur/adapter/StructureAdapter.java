@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +12,6 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,20 +24,14 @@ import com.naniger.elim.controleur.activity.AddBookActivity;
 import com.naniger.elim.controleur.activity.RegisterAuthorActivity;
 import com.naniger.elim.controleur.activity.StructureActivity;
 import com.naniger.elim.controleur.dialog.SimpleOkDialog;
-import com.naniger.elim.controleur.dialog.StructDeleteDialog;
-import com.naniger.elim.model.data.PasswordUtil;
 import com.naniger.elim.model.data.Server;
 import com.naniger.elim.model.data.Structure;
-import com.naniger.elim.model.table.Session;
 import com.squareup.picasso.Picasso;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import com.naniger.elim.model.net.ApiClient;
-import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
@@ -50,6 +41,8 @@ import org.json.JSONObject;
 
 
 public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyViewHolder> {
+    private static final java.util.concurrent.ExecutorService MEMBERSHIP =
+            java.util.concurrent.Executors.newSingleThreadExecutor();
     List<Structure> mStructures;
 
     public int getPosition() {
@@ -109,20 +102,21 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
         private final TextView mTitleTextView;
         private final TextView mBookNumberTextView;
         private final Button mAdhereButton;
-        private Session mSession;
         MyViewHolder(View itemView){
             super(itemView);
             mBlanketImageView = itemView.findViewById(R.id.image_view_adapter_structure_cover);
             mTitleTextView = itemView.findViewById(R.id.text_view_adapter_structure_title);
             mBookNumberTextView = itemView.findViewById(R.id.image_view_adapter_structure_book_number);
             mAdhereButton = itemView.findViewById(R.id.button_adapter_structure);
-            mSession = new Session(itemView.getContext());
             itemView.setOnCreateContextMenuListener(this);
         }
         @Override
         public void onCreateContextMenu(ContextMenu menu , View v , ContextMenu.ContextMenuInfo menuInfo){
         }
+        private Structure mStructureRef;
+
         void display(Structure structure){
+            mStructureRef = structure;
             switch (structure.getId())
             {
                 case "AddBook":
@@ -148,21 +142,33 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
                     // Ligne recyclée : pas d'animation héritée de la carte « Ajouter ».
                     mBlanketImageView.clearAnimation();
                     mBookNumberTextView.setText(structure.getBookNumber() + " Livres");
-                    Picasso.get()
-                            .load(Server.getUrlHostProd(itemView.getContext()) + "/api/public/resource/" + structure.getId() + "/logo/" + structure.getCover())
-                            .placeholder(R.drawable.img_wait_struct)
-                            .error(R.drawable.img_wait_struct)
-                            .fit()
-                            .centerCrop()
-                            .into(mBlanketImageView);
+                    // Logo réel seulement : la valeur par défaut « eduniger.svg » (illisible par
+                    // Picasso) ne déclenche plus une requête vouée à l'échec.
+                    String logoUrl = com.naniger.elim.model.structure.StructureText.logoUrl(
+                            Server.getUrlHostProd(itemView.getContext()), structure.getId(), structure.getCover());
+                    if (logoUrl == null) {
+                        Picasso.get().cancelRequest(mBlanketImageView);
+                        mBlanketImageView.setImageResource(R.drawable.img_wait_struct);
+                    } else {
+                        Picasso.get()
+                                .load(logoUrl)
+                                .placeholder(R.drawable.img_wait_struct)
+                                .error(R.drawable.img_wait_struct)
+                                .fit()
+                                .centerCrop()
+                                .into(mBlanketImageView);
+                    }
                     break;
             }
-            if(structure.isAdhere())
-            {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    mAdhereButton.setBackgroundTintList(ColorStateList.valueOf(itemView.getContext().getColor(R.color.black3)));
-                    mAdhereButton.setText("Détacher");
-                }
+            // État du bouton toujours recalculé : une ligne recyclée ne garde pas le libellé
+            // « Détacher » d'une autre structure (bug corrigé).
+            if (!isPseudoItem(structure)) {
+                applyAdhereState(Boolean.TRUE.equals(structure.isAdhere()));
+            } else {
+                mAdhereButton.setEnabled(true);
+                mAdhereButton.setAlpha(1f);
+                mAdhereButton.setBackgroundTintList(ColorStateList.valueOf(
+                        androidx.core.content.ContextCompat.getColor(itemView.getContext(), R.color.elim_primary)));
             }
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -201,18 +207,11 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
                     switch (structure.getId())
                     {
                         default:
-                            if (mAdhereButton.getText().toString().equals("Détacher"))
+                            if (mBusy) break;
+                            if (Boolean.TRUE.equals(structure.isAdhere()))
                                 structDelete(structure);
                             else
-                            {
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                    mAdhereButton.setBackgroundTintList(ColorStateList.valueOf(itemView.getContext().getColor(R.color.black3)));
-                                }
-                                mAdhereButton.setText("Détacher");
-                                structure.setAdhere(true);
-                                new StructMembershipSyn().execute(
-                                        Server.getUrlHostProd(itemView.getContext()) + "/api/structures/" + structure.getId() + "/join");
-                            }
+                                changeMembership(structure, true);
                             break;
                         case "AddBook","RegisterAuthor":
                             Intent registerAuthorIntent = new Intent(itemView.getContext(), AddBookActivity.class);
@@ -224,76 +223,102 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
                 }
             });
         }
-        private void structDelete(Structure structure){
-            StructDeleteDialog structDeleteDialog = new StructDeleteDialog((Activity) itemView.getContext());
-            TextView no = structDeleteDialog.findViewById(R.id.no);
-            TextView yes = structDeleteDialog.findViewById(R.id.yes);
-            EditText password = structDeleteDialog.findViewById(R.id.edit_text_dialog_struct_delete_password);
-            no.setOnClickListener(view -> structDeleteDialog.cancel());
+        private boolean mBusy;
 
-            yes.setOnClickListener(view -> {
-                String typed = password.getText().toString();
-                if (typed.isEmpty()) {
-                    structDeleteDialog.showError(R.string.struct_leave_err_empty);
-                    return;
-                }
-                if (!Objects.equals(PasswordUtil.hashPassword(typed), mSession.getPassword())) {
-                    structDeleteDialog.showError(R.string.struct_leave_err_wrong);
-                    return;
-                }
-                structDeleteDialog.cancel();
-                mAdhereButton.setBackgroundTintList(ColorStateList.valueOf(itemView.getContext().getColor(R.color.purple_200)));
-                mAdhereButton.setText("S'adhérer");
-                structure.setAdhere(false);
-                new StructMembershipSyn().execute(
-                        Server.getUrlHostProd(itemView.getContext()) + "/api/structures/" + structure.getId() + "/leave");
-            });
-            structDeleteDialog.build();
+        private boolean isPseudoItem(Structure structure) {
+            return "AddBook".equals(structure.getId()) || "RegisterAuthor".equals(structure.getId());
         }
+
+        /** Bouton selon l'état réel (couleurs du thème Elim, plus de couleurs codées en dur). */
+        private void applyAdhereState(boolean adhered) {
+            android.content.Context c = itemView.getContext();
+            mAdhereButton.setText(adhered ? "Détacher" : "S'adhérer");
+            mAdhereButton.setBackgroundTintList(ColorStateList.valueOf(androidx.core.content.ContextCompat.getColor(c,
+                    adhered ? R.color.elim_on_surface_variant : R.color.elim_primary)));
+            mAdhereButton.setEnabled(!mBusy);
+            mAdhereButton.setAlpha(mBusy ? 0.6f : 1f);
+        }
+
         /**
-         * Adhesion et retrait de structure (libre-service), via les nouveaux
-         * endpoints Laravel /api/structures/{id}/join et /leave (idUser vient
-         * du token Sanctum cote serveur). Remplace les anciens DetachStructSyn/
-         * AdhererStructSyn qui appelaient adherer_struct.php et detach_struct.php
-         * (backend legacy incompatible avec les tokens Sanctum -> "Token invalide."
-         * systematique, echouant silencieusement puisque ces classes ignoraient
-         * toute reponse autre que "true"/"RAS").
+         * Confirmation simple avant de quitter. L'ancienne version exigeait le mot de passe,
+         * comparé à une empreinte locale : aucun contrôle réel (l'API autorise via le jeton) et
+         * impossible pour les comptes Google, qui n'ont pas de mot de passe local.
          */
-        private class StructMembershipSyn extends AsyncTask<String, Void, String> {
-            @Override
-            protected String doInBackground(String... params) {
+        private void structDelete(Structure structure){
+            android.content.Context c = itemView.getContext();
+            new androidx.appcompat.app.AlertDialog.Builder(c)
+                    .setTitle(c.getString(R.string.structure_leave_dialog_title, structure.getName()))
+                    .setMessage(R.string.structure_leave_dialog_message)
+                    .setNegativeButton(R.string.struct_leave_cancel, null)
+                    .setPositiveButton(R.string.structure_leave_dialog_confirm, (d, w) -> changeMembership(structure, false))
+                    .show();
+        }
+
+        /**
+         * Adhésion / retrait via /api/structures/{id}/join|leave (idUser pris du jeton côté
+         * serveur). L'état n'est changé qu'après la réponse : en cas d'échec, le bouton reste
+         * juste et un message l'explique (avant : changement affiché même en cas d'échec, et
+         * Toast lancé hors du fil principal en cas d'erreur réseau → plantage).
+         */
+        private void changeMembership(Structure structure, boolean join) {
+            mBusy = true;
+            applyAdhereState(Boolean.TRUE.equals(structure.isAdhere()));
+            android.content.Context app = itemView.getContext().getApplicationContext();
+            String url = Server.getUrlHostProd(app) + "/api/structures/" + structure.getId() + (join ? "/join" : "/leave");
+            android.os.Handler main = new android.os.Handler(android.os.Looper.getMainLooper());
+            MEMBERSHIP.execute(() -> {
+                int code;
+                String message = null;
                 try {
-                    OkHttpClient client = ApiClient.getInstance(itemView.getContext());
-                    RequestBody requestBody = RequestBody.create(new byte[0], null);
-                    Request request = new Request.Builder()
-                            .url(params[0])
-                            .post(requestBody)
-                            .build();
-                    try {
-                        Response response = client.newCall(request).execute();
-                        return response.body() != null ? response.body().string() : null;
-                    } catch (IOException e) {
-                        Toast.makeText(itemView.getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Request request = new Request.Builder().url(url)
+                            .post(RequestBody.create(new byte[0], null))
+                            .header("Accept", "application/json").build();
+                    try (Response response = ApiClient.getInstance(app).newCall(request).execute()) {
+                        code = response.code();
+                        String body = response.body() != null ? response.body().string() : null;
+                        if (body != null) {
+                            try {
+                                message = new JSONObject(body).optString("message", null);
+                            } catch (JSONException ignored) {
+                                // réponse non JSON
+                            }
+                        }
                     }
                 } catch (Exception e) {
-                    return null;
+                    Log.w("StructureAdapter", "Adhésion : échec réseau", e);
+                    code = -1;
                 }
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(String jsonData) {
-                if (jsonData == null) return;
-                try {
-                    String message = new JSONObject(jsonData).optString("message", "");
-                    if (!message.isEmpty()) {
-                        Toast.makeText(itemView.getContext(), message, Toast.LENGTH_SHORT).show();
+                final int status = code;
+                final String serverMessage = message;
+                main.post(() -> {
+                    mBusy = false;
+                    boolean nowMember;
+                    if (join && (status == 200 || status == 201 || status == 409)) nowMember = true;
+                    else if (!join && (status == 200 || (status == 404 && serverMessage != null && serverMessage.contains("membre")))) nowMember = false;
+                    else {
+                        nowMember = Boolean.TRUE.equals(structure.isAdhere());
+                        Toast.makeText(app, status == 401 ? R.string.structure_membership_session
+                                : R.string.structure_membership_error, Toast.LENGTH_LONG).show();
                     }
-                } catch (JSONException e) {
-                    Log.e("StructureAdapter", "Error parsing structure membership response", e);
-                }
-            }
+                    boolean changed = nowMember != Boolean.TRUE.equals(structure.isAdhere());
+                    structure.setAdhere(nowMember);
+                    if (changed) {
+                        Toast.makeText(app, nowMember
+                                ? app.getString(R.string.structure_join_success, structure.getName())
+                                : app.getString(R.string.structure_leave_success, structure.getName()), Toast.LENGTH_SHORT).show();
+                        // Liste et fiche à relire avec le nouvel état.
+                        String host = Server.getUrlHostProd(app);
+                        com.naniger.elim.model.cache.ApiCache.invalidate(app, host + "/api/structures");
+                        com.naniger.elim.model.cache.ApiCache.invalidate(app, host + "/api/structures/" + structure.getId());
+                    }
+                    // La ligne a pu être recyclée pour une autre structure entre-temps.
+                    if (getAdapterPosition() != RecyclerView.NO_POSITION && mStructureRef == structure) {
+                        applyAdhereState(nowMember);
+                    }
+                });
+            });
         }
+
         private void simpleOkDialog(int ico , String title , String message){
             SimpleOkDialog simpleOkDialog = new SimpleOkDialog((Activity) itemView.getContext());
             simpleOkDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));

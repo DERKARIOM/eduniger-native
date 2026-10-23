@@ -501,4 +501,77 @@
     <string name="author_profile_offline_empty">Pas de connexion : ce profil n\'a jamais été consulté et n\'est pas disponible hors ligne.</string>
     <string name="author_not_found_title">Auteur introuvable</string>
     <string name="author_not_found_message">Ce profil n\'existe pas ou n\'est plus disponible dans Elim.</string>
+    <!-- ===================== Structures (liste et fiche) ===================== -->
+    <string name="structures_title">Structures</string>
+    <string name="structures_subtitle">Écoles, universités, bibliothèques et organisations qui partagent leurs ressources sur Elim</string>
+    <string name="structures_search_hint">Rechercher par nom ou par ville</string>
+    <string name="structures_filter_all">Toutes</string>
+    <string name="structures_filter_mine">Mes structures · %1$d</string>
+    <string name="structures_sort">Trier : %1$s</string>
+    <string name="structures_sort_name">Nom A → Z</string>
+    <string name="structures_sort_resources">Plus de ressources</string>
+    <string name="structures_sort_members">Plus de membres</string>
+    <string name="structures_sort_recent">Plus récentes</string>
+    <plurals name="structures_count">
+        <item quantity="one">%1$d structure</item>
+        <item quantity="other">%1$d structures</item>
+    </plurals>
+    <plurals name="structure_resources">
+        <item quantity="one">%1$d ressource</item>
+        <item quantity="other">%1$d ressources</item>
+    </plurals>
+    <plurals name="structure_members">
+        <item quantity="one">%1$d membre</item>
+        <item quantity="other">%1$d membres</item>
+    </plurals>
+    <string name="structure_no_resource">Aucune ressource pour le moment</string>
+    <string name="structure_badge_member">Membre</string>
+    <string name="structure_badge_admin">Administrateur</string>
+    <string name="structures_empty_title">Aucune structure pour le moment</string>
+    <string name="structures_empty_message">Les structures référencées dans Elim apparaîtront ici.</string>
+    <string name="structures_no_results_title">Aucune structure trouvée</string>
+    <string name="structures_no_results_message">Essayez un autre nom ou une autre ville.</string>
+    <string name="structures_error_title">Impossible de charger les structures</string>
+    <string name="structures_error_message">Vérifiez votre connexion internet puis réessayez.</string>
+    <string name="structure_card_a11y_open">Ouvrir la fiche de %1$s</string>
+    <string name="structure_logo_a11y">Logo de %1$s</string>
+
+    <string name="structure_share_chooser">Partager la structure</string>
+    <string name="structure_shortcut">Ajouter un raccourci sur l\'écran d\'accueil</string>
+    <string name="structure_shortcut_done">Raccourci demandé à votre écran d\'accueil</string>
+    <string name="structure_shortcut_unsupported">Votre écran d\'accueil ne permet pas d\'ajouter ce raccourci</string>
+    <string name="structure_announcements">Notifications</string>
+    <string name="structure_join">Adhérer</string>
+    <string name="structure_joined">Membre</string>
+    <string name="structure_join_a11y">Adhérer à %1$s</string>
+    <string name="structure_joined_a11y">Vous êtes membre de %1$s. Toucher pour quitter la structure.</string>
+    <string name="structure_join_in_progress">Patientez…</string>
+    <string name="structure_join_success">Bienvenue ! Vous êtes maintenant membre de %1$s.</string>
+    <string name="structure_leave_success">Vous avez quitté %1$s.</string>
+    <string name="structure_membership_error">L\'opération n\'a pas abouti. Vérifiez votre connexion puis réessayez.</string>
+    <string name="structure_membership_session">Votre session a expiré. Reconnectez-vous pour gérer vos adhésions.</string>
+    <string name="structure_leave_dialog_title">Quitter %1$s ?</string>
+    <string name="structure_leave_dialog_message">Vous ne serez plus membre de cette structure. Ses ressources resteront consultables et vous pourrez adhérer de nouveau à tout moment.</string>
+    <string name="structure_leave_dialog_confirm">Quitter</string>
+    <string name="structure_add_book">Ajouter un livre</string>
+    <string name="structure_since">Sur Elim depuis %1$s</string>
+    <string name="structure_about_empty">Aucune présentation n\'a encore été renseignée pour cette structure.</string>
+    <string name="structure_info_location">Localisation</string>
+    <string name="structure_stat_resources">Ressources</string>
+    <string name="structure_stat_members">Membres</string>
+    <string name="structure_domains_hint">Touchez un domaine pour filtrer les ressources</string>
+    <string name="structure_authors">Auteurs publiés</string>
+    <string name="structure_authors_subtitle">Ils ont des ressources dans cette structure</string>
+    <string name="structure_resources">Ressources</string>
+    <string name="structure_resources_search_hint">Rechercher une ressource</string>
+    <string name="structure_resources_empty_title">Aucune ressource pour le moment</string>
+    <string name="structure_resources_empty_message">%1$s n\'a pas encore publié de ressource dans Elim.</string>
+    <string name="structure_offline">Hors ligne : fiche enregistrée lors de votre dernière visite.</string>
+    <string name="structure_offline_empty">Pas de connexion : cette structure n\'a jamais été consultée et n\'est pas disponible hors ligne.</string>
+    <string name="structure_error">La fiche n\'a pas pu être chargée entièrement.</string>
+    <string name="structure_not_found_title">Structure introuvable</string>
+    <string name="structure_not_found_message">Cette structure n\'existe pas ou n\'est plus disponible dans Elim.</string>
+    <string name="structure_resources_error">Impossible de charger les ressources.</string>
+    <string name="structure_resources_end">Vous avez parcouru toutes les ressources</string>
+    <string name="structure_more_actions">Plus d\'actions</string>
 </resources>

@@ -45,6 +45,8 @@ public final class ApiCache {
     public static final long TTL_CATEGORIES = 30 * 60_000L;
     /** Profil d'auteur, sa bibliographie et ses auteurs similaires. */
     public static final long TTL_AUTHOR_PROFILE = 10 * 60_000L;
+    /** Fiche d'une structure et ses ressources. */
+    public static final long TTL_STRUCTURE_PROFILE = 10 * 60_000L;
 
     private static final long MAX_DISK_BYTES = 5L * 1024 * 1024;
     private static final int MAX_MEMORY_CHARS = 1_000_000;
@@ -109,6 +111,18 @@ public final class ApiCache {
     public static void loadObject(Context context, String url, long ttlMs, boolean forceRefresh,
                                   CachedLoader.Callback callback) {
         get(context).load(url, url, ttlMs, forceRefresh, JSON_OBJECT, callback);
+    }
+
+    /**
+     * Retire une réponse du cache (ex. après une adhésion : la liste des structures et la fiche
+     * doivent être relues au lieu d'afficher l'ancien statut).
+     */
+    public static void invalidate(Context context, String url) {
+        try {
+            get(context).store().remove(url);
+        } catch (Exception e) {
+            Log.w(TAG, "Invalidation impossible : " + e.getMessage());
+        }
     }
 
     /** À appeler à la déconnexion : aucune donnée du compte ne doit rester pour le suivant. */

@@ -37,14 +37,23 @@ public final class BibliographyQuery {
         }
     }
 
+    /** Identifiant du propriétaire de la liste : auteur, ou structure (voir {@link #ownerParam}). */
     public final String authorId;
+    /** Paramètre API du propriétaire : {@code authorId} (profil d'auteur) ou {@code structureId}. */
+    public final String ownerParam;
     public final String search;
     public final Sort sort;
     public final Format format;
     public final Integer categoryId;
 
     public BibliographyQuery(String authorId, String search, Sort sort, Format format, Integer categoryId) {
-        this.authorId = authorId;
+        this("authorId", authorId, search, sort, format, categoryId);
+    }
+
+    private BibliographyQuery(String ownerParam, String ownerId, String search, Sort sort, Format format,
+                              Integer categoryId) {
+        this.ownerParam = ownerParam;
+        this.authorId = ownerId;
         this.search = search == null ? "" : search.trim();
         this.sort = sort == null ? Sort.RECENT : sort;
         this.format = format;
@@ -55,20 +64,25 @@ public final class BibliographyQuery {
         return new BibliographyQuery(authorId, "", Sort.RECENT, null, null);
     }
 
+    /** Ressources d'une structure (même endpoint, filtre {@code structureId}). */
+    public static BibliographyQuery forStructure(String structureId) {
+        return new BibliographyQuery("structureId", structureId, "", Sort.RECENT, null, null);
+    }
+
     public BibliographyQuery withSearch(String s) {
-        return new BibliographyQuery(authorId, s, sort, format, categoryId);
+        return new BibliographyQuery(ownerParam, authorId, s, sort, format, categoryId);
     }
 
     public BibliographyQuery withSort(Sort s) {
-        return new BibliographyQuery(authorId, search, s, format, categoryId);
+        return new BibliographyQuery(ownerParam, authorId, search, s, format, categoryId);
     }
 
     public BibliographyQuery withFormat(Format f) {
-        return new BibliographyQuery(authorId, search, sort, f, categoryId);
+        return new BibliographyQuery(ownerParam, authorId, search, sort, f, categoryId);
     }
 
     public BibliographyQuery withCategory(Integer c) {
-        return new BibliographyQuery(authorId, search, sort, format, c);
+        return new BibliographyQuery(ownerParam, authorId, search, sort, format, c);
     }
 
     /** Un filtre réduit-il la liste (recherche, format ou catégorie) ? Le tri n'en est pas un. */
@@ -90,7 +104,7 @@ public final class BibliographyQuery {
     /** URL complète d'une page (1…n). */
     public String pageUrl(String host, int page) {
         StringBuilder sb = new StringBuilder(trimSlash(host))
-                .append("/api/book/associations?authorId=").append(enc(authorId.trim()))
+                .append("/api/book/associations?").append(ownerParam).append('=').append(enc(authorId.trim()))
                 .append("&published=1")
                 .append("&page=").append(Math.max(1, page))
                 .append("&limit=").append(PAGE_SIZE)

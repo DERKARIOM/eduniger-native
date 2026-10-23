@@ -17,4 +17,8 @@ public final class Publication {
     public boolean isPhysical;
     public String pages;
     public String addedAt;
+    /** « Prénom Nom » de l'auteur (affiché dans les ressources d'une structure). */
+    public String authorName;
+    /** Identifiants de toutes les structures du livre. */
+    public final List<String> structureIds = new ArrayList<>();
 }

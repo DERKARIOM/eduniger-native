@@ -53,6 +53,10 @@ public class AuthorProfileAdapter extends RecyclerView.Adapter<RecyclerView.View
     private final List<Publication> mItems = new ArrayList<>();
     private Footer mFooter = Footer.LOADING_FIRST;
     private String mEmptyMessage;
+    private String mEmptyTitle;
+    private String mErrorText;
+    private String mEndText;
+    private boolean mShowAuthor;
 
     public AuthorProfileAdapter(View header, Listener listener) {
         mHeader = header;
@@ -85,6 +89,17 @@ public class AuthorProfileAdapter extends RecyclerView.Adapter<RecyclerView.View
         mFooter = footer;
         mEmptyMessage = emptyMessage;
         notifyItemChanged(getItemCount() - 1);
+    }
+
+    /**
+     * Réutilisation pour les ressources d'une structure : nom de l'auteur affiché sur chaque
+     * ligne et titre d'état vide adapté.
+     */
+    public void configureForStructure(String emptyTitle, String errorText, String endText) {
+        mShowAuthor = true;
+        mEmptyTitle = emptyTitle;
+        mErrorText = errorText;
+        mEndText = endText;
     }
 
     public int publicationCount() {
@@ -168,6 +183,9 @@ public class AuthorProfileAdapter extends RecyclerView.Adapter<RecyclerView.View
             title.setText(t);
 
             String cats = ProfileText.join(p.categories, " · ");
+            if (mShowAuthor && p.authorName != null) {
+                cats = cats.isEmpty() ? p.authorName : p.authorName + " · " + cats;
+            }
             category.setText(cats);
             category.setVisibility(cats.isEmpty() ? View.GONE : View.VISIBLE);
 
@@ -218,7 +236,7 @@ public class AuthorProfileAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     final class FooterHolder extends RecyclerView.ViewHolder {
         final View skeleton, progress, error, empty, reset;
-        final TextView end, emptyTitle, emptyMessage;
+        final TextView end, emptyTitle, emptyMessage, errorText;
 
         FooterHolder(View v) {
             super(v);
@@ -230,6 +248,9 @@ public class AuthorProfileAdapter extends RecyclerView.Adapter<RecyclerView.View
             end = v.findViewById(R.id.text_view_author_footer_end);
             emptyTitle = v.findViewById(R.id.text_view_author_footer_empty_title);
             emptyMessage = v.findViewById(R.id.text_view_author_footer_empty_message);
+            errorText = v.findViewById(R.id.text_view_author_footer_error);
+            if (mErrorText != null) errorText.setText(mErrorText);
+            if (mEndText != null) end.setText(mEndText);
             v.findViewById(R.id.text_view_author_footer_retry).setOnClickListener(x -> mListener.onRetry());
             reset.setOnClickListener(x -> mListener.onResetFilters());
         }
@@ -243,7 +264,8 @@ public class AuthorProfileAdapter extends RecyclerView.Adapter<RecyclerView.View
             boolean isEmpty = mFooter == Footer.EMPTY || mFooter == Footer.NO_RESULTS;
             empty.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
             if (mFooter == Footer.EMPTY) {
-                emptyTitle.setText(R.string.author_no_books_title);
+                if (mEmptyTitle != null) emptyTitle.setText(mEmptyTitle);
+                else emptyTitle.setText(R.string.author_no_books_title);
                 emptyMessage.setText(mEmptyMessage != null ? mEmptyMessage : c.getString(R.string.author_no_books_message));
                 reset.setVisibility(View.GONE);
             } else if (mFooter == Footer.NO_RESULTS) {
