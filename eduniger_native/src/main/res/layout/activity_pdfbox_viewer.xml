@@ -193,6 +193,74 @@
         tools:alpha="1"
         tools:text="12 / 240" />
 
+    <!-- ===== Reprise de lecture : « Page 132 / 450 · 29 % » + « Début » ===== -->
+    <LinearLayout
+        android:id="@+id/reader_resume_banner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="88dp"
+        android:background="@drawable/bg_reader_banner"
+        android:elevation="6dp"
+        android:gravity="center_vertical"
+        android:minHeight="56dp"
+        android:orientation="horizontal"
+        android:paddingStart="14dp"
+        android:paddingEnd="4dp"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <ImageView
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_reader_bookmark"
+            android:tint="@color/elim_primary" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp">
+
+            <TextView
+                android:id="@+id/reader_resume_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/elim_on_surface"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                tools:text="Reprise à la page 132 / 450" />
+
+            <TextView
+                android:id="@+id/reader_resume_subtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textColor="@color/elim_on_surface_variant"
+                android:textSize="12.5sp"
+                tools:text="29 % lu · hier" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/reader_resume_restart"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:gravity="center"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:text="@string/reader_resume_restart"
+            android:textColor="@color/elim_primary"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
     <!-- ===== Chargement ===== -->
     <LinearLayout
         android:id="@+id/reader_loading"

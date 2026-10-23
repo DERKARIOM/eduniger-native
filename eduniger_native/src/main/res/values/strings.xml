@@ -425,7 +425,12 @@
     <string name="reader_close">Fermer</string>
     <string name="reader_page_of">Page %1$d / %2$d</string>
     <string name="reader_page_chip">%1$d / %2$d</string>
-    <string name="reader_resume">Reprise à la page %1$d</string>
+    <string name="reader_resume">Reprise à la page %1$d / %2$d</string>
+    <string name="reader_resume_percent">%1$d %% lu</string>
+    <string name="reader_resume_percent_when">%1$d %% lu · %2$s</string>
+    <string name="reader_resume_restart">Début</string>
+    <string name="reader_progress">Page %1$d / %2$d · %3$d %%</string>
+    <string name="account_continue_reading">Continuer la lecture</string>
     <string name="reader_invert">Couleurs inversées (lecture de nuit)</string>
     <string name="reader_fit_width">Revenir à la largeur de page</string>
     <string name="reader_first_page">Revenir au début</string>

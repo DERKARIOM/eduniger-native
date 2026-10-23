@@ -44,6 +44,7 @@ import com.naniger.elim.controleur.activity.SuggestionActivity;
 import com.naniger.elim.controleur.activity.ThemeActivity;
 import com.naniger.elim.controleur.adapter.ContinueListeningAdapter;
 import com.naniger.elim.controleur.animation.RoundedTransformation;
+import com.naniger.elim.controleur.pdf.ReadingPositionStore;
 import com.naniger.elim.model.data.ContinueItem;
 import com.naniger.elim.model.data.PlaybackRepository;
 import com.naniger.elim.model.data.Server;
@@ -122,6 +123,10 @@ public class LibraryFragment extends Fragment {
     private ImageView mRecentCoverImageView;
     private TextView mRecentTitleTextView;
     private TextView mRecentMetaTextView;
+    private TextView mRecentSectionTitleTextView;
+    private View mRecentProgressContainer;
+    private android.widget.ProgressBar mRecentProgressBar;
+    private TextView mRecentProgressTextView;
 
     // Section « Reprendre l'écoute » (déplacée depuis l'accueil)
     private View mContinueSection;
@@ -205,6 +210,10 @@ public class LibraryFragment extends Fragment {
         mRecentCoverImageView = view.findViewById(R.id.image_view_fragment_library_recent_cover);
         mRecentTitleTextView = view.findViewById(R.id.text_view_fragment_library_recent_title);
         mRecentMetaTextView = view.findViewById(R.id.text_view_fragment_library_recent_meta);
+        mRecentSectionTitleTextView = view.findViewById(R.id.text_view_fragment_library_recent_section_title);
+        mRecentProgressContainer = view.findViewById(R.id.linear_layout_fragment_library_recent_progress);
+        mRecentProgressBar = view.findViewById(R.id.progress_bar_fragment_library_recent_progress);
+        mRecentProgressTextView = view.findViewById(R.id.text_view_fragment_library_recent_progress);
 
         mContinueSection = view.findViewById(R.id.layout_fragment_library_continue_section);
         mContinueRecyclerView = view.findViewById(R.id.recycler_view_fragment_library_continue);
@@ -481,6 +490,9 @@ public class LibraryFragment extends Fragment {
                                       String idNumber) {
         long usedBytes = 0;
         mRecentBook = null;
+        RecentBook lastDownloaded = null;
+        RecentBook lastRead = null;
+        ReadingPositionStore positions = new ReadingPositionStore(requireContext());
 
         // Colonnes Electronic : 2 idBook, 5 couverture, 6 fichier PDF, 8 titre,
         // 11 dateDownload, 12 statut, 13 taille. Triées par date décroissante.
@@ -501,9 +513,18 @@ public class LibraryFragment extends Fragment {
                     }
                     usedBytes += Math.max(size, 0);
 
-                    if (mRecentBook == null) {
-                        mRecentBook = new RecentBook(cursor.getString(2), cursor.getString(8),
-                                cursor.getString(5), pdfPath, cursor.getString(11), size);
+                    // Carte : le livre lu le plus récemment (« Continuer la lecture »),
+                    // à défaut le dernier téléchargé.
+                    ReadingPositionStore.Position position = positions.get(pdfPath);
+                    boolean readable = position != null && position.pageCount > 0
+                            && new File(pdfPath).exists();
+                    if (lastDownloaded == null || (readable
+                            && (lastRead == null || position.updatedAt > lastRead.position.updatedAt))) {
+                        RecentBook book = new RecentBook(cursor.getString(2), cursor.getString(8),
+                                cursor.getString(5), pdfPath, cursor.getString(11), size,
+                                readable ? position : null);
+                        if (lastDownloaded == null) lastDownloaded = book;
+                        if (readable) lastRead = book;
                     }
                 } while (cursor.moveToNext());
             }
@@ -529,15 +550,33 @@ public class LibraryFragment extends Fragment {
             if (audioCursor != null) audioCursor.close();
         }
 
+        mRecentBook = lastRead != null ? lastRead : lastDownloaded;
         bindRecentBook();
         return usedBytes;
     }
 
     private void bindRecentBook() {
         if (mRecentBook == null) {
+            mRecentSectionTitleTextView.setText(R.string.account_recent_title);
             mRecentCard.setVisibility(View.GONE);
             mRecentEmptyTextView.setVisibility(View.VISIBLE);
             return;
+        }
+        ReadingPositionStore.Position position = mRecentBook.position;
+        if (position != null) {
+            int percent = Math.max(0, position.percent());
+            mRecentSectionTitleTextView.setText(R.string.account_continue_reading);
+            mRecentProgressContainer.setVisibility(View.VISIBLE);
+            mRecentProgressBar.setProgress(percent);
+            String progress = getString(R.string.reader_progress,
+                    position.page + 1, position.pageCount, percent);
+            mRecentProgressTextView.setText(progress);
+            mRecentCard.setContentDescription(getString(R.string.account_continue_reading)
+                    + ", " + mRecentBook.title + ", " + progress);
+        } else {
+            mRecentSectionTitleTextView.setText(R.string.account_recent_title);
+            mRecentProgressContainer.setVisibility(View.GONE);
+            mRecentCard.setContentDescription(mRecentBook.title);
         }
         mRecentEmptyTextView.setVisibility(View.GONE);
         mRecentCard.setVisibility(View.VISIBLE);
@@ -659,7 +698,7 @@ public class LibraryFragment extends Fragment {
         }
     }
 
-    /** Dernier téléchargement affiché dans la carte « Téléchargements récents ». */
+    /** Livre de la carte : dernier lu (« Continuer la lecture ») ou dernier téléchargé. */
     private static final class RecentBook {
         final String idBook;
         final String title;
@@ -667,9 +706,13 @@ public class LibraryFragment extends Fragment {
         final String pdfPath;
         final String downloadDate;
         final long sizeBytes;
+        /** Position de lecture mémorisée par le lecteur PDF, ou null si jamais ouvert. */
+        @Nullable final ReadingPositionStore.Position position;
 
         RecentBook(String idBook, String title, String coverPath, String pdfPath,
-                   String downloadDate, long sizeBytes) {
+                   String downloadDate, long sizeBytes,
+                   @Nullable ReadingPositionStore.Position position) {
+            this.position = position;
             this.idBook = idBook;
             this.title = title;
             this.coverPath = coverPath;

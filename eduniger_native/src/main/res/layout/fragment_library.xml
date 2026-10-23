@@ -226,6 +226,7 @@
                 android:orientation="horizontal">
 
                 <TextView
+                    android:id="@+id/text_view_fragment_library_recent_section_title"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -315,6 +316,37 @@
                             android:textColor="@color/account_text_muted"
                             android:textSize="12sp"
                             tools:text="1,2 Mo · 5 oct. 2026" />
+                    </LinearLayout>
+
+                    <!-- Progression de lecture (affichée si le livre a déjà été ouvert) -->
+                    <LinearLayout
+                        android:id="@+id/linear_layout_fragment_library_recent_progress"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:orientation="vertical"
+                        android:visibility="gone"
+                        tools:visibility="visible">
+
+                        <ProgressBar
+                            android:id="@+id/progress_bar_fragment_library_recent_progress"
+                            style="?android:attr/progressBarStyleHorizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="6dp"
+                            android:importantForAccessibility="no"
+                            android:max="100"
+                            android:progressDrawable="@drawable/bg_reading_progress"
+                            tools:progress="29" />
+
+                        <TextView
+                            android:id="@+id/text_view_fragment_library_recent_progress"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:textColor="@color/account_accent"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            tools:text="Page 132 / 450 · 29 %" />
                     </LinearLayout>
 
                 </LinearLayout>

@@ -2,6 +2,7 @@ package com.naniger.elim.controleur.pdf;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -78,5 +79,32 @@ public class PageGeometryTest {
         assertEquals(-1, PageGeometry.parsePageInput("", 10));
         assertEquals(-1, PageGeometry.parsePageInput(null, 10));
         assertEquals(-1, PageGeometry.parsePageInput("99999999999", 10));
+    }
+
+    @Test
+    public void readingPercent_pagesLuesEtPartDeLaPage() {
+        assertEquals(0, PageGeometry.readingPercent(0, 0f, 450));
+        assertEquals(29, PageGeometry.readingPercent(131, 0f, 450));   // page 132 / 450
+        assertEquals(50, PageGeometry.readingPercent(1, 0.5f, 3));
+        assertEquals(100, PageGeometry.readingPercent(9, 1f, 10));
+        assertEquals(100, PageGeometry.readingPercent(50, 3f, 10));    // bornes
+        assertEquals(-1, PageGeometry.readingPercent(3, 0f, 0));       // inconnu
+    }
+
+    @Test
+    public void resumePage_resteDansLeDocument() {
+        assertEquals(131, PageGeometry.resumePage(131, 450));
+        assertEquals(0, PageGeometry.resumePage(0, 450));
+        assertEquals(0, PageGeometry.resumePage(-4, 450));
+        assertEquals(99, PageGeometry.resumePage(300, 100));  // fichier remplacé, plus court
+        assertEquals(0, PageGeometry.resumePage(5, 0));
+    }
+
+    @Test
+    public void worthResuming_seulementSiOnAAvance() {
+        assertFalse(PageGeometry.worthResuming(0, 0f));
+        assertFalse(PageGeometry.worthResuming(0, 0.1f));
+        assertTrue(PageGeometry.worthResuming(0, 0.6f));
+        assertTrue(PageGeometry.worthResuming(12, 0f));
     }
 }
