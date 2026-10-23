@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Structure / « Ajouter un contenu » : logo rond de la même taille que les
+<!-- Structure / « Ajouter un contenu » : logo (carré légèrement arrondi ; pastille ronde pour
+     « Ajouter un contenu ») de la même taille que les
      portraits d'auteurs (@dimen/author_avatar_size), nom, nombre de livres, bouton. -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -22,7 +23,7 @@
         android:scaleType="centerCrop"
         android:src="@drawable/img_wait_struct"
         android:importantForAccessibility="no"
-        app:shapeAppearanceOverlay="@style/ShapeAppearance.Elim.Circle"
+        app:shapeAppearanceOverlay="@style/ShapeAppearance.Elim.StructureLogoHome"
         app:strokeColor="@color/elim_outline"
         app:strokeWidth="1dp" />
     <RelativeLayout

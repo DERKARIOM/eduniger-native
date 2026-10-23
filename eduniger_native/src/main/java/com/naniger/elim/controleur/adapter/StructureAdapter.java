@@ -117,6 +117,7 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
 
         void display(Structure structure){
             mStructureRef = structure;
+            applyLogoShape(isPseudoItem(structure));
             switch (structure.getId())
             {
                 case "AddBook":
@@ -224,6 +225,22 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
             });
         }
         private boolean mBusy;
+
+        /**
+         * Forme du visuel : logo de structure en carré légèrement arrondi, pastille
+         * « Ajouter un contenu » / « Devenir auteur » ronde (comme les portraits d'auteurs).
+         * Réappliquée à chaque liaison : une ligne recyclée ne garde pas la forme précédente.
+         */
+        private void applyLogoShape(boolean round) {
+            if (!(mBlanketImageView instanceof com.google.android.material.imageview.ShapeableImageView)) return;
+            com.google.android.material.imageview.ShapeableImageView v =
+                    (com.google.android.material.imageview.ShapeableImageView) mBlanketImageView;
+            com.google.android.material.shape.CornerSize corner = round
+                    ? new com.google.android.material.shape.RelativeCornerSize(0.5f)
+                    : new com.google.android.material.shape.AbsoluteCornerSize(
+                            18 * v.getResources().getDisplayMetrics().density);
+            v.setShapeAppearanceModel(v.getShapeAppearanceModel().toBuilder().setAllCornerSizes(corner).build());
+        }
 
         private boolean isPseudoItem(Structure structure) {
             return "AddBook".equals(structure.getId()) || "RegisterAuthor".equals(structure.getId());

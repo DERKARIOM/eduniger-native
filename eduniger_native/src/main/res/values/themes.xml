@@ -443,6 +443,11 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">14dp</item>
     </style>
+    <!-- Logo des structures sur l'accueil (72 dp) : carré légèrement arrondi -->
+    <style name="ShapeAppearance.Elim.StructureLogoHome" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">18dp</item>
+    </style>
     <style name="ShapeAppearance.Elim.StructureLogoLarge" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">22dp</item>
