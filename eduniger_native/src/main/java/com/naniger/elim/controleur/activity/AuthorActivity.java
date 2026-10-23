@@ -163,6 +163,10 @@ public class AuthorActivity extends AppCompatActivity implements AuthorProfileAd
         mTopTitle = findViewById(R.id.text_view_author_top_title);
         mNotFound = findViewById(R.id.linear_layout_author_not_found);
 
+        // Le gestionnaire de mise en page doit exister AVANT de gonfler l'en-tête avec la liste
+        // pour parent (RecyclerView.generateLayoutParams l'exige, sinon plantage au démarrage).
+        mLayoutManager = new LinearLayoutManager(this);
+        mList.setLayoutManager(mLayoutManager);
         mHeader = LayoutInflater.from(this).inflate(R.layout.item_author_profile_header, mList, false);
         mPortrait = mHeader.findViewById(R.id.image_view_author_profile_portrait);
         mName = mHeader.findViewById(R.id.text_view_author_profile_name);
@@ -215,8 +219,6 @@ public class AuthorActivity extends AppCompatActivity implements AuthorProfileAd
     }
 
     private void setupList() {
-        mLayoutManager = new LinearLayoutManager(this);
-        mList.setLayoutManager(mLayoutManager);
         mAdapter = new AuthorProfileAdapter(mHeader, this);
         mList.setAdapter(mAdapter);
         mList.setItemAnimator(null); // pas de clignotement à l'ajout des pages
