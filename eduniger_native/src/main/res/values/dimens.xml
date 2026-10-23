@@ -63,10 +63,10 @@
          lecteur sont superposés au contenu ; sans elle, les derniers éléments restent cachés.
          Même valeur que l'écran Compte (fragment_library). -->
     <dimen name="list_bottom_inset">112dp</dimen>
-    <!-- Cartes de livres horizontales (≈ 2,3 cartes visibles sur un téléphone de 360dp) -->
-    <dimen name="book_card_width">136dp</dimen>
-    <dimen name="book_card_cover_height">192dp</dimen>
-    <dimen name="book_card_gap">14dp</dimen>
+    <!-- Cartes de livres horizontales (≈ 2,7 cartes visibles sur un téléphone de 360dp) -->
+    <dimen name="book_card_width">116dp</dimen>
+    <dimen name="book_card_cover_height">164dp</dimen>
+    <dimen name="book_card_gap">12dp</dimen>
     <dimen name="section_gutter">20dp</dimen>
     <!-- Lignes de livres (listes verticales) -->
     <dimen name="book_row_cover_width">64dp</dimen>
