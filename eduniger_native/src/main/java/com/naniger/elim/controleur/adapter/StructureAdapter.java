@@ -26,7 +26,6 @@ import com.naniger.elim.R;
 import com.naniger.elim.controleur.activity.AddBookActivity;
 import com.naniger.elim.controleur.activity.RegisterAuthorActivity;
 import com.naniger.elim.controleur.activity.StructureActivity;
-import com.naniger.elim.controleur.animation.RoundedTransformation;
 import com.naniger.elim.controleur.dialog.SimpleOkDialog;
 import com.naniger.elim.controleur.dialog.StructDeleteDialog;
 import com.naniger.elim.model.data.PasswordUtil;
@@ -143,13 +142,15 @@ public class StructureAdapter extends RecyclerView.Adapter<StructureAdapter.MyVi
                     mBlanketImageView.setImageResource(R.drawable.add_auteurs);
                     break;
                 default:
+                    // Ligne recyclée : pas d'animation héritée de la carte « Ajouter ».
+                    mBlanketImageView.clearAnimation();
                     mBookNumberTextView.setText(structure.getBookNumber() + " Livres");
                     Picasso.get()
                             .load(Server.getUrlHostProd(itemView.getContext()) + "/api/public/resource/" + structure.getId() + "/logo/" + structure.getCover())
                             .placeholder(R.drawable.img_wait_struct)
                             .error(R.drawable.img_wait_struct)
-                            .transform(new RoundedTransformation(1000,4))
-                            .resize(284,284)
+                            .fit()
+                            .centerCrop()
                             .into(mBlanketImageView);
                     break;
             }

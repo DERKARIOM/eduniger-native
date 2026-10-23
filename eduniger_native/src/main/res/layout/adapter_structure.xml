@@ -1,20 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Structure / « Ajouter un contenu » : logo rond de la même taille que les
+     portraits d'auteurs (@dimen/author_avatar_size), nom, nombre de livres, bouton. -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="10dp">
-    <ImageView
+    android:background="?attr/selectableItemBackground"
+    android:paddingStart="@dimen/section_gutter"
+    android:paddingTop="8dp"
+    android:paddingEnd="10dp"
+    android:paddingBottom="8dp">
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/image_view_adapter_structure_cover"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
+        android:layout_width="@dimen/author_avatar_size"
+        android:layout_height="@dimen/author_avatar_size"
         android:layout_centerVertical="true"
-        android:elevation="5dp"
-        android:src="@mipmap/ic_v2_round"
-        android:importantForAccessibility="no" />
+        android:background="@color/skeleton_base"
+        android:padding="0.5dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/img_wait_struct"
+        android:importantForAccessibility="no"
+        app:shapeAppearanceOverlay="@style/ShapeAppearance.Elim.Circle"
+        app:strokeColor="@color/elim_outline"
+        app:strokeWidth="1dp" />
     <RelativeLayout
         android:id="@+id/info_livre2"
         android:layout_width="match_parent"
@@ -27,7 +35,7 @@
             android:id="@+id/text_view_adapter_structure_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="6dp"
+            android:layout_marginStart="14dp"
             android:ellipsize="end"
             android:maxLines="1"
             android:text="NinoLib"
@@ -38,7 +46,7 @@
             android:id="@+id/image_view_adapter_structure_book_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="6dp"
+            android:layout_marginStart="14dp"
             android:layout_marginTop="2dp"
             android:layout_below="@id/text_view_adapter_structure_title"
             android:ellipsize="end"
