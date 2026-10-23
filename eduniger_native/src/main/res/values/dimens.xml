@@ -68,4 +68,10 @@
     <dimen name="book_card_cover_height">192dp</dimen>
     <dimen name="book_card_gap">14dp</dimen>
     <dimen name="section_gutter">20dp</dimen>
+    <!-- Lignes de livres (listes verticales) -->
+    <dimen name="book_row_cover_width">64dp</dimen>
+    <dimen name="book_row_cover_height">92dp</dimen>
+    <dimen name="book_row_title">15sp</dimen>
+    <dimen name="book_row_subtitle">13sp</dimen>
+    <dimen name="book_row_count">12sp</dimen>
 </resources>

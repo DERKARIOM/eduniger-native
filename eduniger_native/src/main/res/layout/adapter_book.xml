@@ -1,99 +1,140 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Ligne de livre (liste verticale : recherche, catégories, structures…).
+    Même typographie que les cartes horizontales : titre 15sp gras, catégorie 13sp,
+    infos 12sp, couverture aux coins arrondis. Palette Elim clair/sombre.
+    Les identifiants sont conservés (OnlineBookAdapter, FabiolaBookAdapter, AudioAdapter).
+-->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="10dp">
+    android:background="?attr/selectableItemBackground"
+    android:paddingStart="@dimen/section_gutter"
+    android:paddingTop="10dp"
+    android:paddingEnd="@dimen/section_gutter"
+    android:paddingBottom="10dp">
 
-    <ImageView
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/image_view_adapter_book_audio_blanket"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
-        android:elevation="2dp"
-        android:src="@mipmap/ic_v2_round"
-        android:importantForAccessibility="no" />
-    <RelativeLayout
+        android:layout_width="@dimen/book_row_cover_width"
+        android:layout_height="@dimen/book_row_cover_height"
+        android:background="@color/skeleton_base"
+        android:importantForAccessibility="no"
+        android:padding="0.5dp"
+        android:scaleType="centerCrop"
+        app:shapeAppearanceOverlay="@style/ShapeAppearance.Elim.BookRowCover"
+        app:strokeColor="@color/elim_outline"
+        app:strokeWidth="1dp"
+        tools:src="@drawable/img_wait_cover_book" />
+
+    <LinearLayout
         android:id="@+id/info_livre"
-        style="@style/wrap_content_all"
-        android:layout_toEndOf="@+id/image_view_adapter_book_audio_blanket"
-        android:layout_centerVertical="true">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="16dp"
+        android:layout_toEndOf="@id/image_view_adapter_book_audio_blanket"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/text_view_adapter_book_title"
-            style="@style/wrap_content_all"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="5dp"
-            android:layout_marginBottom="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:lineSpacingExtra="1dp"
+            android:maxLines="2"
             android:text="@string/book_title"
-            android:textSize="@dimen/size_title"
-            android:textStyle="bold" />
+            android:textColor="@color/elim_on_surface"
+            android:textSize="@dimen/book_row_title"
+            android:textStyle="bold"
+            tools:text="Epreuve de Sciences de la Vie et de la Terre 2020" />
+
         <TextView
             android:id="@+id/text_view_adapter_book_category"
-            style="@style/wrap_content_all"
-            android:layout_margin="5dp"
-            android:layout_below="@id/text_view_adapter_book_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:text="@string/book_category"
-            android:textSize="@dimen/size_sub_title"/>
+            android:textColor="@color/elim_on_surface_variant"
+            android:textSize="@dimen/book_row_subtitle"
+            tools:text="Kit TD : Sciences" />
+
+        <!-- Formats disponibles + mentions « j'aime » + vues -->
         <LinearLayout
-            style="@style/wrap_content_all"
-            android:layout_below="@id/text_view_adapter_book_category">
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
             <ImageView
                 android:id="@+id/image_view_adapter_book_physical"
+                style="@style/BookRowIcon"
+                android:layout_marginEnd="10dp"
                 android:src="@drawable/vector_black3_physical"
-                style="@style/icon_format"
+                android:visibility="gone"
                 android:importantForAccessibility="no" />
+
             <ImageView
                 android:id="@+id/image_view_adapter_book_electronic"
-                android:layout_width="10dp"
-                android:layout_height="10dp"
-                android:layout_margin="5dp"
+                style="@style/BookRowIcon"
+                android:layout_marginEnd="10dp"
+                android:src="@drawable/vector_black3_pdf"
                 android:visibility="gone"
-                style="@style/adapter_book_pdf"
                 android:importantForAccessibility="no" />
+
             <ImageView
                 android:id="@+id/image_view_adapter_book_audio"
-                style="@style/icon_format"
+                style="@style/BookRowIcon"
+                android:layout_marginEnd="10dp"
                 android:src="@drawable/vector_audio"
+                android:visibility="gone"
                 android:importantForAccessibility="no" />
+
             <LinearLayout
                 android:id="@+id/linear_layout_activity_book_like"
-                style="@style/wrap_content_all"
-                android:layout_margin="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="14dp"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
                 tools:ignore="UseCompoundDrawables">
+
                 <ImageView
                     android:id="@+id/image_view_activity_book_like"
-                    android:layout_width="10dp"
-                    android:layout_height="10dp"
-                    style="@style/adapter_book_like"
+                    style="@style/BookRowIcon"
+                    android:src="@drawable/vector_black3_off_like"
                     android:contentDescription="@string/a11y_like" />
+
                 <TextView
                     android:id="@+id/text_view_activity_book_number_like"
-                    style="@style/icon_subcribe_text_view"
-                    android:src="@drawable/vector_black3_off_like"/>
+                    style="@style/BookRowCount"
+                    tools:text="0" />
             </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/vue"
-                style="@style/wrap_content_all"
-                android:layout_margin="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
                 tools:ignore="UseCompoundDrawables">
+
                 <ImageView
                     android:id="@+id/image_view_activity_book_no_like"
-                    android:layout_width="10dp"
-                    android:layout_height="10dp"
-                    style="@style/adapter_book_view"
-                    android:contentDescription="@string/a11y_dislike" />
+                    style="@style/BookRowIcon"
+                    android:src="@drawable/vector_black3_vue"
+                    android:contentDescription="@string/a11y_views" />
+
                 <TextView
                     android:id="@+id/text_view_adapter_book_number_view"
-                    style="@style/icon_subcribe_text_view"
-                    android:src="@drawable/vector_black3_off_like"/>
+                    style="@style/BookRowCount"
+                    tools:text="4" />
             </LinearLayout>
         </LinearLayout>
-    </RelativeLayout>
-
+    </LinearLayout>
 </RelativeLayout>

@@ -420,4 +420,22 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">12dp</item>
     </style>
+    <style name="ShapeAppearance.Elim.BookRowCover" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">8dp</item>
+    </style>
+    <!-- Icône 15dp des lignes de livres, teintée selon le thème (clair/sombre) -->
+    <style name="BookRowIcon">
+        <item name="android:layout_width">15dp</item>
+        <item name="android:layout_height">15dp</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:tint">@color/elim_on_surface_variant</item>
+    </style>
+    <style name="BookRowCount">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">4dp</item>
+        <item name="android:textColor">@color/elim_on_surface_variant</item>
+        <item name="android:textSize">@dimen/book_row_count</item>
+    </style>
 </resources>
