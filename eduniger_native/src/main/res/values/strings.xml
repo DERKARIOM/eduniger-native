@@ -396,6 +396,7 @@
     <string name="a11y_stop">Arrêter</string>
     <string name="a11y_dislike">Je n\'aime pas</string>
     <string name="a11y_like">J\'aime</string>
+    <string name="a11y_views">Vues</string>
     <string name="a11y_subscribe">S\'abonner</string>
     <string name="a11y_send_comment">Envoyer le commentaire</string>
     <string name="a11y_lock">Verrouillage</string>

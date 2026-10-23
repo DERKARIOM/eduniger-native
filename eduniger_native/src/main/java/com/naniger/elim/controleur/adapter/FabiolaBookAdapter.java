@@ -11,7 +11,6 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.naniger.elim.R;
-import com.naniger.elim.controleur.animation.RoundedTransformation;
 import com.naniger.elim.model.data.OnlineBook;
 import com.naniger.elim.model.data.Server;
 import com.squareup.picasso.Picasso;
@@ -103,19 +102,19 @@ public class FabiolaBookAdapter extends RecyclerView.Adapter<FabiolaBookAdapter.
                     .load(Server.getUrlServer(itemView.getContext()) + "ressources/cover/" + onlineBook.getCover())
                     .placeholder(R.drawable.img_default_book)
                     .error(R.drawable.img_default_book)
-                    .transform(new RoundedTransformation(15,4))
-                    .resize(178,284)
+                    .fit()
+                    .centerCrop()
                     .into(mBlanketImageView);
             mTitleTextView.setText(onlineBook.getTitle());
             mCategoryTextView.setText(onlineBook.getCategory());
             mNumberLikeTextView.setText(String.valueOf(onlineBook.getNumberLikes()));
             mNumberViewTextView.setText(String.valueOf(onlineBook.getNumberView()));
-            if(onlineBook.getIsPhysic().equals("1"))
-                mPysicalImageView.setVisibility(View.VISIBLE);
-            if(!onlineBook.getElectronic().equals("null"))
-                mElectronicImageView.setVisibility(View.VISIBLE);
-            if(onlineBook.getIsAudio().equals("1"))
-                mAudioImageView.setVisibility(View.VISIBLE);
+            // Visibilité fixée dans les deux sens : une ligne recyclée ne garde pas
+            // les icônes de format du livre précédent.
+            mPysicalImageView.setVisibility("1".equals(onlineBook.getIsPhysic()) ? View.VISIBLE : View.GONE);
+            mElectronicImageView.setVisibility(onlineBook.getElectronic() != null
+                    && !"null".equals(onlineBook.getElectronic()) ? View.VISIBLE : View.GONE);
+            mAudioImageView.setVisibility("1".equals(onlineBook.getIsAudio()) ? View.VISIBLE : View.GONE);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
