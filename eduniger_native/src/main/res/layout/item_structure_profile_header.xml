@@ -59,7 +59,7 @@
                     android:background="@color/elim_surface"
                     android:padding="4dp"
                     android:scaleType="centerCrop"
-                    android:visibility="gone"
+                    android:visibility="invisible"
                     app:shapeAppearanceOverlay="@style/ShapeAppearance.Elim.StructureLogoLarge"
                     app:strokeColor="@color/elim_surface"
                     app:strokeWidth="4dp" />

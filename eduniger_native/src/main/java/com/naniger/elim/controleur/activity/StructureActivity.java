@@ -444,7 +444,7 @@ public class StructureActivity extends AppCompatActivity implements AuthorProfil
         String logoUrl = StructureText.logoUrl(host, mId, mInfo.logo);
         if (logoUrl == null) {
             Picasso.get().cancelRequest(mLogo);
-            mLogo.setVisibility(View.GONE); // initiales sur fond bleu doux
+            mLogo.setVisibility(View.INVISIBLE); // initiales sur fond bleu doux
         } else {
             mLogo.setContentDescription(getString(R.string.structure_logo_a11y, name));
             Picasso.get().load(logoUrl).fit().centerCrop().into(mLogo, new Callback() {
@@ -455,7 +455,7 @@ public class StructureActivity extends AppCompatActivity implements AuthorProfil
 
                 @Override
                 public void onError(Exception e) {
-                    mLogo.setVisibility(View.GONE);
+                    mLogo.setVisibility(View.INVISIBLE);
                 }
             });
         }

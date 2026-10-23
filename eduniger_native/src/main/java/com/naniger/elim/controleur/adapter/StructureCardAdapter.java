@@ -146,9 +146,11 @@ public class StructureCardAdapter extends RecyclerView.Adapter<RecyclerView.View
             initials.setText(StructureText.initials(s.name));
 
             // Logo réel seulement ; sinon (absent, valeur par défaut, SVG, erreur) les initiales.
+            // INVISIBLE et non GONE : fit() attend la taille de la vue, qu'une vue GONE n'a
+            // jamais (la requête restait en attente et le logo ne s'affichait pas).
             String url = StructureText.logoUrl(Server.getUrlHostProd(c), s.id, s.logo);
             Picasso.get().cancelRequest(logo);
-            logo.setVisibility(View.GONE);
+            logo.setVisibility(View.INVISIBLE);
             if (url != null) {
                 Picasso.get().load(url).fit().centerCrop().into(logo, new Callback() {
                     @Override
@@ -158,7 +160,7 @@ public class StructureCardAdapter extends RecyclerView.Adapter<RecyclerView.View
 
                     @Override
                     public void onError(Exception e) {
-                        logo.setVisibility(View.GONE);
+                        logo.setVisibility(View.INVISIBLE);
                     }
                 });
             }
